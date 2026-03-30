@@ -924,20 +924,7 @@ h+='</div>';
 });
 return h;
 }
-// Pick up redirects from 404.html (GitHub Pages SPA routing)
-// 404.html encodes the original path as ?p=... so no sessionStorage needed
-try{(function(){
-  var qs=window.location.search;
-  if(qs.indexOf('?p=')===0||qs.indexOf('&p=')>0){
-    var params=new URLSearchParams(qs);
-    var routePath=params.get('p')||'';
-    var hash=params.get('h')||'';
-    if(routePath){
-      var base=window.location.pathname.replace(/\/$/,'');
-      try{history.replaceState(null,'',base+routePath+(hash?hash:''));}catch(e){}
-    }
-  }
-})();}catch(e){}
+
 // Theme acronym map — must be defined before readHash() runs
 var TH_SLUG={
 'Who We Are':'WWA',
