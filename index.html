@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Wesley Digital Learning Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#111111;--sf:#1A1A1A;--tx:#F2F2F2;--mt:#999;--bd:#2A2A2A;--ac:#CDEB45;--ac2:#7ED957;--hl:#222}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
+.hd{background:var(--bg);position:sticky;top:0;z-index:100;caret-color:transparent}
+.hi{max-width:700px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:10px;user-select:none}
+.logo{height:34px;width:auto;border-radius:4px;mix-blend-mode:lighten}
+.bk{background:var(--hl);border:none;color:#fff;border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .15s}
+.bk:hover{background:#333}
+.hd h1{color:#FFF;font-size:15px;font-weight:700;letter-spacing:-.3px}
+.hd-sub{color:#999;font-size:11px;font-weight:500;margin-top:1px}
+
+.wp{max-width:700px;margin:0 auto;padding:0 20px 80px}
+.fd{animation:fu .3s ease both}@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+#app{min-height:100vh}
+.tab-fade .fd{animation:tf .15s ease both}@keyframes tf{from{opacity:.6}to{opacity:1}}
+
+.hero{margin:24px 0 36px}
+.hero-title{font-size:clamp(36px,9vw,56px);font-weight:700;line-height:1.08;letter-spacing:-2px;color:#FFF}
+.hero-accent{color:var(--ac)}
+.hero-sub{font-size:15px;color:var(--mt);margin-top:16px;line-height:1.6;max-width:400px}
+
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:6px 14px;border-radius:99px;background:var(--hl);color:#FFF;letter-spacing:.2px}
+.tag-t{display:inline-block;font-size:10px;font-weight:700;padding:4px 12px;border-radius:99px;background:rgba(0,0,0,.15);letter-spacing:.3px}
+.tag-tool{display:inline-block;font-size:12px;font-weight:700;padding:6px 14px;border-radius:99px;letter-spacing:.2px}
+.tag-meta{display:inline-block;font-size:12px;font-weight:700;padding:6px 14px;border-radius:99px;background:var(--hl);color:#BBB}
+
+.cc{border-radius:20px;padding:28px;margin-bottom:12px;cursor:pointer;transition:transform .15s;position:relative;overflow:hidden}
+.cc:hover{transform:scale(1.01)}
+.cc-wm{position:absolute;right:-20px;bottom:-20px;font-size:110px;font-weight:800;opacity:.1;line-height:1;letter-spacing:-6px;pointer-events:none}
+.cc-inner{position:relative;z-index:1}
+.cc-name{font-size:26px;font-weight:700;letter-spacing:-.5px}
+.cc-sub{font-size:14px;margin-top:4px;font-weight:500}
+
+.sec-title{font-size:clamp(28px,7vw,36px);font-weight:700;margin-top:14px;letter-spacing:-1px;color:#FFF;line-height:1.15}
+
+.yg{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.yc{background:var(--sf);border-radius:16px;padding:22px 18px;cursor:pointer;transition:all .15s;border:2px solid var(--bd);position:relative;overflow:hidden}
+.yc:hover{border-color:var(--ac);background:rgba(205,235,69,.05);transform:translateY(-3px)}
+.yc-dot{width:14px;height:14px;border-radius:4px;margin-bottom:14px}
+.yc h3{font-size:20px;font-weight:700;letter-spacing:-.3px}.yc .cn{font-size:12px;color:var(--mt);margin-top:4px}
+
+.uc{border-radius:16px;padding:20px 22px;margin-bottom:10px;cursor:pointer;transition:transform .15s;position:relative;overflow:hidden}
+.uc:hover{transform:scale(1.01)}
+.uc-emoji{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:48px;opacity:.3;pointer-events:none}
+.uc-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;opacity:.5;margin-bottom:4px}
+.uc-name{font-size:20px;font-weight:700;letter-spacing:-.3px;max-width:80%;line-height:1.2;color:inherit}
+
+.dh{border-radius:20px;padding:28px 26px;margin:16px 0 20px;position:relative;overflow:hidden}
+.dh-wm{position:absolute;right:-10px;bottom:-10px;font-size:100px;opacity:.15;line-height:1;pointer-events:none}
+.dh-title{font-size:26px;font-weight:700;letter-spacing:-.5px;line-height:1.15}
+.dh-ci{font-size:15px;opacity:.8;margin-top:10px;line-height:1.6;font-style:italic}
+
+.loi-box{background:var(--sf);border-radius:16px;padding:20px 22px;margin-bottom:20px;border:2px solid var(--bd)}
+.loi-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--mt);margin-bottom:12px}
+.loi-item{padding:10px 0;border-bottom:1px solid var(--bd);font-size:14px;line-height:1.55;color:#EEE}
+.loi-item:last-child{border-bottom:none}
+.loi-num{font-weight:700;margin-right:8px}
+
+.tb{display:flex;gap:6px;margin-bottom:18px;background:var(--sf);border-radius:14px;padding:5px}
+.tt{flex:1;padding:12px 8px;border:none;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:var(--mt);transition:all .2s;letter-spacing:-.2px}
+.tt.on{background:var(--ac);color:#111}
+.tt-count{font-weight:600;opacity:.7;font-size:11px}
+
+.sg{background:var(--sf);border:2px solid var(--bd);border-radius:16px;overflow:hidden;margin-bottom:14px;transition:border-color .15s}
+.sg:hover{border-color:var(--ac)}
+.sg-pending{background:transparent;border:2px dashed #333;border-radius:16px;padding:28px 24px;margin-bottom:14px;text-align:center}
+.sg-pending-icon{font-size:40px;margin-bottom:12px}
+.sg-pending-title{font-size:16px;font-weight:700;color:#F5A623;margin-bottom:8px}
+.sg-pending-msg{font-size:14px;line-height:1.6;color:#888;max-width:400px;margin:0 auto}
+.sg-pending-cta{display:inline-block;margin-top:16px;font-size:13px;font-weight:600;color:#CDEB45;background:#CDEB4515;padding:8px 18px;border-radius:99px;border:1px solid #CDEB4530;text-decoration:none;cursor:pointer;transition:all .15s}
+.sg-pending-cta:hover{background:#CDEB4530;color:#FFF}
+.sg-head{padding:14px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--bd)}
+.sg-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.sg-meta{flex:1}
+.sg-type{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--mt)}
+.sg-tool{font-size:17px;font-weight:700;letter-spacing:-.3px;margin-top:2px}
+.sg-body{padding:16px 20px 20px}
+.sg-desc{font-size:14px;line-height:1.7;color:#F2F2F2}
+.sg-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.sg-section{margin-top:16px}
+.sg-refs{margin-top:14px}
+.sg-ref-link{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--ac);text-decoration:none;padding:8px 12px;background:rgba(205,235,69,.08);border-radius:8px;margin-bottom:5px;border:1px solid rgba(205,235,69,.15);transition:background .15s}
+.sg-ref-link:hover{background:rgba(205,235,69,.18);color:#fff}
+.sg-ref-doc{background:rgba(126,217,87,.1);border-color:rgba(126,217,87,.2);color:var(--ac2)}
+.sg-ref-doc:hover{background:rgba(126,217,87,.22);color:#fff}
+.sg-label{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--mt);margin-bottom:6px}
+.sg-label svg{width:15px;height:15px;flex-shrink:0}
+.vb{background:rgba(205,235,69,.08);border-left:3px solid var(--ac);padding:11px 15px;border-radius:0 10px 10px 0;font-size:13px;color:#CDEB45;line-height:1.55;font-style:italic}
+
+.cur-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.cur-pill{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:6px 12px;border-radius:8px;cursor:pointer;border:2px solid var(--bd);background:var(--sf);color:var(--tx);transition:all .2s;user-select:none}
+.cur-pill:hover{border-color:var(--ac);background:rgba(205,235,69,.05)}
+.cur-pill.open{border-color:var(--ac);background:rgba(205,235,69,.08)}
+.cur-pill svg{width:12px;height:12px;transition:transform .2s;flex-shrink:0}
+.cur-pill.open svg{transform:rotate(180deg)}
+.cur-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.cur-detail{overflow:hidden;max-height:0;transition:max-height .2s ease-out,padding .2s ease-out;padding:0 14px;background:rgba(205,235,69,.06);border-left:3px solid var(--ac);border-radius:0 8px 8px 0;font-size:12.5px;color:#CDEB45;line-height:1.5;margin-top:0}
+.cur-detail.open{max-height:300px;padding:10px 14px;margin-top:6px;transition:max-height .3s ease-in,padding .3s ease-in}
+.cur-detail b{font-weight:700}
+.cur-detail li{color:#DDD}
+
+.bb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:var(--ac);color:#111;border:none;border-radius:16px;padding:18px 24px;font-family:inherit;font-size:17px;font-weight:700;text-decoration:none;cursor:pointer;width:100%;margin-top:24px;letter-spacing:-.3px;transition:transform .15s}
+.bb:hover{transform:scale(1.01)}
+.bb-sub{font-size:12px;font-weight:500;opacity:.6}
+
+@media(max-width:480px){.hero-title{font-size:36px}.cc-name{font-size:22px}.cc-wm{font-size:80px}}
+
+.atl-section{margin-top:16px}
+.atl-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.atl-pill{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:6px 12px;border-radius:8px;cursor:pointer;border:2px solid var(--bd);background:var(--sf);color:var(--tx);transition:all .2s;user-select:none}
+.atl-pill:hover{border-color:#F5A623;background:rgba(245,166,35,.05)}
+.atl-pill.open{border-color:#F5A623;background:rgba(245,166,35,.08)}
+.atl-pill svg{width:12px;height:12px;transition:transform .2s;flex-shrink:0}
+.atl-pill.open svg{transform:rotate(180deg)}
+.atl-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.atl-detail{overflow:hidden;max-height:0;transition:max-height .2s ease-out,padding .2s ease-out;padding:0 14px;background:rgba(245,166,35,.06);border-left:3px solid #F5A623;border-radius:0 8px 8px 0;font-size:12.5px;color:#F5A623;line-height:1.5;margin-top:0}
+.atl-detail.open{max-height:300px;padding:10px 14px;margin-top:6px;transition:max-height .3s ease-in,padding .3s ease-in}
+.atl-detail b{font-weight:700}
+.atl-detail li{color:#DDD;margin-bottom:4px}
+.wds-section{margin-top:12px}
+.wds-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.wds-pill{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:6px 12px;border-radius:8px;cursor:pointer;border:2px solid var(--bd);background:var(--sf);color:var(--tx);transition:all .2s;user-select:none}
+.wds-pill:hover{border-color:#9333EA;background:rgba(147,51,234,.05)}
+.wds-pill.open{border-color:#9333EA;background:rgba(147,51,234,.08)}
+.wds-pill svg{width:12px;height:12px;transition:transform .2s;flex-shrink:0}
+.wds-pill.open svg{transform:rotate(180deg)}
+.wds-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.wds-detail{overflow:hidden;max-height:0;transition:max-height .2s ease-out,padding .2s ease-out;padding:0 14px;background:rgba(147,51,234,.06);border-left:3px solid #9333EA;border-radius:0 8px 8px 0;font-size:12.5px;color:#9333EA;line-height:1.5;margin-top:0}
+.wds-detail.open{max-height:400px;padding:10px 14px;margin-top:6px;transition:max-height .3s ease-in,padding .3s ease-in}
+.wds-detail b{font-weight:700}
+.wds-detail li{color:#DDD;margin-bottom:4px}
+
+.sg-tool a:hover{text-decoration-color:#FFF}
+
+.sg-fb{display:flex;align-items:center;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--bd);flex-wrap:wrap}
+.sg-fb-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:8px 18px;border-radius:99px;cursor:pointer;text-decoration:none;border:none;background:#333;color:#AAA;transition:all .15s;font-family:inherit}
+.sg-fb-btn:hover{background:#444;color:#FFF}
+.fb-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
+.fb-overlay.open{opacity:1;pointer-events:all}
+.fb-modal{background:#1A1A1A;border:2px solid #333;border-radius:20px;padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.fb-title{font-size:18px;font-weight:700;color:#FFF;margin-bottom:4px}
+.fb-sub{font-size:12px;color:#888;margin-bottom:20px}
+.fb-context{font-size:13px;color:#CDEB45;background:#CDEB4510;border:1px solid #CDEB4530;border-radius:10px;padding:10px 14px;margin-bottom:16px;line-height:1.5}
+.fb-label{font-size:12px;font-weight:600;color:#AAA;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.fb-textarea{width:100%;min-height:100px;background:#111;border:2px solid #333;border-radius:12px;color:#FFF;font-family:inherit;font-size:14px;padding:12px;resize:vertical;outline:none;transition:border-color .15s;box-sizing:border-box}
+.fb-textarea:focus{border-color:#CDEB45}
+.fb-textarea::placeholder{color:#555}
+.fb-actions{display:flex;gap:10px;margin-top:16px}
+.fb-submit{flex:1;padding:12px;border:none;border-radius:12px;background:#CDEB45;color:#111;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .15s}
+.fb-submit:hover{background:#D8F050;transform:scale(1.01)}
+.fb-submit:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.fb-cancel{padding:12px 20px;border:2px solid #333;border-radius:12px;background:none;color:#888;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .15s}
+.fb-cancel:hover{border-color:#555;color:#CCC}
+.fb-success{text-align:center;padding:20px 0}
+.fb-success-icon{font-size:48px;margin-bottom:12px}
+.fb-success-msg{font-size:16px;font-weight:600;color:#CDEB45}
+.fb-success-sub{font-size:13px;color:#888;margin-top:6px}
+
+.sg-collapse{cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;padding:8px 0}
+.sg-collapse:hover .sg-label{opacity:1}
+.sg-collapse .sg-label{opacity:.7;transition:opacity .15s;margin:0}
+.sg-collapse svg{width:14px;height:14px;color:#888;transition:transform .2s;flex-shrink:0}
+.sg-collapse.open svg{transform:rotate(180deg)}
+.sg-collapsible{overflow:hidden;max-height:0;transition:max-height .25s ease-out;padding:0}
+.sg-collapsible.open{max-height:600px;padding:8px 0 0;transition:max-height .35s ease-in}
+
+.sg-react{display:inline-flex;gap:8px;margin-left:auto}
+.sg-react-btn{background:#FF6B6B20;border:none;border-radius:99px;padding:8px 14px;cursor:pointer;font-size:14px;transition:all .15s;color:#FF6B6B}
+.sg-react-btn:hover{background:#FF6B6B35}
+.sg-react-btn.voted{background:#FF6B6B;color:#111}
+.sg-react-up{background:#22C55E20;color:#22C55E}
+.sg-react-up:hover{background:#22C55E35}
+.sg-react-up.voted{background:#22C55E;color:#111}
+
+.planner-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
+.planner-overlay.open{opacity:1;pointer-events:all}
+.planner-modal{background:#1A1A1A;border:2px solid #F5A623;border-radius:20px;padding:36px;width:100%;max-width:480px;text-align:center}
+.planner-modal-icon{font-size:52px;margin-bottom:16px}
+.planner-modal-title{font-size:20px;font-weight:700;color:#F5A623;margin-bottom:8px}
+.planner-modal-sub{font-size:14px;line-height:1.6;color:#888;margin-bottom:20px}
+.planner-modal-cta{display:inline-block;font-size:14px;font-weight:600;color:#CDEB45;background:#CDEB4515;padding:10px 22px;border-radius:99px;border:1px solid #CDEB4530;text-decoration:none;cursor:pointer;transition:all .15s;margin-bottom:10px;white-space:nowrap}
+.planner-modal-cta:hover{background:#CDEB4530;color:#FFF}
+.planner-modal-close{display:inline-block;font-size:13px;color:#666;cursor:pointer;padding:8px 16px;margin-top:8px;transition:color .15s}
+.planner-modal-close:hover{color:#FFF}
+
+.sg-howto{cursor:pointer;display:flex;align-items:center;gap:8px;padding:10px 0 4px;user-select:none;margin-top:8px;border-top:1px solid var(--bd)}
+.sg-howto:hover .sg-howto-label{color:#CDEB45}
+.sg-howto-label{font-size:12px;font-weight:600;color:#888;transition:color .15s;letter-spacing:.3px}
+.sg-howto svg{width:13px;height:13px;color:#888;transition:transform .2s;flex-shrink:0}
+.sg-howto.open svg{transform:rotate(180deg)}
+.sg-howto-body{overflow:hidden;max-height:0;transition:max-height .25s ease-out;padding:0}
+.sg-howto-body.open{max-height:800px;padding:10px 0 4px;transition:max-height .35s ease-in}
+.sg-howto-steps{font-size:13px;color:#BBB;line-height:1.7;padding:8px 14px;background:rgba(205,235,69,.04);border-left:3px solid #CDEB4540;border-radius:0 8px 8px 0}
+.sg-howto-steps ol{margin:0;padding:0 0 0 18px}
+.sg-howto-steps li{margin-bottom:6px}
+.sg-howto-steps li:last-child{margin-bottom:0}
+.sg-howto-tip{font-size:12px;color:#F5A623;margin-top:8px;font-style:italic}
+
+.sg-howto{margin-top:14px;border-top:1px solid var(--bd);padding-top:10px}
+.sg-howto-btn{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:#38BDF8;cursor:pointer;background:none;border:none;font-family:inherit;padding:4px 0;transition:opacity .15s}
+.sg-howto-btn:hover{opacity:.8}
+.sg-howto-btn svg{width:14px;height:14px;transition:transform .2s}
+.sg-howto-btn.open svg{transform:rotate(180deg)}
+.sg-howto-content{overflow:hidden;max-height:0;transition:max-height .25s ease-out;padding:0}
+.sg-howto-content.open{max-height:800px;padding:12px 0 0;transition:max-height .35s ease-in}
+.sg-howto-steps{font-size:13px;color:#BBB;line-height:1.7;padding:12px 16px;background:rgba(56,189,248,.05);border-left:3px solid #38BDF8;border-radius:0 10px 10px 0}
+.sg-howto-steps ol{margin:0;padding:0 0 0 18px}
+.sg-howto-steps li{margin-bottom:6px}
+.sg-howto-steps li:last-child{margin-bottom:0}
+.sg-howto-tip{margin-top:10px;font-size:12px;color:#F5A623;font-style:italic}
+
+.howto-steps{list-style:none;padding:0;margin:8px 0 0;counter-reset:step}
+.howto-steps li{position:relative;padding:6px 0 6px 32px;font-size:13px;color:#CCC;line-height:1.5;counter-increment:step}
+.howto-steps li::before{content:counter(step);position:absolute;left:0;top:6px;width:22px;height:22px;background:#CDEB4520;color:#CDEB45;border-radius:50%;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+
+.sg-extras{margin-top:16px;padding-top:14px;border-top:1px solid #333}
+
+.sg-used{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:8px 18px;border-radius:99px;cursor:pointer;border:none;background:#22C55E;color:#111;transition:all .15s;font-family:inherit}
+.sg-used:hover{background:#2AD264}
+.sg-used.done{background:#22C55E;color:#111;cursor:default;opacity:.8}
+.team-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
+.team-overlay.open{opacity:1;pointer-events:all}
+.team-modal{background:#1A1A1A;border:2px solid #CDEB45;border-radius:20px;padding:32px;width:100%;max-width:400px;text-align:center}
+.team-modal h2{font-size:18px;color:#CDEB45;margin:0 0 6px}
+.team-modal p{font-size:13px;color:#888;margin:0 0 20px}
+.team-select{width:100%;padding:12px;border-radius:12px;background:#111;border:2px solid #333;color:#FFF;font-size:14px;font-family:inherit;margin-bottom:12px;outline:none;cursor:pointer}
+.team-select:focus{border-color:#CDEB45}
+.team-go{width:100%;padding:12px;border:none;border-radius:12px;background:#CDEB45;color:#111;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;transition:background .15s}
+.team-go:hover{background:#D8F050}
+.team-go:disabled{opacity:.4;cursor:not-allowed}
+.lb-section{margin:60px 0 24px;padding-top:40px;border-top:1px solid #222}
+.lb-campus{background:#1A1A1A;border-radius:16px;padding:20px;margin-bottom:16px;border:1px solid #222}
+.lb-campus-title{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.lb-row{display:flex;align-items:center;padding:8px 12px;border-radius:10px;margin-bottom:6px;font-size:13px}
+.lb-row:nth-child(odd){background:#ffffff06}
+.lb-rank{width:28px;font-weight:700;color:#888;flex-shrink:0}
+.lb-rank.gold{color:#FFD700}
+.lb-rank.silver{color:#C0C0C0}
+.lb-rank.bronze{color:#CD7F32}
+.lb-team{flex:1;font-weight:600;color:#EEE}
+.lb-pts{font-weight:700;color:#CDEB45;font-size:14px}
+.lb-streak{font-size:11px;color:#F5A623;margin-left:8px}
+.lb-empty{color:#555;font-size:13px;font-style:italic;padding:8px 12px}
+.lb-loading{color:#555;font-size:13px;text-align:center;padding:20px}
+
+@keyframes confettiFall{0%{transform:translateY(-100px) rotate(0deg);opacity:1}100%{transform:translateY(400px) rotate(720deg);opacity:0}}
+@keyframes pointPop{0%{transform:scale(0);opacity:0}40%{transform:scale(1.1);opacity:1}100%{transform:scale(1);opacity:1}}
+.confetti-container{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}
+.confetti{position:absolute;width:10px;height:10px;border-radius:2px;animation:confettiFall 1.5s ease-out forwards}
+.point-popup{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);animation:pointPop .5s ease-out forwards}
+
+.point-popup-btn{display:inline-block;margin-top:16px;padding:10px 24px;border:none;border-radius:99px;background:#CDEB45;color:#111;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;transition:background .15s}
+.point-popup-btn:hover{background:#D8F050}
+.point-popup-inner{background:#111;border:3px solid #CDEB45;border-radius:24px;padding:24px 40px;text-align:center;box-shadow:0 0 60px rgba(205,235,69,.3)}
+.point-popup-emoji{font-size:48px;margin-bottom:8px}
+.point-popup-text{font-size:24px;font-weight:800;color:#CDEB45;font-family:"Space Grotesk",sans-serif}
+.point-popup-sub{font-size:13px;color:#888;margin-top:4px}
+</style></head><body><div id="app"></div>
+<script>
+
+const HT={
+"Google Earth":"<ol><li>Open <b>earth.google.com</b> in Chrome.</li><li>Click <b>Projects → New Project</b>.</li><li>Search for locations and click <b>Add to project</b> to pin them.</li><li>For each pin, add a <b>title, description and images</b>.</li><li>Click the <b>microphone icon</b> to record voice narration at each stop.</li><li>Click <b>Present</b> to fly between locations with narration playing automatically.</li></ol><div class=\"sg-howto-tip\">Tip: Students can collaborate on a shared project by clicking the share icon.</div>",
+"Scratch":"<ol><li>Open <b>scratch.mit.edu</b> and click <b>Create</b>.</li><li>Add <b>sprites</b> (characters) and <b>backdrops</b> (scenes) from the library or draw your own.</li><li>Use the <b>block-based code</b> to make sprites move, talk, sense and react.</li><li>Use <b>Events</b> blocks (green flag, key press, sprite click) to trigger actions.</li><li>Use <b>Control</b> blocks (if/then, repeat, wait) for game logic.</li><li>Click the <b>green flag</b> to test, then <b>Share</b> when ready.</li></ol><div class=\"sg-howto-tip\">Tip: Start with the Scratch tutorials (click Tutorials in the top bar) for step-by-step guided projects.</div>",
+"Scratch Jr":"<ol><li>Open the <b>Scratch Jr app</b> on the iPad.</li><li>Tap <b>+</b> to start a new project.</li><li>Choose or draw <b>characters</b> and <b>backgrounds</b>.</li><li>Drag <b>coding blocks</b> together to make characters move, jump, grow, shrink and speak.</li><li>Tap the <b>green flag</b> to play the animation.</li><li>Add extra <b>pages</b> (like slides) to create a multi-scene story.</li></ol><div class=\"sg-howto-tip\">Tip: Use the paint editor to let students draw their own characters — great for younger learners.</div>",
+"Seesaw":"<ol><li>Open <b>Seesaw</b> and go to the class journal.</li><li>Tap <b>Add</b> (+) to start a new post.</li><li>Choose the tool: <b>photo, video, drawing, voice recording, link or file</b>.</li><li>Students capture their work and <b>annotate</b> with labels, arrows and voice.</li><li>Tap the <b>green tick</b> to submit for teacher approval.</li></ol><div class=\"sg-howto-tip\">Tip: Create an Activity template with instructions so students know exactly what to do.</div>",
+"Book Creator":"<ol><li>Open <b>bookcreator.com</b> and select your class library.</li><li>Click <b>New Book</b> and choose a template or blank page.</li><li>Add content: <b>text, images, drawings, audio recordings, videos and shapes</b>.</li><li>Use the <b>record button</b> for voice narration on any page.</li><li>Add more <b>pages</b> to build out the book.</li><li>Click <b>Publish</b> to share as a link or export as ePub/PDF.</li></ol><div class=\"sg-howto-tip\">Tip: Use the comic book template for visual storytelling or the blank template for information reports.</div>",
+"Canva":"<ol><li>Open <b>canva.com</b> and click <b>Create a design</b>.</li><li>Choose a format: <b>poster, presentation, infographic, video</b> etc.</li><li>Use <b>templates</b> as a starting point or start from scratch.</li><li>Drag in <b>text, images, icons, shapes and charts</b> from the sidebar.</li><li>Upload your own <b>photos</b> using the Uploads tab.</li><li>Click <b>Share → Download</b> or <b>Share → Link</b> to publish.</li></ol><div class=\"sg-howto-tip\">Tip: Use Canva Education for free premium features and classroom integration.</div>",
+"Padlet":"<ol><li>Open <b>padlet.com</b> and click <b>Make a padlet</b>.</li><li>Choose a format: <b>Wall, Canvas, Timeline, Map, Grid</b> or others.</li><li>Set a <b>title</b> and description.</li><li>Share the <b>link or QR code</b> with students.</li><li>Students tap <b>+</b> to add posts with <b>text, images, links, audio or video</b>.</li><li>Students can <b>comment and react</b> on each other's posts.</li></ol><div class=\"sg-howto-tip\">Tip: Use the Map format for geographic projects — students pin locations and add multimedia at each point.</div>",
+"Mentimeter":"<ol><li>Open <b>mentimeter.com</b> and click <b>New presentation</b>.</li><li>Add a slide and choose the type: <b>word cloud, poll, quiz, scales, open-ended</b>.</li><li>Type your <b>question</b>.</li><li>Click <b>Present</b> and share the <b>join code</b> with students.</li><li>Students go to <b>menti.com</b>, enter the code and respond.</li><li>Results appear <b>live on screen</b> in real time.</li></ol><div class=\"sg-howto-tip\">Tip: Word clouds work brilliantly for tuning-in provocations — instant visual of the class's thinking.</div>",
+"iMovie":"<ol><li>Open <b>iMovie</b> on iPad or Mac.</li><li>Tap <b>Create Project → Movie</b>.</li><li>Import <b>video clips and photos</b> from the camera roll.</li><li>Drag clips onto the <b>timeline</b> and trim them.</li><li>Add <b>titles, transitions and background music</b>.</li><li>Record a <b>voiceover</b> by tapping the microphone icon.</li><li>Tap <b>Share</b> to export the finished video.</li></ol><div class=\"sg-howto-tip\">Tip: Use the Trailer templates for polished-looking news reports and documentaries.</div>",
+"GarageBand":"<ol><li>Open <b>GarageBand</b> on iPad or Mac.</li><li>Choose <b>Live Loops, Tracks or Drummer</b> to start.</li><li>Tap instruments to <b>play and record</b> — keyboard, guitar, drums, strings.</li><li>Use <b>Smart Instruments</b> for students who do not play an instrument.</li><li>Layer multiple <b>tracks</b> together to build a composition.</li><li>Tap <b>Share</b> to export as an audio file.</li></ol><div class=\"sg-howto-tip\">Tip: Use Live Loops for quick, fun music creation — students tap cells to build arrangements without needing to play notes.</div>",
+"Microsoft Forms":"<ol><li>Open <b>forms.office.com</b> and click <b>New Form</b>.</li><li>Add questions: <b>choice, text, rating, date, ranking, Likert</b>.</li><li>Toggle <b>Required</b> for must-answer questions.</li><li>Click <b>Share</b> and copy the link or QR code.</li><li>Students open the link and submit responses.</li><li>Click <b>Responses</b> to see results in real time with auto-generated charts.</li></ol><div class=\"sg-howto-tip\">Tip: Use the Quiz mode for self-marking assessments with automatic scores and feedback.</div>",
+"Kahoot":"<ol><li>Open <b>kahoot.com</b> and click <b>Create</b>.</li><li>Add <b>questions</b> with multiple choice answers and mark the correct one.</li><li>Set a <b>time limit</b> per question.</li><li>Click <b>Play</b> and choose <b>Classic</b> (individual) or <b>Team</b> mode.</li><li>Students join at <b>kahoot.it</b> with the game PIN.</li><li>Results show on the <b>leaderboard</b> after each question.</li></ol><div class=\"sg-howto-tip\">Tip: Use it as a diagnostic at the start of a unit to reveal what students already know and where misconceptions are.</div>",
+"Adobe Express":"<ol><li>Open <b>express.adobe.com</b> and sign in with school account.</li><li>Click <b>Create new</b> and choose: <b>poster, video, webpage, social post</b>.</li><li>Use <b>templates</b> or start blank.</li><li>Add <b>text, images, icons, video clips and animations</b>.</li><li>Use <b>brand tools</b> to keep consistent colours and fonts.</li><li>Click <b>Download</b> or <b>Share link</b> to publish.</li></ol><div class=\"sg-howto-tip\">Tip: The video tool is great for animated explainer videos — students add voiceover and the visuals animate automatically.</div>",
+"Micro:bit":"<ol><li>Open <b>makecode.microbit.org</b> and click <b>New Project</b>.</li><li>Drag <b>coding blocks</b> to program the micro:bit.</li><li>Use blocks for <b>LED display, buttons, sensors</b> (light, temperature, accelerometer, compass).</li><li>Click <b>Download</b> and drag the file onto the micro:bit (connected via USB).</li><li>The program runs on the <b>physical device</b> immediately.</li></ol><div class=\"sg-howto-tip\">Tip: Start with the LED display — students can show their name, an icon, or a scrolling message as their first program.</div>",
+"Sphero":"<ol><li>Open the <b>Sphero Edu</b> app on iPad.</li><li>Connect to a <b>Sphero robot</b> via Bluetooth.</li><li>Choose <b>Draw, Block or Text</b> coding mode.</li><li>Draw a path or drag blocks to <b>control movement, lights, speed and sounds</b>.</li><li>Tap <b>Start</b> to run the program on the physical robot.</li><li>Iterate: observe, adjust code, try again.</li></ol><div class=\"sg-howto-tip\">Tip: Use Draw mode for younger students — they draw the path and the robot follows it.</div>",
+"Beebots":"<ol><li>Place the <b>Beebot</b> on a mat or floor space.</li><li>Press the <b>arrow buttons</b> (forward, back, left turn, right turn) to enter a sequence.</li><li>Press <b>Go</b> and the Beebot follows the programmed path.</li><li>Press <b>X</b> (clear) to reset and try a new sequence.</li><li>Students <b>predict</b> where it will end up, then <b>test and adjust</b>.</li></ol><div class=\"sg-howto-tip\">Tip: Create custom mats using butcher paper — draw a grid of squares matching the Beebot step size (15cm).</div>",
+"Cubetto":"<ol><li>Place <b>Cubetto</b> on a mat.</li><li>Slot the coloured <b>coding blocks</b> into the board (green=forward, red=right, yellow=left, blue=function).</li><li>Press the <b>blue button</b> to run the sequence.</li><li>Students watch Cubetto move and <b>debug</b> if it goes wrong.</li><li>Use the <b>function line</b> to create reusable sub-routines.</li></ol><div class=\"sg-howto-tip\">Tip: No screen needed — perfect for Prep and Year 1 as a tangible introduction to sequencing.</div>",
+"Indi Robot":"<ol><li>Place <b>Indi</b> on a flat surface with the <b>colour tiles</b>.</li><li>Arrange tiles in a path — each <b>colour triggers a different action</b> (green=go, red=stop, purple=turn).</li><li>Press <b>Go</b> and Indi drives over the tiles, responding to each colour.</li><li>Students <b>rearrange tiles</b> to change the behaviour.</li><li>Challenge: create a path that solves a problem or tells a story.</li></ol><div class=\"sg-howto-tip\">Tip: Great for screen-free coding — students learn cause and effect through physical experimentation.</div>",
+"CoDrone EDU":"<ol><li>Open the <b>Robolink Codrone</b> app or <b>Python IDE</b>.</li><li>Connect the <b>CoDrone EDU</b> via the smart controller.</li><li>Use <b>block coding</b> (Blockly) or <b>Python</b> to program flight paths.</li><li>Set <b>takeoff, movement, altitude, rotation and landing</b> commands.</li><li>Click <b>Run</b> and the drone executes the programmed flight.</li></ol><div class=\"sg-howto-tip\">Tip: Start with simple hover-and-land programs before progressing to flight paths. Always fly in a clear open space.</div>",
+"Lego Spike":"<ol><li>Build a <b>Lego Spike</b> model using the instructions in the app.</li><li>Open the <b>Spike app</b> and connect the hub via Bluetooth.</li><li>Use <b>drag-and-drop blocks</b> to program motors, sensors and the LED matrix.</li><li>Test and <b>iterate</b> — adjust the build and the code together.</li><li>Use <b>sensors</b> (colour, distance, force) to make the robot respond to its environment.</li></ol><div class=\"sg-howto-tip\">Tip: The build-and-code cycle teaches computational thinking — students learn that hardware and software work together.</div>",
+"Tinkercad":"<ol><li>Open <b>tinkercad.com</b> and sign in with class code.</li><li>Click <b>Create new design</b>.</li><li>Drag <b>3D shapes</b> onto the workplane — cubes, cylinders, spheres, text.</li><li>Use <b>resize, rotate, lift and group</b> to combine shapes.</li><li>Use <b>Hole</b> shapes to cut through other objects.</li><li>Export as <b>STL</b> for 3D printing or share the link.</li></ol><div class=\"sg-howto-tip\">Tip: Start with the built-in tutorials — the Starter lessons teach all the basic skills in 10 minutes.</div>",
+"Pico VR":"<ol><li>Power on the <b>Pico VR headset</b> and put it on.</li><li>Use the <b>controller</b> to navigate menus.</li><li>Open pre-loaded <b>VR experiences</b> or launch a browser for web-based VR.</li><li>Students explore <b>360-degree environments</b> by looking around.</li><li>Use in <b>guided sessions</b> with teacher supervision.</li></ol><div class=\"sg-howto-tip\">Tip: Keep VR sessions to 10-15 minutes and have students seated. Pre-load the experiences before the lesson.</div>",
+"Insta360":"<ol><li>Mount the <b>Insta360 camera</b> on a tripod or selfie stick.</li><li>Connect via the <b>Insta360 app</b> on a phone/iPad.</li><li>Tap <b>record</b> to capture 360-degree photos or video.</li><li>Use the app to <b>edit</b> — choose viewing angles, add effects, trim clips.</li><li>Export as a <b>standard video</b> or <b>interactive 360 file</b>.</li></ol><div class=\"sg-howto-tip\">Tip: Great for virtual tours — students film a location and classmates can look around in every direction.</div>",
+"DJI Drone":"<ol><li><b>Teacher-operated only</b> — students direct but do not fly.</li><li>Open the <b>DJI app</b> and connect the drone.</li><li>Take off in a <b>clear, open outdoor space</b>.</li><li>Capture <b>aerial photos and video</b> of the school, local area or environment.</li><li>Students use the footage in their <b>projects, presentations and reports</b>.</li></ol><div class=\"sg-howto-tip\">Tip: Plan the flight path with students beforehand — they sketch what they want to capture and why.</div>",
+"Delightex (CoSpaces)":"<ol><li>Open <b>cospaces.io</b> and click <b>Create new CoSpace</b>.</li><li>Choose a <b>3D or VR environment</b>.</li><li>Drag in <b>objects, characters and buildings</b> from the library.</li><li>Use <b>CoBlocks</b> (visual coding) to animate objects — movement, speech, triggers.</li><li>Click <b>Play</b> to test in 3D or <b>Share</b> for VR viewing.</li></ol><div class=\"sg-howto-tip\">Tip: Students can explore each others creations in VR using the Pico headsets for a fully immersive experience.</div>"
+};
+// Data is loaded from data.json — edit that file (via Excel) to update lessons
+let D = [];
+fetch('data.json')
+  .then(r => r.json())
+  .then(data => { D = data; R(); loadLeaderboard(); })
+  .catch(() => { document.getElementById('app').innerHTML = '<div style="color:#FF6B6B;padding:40px;text-align:center">⚠️ Could not load data.json — make sure it is in the same folder as this file.</div>'; });
+const BK="https://outlook.office365.com/book/DigitalLearningPractice@WesleyCollegeMelbourne.onmicrosoft.com/?ismsaljsauthenabled=true";
+const TU={
+"Book Creator":"https://bookcreator.com",
+"Canva":"https://www.canva.com",
+"Canva Presentation":"https://www.canva.com",
+"Seesaw":"https://web.seesaw.me",
+"Scratch":"https://scratch.mit.edu",
+"Scratch Jr":"https://www.scratchjr.org",
+"Padlet":"https://padlet.com",
+"Google Earth":"https://earth.google.com",
+"GarageBand":"https://www.apple.com/au/garageband/",
+"iMovie":"https://www.apple.com/au/imovie/",
+"iMovie/Green Screen":"https://www.apple.com/au/imovie/",
+"Green Screen + iMovie":"https://www.apple.com/au/imovie/",
+"Tinkercad":"https://www.tinkercad.com",
+"Kahoot":"https://kahoot.com",
+"Mentimeter":"https://www.mentimeter.com",
+"Microsoft Excel":"https://www.microsoft.com/en-au/microsoft-365/excel",
+"Microsoft Forms":"https://forms.office.com",
+"Adobe Express (Video)":"https://www.adobe.com/au/express/",
+"Adobe Express (Podcast)":"https://www.adobe.com/au/express/",
+"Adobe Express (Website)":"https://www.adobe.com/au/express/",
+"Adobe Express Podcasting":"https://www.adobe.com/au/express/",
+"Adobe Express Video Creator":"https://www.adobe.com/au/express/",
+"Adobe Express Website":"https://www.adobe.com/au/express/",
+"Micro:bit":"https://makecode.microbit.org",
+"Sphero":"https://sphero.com/pages/apps",
+"Lego Spike":"https://education.lego.com/en-au/products/lego-education-spike-essential-set/45345/",
+"CoDrone EDU":"https://www.robolink.com/codrone-edu",
+"Delightex (CoSpaces)":"https://www.cospaces.io",
+"Pico VR":"https://www.picoxr.com",
+"Insta360 Cam":"https://www.insta360.com",
+"DJI Drone (teacher-operated)":"https://www.dji.com/au",
+"Beebots":"https://www.bee-bot.us",
+"Cubetto":"https://www.primotoys.com",
+"Indi Robot":"https://sphero.com/products/indi-learning-robot",
+"Adobe Express Character Animator":"https://www.adobe.com/express/"
+};
+
+const CM={"Glen Waverley":"GW","Elsternwick":"EL","St Kilda":"SKR"},CN={"GW":"Glen Waverley","EL":"Elsternwick","SKR":"St Kilda Rd"};
+const CC={"GW":"#F5A623","EL":"#CDEB45","SKR":"#7ED957"};
+const CTX={"GW":"#3D1E00","EL":"#1A2E05","SKR":"#0D3B00"};
+const TC={"Who We Are":"#FF6B6B","Where We Are in Place and Time":"#F5A623","How We Express Ourselves":"#A78BFA","How the World Works":"#CDEB45","How the World Works (Materials)":"#CDEB45","How the World Works (Solar System)":"#CDEB45","How We Organise Ourselves":"#38BDF8","Sharing the Planet":"#22C55E"};
+const YO=["Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"];
+const YC={"Prep":"#CDEB45","Year 1":"#7ED957","Year 2":"#F5A623","Year 3":"#FF6B6B","Year 4":"#A78BFA","Year 5":"#38BDF8","Year 6":"#FB923C"};
+const TE={"Who We Are":"🧠","Where We Are in Place and Time":"🗺️","How We Express Ourselves":"🎨","How the World Works":"🔬","How the World Works (Materials)":"🧪","How the World Works (Solar System)":"🌍","How We Organise Ourselves":"⚙️","Sharing the Planet":"🌿"};
+const TTX={"Who We Are":"#FFF","Where We Are in Place and Time":"#3D1E00","How We Express Ourselves":"#FFF","How the World Works":"#1A2E05","How the World Works (Materials)":"#1A2E05","How the World Works (Solar System)":"#1A2E05","How We Organise Ourselves":"#052E44","Sharing the Planet":"#FFF"};
+
+function gu(c,y){const n=Object.entries(CM).find(([k,v])=>v===c);return n?D.filter(r=>r.ca===n[0]&&r.yl===y):[]}
+function gS(t,d){const s=(t+" "+d).toLowerCase();if(/scratch|robot|code|micro.bit|beebot|sphero|spike|codrone|cubetto|indi|drone|dji|website/.test(s))return"Digital Technologies";if(/garageband|music|chrome music/.test(s))return"Music";if(/imovie|green screen|stop motion|video|premiere|insta360|360/.test(s))return"Media Arts";if(/canva.*present|poster|infograph|visual|drawing|character animat/.test(s))return"Visual Arts";if(/google earth|geography|timeline|histor|migrat|colon/.test(s))return"HASS";if(/data|graph|survey|excel|chart|measur|statistic/.test(s))return"Mathematics";if(/experiment|investig|scien|material|force|energy|plant|animal|habitat|ecosystem|weather|sensor/.test(s))return"Science";if(/book creator|writing|story|narrat|reading|podcast|oral|literacy/.test(s))return"English";if(/wellbeing|emotion|relationship|health|safe|reflect|journal/.test(s))return"Health & PE";return"Integrated"}
+function gV(y,j,t,d){
+const b=y==="Prep"?"F-2":/1|2/.test(y)?"F-2":/3|4/.test(y)?"3-4":"5-6";
+const s=(t+" "+d).toLowerCase();
+const links=[];
+const DT={"F-2":[
+"Recognise and explore digital systems (hardware and software) for a purpose (AC9TDIFK01)",
+"Identify and explore digital systems and their components for a purpose (AC9TDI2K01)",
+"Represent data as objects, pictures, symbols, numbers and words (AC9TDI2K02)",
+"Investigate simple problems for known users that can be solved with digital systems (AC9TDI2P01)",
+"Follow and describe algorithms involving a sequence of steps, branching (decisions) and iteration (repetition) (AC9TDI2P02)",
+"Discuss how existing digital systems satisfy known user needs (AC9TDI2P03)",
+"Create and locate content and communicate with others using common tools and their basic functionality (AC9TDI2P04)",
+"Share information with known people following agreed behaviours, supervised by trusted adults (AC9TDI2P05)",
+"Identify some data that is personal and owned by them (AC9TDIFP01)"
+],"3-4":[
+"Explore and describe a range of digital systems and their peripherals for a variety of purposes (AC9TDI4K01)",
+"Recognise different types of data and explore how the same data can be represented differently depending on the purpose (AC9TDI4K02)",
+"Define simple problems with teacher-provided requirements and co-develop user stories (AC9TDI4P01)",
+"Follow, describe and represent algorithms involving sequencing, comparison operators (branching) and iteration (AC9TDI4P02)",
+"Design a simple user interface, generate, communicate and compare the designs (AC9TDI4P03)",
+"Implement simple algorithms as visual programs involving control structures and input (AC9TDI4P04)",
+"Discuss how existing and student-created solutions satisfy the given requirements (AC9TDI4P05)",
+"Use the core features of common digital tools to create, locate and communicate content, following agreed conventions (AC9TDI4P06)",
+"Use the core features of common digital tools to share content, plan tasks and collaborate, following agreed behaviours (AC9TDI4P07)",
+"Identify what personal data is stored and shared in their online accounts and discuss any associated risks (AC9TDI4P08)"
+],"5-6":[
+"Investigate the main internal components of common digital systems and their function (AC9TDI6K01)",
+"Examine how digital systems form networks to transmit data (AC9TDI6K02)",
+"Explain how digital systems represent all data using numbers (AC9TDI6K03)",
+"Define problems with teacher-provided or co-developed design criteria and user stories (AC9TDI6P01)",
+"Design algorithms involving complex branching and iteration and represent them using flowcharts and pseudocode (AC9TDI6P02)",
+"Design and modify a user interface for a digital system, and generate, communicate and evaluate the designs (AC9TDI6P03)",
+"Implement algorithms as visual programs involving control structures, variables and input (AC9TDI6P04)",
+"Evaluate existing and student-created solutions against the design criteria and user stories (AC9TDI6P05)",
+"Acquire and manipulate different types of data from a range of sources using software tools, including spreadsheets (AC9TDI6P06)",
+"Select and use appropriate digital tools effectively to create, locate and communicate content, applying common conventions (AC9TDI6P07)",
+"Select and use appropriate digital tools effectively to share content online, plan tasks and collaborate on projects (AC9TDI6P08)",
+"Explain the creation and permanence of their personal digital footprint and consider privacy when collecting personal data (AC9TDI6P09)"
+]};
+const EN={"F-2":[
+"Create short texts to explore, record and report ideas and events using familiar words and beginning writing knowledge (AC9E1LY06)",
+"Create short imaginative, informative and persuasive texts for familiar audiences, selecting print and multimodal elements (AC9E2LY06)",
+"Retell or innovate on a familiar story through role play, writing, drawing or digital applications (AC9E1LE05)",
+"Create or innovate on familiar literary texts by experimenting with characters, setting and events through drawing, writing, performance and digital applications (AC9E2LE05)",
+"Create and deliver short oral and/or multimodal presentations, structuring ideas with an opening, middle and concluding statement (AC9E1LY07)",
+"Use interaction skills including turn-taking, speaking clearly, listening to and responding to the contributions of others (AC9E1LY02)",
+"Use interaction skills when engaging with topics, listening to others and extending own ideas (AC9E2LY02)",
+"Understand that imaginative, informative and persuasive texts may use different types of images to contribute to meaning (AC9E1L10)",
+"Understand that spoken, visual and written forms of language are different modes of communication (AC9E2L01)"
+],"3-4":[
+"Create narrative, informative and persuasive texts with ideas grouped in simple paragraphs using topic-specific vocabulary (AC9E3LY10)",
+"Create narrative, informative and persuasive texts using relevant, linked ideas for a range of audiences (AC9E4LY10)",
+"Create and deliver structured spoken and multimodal texts to report on a topic, telling a story or persuading an audience (AC9E3LY11)",
+"Create and deliver structured spoken and multimodal texts for a range of purposes and audiences (AC9E4LY11)",
+"Re-read and edit texts for meaning, appropriate structure, grammatical choices and punctuation (AC9E3LY12)",
+"Use interaction skills to contribute to conversations and discussions to share information and ideas (AC9E3LY01)",
+"Create texts by developing storylines, characters and settings using language features from literary texts encountered (AC9E4LE05)",
+"Identify how images extend the meaning of a text (AC9E3LA10)",
+"Identify and explain how images, figures, tables, diagrams, maps and graphs contribute to or extend the meaning of a text (AC9E4LA11)"
+],"5-6":[
+"Create different types of texts with relevant, elaborated and sequenced ideas using text structures and language features (AC9E5LY10)",
+"Create different types of texts with developed and organised ideas for purpose and audience, and multimodal elements (AC9E6LY09)",
+"Create and deliver structured spoken and multimodal texts to an audience for a specific purpose (AC9E5LY11)",
+"Create and deliver structured spoken and multimodal texts to an intended audience for a specific purpose (AC9E6LY10)",
+"Re-read and edit their own and others' texts using agreed criteria for text structures and language features (AC9E5LY12)",
+"Use comprehension strategies such as visualising, predicting, connecting, summarising, monitoring and questioning (AC9E5LY09)",
+"Create texts that adapt plot structure, characters, settings and/or ideas from literary texts encountered (AC9E6LE05)",
+"Explain how the sequence of still and moving images and the use of sound in texts affect meaning (AC9E5LA07)",
+"Analyse how text structures and language features work together to meet the purpose of a text (AC9E6LY07)"
+]};
+const SC={"F-2":[
+"Pose and respond to questions about familiar objects and events using the senses (AC9S1I01)",
+"Participate in guided investigations to explore and answer questions (AC9S1I02)",
+"Make and record observations including informal measurements using digital tools (AC9S2I03)",
+"Sort and order data and information using provided tables and displays (AC9S2I04)",
+"Compare observations with those of others, including predictions (AC9S2I05)",
+"Share observations, findings and ideas through a range of communication modes (AC9S2I06)",
+"Explore how people use science in their daily lives, including using knowledge of seasons (AC9S2H02)"
+],"3-4":[
+"Use questions to identify patterns and relationships and make predictions (AC9S3I01)",
+"Plan and conduct investigations to answer questions or test predictions (AC9S4I01)",
+"Make and record observations using formal measurements and digital technologies (AC9S4I03)",
+"Organise and represent data to identify patterns and relationships (AC9S4I04)",
+"Compare findings with those of others, including whether fair testing has occurred (AC9S4I05)",
+"Communicate observations, findings and ideas using scientific vocabulary and representations (AC9S4I06)",
+"Use data from observations to develop explanations of phenomena (AC9S4H01)",
+"Consider how people use scientific knowledge and skills to solve problems or meet needs (AC9S4H02)"
+],"5-6":[
+"Pose investigable questions and make reasoned predictions to guide investigations (AC9S6I01)",
+"Plan and conduct repeatable investigations to answer questions (AC9S6I02)",
+"Use equipment to observe, generate, measure and record data with reasonable precision (AC9S6I03)",
+"Organise and process data to show patterns, trends and relationships (AC9S6I04)",
+"Compare methods and findings with those of others to identify sources of error and opportunities for improvement (AC9S6I05)",
+"Communicate scientific ideas, findings, patterns, trends and relationships using multimodal texts (AC9S6I06)",
+"Describe how scientific knowledge changes over time, resulting from collaboration or building on prior research (AC9S6H01)",
+"Discuss how scientific knowledge is used in decisions that affect people's lives (AC9S6H02)"
+]};
+const HU={"F-2":[
+"Identify how people and places are described in texts, including Aboriginal and Torres Strait Islander Country/Place (AC9HS1K01)",
+"Identify how daily and seasonal changes in the weather affect daily life (AC9HS1K02)",
+"Explore how and why the lives of people have changed over time (AC9HS2K01)",
+"Describe how people in different places are connected to each other and the features of a place (AC9HS2K02)",
+"Pose questions and collect data and information from provided sources (AC9HS2S01)",
+"Sort and record information and data, including in digital formats (AC9HS2S02)",
+"Draw simple conclusions based on discussions, observations and information (AC9HS2S03)",
+"Present narratives, information and findings in oral, graphic and written forms (AC9HS2S05)"
+],"3-4":[
+"Identify the significance of a person, event or place in the local community (AC9HS3K01)",
+"Describe how people in their community and other communities live and work together (AC9HS3K02)",
+"Describe the diverse characteristics of different places at the local scale and explain the interconnections between people and places (AC9HS4K01)",
+"Investigate the importance of the environment and sustainability of the environment (AC9HS4K02)",
+"Develop questions to investigate and collect data and information from provided and self-identified sources (AC9HS3S01)",
+"Interpret data and information to identify and describe distributions, patterns and simple relationships (AC9HS4S02)",
+"Present narratives, descriptions, explanations and findings in oral, written and visual forms using geographic and historical terminology (AC9HS3S05)"
+],"5-6":[
+"Examine the significance of events, people, groups and places in shaping Australian communities (AC9HS5K01)",
+"Investigate the diversity of Aboriginal and Torres Strait Islander Peoples and their connections to Country/Place (AC9HS5K02)",
+"Examine the causes and effects of migration to Australia and the significant contribution of migrants (AC9HS6K01)",
+"Investigate Australia's political system including the 3 levels of government, elections and the making of laws (AC9HS6K02)",
+"Develop questions to investigate contemporary political, legal and civic issues (AC9HS6S01)",
+"Identify and describe multiple perspectives on events, developments and issues (AC9HS6S02)",
+"Present descriptions, explanations and findings in multimodal forms using geographic and historical terminology (AC9HS6S05)",
+"Propose action in response to a contemporary issue or challenge, taking into account different perspectives (AC9HS6S06)"
+]};
+const VA={"F-2":[
+"Explore and experiment with the visual arts elements and concepts in response to stimulus (AC9AVA2C01)",
+"Make artworks using different materials, techniques and processes to express their ideas (AC9AVA2C02)",
+"Display artworks and describe to an audience what they see and interpret when responding (AC9AVA2E01)"
+],"3-4":[
+"Explore visual conventions and use them in artworks to communicate ideas and perspectives (AC9AVA4C01)",
+"Use visual arts processes and materials to plan, create and display artworks (AC9AVA4C02)",
+"Describe and discuss similarities and differences between artworks from different contexts (AC9AVA4E01)"
+],"5-6":[
+"Plan and create artworks using visual conventions, processes and materials to communicate ideas and perspectives (AC9AVA6C01)",
+"Develop and refine techniques and processes to represent ideas and subject matter (AC9AVA6C02)",
+"Explore ways that visual conventions, processes and materials are used to communicate ideas and perspectives (AC9AVA6E01)"
+]};
+const MA={"F-2":[
+"Explore ideas, characters and settings in the community through stories in images, sounds and text (AC9AMA2C01)",
+"Create and present media arts work that communicates ideas (AC9AMA2C02)",
+"Respond to media arts works and consider where, why and for whom media arts are made (AC9AMA2E01)"
+],"3-4":[
+"Use media technologies to create time- and space-based media arts works (AC9AMA4C01)",
+"Plan, create and present media arts works for a range of audiences (AC9AMA4C02)",
+"Discuss how and why media arts works are made and their purposes (AC9AMA4E01)"
+],"5-6":[
+"Develop and refine media arts skills and techniques to represent ideas and perspectives (AC9AMA6C01)",
+"Plan, produce and present media arts works for specific audiences and purposes (AC9AMA6C02)",
+"Explore and analyse how social, cultural and historical contexts influence media arts works (AC9AMA6E01)"
+]};
+const MU={"F-2":[
+"Sing and play instruments to improvise, practise a repertoire of songs, and experiment with the elements of music (AC9AMU2C01)",
+"Create, perform and record compositions using the elements of music (AC9AMU2C02)",
+"Respond to music and consider where, why and for whom music is created (AC9AMU2E01)"
+],"3-4":[
+"Practise and perform music, including songs and instrumental pieces, drawing on understanding of the elements of music (AC9AMU4C01)",
+"Create, practise and perform compositions by combining the elements of music (AC9AMU4C02)",
+"Describe and discuss similarities and differences between music from different social, cultural or historical contexts (AC9AMU4E01)"
+],"5-6":[
+"Develop and refine musical skills and techniques in singing, playing instruments, improvising and arranging (AC9AMU6C01)",
+"Plan, rehearse and perform compositions using the elements of music to communicate ideas and intentions (AC9AMU6C02)",
+"Explain how music communicates ideas and intentions and discuss how the context influences their responses (AC9AMU6E01)"
+]};
+const MT={"F-2":[
+"Collect and record data, create displays including lists, tables and pictographs and compare the data (AC9M1ST03)",
+"Collect, record and represent categorical data using frequency tables, picture graphs and simple column graphs using one-to-one correspondence (AC9M2ST01)",
+"Compare data displays and communicate observations (AC9M2ST02)",
+"Recognise, describe, continue and create repeating and growing patterns (AC9M1A01)",
+"Measure and compare objects using uniform informal units (AC9M1M02)"
+],"3-4":[
+"Acquire data for categorical and discrete numerical variables to address a question of interest (AC9M3ST01)",
+"Create and compare different graphical representations of data sets including using digital tools (AC9M4ST01)",
+"Conduct statistical investigations and interpret and communicate findings (AC9M4ST02)",
+"Follow and create algorithms involving a sequence of steps and decisions (AC9M4N10)",
+"Use scaled instruments to measure temperature, mass, capacity and length (AC9M3M01)"
+],"5-6":[
+"Plan and conduct statistical investigations by posing questions or identifying a problem and collecting relevant data (AC9M5ST03)",
+"Interpret, compare and analyse data sets for ordinal and nominal categorical, discrete and continuous numerical variables (AC9M6ST01)",
+"Acquire, validate and represent data for nominal and ordinal categorical and discrete numerical variables (AC9M5ST01)",
+"Interpret line graphs representing change over time; discuss relationships and conclusions (AC9M5ST02)",
+"Follow and create algorithms involving a sequence of steps and decisions that use addition or multiplication to generate sets of numbers (AC9M5N09)"
+]};
+const HP={"F-2":[
+"Identify personal strengths and explore how these change over time (AC9HP2P01)",
+"Describe their own and others' feelings and identify how these affect how people behave (AC9HP2P02)",
+"Practise strategies they can use when they feel uncomfortable, unsafe or need help (AC9HP2P03)",
+"Examine messages related to health decisions and describe actions to keep safe and healthy (AC9HP2P04)",
+"Perform fundamental movement skills in a variety of movement situations (AC9HP2M01)"
+],"3-4":[
+"Describe and apply strategies to work cooperatively and respond to conflict in group situations (AC9HP4P01)",
+"Investigate how success, challenge and failure strengthen personal identities (AC9HP4P02)",
+"Investigate how emotional responses vary and develop strategies to manage their own emotions (AC9HP4P03)",
+"Investigate health practices, behaviours and resources that can support personal, social and community health (AC9HP4P04)",
+"Apply the elements of movement to perform and create movement sequences (AC9HP4M01)"
+],"5-6":[
+"Investigate resources and strategies to manage changes and transitions and their impact on identities (AC9HP6P01)",
+"Investigate how empathy and ethical decision-making contribute to positive relationships (AC9HP6P02)",
+"Plan and use health practices, behaviours and resources to enhance the health, safety, wellbeing and physical activity of their class and school community (AC9HP6P03)",
+"Investigate the impact of transition and change on identities (AC9HP6P04)",
+"Compose and perform movement sequences using fundamental movement skills and the elements of movement (AC9HP6M01)"
+]};
+const CT={"F-2":[
+"Identify and describe familiar information and ideas (Critical and Creative Thinking)",
+"Use imagination to consider alternative ideas and actions (Critical and Creative Thinking)",
+"Consider personal strengths and challenges when reflecting on their learning (Critical and Creative Thinking)"
+],"3-4":[
+"Identify and clarify relevant information and ideas from provided sources (Critical and Creative Thinking)",
+"Generate and evaluate ideas and possibilities using creative thinking strategies (Critical and Creative Thinking)",
+"Reflect on processes and transfer knowledge to new contexts (Critical and Creative Thinking)"
+],"5-6":[
+"Identify, process and evaluate information from a range of sources (Critical and Creative Thinking)",
+"Develop and justify ideas and evaluate the thinking processes used (Critical and Creative Thinking)",
+"Apply knowledge and skills gained to new situations and evaluate their effectiveness (Critical and Creative Thinking)"
+]};
+const PS={"F-2":[
+"Recognise and describe their personal qualities and those of others (Personal and Social Capability)",
+"Identify and practise strategies to promote their own wellbeing (Personal and Social Capability)",
+"Use communication skills to interact with others, recognising different perspectives (Personal and Social Capability)"
+],"3-4":[
+"Describe the influence of emotions and dispositions on behaviour and learning (Personal and Social Capability)",
+"Examine the importance of persisting with tasks and developing a growth mindset (Personal and Social Capability)",
+"Work collaboratively, recognising and responding constructively to different perspectives and contributions (Personal and Social Capability)"
+],"5-6":[
+"Analyse how social and cultural influences affect wellbeing and how to respond effectively (Personal and Social Capability)",
+"Evaluate the effectiveness of strategies for managing change, challenge and adversity (Personal and Social Capability)",
+"Contribute positively to collaborative tasks, negotiating roles and managing conflict (Personal and Social Capability)"
+]};
+const ET={"F-2":[
+"Identify and describe what is fair and unfair in familiar situations (Ethical Understanding)",
+"Explore how people's actions affect others and identify responsible behaviour (Ethical Understanding)",
+"Discuss how personal choices affect themselves and others (Ethical Understanding)"
+],"3-4":[
+"Examine values, rights and responsibilities in familiar contexts (Ethical Understanding)",
+"Explore ethical concepts such as fairness, honesty and responsibility in different situations (Ethical Understanding)",
+"Identify and evaluate different points of view and suggest possible responses to ethical dilemmas (Ethical Understanding)"
+],"5-6":[
+"Explore the concept of ethical decision-making in increasingly complex situations (Ethical Understanding)",
+"Examine how different cultural values and beliefs influence ethical positions (Ethical Understanding)",
+"Analyse situations involving ethical dilemmas and propose and justify courses of action (Ethical Understanding)"
+]};
+links.push({area:"Digital Technologies",ds:DT[b]});
+if(/book creator|writing|story|narrat|reading|podcast|oral|literacy|present|video|imovie|express/.test(s))links.push({area:"English",ds:EN[b]});
+if(/experiment|investig|scien|material|force|energy|plant|animal|habitat|ecosystem|weather|sensor|circuit|magnet|state.*matter/.test(s))links.push({area:"Science",ds:SC[b]});
+if(/google earth|geography|timeline|histor|migrat|colon|explor|communit|govern|citizen|first nation|indigenous/.test(s))links.push({area:"HASS",ds:HU[b]});
+if(/canva.*present|poster|infograph|visual|drawing|character animat|tinkercad|3d/.test(s))links.push({area:"Visual Arts",ds:VA[b]});
+if(/imovie|green screen|stop motion|video|film|insta360|360|premiere/.test(s))links.push({area:"Media Arts",ds:MA[b]});
+if(/garageband|music|chrome music|soundscape|composition/.test(s))links.push({area:"Music",ds:MU[b]});
+if(/data|measure|graph|survey|count|compar|record.*finding|collect|chart|pattern|sort|budget|cost|calcul|statistic/.test(s))links.push({area:"Mathematics",ds:MT[b]});
+if(/wellbeing|emotion|relationship|health|safe|reflect|journal|fitness|body/.test(s))links.push({area:"Health & PE",ds:HP[b]});
+if(/code|scratch|robot|design|think|prototype|experiment|investigat|solve|create.*solution|build|program|debug|algorithm|innovati/.test(s))links.push({area:"Critical & Creative Thinking",ds:CT[b]});
+if(/collaborat|team|wellbeing|emotion|relationship|social|conflict|community|leader|cooperat|peer|group|perspective|empath/.test(s))links.push({area:"Personal & Social",ds:PS[b]});
+if(/ethic|responsible|citizen|bias|persua|manipulat|privacy|safe.*online|digital.*citizen|right.*wrong|fair|rules|laws/.test(s))links.push({area:"Ethical Understanding",ds:ET[b]});
+return links}
+
+function gA(t,d){const s=(t+" "+d).toLowerCase();if(/video|film|imovie|record|360|insta/.test(s))return"Students practise speaking, presenting and telling stories using video tools.";if(/book creator|story|narrat/.test(s))return"Students combine writing, images and voice recording to create rich digital books.";if(/data|graph|survey|chart|excel/.test(s))return"Students learn to collect, organise and make sense of real data.";if(/scratch|code|robot|beebot|sphero|spike|codrone|cubetto|indi/.test(s))return"Students learn to think logically, solve problems and create through coding.";if(/collaborat|padlet|shared/.test(s))return"Students work together, share ideas and build on each other's thinking online.";if(/podcast|garageband|audio/.test(s))return"Students develop confidence in speaking and learn to produce audio content.";if(/website/.test(s))return"Students learn to design and share information online.";if(/canva.*present|poster|infograph|design/.test(s))return"Students learn to communicate ideas visually through posters, infographics and presentations.";if(/reflect|journal|seesaw|wellbeing/.test(s))return"Students reflect on their own learning and track how their thinking grows over time.";if(/google earth/.test(s))return"Students explore real places around the world and connect geography to their learning.";if(/green screen|stop motion/.test(s))return"Students combine creative storytelling with video production techniques.";if(/tinkercad|3d print/.test(s))return"Students design, test and improve 3D models — learning through trial and error.";if(/micro.bit|makey/.test(s))return"Students connect coding to the physical world using sensors and electronics.";if(/vr|merge|cospaces|delightex|pico/.test(s))return"Students step inside their learning through virtual and augmented reality experiences.";if(/freeform/.test(s))return"Students make their thinking visible by mapping ideas, connections and questions on a shared canvas.";if(/character animat|animat/.test(s))return"Students bring stories to life through digital animation.";if(/drone|dji/.test(s))return"Students see their environment from above, connecting aerial views to their inquiry.";if(/mentimeter|kahoot/.test(s))return"Students share their thinking in real time and see how the class responds instantly.";if(/microsoft forms/.test(s))return"Students design surveys, collect responses and analyse what the class thinks.";return"Students use technology with purpose to deepen and demonstrate their learning."}
+
+function gHow(t,d){var s=(t+" "+d).toLowerCase(),steps=[],tip="";
+if(t==="Seesaw"){steps=["Open Seesaw and navigate to your class.","Tap the green '+' button to create a new post.","Choose your tool — camera, drawing, voice recording, or upload.","Students complete the activity, adding labels, drawings or narration.","Tap the green tick to submit to their journal.","Review responses in the class feed or student journals."];tip="Tip: Use Seesaw Activities to set up a template with instructions so students know exactly what to do.";}
+else if(t==="Book Creator"){steps=["Open Book Creator (bookcreator.com) and create a new book or open an existing one.","Choose a blank page or template layout.","Students add content — text, images, drawings, audio recordings, or video.","Use the '+' button to add new pages as the work develops.","Students can read back their book using the play button.","Share the finished book via link, or export as ePub/PDF."];tip="Tip: Create a class library so students can read each other's books.";}
+else if(t==="Canva"){steps=["Open Canva (canva.com) and select a template — poster, presentation, infographic or video.","Students customise using drag-and-drop — add images, text, icons and shapes.","Use the Elements tab to search for relevant graphics and photos.","Encourage students to keep text minimal and let visuals tell the story.","Download as PNG/PDF or share via link.","For presentations, use Present mode to display full screen."];tip="Tip: Canva for Education gives students access to premium content for free — sign up with your school email.";}
+else if(t==="Scratch"){steps=["Open Scratch (scratch.mit.edu) and click 'Create' to start a new project.","Plan the project first — storyboard the screens, characters and interactions on paper.","Add sprites (characters) and backdrops from the library or draw custom ones.","Build the code using drag-and-drop blocks — start with 'Events' (when green flag clicked).","Test frequently by clicking the green flag — debug when things go wrong.","Save the project and share via the project link."];tip="Tip: Start with a working example students can remix rather than building from scratch.";}
+else if(t==="Scratch Jr"){steps=["Open the Scratch Jr app on the iPad.","Tap '+' to start a new project.","Add characters from the library or draw your own.","Drag code blocks together to make characters move, speak and change.","Add new pages by tapping the '+' on the right side.","Tap the green flag to play the story from the beginning."];tip="Tip: Keep projects to 4-5 pages maximum for younger students.";}
+else if(t==="Padlet"){steps=["Open Padlet (padlet.com) and create a new board — choose Wall, Map, Timeline or Canvas layout.","Set the board title and customise the background.","Share the join link with students or display the QR code.","Students tap '+' to add a post — they can include text, images, links, audio or video.","Encourage students to read and comment on classmates' posts.","Export or screenshot the finished board for documentation."];tip="Tip: For Map layout, students drop pins on real locations — great for geography and cultural units.";}
+else if(t==="Google Earth"){steps=["Open Google Earth (earth.google.com) in Chrome.","Click Projects → New Project to start a guided tour.","Search for a location and click 'Add to project' to pin it.","For each pin, add a title, description, images and voice narration.","Drag pins to reorder the tour sequence.","Click 'Present' to fly between locations with narration at each stop."];tip="Tip: Use Street View (drag the person icon) to explore locations at ground level in 360 degrees.";}
+else if(t==="iMovie"){steps=["Open iMovie on iPad or Mac and create a new Movie project.","Import video clips, photos and audio from the camera roll.","Drag clips onto the timeline in the order you want.","Add titles, transitions and background music from the built-in library.","Record a voiceover by tapping the microphone icon while the video plays.","Export the finished movie and share via AirDrop, Google Drive or Seesaw."];tip="Tip: Film in landscape mode and keep clips under 15 seconds each for easier editing.";}
+else if(t==="GarageBand"){steps=["Open GarageBand on iPad or Mac.","Choose Live Loops for experimenting with beats, or Tracks for recording.","Students can tap instruments on screen or record real audio using the microphone.","Layer multiple tracks to build a full composition.","Use the mixing controls to adjust volume and balance between tracks.","Export as an audio file to share via Seesaw, Google Drive or embed in Book Creator."];tip="Tip: Start with the Smart Instruments — they sound great even for beginners.";}
+else if(t==="Mentimeter"){steps=["Open Mentimeter (mentimeter.com) and create a new presentation.","Add slides — choose Word Cloud, Multiple Choice, Scales, Open Ended or Q&A.","Share the join code (menti.com) with students or display on screen.","Students respond on their devices — results appear live on the teacher's screen.","Discuss the results as a class, highlighting patterns and surprises.","Download results as a PDF or screenshot for documentation."];tip="Tip: Word Clouds are great for tuning in — Open Ended questions work well for deeper provocations.";}
+else if(t==="Microsoft Forms"){steps=["Open Microsoft Forms (forms.office.com) and create a new form or quiz.","Add questions — choose from Choice, Text, Rating, Likert or Ranking.","Share the form link with students via Teams, email or QR code.","Students complete the form on any device.","View responses in the Responses tab — Forms auto-generates charts and summaries.","Export to Excel for deeper analysis or class discussion."];tip="Tip: Use the Branching feature to create different question paths based on student answers.";}
+else if(t==="Kahoot"){steps=["Open Kahoot (kahoot.com) and create a new kahoot.","Add questions with multiple choice answers — set a time limit for each.","Launch the kahoot and share the game PIN with students.","Students join on their devices at kahoot.it and answer in real time.","Review results after each question — discuss why answers are right or wrong.","Download the results spreadsheet to identify knowledge gaps."];tip="Tip: Use it as a diagnostic at the start of a unit to reveal what students already know and where misconceptions lie.";}
+else if(t==="Adobe Express"||t==="Adobe Express Video"){steps=["Open Adobe Express (adobe.com/express) and choose a template — video, poster, flyer or social post.","Students remix the template using drag-and-drop — add images, text, icons and brand colours.","For video, add clips, record voiceover and choose background music from the free library.","Use the AI tools to resize content for different formats.","Download or share via link.","For presentations, use the slideshow feature with transitions."];tip="Tip: Adobe Express is free with a school Google or Microsoft account.";}
+else if(t==="Micro:bit"){steps=["Open MakeCode (makecode.microbit.org) in a browser.","Create a new project and build code using drag-and-drop blocks.","Use the simulator on screen to test before downloading to the physical device.","Connect the micro:bit via USB and click 'Download' to flash the code.","Students test, observe and iterate — changing variables and sensors.","Share the project via the MakeCode link."];tip="Tip: Start with the LED display and buttons before moving to sensors — it builds confidence.";}
+else if(t.indexOf("Sphero")!==-1){steps=["Open the Sphero Edu app on iPad and connect to a Sphero robot via Bluetooth.","Choose Block programming mode (or Draw/Text for different levels).","Students build their program using drag-and-drop blocks — movement, lights, sounds and sensors.","Tap Start to run the program and watch the Sphero execute on the floor.","Iterate — adjust speeds, angles and timing based on what happened.","Use a floor map or tape course to give the coding a real-world context."];tip="Tip: Masking tape on the floor creates instant courses. Have students calculate distances and angles first.";}
+else if(t==="Beebots"){steps=["Place the Beebot on the floor mat or custom map.","Students plan their route first — counting squares and turns on paper.","Press the Clear button to reset any previous commands.","Enter the sequence — Forward, Back, Left Turn, Right Turn buttons.","Press Go and watch the Beebot follow the programmed path.","Debug if it goes wrong — which step needs changing?"];tip="Tip: Create custom floor mats with laminated A3 paper to match your unit topic.";}
+else if(t==="Cubetto"){steps=["Place Cubetto on the floor mat.","Students select coding blocks — green (forward), red (right), yellow (left), blue (function).","Place the blocks on the coding board in sequence.","Press the blue button to run the sequence.","Watch Cubetto follow the path — discuss what happened.","Iterate by changing blocks and re-running."];tip="Tip: The function block teaches subroutines — great for introducing the idea of reusable code.";}
+else if(t==="Indi Robot"){steps=["Set up colour tiles on the table or floor to create a path.","Each colour tells Indi what to do — green means go, red means stop, purple means turn.","Students arrange tiles to guide Indi from start to finish.","Place Indi at the start and press the button to begin.","Observe and adjust — swap tiles to change behaviour.","Challenge students to find the shortest or most creative path."];tip="Tip: Have students predict what will happen before pressing start — builds computational thinking.";}
+else if(t==="Lego Spike"){steps=["Open the LEGO Education SPIKE app and choose a unit or free build.","Build the model following instructions or create a custom design.","Connect to the hub via Bluetooth and open the coding canvas.","Build the program using drag-and-drop word blocks.","Run the program and observe the model's behaviour.","Iterate on both the build and the code to improve performance."];tip="Tip: Start with the guided tutorials to learn the motor and sensor blocks before free building.";}
+else if(t==="CoDrone EDU"){steps=["Open the CoDrone EDU app or Robolink Basecamp on a laptop.","Connect the CoDrone controller via USB.","Write the flight program using block coding or Python.","Always test in the simulator first before real flight.","Find a clear indoor space — use a drone landing pad.","The teacher operates the safety override at all times."];tip="Tip: CoDrone is teacher-operated for safety. Students write the code, teacher handles the controller.";}
+else if(t==="Green Screen"){steps=["Set up the green screen backdrop and ensure even lighting with no shadows.","Position the iPad on a tripod facing the green screen.","Open Do Ink (or a green screen app) and import a background image or video.","Students stand in front of the green screen and perform/present.","Record the video — the app replaces the green with the background in real time.","Export and share via Seesaw, Google Drive or embed in other projects."];tip="Tip: Students should avoid wearing green clothing. Consistent lighting is the key to a clean effect.";}
+else if(t==="Tinkercad"){steps=["Open Tinkercad (tinkercad.com) and log in with a class code.","Start a new 3D design on the workplane.","Drag basic shapes from the panel and combine them to build a model.","Use the ruler, align and group tools to refine the design.","Export as STL for 3D printing or take a screenshot for documentation.","Share designs with classmates using the Tinkercad Gallery."];tip="Tip: Start with the Tinkercad tutorials — they teach the tools through guided challenges.";}
+else if(t==="Pico VR"||t.indexOf("Delightex")!==-1||t.indexOf("CoSpaces")!==-1){steps=["Open CoSpaces (cospaces.io) and create a new space.","Choose a 3D environment and add objects, characters and text from the library.","Use the CoBlocks coding tool to animate objects and add interactions.","Preview in the browser by clicking Play.","For VR, export to the Pico headset via the CoSpaces app.","Students explore each other's creations in VR."];tip="Tip: Start with a simple scene before adding coding — students can always add complexity later.";}
+else if(t==="Insta360"||t.indexOf("360")!==-1){steps=["Mount the Insta360 camera on the selfie stick — keep fingers clear of both lenses.","Open the Insta360 app on iPad and connect via WiFi.","Tap record — the camera captures everything in 360 degrees.","After recording, use the app to edit — choose angles, add effects and trim.","Export as a regular video (reframed) or as a full 360 file.","Share via Google Drive, Seesaw or embed in a Book Creator page."];tip="Tip: Place the camera in the centre of the action and step back — it sees everything.";}
+else if(t.indexOf("DJI")!==-1||t.indexOf("Drone")!==-1){steps=["DJI drones are teacher-operated only — students do not handle the drone.","Students plan the flight path and what footage they need beforehand.","Teacher flies the drone in an approved outdoor area following school policy.","Students review the aerial footage and select the best clips.","Import footage into iMovie or Canva for editing.","Students add narration, titles and context to the aerial footage."];tip="Tip: Pre-flight planning is the learning — have students storyboard exactly what shots they need and why.";}
+else if(t==="Microsoft Excel"){steps=["Open Microsoft Excel and create a new workbook.","Set up column headers for the data categories.","Students enter data into rows — one record per row.","Select the data range and insert a chart (Insert → Chart).","Choose the right chart type — bar for comparison, line for change over time, pie for proportions.","Format the chart with titles, labels and colours to make it clear."];tip="Tip: Teach students to choose the chart type that tells the story of their data, not just the prettiest one.";}
+else if(t==="Freeform"){steps=["Open the Freeform app on the iPad.","Tap '+' to create a new board.","Students add sticky notes, text boxes, shapes, drawings and images by tapping the toolbar.","To collaborate, tap the share icon and invite classmates via AirDrop or iCloud.","Students can draw connections between ideas using lines and arrows.","Export the board as a PDF or screenshot to share in Seesaw or Book Creator."];tip="Tip: Set up a board template with pre-placed headings or zones so students know where to put their thinking.";}
+else{steps=["Open the app or website and log in with your school account.","Set up the activity — create a template or assignment for students.","Share the link, code or QR with students.","Students complete the activity on their device.","Review and discuss the results as a class.","Save or export the work for documentation."];tip="Tip: Contact the DLP team if you need help setting up this tool.";}
+return{steps:steps,tip:tip};}
+
+
+function gATL(t,d){
+var tool=t.toLowerCase(),desc=d.toLowerCase(),s=tool+' '+desc,r=[];
+
+// THINKING
+if(/analys|evaluat|compar|critiqu|assess|deconstruct|justify|examin|interrogat|debate|bias|argument|reasoning|evidence/.test(s))r.push({cat:'Thinking',skill:'Critical-thinking skills',desc:'Analysing and evaluating issues, ideas and creative works'});
+if(/compos|imagin|prototype|invent|brainstorm|novel|original|code.*interact|code.*simulat|code.*animat|code.*game|code.*story|code.*creat|program.*creat|program.*design|design.*solutio|design.*3d|build.*prototype|build.*sensor|build.*model|build.*device|build.*robot/.test(s))r.push({cat:'Thinking',skill:'Creative-thinking skills',desc:'Generating novel ideas and considering new perspectives'});
+if(/prior.*learning|prior.*knowledge|apply.*skills.*to|applying.*to|applying.*understanding|apply.*understanding|real.world.*application|extend.*their.*learning|connect.*to real|across.*different.*context/.test(s))r.push({cat:'Thinking',skill:'Transfer skills',desc:'Applying skills and knowledge in multiple contexts'});
+
+// RESEARCH
+if(/research|investigat|gather.*data|collect.*data|formulate.*question|find.*source|evaluat.*source|cite|bibliograph|analys.*data|interpret.*data|survey.*data/.test(s))r.push({cat:'Research',skill:'Information-literacy skills',desc:'Formulating questions, gathering, recording, synthesising and evaluating information'});
+if(/media.*literac|deconstruct.*ad|analys.*media|media.*message|news.*bias|evaluat.*media|propaganda|documentary|news.*broadcast|news.*report|persuasive.*video|advertisement|podcast.*investigat|podcast.*report|newspaper.*report|news.style/.test(s))r.push({cat:'Research',skill:'Media-literacy skills',desc:'Interacting with media to use, create and critically evaluate ideas and information'});
+if(/digital.*citizen|cyber.*safe|privacy|copyright|plagiar|ethic.*online|responsible.*digital|safe.*online|digital.*right|data.*right/.test(s))r.push({cat:'Research',skill:'Ethical use of media and information',desc:'Applying ethical principles to the use and creation of information and media'});
+
+// COMMUNICATION
+if(/oral.*present|deliver.*present|spoken.*present|present.*their.*findings|present.*to.*class|present.*to.*audience|present.*at.*a|present.*their.*work|presenting.*to|interview|podcast|audience|public.*speak|explain.*aloud|narrat.*aloud/.test(s))r.push({cat:'Communication',skill:'Communication skills',desc:'Listening, interpreting and expressing ideas through oral communication'});
+if(/\bwriting\b|written.*report|written.*story|written.*response|literacy|letter\b|blog\b|\bpoem\b|annotate|draft.*text|author.*book|publish.*book|written.*explanation/.test(s))r.push({cat:'Communication',skill:'Literacy skills',desc:'Reading, writing and using language to gather and communicate information'});
+if(/scratch|micro.?bit|lego spike|codrone|beebot|indi robot|cubetto|insta360|imovie|garageband|canva|seesaw|padlet|book creator|adobe express|tinkercad|cospaces|delightex|pico vr|freeform|kahoot|mentimeter|microsoft forms|microsoft excel|google earth|google maps|green screen|makecode|sphero|drone|adobe/.test(tool))r.push({cat:'Communication',skill:'ICT skills',desc:'Using technology to gather, investigate and communicate information and ideas'});
+
+// SOCIAL
+if(/collaborat|teamwork|group.*work|peer.*feedback|cooperat|co.creat|work.*together.*to|work.*with.*their.*partner|work.*with.*a.*partner|jointly|collective/.test(s))r.push({cat:'Social',skill:'Collaboration skills',desc:'Working cooperatively, managing setbacks and supporting peers'});
+if(/empath|perspective.*of.*others|others.*perspective|point.*of.*view.*of|conflict.*resolut|active.*listen|respect.*others|belonging|inclusion|diverse.*perspective|walk.*in.*shoes/.test(s))r.push({cat:'Social',skill:'Interpersonal skills',desc:'Developing empathy, resolving conflict and maintaining positive relationships'});
+
+// SELF-MANAGEMENT
+if(/manag.*emotion|self.regulat|mindful|resilien|persever|growth.*mindset|self.motivat|emotional.*regulat|cope|calm.*strateg|wellbeing.*strateg|stress.*manag/.test(s))r.push({cat:'Self-Management',skill:'Affective skills',desc:'Managing emotions, building resilience and maintaining self-motivation'});
+if(/plan.*sequence|organis.*time|manage.*time|timeline|checklist|step.by.step|schedule|set.*goal|goal.*setting|deadline|systematic/.test(s))r.push({cat:'Self-Management',skill:'Organisation skills',desc:'Managing time, tasks and goals effectively'});
+if(/reflect.*on.*their.*learn|reflect.*on.*learn|self.assess|metacognit|review.*their.*learn|consider.*their.*process|what.*they.*learn|how.*they.*improv|learning.*journal/.test(s))r.push({cat:'Self-Management',skill:'Reflection skills',desc:'(Re)considering the process of learning to develop self-awareness and understanding'});
+
+return r;}
+function gWDS(t,d,yl){
+var tool=t.toLowerCase(),desc=d.toLowerCase(),s=tool+' '+desc,r=[];
+var isF2=(yl==='Prep'||yl==='Year 1'||yl==='Year 2');
+var is34=(yl==='Year 3'||yl==='Year 4');
+var is56=(yl==='Year 5'||yl==='Year 6');
+var isRobot=/scratch|lego spike|micro.?bit|codrone|beebot|cubetto|indi robot|sphero/.test(tool);
+
+// PRINCIPLED PRACTICE — Safe and Secure
+if(/cyber.safe|safe.*online|online.*safe|privacy|personal.*information|protect.*data|essential.*agreement.*digital|responsible.*digital|digital.*citizen|data.*security|identity.*protection|screen.*time|age.*appropriat|being safe online|stay safe.*online|safe.*use.*technolog|ethical behaviour.*technolog|legal.*ethical.*technolog/.test(s))
+r.push({cat:'Principled Practice',sub:'Safe and Secure',desc:'Engaging safely, legally and ethically when using technology and networked devices'});
+
+// PRINCIPLED PRACTICE — Academic Integrity
+if(/copyright|plagiar|referenc.*convention|attribut.*source|intellectual.*property|cite.*source|acknowledge.*source|ownership.*digital|creative.*commons|reference.*list|source.*of.*information|find.*most.*accurate/.test(s))
+r.push({cat:'Principled Practice',sub:'Academic Integrity',desc:'Respecting intellectual property and applying ethical conventions when using digital resources'});
+
+// PRINCIPLED PRACTICE — Technology and Society
+if(/how technology.*(impact|transform|change|evolv|influenc|affect)|impact.*of.*(ict|technolog|digital)|role.*of.*(ict|digital|technolog)|ict.*in.*society|positive.*and.*negative.*impact|how.*ict.*is.*used|technology.*transform|technology.*has.*changed|evolution.*of.*technolog|history.*of.*technolog|technolog.*over.*time|communication.*tool.*evolved|digital.*literacy|future.*of.*technolog/.test(s))
+r.push({cat:'Principled Practice',sub:'Technology and Society',desc:'Understanding the role and impact of digital technology in school, home, community and society'});
+
+// ENGINEERING KNOWLEDGE — Ideate and Plan
+if(/design.*process|brainstorm|generate.*idea|ideate|plan.*their|plan.*a.*solution|planning.*their|record.*their.*idea|represent.*their.*thinking|outline.*their|storyboard|sketch.*their|concept.*map|annotate.*plan|design.*brief|map.*out.*idea|map.*their.*thinking|map.*out.*concept/.test(s))
+r.push({cat:'Engineering Knowledge',sub:'Ideate and Plan',desc:isF2?'Preparing simple plans to find solutions or answers to questions':'Generating ideas, representing thinking and planning digital solutions'});
+
+// ENGINEERING KNOWLEDGE — Prototype (tool-based OR specific build/code language)
+if(isRobot||/code[sd]?|program|programm|build.*prototype|build.*robot|build.*sensor|build.*device|build.*mechanism|build.*rig|build\s+a\s+circuit|building\s+a\s+circuit|build\s+their\s+circuit|build.*a.*model|build.*machine|build.*a.*working|build.*an.*interactive|build.*a.*simulation|design.*and.*build|design.*and.*build\b|design.*and.*develop|digital.*solution|creat\w*\s+a\s+digital\b|creat\w*\s+their\s+digital\b|develop.*a.*digital|digital.*artefact|3d model|tinkercad/.test(s))
+r.push({cat:'Engineering Knowledge',sub:'Prototype',desc:isF2?'Participating in the development of a digital solution or creative output':is34?'Creating and modifying digital solutions or creative outputs for particular purposes':'Independently or collaboratively creating and modifying digital solutions for particular audiences and purposes'});
+
+// ENGINEERING KNOWLEDGE — Self-Regulated Learning
+if(/self.assess|reflect.*on.*their.*learn|reflect.*on.*the.*process|personal.*goal|learning.*goal|review.*their.*progress|feedback.*improve|growth.*mindset|learning.*journal|metacognit|monitor.*own.*learn|track.*their.*progress|assess.*their.*own|what.*they.*learned|how.*they.*improved|revisit.*their|evidence.*of.*growth|document.*their.*learning|return.*to.*throughout/.test(s))
+r.push({cat:'Engineering Knowledge',sub:'Self-Regulated Learning',desc:'Setting personal learning goals, seeking feedback and reflecting on the process to improve outcomes'});
+
+// ENGINEERING KNOWLEDGE — Critically Curate (information-seeking, NOT hands-on experiments)
+if(/research|gather.*information|locate.*information|find.*source|evaluat.*source|evaluat.*credib|evaluat.*reliab|evaluat.*accurac|evaluat.*relev|curate.*information|analyse.*data|interpret.*data|formulate.*question|fact.check|verify.*source|bibliography|investigate.*source|investigate.*information|investigate.*online|collect.*evidence|gather.*evidence|primary.*source|secondary.*source|synthesise|synthesize/.test(s))
+r.push({cat:'Engineering Knowledge',sub:'Critically Curate',desc:isF2?'Employing effective research strategies to locate information for creative and intellectual pursuits':'Building knowledge by actively locating, evaluating and synthesising information from digital resources'});
+
+// ENGINEERING KNOWLEDGE — Design Thinking
+if(/design.*thinking|empathis|empathise|empathize|define.*the.*problem|iterate|iterating|test.*and.*refine|user.*need|human.centred|design.*cycle|prototype.*and.*test|test.*their.*prototype|refine.*their.*design|design.*constrain|design.*criteria|d:school|empathy.*interview|testing.*phase|testing.*week|design.*feedback/.test(s))
+r.push({cat:'Engineering Knowledge',sub:'Design Thinking',desc:isF2?'Using a deliberate design process to generate ideas and solve authentic problems':'Using a cyclical design process to develop, test and refine prototypes as solutions to authentic problems'});
+
+// CREATIVE COMMUNICATOR — Collaboration
+if(/collaborat|co.creat|each group|in small groups|in groups|in pairs|their group|group films|small group|with a partner|partner draws|partner must|peer.*feedback|peer.*review|work.*together|jointly|collective|work.*with.*their.*partner|with a classmate|class.*contribut|class.*collects|class.*builds|class.*curates/.test(s))
+r.push({cat:'Creative Communicator',sub:'Collaboration',desc:isF2?'Using purposefully selected tools to safely share information with appropriate audiences':'Using digital tools to safely share, exchange and co-create with appropriate audiences'});
+
+// CREATIVE COMMUNICATOR — Computer Mediated Communication
+if(/broadcast|news.*report|podcast|publish|post.*online|digital.*exhibition|share.*their.*work|present.*to.*audience|multimodal.*present|class.*audience|school.*audience|assembly|families.*can|parents.*can|wider.*audience|exhibited|viewed.*by|shared.*with.*class|shared.*with.*parents|viewed.*on.*screen|display.*to/.test(s))
+r.push({cat:'Creative Communicator',sub:'Computer Mediated Communication',desc:'Creating and sharing digital communications for specific audiences through appropriate digital platforms'});
+
+// CREATIVE COMMUNICATOR — Original Works
+if(/produce[sd]?|compos[eing]+|film(?:s|ed|ing)?\s+(?:themselves|their|a\s|an\s|the\s|us)|animat|illustrat|create.*original|original.*creat|new.*creation|students?\s+(?:create|makes?|records?|writes?|draws?|develops?|authors?)\s+(?:a|an|their|the\s|one)|digital.*artefact|their\s+own\s+work|own\s+composition|own\s+soundtrack|original.*work/.test(s))
+r.push({cat:'Creative Communicator',sub:'Original Works',desc:'Creating original digital works or responsibly repurposing digital resources into new creations'});
+
+// CREATIVE COMMUNICATOR — Learning Tools (all named tools)
+if(/garageband|scratch|canva|book creator|imovie|green screen|seesaw|padlet|adobe express|tinkercad|cospaces|delightex|freeform|kahoot|mentimeter|microsoft forms|microsoft excel|google earth|google maps|pico vr|sphero|insta360|lego spike|micro.?bit|codrone|beebot|cubetto|indi robot|dji drone/.test(tool))
+r.push({cat:'Creative Communicator',sub:'Learning Tools',desc:isF2?'Engaging with a variety of creation and collaboration tools to express ideas and learning':is34?'Choosing appropriate platforms and tools to meet the objectives of their creation or communication':'Choosing and customising appropriate platforms and tools, including publishing content for intended audiences'});
+
+// CREATIVE COMMUNICATOR — Teamwork
+if(/assuming.*role|team.*roles|assigned.*role|as a team|group.*project|collaborative.*project|team.*present|each.*group.*present|group.*roles|different.*roles|group.*task|work.*in.*teams/.test(s))
+r.push({cat:'Creative Communicator',sub:'Teamwork',desc:'Contributing constructively to project teams, assuming roles and working effectively toward a common goal'});
+
+// SYSTEMS THINKING — Use and Selection
+if(/troubleshoot|select.*from.*range|select.*a.*device|select.*software|select.*platform|independently.*select|independently.*operat|adjust.*software|software.*function|range.*of.*devices|choosing.*the.*right.*tool|which.*platform|which.*tool/.test(s))
+r.push({cat:'Systems Thinking',sub:'Use and Selection',desc:isF2?'Identifying and safely operating systems to complete simple specified tasks':'Selecting and operating appropriate devices and software to complete specific tasks'});
+
+// SYSTEMS THINKING — Systems and Components
+if(/circuit|input.*output|hardware|sensor.*detect|sensor.*trigger|motor.*trigger|if.*part.*fails|parts.*work.*together|components.*work|components.*connect|interdependent.*part|system.*breaks.*down|system.*fails|closed.*circuit|networked.*system|system.*component/.test(s))
+r.push({cat:'Systems Thinking',sub:'Systems and Components',desc:'Identifying and comparing system components and their fundamental functions'});
+
+// SYSTEMS THINKING — Data Management
+if(/data.*collect|collect.*data|data.*table|data.*chart|data.*graph|log.*data|dataset|microsoft excel|data.*over.*time|sensor.*data|readings.*over|reading.*at.*interval|tally.*data|record.*readings|chart.*results|graph.*results|spreadsheet.*formula|formula.*track|track.*results/.test(s))
+r.push({cat:'Systems Thinking',sub:'Data Management',desc:isF2?'Managing and maintaining digital data with guidance':'Managing and maintaining data using a variety of digital tools and systems'});
+
+// SYSTEMS THINKING — Thinking Process (tool-based for robotics/coding OR explicit algorithmic language)
+if(isRobot||/algorithm|debug|debugging|decompos|computational.*think|step.by.step.*code|program.*logic|coded.*logic|branching.*logic|flowchart.*code|sequence.*of.*steps|sequence.*of.*instructions|if.then|conditional|loop|loops/.test(s))
+r.push({cat:'Systems Thinking',sub:'Thinking Process',desc:isF2?'Developing an understanding of algorithmic thinking by sequencing instructions':'Using algorithmic thinking to develop and test automated solutions to problems'});
+
+return r;}
+function tgWDS(el,id){var d=document.getElementById("wd_"+id);var p=document.getElementById("wp_"+id);if(d.classList.contains("open")){d.classList.remove("open");p.classList.remove("open")}else{d.classList.add("open");p.classList.add("open")}}
+const FBHOOK="https://script.google.com/macros/s/AKfycbwFSbbn_1IaTst0ujfzBiQpE5pGpo07UL8yxemoHOudXzPHxKmKJvkgW2jvivf9yr9Alg/exec";
+let S={v:"home",ca:null,yl:null,ui:null};
+const I={b:'<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="13 4 7 10 13 16"/></svg>',c:'<svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="7 4 13 10 7 16"/></svg>',d:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="2" width="14" height="16" rx="2"/><line x1="7" y1="7" x2="13" y2="7"/><line x1="7" y1="10" x2="13" y2="10"/><line x1="7" y1="13" x2="10" y2="13"/></svg>',t:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="16" height="11" rx="2"/><line x1="6" y1="17" x2="14" y2="17"/><line x1="10" y1="14" x2="10" y2="17"/></svg>',s:'<svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2L11.5 7.5 17 6 12.5 9.5 17 13 11.5 11.5 10 17 8.5 11.5 3 13 7.5 9.5 3 6 8.5 7.5Z"/></svg>',k:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 10l4 4 8-8"/></svg>',l:'<svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="16" height="14" rx="2"/><line x1="2" y1="9" x2="18" y2="9"/><line x1="6" y1="2" x2="6" y2="5"/><line x1="14" y1="2" x2="14" y2="5"/></svg>'};
+function R(){window._cid=0;const a=document.getElementById("app"),{v,ca,yl,ui,tab}=S;
+let h='<div class="hd"><div class="hi">';
+if(v!=="home")h+='<button class="bk" onclick="bk()">'+I.b+'</button>';
+h+='<div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="S.v=\'home\';S.ca=null;S.yl=null;S.ui=null;loadLeaderboard();pushHash();R()"><img src="data:image/png;base64,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" class="logo"/><div><h1>Digital Learning Assistant</h1><div class="hd-sub">Created by the DLP team</div></div></div></div><div class="wp"><div class="fd">';
+
+if(v==="home"){
+h+='<div class="hero"><h2 class="hero-title">Tech ideas<br>for every<br><span class="hero-accent">Unit of Inquiry.</span></h2><p class="hero-sub">Select your campus to explore planner-specific technology suggestions.</p></div>';
+for(const[n,k]of Object.entries(CM)){
+var cc=CC[k],ct=CTX[k],uc=D.filter(r=>r.ca===n).length;
+h+='<div class="cc" onclick="nv(\'ca\',\''+k+'\')" style="background:'+cc+'"><div class="cc-wm" style="color:'+ct+'">'+k+'</div><div class="cc-inner"><div class="cc-name" style="color:'+ct+'">'+n+'</div><div class="cc-sub" style="color:'+ct+'99">Prep – Year 6 · '+uc+' units</div></div></div>';
+}
+h+='<div class="lb-section"><h2 class="sec-title" style="margin-bottom:16px">🏆 Tech Champions</h2>';
+h+=renderLeaderboard();
+h+='</div>';
+}
+
+else if(v==="campus"){
+h+='<div style="margin:20px 0 28px"><span class="tag" style="background:'+CC[ca]+';color:'+CTX[ca]+'">'+CN[ca]+'</span><h2 class="sec-title">Choose a<br>year level.</h2></div><div class="yg">';
+for(const y of YO){const us=gu(ca,y);if(!us.length)continue;const c=YC[y];
+h+='<div class="yc" onclick="nv(\'yl\',\''+y+'\')" data-color="'+c+'"><div class="yc-dot" style="background:'+c+'"></div><h3>'+y+'</h3><div class="cn">'+us.length+' units</div></div>';}
+h+='</div>';}
+
+else if(v==="units"){
+const us=gu(ca,yl);
+h+='<div style="margin:20px 0 28px"><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="tag" style="background:'+CC[ca]+';color:'+CTX[ca]+'">'+CN[ca]+'</span><span class="tag">'+yl+'</span></div><h2 class="sec-title">Units of Inquiry</h2></div>';
+us.forEach((u,i)=>{const tc=TC[u.th]||"#888";const em=TE[u.th]||"💡";
+h+='<div class="uc" style="background:'+tc+';color:'+(TTX[u.th]||"#FFF")+'" onclick="nv(\'ui\','+i+')"><div class="uc-emoji">'+em+'</div><div class="uc-label">Transdisciplinary Theme</div><div class="uc-name">'+u.th+'</div></div>';});}
+
+else if(v==="detail"){
+const us=gu(ca,yl),u=us[ui];if(!u){S.v='units';S.ui=null;R();return;}const tc=TC[u.th]||"#888";const em=TE[u.th]||"💡";
+
+h+='<div class="dh" style="background:'+tc+';color:'+(TTX[u.th]||"#FFF")+'">'+'<div class="dh-wm">'+em+'</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;position:relative;z-index:1"><span class="tag-t">'+yl+'</span><span class="tag-t">'+CN[ca]+'</span></div><h2 class="dh-title" style="position:relative;z-index:1">'+u.th+'</h2><div class="dh-ci" style="position:relative;z-index:1">“'+u.ci+'”</div></div>';
+
+h+='<div class="loi-box"><div class="loi-label">Lines of Inquiry</div>';
+var lois=u.lo.split(/[;•]/).filter(l=>l.trim());
+lois.forEach((l,i)=>{l=l.trim();if(l)h+='<div class="loi-item"><span class="loi-num" style="color:'+tc+'">0'+(i+1)+'</span>'+l+'</div>';});
+h+='</div>';
+
+var curList=u.s;
+window._sid=0;window._aid=0;window._wid=0;
+curList.forEach((s,si)=>{
+if(s.t.indexOf("Planner Needed")!==-1){var tmsg=encodeURIComponent("Hi Nathan, I have the UOI planner for "+yl+" "+u.th+" ("+CN[ca]+"). How should I send it to you?");h+='<div class="sg-pending"><div class="sg-pending-icon">📋</div><div class="sg-pending-title">Planner Not Yet Uploaded</div><div class="sg-pending-msg">Specific technology suggestions will be generated once the UOI planner for this unit is provided.</div><a href="https://teams.microsoft.com/l/chat/0/0?users=nathan.benn@wesleycollege.edu.au&message='+tmsg+'" target="_blank" rel="noopener noreferrer" class="sg-pending-cta">💬 Message Nathan Benn from DLP on Teams</a></div>';return;}
+const j=gS(s.t,s.d),va=gA(s.t,s.d);
+const tl=s.t.split(/[,&+]| and /).map(t=>t.trim()).filter(Boolean);
+var primaryTool=s.t.split(' + ')[0].trim();var turl=TU[primaryTool]||'';
+var toolLabel=turl?'<a href="'+turl+'" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline;text-decoration-color:#555;text-underline-offset:3px">'+s.t+'</a>':s.t;
+var phaseLabel="Suggestion";
+h+='<div class="sg"><div class="sg-head"><div class="sg-icon" style="background:'+tc+'">'+em+'</div><div class="sg-meta"><div class="sg-type">'+'Idea #'+(si+1)+' of '+curList.length+'</div><div class="sg-tool">'+toolLabel+'</div></div></div><div class="sg-body">';
+h+='<div class="sg-desc">'+s.d+'</div>';
+h+='';
+if(s.ref||s.docKey){var _rl='<div class="sg-section sg-refs"><div class="sg-label"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h8M4 8h8M4 12h5"/><rect x="2" y="2" width="12" height="12" rx="2"/></svg> Resources</div>';if(s.docKey&&window.DOCS&&DOCS[s.docKey]){var _doc=DOCS[s.docKey];_rl+='<a class="sg-ref-link sg-ref-doc" href="'+_doc.url+'" download="'+_doc.n+'" target="_blank">&#11015;&#65039; '+_doc.n+'</a>';}if(s.ref){s.ref.forEach(function(r){_rl+='<a class="sg-ref-link" href="'+r.url+'" target="_blank" rel="noopener">&#128279; '+r.label+'</a>';});}h+=_rl+'</div>';}
+h+='<div class="sg-section"><div class="sg-label">'+I.s+' Value Add</div><div class="vb" style="border-left-color:'+tc+'">'+va+'</div></div>';
+
+h+='<div class="sg-extras">';
+var sid2='s'+window._sid++;
+h+='<div class="atl-section"><div class="sg-collapse" id="sb_'+sid2+'" onclick="tgSec(\''+sid2+'\')"><div class="sg-label" style="color:#F5A623">🎯 IB Approaches to Learning</div><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 8 10 12 14 8"/></svg></div><div class="sg-collapsible" id="sc_'+sid2+'"><div class="atl-pills">';
+var atls=gATL(s.t,s.d);
+var atlcols={"Thinking":"#A78BFA","Research":"#38BDF8","Communication":"#CDEB45","Social":"#FF6B6B","Self-Management":"#F5A623"};
+var atlgrp={};atls.forEach(function(a){if(!atlgrp[a.cat])atlgrp[a.cat]=[];atlgrp[a.cat].push(a);});
+if(!window._aid)window._aid=0;
+Object.keys(atlgrp).forEach(function(cat){var aid='atl'+window._aid++;h+='<div class="atl-pill" onclick="tgATL(this,\''+aid+'\')" id="ap_'+aid+'"><span class="atl-dot" style="background:'+atlcols[cat]+'"></span>'+cat+'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 8 10 12 14 8"/></svg></div>';});
+if(!Object.keys(atlgrp).length)h+='<div class="atl-pill">Integrated across ATL categories</div>';
+h+='</div>';
+window._aid-=Object.keys(atlgrp).length;
+Object.keys(atlgrp).forEach(function(cat){var aid='atl'+window._aid++;h+='<div class="atl-detail" id="ad_'+aid+'"><b>'+cat+' Skills</b><ul style="margin:6px 0 0 16px;padding:0;list-style:disc">';atlgrp[cat].forEach(function(a){h+='<li>'+a.skill+' — '+a.desc+'</li>';});h+='</ul></div>';});
+h+='</div></div></div>';
+if(!window._wid)window._wid=0;
+var wdss=gWDS(s.t,s.d,yl);
+var wdscols={'Principled Practice':'#9333EA','Engineering Knowledge':'#F5A623','Creative Communicator':'#38BDF8','Systems Thinking':'#22C55E'};
+var wdsgrp={};wdss.forEach(function(w){if(!wdsgrp[w.cat])wdsgrp[w.cat]=[];wdsgrp[w.cat].push(w);});
+var wid2='w'+window._sid++;
+h+='<div class="wds-section"><div class="sg-collapse" id="sb_'+wid2+'" onclick="tgSec(\''+wid2+'\')"><div class="sg-label" style="color:#9333EA"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="18" height="18" style="vertical-align:middle;margin-right:4px;position:relative;top:-1px"><defs><linearGradient id="wg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#4A90D9"/><stop offset="100%" stop-color="#C45AE0"/></linearGradient></defs><circle cx="50" cy="50" r="50" fill="url(#wg)"/><g fill="white"><path d="M62 20 C72 25 78 36 78 48 C78 58 73 67 65 72 L65 80 L42 80 L42 72 C34 67 29 58 29 48 C29 33 39 20 52 20 Z"/><rect x="43" y="83" width="22" height="5" rx="2"/></g><rect x="43" y="43" width="14" height="14" rx="2" fill="#7B5FC7" stroke="#4A90D9" stroke-width="1.5"/><rect x="47" y="47" width="6" height="6" fill="#4A90D9"/><line x1="50" y1="43" x2="50" y2="36" stroke="#7B5FC7" stroke-width="2"/><circle cx="50" cy="34" r="3" fill="#7B5FC7"/><line x1="50" y1="57" x2="50" y2="64" stroke="#7B5FC7" stroke-width="2"/><circle cx="50" cy="66" r="3" fill="#7B5FC7"/><line x1="43" y1="50" x2="36" y2="50" stroke="#7B5FC7" stroke-width="2"/><circle cx="34" cy="50" r="3" fill="#7B5FC7"/><line x1="57" y1="50" x2="64" y2="50" stroke="#7B5FC7" stroke-width="2"/><circle cx="66" cy="50" r="3" fill="#7B5FC7"/><line x1="43" y1="43" x2="37" y2="37" stroke="#7B5FC7" stroke-width="2"/><circle cx="35" cy="35" r="3" fill="#7B5FC7"/><line x1="57" y1="43" x2="63" y2="37" stroke="#7B5FC7" stroke-width="2"/><circle cx="65" cy="35" r="3" fill="#7B5FC7"/></svg>Wesley Digital Skills</div><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 8 10 12 14 8"/></svg></div><div class="sg-collapsible" id="sc_'+wid2+'"><div class="wds-pills">';
+Object.keys(wdsgrp).forEach(function(cat){var wid='wds'+window._wid++;h+='<div class="wds-pill" onclick="tgWDS(this,\''+wid+'\')" id="wp_'+wid+'"><span class="wds-dot" style="background:'+wdscols[cat]+'"></span>'+cat+'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 8 10 12 14 8"/></svg></div>';});
+if(!Object.keys(wdsgrp).length)h+='<div class="wds-pill">Integrated across all domains</div>';
+h+='</div>';
+window._wid-=Object.keys(wdsgrp).length;
+Object.keys(wdsgrp).forEach(function(cat){var wid='wds'+window._wid++;h+='<div class="wds-detail" id="wd_'+wid+'"><b>'+cat+'</b><ul style="margin:6px 0 0 16px;padding:0;list-style:disc">';wdsgrp[cat].forEach(function(w){h+='<li><b>'+w.sub+'</b> — '+w.desc+'</li>';});h+='</ul></div>';});
+h+='</div></div>';
+if(!window._fbData)window._fbData=[];var _fbi=window._fbData.length;window._fbData.push({campus:CN[ca],year:yl,theme:u.th,tool:s.t,phase:phaseLabel+' #'+(si+1)});
+if(!window._usedData)window._usedData=[];var _usi=window._usedData.length;window._usedData.push({campus:CN[ca],year:yl,theme:u.th,tool:s.t,phase:phaseLabel});
+h+='<div class="sg-fb"><button class="sg-used" onclick="markUsed('+_usi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+_fbi+')" class="sg-fb-btn">💬 Feedback</button><button class="sg-react-btn sg-react-up" onclick="reactFB('+_fbi+',\'up\',this)">👍</button><button class="sg-react-btn" onclick="reactFB('+_fbi+',\'down\',this)">👎</button></div></div>';
+h+='</div></div>';});
+
+h+='<a href="'+BK+'" target="_blank" rel="noopener noreferrer" class="bb">📅 Book a Digital Learning Coach<span class="bb-sub">Schedule a session with the DLP team</span></a>';}
+
+h+='</div></div>';var pv=a.dataset.lastView||'';var cv=S.v+S.ca+S.yl+S.ui;var isTabSwitch=(cv===pv);a.innerHTML=h;if(!isTabSwitch)window.scrollTo(0,0);a.dataset.lastView=cv;a.classList.remove('tab-fade');if(isTabSwitch){void a.offsetWidth;a.classList.add('tab-fade');}}
+
+
+function markUsed(idx,btn){
+var d=window._usedData[idx];
+var team=d.campus+' '+d.year+' Team';
+var payload={type:'used',team:team,campus:d.campus,year:d.year,theme:d.theme,tool:d.tool,phase:d.phase};
+fetch(FBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
+btn.classList.add('done');
+btn.innerHTML='✅ Done!';
+btn.onclick=null;
+if(!window._usedPhases)window._usedPhases={};
+var unitKey=d.campus+'|'+d.year+'|'+d.theme;
+if(!window._usedPhases[unitKey])window._usedPhases[unitKey]={};
+window._usedPhases[unitKey][d.phase]=true;
+var p=window._usedPhases[unitKey];
+if(p['Beginning']&&p['Middle']&&p['End']){
+celebrateStreak(d.campus+' '+d.year);
+}else{
+celebrate(d.campus+' '+d.year);
+}
+}
+function celebrate(teamName){
+var colors=['#CDEB45','#F5A623','#7ED957','#38BDF8','#A78BFA','#FF6B6B','#FBBF24','#22C55E'];
+var container=document.createElement('div');
+container.className='confetti-container';
+for(var i=0;i<80;i++){
+var c=document.createElement('div');
+c.className='confetti';
+c.style.left=Math.random()*100+'%';
+c.style.background=colors[Math.floor(Math.random()*colors.length)];
+c.style.animationDelay=Math.random()*0.8+'s';
+c.style.animationDuration=(1.5+Math.random()*2)+'s';
+c.style.width=(6+Math.random()*8)+'px';
+c.style.height=(6+Math.random()*8)+'px';
+c.style.borderRadius=Math.random()>0.5?'50%':'2px';
+container.appendChild(c);
+}
+document.body.appendChild(container);
+var popup=document.createElement('div');
+popup.className='point-popup';
+popup.innerHTML='<div class="point-popup-inner"><div class="point-popup-emoji">🎉</div><div class="point-popup-text">+1 Point!</div><div class="point-popup-sub">'+teamName+'</div><button class="point-popup-btn" onclick="this.closest(\'.point-popup\').remove()">Keep Exploring</button></div>';
+document.body.appendChild(popup);
+setTimeout(function(){container.remove();},3000);
+}
+function celebrateStreak(teamName){
+var colors=['#CDEB45','#F5A623','#7ED957','#38BDF8','#A78BFA','#FF6B6B','#FBBF24','#22C55E'];
+var container=document.createElement('div');
+container.className='confetti-container';
+for(var i=0;i<120;i++){
+var c=document.createElement('div');
+c.className='confetti';
+c.style.left=Math.random()*100+'%';
+c.style.background=colors[Math.floor(Math.random()*colors.length)];
+c.style.animationDelay=Math.random()*1.2+'s';
+c.style.animationDuration=(1.5+Math.random()*2)+'s';
+c.style.width=(6+Math.random()*10)+'px';
+c.style.height=(6+Math.random()*10)+'px';
+c.style.borderRadius=Math.random()>0.5?'50%':'2px';
+container.appendChild(c);
+}
+document.body.appendChild(container);
+var popup=document.createElement('div');
+popup.className='point-popup';
+popup.innerHTML='<div class="point-popup-inner"><div class="point-popup-emoji">🔥</div><div class="point-popup-text" style="font-size:28px">STREAK BONUS!</div><div class="point-popup-text">+3 Points!</div><div class="point-popup-sub" style="margin-top:8px">'+teamName+' Team completed all 3 phases of a unit!</div><button class="point-popup-btn" onclick="this.closest(\'.point-popup\').remove()">Keep Exploring</button></div>';
+document.body.appendChild(popup);
+setTimeout(function(){container.remove();},4000);
+}
+var _lbLastFetch=0;
+function loadLeaderboard(){
+var now=Date.now();
+if(now-_lbLastFetch<300000)return; // 5-minute cache — was 3 seconds
+_lbLastFetch=now;
+fetch(FBHOOK+'?action=leaderboard').then(function(r){return r.json();}).then(function(data){
+window._leaderboard=data;
+if(S.v==='home')R();
+}).catch(function(){window._leaderboard=[];if(S.v==='home')R();});
+}
+function renderLeaderboard(){
+var lb=window._leaderboard;
+if(!lb)return '<div class="lb-loading">Loading leaderboard...</div>';
+var h='';
+var campuses=[{code:'EL',name:'Elsternwick',color:'#CDEB45'},{code:'GW',name:'Glen Waverley',color:'#F5A623'},{code:'SKR',name:'St Kilda Rd',color:'#7ED957'}];
+campuses.forEach(function(c){
+var teams=lb.filter(function(t){return t.campus===c.name;}).sort(function(a,b){return b.points-a.points;});
+h+='<div class="lb-campus"><div class="lb-campus-title"><span style="color:'+c.color+'">'+c.name+'</span></div>';
+if(teams.length===0){h+='<div class="lb-empty">No points yet — be the first!</div>';}
+else{teams.forEach(function(t,i){
+var rc=i===0?'gold':i===1?'silver':i===2?'bronze':'';
+h+='<div class="lb-row"><span class="lb-rank '+rc+'">#'+(i+1)+'</span><span class="lb-team">'+t.year+' Team</span><span class="lb-pts">'+t.points+' pts</span>';
+if(t.streaks>0)h+='<span class="lb-streak">🔥 '+t.streaks+' streak'+(t.streaks>1?'s':'')+'</span>';
+h+='</div>';
+});}
+h+='</div>';
+});
+return h;
+}
+// Pick up redirects from 404.html (GitHub Pages SPA routing)
+// 404.html encodes the original path as ?p=... so no sessionStorage needed
+try{(function(){
+  var qs=window.location.search;
+  if(qs.indexOf('?p=')===0||qs.indexOf('&p=')>0){
+    var params=new URLSearchParams(qs);
+    var routePath=params.get('p')||'';
+    var hash=params.get('h')||'';
+    if(routePath){
+      var base=window.location.pathname.replace(/\/$/,'');
+      try{history.replaceState(null,'',base+routePath+(hash?hash:''));}catch(e){}
+    }
+  }
+})();}catch(e){}
+// Theme acronym map — must be defined before readHash() runs
+var TH_SLUG={
+'Who We Are':'WWA',
+'Where We Are in Place and Time':'WWAIPAT',
+'How We Express Ourselves':'HWEO',
+'How the World Works':'HTWW',
+'How the World Works (Materials)':'HTWWM',
+'How the World Works (Solar System)':'HTWWSS',
+'How We Organise Ourselves':'HWOO',
+'Sharing the Planet':'STP'
+};
+var TH_UNSLUG={};
+Object.keys(TH_SLUG).forEach(function(k){TH_UNSLUG[TH_SLUG[k]]=k;});
+function slugYL(y){return y.replace(/\s+/g,'');}
+function unslugYL(y){return y.replace(/(Year|Term)(\d)/,'$1 $2');}
+
+// Detect the base path once (e.g. "/digital-learning-assistant")
+// Must be defined before readHash() runs
+var _basePath=(function(){
+  try{
+    var p=window.location.pathname;
+    var m=p.match(/^(.*?)\/(GW|EL|SKR)(\/|$)/);
+    if(m)return m[1];
+    return p.replace(/\/(index\.html)?$/, '').replace(/\/$/,'') || '';
+  }catch(e){return '';}
+})();
+
+loadLeaderboard();
+readHash();
+R();
+
+
+function pushHash(){
+  try{
+    var path=_basePath+'/';
+    if(S.v==='campus'&&S.ca)path+=S.ca;
+    else if(S.v==='units'&&S.ca&&S.yl)path+=S.ca+'/'+slugYL(S.yl);
+    else if(S.v==='detail'&&S.ca&&S.yl&&S.ui!=null){
+      var us=gu(S.ca,S.yl);
+      var u=us[S.ui];
+      var thSlug=u?TH_SLUG[u.th]||S.ui:S.ui;
+      path+=S.ca+'/'+slugYL(S.yl)+'/'+thSlug;
+    }
+    else path=_basePath||'/';
+    history.replaceState(null,'',path);
+  }catch(e){}
+}
+
+function readHash(){try{
+  var hash=window.location.hash.replace(/^#/,'');
+  var raw='';
+
+  // Only use path-based routing on GitHub Pages — not in Claude preview or local file
+  var onGitHubPages=/github\.io/.test(window.location.hostname);
+  if(onGitHubPages){
+    var pathname=window.location.pathname;
+    var seg=(pathname.startsWith(_basePath)
+      ? pathname.slice(_basePath.length)
+      : pathname).replace(/^\//, '');
+    raw=seg||decodeURIComponent(hash);
+  } else {
+    // Claude preview / local file — only trust the hash
+    raw=decodeURIComponent(hash);
+  }
+
+  if(!raw)return;
+  var parts=raw.split('/');
+  var ca=parts[0]||'';
+  var ylSlug=parts[1]||'';
+  var uiStr=parts[2]||'';
+
+  // Validate ca is a known campus code before applying
+  if(!ca||!['GW','EL','SKR'].includes(ca))return;
+  S.ca=ca; S.v='campus';
+  if(ylSlug){
+    var yl=unslugYL(ylSlug);
+    S.yl=yl; S.v='units';
+    if(uiStr!==''&&uiStr!=null){
+      var us=gu(ca,yl);
+      var idx=-1;
+      // Try acronym lookup first, then fall back to numeric index
+      var thName=TH_UNSLUG[uiStr]||'';
+      if(thName){
+        for(var i=0;i<us.length;i++){if(us[i].th===thName){idx=i;break;}}
+      } else {
+        idx=parseInt(uiStr,10);
+        if(isNaN(idx)||!us[idx])idx=-1;
+      }
+      if(idx>=0&&us[idx]){S.ui=idx;S.v='detail';}
+    }
+  }
+  }catch(e){}}
+function nv(t,v){
+if(t==="ca")trackPage(CN[v]+" campus",CN[v],"");
+else if(t==="yl")trackPage(v,CN[S.ca]||"",v);
+else if(t==="ui"){var u=D.filter(function(r){return r.ca===(Object.keys(CM).find(function(k){return CM[k]===S.ca}))&&r.yl===S.yl})[v];if(u&&u.s.some(function(s){return s.t.indexOf("Planner Needed")!==-1})){openPlanner(CN[S.ca]||"",S.yl,u.th);return;}trackPage(u?u.th:"Unit",CN[S.ca]||"",S.yl);}if(t==="ca"){S.ca=v;S.v="campus"}else if(t==="yl"){S.yl=v;S.v="units"}else if(t==="ui"){S.ui=v;S.v="detail"}pushHash();R()}
+function bk(){if(S.v==="detail"){S.ui=null;S.v="units"}else if(S.v==="units"){S.yl=null;S.v="campus"}else if(S.v==="campus"){S.ca=null;S.v="home";loadLeaderboard()}else{S.v="home";loadLeaderboard();}pushHash();R()}
+
+
+
+function openPlanner(campus,yl,theme){
+var tmsg=encodeURIComponent("Hi Nathan, I have the UOI planner for "+yl+" "+theme+" ("+campus+"). How should I send it to you?");
+document.getElementById("plannerCTA").href="https://teams.microsoft.com/l/chat/0/0?users=nathan.benn@wesleycollege.edu.au&message="+tmsg;
+document.getElementById("plannerOverlay").classList.add("open");
+}
+function closePlanner(){document.getElementById("plannerOverlay").classList.remove("open");}
+
+function tgSec(id){var el=document.getElementById('sc_'+id);var btn=document.getElementById('sb_'+id);if(el.classList.contains('open')){el.classList.remove('open');btn.classList.remove('open');}else{el.classList.add('open');btn.classList.add('open');}}
+function tgATL(el,id){var d=document.getElementById("ad_"+id);var p=document.getElementById("ap_"+id);if(d.classList.contains("open")){d.classList.remove("open");p.classList.remove("open")}else{d.classList.add("open");p.classList.add("open")}}
+function tgCur(el,id){var d=document.getElementById("d_"+id);var p=document.getElementById("p_"+id);if(d.classList.contains("open")){d.classList.remove("open");p.classList.remove("open")}else{d.classList.add("open");p.classList.add("open")}}
+var _fbCurrent='';
+function openFB(idx){_fbCurrent=window._fbData[idx]||{};var ctx=(_fbCurrent.campus||'')+' · '+(_fbCurrent.year||'')+' · '+(_fbCurrent.theme||'')+' · '+(_fbCurrent.tool||'')+' · '+(_fbCurrent.phase||'');document.getElementById('fbContent').innerHTML='<div class="fb-title">💬 Suggestion Feedback</div><div class="fb-sub">Your feedback helps us improve these suggestions for everyone.</div><div class="fb-context">'+ctx+'</div><div class="fb-label">How did this go, or what would you change?</div><textarea class="fb-textarea" id="fbText" placeholder="e.g. We tried this and it worked great, but we\'d swap Canva for Book Creator next time..."></textarea><div class="fb-actions"><button class="fb-cancel" onclick="closeFB()">Cancel</button><button class="fb-submit" id="fbSubmit" onclick="submitFB()">Submit Feedback</button></div>';document.getElementById('fbOverlay').classList.add('open');}
+function closeFB(){document.getElementById('fbOverlay').classList.remove('open');}
+function submitFB(){var txt=document.getElementById('fbText').value.trim();if(!txt){document.getElementById('fbText').style.borderColor='#FF6B6B';return;}var btn=document.getElementById('fbSubmit');btn.disabled=true;btn.textContent='Sending...';var payload={campus:_fbCurrent.campus,year:_fbCurrent.year,theme:_fbCurrent.theme,tool:_fbCurrent.tool,phase:_fbCurrent.phase,feedback:txt};fetch(FBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)}).then(function(){showFBSuccess();}).catch(function(){showFBSuccess();});}
+function showFBSuccess(){document.getElementById('fbContent').innerHTML='<div class="fb-success"><div class="fb-success-icon">✅</div><div class="fb-success-msg">Thanks for your feedback!</div><div class="fb-success-sub">This helps us make better suggestions for everyone.</div><button class="fb-cancel" onclick="closeFB()" style="margin-top:20px">Close</button></div>';}
+
+var _pageStart=Date.now(),_pageName="Home",_pageCampus="",_pageYear="";
+var _userSession="User-"+new Date().toLocaleDateString('en-AU',{day:'2-digit',month:'short'})+"-"+Math.random().toString(36).substr(2,4).toUpperCase();
+
+// Analytics queue — batches navigation events and flushes every 30s or on tab close
+// This prevents hammering the Apps Script webhook when many teachers are online simultaneously
+var _analyticsQueue=[];
+var _analyticsFlushTimer=null;
+
+function _flushAnalytics(sync){
+if(!_analyticsQueue.length)return;
+var batch={type:'analytics_batch',session:_userSession,events:_analyticsQueue.slice()};
+_analyticsQueue=[];
+var body=JSON.stringify(batch);
+if(sync&&navigator.sendBeacon){
+// sendBeacon is guaranteed to complete even during page unload
+navigator.sendBeacon(FBHOOK,new Blob([body],{type:'text/plain'}));
+}else{
+fetch(FBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:body}).catch(function(){});
+}
+}
+
+function _scheduleFlush(){
+if(_analyticsFlushTimer)clearTimeout(_analyticsFlushTimer);
+_analyticsFlushTimer=setTimeout(function(){_flushAnalytics(false);},30000);
+}
+
+function trackPage(name,campus,year){
+var spent=Math.round((Date.now()-_pageStart)/1000);
+// Only queue events where the user actually spent time on the page (2s–10min)
+if(spent>=2&&spent<=600){
+_analyticsQueue.push({page:_pageName,campus:_pageCampus,year:_pageYear,seconds:spent});
+_scheduleFlush();
+// Flush immediately if queue is getting large (e.g. very active session)
+if(_analyticsQueue.length>=8)_flushAnalytics(false);
+}
+_pageStart=Date.now();_pageName=name;_pageCampus=campus||"";_pageYear=year||"";}
+
+// Use sendBeacon on unload — reliable, non-blocking, won't trigger another concurrent write
+window.addEventListener('visibilitychange',function(){
+if(document.visibilityState==='hidden'){trackPage('exit','','');_flushAnalytics(true);}
+});
+window.addEventListener('beforeunload',function(){trackPage('exit','','');_flushAnalytics(true);});
+
+function reactFB(idx,reaction,btn){
+var d=window._fbData[idx];
+var payload={type:'reaction',campus:d.campus,year:d.year,theme:d.theme,tool:d.tool,phase:d.phase,reaction:reaction};
+fetch(FBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
+var parent=btn.parentElement;parent.querySelectorAll('.sg-react-btn').forEach(function(b){b.classList.remove('voted');});
+btn.classList.add('voted');
+}
+</script>
+
+<div class="planner-overlay" id="plannerOverlay" onclick="if(event.target===this)closePlanner()">
+<div class="planner-modal">
+<div class="planner-modal-icon">📋</div>
+<div class="planner-modal-title">Planner Not Yet Uploaded</div>
+<div class="planner-modal-sub">Specific technology suggestions will be generated once the UOI planner for this unit is provided.</div>
+<a id="plannerCTA" href="#" target="_blank" rel="noopener noreferrer" class="planner-modal-cta">💬 Message Nathan Benn from DLP on Teams</a>
+<div class="planner-modal-close" onclick="closePlanner()">Close</div>
+</div>
+</div>
+
+<div class="fb-overlay" id="fbOverlay" onclick="if(event.target===this)closeFB()">
+<div class="fb-modal">
+<div id="fbContent">
+<div class="fb-title">💬 Suggestion Feedback</div>
+<div class="fb-sub">Your feedback helps us improve these suggestions for everyone.</div>
+<div class="fb-context" id="fbContext"></div>
+<div class="fb-label">How did this go, or what would you change?</div>
+<textarea class="fb-textarea" id="fbText" placeholder="e.g. We tried this and it worked great, but we'd swap Canva for Book Creator next time..."></textarea>
+<div class="fb-actions">
+<button class="fb-cancel" onclick="closeFB()">Cancel</button>
+<button class="fb-submit" id="fbSubmit" onclick="submitFB()">Submit Feedback</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+var DOCS={};
+DOCS["doc_cser_microbit"]={"n":"CSER Lesson Plan — Build a Sensor(y) Smart Garden.pdf","m":"application/pdf","url":"doc_cser_microbit.pdf"};
+DOCS["doc_rubbish_audit"]={"n":"DT Hub — Rubbish Recording and Reduction Lesson Plan.docx","m":"application/vnd.openxmlformats-officedocument.wordprocessingml.document","url":"doc_rubbish_audit.docx"};
+</script>
