@@ -2,19 +2,22 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Wesley DLA</title>
+  <title>Digital Learning Assistant</title>
   <script>
-    // GitHub Pages SPA routing — encodes the path as a query string
-    // so index.html can read it without relying on sessionStorage.
-    // e.g. /digital-learning-assistant/GW/Year5/HWEO
-    //   -> /digital-learning-assistant/?p=/GW/Year5/HWEO
-    var l = window.location;
-    var base = l.pathname.match(/^(\/[^\/]*)\//);
-    var basePath = base ? base[1] : '';
-    var routePath = l.pathname.slice(basePath.length);
-    l.replace(
-      basePath + '/?p=' + encodeURIComponent(routePath + l.search) + (l.hash ? '&h=' + encodeURIComponent(l.hash) : '')
-    );
+    // GitHub Pages 404 redirect for single-page apps
+    // Captures the path and redirects to index with it as a query param
+    var path = window.location.pathname;
+    var repo = '/digital-learning-assistant-v2';
+    var rest = path.replace(repo, '');
+    if (rest && rest !== '/') {
+      window.location.replace(
+        window.location.origin + repo + '/?p=' + encodeURIComponent(rest) +
+        (window.location.search ? '&' + window.location.search.slice(1) : '') +
+        window.location.hash
+      );
+    } else {
+      window.location.replace(window.location.origin + repo + '/');
+    }
   </script>
 </head>
 <body></body>
