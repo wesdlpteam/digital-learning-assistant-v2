@@ -271,6 +271,10 @@
       {
         "t": "Google Earth",
         "d": "Students use Google Earth's satellite and 3D globe view — not Street View, which shows existing modern streets — to explore the actual geographic landscapes where the homes they studied were built: flying into the Arctic to see the treeless tundra where igloos were made from snow and ice, zooming into outback Australia for the sparse scrubland of gunya hut Country, and navigating the Mongolian steppe for ger territory. The satellite perspective reveals how geography determines building materials directly: there are no trees in the tundra, no ice blocks in the desert. The landscape is the building guide, and Google Earth makes that cause-and-effect relationship visible and explorable. At St Kilda Rd where Pico VR is available, this Google Earth exploration can be delivered as a fully immersive VR experience — students step inside the environment rather than navigating it from a screen."
+      },
+      {
+        "t": "Minecraft Education (Historical Homes)",
+        "d": "Students explore the 'Historical Homes' build challenge — which takes players through ancient, medieval and modern architecture — to discover how homes across history reflect the culture and environment of the people who built them. They compare the home types encountered in Minecraft with the home types they researched (igloos, gunya huts, gers), identifying which environmental factors drove each design decision. Access at education.minecraft.net/challenges/historical-homes"
       }
     ]
   },
@@ -590,6 +594,10 @@
       {
         "t": "iMovie/Green Screen",
         "d": "Students film themselves 'reporting live' from an ecosystem (using green screen), presenting their research on how adaptations ensure survival, incorporating findings from the Melbourne Aquarium excursion and class discussions about the positive and negative impact humans have on habitats."
+      },
+      {
+        "t": "Minecraft Education (We Are the Rangers)",
+        "d": "Students explore the 'We Are the Rangers' world — developed with United for Wildlife — where they play as conservation rangers protecting threatened species in authentic habitats. They investigate how adaptations help animals survive, map food web relationships, and design in-game interventions to address threats like habitat loss. The experience makes the unit's central idea — that adaptation and sustainability ensure survival — something students inhabit rather than just study. Access the world and lesson plans at education.minecraft.net/resources/climate-science/we-are-the-rangers"
       }
     ]
   },
@@ -619,6 +627,10 @@
       {
         "t": "Google Earth",
         "d": "Students use Google Earth to trace the routes of the explorers studied during the unit — navigating Burke and Wills' inland journey, the route of the First Fleet, and early Pacific voyages. At each significant location they compare what the satellite imagery shows today with what the explorers would have encountered, discussing what motivated them and what consequences their arrival had for the people and environments already there. The real-world geography gives weight to the unit's inquiry into how exploration leads to discoveries that change society. At St Kilda Rd where Pico VR is available, this Google Earth exploration can be delivered as a fully immersive VR experience — students step inside the environment rather than navigating it from a screen."
+      },
+      {
+        "t": "Minecraft Education (World Cities and Civilizations)",
+        "d": "Students use this world collection to travel through history and experience how exploration led to the growth of settlements, trade routes and new communities. They connect what they discover to their Mars Colony project — identifying which historical exploration patterns (resource-seeking, route-finding, settlement-building) apply to future planetary exploration. Access at education.minecraft.net/resources/social-studies/World_Cities_and_Civilizations"
       }
     ]
   },
@@ -748,6 +760,10 @@
       {
         "t": "Mentimeter",
         "d": "Students respond to a series of true/false provocations about the importance of country to first nations people using Mentimeter live polls — the class sees results in real time, debates surprising answers, and identifies misconceptions to investigate during the unit."
+      },
+      {
+        "t": "Minecraft Education (Indigenous Cultures and History)",
+        "d": "Students explore this lesson collection — built in authentic partnership with First Nations communities — to experience the stories, cultural practices, and deep connections to Country of Indigenous peoples from around the world. They identify parallels with Woi wurrung and Boon Wurrung perspectives explored in class, comparing how different First Nations peoples express custodial responsibility through language, land management and community. Access at education.minecraft.net/resources/social-studies/Indigenous_Cultures_and_History"
       }
     ]
   },
@@ -906,6 +922,10 @@
       {
         "t": "Freeform",
         "d": "Students use Freeform to build a collaborative conflict analysis map connecting types of conflict to their causes, impacts and potential peaceful resolutions explored during the unit — plotting how humanitarian drone technology, peacekeeping strategies and community action interconnect."
+      },
+      {
+        "t": "Minecraft Education (Peace Builders)",
+        "d": "Students explore the 'Peace Builders' world — developed with the Nobel Peace Center and Games for Change — following Nobel Peace Prize Laureates navigating real conflict situations. They analyse the strategies each laureate used to find peaceful resolution, comparing their approaches with the conflict resolution frameworks studied in class. The world makes the unit's central idea — that peaceful solutions can make a difference — tangible through the documented decisions of real peacemakers. Access at education.minecraft.net/lessons/peace-builders"
       }
     ]
   },
@@ -1064,6 +1084,10 @@
       {
         "t": "Micro:bit",
         "d": "Students prototype an animal movement tracker using the micro:bit's accelerometer and radio features — programming one micro:bit to detect and transmit movement patterns and a second to receive and display them. They simulate conservation scientists tracking how wildlife is affected by habitat loss, then reflect on how this data could inform local environmental management decisions. The project connects directly to the unit's taking-action focus: students propose how real tracking data could be used by their community to protect local species and drive the environmental stewardship they've researched throughout the unit."
+      },
+      {
+        "t": "Minecraft Education (Sustainability City)",
+        "d": "Students explore the Sustainability City world — where each district models a real sustainable system: solar energy, waste recycling, responsible forestry, water management. They analyse each system, identify how it reduces environmental impact, and redesign one district to model a stewardship intervention for their local area. The build challenges students to apply the unit's central idea — that community actions affect the balance of nature — as a design and systems-thinking problem. Access at education.minecraft.net/resources/science-subject-kit/sustainability"
       }
     ]
   },
@@ -1931,6 +1955,10 @@
       {
         "t": "Canva Presentation",
         "d": "Students design a respectful presentation exploring the significance of Country to First Nations people, incorporating learning from the Indigenous elder at camp who led a nature walk, played the didgeridoo and shared stories, and connecting to their continued study of native Australian animals."
+      },
+      {
+        "t": "Minecraft Education (Indigenous Cultures and History)",
+        "d": "Students explore this lesson collection to experience stories and cultural practices of First Nations peoples from around the world, finding connections to the Woi wurrung and Boon wurrung knowledge shared by the Indigenous elder at camp. They compare what they observe with the nature walk teachings and story sharing, discussing what the Minecraft representation can and cannot capture about living culture. Access at education.minecraft.net/resources/social-studies/Indigenous_Cultures_and_History"
       }
     ]
   },
@@ -2089,6 +2117,10 @@
       {
         "t": "Minecraft Education",
         "d": "Students use Minecraft Education to design a conservation management plan for the Alex Wilkie Nature Reserve — building a to-scale Minecraft model of the reserve and surrounding urban development using aerial drone footage and Google Earth satellite imagery from class as their spatial reference. They mark existing green corridors, biodiversity zones, and development pressure points in the build, then design and construct their proposed stewardship interventions: wildlife crossing bridges, native vegetation corridors, stormwater filtration zones, community access paths that don't disturb habitat. Each intervention is annotated with a sign explaining the ecological rationale, drawing on the micro:bit sensor data and excursion observations. The finished Minecraft plan is presented to the class as a conservation proposal — the same proposal, but built rather than drawn."
+      },
+      {
+        "t": "Minecraft Education (Sustainability City)",
+        "d": "Students explore the Sustainability City world and analyse how sustainable systems — solar energy grids, composting facilities, green transport, responsible forestry — function as interconnected community decisions. They then adapt one district to model a conservation intervention relevant to the Alex Wilkie Nature Reserve research, presenting their Minecraft design alongside the micro:bit sensor data and drone footage gathered during class. Access the world and lesson plans at education.minecraft.net/resources/science-subject-kit/sustainability"
       }
     ]
   },
@@ -2118,6 +2150,10 @@
       {
         "t": "Adobe Express Character Animator",
         "d": "Students choose a historical character from the Gold Rush era — a Chinese miner, an Indigenous Australian whose land was disrupted, a ship passenger on the £10 Pom scheme, a Eureka Stockade participant — and record their first-person account in Adobe Express Character Animator. The character animates to their voice with a historically appropriate background, creating a perspective piece that goes beyond the written account and brings the impact of migration and resource discovery to life through embodied storytelling."
+      },
+      {
+        "t": "Minecraft Education (World Cities and Civilizations + Indigenous Cultures and History)",
+        "d": "Students explore 'World Cities and Civilizations' to experience how resource discoveries shaped historical settlements, then move to 'Indigenous Cultures and History' to understand what those same discoveries meant for communities already living there. The paired experience grounds the unit's central idea — that resource discovery impacts the growth of nations — in both coloniser and First Nations perspectives. Access at education.minecraft.net/resources/social-studies/World_Cities_and_Civilizations"
       }
     ]
   },
@@ -2231,6 +2267,10 @@
       {
         "t": "Adobe Express Character Animator",
         "d": "Students choose a character from within their product's supply chain — a cocoa farmer in Ghana, a garment worker, a delivery driver, a coral reef species affected by packaging waste — and record their first-person account in Adobe Express Character Animator. The character animates to their voice with a contextually appropriate background; students add music that reflects the emotional tone of the testimony. The script draws directly on the ethics research they conducted, the child labour case study, and the Story of Stuff production-chain analysis. The class collection of animated supply chain voices — each connected to a different product — becomes a powerful exhibition piece demonstrating LOI 2 through embodied, first-person testimony that no report or poster can replicate."
+      },
+      {
+        "t": "Minecraft Education (Sustainability City)",
+        "d": "Students analyse the Sustainability City world as a case study in how consumer and community choices shape environmental outcomes — connecting to the unit's central idea about consumer interdependence with natural systems. They identify which systems reflect responsible consumption and redesign one district to model an ethical consumer alternative linked to the product chain they investigated. Access at education.minecraft.net/resources/science-subject-kit/sustainability"
       }
     ]
   },
@@ -2260,6 +2300,10 @@
       {
         "t": "Adobe Express Character Animator",
         "d": "Students choose a character in Adobe Express Character Animator to represent a voice from the nation-building migrations studied during the unit — a post-war European migrant, a refugee, an economic migrant, or an Indigenous Australian reflecting on the changes brought by development. They record their first-person account with a historically appropriate background, the character animating automatically to their narration. The class collection of animated migration perspectives — voiced in first person across different roles and time periods — makes the human dimension of nation building visible in a way timelines and reports cannot."
+      },
+      {
+        "t": "Minecraft Education (Indigenous Cultures and History + World Cities and Civilizations)",
+        "d": "Students explore both world collections to experience how human needs drove the development of nations from two very different perspectives — those building new settlements, and those already living on the land those settlements displaced. The paired experience anchors the unit's three lines of inquiry — how human needs drive development, the role of migration, and the impacts on Indigenous populations — in immersive environments. Access at education.minecraft.net/resources/social-studies/Indigenous_Cultures_and_History"
       }
     ]
   },
@@ -2531,6 +2575,10 @@
       {
         "t": "Book Creator",
         "d": "Students create a 'Bee Scientist' page in Book Creator featuring a photo of their clay bee sculpture alongside their scientific mirror-image drawing, with labels identifying the body parts (3 sections, 6 legs, wings, antennae) and a voice recording explaining the roles bees play within their community — building the observation and documentation skills practised throughout the unit."
+      },
+      {
+        "t": "Minecraft Education (Build with Bees)",
+        "d": "Students explore the 'Build with Bees' world — developed with the American Beekeeping Federation — investigating bee habitats, pollination routes, and the structural features that make bees essential to ecosystems. They discover how bees' physical structures enable survival and design bee-friendly garden additions within Minecraft that could be replicated in the school garden — directly connecting digital and physical inquiry. Access at education.minecraft.net/resources/science-subject-kit/build-with-bees"
       }
     ]
   },
@@ -2908,6 +2956,10 @@
       {
         "t": "Google Maps",
         "d": "Students use Google Earth to explore the cities they researched during the unit — Tokyo, New York, Paris, Mexico City — navigating from satellite view down to street level to identify essential features: transport hubs, civic buildings, parks, commercial districts, and residential areas. They compare the spatial organisation of different cities, identifying similarities that reveal universal urban functions and differences that reflect local culture and history. The virtual exploration grounds the unit's inquiry into what makes a city, what functions it serves, and how cities develop over time."
+      },
+      {
+        "t": "Minecraft Education (World Cities and Civilizations)",
+        "d": "Students explore the 'World Cities and Civilizations' collection — travelling through history to discover how cities developed in response to geography, trade, governance and human need. They compare the historical city models with their own collaborative class city design, identifying which planning decisions from history appear in their build and which they chose differently. Access at education.minecraft.net/resources/social-studies/World_Cities_and_Civilizations"
       }
     ]
   },
@@ -2937,6 +2989,10 @@
       {
         "t": "Freeform",
         "d": "Students use Freeform to build a class 'Body Systems Connection Map' — each group adding their assigned body system (digestive, circulatory, respiratory, nervous) and then drawing connections to every other system it interacts with. The completed board reveals that no system works in isolation: every choice students make (food, exercise, sleep, stress) ripples across multiple systems simultaneously. The map becomes the visual backbone for the unit's argument that health and wellbeing are interconnected, not separate."
+      },
+      {
+        "t": "Minecraft Education (Social Emotional Learning)",
+        "d": "Students use the Minecraft Education SEL world collection — which includes scenarios focused on emotional wellbeing, empathy and responsible decision-making — as a discussion provocation for the unit's inquiry into how health choices affect wellbeing. They play through a scenario together, identify the health choices being made, and discuss what the character could do differently — making abstract health concepts concrete and discussable. Access at education.minecraft.net/resources/social-studies/Social_Emotional_Learning"
       }
     ]
   },
@@ -3053,6 +3109,10 @@
       {
         "t": "GarageBand",
         "d": "Students collaborate in groups to create their soundscape representing a page from 'Australia from Dawn to Dusk', experimenting with digital instruments and recorded sounds to evoke a specific time of day, Australian animals, scenery and location, building on the musical decision-making practised during Sort Out where groups chose how to represent the landscape and atmosphere of their assigned page."
+      },
+      {
+        "t": "Minecraft Education (Indigenous Cultures and History)",
+        "d": "Students explore this world collection — created in partnership with First Nations communities — to experience how diverse Indigenous peoples express connection to Country, language and culture. They compare what they encounter with knowledge from the Melbourne Museum First Nations exhibition and the 'Australia from Dawn to Dusk' soundscape work, critically discussing what digital representation can and cannot convey about living culture. Access at education.minecraft.net/resources/social-studies/Indigenous_Cultures_and_History"
       }
     ]
   },
@@ -3256,6 +3316,10 @@
       {
         "t": "Adobe Express Character Animator",
         "d": "Students choose a character in Adobe Express Character Animator to voice a perspective on colonisation — an Indigenous Australian at the time of first contact, a coloniser, or a present-day descendant reflecting on lasting impact. Recording their first-person account with a historically grounded background, the animation syncs to their voice automatically. The class collection of animated perspectives — voiced by the same students, but from opposite sides — becomes a powerful demonstration of the unit's central idea: that colonisation transformed society and culture differently depending on whose story is being told."
+      },
+      {
+        "t": "Minecraft Education (Indigenous Cultures and History)",
+        "d": "Students explore this world collection to experience the stories and cultural practices of First Nations peoples — including the lasting impacts of colonisation on communities, language and Country. They compare what the Minecraft worlds represent with the primary sources, the 'Unsettled' resource, and the carved spotted gum investigation from class, critically discussing what each medium can and cannot convey about the ongoing effects of colonisation. Access at education.minecraft.net/resources/social-studies/Indigenous_Cultures_and_History"
       }
     ]
   },
@@ -3343,6 +3407,10 @@
       {
         "t": "Minecraft Education",
         "d": "Students use Minecraft Education to build a model of Australia's three levels of government as a physical landscape — federal institutions (Parliament House, High Court, Governor-General's residence) at the centre, state government buildings in a surrounding ring, and local council facilities (library, park, waste depot, community centre) in the outer zone. Roads and pathways between levels must represent the flow of decision-making: which laws travel from federal to state, which council decisions require state approval, where citizens interact with each level directly. After building, students introduce a policy challenge (a new school, a road, a community garden) and trace which level of government makes each decision, annotating the pathway through their built landscape. The Canberra Tour becomes a physical reference throughout the build."
+      },
+      {
+        "t": "Minecraft Education (Civic Engagement and Citizenship)",
+        "d": "Students explore the 'Civic Engagement and Citizenship' world — which follows real people making change through politics, community organising and protest — to analyse how ordinary citizens interact with democratic systems. They connect what they observe to the three levels of Australian government studied through the Canberra Tour, identifying where each form of civic action would be most effective. Access at education.minecraft.net/resources/social-studies/Civic_Engagement_and_Citizenship"
       }
     ]
   },
@@ -3401,6 +3469,10 @@
       {
         "t": "DJI Drone (teacher-operated)",
         "d": "DLP captures aerial footage of the Melbourne Zoo grounds and local conservation areas, providing a bird's-eye perspective of animal habitats and enclosures that students analyse alongside the Tracker Tech observations from their zoo excursion, adding spatial context to their STEM Design Project research on tracking and monitoring threatened species."
+      },
+      {
+        "t": "Minecraft Education (We Are the Rangers + Biodiversity)",
+        "d": "Students use 'We Are the Rangers' to investigate how conservation technology protects threatened species — directly connecting to their STEM Design Project on animal tracking. They then explore 'Biodiversity' to travel through time, meet extinct species, and design solutions to biodiversity threats. The two worlds ground the unit's central ideas — interdependence, human responsibility and consequences — in immersive, evidence-based experiences. Access at education.minecraft.net/resources/climate-science/we-are-the-rangers and education.minecraft.net/resources/science-subject-kit/biodiversity"
       }
     ]
   },
