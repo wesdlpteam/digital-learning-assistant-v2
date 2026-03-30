@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Wesley DLA</title>
+  <script>
+    // GitHub Pages SPA routing — encodes the path as a query string
+    // so index.html can read it without relying on sessionStorage.
+    // e.g. /digital-learning-assistant/GW/Year5/HWEO
+    //   -> /digital-learning-assistant/?p=/GW/Year5/HWEO
+    var l = window.location;
+    var base = l.pathname.match(/^(\/[^\/]*)\//);
+    var basePath = base ? base[1] : '';
+    var routePath = l.pathname.slice(basePath.length);
+    l.replace(
+      basePath + '/?p=' + encodeURIComponent(routePath + l.search) + (l.hash ? '&h=' + encodeURIComponent(l.hash) : '')
+    );
+  </script>
+</head>
+<body></body>
+</html>
