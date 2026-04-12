@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DLA Editor — Wesley College</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0a0a0a;color:#e5e5e5;font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:13px;min-height:100vh}
+  h1,h2,h3,h4{font-family:system-ui,-apple-system,sans-serif}
+  button{font-family:inherit;cursor:pointer}
+  input,textarea,select{font-family:inherit;font-size:12px}
+  a{color:#60a5fa}
+
+  /* Layout */
+  #header{background:#111;border-bottom:1px solid #222;padding:10px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:sticky;top:0;z-index:100}
+  #logo{font-family:system-ui,sans-serif;font-weight:700;font-size:14px;color:#34d399;letter-spacing:-.5px;white-space:nowrap}
+  #status-bar{font-size:11px;max-width:380px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #main{padding:20px}
+  .center{max-width:820px;margin:0 auto}
+
+  /* Buttons */
+  .btn{padding:5px 11px;border-radius:5px;border:1px solid #333;background:transparent;color:#a3a3a3;font-size:11px}
+  .btn:hover{border-color:#555;color:#e5e5e5}
+  .btn-pri{padding:5px 12px;border-radius:5px;border:none;background:#34d399;color:#0a0a0a;font-size:11px;font-weight:600}
+  .btn-pri:hover{background:#2fb888}
+  .btn-sm{padding:3px 8px;border-radius:4px;border:1px solid #2a2a2a;background:transparent;color:#737373;font-size:10px}
+  .btn-sm:hover{color:#a3a3a3;border-color:#444}
+  .btn-alert{padding:5px 12px;border-radius:5px;border:1px solid #7f1d1d;background:#450a0a;color:#fca5a5;font-size:11px}
+  .btn-alert:hover{background:#5a0f0f}
+  .btn-blue{padding:5px 12px;border-radius:5px;border:1px solid #1e3a5f;background:#0c1f35;color:#60a5fa;font-size:11px}
+  .btn-blue:hover{background:#112847}
+  .btn-tab{padding:3px 8px;border-radius:4px;border:1px solid transparent;background:transparent;color:#525252;font-size:10px}
+  .btn-tab.active{background:#1e1e1e;color:#e5e5e5;border-color:#333}
+  button:disabled{opacity:.5;cursor:not-allowed}
+
+  /* Cards */
+  .card{background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:16px;margin-bottom:12px}
+  .label{font-size:10px;color:#525252;letter-spacing:.08em;text-transform:uppercase;font-weight:500;display:block;margin-bottom:8px}
+
+  /* Form elements */
+  .inp{background:#0a0a0a;border:1px solid #2a2a2a;color:#e5e5e5;border-radius:4px;padding:6px 8px;outline:none;width:100%}
+  .inp:focus{border-color:#444}
+  select.inp{cursor:pointer}
+
+  /* Badges */
+  .badge{padding:2px 7px;border-radius:3px;font-size:10px;font-weight:600;display:inline-block}
+  .badge-banned{background:#991b1b;color:#fca5a5}
+  .badge-incomplete{background:#9a3412;color:#fdba74}
+  .badge-mismatch{background:#57534e;color:#d6d3d1}
+
+  /* Issue rows */
+  .issue-row{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:6px;cursor:pointer;margin-bottom:5px;transition:opacity .1s}
+  .issue-row:hover{opacity:.8}
+  .issue-banned{background:#450a0a;border:1px solid #7f1d1d}
+  .issue-incomplete{background:#451a03;border:1px solid #7c2d12}
+  .issue-mismatch{background:#1c1917;border:1px solid #44403c}
+
+  /* Sug rows */
+  .sug-row{border-radius:6px;margin-bottom:8px;overflow:hidden}
+  .sug-main{padding:9px 12px}
+  .sug-ok{background:#052e16;border:1px solid #14532d}
+  .sug-banned{background:#450a0a;border:1px solid #7f1d1d}
+  .sug-mismatch{background:#1c1917;border:1px solid #44403c}
+  .sug-fb{padding:10px 12px;background:#0d0d0d;border:1px solid #2a2a2a;border-top:none;border-radius:0 0 6px 6px}
+
+  /* Bar chart */
+  .bar-track{height:5px;background:#1e1e1e;border-radius:3px;margin-top:4px}
+  .bar-fill{height:100%;border-radius:3px;transition:width .3s}
+
+  /* Grid */
+  .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+  .stat-card{background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:16px 18px}
+  .stat-num{font-size:30px;font-family:system-ui,sans-serif;font-weight:700;color:#34d399}
+  .stat-label{font-size:11px;color:#525252;margin-top:4px}
+
+  /* Progress bar */
+  .progress-track{height:3px;background:#1e1e1e;border-radius:2px;margin-top:10px}
+  .progress-fill{height:100%;background:#34d399;border-radius:2px;transition:width .4s}
+
+  /* Campus colours */
+  .ca-elsternwick{color:#818cf8}
+  .ca-glen-waverley{color:#34d399}
+  .ca-st-kilda{color:#fb923c}
+
+  /* Screens */
+  .screen{display:none}
+  .screen.active{display:block}
+
+  /* API key screen */
+  #screen-apikey{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;text-align:center}
+  #screen-load{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;text-align:center}
+
+  /* Entry detail back */
+  .back-row{margin-bottom:14px}
+
+  /* Scrollable tool list */
+  .tool-entries{margin-top:8px;display:flex;flex-direction:column;gap:4px}
+  .tool-entry-row{display:flex;align-items:center;gap:8px;padding:5px 10px;background:#0f0f0f;border:1px solid #2a2a2a;border-radius:4px;cursor:pointer;font-size:11px}
+  .tool-entry-row:hover{background:#161616}
+
+  /* Planner check results */
+  .pc-row{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:6px;margin-bottom:5px}
+  .pc-ok{background:#052e16;border:1px solid #14532d;cursor:pointer}
+  .pc-ok:hover{opacity:.8}
+  .pc-err{background:#450a0a;border:1px solid #7f1d1d}
+
+  /* Regen preview */
+  .regen-preview{margin-top:10px;padding:8px 10px;border-radius:4px}
+  .regen-ok{background:#052e16;border:1px solid #14532d}
+  .regen-err{background:#1c1917;border:1px solid #44403c}
+
+  @media(max-width:600px){
+    .stat-grid{grid-template-columns:repeat(2,1fr)}
+    .issue-row .ca-col{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER (hidden until data loaded) -->
+<div id="header" style="display:none">
+  <div id="logo">DLA Editor</div>
+  <span style="font-size:10px;color:#3f3f3f">v3 · Wesley College</span>
+  <div style="flex:1"></div>
+  <span id="status-bar"></span>
+  <button class="btn-tab active" data-tab="dashboard" onclick="switchTab(this)">dashboard</button>
+  <button class="btn-tab" data-tab="issues" onclick="switchTab(this)" id="tab-issues-btn">issues</button>
+  <button class="btn-tab" data-tab="browse" onclick="switchTab(this)">browse</button>
+  <button class="btn-tab" data-tab="planner" onclick="switchTab(this)">planner check</button>
+  <button class="btn-tab" data-tab="audit" onclick="switchTab(this)">audit</button>
+  <button class="btn-pri" onclick="downloadJSON()" style="margin-left:4px">↓ json</button>
+  <button class="btn-sm" onclick="showApiKeyScreen()" title="Change API key" style="margin-left:4px">⚙ key</button>
+</div>
+
+<div id="main">
+
+<!-- API KEY SCREEN -->
+<div id="screen-apikey" class="screen active">
+  <h1 style="font-family:system-ui,sans-serif;font-size:28px;font-weight:700;margin-bottom:8px">DLA Editor <span style="color:#34d399">v3</span></h1>
+  <p style="color:#525252;font-size:12px;margin-bottom:40px">Wesley College · year-level suitability · planner-aware</p>
+  <div style="max-width:420px;width:100%">
+    <div class="card" style="text-align:left">
+      <span class="label">anthropic api key</span>
+      <input type="password" id="api-key-input" class="inp" placeholder="sk-ant-..." style="margin-bottom:10px">
+      <p style="font-size:10px;color:#525252;margin-bottom:18px;line-height:1.6">
+        Get yours at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> — stored in your browser only.
+      </p>
+      <span class="label">google oauth client id</span>
+      <input type="text" id="client-id-input" class="inp" placeholder="xxxx.apps.googleusercontent.com" value="334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleusercontent.com" style="margin-bottom:10px">
+      <p style="font-size:10px;color:#525252;margin-bottom:18px;line-height:1.6">
+        Needed for Google Drive access. <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a> → APIs &amp; Services → Credentials → OAuth client ID (Web application). Add your GitHub Pages URL as an authorised origin.
+      </p>
+      <button class="btn-pri" onclick="saveApiKey()" style="width:100%;padding:10px 0;font-size:13px">continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOAD SCREEN -->
+<div id="screen-load" class="screen">
+  <h1 style="font-family:system-ui,sans-serif;font-size:28px;font-weight:700;margin-bottom:8px">DLA Editor <span style="color:#34d399">v3</span></h1>
+  <p style="color:#525252;font-size:12px;margin-bottom:40px">Wesley College · year-level suitability · planner-aware</p>
+  <div style="display:flex;flex-direction:column;gap:10px;align-items:center;width:100%">
+    <button class="btn-pri" id="btn-drive-load" onclick="loadFromDrive()" style="width:280px;padding:11px 0;font-size:13px">↑ load from Google Drive</button>
+    <button class="btn" onclick="document.getElementById('file-input').click()" style="width:280px;padding:11px 0;font-size:13px">open local file</button>
+    <button class="btn" onclick="showPaste()" style="width:280px;padding:11px 0;font-size:13px">paste json</button>
+  </div>
+  <div id="drive-auth-status" style="margin-top:14px;font-size:11px;color:#525252"></div>
+  <input type="file" id="file-input" accept=".json" style="display:none" onchange="loadFromFile(event)">
+  <div id="load-error" style="display:none;margin-top:16px;color:#f87171;font-size:12px;padding:12px;background:#450a0a;border-radius:6px;max-width:340px;width:100%"></div>
+</div>
+
+<!-- PASTE SCREEN -->
+<div id="screen-paste" class="screen">
+  <div class="center" style="max-width:600px;margin-top:40px">
+    <h2 style="font-family:system-ui,sans-serif;font-size:18px;font-weight:600;margin-bottom:12px">paste data.json</h2>
+    <textarea id="paste-input" class="inp" rows="14" placeholder="paste full contents of data.json…" style="display:block;resize:vertical;line-height:1.5;margin-bottom:12px"></textarea>
+    <div style="display:flex;gap:8px">
+      <button class="btn-pri" onclick="loadFromPaste()">load</button>
+      <button class="btn" onclick="showScreen('screen-load')">cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="screen-app" class="screen">
+  <div id="tab-dashboard" class="center tab-panel">
+    <div class="stat-grid" id="stat-cards"></div>
+    <div id="bulk-fix-card"></div>
+    <div class="card">
+      <span class="label">all issues — click to fix individually</span>
+      <div id="all-issues-list"></div>
+    </div>
+  </div>
+
+  <div id="tab-issues" class="center tab-panel" style="display:none">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+      <h2 style="font-family:system-ui,sans-serif;font-size:16px;font-weight:600">issues</h2>
+      <div style="flex:1"></div>
+      <button class="btn-tab active" data-filter="all" onclick="setFilter(this)">all</button>
+      <button class="btn-tab" data-filter="banned" onclick="setFilter(this)">banned</button>
+      <button class="btn-tab" data-filter="incomplete" onclick="setFilter(this)">incomplete</button>
+      <button class="btn-tab" data-filter="mismatch" onclick="setFilter(this)">mismatch</button>
+    </div>
+    <div id="issues-fix-bar" style="margin-bottom:14px"></div>
+    <div id="filtered-issues-list"></div>
+  </div>
+
+  <div id="tab-browse" class="center tab-panel" style="display:none">
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+      <select id="browse-campus" class="inp btn" onchange="renderBrowse()" style="width:auto;padding:5px 9px">
+        <option value="">all campuses</option>
+      </select>
+      <select id="browse-year" class="inp btn" onchange="renderBrowse()" style="width:auto;padding:5px 9px">
+        <option value="">all year levels</option>
+      </select>
+      <input id="browse-search" class="inp btn" placeholder="search themes…" oninput="renderBrowse()" style="flex:1;min-width:140px">
+      <span id="browse-count" style="font-size:11px;color:#525252;align-self:center"></span>
+    </div>
+    <div id="browse-list"></div>
+  </div>
+
+  <div id="tab-planner" class="center tab-panel" style="display:none">
+    <h2 style="font-family:system-ui,sans-serif;font-size:16px;font-weight:600;margin-bottom:12px">bulk planner check</h2>
+    <div id="drive-planner-status" style="display:none;margin-bottom:12px;padding:10px 14px;background:#0c1f35;border:1px solid #1e3a5f;border-radius:6px;font-size:11px;color:#60a5fa"></div>
+    <div class="card" style="margin-bottom:16px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+        <select id="pc-campus" class="inp btn" style="width:auto;padding:5px 9px">
+          <option value="">all campuses</option>
+        </select>
+        <select id="pc-year" class="inp btn" style="width:auto;padding:5px 9px">
+          <option value="">all year levels</option>
+        </select>
+        <span id="pc-count" style="font-size:11px;color:#525252"></span>
+        <div style="flex:1"></div>
+        <button class="btn-blue" id="btn-planner-run" onclick="runPlannerCheck()">check entries against planners</button>
+      </div>
+      <div id="pc-progress" style="display:none">
+        <div class="progress-track"><div class="progress-fill" id="pc-progress-bar" style="width:0%"></div></div>
+        <div id="pc-progress-label" style="font-size:11px;color:#fbbf24;margin-top:6px"></div>
+      </div>
+      <p style="font-size:11px;color:#525252;margin-top:8px">Searches Google Drive for planner PDFs by campus and year level, reads them, and tweaks descriptions to match. Tool names are preserved.</p>
+    </div>
+    <div id="pc-results"></div>
+  </div>
+
+  <div id="tab-audit" class="center tab-panel" style="display:none">
+    <h2 style="font-family:system-ui,sans-serif;font-size:16px;font-weight:600;margin-bottom:16px">audit &amp; analytics</h2>
+    <div class="stat-grid" id="audit-stats"></div>
+    <div style="display:flex;gap:6px;margin-bottom:16px">
+      <button class="btn-tab active" data-view="tools" onclick="setAuditView(this)">tools</button>
+      <button class="btn-tab" data-view="campus" onclick="setAuditView(this)">campus</button>
+      <button class="btn-tab" data-view="year" onclick="setAuditView(this)">year</button>
+    </div>
+    <div id="audit-chart"></div>
+    <div class="card" style="margin-top:20px">
+      <span class="label">adjust distribution with feedback</span>
+      <p style="font-size:11px;color:#525252;margin-bottom:10px">e.g. "I want more Micro:bit in Years 3-6", "reduce Seesaw across all campuses", "add more Pico VR in Year 5-6"</p>
+      <textarea id="audit-feedback" class="inp" rows="3" placeholder="Describe what you'd like to change…" style="display:block;resize:vertical;margin-bottom:10px;line-height:1.5"></textarea>
+      <button class="btn-pri" id="btn-audit-apply" onclick="applyAuditFeedback()">apply feedback across all entries</button>
+    </div>
+  </div>
+
+  <!-- ENTRY DETAIL (overlays tab content) -->
+  <div id="entry-detail" style="display:none">
+    <div class="center">
+      <div class="back-row"><button class="btn-sm" onclick="closeDetail()">← back</button></div>
+      <div class="card" id="detail-header"></div>
+      <div class="card" id="detail-manual">
+        <div style="display:flex;align-items:center">
+          <span class="label" style="margin-bottom:0">type suggestions manually</span>
+          <div style="flex:1"></div>
+          <button class="btn-sm" id="btn-edit-toggle" onclick="toggleEdit()">edit</button>
+        </div>
+        <div id="manual-form" style="display:none;margin-top:14px"></div>
+      </div>
+      <div class="card" id="detail-planner">
+        <div style="display:flex;align-items:center">
+          <span class="label" style="margin-bottom:0">check against planner</span>
+          <div style="flex:1"></div>
+          <button class="btn-blue" onclick="checkSinglePlanner()">check Drive planner</button>
+        </div>
+        <div id="planner-single-result" style="margin-top:10px"></div>
+      </div>
+      <div class="card" id="detail-generate">
+        <span class="label">regenerate all 5 with AI</span>
+        <button class="btn-pri" id="btn-gen-all" onclick="genAllSugs()">generate 5 suggestions</button>
+        <div id="gen-all-result" style="margin-top:10px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end #main -->
+
+<script>
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+// ─── State ────────────────────────────────────────────────────────────────────
+let DATA = [];
+let ISSUES = { banned:[], incomplete:[], mismatch:[] };
+let CURRENT_ENTRY_IDX = null;
+let CURRENT_FILTER = "all";
+let CURRENT_AUDIT_VIEW = "tools";
+let SELECTED_AUDIT_TOOL = null;
+let AUDIT_YEAR_CAMPUS = '';
+let EDIT_MODE = false;
+let BATCH_RUNNING = false;
+
+// ─── Google Drive OAuth ───────────────────────────────────────────────────────
+let DRIVE_TOKEN = null;
+let DRIVE_TOKEN_EXPIRY = 0;
+let DATA_JSON_FILE_ID = null; // cached after first search
+const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive';
+
+const YR = ["Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"];
+const MODEL = "claude-sonnet-4-20250514";
+const DRIVE_MCP = [{ type:"url", url:"https://drivemcp.googleapis.com/mcp/v1", name:"google-drive" }];
+const CAMPUS_COLORS = { "Elsternwick":"#818cf8", "Glen Waverley":"#34d399", "St Kilda":"#fb923c" };
+
+const RULES = [
+  { kw:["3d print"],min:4,max:6,name:"3D Printer" },
+  { kw:["beebot"],min:0,max:1,name:"Beebots" },
+  { kw:["cubetto"],min:0,max:2,name:"Cubetto" },
+  { kw:["edison"],min:2,max:6,name:"Edison Robots" },
+  { kw:["insta360","insta 360"],min:2,max:6,name:"Insta360 Cam" },
+  { kw:["lego spike","spike kit","spike prime"],min:2,max:6,name:"Lego Spike" },
+  { kw:["makey makey","makeymakey"],min:3,max:6,name:"MakeyMakey" },
+  { kw:["merge cube"],min:2,max:6,name:"Merge Cube" },
+  { kw:["micro:bit","microbit","micro bit"],min:3,max:6,name:"Micro:bit" },
+  { kw:["tripod"],min:2,max:6,name:"Tripod" },
+  { kw:["ozobot"],min:1,max:6,name:"Ozobot" },
+  { kw:["pico vr"],min:5,max:6,name:"Pico VR" },
+  { kw:["green screen"],min:3,max:6,name:"Green Screen" },
+  { kw:["rugged robot"],min:1,max:2,name:"Rugged Robot" },
+  { kw:["sam lab"],min:3,max:6,name:"SAM Labs" },
+  { kw:["smart brick"],min:1,max:3,name:"Smart Bricks" },
+  { kw:["sphero"],min:4,max:6,name:"Spheros" },
+  { kw:["scratch jr","scratch jr."],min:0,max:2,name:"Scratch Jr" },
+];
+
+const SYS = `You generate digital learning tool suggestions for Wesley College (Melbourne, AU, P-6 school).
+BANNED: WeVideo — never suggest it. VIDEO: Canva Video (default), iMovie ONLY for slow-mo/split-screen/time-lapse/stop-motion/green screen.
+HARDWARE YEAR RESTRICTIONS: 3D Printer Yr4-6 | Beebots Prep-Yr1 | Cubetto Prep-Yr2 | Edison Robots Yr2-6 | Insta360 Yr2-6 | Lego Spike Yr2-6 | MakeyMakey Yr3-6 | Merge Cubes Yr2-6 | Micro:bit Yr3-6 | Ozobots Yr1-6 | Pico VR Yr5-6 | Green Screen Yr3-6 | Rugged Robot Yr1-2 | SAM Labs Yr3-6 | Smart Bricks Yr1-3 | Spheros Yr4-6 | Tripod Yr2-6
+SOFTWARE: Scratch Jr (Prep-Yr2), Scratch full (Yr3+).
+RULES: (1) Tech elevates — impossible/dramatically better without it. (2) Max 1 of any tool. (3) Max 1 Seesaw. (4) At least one large-scale ambitious project. (5) Mix diverse formats. (6) Planner-specific — nothing generic. (7) Google Maps=street-level, Google Earth=satellite/globe. Reply ONLY with a JSON array, no backticks.`;
+
+// ─── API key ──────────────────────────────────────────────────────────────────
+function getKey(){ return localStorage.getItem('dla_api_key')||'' }
+function getClientId(){ return localStorage.getItem('dla_client_id')||'' }
+function saveApiKey(){
+  const k = document.getElementById('api-key-input').value.trim();
+  const cid = document.getElementById('client-id-input').value.trim();
+  if(!k){ alert('Please enter your Anthropic API key'); return; }
+  localStorage.setItem('dla_api_key', k);
+  if(cid) localStorage.setItem('dla_client_id', cid);
+  showScreen('screen-load');
+}
+function showApiKeyScreen(){
+  document.getElementById('api-key-input').value = getKey();
+  // Pre-bake the client ID if not already set
+  if(!getClientId()) localStorage.setItem('dla_client_id','334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleusercontent.com');
+  document.getElementById('client-id-input').value = getClientId();
+  showScreen('screen-apikey');
+}
+
+// ─── Screen management ────────────────────────────────────────────────────────
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.style.display='none');
+  const el = document.getElementById(id);
+  if(el){
+    // flex for load/apikey screens, block for others
+    el.style.display = (id==='screen-apikey'||id==='screen-load') ? 'flex' : 'block';
+  }
+  document.getElementById('header').style.display = id==='screen-app' ? 'flex' : 'none';
+}
+
+function switchTab(btn){
+  document.querySelectorAll('#header .btn-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const t = btn.dataset.tab;
+  document.querySelectorAll('.tab-panel').forEach(p=>p.style.display='none');
+  document.getElementById('tab-'+t).style.display='block';
+  document.getElementById('entry-detail').style.display='none';
+  CURRENT_ENTRY_IDX = null;
+  if(t==='browse') renderBrowse();
+  if(t==='audit') renderAudit();
+  if(t==='planner') initPlannerFilters();
+}
+
+function setFilter(btn){
+  document.querySelectorAll('#tab-issues .btn-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  CURRENT_FILTER = btn.dataset.filter;
+  renderFilteredIssues();
+}
+
+function setAuditView(btn){
+  document.querySelectorAll('[data-view]').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  CURRENT_AUDIT_VIEW = btn.dataset.view;
+  SELECTED_AUDIT_TOOL = null;
+  renderAuditChart();
+}
+
+// ─── Status bar ───────────────────────────────────────────────────────────────
+function setStatus(msg, type='ok'){
+  const el = document.getElementById('status-bar');
+  el.textContent = msg;
+  el.style.color = type==='error'?'#f87171':type==='loading'?'#fbbf24':'#34d399';
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function yrN(yl){
+  if(!yl) return -1;
+  const s = String(yl).trim().toLowerCase();
+  if(s==='prep') return 0;
+  const m = s.match(/\d+/);
+  return m ? parseInt(m[0]) : -1;
+}
+
+function checkTool(name, yn){
+  const t = String(name).toLowerCase().replace(/[^a-z0-9 :]/g,' ').trim();
+  if(t.includes('wevideo')) return {ok:false,type:'banned',msg:'WeVideo is banned — use Canva Video or iMovie'};
+  for(const r of RULES){
+    if(r.kw.some(k=>t.includes(k))){
+      if(yn>=0&&(yn<r.min||yn>r.max)) return {ok:false,type:'mismatch',msg:`${r.name} is ${YR[r.min]}-${YR[r.max]} only (this entry: ${YR[yn]||'?'})`};
+      return {ok:true};
+    }
+  }
+  if(t.includes('scratch')&&!t.includes('jr')){
+    if(yn>=0&&yn<3) return {ok:false,type:'mismatch',msg:`Scratch (full) is Year 3+ only (this: ${YR[yn]||'?'}) — use Scratch Jr`};
+  }
+  return {ok:true};
+}
+
+function doAudit(data){
+  const banned=[],incomplete=[],mismatch=[];
+  data.forEach((entry,idx)=>{
+    const yn=yrN(entry.yl), sugs=entry.s||[];
+    if(sugs.length<5){ incomplete.push({idx,entry,type:'incomplete',details:`${sugs.length}/5 suggestions`}); return; }
+    const issues=[];
+    sugs.forEach((s,si)=>{ const c=checkTool(s.t||'',yn); if(!c.ok) issues.push({si,...c,tool:s.t}); });
+    const seen={};
+    sugs.forEach((s,si)=>{
+      const tn=(s.t||'').toLowerCase().trim();
+      if(!tn) return;
+      if(seen[tn]!==undefined) issues.push({si,type:'duplicate',tool:s.t,msg:`"${s.t}" appears more than once`});
+      else seen[tn]=si;
+    });
+    const ssIdx=sugs.reduce((a,s,si)=>(s.t||'').toLowerCase().includes('seesaw')?[...a,si]:a,[]);
+    if(ssIdx.length>1) ssIdx.slice(1).forEach(si=>issues.push({si,type:'duplicate',tool:sugs[si].t,msg:`Seesaw appears ${ssIdx.length} times (max 1)`}));
+    const b=issues.filter(i=>i.type==='banned');
+    const m=issues.filter(i=>i.type==='mismatch'||i.type==='duplicate');
+    if(b.length) banned.push({idx,entry,type:'banned',issues:b,details:b.map(i=>i.tool).join(', ')});
+    if(m.length) mismatch.push({idx,entry,type:'mismatch',issues:m,details:m.map(i=>i.tool).join(', ')});
+  });
+  return {banned,incomplete,mismatch};
+}
+
+function allIssues(){ return [...ISSUES.banned,...ISSUES.incomplete,...ISSUES.mismatch]; }
+function issueIdxSet(){ return new Set(allIssues().map(i=>i.idx)); }
+
+function caClass(ca){ return 'ca-'+(ca||'').toLowerCase().replace(/\s+/g,'-'); }
+function caColor(ca){ return CAMPUS_COLORS[ca]||'#34d399'; }
+
+function ingest(arr){
+  DATA = Array.isArray(arr) ? arr : Object.values(arr);
+  ISSUES = doAudit(DATA);
+  const tot = ISSUES.banned.length+ISSUES.incomplete.length+ISSUES.mismatch.length;
+  setStatus(`${DATA.length} entries loaded — ${tot} issue${tot!==1?'s':''} found`);
+  showScreen('screen-app');
+  renderDashboard();
+  initBrowseFilters();
+  initPlannerFilters();
+  document.getElementById('tab-issues-btn').textContent = `issues${tot>0?' ('+tot+')':''}`;
+}
+
+// ─── Loading ──────────────────────────────────────────────────────────────────
+function loadFromFile(e){
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=ev=>{ try{ ingest(JSON.parse(ev.target.result)); } catch{ showLoadError('Invalid JSON file'); } };
+  r.readAsText(f);
+}
+function showPaste(){ showScreen('screen-paste'); }
+function loadFromPaste(){
+  try{ ingest(JSON.parse(document.getElementById('paste-input').value)); }
+  catch{ showLoadError('Invalid JSON'); }
+}
+function showLoadError(msg){
+  const el=document.getElementById('load-error');
+  el.textContent=msg; el.style.display='block';
+}
+
+// ─── Google Drive OAuth2 ─────────────────────────────────────────────────────
+async function getDriveToken(){
+  if(DRIVE_TOKEN && Date.now() < DRIVE_TOKEN_EXPIRY - 60000) return DRIVE_TOKEN;
+  const clientId = getClientId();
+  if(!clientId) throw new Error('No Google Client ID — click \u2699 key to set it');
+  return new Promise((resolve, reject) => {
+    const client = google.accounts.oauth2.initTokenClient({
+      client_id: clientId,
+      scope: DRIVE_SCOPE,
+      callback: (resp) => {
+        if(resp.error){ reject(new Error(resp.error)); return; }
+        DRIVE_TOKEN = resp.access_token;
+        DRIVE_TOKEN_EXPIRY = Date.now() + (resp.expires_in * 1000);
+        resolve(DRIVE_TOKEN);
+      }
+    });
+    client.requestAccessToken({ prompt: DRIVE_TOKEN ? '' : 'consent' });
+  });
+}
+
+async function driveRequest(url, opts={}){
+  const token = await getDriveToken();
+  const r = await fetch(url, {
+    ...opts,
+    headers: { 'Authorization': 'Bearer '+token, ...(opts.headers||{}) }
+  });
+  if(!r.ok){
+    const err = await r.json().catch(()=>({error:{message:r.statusText}}));
+    throw new Error(err.error?.message || r.statusText);
+  }
+  return r;
+}
+
+async function driveSearchFile(name, mimeType=''){
+  let q = `name='${name}' and trashed=false`;
+  if(mimeType) q += ` and mimeType='${mimeType}'`;
+  const r = await driveRequest(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id,name,modifiedTime)&pageSize=5`);
+  const d = await r.json();
+  return d.files || [];
+}
+
+async function driveReadFile(fileId){
+  const r = await driveRequest(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`);
+  return r;
+}
+
+async function driveWriteFile(fileId, content){
+  const blob = new Blob([content], {type:'application/json'});
+  await driveRequest(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: blob
+  });
+}
+
+async function loadFromDrive(){
+  const btn = document.getElementById('btn-drive-load');
+  const statusEl = document.getElementById('drive-auth-status');
+  btn.disabled=true; btn.textContent='connecting…';
+  document.getElementById('load-error').style.display='none';
+  if(statusEl) statusEl.textContent='Signing in to Google…';
+  try{
+    await getDriveToken();
+    if(statusEl) statusEl.textContent='Searching for data.json…';
+    const files = await driveSearchFile('data.json','application/json');
+    if(!files.length) throw new Error('data.json not found on Drive — make sure it exists and Drive is connected');
+    DATA_JSON_FILE_ID = files[0].id;
+    if(statusEl) statusEl.textContent='Downloading data.json…';
+    const r = await driveReadFile(DATA_JSON_FILE_ID);
+    const json = await r.json();
+    ingest(json);
+    if(statusEl) statusEl.textContent='';
+  }catch(e){
+    if(statusEl) statusEl.textContent='';
+    showLoadError(e.message);
+  }
+  btn.disabled=false; btn.textContent='↑ load from Google Drive';
+}
+
+async function saveToExports(data) {
+  if (!DATA_JSON_FILE_ID) return;
+  try{
+    await driveWriteFile(DATA_JSON_FILE_ID, JSON.stringify(data, null, 2));
+    setStatus('Saved to Google Drive');
+  }catch(e){
+    setStatus('Drive save failed: '+e.message, 'error');
+  }
+}
+
+// ─── API call ─────────────────────────────────────────────────────────────────
+async function callAPI(messages, opts={}){
+  const key=getKey();
+  if(!key) throw new Error('No API key — click ⚙ key to set it');
+  const body={ model:MODEL, max_tokens:opts.maxTokens||1500, messages };
+  if(!opts.noSys) body.system=opts.system||SYS;
+  const controller = new AbortController();
+  const timeout = setTimeout(()=>controller.abort(), 90000);
+  let r;
+  try{
+    r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key': key,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify(body),
+      signal: controller.signal
+    });
+  } catch(e){
+    clearTimeout(timeout);
+    if(e.name==='AbortError') throw new Error('Request timed out after 90s — try again');
+    throw e;
+  }
+  clearTimeout(timeout);
+  const d=await r.json();
+  if(d.error) throw new Error(d.error.message);
+  return d;
+}
+
+async function genSugs(entry){
+  const d=await callAPI([{role:'user',content:
+    `Generate exactly 5 digital tool suggestions for:
+Campus: ${entry.ca} | Year Level: ${entry.yl} | Unit Theme: "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${entry.lo?`\nLines of Inquiry: "${entry.lo}"`:''}
+Requirements: all 5 different tools, max 1 Seesaw, at least one ambitious project, everything specific to this unit.
+Return: [{"t":"Tool Name","d":"One specific sentence for THIS unit."},...]`}],{maxTokens:1500});
+  const txt=d.content.map(b=>b.text||'').join('').replace(/```json|```/g,'').trim();
+  return JSON.parse(txt);
+}
+
+async function genSugsWithRetry(entry, maxRetries=4){
+  let delay = 8000;
+  for(let attempt=0; attempt<=maxRetries; attempt++){
+    try{ return await genSugs(entry); }
+    catch(e){
+      const msg=e.message||'';
+      const isRate=msg.includes('exceeded_limit')||msg.includes('rate_limit')||msg.includes('529')||msg.includes('overloaded')||msg.includes('tokens per minute');
+      if(isRate && attempt<maxRetries){
+        setStatus(`Rate limited — waiting ${Math.round(delay/1000)}s (retry ${attempt+1}/${maxRetries})…`,'loading');
+        await sleep(delay);
+        delay=Math.min(delay*1.8,60000);
+      } else { throw e; }
+    }
+  }
+}
+
+async function regenOneSug(entry, oldSug, feedback){
+  const others=(entry.s||[]).filter(s=>s.t!==oldSug.t).map(s=>s.t).join(', ');
+  const d=await callAPI([{role:'user',content:
+    `Regenerate ONE suggestion based on feedback.
+Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}
+Current: ${oldSug.t} — ${oldSug.d}
+Feedback: ${feedback||'improve this suggestion'}
+Other tools already in this unit (do not repeat): ${others}
+Return ONLY: {"t":"Tool Name","d":"One specific sentence."} — no markdown.`}],{maxTokens:600});
+  const txt=d.content.map(b=>b.text||'').join('').replace(/```json|```/g,'').trim();
+  const m=txt.match(/\{[\s\S]*\}/);
+  if(!m) throw new Error('No JSON in response');
+  return JSON.parse(m[0]);
+}
+
+// ─── Apply fix ────────────────────────────────────────────────────────────────
+function applyFix(idx, sugs){
+  DATA[idx] = {...DATA[idx], s:sugs};
+  ISSUES = doAudit(DATA);
+  const tot=ISSUES.banned.length+ISSUES.incomplete.length+ISSUES.mismatch.length;
+  setStatus(`Saved — ${tot} issue${tot!==1?'s':''} remaining`);
+  document.getElementById('tab-issues-btn').textContent=`issues${tot>0?' ('+tot+')':''}`;
+  if(DATA_JSON_FILE_ID) saveToExports(DATA);
+}
+
+// ─── Dashboard ────────────────────────────────────────────────────────────────
+function renderDashboard(){
+  const all=allIssues();
+  // Stat cards
+  document.getElementById('stat-cards').innerHTML=[
+    {key:'banned',label:'banned tool',col:'#f87171',bg:'#450a0a',border:'#7f1d1d'},
+    {key:'incomplete',label:'incomplete',col:'#fb923c',bg:'#451a03',border:'#7c2d12'},
+    {key:'mismatch',label:'year mismatch',col:'#a3a3a3',bg:'#1c1917',border:'#44403c'},
+  ].map(({key,label,col,bg,border})=>`
+    <div class="stat-card" style="background:${bg};border-color:${border};cursor:pointer" onclick="document.querySelector('[data-tab=issues]').click();setFilter(document.querySelector('[data-filter=${key}]'))">
+      <div class="stat-num" style="color:${col}">${ISSUES[key].length}</div>
+      <div class="stat-label">${label}</div>
+    </div>`).join('');
+
+  // Bulk fix
+  const hasBanned=ISSUES.banned.length>0, hasMismatch=ISSUES.mismatch.length>0;
+  document.getElementById('bulk-fix-card').innerHTML = (hasBanned||hasMismatch) ? `
+    <div class="card">
+      <h4 style="font-family:system-ui,sans-serif;font-weight:600;font-size:14px;margin-bottom:4px">Bulk Fix</h4>
+      <p style="font-size:11px;color:#525252;margin-bottom:14px">Incomplete entries skipped — those need planners first.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        ${hasMismatch?`<div>
+          <p style="font-size:11px;color:#a3a3a3;margin-bottom:6px">${ISSUES.mismatch.length} mismatch${ISSUES.mismatch.length!==1?'es':''} — wrong hardware, duplicate tools, repeat Seesaw</p>
+          <button class="btn-alert" id="btn-fix-mismatch" onclick="runBulkFix(['mismatch'])">fix mismatches (${ISSUES.mismatch.length})</button>
+        </div>`:''}
+        ${hasBanned?`<div>
+          <p style="font-size:11px;color:#fca5a5;margin-bottom:6px">${ISSUES.banned.length} banned tool${ISSUES.banned.length!==1?'s':''}</p>
+          <button class="btn-alert" id="btn-fix-banned" onclick="runBulkFix(['banned'])">fix banned (${ISSUES.banned.length})</button>
+        </div>`:''}
+        ${hasBanned&&hasMismatch?`<div style="align-self:flex-end"><button class="btn-sm" onclick="runBulkFix(['banned','mismatch'])">fix both</button></div>`:''}
+      </div>
+      <div class="progress-track" id="bulk-progress" style="display:none"><div class="progress-fill" id="bulk-progress-bar" style="width:0%"></div></div>
+      <div id="bulk-result" style="margin-top:10px"></div>
+    </div>` : '';
+
+  // All issues list
+  document.getElementById('all-issues-list').innerHTML = all.length
+    ? all.map(iss=>issueRowHTML(iss)).join('')
+    : '<div style="text-align:center;padding:30px;color:#34d399;font-size:13px">all issues resolved</div>';
+
+  // Filter buttons label
+  renderFilteredIssues();
+}
+
+function issueRowHTML(iss){
+  const cls=`issue-${iss.type==='duplicate'?'mismatch':iss.type}`;
+  return `<div class="issue-row ${cls}" onclick="openEntry(${iss.idx})">
+    <span class="badge badge-${iss.type==='duplicate'?'mismatch':iss.type}">${iss.type}</span>
+    <span style="color:#737373;font-size:11px;width:108px;flex-shrink:0">${iss.entry.ca}</span>
+    <span style="font-size:11px;width:62px;flex-shrink:0;color:${caColor(iss.entry.ca)}">${iss.entry.yl}</span>
+    <span style="flex:1;font-size:12px">${iss.entry.th}</span>
+    <span style="font-size:11px;color:#525252">${iss.details}</span>
+    <span style="color:#525252">›</span>
+  </div>`;
+}
+
+function renderFilteredIssues(){
+  const all=allIssues();
+  const disp=CURRENT_FILTER==='all'?all:all.filter(i=>i.type===CURRENT_FILTER);
+  document.getElementById('filtered-issues-list').innerHTML = disp.length
+    ? disp.map(iss=>issueRowHTML(iss)).join('')
+    : `<div style="text-align:center;padding:40px;color:#525252;font-size:13px">no ${CURRENT_FILTER==='all'?'':CURRENT_FILTER+' '}issues</div>`;
+  document.querySelectorAll('#tab-issues .btn-tab').forEach(b=>{
+    const f=b.dataset.filter;
+    const cnt=f==='all'?all.length:ISSUES[f]?.length||0;
+    b.textContent=`${f} (${cnt})`;
+  });
+  // Fix bar
+  const fb=document.getElementById('issues-fix-bar');
+  if(!fb) return;
+  const hasBanned=ISSUES.banned.length>0, hasMismatch=ISSUES.mismatch.length>0;
+  if(!hasBanned&&!hasMismatch){ fb.innerHTML='<div style="font-size:11px;color:#34d399;padding:8px 14px">No fixable issues.</div>'; return; }
+  fb.innerHTML=`<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 14px;background:#111;border:1px solid #1e1e1e;border-radius:7px;margin-bottom:4px">
+    <span style="font-size:11px;color:#525252;flex:1">Bulk fix — incomplete entries need planners first and are skipped</span>
+    ${hasMismatch?`<button class="btn-alert" onclick="runBulkFix(['mismatch'])">fix mismatches (${ISSUES.mismatch.length})</button>`:''}
+    ${hasBanned?`<button class="btn-alert" onclick="runBulkFix(['banned'])">fix banned (${ISSUES.banned.length})</button>`:''}
+    ${hasBanned&&hasMismatch?`<button class="btn-sm" onclick="runBulkFix(['banned','mismatch'])">fix both</button>`:''}
+  </div>`;
+}
+
+
+// ─── Bulk fix ────────────────────────────────────────────────────────────────
+async function runBulkFix(types){
+  if(BATCH_RUNNING) return;
+  const typeSet=new Set(types);
+  const all=[...ISSUES.banned,...ISSUES.incomplete,...ISSUES.mismatch].filter(i=>typeSet.has(i.type));
+  if(!all.length) return;
+  BATCH_RUNNING=true;
+  ['btn-fix-mismatch','btn-fix-banned'].forEach(id=>{ const b=document.getElementById(id); if(b) b.disabled=true; });
+  const prog=document.getElementById('bulk-progress');
+  const bar=document.getElementById('bulk-progress-bar');
+  const res=document.getElementById('bulk-result');
+  if(prog) prog.style.display='block';
+  let fixed=0; const errors=[];
+  for(let i=0;i<all.length;i++){
+    const label=`${all[i].entry.yl} \u2014 ${all[i].entry.th}`;
+    setStatus(`${i+1}/${all.length}: ${label}`,'loading');
+    if(bar) bar.style.width=`${Math.round(((i+1)/all.length)*100)}%`;
+    try{
+      const sugs=await genSugsWithRetry(DATA[all[i].idx]);
+      if(!Array.isArray(sugs)||!sugs.length) throw new Error('Empty response from API');
+      DATA[all[i].idx]={...DATA[all[i].idx],s:sugs};
+      ISSUES=doAudit(DATA); fixed++;
+      if(DATA_JSON_FILE_ID) saveToExports(DATA);
+    }catch(e){
+      errors.push({label,err:e.message});
+      setStatus(`Failed: ${label} \u2014 ${e.message}`,'error');
+    }
+    if(i<all.length-1) await sleep(3500);
+  }
+  BATCH_RUNNING=false;
+  ['btn-fix-mismatch','btn-fix-banned'].forEach(id=>{ const b=document.getElementById(id); if(b) b.disabled=false; });
+  const tot=ISSUES.banned.length+ISSUES.incomplete.length+ISSUES.mismatch.length;
+  setStatus(`Done \u2014 ${fixed} fixed, ${errors.length} failed, ${tot} issue${tot!==1?'s':''} remaining`, fixed===0&&errors.length>0?'error':'ok');
+  if(res) res.innerHTML=`<p style="font-size:11px;color:#34d399">${fixed} entries fixed</p>`
+    +(errors.length?`<div style="font-size:11px;color:#f87171;margin-top:4px">${errors.length} failed:<br>
+      ${errors.map(e=>`<span style="padding-left:8px;border-left:2px solid #7f1d1d;display:block;margin-top:3px">${e.label} \u2014 ${e.err}</span>`).join('')}</div>`:'');
+  renderDashboard();
+}
+
+// ─── Browse ───────────────────────────────────────────────────────────────────
+function initBrowseFilters(){
+  const campuses=[...new Set(DATA.map(e=>e.ca))].sort();
+  const yrs=[...new Set(DATA.map(e=>e.yl))].sort((a,b)=>yrN(a)-yrN(b));
+  ['browse-campus','pc-campus'].forEach(id=>{
+    const el=document.getElementById(id); if(!el) return;
+    while(el.options.length>1) el.remove(1);
+    campuses.forEach(c=>el.add(new Option(c,c)));
+  });
+  ['browse-year','pc-year'].forEach(id=>{
+    const el=document.getElementById(id); if(!el) return;
+    while(el.options.length>1) el.remove(1);
+    yrs.forEach(y=>el.add(new Option(y,y)));
+  });
+  renderBrowse();
+}
+
+function renderBrowse(){
+  const ca=document.getElementById('browse-campus')?.value||'';
+  const yr=document.getElementById('browse-year')?.value||'';
+  const q=(document.getElementById('browse-search')?.value||'').toLowerCase();
+  const set=issueIdxSet();
+  const filtered=DATA.map((e,idx)=>({e,idx})).filter(({e})=>{
+    if(ca&&e.ca!==ca) return false;
+    if(yr&&e.yl!==yr) return false;
+    if(q&&!e.th?.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  document.getElementById('browse-count').textContent=`${filtered.length} entries`;
+  document.getElementById('browse-list').innerHTML=filtered.map(({e,idx})=>{
+    const hi=set.has(idx);
+    return `<div onclick="openEntry(${idx})" style="display:flex;align-items:center;gap:10px;padding:9px 14px;background:${hi?'#1a1208':'#111'};border:1px solid ${hi?'#44300a':'#1e1e1e'};border-radius:6px;cursor:pointer;margin-bottom:5px"
+      onmouseover="this.style.background='${hi?'#201508':'#161616'}'" onmouseout="this.style.background='${hi?'#1a1208':'#111'}'">
+      ${hi?'<span style="font-size:11px;color:#fb923c">!</span>':''}
+      <span style="font-size:11px;color:#525252;width:100px;flex-shrink:0">${e.ca}</span>
+      <span style="font-size:11px;color:${caColor(e.ca)};width:62px;flex-shrink:0">${e.yl}</span>
+      <span style="font-size:12px;flex:1">${e.th}</span>
+      <span style="font-size:11px;color:#525252">${(e.s||[]).length}/5 ›</span>
+    </div>`;
+  }).join('');
+}
+
+// ─── Entry detail ─────────────────────────────────────────────────────────────
+function openEntry(idx){
+  CURRENT_ENTRY_IDX=idx;
+  EDIT_MODE=false;
+  document.querySelectorAll('.tab-panel').forEach(p=>p.style.display='none');
+  document.getElementById('entry-detail').style.display='block';
+  renderEntryDetail();
+}
+
+function closeDetail(){
+  CURRENT_ENTRY_IDX=null;
+  document.getElementById('entry-detail').style.display='none';
+  const activeTab=document.querySelector('#header .btn-tab.active');
+  if(activeTab){
+    const t=activeTab.dataset.tab;
+    document.getElementById('tab-'+t).style.display='block';
+    if(t==='browse') renderBrowse();
+    if(t==='audit') renderAudit();
+  } else {
+    document.getElementById('tab-dashboard').style.display='block';
+  }
+  renderDashboard();
+}
+
+function renderEntryDetail(){
+  const idx=CURRENT_ENTRY_IDX;
+  const entry=DATA[idx];
+  const yn=yrN(entry.yl);
+  const sugs=entry.s||[];
+  const entIssues=allIssues().filter(i=>i.idx===idx);
+
+  // Header
+  document.getElementById('detail-header').innerHTML=`
+    <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:14px">
+      <div style="flex:1">
+        <h3 style="font-family:system-ui,sans-serif;font-weight:600;font-size:17px">${entry.th}</h3>
+        <p style="font-size:12px;color:#525252;margin-top:3px">${entry.ca} · ${entry.yl}</p>
+        ${entry.ci?`<p style="font-size:11px;color:#525252;margin-top:6px;font-style:italic">${entry.ci}</p>`:''}
+      </div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end">
+        ${entIssues.length?entIssues.map(i=>`<span class="badge badge-${i.type==='duplicate'?'mismatch':i.type}">${i.type}</span>`).join(''):'<span style="font-size:11px;color:#34d399">no issues</span>'}
+      </div>
+    </div>
+    <span class="label">current suggestions (${sugs.length}/5)</span>
+    <div id="sug-rows-list">${sugs.length?sugs.map((s,i)=>sugRowHTML(s,yn,idx,i)).join(''):'<p style="font-size:12px;color:#525252;font-style:italic">no suggestions yet</p>'}</div>`;
+
+  // Manual form
+  document.getElementById('btn-edit-toggle').textContent='edit';
+  document.getElementById('manual-form').style.display='none';
+  renderManualForm(idx, yn);
+
+  // Reset planner/gen results
+  document.getElementById('planner-single-result').innerHTML='';
+  document.getElementById('gen-all-result').innerHTML='';
+  document.getElementById('btn-gen-all').style.display='inline-block';
+  document.getElementById('btn-gen-all').textContent=`generate 5 for ${entry.yl}`;
+}
+
+function sugRowHTML(sug, yn, entryIdx, sugIdx){
+  const c=checkTool(sug.t||'',yn);
+  const cls=c.ok?'sug-ok':'sug-'+c.type;
+  const tcol=c.ok?'#86efac':c.type==='banned'?'#fca5a5':'#d6d3d1';
+  const uid=`sug-${entryIdx}-${sugIdx}`;
+  return `<div class="sug-row" id="${uid}">
+    <div class="sug-main ${cls}">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:11px;color:${tcol};font-weight:500;flex:1">${c.ok?'+ ':'! '}${escH(sug.t)}</span>
+        ${!c.ok?`<span class="badge badge-${c.type}">${c.type}</span>`:''}
+        <button class="btn-sm" onclick="toggleFeedback('${uid}')">feedback</button>
+      </div>
+      ${!c.ok?`<p style="font-size:11px;color:${tcol};margin-top:3px;opacity:.8">${c.msg}</p>`:''}
+      <p style="font-size:11px;color:#737373;margin-top:4px;line-height:1.5">${escH(sug.d)}</p>
+    </div>
+    <div class="sug-fb" id="${uid}-fb" style="display:none">
+      <textarea class="inp" id="${uid}-fbtxt" rows="2" placeholder="e.g. make it more hands-on, try a different tool, connect more to the inquiry…" style="display:block;resize:vertical;margin-bottom:8px;line-height:1.5"></textarea>
+      <button class="btn-pri" style="font-size:10px" onclick="doRegenSug(${entryIdx},${sugIdx},'${uid}')">regenerate this suggestion</button>
+      <div id="${uid}-regen-result" style="margin-top:10px"></div>
+    </div>
+  </div>`;
+}
+
+function toggleFeedback(uid){
+  const fb=document.getElementById(uid+'-fb');
+  if(fb) fb.style.display=fb.style.display==='none'?'block':'none';
+}
+
+async function doRegenSug(entryIdx, sugIdx, uid){
+  const entry=DATA[entryIdx];
+  const oldSug=entry.s[sugIdx];
+  const fb=document.getElementById(uid+'-fbtxt')?.value||'';
+  const btn=document.querySelector(`#${uid} .sug-fb .btn-pri`);
+  const resEl=document.getElementById(uid+'-regen-result');
+  btn.disabled=true; btn.textContent='regenerating…';
+  resEl.innerHTML='';
+  try{
+    const newSug=await regenOneSug(entry,oldSug,fb);
+    const yn=yrN(entry.yl);
+    const c=checkTool(newSug.t||'',yn);
+    const bgCls=c.ok?'regen-ok':'regen-err';
+    const tcol=c.ok?'#86efac':'#d6d3d1';
+    resEl.innerHTML=`
+      <p style="font-size:10px;color:${c.ok?'#34d399':'#f87171'};letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">${c.ok?'replacement preview':'replacement — has issue'}</p>
+      <div class="regen-preview ${bgCls}">
+        <p style="font-size:11px;color:${tcol};font-weight:500">${escH(newSug.t)}</p>
+        ${!c.ok?`<p style="font-size:10px;color:${tcol};margin-top:2px">${c.msg}</p>`:''}
+        <p style="font-size:11px;color:#737373;margin-top:3px;line-height:1.5">${escH(newSug.d)}</p>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <button class="btn-pri" style="font-size:10px" onclick='applyRegenSug(${entryIdx},${sugIdx},${JSON.stringify(newSug).replace(/'/g,"&#39;")})'>apply</button>
+        <button class="btn-sm" onclick="document.getElementById('${uid}-regen-result').innerHTML=''">discard</button>
+      </div>`;
+  }catch(e){
+    resEl.innerHTML=`<p style="font-size:11px;color:#f87171">${e.message}</p>`;
+  }
+  btn.disabled=false; btn.textContent='regenerate this suggestion';
+}
+
+function applyRegenSug(entryIdx, sugIdx, newSug){
+  const sugs=[...(DATA[entryIdx].s||[])];
+  sugs[sugIdx]=newSug;
+  applyFix(entryIdx,sugs);
+  renderEntryDetail();
+}
+
+// ─── Gen all sugs ─────────────────────────────────────────────────────────────
+async function genAllSugs(){
+  const idx=CURRENT_ENTRY_IDX;
+  const entry=DATA[idx];
+  const btn=document.getElementById('btn-gen-all');
+  const res=document.getElementById('gen-all-result');
+  btn.style.display='none';
+  res.innerHTML='<p style="font-size:11px;color:#fbbf24">generating\u2026</p>';
+  try{
+    const sugs=await genSugsWithRetry(entry);
+    const yn=yrN(entry.yl);
+    res.innerHTML=`
+      <p style="font-size:10px;color:#34d399;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">preview \u2014 apply to save</p>
+      ${sugs.map((s,i)=>sugRowHTML(s,yn,idx,i)).join('')}
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn-pri" onclick='applyGenAll(${idx},${JSON.stringify(sugs).replace(/'/g,"&#39;")})'>apply all</button>
+        <button class="btn-sm" onclick="resetGenAll()">discard</button>
+      </div>`;
+  }catch(e){
+    res.innerHTML=`<p style="font-size:11px;color:#f87171">${e.message}</p>`;
+    btn.style.display='inline-block';
+  }
+}
+
+function applyGenAll(idx, sugs){ applyFix(idx,sugs); renderEntryDetail(); }
+function resetGenAll(){
+  document.getElementById('gen-all-result').innerHTML='';
+  document.getElementById('btn-gen-all').style.display='inline-block';
+}
+
+// ─── Manual edit ─────────────────────────────────────────────────────────────
+function renderManualForm(idx, yn){
+  const entry=DATA[idx];
+  const sugs=entry.s||[];
+  let html='';
+  for(let i=0;i<5;i++){
+    const s=sugs[i]||{t:'',d:''};
+    const c=s.t.trim()?checkTool(s.t,yn):{ok:true};
+    html+=`<div style="margin-bottom:10px;padding:10px;border-radius:6px;background:${c.ok?'#0f0f0f':IS_BG(c.type)};border:1px solid ${c.ok?'#2a2a2a':IS_BORDER(c.type)}">
+      <p style="font-size:10px;color:#525252;margin-bottom:6px">suggestion ${i+1}</p>
+      <input class="inp" id="manual-t-${i}" value="${escAttr(s.t)}" placeholder="Tool name" style="margin-bottom:6px">
+      <textarea class="inp" id="manual-d-${i}" rows="2" style="display:block;resize:vertical;line-height:1.5" placeholder="One sentence for this unit">${escH(s.d)}</textarea>
+      ${!c.ok?`<p style="font-size:11px;color:${IS_TEXT(c.type)};margin-top:6px">! ${c.msg}</p>`:''}
+    </div>`;
+  }
+  document.getElementById('manual-form').innerHTML=html+`
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btn-pri" onclick="saveManual(${idx})">save</button>
+      <button class="btn-sm" onclick="cancelEdit()">cancel</button>
+    </div>`;
+}
+
+function toggleEdit(){
+  EDIT_MODE=!EDIT_MODE;
+  const form=document.getElementById('manual-form');
+  const btn=document.getElementById('btn-edit-toggle');
+  form.style.display=EDIT_MODE?'block':'none';
+  btn.textContent=EDIT_MODE?'cancel edit':'edit';
+}
+function cancelEdit(){ EDIT_MODE=false; document.getElementById('manual-form').style.display='none'; document.getElementById('btn-edit-toggle').textContent='edit'; }
+function saveManual(idx){
+  const sugs=[];
+  for(let i=0;i<5;i++){
+    const t=document.getElementById(`manual-t-${i}`)?.value.trim()||'';
+    const d=document.getElementById(`manual-d-${i}`)?.value.trim()||'';
+    if(t) sugs.push({t,d});
+  }
+  applyFix(idx,sugs);
+  EDIT_MODE=false;
+  renderEntryDetail();
+}
+
+// ─── Planner check (single) ───────────────────────────────────────────────────
+async function checkSinglePlanner(){
+  const idx=CURRENT_ENTRY_IDX;
+  const entry=DATA[idx];
+  const res=document.getElementById('planner-single-result');
+  if(!getClientId()){
+    res.innerHTML=`<p style="font-size:11px;color:#fbbf24">No Google Client ID set — click ⚙ key in the top bar and add your Client ID.</p>`;
+    return;
+  }
+  res.innerHTML='<p style="font-size:11px;color:#60a5fa">Searching Drive for planner…</p>';
+  try{
+    const units=await loadPlannerContent(entry.ca,entry.yl,msg=>res.innerHTML=`<p style="font-size:11px;color:#60a5fa">${msg}</p>`);
+    const sugs=await doPlannerCheck(entry,msg=>res.innerHTML=`<p style="font-size:11px;color:#60a5fa">${msg}</p>`,units);
+    const yn=yrN(entry.yl);
+    res.innerHTML=`
+      <p style="font-size:10px;color:#60a5fa;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">planner-checked — apply to save</p>
+      ${sugs.map((s,i)=>sugRowHTML(s,yn,idx,i)).join('')}
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn-pri" style="background:#2563eb" onclick='applyPlannerSingle(${idx},${JSON.stringify(sugs).replace(/'/g,"&#39;")})'>apply all</button>
+        <button class="btn-sm" onclick="document.getElementById('planner-single-result').innerHTML=''">discard</button>
+      </div>`;
+  }catch(e){
+    res.innerHTML=`<p style="font-size:11px;color:#f87171;padding:8px;background:#450a0a;border-radius:5px">${e.message}</p>`;
+  }
+}
+
+function applyPlannerSingle(idx, sugs){
+  applyFix(idx,sugs);
+  document.getElementById('planner-single-result').innerHTML='<p style="font-size:11px;color:#34d399">Applied.</p>';
+  renderEntryDetail();
+}
+
+// Cache: plannerKey -> base64 string
+const PLANNER_CACHE = {};
+
+// PLANNER CACHE: stores extracted unit text per "Campus|YearLevel"
+// Format: { "Elsternwick|Prep": { "How We Express Ourselves": "...unit text...", ... } }
+
+async function searchPlannerOnDrive(ca, yl){
+  const CA_CODE = { 'Elsternwick':'EL', 'Glen Waverley':'GW', 'St Kilda':'STK' };
+  const code = CA_CODE[ca];
+  if(!code) throw new Error(`Unknown campus: ${ca}`);
+  const token = await getDriveToken();
+  // Primary search: exact pattern match
+  const q = `name contains '${yl} UOI Planner' and name contains '(${code})' and mimeType='application/pdf' and trashed=false`;
+  let r = await fetch(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id,name)&pageSize=5`,{headers:{'Authorization':'Bearer '+token}});
+  let d = await r.json();
+  if(d.files && d.files.length) return d.files[0];
+  // Fallback: broader search
+  const q2 = `name contains '${yl}' and name contains '(${code})' and mimeType='application/pdf' and trashed=false`;
+  r = await fetch(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q2)}&fields=files(id,name)&pageSize=5`,{headers:{'Authorization':'Bearer '+token}});
+  d = await r.json();
+  if(d.files && d.files.length) return d.files[0];
+  return null;
+}
+
+async function loadPlannerContent(ca, yl, onStatus){
+  const cacheKey=`${ca}|${yl}`;
+  if(PLANNER_CACHE[cacheKey]) return PLANNER_CACHE[cacheKey];
+
+  const file=await searchPlannerOnDrive(ca,yl);
+  if(!file) throw new Error(`No planner found on Drive for ${ca} ${yl}`);
+
+  onStatus(`Downloading ${file.name}…`);
+  const fileResp=await driveReadFile(file.id);
+  const buf=await fileResp.arrayBuffer();
+  const bytes=new Uint8Array(buf);
+  let b='';
+  for(let i=0;i<bytes.length;i++) b+=String.fromCharCode(bytes[i]);
+  const b64=btoa(b);
+
+  // Extract unit summaries using a delimiter format (avoids JSON escaping issues)
+  onStatus(`Extracting unit content from ${file.name}…`);
+  const extractPrompt=`This is a ${ca} ${yl} IB PYP unit planner PDF.
+For EACH unit of inquiry in the document, write a summary of the key activities, resources, vocabulary, and assessments mentioned.
+Use this exact format with no variation — one block per unit:
+
+===UNIT: How We Express Ourselves===
+(summary here on one or more lines)
+===END===
+
+===UNIT: Where We Are in Place and Time===
+(summary here)
+===END===
+
+Include every unit found. Use the exact unit theme name from the planner.`;
+
+  const apiResp=await callAPI([{role:'user',content:[
+    {type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},
+    {type:'text',text:extractPrompt}
+  ]}],{maxTokens:4000});
+
+  const raw=apiResp.content.map(b=>b.text||'').join('');
+
+  // Parse the delimiter format into an object
+  const units={};
+  const blocks=raw.split('===UNIT:');
+  for(const block of blocks.slice(1)){
+    const nameEnd=block.indexOf('===');
+    if(nameEnd===-1) continue;
+    const name=block.slice(0,nameEnd).trim();
+    const contentStart=nameEnd+3;
+    const contentEnd=block.indexOf('===END===');
+    const content=contentEnd===-1
+      ? block.slice(contentStart).trim()
+      : block.slice(contentStart,contentEnd).trim();
+    if(name&&content) units[name]=content;
+  }
+
+  if(!Object.keys(units).length) throw new Error('Could not extract unit content from planner — try again');
+  PLANNER_CACHE[cacheKey]=units;
+  return units;
+}
+
+
+
+async function loadPlannerContentWithRetry(ca, yl, onStatus, maxRetries=5){
+  let delay=20000;
+  for(let attempt=0; attempt<=maxRetries; attempt++){
+    try{
+      return await loadPlannerContent(ca, yl, onStatus);
+    }catch(e){
+      const msg=e.message||'';
+      const isRate=msg.includes('rate_limit')||msg.includes('exceeded')||msg.includes('529')||msg.includes('overloaded')||msg.includes('tokens per minute');
+      if(isRate && attempt<maxRetries){
+        onStatus(`Rate limited — waiting ${Math.round(delay/1000)}s before retry (${attempt+1}/${maxRetries})…`);
+        await sleep(delay);
+        delay=Math.min(delay*2, 120000);
+      } else { throw e; }
+    }
+  }
+}
+
+async function doPlannerCheck(entry, onStatus, plannerUnits=null){
+  if(!plannerUnits){
+    plannerUnits = await loadPlannerContent(entry.ca, entry.yl, onStatus);
+  }
+  // Find matching unit text — exact first, then partial
+  let unitText = plannerUnits[entry.th];
+  if(!unitText){
+    const k = Object.keys(plannerUnits).find(k=>
+      k.toLowerCase().includes(entry.th.toLowerCase()) ||
+      entry.th.toLowerCase().includes(k.toLowerCase())
+    );
+    unitText = k ? plannerUnits[k] : null;
+  }
+  if(!unitText) return entry.s||[]; // unit not found — return unchanged
+
+  // Live elapsed timer so user knows it's working
+  let elapsed=0;
+  const ticker=setInterval(()=>{ elapsed++; onStatus(`Checking against planner… (${elapsed}s)`); },1000);
+  try{
+    const prompt=`Check these tech suggestions against this unit planner content.
+Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"
+Planner content: ${unitText}
+Current suggestions:
+${(entry.s||[]).map((s,i)=>`${i+1}. ${s.t}: ${s.d}`).join('\n\n')}
+Tweak descriptions that are too generic — ground them in specific planner content. Keep the same tool names, only update descriptions where needed. Preserve suggestions already referencing planner-specific content.
+Return ONLY: [{"t":"Tool Name","d":"revised or unchanged description"},...]`;
+    const resp=await callAPI([{role:'user',content:prompt}],{maxTokens:1500});
+    const raw=resp.content.map(b=>b.text||'').join('');
+    const si=raw.indexOf('['), ei=raw.lastIndexOf(']');
+    if(si===-1||ei===-1) throw new Error('No JSON array in response');
+    return JSON.parse(raw.slice(si,ei+1));
+  } finally {
+    clearInterval(ticker);
+  }
+}
+
+
+
+
+
+async function doPlannerCheckWithRetry(entry, onStatus, plannerUnits=null, maxRetries=4){
+  let delay = 15000;
+  for(let attempt=0; attempt<=maxRetries; attempt++){
+    try{
+      return await doPlannerCheck(entry, onStatus, plannerUnits);
+    }catch(e){
+      const msg = e.message||'';
+      const isRate = msg.includes('rate_limit')||msg.includes('exceeded')||msg.includes('529')||msg.includes('overloaded')||msg.includes('tokens per minute');
+      if(isRate && attempt < maxRetries){
+        onStatus(`Rate limited — waiting ${Math.round(delay/1000)}s before retry (${attempt+1}/${maxRetries})…`);
+        await sleep(delay);
+        delay = Math.min(delay * 1.8, 90000);
+      } else { throw e; }
+    }
+  }
+}
+
+async function runPlannerCheck(){
+  const ca=document.getElementById('pc-campus')?.value||'';
+  const yr=document.getElementById('pc-year')?.value||'';
+  const targets=DATA.map((e,idx)=>({e,idx})).filter(({e})=>{
+    if(ca&&e.ca!==ca)return false; if(yr&&e.yl!==yr)return false; return true;
+  });
+  if(!targets.length) return;
+  const btn=document.getElementById('btn-planner-run'); btn.disabled=true;
+  const prog=document.getElementById('pc-progress'); prog.style.display='block';
+  const bar=document.getElementById('pc-progress-bar');
+  const lbl=document.getElementById('pc-progress-label');
+  const res=document.getElementById('pc-results'); res.innerHTML='';
+  let updated=0, failed=0, done=0;
+
+  // Group by campus+year so planner PDF is extracted only once per group
+  const groups={};
+  targets.forEach(t=>{
+    const k=`${t.e.ca}|${t.e.yl}`;
+    if(!groups[k]) groups[k]=[];
+    groups[k].push(t);
+  });
+
+  for(const key of Object.keys(groups)){
+    const group=groups[key];
+    const {ca:gCa,yl:gYl}=group[0].e;
+
+    // Extract planner content once for the whole group
+    let plannerUnits=null;
+    try{
+      plannerUnits=await loadPlannerContentWithRetry(gCa,gYl,msg=>{lbl.textContent=msg;});
+    }catch(err){
+      for(const {e,idx} of group){
+        failed++; done++;
+        res.innerHTML+=`<div class="pc-row pc-err">
+          <span style="font-size:11px;color:#fca5a5">! failed</span>
+          <span style="font-size:11px;color:#737373;width:100px;flex-shrink:0">${e.ca}</span>
+          <span style="font-size:11px;color:${caColor(e.ca)};width:62px;flex-shrink:0">${e.yl}</span>
+          <span style="font-size:12px;flex:1">${e.th}</span>
+          <span style="font-size:11px;color:#737373">${err.message}</span>
+        </div>`;
+      }
+      bar.style.width=`${Math.round((done/targets.length)*100)}%`;
+      continue;
+    }
+
+    // Process each entry using cached text — no repeated PDF sending
+    for(let gi=0;gi<group.length;gi++){
+      const {e,idx}=group[gi];
+      done++;
+      bar.style.width=`${Math.round((done/targets.length)*100)}%`;
+      const lbl2=`${done}/${targets.length}: ${e.yl} \u2014 ${e.th}`;
+      lbl.textContent=lbl2;
+      try{
+        const sugs=await doPlannerCheckWithRetry(e,msg=>{lbl.textContent=`${lbl2} (${msg})`;},plannerUnits);
+        DATA[idx]={...DATA[idx],s:sugs};
+        ISSUES=doAudit(DATA);
+        if(DATA_JSON_FILE_ID) saveToExports(DATA);
+        updated++;
+        res.innerHTML+=`<div class="pc-row pc-ok" onclick="openEntry(${idx})">
+          <span style="font-size:11px;color:#86efac">+ updated</span>
+          <span style="font-size:11px;color:#737373;width:100px;flex-shrink:0">${e.ca}</span>
+          <span style="font-size:11px;color:${caColor(e.ca)};width:62px;flex-shrink:0">${e.yl}</span>
+          <span style="font-size:12px;flex:1">${e.th}</span>
+          <span style="color:#525252">\u203a</span>
+        </div>`;
+      }catch(err){
+        failed++;
+        res.innerHTML+=`<div class="pc-row pc-err">
+          <span style="font-size:11px;color:#fca5a5">! failed</span>
+          <span style="font-size:11px;color:#737373;width:100px;flex-shrink:0">${e.ca}</span>
+          <span style="font-size:11px;color:${caColor(e.ca)};width:62px;flex-shrink:0">${e.yl}</span>
+          <span style="font-size:12px;flex:1">${e.th}</span>
+          <span style="font-size:11px;color:#737373">${err.message}</span>
+        </div>`;
+      }
+      if(gi<group.length-1) await sleep(3500);
+    }
+    await sleep(65000); // wait >1 min between groups so PDF rate limit resets
+  }
+  btn.disabled=false;
+  const tot=ISSUES.banned.length+ISSUES.incomplete.length+ISSUES.mismatch.length;
+  setStatus(`Planner check done \u2014 ${updated} updated, ${failed} failed, ${tot} issue${tot!==1?'s':''} remaining`);
+}
+
+
+
+
+// ─── Audit ────────────────────────────────────────────────────────────────────
+function computeStats(){
+  const toolCounts={},campusTools={},yearTools={}; let total=0;
+  DATA.forEach(e=>{
+    (e.s||[]).forEach(s=>{
+      const t=s.t||'Unknown';
+      toolCounts[t]=(toolCounts[t]||0)+1;
+      if(!campusTools[e.ca]) campusTools[e.ca]={};
+      campusTools[e.ca][t]=(campusTools[e.ca][t]||0)+1;
+      if(!yearTools[e.yl]) yearTools[e.yl]={};
+      yearTools[e.yl][t]=(yearTools[e.yl][t]||0)+1;
+      total++;
+    });
+  });
+  const sorted=Object.entries(toolCounts).sort((a,b)=>b[1]-a[1]).map(([name,count])=>({name,count,pct:total?Math.round(count/total*100):0}));
+  return {sorted,campusTools,yearTools,total,toolCounts};
+}
+
+function renderAudit(){
+  const stats=computeStats();
+  document.getElementById('audit-stats').innerHTML=[
+    {label:'total entries',val:DATA.length},
+    {label:'unique tools',val:stats.sorted.length},
+    {label:'total suggestions',val:stats.total},
+  ].map(({label,val})=>`<div class="stat-card"><div class="stat-num">${val}</div><div class="stat-label">${label}</div></div>`).join('');
+  renderAuditChart();
+}
+
+function renderAuditChart(){
+  const stats=computeStats();
+  const container=document.getElementById('audit-chart');
+  if(CURRENT_AUDIT_VIEW==='tools'){
+    const top=stats.sorted.slice(0,30);
+    const mx=top[0]?.count||1;
+    container.innerHTML=`<div class="card">
+      <span class="label">tool frequency — click to see entries</span>
+      ${top.map(({name,count,pct})=>{
+        const isSel=SELECTED_AUDIT_TOOL===name;
+        const entries=isSel?DATA.map((e,idx)=>({e,idx})).filter(({e})=>(e.s||[]).some(s=>s.t===name)):[];
+        return `<div style="margin-bottom:10px;cursor:pointer" onclick="toggleAuditTool('${escAttr(name)}')">
+          <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px">
+            <span style="color:${isSel?'#34d399':'#e5e5e5'}">${escH(name)}</span>
+            <span style="color:#525252">${count}× (${pct}%)</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:${(count/mx)*100}%;background:${isSel?'#34d399':'#2a6349'}"></div></div>
+          ${isSel?`<div class="tool-entries">${entries.map(({e,idx})=>`
+            <div class="tool-entry-row" onclick="event.stopPropagation();openEntry(${idx})">
+              <span style="color:#525252;width:95px;flex-shrink:0">${e.ca}</span>
+              <span style="color:${caColor(e.ca)};width:58px;flex-shrink:0">${e.yl}</span>
+              <span style="color:#a3a3a3">${e.th}</span>
+            </div>`).join('')}</div>`:''}
+        </div>`;
+      }).join('')}
+    </div>`;
+  } else if(CURRENT_AUDIT_VIEW==='campus'){
+    const campuses=[...new Set(DATA.map(e=>e.ca))].sort();
+    container.innerHTML=campuses.map(ca=>{
+      const tools=stats.campusTools[ca]||{};
+      const sorted=Object.entries(tools).sort((a,b)=>b[1]-a[1]).slice(0,15);
+      const total=Object.values(tools).reduce((a,b)=>a+b,0);
+      const mx=sorted[0]?.[1]||1;
+      return `<div class="card" style="margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <div style="width:8px;height:8px;border-radius:50%;background:${caColor(ca)}"></div>
+          <h4 style="font-family:system-ui,sans-serif;font-weight:600;font-size:14px">${ca}</h4>
+          <span style="font-size:11px;color:#525252">${total} suggestions</span>
+        </div>
+        ${sorted.map(([name,count])=>`
+          <div style="margin-bottom:8px">
+            <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>${escH(name)}</span><span style="color:#525252">${count}×</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:${(count/mx)*100}%;background:${caColor(ca)};opacity:.7"></div></div>
+          </div>`).join('')}
+      </div>`;
+    }).join('');
+  } else {
+    // Campus filter buttons + "all" option
+    const campuses=[...new Set(DATA.map(e=>e.ca))].sort();
+    const filterBtns=`<div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">
+      <button class="btn-tab${AUDIT_YEAR_CAMPUS===''?' active':''}" onclick="setAuditYearCampus('')">all campuses</button>
+      ${campuses.map(ca=>`<button class="btn-tab${AUDIT_YEAR_CAMPUS===ca?' active':''}" onclick="setAuditYearCampus('${escAttr(ca)}')" style="color:${caColor(ca)};${AUDIT_YEAR_CAMPUS===ca?`border-color:${caColor(ca)};background:#1a1a1a`:''}">${ca}</button>`).join('')}
+    </div>`;
+
+    // Filter data by selected campus
+    const filteredData = AUDIT_YEAR_CAMPUS ? DATA.filter(e=>e.ca===AUDIT_YEAR_CAMPUS) : DATA;
+    const yearTools={};
+    filteredData.forEach(e=>{
+      (e.s||[]).forEach(s=>{
+        const t=s.t||'Unknown';
+        if(!yearTools[e.yl]) yearTools[e.yl]={};
+        yearTools[e.yl][t]=(yearTools[e.yl][t]||0)+1;
+      });
+    });
+
+    const yrs=YR.filter(yr=>yearTools[yr]);
+    container.innerHTML=filterBtns+yrs.map(yr=>{
+      const tools=yearTools[yr]||{};
+      const sorted=Object.entries(tools).sort((a,b)=>b[1]-a[1]).slice(0,12);
+      const total=Object.values(tools).reduce((a,b)=>a+b,0);
+      const mx=sorted[0]?.[1]||1;
+      const barCol=AUDIT_YEAR_CAMPUS?caColor(AUDIT_YEAR_CAMPUS):'#818cf8';
+      return `<div class="card" style="margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <h4 style="font-family:system-ui,sans-serif;font-weight:600;font-size:14px;color:#34d399">${yr}</h4>
+          <span style="font-size:11px;color:#525252">${total} suggestions${AUDIT_YEAR_CAMPUS?' ('+AUDIT_YEAR_CAMPUS+')':''}</span>
+        </div>
+        ${sorted.map(([name,count])=>`
+          <div style="margin-bottom:8px">
+            <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>${escH(name)}</span><span style="color:#525252">${count}×</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:${(count/mx)*100}%;background:${barCol};opacity:.7"></div></div>
+          </div>`).join('')}
+      </div>`;
+    }).join('');
+  }
+}
+
+function toggleAuditTool(name){
+  SELECTED_AUDIT_TOOL=SELECTED_AUDIT_TOOL===name?null:name;
+  renderAuditChart();
+}
+
+function setAuditYearCampus(ca){
+  AUDIT_YEAR_CAMPUS=ca;
+  renderAuditChart();
+}
+
+async function applyAuditFeedback(){
+  const fb=document.getElementById('audit-feedback').value.trim();
+  if(!fb) return;
+  const btn=document.getElementById('btn-audit-apply');
+  btn.disabled=true; btn.textContent='applying…';
+  const stats=computeStats();
+  setStatus('Analysing feedback…','loading');
+  try{
+    const prompt=`You are adjusting digital learning tool suggestions for Wesley College based on feedback.
+Current distribution (${stats.total} total across ${DATA.length} entries):
+${stats.sorted.map(({name,count,pct})=>`- ${name}: ${count} uses (${pct}%)`).join('\n')}
+Feedback: "${fb}"
+Identify which entry indices (0-based) should be regenerated to address this. Return ONLY a JSON array of integers, e.g. [3,7,12].
+Entries:
+${DATA.map((e,i)=>`${i}: ${e.ca} | ${e.yl} | ${e.th}`).join('\n')}`;
+    const d=await callAPI([{role:'user',content:prompt}],{maxTokens:1000,system:'Return only a JSON array of integers. No explanation.'});
+    const txt=d.content.map(b=>b.text||'').join('').trim();
+    const m=txt.match(/\[[\d,\s]*\]/);
+    if(!m) throw new Error('Could not parse response');
+    const indices=JSON.parse(m[0]).filter(i=>i>=0&&i<DATA.length);
+    if(!indices.length) throw new Error('No entries identified');
+    setStatus(`Regenerating ${indices.length} entries…`,'loading');
+    let fixed=0;
+    for(let i=0;i<indices.length;i++){
+      try{
+        const sugs=await genSugs(DATA[indices[i]]);
+        DATA[indices[i]]={...DATA[indices[i]],s:sugs};
+        ISSUES=doAudit(DATA); fixed++;
+        setStatus(`Regenerating ${i+1}/${indices.length}…`,'loading');
+      }catch{}
+    }
+    setStatus(`Done — ${fixed}/${indices.length} entries updated`);
+    document.getElementById('audit-feedback').value='';
+    renderAudit();
+  }catch(e){ setStatus(`Feedback failed: ${e.message}`,'error'); }
+  btn.disabled=false; btn.textContent='apply feedback across all entries';
+}
+
+// ─── Download ─────────────────────────────────────────────────────────────────
+function downloadJSON(){
+  const b=new Blob([JSON.stringify(DATA,null,2)],{type:'application/json'});
+  const u=URL.createObjectURL(b); const a=document.createElement('a');
+  a.href=u; a.download='data_patched.json'; a.click(); URL.revokeObjectURL(u);
+  if(DATA_JSON_FILE_ID) saveToExports(DATA);
+}
+
+// ─── Utils ────────────────────────────────────────────────────────────────────
+function escH(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escAttr(s){ return String(s||'').replace(/'/g,"&#39;").replace(/"/g,'&quot;'); }
+function IS_BG(type){ return type==='banned'?'#450a0a':'#1c1917'; }
+function IS_BORDER(type){ return type==='banned'?'#7f1d1d':'#44403c'; }
+function IS_TEXT(type){ return type==='banned'?'#fca5a5':'#d6d3d1'; }
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+(function init(){
+  const key=getKey();
+  if(key){ showScreen('screen-load'); }
+  else { showScreen('screen-apikey'); }
+  document.getElementById('api-key-input').addEventListener('keydown',e=>{ if(e.key==='Enter') saveApiKey(); });
+  // Pre-bake the client ID if not already set
+  if(!getClientId()) localStorage.setItem('dla_client_id','334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleusercontent.com');
+  document.getElementById('client-id-input').value = getClientId();
+})();
+</script>
+</body>
+</html>
