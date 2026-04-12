@@ -126,7 +126,7 @@ window.fetch = async function() {
     const body = JSON.parse(opts.body);
     const key = opts.headers['x-api-key'] || document.getElementById('api-key-input').value || localStorage.getItem('dla_api_key');
     
-    const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=' + key;
+    const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro-latest:generateContent?key=' + key;
     const sysText = body.system || "";
 const usrText = Array.isArray(body.messages[0].content) ? body.messages[0].content.map(c => c.text).join('\\n') : body.messages[0].content;
     
