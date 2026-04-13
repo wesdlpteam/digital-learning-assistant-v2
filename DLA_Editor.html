@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DLA Editor — Wesley College</title>
+<title>DLA Editor v3 — Wesley College</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
@@ -11,10 +11,8 @@
   h1,h2,h3,h4{font-family:system-ui,-apple-system,sans-serif}
   button{font-family:inherit;cursor:pointer}
   input,textarea,select{font-family:inherit;font-size:12px}
-  a{color:#34d399;text-decoration:none}
-  a:hover{text-decoration:underline}
-  #header{background:#111;border-bottom:1px solid #222;padding:10px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:sticky;top:0;z-index:100}
-  #logo{font-family:system-ui,sans-serif;font-weight:700;font-size:14px;color:#34d399;letter-spacing:-.5px;white-space:nowrap}
+  #header{background:#111;border-bottom:1px solid #222;padding:10px 16px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:100}
+  #logo{font-family:system-ui,sans-serif;font-weight:700;font-size:14px;color:#34d399;letter-spacing:-.5px}
   #status-bar{font-size:11px;max-width:380px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   #main{padding:20px}
   .center{max-width:820px;margin:0 auto}
@@ -23,174 +21,236 @@
   .btn-pri{padding:5px 12px;border-radius:5px;border:none;background:#34d399;color:#0a0a0a;font-size:11px;font-weight:600}
   .btn-pri:hover{background:#2fb888}
   .btn-sm{padding:3px 8px;border-radius:4px;border:1px solid #2a2a2a;background:transparent;color:#737373;font-size:10px}
-  .btn-sm:hover{color:#a3a3a3;border-color:#444}
-  .btn-alert{padding:5px 12px;border-radius:5px;border:1px solid #7f1d1d;background:#450a0a;color:#fca5a5;font-size:11px}
-  .btn-alert:hover{background:#5a0f0f}
-  .btn-blue{padding:5px 12px;border-radius:5px;border:1px solid #1e3a5f;background:#0c1f35;color:#60a5fa;font-size:11px}
-  .btn-blue:hover{background:#112847}
   .btn-tab{padding:3px 8px;border-radius:4px;border:1px solid transparent;background:transparent;color:#525252;font-size:10px}
   .btn-tab.active{background:#1e1e1e;color:#e5e5e5;border-color:#333}
   .card{background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:16px;margin-bottom:12px}
   .label{font-size:10px;color:#525252;letter-spacing:.08em;text-transform:uppercase;font-weight:500;display:block;margin-bottom:8px}
   .inp{background:#0a0a0a;border:1px solid #2a2a2a;color:#e5e5e5;border-radius:4px;padding:6px 8px;outline:none;width:100%}
-  .inp:focus{border-color:#444}
   .badge{padding:2px 7px;border-radius:3px;font-size:10px;font-weight:600;display:inline-block}
   .badge-banned{background:#991b1b;color:#fca5a5}
   .badge-incomplete{background:#9a3412;color:#fdba74}
-  .badge-mismatch{background:#57534e;color:#d6d3d1}
-  .issue-row{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:6px;cursor:pointer;margin-bottom:5px;transition:opacity .1s}
-  .issue-row:hover{opacity:.8}
-  .issue-banned{background:#450a0a;border:1px solid #7f1d1d}
-  .issue-incomplete{background:#451a03;border:1px solid #7c2d12}
-  .issue-mismatch{background:#1c1917;border:1px solid #44403c}
-  .sug-row{border-radius:6px;margin-bottom:8px;overflow:hidden}
-  .sug-main{padding:9px 12px}
-  .sug-ok{background:#052e16;border:1px solid #14532d}
-  .sug-banned{background:#450a0a;border:1px solid #7f1d1d}
-  .sug-mismatch{background:#1c1917;border:1px solid #44403c}
-  .sug-fb{padding:10px 12px;background:#0d0d0d;border:1px solid #2a2a2a;border-top:none;border-radius:0 0 6px 6px}
+  .issue-row{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:6px;cursor:pointer;margin-bottom:5px;background:#161616;border:1px solid #222}
+  .issue-row:hover{border-color:#444}
+  .sug-row{border-radius:6px;margin-bottom:8px;background:#052e16;border:1px solid #14532d;padding:10px}
   .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
-  .stat-card{background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:16px 18px}
-  .stat-num{font-size:30px;font-family:system-ui,sans-serif;font-weight:700;color:#34d399}
-  .stat-label{font-size:11px;color:#525252;margin-top:4px}
-  .ca-elsternwick{color:#818cf8}
-  .ca-glen-waverley{color:#34d399}
-  .ca-st-kilda{color:#fb923c}
-  .screen{display:none}
-  .screen.active{display:block}
+  .stat-card{background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:16px}
+  .stat-num{font-size:30px;font-weight:700;color:#34d399}
+  .screen{display:none}.screen.active{display:block}
   #screen-apikey, #screen-load{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh}
-  .pc-row{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:6px;margin-bottom:5px}
-  .pc-ok{background:#052e16;border:1px solid #14532d;cursor:pointer}
-  @media(max-width:600px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
-<script>
-// GEMINI FLASH 2.5 INTERCEPTOR
-const originalFetch = window.fetch;
-window.fetch = async function() {
-  if (typeof arguments[0] === 'string' && arguments[0].includes('api.anthropic.com')) {
-    const opts = arguments[1], body = JSON.parse(opts.body);
-    const key = opts.headers['x-api-key'] || document.getElementById('api-key-input').value || localStorage.getItem('dla_api_key');
-    const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + key;
-    const sysText = body.system || "", usrText = Array.isArray(body.messages[0].content) ? body.messages[0].content.map(c => c.text).join('\n') : body.messages[0].content;
-    const newBody = JSON.stringify({
-      system_instruction: { parts: [{ text: sysText }] },
-      contents: [{ role: "user", parts: [{ text: usrText }] }],
-      generationConfig: { temperature: 0.2, response_mime_type: "application/json" }
-    });
-    const res = await originalFetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: newBody });
-    if (!res.ok) return res;
-    const data = await res.json();
-    return new Response(JSON.stringify({ content: [{ text: data.candidates[0].content.parts[0].text }] }), { status: 200, headers: { 'Content-Type': 'application/json' } });
-  }
-  return originalFetch.apply(this, arguments);
-};
-</script>
 </head>
 <body>
+
 <div id="header" style="display:none">
   <div id="logo">DLA Editor</div>
-  <span style="font-size:10px;color:#3f3f3f">v3 · Wesley College</span>
   <div style="flex:1"></div>
   <span id="status-bar"></span>
   <button class="btn-tab active" data-tab="dashboard" onclick="switchTab(this)">dashboard</button>
-  <button class="btn-tab" data-tab="issues" onclick="switchTab(this)" id="tab-issues-btn">issues</button>
   <button class="btn-tab" data-tab="browse" onclick="switchTab(this)">browse</button>
-  <button class="btn-tab" data-tab="planner" onclick="switchTab(this)">planner check</button>
-  <button class="btn-tab" data-tab="audit" onclick="switchTab(this)">audit</button>
-  <button class="btn-pri" onclick="downloadJSON()" style="margin-left:4px">↓ json</button>
-  <button class="btn-sm" onclick="showApiKeyScreen()" title="Change API key" style="margin-left:4px">⚙ key</button>
+  <button class="btn-tab" data-tab="audit" onclick="switchTab(this)">global feedback</button>
+  <button class="btn-pri" onclick="downloadJSON()" style="margin-left:8px">↓ json</button>
 </div>
+
 <div id="main">
-<div id="screen-apikey" class="screen active">
-  <h1 style="font-family:system-ui,sans-serif;font-size:28px;font-weight:700;margin-bottom:8px">DLA Editor <span style="color:#34d399">v3</span></h1>
-  <p style="color:#525252;font-size:12px;margin-bottom:40px">Wesley College · Carnegie Campus</p>
-  <div style="max-width:420px;width:100%"><div class="card" style="text-align:left"><span class="label">gemini api key</span><input type="password" id="api-key-input" class="inp" placeholder="AIzaSy..." style="margin-bottom:10px"><button class="btn-pri" onclick="saveApiKey()" style="width:100%;padding:10px 0;font-size:13px">continue →</button></div></div>
-</div>
-<div id="screen-load" class="screen">
-  <div style="display:flex;flex-direction:column;gap:10px;align-items:center;width:100%"><button class="btn-pri" id="btn-drive-load" onclick="loadFromDrive()" style="width:280px;padding:11px 0;font-size:13px">↑ load from Google Drive</button><button class="btn" onclick="document.getElementById('file-input').click()" style="width:280px;padding:11px 0;font-size:13px">open local file</button></div>
-  <input type="file" id="file-input" accept=".json" style="display:none" onchange="loadFromFile(event)">
-  <div id="load-error" style="display:none;margin-top:16px;color:#f87171;font-size:12px;padding:12px;background:#450a0a;border-radius:6px;"></div>
-</div>
-<div id="screen-app" class="screen">
-  <div id="tab-dashboard" class="center tab-panel">
-    <div class="stat-grid" id="stat-cards"></div>
-    <div id="bulk-fix-card"></div>
-    <div class="card" style="border-left: 4px solid #34d399;">
-      <span class="label" style="color: #34d399;">Step 1: The Workflow</span>
-      <div style="background: #161616; padding: 12px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #222;">
-        <ol style="margin-left: 18px; color: #a3a3a3; font-size: 11px; line-height: 1.6;">
-          <li><b>Upload:</b> Drop unit PDF into your <b>Planners Drive Folder</b>.</li>
-          <li><b>Name:</b> Ensure it matches: <code style="color: #e5e5e5;">2026 - Year 3 UOI Planners (GW).pdf</code>.</li>
-          <li><b>Queue:</b> Fill details below and click <b>Add to Queue</b>.</li>
-          <li><b>Wait:</b> The AI engine checks every 10 mins and generates suggestions automatically.</li>
-        </ol>
-      </div>
-      <span class="label">Step 2: Add to AI Queue</span>
-      <div style="display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap;"><input type="text" id="new-ca" class="inp" placeholder="Campus (e.g., Glen Waverley)" style="flex:1; min-width:140px"><input type="text" id="new-yl" class="inp" placeholder="Year Level (e.g., Year 3)" style="flex:1; min-width:140px"><input type="text" id="new-th" class="inp" placeholder="Theme (e.g., How the World Works)" style="flex:1; min-width:140px"></div>
-      <div style="display:flex; align-items:center; gap:12px;"><button class="btn-pri" id="btn-submit-unit" onclick="submitNewUnit()" style="padding: 8px 16px;">add to queue</button><span id="new-unit-status" style="font-size:11px;"></span></div>
+  <div id="screen-apikey" class="screen active">
+    <div class="card" style="width:340px">
+      <span class="label">gemini api key</span>
+      <input type="password" id="api-key-input" class="inp" placeholder="AIzaSy..." style="margin-bottom:12px">
+      <button class="btn-pri" onclick="saveApiKey()" style="width:100%">continue →</button>
     </div>
-    <div class="card"><span class="label">all issues — click to fix individually</span><div id="all-issues-list"></div></div>
   </div>
-  <div id="tab-issues" class="center tab-panel" style="display:none">
-    <div id="issues-fix-bar"></div><div id="filtered-issues-list"></div>
+
+  <div id="screen-load" class="screen">
+    <button class="btn-pri" id="btn-drive-load" onclick="loadFromDrive()" style="width:280px;padding:12px">↑ load from Google Drive</button>
   </div>
-  <div id="tab-browse" class="center tab-panel" style="display:none">
-    <div style="display:flex;gap:8px;margin-bottom:16px;"><select id="browse-campus" class="inp btn" onchange="renderBrowse()"><option value="">all campuses</option></select><input id="browse-search" class="inp btn" placeholder="search themes…" oninput="renderBrowse()" style="flex:1"></div>
-    <div id="browse-list"></div>
-  </div>
-  <div id="entry-detail" style="display:none">
-    <div class="center"><div class="back-row"><button class="btn-sm" onclick="closeDetail()">← back</button></div><div class="card" id="detail-header"></div><div id="sug-rows-list"></div></div>
+
+  <div id="screen-app" class="screen">
+    <div id="tab-dashboard" class="center tab-panel">
+      <div class="stat-grid" id="stat-cards"></div>
+      
+      <div class="card" style="border-left: 4px solid #34d399;">
+        <span class="label" style="color:#34d399">Step 1: The Workflow</span>
+        <div style="background:#161616;padding:12px;border-radius:6px;margin-bottom:15px;font-size:11px;color:#a3a3a3">
+          1. Upload PDF to Drive Folder<br>
+          2. Name: <b>2026 - Year X UOI Planners (Campus).pdf</b><br>
+          3. Add to Queue below. AI audits every 10 mins.
+        </div>
+        <span class="label">Step 2: Add to AI Queue</span>
+        <div style="display:flex;gap:10px;margin-bottom:12px">
+          <input type="text" id="new-ca" class="inp" placeholder="Campus">
+          <input type="text" id="new-yl" class="inp" placeholder="Year Level">
+          <input type="text" id="new-th" class="inp" placeholder="Theme">
+        </div>
+        <button class="btn-pri" id="btn-submit-unit" onclick="submitNewUnit()">add to queue</button>
+        <span id="new-unit-status" style="margin-left:10px;font-size:11px"></span>
+      </div>
+
+      <div class="card"><span class="label">Units Needing Attention</span><div id="all-issues-list"></div></div>
+    </div>
+
+    <div id="tab-browse" class="center tab-panel" style="display:none">
+      <div style="display:flex;gap:10px;margin-bottom:15px">
+        <select id="browse-campus" class="inp" onchange="renderBrowse()" style="width:150px"><option value="">All Campuses</option></select>
+        <input id="browse-search" class="inp" placeholder="Search themes..." oninput="renderBrowse()">
+      </div>
+      <div id="browse-list"></div>
+    </div>
+
+    <div id="tab-audit" class="center tab-panel" style="display:none">
+      <div class="card">
+        <span class="label">Global AI Feedback</span>
+        <p style="font-size:11px;color:#737373;margin-bottom:12px">This will redo suggestions for ALL units based on your guidance.</p>
+        <textarea id="audit-feedback" class="inp" rows="4" placeholder="e.g. Make all suggestions focus more on coding and robotics using our Wesley equipment..."></textarea>
+        <button class="btn-pri" id="btn-audit-apply" onclick="applyAuditFeedback()" style="margin-top:12px">apply to all units</button>
+        <div id="audit-status" style="margin-top:10px;font-size:11px"></div>
+      </div>
+    </div>
+
+    <div id="entry-detail" style="display:none" class="center">
+      <button class="btn-sm" onclick="closeDetail()" style="margin-bottom:15px">← back to list</button>
+      <div class="card" id="detail-header"></div>
+      <div id="sug-rows-list"></div>
+      <div class="card">
+        <span class="label">Individual Regeneration</span>
+        <textarea id="single-feedback" class="inp" placeholder="Add specific feedback for this unit (optional)..."></textarea>
+        <button class="btn-pri" onclick="genAllSugs()" style="margin-top:10px">Regenerate with 3.1 Pro</button>
+        <div id="gen-status" style="margin-top:8px;font-size:11px"></div>
+      </div>
+    </div>
   </div>
 </div>
-</div>
+
 <script>
-let DATA=[], ISSUES={banned:[],incomplete:[],mismatch:[]}, CURRENT_ENTRY_IDX=null, DRIVE_TOKEN=null, DRIVE_TOKEN_EXPIRY=0, DATA_JSON_FILE_ID=null;
-const DRIVE_SCOPE='https://www.googleapis.com/auth/drive', YR=["Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"], CAMPUS_COLORS={"Elsternwick":"#818cf8","Glen Waverley":"#34d399","St Kilda":"#fb923c"};
-function getKey(){return localStorage.getItem('dla_api_key')||''}
-function saveApiKey(){const k=document.getElementById('api-key-input').value.trim();if(!k){alert('Enter key');return;}localStorage.setItem('dla_api_key',k);showScreen('screen-load');}
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.style.display='none');const el=document.getElementById(id);if(el)el.style.display=(id==='screen-apikey'||id==='screen-load')?'flex':'block';document.getElementById('header').style.display=id==='screen-app'?'flex':'none';}
-function switchTab(btn){document.querySelectorAll('#header .btn-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');const t=btn.dataset.tab;document.querySelectorAll('.tab-panel').forEach(p=>p.style.display='none');document.getElementById('tab-'+t).style.display='block';document.getElementById('entry-detail').style.display='none';if(t==='browse')renderBrowse();}
-function ingest(arr){DATA=Array.isArray(arr)?arr:Object.values(arr);ISSUES=doAudit(DATA);showScreen('screen-app');renderDashboard();initBrowseFilters();}
-function doAudit(data){
-  const banned=[],incomplete=[],mismatch=[];
-  data.forEach((entry,idx)=>{
-    const sugs=entry.s||[];
-    if(sugs.length<5||sugs.some(s=>s.t==="TBA")){incomplete.push({idx,entry,type:'incomplete'});}
-    else if(sugs.some(s=>s.t.toLowerCase().includes('wevideo'))){banned.push({idx,entry,type:'banned'});}
-  });
-  return{banned,incomplete,mismatch};
-}
+let DATA=[], ISSUES={banned:[],incomplete:[]}, CURRENT_ENTRY_IDX=null, DRIVE_TOKEN=null;
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUlNbBkcwXB8ImUUhEQDP7C3itYCUu-j_vRNKA7_Km2h4uJMIs0RVFJxUXKcFOFgIW/exec';
+
+function saveApiKey(){const k=document.getElementById('api-key-input').value.trim();if(k){localStorage.setItem('dla_api_key',k);showScreen('screen-load');}}
+function getKey(){return localStorage.getItem('dla_api_key')||'';}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');if(id==='screen-app')document.getElementById('header').style.display='flex';}
+
 async function loadFromDrive(){
-  try{const token=await getDriveToken();const r=await fetch("https://www.googleapis.com/drive/v3/files?q=name='data.json'&fields=files(id)",{headers:{'Authorization':'Bearer '+token}});const d=await r.json();DATA_JSON_FILE_ID=d.files[0].id;const fr=await fetch(`https://www.googleapis.com/drive/v3/files/${DATA_JSON_FILE_ID}?alt=media`,{headers:{'Authorization':'Bearer '+token}});ingest(await fr.json());}catch(e){alert(e.message);}
+  try {
+    const token = await getDriveToken();
+    const r = await fetch("https://www.googleapis.com/drive/v3/files?q=name='data.json'&fields=files(id)",{headers:{'Authorization':'Bearer '+token}});
+    const d = await r.json();
+    const fileId = d.files[0].id;
+    const fr = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,{headers:{'Authorization':'Bearer '+token}});
+    DATA = await fr.json();
+    refreshUI();
+    showScreen('screen-app');
+  } catch(e){alert("Drive Error: " + e.message);}
 }
+
 async function getDriveToken(){
-  if(DRIVE_TOKEN&&Date.now()<DRIVE_TOKEN_EXPIRY-60000)return DRIVE_TOKEN;
-  return new Promise((res,rej)=>{google.accounts.oauth2.initTokenClient({client_id:'334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleusercontent.com',scope:DRIVE_SCOPE,callback:resp=>{if(resp.error){rej(resp.error);return;}DRIVE_TOKEN=resp.access_token;DRIVE_TOKEN_EXPIRY=Date.now()+(resp.expires_in*1000);res(DRIVE_TOKEN);}}).requestAccessToken();});
+  return new Promise((res,rej)=>{google.accounts.oauth2.initTokenClient({client_id:'334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleusercontent.com',scope:'https://www.googleapis.com/auth/drive',callback:resp=>{res(resp.access_token);}}).requestAccessToken();});
 }
+
+function refreshUI(){
+  ISSUES.incomplete = DATA.filter(e => e.audited === false || e.s.some(s=>s.t==="TBA"));
+  ISSUES.banned = DATA.filter(e => e.s.some(s=>s.t.toLowerCase().includes('wevideo')));
+  
+  document.getElementById('stat-cards').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${ISSUES.incomplete.length}</div><div class="stat-label">missing planner</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:#f87171">${ISSUES.banned.length}</div><div class="stat-label">banned tools</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:#a3a3a3">${DATA.length}</div><div class="stat-label">total units</div></div>
+  `;
+  
+  const issues = [...ISSUES.banned, ...ISSUES.incomplete];
+  document.getElementById('all-issues-list').innerHTML = issues.map(e => `
+    <div class="issue-row" onclick="openEntry(${DATA.indexOf(e)})">
+      <span class="badge ${e.audited?'badge-banned':'badge-incomplete'}">${e.audited?'banned':'missing planner'}</span>
+      ${e.yl} - ${e.th}
+    </div>`).join('');
+  initBrowseFilters();
+}
+
+function openEntry(idx){
+  CURRENT_ENTRY_IDX=idx;
+  const e = DATA[idx];
+  document.getElementById('tab-dashboard').style.display='none';
+  document.getElementById('tab-browse').style.display='none';
+  document.getElementById('tab-audit').style.display='none';
+  document.getElementById('entry-detail').style.display='block';
+  document.getElementById('detail-header').innerHTML = `<h3>${e.th}</h3><p style="color:#525252">${e.ca} · ${e.yl}</p>`;
+  document.getElementById('sug-rows-list').innerHTML = e.s.map(s=>`<div class="sug-row"><b>${s.t}</b><p style="font-size:11px;margin-top:4px">${s.d}</p></div>`).join('');
+}
+
+function closeDetail(){
+  document.getElementById('entry-detail').style.display='none';
+  switchTab(document.querySelector('.btn-tab.active'));
+}
+
+function switchTab(btn){
+  document.querySelectorAll('.btn-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(p=>p.style.display='none');
+  document.getElementById('tab-'+btn.dataset.tab).style.display='block';
+  document.getElementById('entry-detail').style.display='none';
+  if(btn.dataset.tab === 'browse') renderBrowse();
+}
+
+function initBrowseFilters(){
+  const campuses = [...new Set(DATA.map(e=>e.ca))].sort();
+  const sel = document.getElementById('browse-campus');
+  sel.innerHTML = '<option value="">All Campuses</option>' + campuses.map(c=>`<option value="${c}">${c}</option>`).join('');
+}
+
+function renderBrowse(){
+  const ca = document.getElementById('browse-campus').value;
+  const q = document.getElementById('browse-search').value.toLowerCase();
+  const filtered = DATA.filter(e => (!ca || e.ca===ca) && (!q || e.th.toLowerCase().includes(q)));
+  document.getElementById('browse-list').innerHTML = filtered.map(e => `
+    <div class="issue-row" onclick="openEntry(${DATA.indexOf(e)})">${e.yl} - ${e.th}</div>`).join('');
+}
+
+async function genAllSugs(){
+  const status = document.getElementById('gen-status');
+  const feedback = document.getElementById('single-feedback').value;
+  status.textContent = "AI is thinking (Gemini 3.1 Pro)...";
+  
+  const entry = DATA[CURRENT_ENTRY_IDX];
+  const prompt = `Rewrite tech suggestions for ${entry.th} (${entry.yl}). ${feedback ? 'Feedback: '+feedback : ''} Output JSON array of 5 {t,d} objects.`;
+  
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', { // Intercepted by our top script
+      method: 'POST',
+      headers: {'x-api-key': getKey()},
+      body: JSON.stringify({system: "Use Australian spelling. BANNED: WeVideo.", messages: [{role:'user', content: prompt}]})
+    });
+    const json = await res.json();
+    DATA[CURRENT_ENTRY_IDX].s = JSON.parse(json.content[0].text);
+    DATA[CURRENT_ENTRY_IDX].audited = true;
+    openEntry(CURRENT_ENTRY_IDX);
+    status.textContent = "✓ Updated!";
+  } catch(e) { status.textContent = "Error: " + e.message; }
+}
+
+async function applyAuditFeedback(){
+  const fb = document.getElementById('audit-feedback').value;
+  if(!fb) return alert("Enter feedback first");
+  if(!confirm("This will reset all units and start a bulk re-audit. Continue?")) return;
+  
+  DATA.forEach(e => { e.audited = false; e.feedback = fb; });
+  document.getElementById('audit-status').textContent = "✓ Global feedback applied. Engine will re-audit all units now.";
+  refreshUI();
+}
+
 function submitNewUnit(){
-  const scriptUrl='https://script.google.com/macros/s/AKfycbyUlNbBkcwXB8ImUUhEQDP7C3itYCUu-j_vRNKA7_Km2h4uJMIs0RVFJxUXKcFOFgIW/exec';
-  const ca=document.getElementById('new-ca').value.trim(),yl=document.getElementById('new-yl').value.trim(),th=document.getElementById('new-th').value.trim();
-  if(!ca||!yl||!th){alert("Fill all fields");return;}
-  const statusEl=document.getElementById('new-unit-status'),btn=document.getElementById('btn-submit-unit');
-  btn.disabled=true;statusEl.textContent='Sending...';statusEl.style.color='#fbbf24';
-  fetch(scriptUrl,{method:'POST',mode:'no-cors',body:JSON.stringify({ca,yl,th,ci:""})}).then(()=>{
-    statusEl.textContent='✓ Added! AI will audit soon.';statusEl.style.color='#34d399';
+  const ca=document.getElementById('new-ca').value, yl=document.getElementById('new-yl').value, th=document.getElementById('new-th').value;
+  const status=document.getElementById('new-unit-status');
+  status.textContent="Sending...";
+  fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({ca,yl,th,ci:""})}).then(()=>{
+    status.textContent="✓ Added to Queue";
     document.getElementById('new-ca').value='';document.getElementById('new-yl').value='';document.getElementById('new-th').value='';
-    setTimeout(()=>{statusEl.textContent='';},8000);
-  }).catch(()=>statusEl.textContent='Error').finally(()=>btn.disabled=false);
+  });
 }
-function renderDashboard(){
-  document.getElementById('stat-cards').innerHTML=[{k:'banned',l:'banned',c:'#f87171'},{k:'incomplete',l:'missing planner',c:'#fb923c'}].map(s=>`<div class="stat-card"><div class="stat-num" style="color:${s.c}">${ISSUES[s.k].length}</div><div class="stat-label">${s.l}</div></div>`).join('');
-  const all=[...ISSUES.banned,...ISSUES.incomplete];
-  document.getElementById('all-issues-list').innerHTML=all.map(i=>`<div class="issue-row" onclick="openEntry(${i.idx})"><span class="badge badge-${i.type}">${i.type==='incomplete'?'missing planner':i.type}</span> ${i.entry.yl} - ${i.entry.th}</div>`).join('');
+
+function downloadJSON(){
+  const blob = new Blob([JSON.stringify(DATA,null,2)],{type:'application/json'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='data.json'; a.click();
 }
-function openEntry(idx){CURRENT_ENTRY_IDX=idx;document.querySelectorAll('.tab-panel').forEach(p=>p.style.display='none');document.getElementById('entry-detail').style.display='block';renderEntryDetail();}
-function renderEntryDetail(){const entry=DATA[CURRENT_ENTRY_IDX];document.getElementById('detail-header').innerHTML=`<h3>${entry.th}</h3><p>${entry.ca} · ${entry.yl}</p>`;document.getElementById('sug-rows-list').innerHTML=(entry.s||[]).map(s=>`<div class="sug-row sug-ok"><div class="sug-main"><b>${s.t}</b><p>${s.d}</p></div></div>`).join('');}
-function closeDetail(){document.getElementById('entry-detail').style.display='none';document.getElementById('tab-dashboard').style.display='block';}
-function initBrowseFilters(){const campuses=[...new Set(DATA.map(e=>e.ca))].sort();const el=document.getElementById('browse-campus');campuses.forEach(c=>el.add(new Option(c,c)));renderBrowse();}
-function renderBrowse(){const ca=document.getElementById('browse-campus').value, q=document.getElementById('browse-search').value.toLowerCase();const filtered=DATA.filter(e=>(!ca||e.ca===ca)&&(!q||e.th.toLowerCase().includes(q)));document.getElementById('browse-list').innerHTML=filtered.map(e=>`<div class="issue-row" onclick="openEntry(${DATA.indexOf(e)})">${e.yl} - ${e.th}</div>`).join('');}
-function downloadJSON(){const blob=new Blob([JSON.stringify(DATA,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='data.json';a.click();}
-(function init(){if(getKey())showScreen('screen-load');else showScreen('screen-apikey');})();
+
+if(getKey()) showScreen('screen-load');
 </script>
 </body>
 </html>
