@@ -6,236 +6,1090 @@
 <title>DLA Studio — Wesley College</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
-  :root { 
-    --mint: #34d399; --bg: #0a0a0a; --card: #161616; 
-    --border: #262626; --text-dim: #737373; 
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  
-  body { 
-    background: var(--bg); color: #e5e5e5; 
-    font-family: system-ui, -apple-system, sans-serif; 
-    display: flex; min-height: 100vh;
-  }
+:root {
+  --mint:#34d399; --vivid:#00e676; --bg:#080e08; --card:#0d140d;
+  --card2:#131a13; --border:#1a2a1a; --dim:#4a6a4a; --text:#e0ffe0;
+  --glow:rgba(52,211,153,0.35);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;min-height:100vh}
 
-  /* SIDEBAR: Always visible on App screen, hidden on Setup */
-  #sidebar { 
-    width: 280px; background: #111; border-right: 1px solid var(--border); 
-    display: none; flex-direction: column; padding: 40px 25px; 
-    position: fixed; height: 100vh; z-index: 100;
-  }
-  #logo-zone { font-weight: 900; font-size: 20px; color: var(--mint); letter-spacing: 1px; margin-bottom: 50px; }
-  .nav-item { 
-    padding: 12px 16px; border-radius: 8px; color: var(--text-dim); cursor: pointer; 
-    margin-bottom: 8px; font-size: 13px; font-weight: 500; transition: 0.2s;
-  }
-  .nav-item:hover { color: #fff; background: #1a1a1a; }
-  .nav-item.active { background: #1a1a1a; color: var(--mint); border: 1px solid #222; }
+/* SIDEBAR */
+#sidebar{
+  width:240px;background:var(--card);border-right:1px solid var(--border);
+  position:fixed;top:0;left:0;height:100vh;
+  display:none;flex-direction:column;padding:32px 20px;z-index:50
+}
+body.app-mode #sidebar{display:flex}
+body.app-mode #main{margin-left:240px}
+#logo{font-size:11px;font-weight:800;color:var(--mint);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:40px}
+.nav-item{
+  padding:10px 14px;border-radius:8px;color:var(--dim);cursor:pointer;
+  margin-bottom:4px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:10px;
+  transition:all 0.15s
+}
+.nav-item:hover{color:var(--text);background:#1a1a1a}
+.nav-item.active{color:var(--mint);background:#1a1a1a}
+#sidebar-footer{margin-top:auto;padding-top:24px;border-top:1px solid var(--border)}
 
-  #wesley-footer { margin-top: auto; padding-top: 30px; border-top: 1px solid var(--border); }
-  .wesley-lion { width: 50px; height: auto; margin-bottom: 15px; opacity: 0.8; }
-  .wesley-tag { font-size: 10px; font-weight: 800; color: #fff; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
-  
-  /* MAIN STAGE */
-  #main-stage { flex: 1; display: flex; justify-content: center; align-items: flex-start; padding: 60px 20px; }
-  .app-active #main-stage { padding-left: 300px; justify-content: flex-start; } /* Offsets the fixed sidebar */
+/* MAIN */
+#main{min-height:100vh}
 
-  /* CONTAINERS */
-  .studio-layout { width: 100%; max-width: 1000px; animation: fadeIn 0.4s ease-out; }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+/* SETUP / LOAD SCREENS */
+.screen{display:none;min-height:100vh;align-items:center;justify-content:center;padding:40px 20px}
+.screen.active{display:flex;flex-direction:column}
+.screen-inner{width:100%;max-width:460px}
 
-  .card { 
-    background: var(--card); border: 1px solid var(--border); border-radius: 16px; 
-    padding: 40px; margin-bottom: 20px; position: relative;
-  }
-  .card-accent::before {
-    content: ''; position: absolute; left: 0; top: 40px; bottom: 40px; width: 4px; 
-    background: var(--mint); border-radius: 0 4px 4px 0;
-  }
+/* APP */
+#app-content{display:none;padding:40px}
+body.app-mode #app-content{display:block}
+#status-bar{font-size:11px;color:var(--mint);text-align:right;min-height:18px;margin-bottom:16px}
+.panel{display:none;max-width:900px}
+.panel.active{display:block}
 
-  h1 { font-size: 30px; font-weight: 800; margin-bottom: 10px; color: #fff; }
-  .subtitle { color: var(--text-dim); font-size: 14px; margin-bottom: 30px; line-height: 1.5; }
-  .label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; font-weight: 700; letter-spacing: 1px; margin-bottom: 12px; display: block; }
-  
-  .inp { 
-    background: #000; border: 1px solid var(--border); color: #fff; border-radius: 8px; 
-    padding: 15px; width: 100%; outline: none; margin-bottom: 25px;
-  }
-  .inp:focus { border-color: var(--mint); }
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:16px}
+.card2{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:10px}
 
-  .btn-launch { 
-    background: var(--mint); color: #000; border: none; padding: 16px; border-radius: 10px; 
-    font-weight: 800; width: 100%; cursor: pointer; text-transform: uppercase;
-  }
+/* TYPE */
+.page-title{font-size:22px;font-weight:700;color:#fff;margin-bottom:6px}
+.page-sub{font-size:13px;color:var(--dim);margin-bottom:24px;line-height:1.6}
+.label{font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;letter-spacing:1px;margin-bottom:10px;display:block}
 
-  /* DASHBOARD UI */
-  .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px; }
-  .stat-card { background: #111; border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
-  .stat-num { font-size: 28px; font-weight: 800; color: var(--mint); }
-  .row { padding: 15px; background: #111; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; cursor: pointer; display: flex; gap: 10px; }
+/* INPUTS */
+.inp{background:#000;border:1px solid var(--border);color:var(--text);border-radius:8px;padding:12px 14px;width:100%;outline:none;font-size:13px;font-family:inherit}
+.inp:focus{border-color:var(--mint)}
+textarea.inp{resize:vertical;line-height:1.6}
+select.inp{cursor:pointer}
 
-  .screen { display: none; width: 100%; }
-  .screen.active { display: block; }
+/* BUTTONS */
+.btn{padding:8px 16px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:12px;font-family:inherit;transition:all 0.15s}
+.btn:hover{color:var(--text);border-color:#444}
+.btn-pri{background:var(--mint);color:#000;border:none;padding:11px 20px;border-radius:8px;font-weight:700;cursor:pointer;font-size:13px;font-family:inherit}
+.btn-pri:hover{background:#2fb888}
+.btn-pri.full{width:100%}
+.btn-sm{padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:11px;font-family:inherit}
+.btn-sm:hover{color:var(--text)}
+button:disabled{opacity:.4;cursor:not-allowed}
+
+/* STATS */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+.stat-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:20px}
+.stat-num{font-size:26px;font-weight:800;color:var(--mint)}
+.stat-lbl{font-size:11px;color:var(--dim);margin-top:4px}
+
+/* ROWS */
+.row{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--card2);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;cursor:pointer;transition:background 0.1s}
+.row:hover{background:#1a1a1a}
+
+/* SUGGESTION ROWS */
+.sug{border-radius:8px;margin-bottom:10px;overflow:hidden}
+.sug-main{padding:14px 16px;background:var(--card2);border:1px solid var(--border)}
+.sug-tool{font-size:13px;font-weight:600;color:var(--mint);margin-bottom:4px}
+.sug-desc{font-size:12px;color:#a3a3a3;line-height:1.5}
+.sug-fb{padding:12px 16px;background:#0d0d0d;border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px}
+
+/* BAR CHART */
+.bar-row{margin-bottom:10px;cursor:pointer}
+.bar-row:hover .bar-label span:first-child{color:var(--mint)}
+.bar-label{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px}
+.bar-track{height:5px;background:#1e1e1e;border-radius:3px}
+.bar-fill{height:100%;border-radius:3px;background:var(--mint);transition:width 0.4s}
+
+/* CHAT */
+#chat-messages{background:#000;border:1px solid var(--border);border-radius:12px 12px 0 0;height:400px;overflow-y:auto;padding:20px}
+.chat-msg{margin-bottom:16px}
+.chat-msg.user{text-align:right}
+.chat-bubble{display:inline-block;padding:10px 14px;border-radius:10px;font-size:13px;line-height:1.6;max-width:82%;text-align:left}
+.chat-msg.user .chat-bubble{background:var(--mint);color:#000;font-weight:500}
+.chat-msg.model .chat-bubble{background:var(--card2);border:1px solid var(--border);color:var(--text);white-space:pre-wrap}
+.chat-input-row{display:flex;gap:10px;padding:14px;background:var(--card2);border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px}
+
+/* AUDIT TABS */
+.view-tabs{display:flex;gap:6px;margin-bottom:20px}
+.view-tab{padding:6px 14px;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--dim);cursor:pointer;font-size:12px;font-family:inherit}
+.view-tab.active{background:#1a1a1a;color:var(--text);border-color:var(--border)}
+
+.back-btn{background:#1a1a1a;border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:7px;cursor:pointer;font-size:12px;font-family:inherit;margin-bottom:20px}
+
+/* PREVIEW BOX */
+.preview-ok{padding:12px;background:#052e16;border:1px solid #14532d;border-radius:6px;margin-bottom:8px}
+.preview-tool{font-size:12px;font-weight:600;color:#86efac;margin-bottom:3px}
+.preview-desc{font-size:11px;color:#737373;line-height:1.5}
+
+/* BACKGROUND CANVAS */
+#bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.screen,.screen.active{position:relative;z-index:1}
+#main{position:relative;z-index:1}
+#sidebar{position:fixed;z-index:10}
+
+/* SETUP SCREEN OVERRIDE - three column */
+#screen-setup{
+  flex-direction:row!important;align-items:stretch!important;
+  justify-content:flex-start!important;padding:0!important;min-height:100vh
+}
+
+/* Setup left sidebar */
+.setup-sidebar{
+  width:200px;flex-shrink:0;background:rgba(8,14,8,0.92);
+  border-right:1px solid var(--border);display:flex;flex-direction:column;
+  padding:32px 20px;position:relative;z-index:2
+}
+.dla-wordmark{font-size:28px;font-weight:900;color:var(--vivid);letter-spacing:2px;margin-bottom:48px;font-family:monospace}
+.setup-nav-item{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;
+  border-radius:8px;color:var(--dim);font-size:12px;font-weight:600;
+  margin-bottom:4px;cursor:pointer;font-family:monospace;letter-spacing:.5px
+}
+.setup-nav-item.active{color:var(--vivid);background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.15)}
+.setup-version{font-size:10px;color:var(--dim);font-family:monospace;margin-top:auto;margin-bottom:16px}
+.wesley-brand{display:flex;align-items:center;gap:10px}
+.wesley-w{font-size:22px;font-weight:900;color:var(--mint)}
+.wesley-text{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#888;line-height:1.4}
+
+/* Setup center */
+.setup-center{
+  flex:0 0 500px;display:flex;align-items:center;justify-content:center;
+  padding:40px 30px
+}
+.setup-card{
+  width:100%;background:rgba(10,20,10,0.88);
+  border:1px solid rgba(52,211,153,0.4);border-radius:16px;
+  padding:36px;
+  box-shadow:0 0 40px rgba(52,211,153,0.12),inset 0 0 30px rgba(52,211,153,0.03);
+  backdrop-filter:blur(12px)
+}
+.setup-card-title{
+  font-size:18px;font-weight:900;color:#fff;
+  font-family:monospace;letter-spacing:1px;text-transform:uppercase;
+  margin-bottom:6px;display:flex;align-items:center;gap:12px
+}
+.setup-card-sub{font-size:12px;color:var(--dim);margin-bottom:28px;line-height:1.6}
+.setup-field-label{
+  font-size:10px;color:var(--mint);font-family:monospace;
+  letter-spacing:1.5px;text-transform:uppercase;font-weight:700;
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:8px
+}
+.field-badge{
+  font-size:9px;padding:2px 8px;border-radius:10px;
+  background:rgba(52,211,153,0.12);color:var(--mint);
+  border:1px solid rgba(52,211,153,0.25);letter-spacing:.5px
+}
+.setup-inp{
+  background:rgba(0,0,0,0.6);border:1px solid rgba(52,211,153,0.25);
+  color:#fff;border-radius:8px;padding:14px 16px;width:100%;
+  outline:none;font-size:14px;font-family:monospace;
+  transition:border-color .2s;margin-bottom:20px
+}
+.setup-inp:focus{border-color:var(--mint);box-shadow:0 0 12px rgba(52,211,153,0.15)}
+.setup-confirm{
+  background:linear-gradient(135deg,var(--vivid),var(--mint));
+  color:#000;border:none;padding:15px;border-radius:10px;
+  font-weight:900;width:100%;cursor:pointer;font-size:14px;
+  font-family:monospace;letter-spacing:1px;text-transform:uppercase;
+  transition:opacity .15s
+}
+.setup-confirm:hover{opacity:.9}
+.setup-alt{display:flex;gap:8px;justify-content:center;margin-top:12px}
+
+/* Setup right panel */
+.setup-right{
+  flex:1;display:flex;flex-direction:column;justify-content:center;
+  padding:60px 50px;
+}
+.setup-welcome-label{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;font-family:monospace;margin-bottom:16px}
+.setup-headline{font-size:38px;font-weight:900;color:#fff;line-height:1.15;margin-bottom:16px;letter-spacing:-.5px}
+.setup-headline span{color:var(--vivid)}
+.setup-tagline{font-size:14px;color:var(--dim);line-height:1.7;margin-bottom:40px;max-width:420px}
+.status-cards{display:flex;flex-direction:column;gap:10px}
+.status-card{
+  background:rgba(13,20,13,0.8);border:1px solid var(--border);
+  border-radius:10px;padding:14px 18px;display:flex;
+  align-items:center;justify-content:space-between;
+  font-family:monospace;font-size:12px
+}
+.status-key{color:var(--dim)}
+.status-val{color:#fff;font-weight:700}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--vivid);box-shadow:0 0 6px var(--vivid);display:inline-block;margin-right:8px}
+
 </style>
 </head>
 <body>
+<canvas id="bg-canvas"></canvas>
 
+<!-- SIDEBAR -->
 <div id="sidebar">
-  <div id="logo-zone">DLA STUDIO</div>
-  <div class="nav-item active" onclick="switchTab('dashboard', this)">Dashboard</div>
-  <div class="nav-item" onclick="switchTab('browse', this)">Browse Library</div>
-  <div class="nav-item" onclick="switchTab('audit', this)">AI Coaching</div>
-  <div id="wesley-footer">
-    <img src="image_9107c9.png" class="wesley-lion" alt="Lion">
-    <div class="wesley-tag">Wesley College <br>Melbourne</div>
-    <div style="font-size:9px; color:var(--mint); margin-top:5px">● SYSTEM ONLINE</div>
+  <div id="logo">DLA Studio</div>
+  <div class="nav-item active" data-tab="dashboard" onclick="switchTab('dashboard',this)">
+    <span>◈</span> Dashboard
+  </div>
+  <div class="nav-item" data-tab="browse" onclick="switchTab('browse',this)">
+    <span>⊞</span> Browse Library
+  </div>
+  <div class="nav-item" data-tab="audit" onclick="switchTab('audit',this)">
+    <span>◎</span> Audit & AI Coach
+  </div>
+  <div id="sidebar-footer">
+    <svg width="38" height="38" viewBox="0 0 100 100" style="margin-bottom:10px;opacity:0.55">
+      <circle cx="50" cy="38" r="20" fill="none" stroke="#34d399" stroke-width="3"/>
+      <ellipse cx="50" cy="76" rx="16" ry="10" fill="none" stroke="#34d399" stroke-width="2.5"/>
+      <path d="M36 38 Q50 24 64 38" fill="none" stroke="#34d399" stroke-width="2.5"/>
+      <circle cx="43" cy="41" r="2.5" fill="#34d399"/>
+      <circle cx="57" cy="41" r="2.5" fill="#34d399"/>
+      <path d="M44 50 Q50 56 56 50" fill="none" stroke="#34d399" stroke-width="2"/>
+    </svg>
+    <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text)">Wesley College</div>
+    <div style="font-size:9px;color:var(--dim);margin-bottom:6px">Melbourne</div>
+    <div style="font-size:9px;color:var(--mint)">● DLA Studio v4</div>
+    <div style="margin-top:12px;display:flex;gap:8px">
+      <button class="btn-sm" onclick="downloadJSON()">↓ JSON</button>
+      <button class="btn-sm" onclick="showApiKeyScreen()">⚙ key</button>
+    </div>
   </div>
 </div>
 
-<div id="main-stage">
+<!-- MAIN -->
+<div id="main">
+
+  <!-- SETUP -->
   <div id="screen-setup" class="screen active">
-    <div class="studio-layout" style="max-width:500px">
-      <div class="card card-accent">
-        <span class="label">Authentication</span>
-        <h1>Studio Login</h1>
-        <p class="subtitle">Enter your Gemini API Key to access the 2026 planner database.</p>
-        <input type="password" id="api-key-input" class="inp" placeholder="AIzaSy...">
-        <button class="btn-launch" onclick="saveApiKey()">Enter Studio →</button>
+
+    <!-- Left setup sidebar -->
+    <div class="setup-sidebar">
+      <div class="dla-wordmark">DLA</div>
+      <div class="setup-nav-item active">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+        API Setup
+      </div>
+      <div class="setup-nav-item" style="opacity:.4">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </div>
+      <div class="setup-version">v4.0</div>
+      <div class="wesley-brand">
+        <div class="wesley-w">W</div>
+        <div class="wesley-text">Wesley<br>College</div>
       </div>
     </div>
-  </div>
 
-  <div id="screen-load" class="screen">
-    <div class="studio-layout" style="max-width:500px">
-      <div class="card" style="text-align:center">
-        <span class="label">Synchronising</span>
-        <h2 id="load-status" style="margin-bottom:20px">Ready to connect...</h2>
-        <button class="btn-launch" onclick="loadFromDrive()">Initialize Database</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="screen-app" class="screen">
-    <div class="studio-layout">
-      <div id="tab-dashboard" class="tab-panel">
-        <div class="stat-grid" id="stat-cards"></div>
-        <div class="card">
-          <span class="label">Add to Queue</span>
-          <div style="display:flex; gap:10px; margin-bottom:15px">
-            <input type="text" id="new-ca" class="inp" style="margin-bottom:0" placeholder="Campus">
-            <input type="text" id="new-yl" class="inp" style="margin-bottom:0" placeholder="Year">
-            <input type="text" id="new-th" class="inp" style="margin-bottom:0" placeholder="Theme">
-          </div>
-          <button class="btn-launch" onclick="submitNewUnit()" style="width:auto; padding:12px 30px">Add Unit</button>
+    <!-- Center card -->
+    <div class="setup-center">
+      <div class="setup-card">
+        <div class="setup-card-title">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#00e676" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          DLA Studio: Welcome &amp; Setup
         </div>
-        <span class="label">Pending Audits</span>
-        <div id="all-issues-list"></div>
-      </div>
-      
-      <div id="tab-browse" class="tab-panel" style="display:none">
-        <input id="browse-search" class="inp" placeholder="Search library..." oninput="renderBrowse()">
-        <div id="browse-list"></div>
-      </div>
+        <div class="setup-card-sub">Enter your Gemini API key to access the lesson database.</div>
 
-      <div id="entry-detail" style="display:none">
-        <button onclick="closeDetail()" style="background:#222; color:#fff; border:none; padding:8px 15px; border-radius:5px; margin-bottom:20px; cursor:pointer">← Back</button>
-        <div class="card" id="detail-header" style="margin-bottom:15px"></div>
-        <div id="sug-rows-list"></div>
+        <div class="setup-field-label">
+          Gemini API Key
+          <span class="field-badge" id="key-badge">required</span>
+        </div>
+        <input type="password" id="api-key-input" class="setup-inp" placeholder="AIzaSy..." oninput="checkKeyInput()">
+
+        <button class="setup-confirm" onclick="saveApiKey()">confirm →</button>
+        <div class="setup-alt">
+          <button class="btn" onclick="document.getElementById('file-input').click()" style="font-size:11px">Open local file</button>
+          <button class="btn" onclick="showScreen('paste')" style="font-size:11px">Paste JSON</button>
+          <input type="file" id="file-input" accept=".json" style="display:none" onchange="loadFromFile(event)">
+        </div>
+        <p style="font-size:10px;color:var(--dim);margin-top:14px;text-align:center;line-height:1.6;font-family:monospace">
+          Get your key at <a href="https://aistudio.google.com" target="_blank" style="color:var(--mint)">aistudio.google.com</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Right info panel -->
+    <div class="setup-right">
+      <div class="setup-welcome-label">Welcome to</div>
+      <div class="setup-headline">Your <span>AI-powered</span><br>assistant for<br>IB PYP learning plans</div>
+      <div class="setup-tagline">Your advanced platform for generating innovative technology experiences linked directly to your units of inquiry.</div>
+      <div class="status-cards">
+        <div class="status-card">
+          <span class="status-key">AI Engine</span>
+          <span class="status-val">Gemini 2.0 Flash</span>
+          <span><span class="status-dot"></span></span>
+        </div>
+        <div class="status-card">
+          <span class="status-key">Processing Mode</span>
+          <span class="status-val">AI Coach + Feedback</span>
+          <span><span class="status-dot"></span></span>
+        </div>
+        <div class="status-card">
+          <span class="status-key">Platform</span>
+          <span class="status-val">Wesley College DLA</span>
+          <span><span class="status-dot"></span></span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- LOAD -->
+  <div id="screen-load" class="screen">
+    <div class="screen-inner">
+      <div class="card" style="text-align:center">
+        <span class="label">Load data.json</span>
+        <p style="font-size:13px;color:var(--dim);margin-bottom:20px;line-height:1.6">
+          Connect Google Drive to load your <code style="background:#1a1a1a;padding:2px 6px;border-radius:4px;font-size:11px">data.json</code> file.
+        </p>
+        <button class="btn-pri full" id="btn-drive" onclick="loadFromDrive()">↑ Load from Google Drive</button>
+        <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
+          <button class="btn" onclick="document.getElementById('file-input').click()">Open local file</button>
+          <button class="btn" onclick="showScreen('paste')">Paste JSON</button>
+        </div>
+        <input type="file" id="file-input" accept=".json" style="display:none" onchange="loadFromFile(event)">
+        <div id="load-err" style="display:none;margin-top:14px;font-size:12px;color:#f87171;padding:10px;background:#450a0a;border-radius:6px"></div>
       </div>
     </div>
   </div>
-</div>
+
+  <!-- PASTE -->
+  <div id="screen-paste" class="screen">
+    <div class="screen-inner">
+      <div class="card">
+        <span class="label">Paste data.json</span>
+        <textarea id="paste-val" class="inp" rows="12" placeholder="Paste full contents of data.json..." style="margin-bottom:14px"></textarea>
+        <div style="display:flex;gap:10px">
+          <button class="btn-pri" onclick="loadFromPaste()">Load</button>
+          <button class="btn" onclick="showScreen('load')">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="app-content">
+    <div id="status-bar"></div>
+
+    <!-- DASHBOARD -->
+    <div id="panel-dashboard" class="panel active">
+      <div class="page-title">Dashboard</div>
+      <div class="page-sub" id="db-sub"></div>
+      <div class="stat-grid" id="stat-cards"></div>
+      <div class="card">
+        <span class="label">Issues</span>
+        <div id="issues-list"></div>
+      </div>
+    </div>
+
+    <!-- BROWSE -->
+    <div id="panel-browse" class="panel">
+      <div class="page-title">Browse Library</div>
+      <div class="page-sub">All entries across campuses and year levels.</div>
+      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+        <select id="f-campus" class="inp" style="width:auto" onchange="renderBrowse()"><option value="">All campuses</option></select>
+        <select id="f-year" class="inp" style="width:auto" onchange="renderBrowse()"><option value="">All year levels</option></select>
+        <input id="f-search" class="inp" placeholder="Search themes..." oninput="renderBrowse()" style="flex:1;min-width:160px">
+        <span id="browse-count" style="font-size:11px;color:var(--dim);align-self:center"></span>
+      </div>
+      <div id="browse-list"></div>
+    </div>
+
+    <!-- AUDIT -->
+    <div id="panel-audit" class="panel">
+      <div class="page-title">Audit & AI Coach</div>
+      <div class="page-sub">Analyse tool usage and chat with Gemini to make bulk changes across the library.</div>
+      <div class="view-tabs">
+        <button class="view-tab active" data-view="analytics" onclick="setAuditView(this)">Analytics</button>
+        <button class="view-tab" data-view="chat" onclick="setAuditView(this)">AI Coach Chat</button>
+      </div>
+
+      <!-- Analytics -->
+      <div id="audit-analytics">
+        <div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">
+          <button class="view-tab active" data-av="tools" onclick="setAnalyticsView(this)">By tool</button>
+          <button class="view-tab" data-av="campus" onclick="setAnalyticsView(this)">By campus</button>
+          <button class="view-tab" data-av="year" onclick="setAnalyticsView(this)">By year</button>
+        </div>
+        <div id="year-campus-filter" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px"></div>
+        <div id="audit-chart"></div>
+      </div>
+
+      <!-- Chat -->
+      <div id="audit-chat" style="display:none">
+        <div id="chat-messages"></div>
+        <div class="chat-input-row">
+          <input id="chat-input" class="inp" placeholder="e.g. I want more Minecraft lessons — where could these fit?" style="flex:1">
+          <button class="btn-pri" id="btn-send" onclick="sendChat()">Send</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENTRY DETAIL -->
+    <div id="panel-entry" class="panel">
+      <button class="back-btn" onclick="closeEntry()">← Back</button>
+      <div id="entry-header" class="card" style="margin-bottom:16px"></div>
+      <div id="entry-sugs"></div>
+      <div class="card">
+        <span class="label">Regenerate all 5 with Gemini</span>
+        <button class="btn-pri" id="btn-regen-all" onclick="regenAll()">Generate 5 new suggestions</button>
+        <div id="regen-all-result" style="margin-top:12px"></div>
+      </div>
+    </div>
+
+  </div><!-- end app-content -->
+</div><!-- end main -->
 
 <script>
+// ─── State ────────────────────────────────────────────────────────────────────
 let DATA = [];
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUlNbBkcwXB8ImUUhEQDP7C3itYCUu-j_vRNKA7_Km2h4uJMIs0RVFJxUXKcFOFgIW/exec';
+let DRIVE_TOKEN = null;
+let DRIVE_FILE_ID = null;
+let CURRENT_ENTRY_IDX = null;
+let PREV_TAB = 'dashboard';
+let AUDIT_VIEW = 'tools';
+let AUDIT_YEAR_CAMPUS = '';
+let CHAT_HISTORY = [];
 
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + id).classList.add('active');
-  
-  if(id === 'app') {
-    document.body.classList.add('app-active');
-    document.getElementById('sidebar').style.display = 'flex';
-  } else {
-    document.body.classList.remove('app-active');
-    document.getElementById('sidebar').style.display = 'none';
-  }
+const CLIENT_ID = '334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleusercontent.com';
+const GEMINI_MODEL = 'gemini-2.0-flash';
+const YR = ["Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"];
+const CAMPUS_COL = { Elsternwick:'#818cf8', 'Glen Waverley':'#34d399', 'St Kilda':'#fb923c' };
+
+function getKey(){ return localStorage.getItem('dla_api_key')||''; }
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function caCol(ca){ return CAMPUS_COL[ca]||'#34d399'; }
+
+// ─── Screens ──────────────────────────────────────────────────────────────────
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.body.classList.remove('app-mode');
+  document.getElementById('app-content').style.display='none';
+  const el=document.getElementById('screen-'+id);
+  if(el) el.classList.add('active');
 }
 
-function saveApiKey() {
-  const k = document.getElementById('api-key-input').value.trim();
-  if(!k) return alert("Key required");
-  localStorage.setItem('dla_api_key', k);
+function showApp(){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('app-content').style.display='block';
+  document.body.classList.add('app-mode');
+}
+
+function setStatus(msg,type){
+  const el=document.getElementById('status-bar'); if(!el) return;
+  el.textContent=msg;
+  el.style.color=type==='error'?'#f87171':type==='loading'?'#fbbf24':'#34d399';
+}
+
+function showApiKeyScreen(){
+  document.getElementById('api-key-input').value=getKey();
+  showScreen('setup');
+}
+
+// ─── Auth ─────────────────────────────────────────────────────────────────────
+function saveApiKey(){
+  const k=document.getElementById('api-key-input').value.trim();
+  if(!k){ alert('Please enter your Gemini API key'); return; }
+  localStorage.setItem('dla_api_key',k);
   showScreen('load');
 }
 
-async function loadFromDrive() {
-  const status = document.getElementById('load-status');
-  status.textContent = "Connecting...";
-  try {
-    const token = await new Promise(res => {
-      google.accounts.oauth2.initTokenClient({
-        client_id: '334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleusercontent.com',
-        scope: 'https://www.googleapis.com/auth/drive',
-        callback: (resp) => res(resp.access_token)
-      }).requestAccessToken();
+async function getDriveToken(){
+  return new Promise((resolve,reject)=>{
+    const client=google.accounts.oauth2.initTokenClient({
+      client_id:CLIENT_ID,
+      scope:'https://www.googleapis.com/auth/drive',
+      callback:(resp)=>{
+        if(resp.error){ reject(new Error(resp.error)); return; }
+        DRIVE_TOKEN=resp.access_token;
+        resolve(resp.access_token);
+      }
     });
-    status.textContent = "Fetching Data...";
-    const r = await fetch("https://www.googleapis.com/drive/v3/files?q=name='data.json'&fields=files(id)", {headers:{'Authorization':'Bearer '+token}});
-    const d = await r.json();
-    const fr = await fetch(`https://www.googleapis.com/drive/v3/files/${d.files[0].id}?alt=media`, {headers:{'Authorization':'Bearer '+token}});
-    DATA = await fr.json();
-    renderDashboard();
-    showScreen('app');
-  } catch(e) { alert("Error: " + e.message); status.textContent = "Error: " + e.message; }
+    client.requestAccessToken({prompt:DRIVE_TOKEN?'':'consent'});
+  });
 }
 
-function renderDashboard() {
-  const missing = DATA.filter(e => e.audited === false);
-  document.getElementById('stat-cards').innerHTML = `
-    <div class="stat-card"><div class="stat-num">${missing.length}</div><div class="stat-label">missing</div></div>
-    <div class="stat-card"><div class="stat-num" style="color:#fff">${DATA.length}</div><div class="stat-label">total</div></div>
-    <div class="stat-card"><div class="stat-num" style="color:var(--mint)">3.1 Pro</div><div class="stat-label">engine</div></div>`;
-  document.getElementById('all-issues-list').innerHTML = missing.map(e => `
-    <div class="row" onclick="openEntry(${DATA.indexOf(e)})"><span style="color:var(--mint)">●</span> <b>${e.yl}</b> — ${e.th}</div>`).join('');
+async function loadFromDrive(){
+  const btn=document.getElementById('btn-drive');
+  const err=document.getElementById('load-err');
+  btn.disabled=true; btn.textContent='Connecting…'; err.style.display='none';
+  try{
+    const tok=await getDriveToken();
+    const r=await fetch("https://www.googleapis.com/drive/v3/files?q=name='data.json' and trashed=false&fields=files(id)&pageSize=5",{headers:{'Authorization':'Bearer '+tok}});
+    const d=await r.json();
+    if(!d.files||!d.files.length) throw new Error('data.json not found on Drive');
+    DRIVE_FILE_ID=d.files[0].id;
+    const r2=await fetch(`https://www.googleapis.com/drive/v3/files/${DRIVE_FILE_ID}?alt=media`,{headers:{'Authorization':'Bearer '+tok}});
+    ingest(await r2.json());
+  }catch(e){
+    err.textContent=e.message; err.style.display='block';
+    btn.disabled=false; btn.textContent='↑ Load from Google Drive';
+  }
 }
 
-function openEntry(idx) {
-  const e = DATA[idx];
-  document.getElementById('tab-dashboard').style.display='none';
-  document.getElementById('entry-detail').style.display='block';
-  document.getElementById('detail-header').innerHTML = `<h1>${e.th}</h1><p>${e.ca} · ${e.yl}</p>`;
-  document.getElementById('sug-rows-list').innerHTML = e.s.map(s => `<div class="card" style="padding:20px; margin-bottom:10px; border-left:3px solid var(--mint)"><b>${s.t}</b><p style="margin-top:5px; font-size:12px; opacity:0.7">${s.d}</p></div>`).join('');
+function loadFromFile(e){
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=ev=>{ try{ ingest(JSON.parse(ev.target.result)); }catch{ alert('Invalid JSON file'); } };
+  r.readAsText(f);
 }
 
-function closeDetail() { document.getElementById('entry-detail').style.display='none'; document.getElementById('tab-dashboard').style.display='block'; }
+function loadFromPaste(){
+  try{ ingest(JSON.parse(document.getElementById('paste-val').value)); }
+  catch{ alert('Invalid JSON'); }
+}
 
-function switchTab(tab, btn) {
-  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+function ingest(arr){
+  DATA=Array.isArray(arr)?arr:Object.values(arr);
+  // Populate filter dropdowns
+  const campuses=[...new Set(DATA.map(e=>e.ca))].sort();
+  const yrs=[...new Set(DATA.map(e=>e.yl))].sort((a,b)=>YR.indexOf(a)-YR.indexOf(b));
+  ['f-campus'].forEach(id=>{
+    const el=document.getElementById(id); if(!el) return;
+    while(el.options.length>1) el.remove(1);
+    campuses.forEach(c=>el.add(new Option(c,c)));
+  });
+  ['f-year'].forEach(id=>{
+    const el=document.getElementById(id); if(!el) return;
+    while(el.options.length>1) el.remove(1);
+    yrs.forEach(y=>el.add(new Option(y,y)));
+  });
+  showApp();
+  switchTab('dashboard',document.querySelector('.nav-item[data-tab="dashboard"]'));
+  renderDashboard();
+}
+
+async function saveToDrive(){
+  if(!DRIVE_FILE_ID||!DRIVE_TOKEN) return;
+  try{
+    await fetch(`https://www.googleapis.com/upload/drive/v3/files/${DRIVE_FILE_ID}?uploadType=media`,{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+DRIVE_TOKEN},
+      body:JSON.stringify(DATA,null,2)
+    });
+    setStatus('Saved to Drive');
+  }catch(e){ setStatus('Drive save failed: '+e.message,'error'); }
+}
+
+function downloadJSON(){
+  const b=new Blob([JSON.stringify(DATA,null,2)],{type:'application/json'});
+  const u=URL.createObjectURL(b);
+  const a=document.createElement('a');
+  a.href=u; a.download='data.json'; a.click();
+  URL.revokeObjectURL(u);
+  if(DRIVE_FILE_ID) saveToDrive();
+}
+
+// ─── Gemini API ───────────────────────────────────────────────────────────────
+async function callGemini(contents, systemPrompt){
+  const key=getKey();
+  if(!key) throw new Error('No API key — click ⚙ key to set it');
+  const body={ contents };
+  if(systemPrompt) body.systemInstruction={ parts:[{text:systemPrompt}] };
+  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${key}`,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(body)
+  });
+  const d=await r.json();
+  if(d.error) throw new Error(d.error.message);
+  return d.candidates[0].content.parts[0].text;
+}
+
+// ─── Navigation ───────────────────────────────────────────────────────────────
+function switchTab(tab,btn){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  const panel=document.getElementById('panel-'+tab);
+  if(panel) panel.classList.add('active');
+  PREV_TAB=tab; CURRENT_ENTRY_IDX=null;
+  if(tab==='browse') renderBrowse();
+  if(tab==='audit') renderAudit();
+}
+
+function openEntry(idx){
+  CURRENT_ENTRY_IDX=idx;
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-entry').classList.add('active');
+  renderEntry(idx);
+}
+
+function closeEntry(){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  const panel=document.getElementById('panel-'+PREV_TAB);
+  if(panel) panel.classList.add('active');
+  CURRENT_ENTRY_IDX=null;
+  if(PREV_TAB==='browse') renderBrowse();
+}
+
+// ─── Dashboard ────────────────────────────────────────────────────────────────
+function getIssues(){
+  const incomplete=[], banned=[];
+  DATA.forEach((e,idx)=>{
+    const sugs=e.s||[];
+    if(sugs.length<5) incomplete.push({e,idx,detail:`${sugs.length}/5 suggestions`});
+    if(sugs.some(s=>(s.t||'').toLowerCase().includes('wevideo'))) banned.push({e,idx,detail:'WeVideo found'});
+  });
+  return {incomplete,banned};
+}
+
+function renderDashboard(){
+  const {incomplete,banned}=getIssues();
+  const total=incomplete.length+banned.length;
+  document.getElementById('db-sub').textContent=`${DATA.length} entries across ${[...new Set(DATA.map(e=>e.ca))].length} campuses — ${total} issue${total!==1?'s':''} found`;
+  document.getElementById('stat-cards').innerHTML=[
+    {label:'total entries',val:DATA.length,col:'#fff'},
+    {label:'incomplete',val:incomplete.length,col:'#fb923c'},
+    {label:'banned tools',val:banned.length,col:'#f87171'},
+  ].map(({label,val,col})=>`<div class="stat-card"><div class="stat-num" style="color:${col}">${val}</div><div class="stat-lbl">${label}</div></div>`).join('');
+
+  const all=[
+    ...banned.map(({e,idx,detail})=>({e,idx,type:'banned',detail})),
+    ...incomplete.map(({e,idx,detail})=>({e,idx,type:'incomplete',detail})),
+  ];
+  document.getElementById('issues-list').innerHTML=all.length
+    ? all.map(({e,idx,type,detail})=>`<div class="row" onclick="openEntry(${idx})">
+        <span style="font-size:10px;padding:2px 8px;border-radius:3px;background:${type==='banned'?'#991b1b':'#9a3412'};color:${type==='banned'?'#fca5a5':'#fdba74'};flex-shrink:0">${type}</span>
+        <span style="font-size:11px;color:var(--dim);width:100px;flex-shrink:0">${esc(e.ca)}</span>
+        <span style="font-size:11px;color:${caCol(e.ca)};width:62px;flex-shrink:0">${esc(e.yl)}</span>
+        <span style="flex:1;font-size:12px">${esc(e.th)}</span>
+        <span style="font-size:11px;color:var(--dim)">${detail}</span>
+        <span style="color:var(--dim)">›</span>
+      </div>`).join('')
+    : '<div style="text-align:center;padding:24px;color:var(--dim);font-size:13px">No issues found ✓</div>';
+}
+
+// ─── Browse ───────────────────────────────────────────────────────────────────
+function renderBrowse(){
+  const ca=document.getElementById('f-campus')?.value||'';
+  const yr=document.getElementById('f-year')?.value||'';
+  const q=(document.getElementById('f-search')?.value||'').toLowerCase();
+  const filtered=DATA.map((e,idx)=>({e,idx})).filter(({e})=>{
+    if(ca&&e.ca!==ca) return false;
+    if(yr&&e.yl!==yr) return false;
+    if(q&&!e.th?.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  document.getElementById('browse-count').textContent=`${filtered.length} entries`;
+  document.getElementById('browse-list').innerHTML=filtered.map(({e,idx})=>`
+    <div class="row" onclick="openEntry(${idx})">
+      <span style="font-size:11px;color:var(--dim);width:100px;flex-shrink:0">${esc(e.ca)}</span>
+      <span style="font-size:11px;color:${caCol(e.ca)};width:62px;flex-shrink:0">${esc(e.yl)}</span>
+      <span style="flex:1;font-size:12px">${esc(e.th)}</span>
+      <span style="font-size:11px;color:var(--dim)">${(e.s||[]).length}/5 ›</span>
+    </div>`).join('');
+}
+
+// ─── Entry Detail ─────────────────────────────────────────────────────────────
+function renderEntry(idx){
+  const e=DATA[idx];
+  document.getElementById('entry-header').innerHTML=`
+    <h2 style="font-size:20px;font-weight:700;color:#fff;margin-bottom:4px">${esc(e.th)}</h2>
+    <p style="font-size:12px;color:var(--dim)">${esc(e.ca)} · ${esc(e.yl)}</p>
+    ${e.ci?`<p style="font-size:12px;color:#737373;margin-top:8px;font-style:italic">${esc(e.ci)}</p>`:''}`;
+  const sugs=e.s||[];
+  document.getElementById('entry-sugs').innerHTML=sugs.length
+    ? sugs.map((s,i)=>buildSugRow(s,idx,i)).join('')
+    : '<div class="card2" style="color:var(--dim);font-size:12px;font-style:italic">No suggestions yet.</div>';
+  document.getElementById('regen-all-result').innerHTML='';
+  document.getElementById('btn-regen-all').disabled=false;
+  document.getElementById('btn-regen-all').textContent=`Generate 5 new suggestions for ${e.yl}`;
+}
+
+function buildSugRow(sug,entryIdx,sugIdx){
+  const uid=`s${entryIdx}_${sugIdx}`;
+  return `<div class="sug" id="${uid}">
+    <div class="sug-main">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="sug-tool">${esc(sug.t)}</div>
+        <div style="flex:1"></div>
+        <button class="btn-sm" onclick="toggleFb('${uid}')">feedback</button>
+      </div>
+      <div class="sug-desc">${esc(sug.d)}</div>
+    </div>
+    <div class="sug-fb" id="${uid}-fb" style="display:none">
+      <textarea class="inp" id="${uid}-txt" rows="2" placeholder="e.g. make it more hands-on, use a different tool, connect it to the central idea..." style="margin-bottom:8px;font-size:12px"></textarea>
+      <button class="btn-pri" style="font-size:11px;padding:6px 14px" onclick="regenOne(${entryIdx},${sugIdx},'${uid}')">Regenerate with Gemini</button>
+      <div id="${uid}-res" style="margin-top:10px"></div>
+    </div>
+  </div>`;
+}
+
+function toggleFb(uid){
+  const fb=document.getElementById(uid+'-fb');
+  if(fb) fb.style.display=fb.style.display==='none'?'block':'none';
+}
+
+async function regenOne(entryIdx,sugIdx,uid){
+  const entry=DATA[entryIdx];
+  const oldSug=(entry.s||[])[sugIdx];
+  const feedback=document.getElementById(uid+'-txt')?.value||'';
+  const resEl=document.getElementById(uid+'-res');
+  const btn=document.querySelector(`#${uid} .sug-fb .btn-pri`);
+  if(btn){ btn.disabled=true; btn.textContent='Regenerating…'; }
+  resEl.innerHTML='';
+  const others=(entry.s||[]).filter((_,i)=>i!==sugIdx).map(s=>s.t).join(', ');
+  const prompt=`Regenerate ONE technology suggestion for an IB PYP unit.
+Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${entry.lo?`\nLines of Inquiry: "${entry.lo}"`:''}
+Current suggestion being replaced: ${oldSug?oldSug.t+' — '+oldSug.d:'(none)'}
+Teacher feedback: ${feedback||'improve this suggestion'}
+Other tools already used in this unit — do NOT repeat these: ${others||'none'}
+Return ONLY a JSON object with no markdown or backticks:
+{"t":"Tool Name","d":"One specific sentence about how students use it for this unit."}`;
+  try{
+    const raw=await callGemini([{role:'user',parts:[{text:prompt}]}]);
+    const clean=raw.replace(/```json|```/g,'').trim();
+    const si=clean.indexOf('{'), ei=clean.lastIndexOf('}');
+    if(si===-1||ei===-1) throw new Error('No JSON in response');
+    const newSug=JSON.parse(clean.slice(si,ei+1));
+    // Store pending suggestion index for apply
+    const applyId=`pending_${entryIdx}_${sugIdx}`;
+    window[applyId]=newSug;
+    resEl.innerHTML=`
+      <div class="preview-ok">
+        <div class="preview-tool">${esc(newSug.t)}</div>
+        <div class="preview-desc">${esc(newSug.d)}</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:6px">
+        <button class="btn-pri" style="font-size:11px;padding:5px 12px" onclick="applyOne(${entryIdx},${sugIdx},'${applyId}','${uid}')">Apply</button>
+        <button class="btn-sm" onclick="document.getElementById('${uid}-res').innerHTML=''">Discard</button>
+      </div>`;
+  }catch(e){
+    resEl.innerHTML=`<div style="font-size:11px;color:#f87171">${esc(e.message)}</div>`;
+  }
+  if(btn){ btn.disabled=false; btn.textContent='Regenerate with Gemini'; }
+}
+
+function applyOne(entryIdx,sugIdx,applyId,uid){
+  const newSug=window[applyId]; if(!newSug) return;
+  if(!DATA[entryIdx].s) DATA[entryIdx].s=[];
+  DATA[entryIdx].s[sugIdx]=newSug;
+  delete window[applyId];
+  setStatus('Saved'); saveToDrive();
+  renderEntry(entryIdx);
+}
+
+async function regenAll(){
+  if(CURRENT_ENTRY_IDX===null) return;
+  const idx=CURRENT_ENTRY_IDX;
+  const entry=DATA[idx];
+  const btn=document.getElementById('btn-regen-all');
+  const res=document.getElementById('regen-all-result');
+  btn.disabled=true; btn.textContent='Generating…';
+  res.innerHTML='<div style="font-size:12px;color:#fbbf24">Generating 5 suggestions…</div>';
+  const prompt=`Generate exactly 5 digital technology suggestions for this IB PYP unit.
+Campus: ${entry.ca} | Year Level: ${entry.yl} | Theme: "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${entry.lo?`\nLines of Inquiry: "${entry.lo}"`:''}
+Requirements:
+- All 5 suggestions use different tools (no repeats)
+- At least one should be an ambitious, innovative project idea
+- Every suggestion connects specifically to this unit's content — nothing generic
+- Return ONLY a JSON array with no markdown or backticks:
+[{"t":"Tool Name","d":"One specific sentence for this unit."},...]`;
+  try{
+    const raw=await callGemini([{role:'user',parts:[{text:prompt}]}]);
+    const clean=raw.replace(/```json|```/g,'').trim();
+    const si=clean.indexOf('['), ei=clean.lastIndexOf(']');
+    if(si===-1||ei===-1) throw new Error('No JSON array in response');
+    const sugs=JSON.parse(clean.slice(si,ei+1));
+    const pendingId='regenall_'+idx;
+    window[pendingId]=sugs;
+    res.innerHTML=`
+      <div style="font-size:10px;color:var(--mint);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Preview — apply to save</div>
+      ${sugs.map(s=>`<div class="preview-ok"><div class="preview-tool">${esc(s.t)}</div><div class="preview-desc">${esc(s.d)}</div></div>`).join('')}
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn-pri" onclick="applyRegenAll(${idx},'${pendingId}')">Apply all</button>
+        <button class="btn-sm" onclick="document.getElementById('regen-all-result').innerHTML='';document.getElementById('btn-regen-all').disabled=false;document.getElementById('btn-regen-all').textContent='Generate 5 new suggestions'">Discard</button>
+      </div>`;
+  }catch(e){
+    res.innerHTML=`<div style="font-size:12px;color:#f87171">${esc(e.message)}</div>`;
+    btn.disabled=false; btn.textContent='Generate 5 new suggestions';
+  }
+}
+
+function applyRegenAll(idx,pendingId){
+  const sugs=window[pendingId]; if(!sugs) return;
+  DATA[idx].s=sugs;
+  delete window[pendingId];
+  setStatus('Saved'); saveToDrive();
+  renderEntry(idx);
+}
+
+// ─── Audit ────────────────────────────────────────────────────────────────────
+function computeStats(){
+  const toolCounts={}, campusTools={}, yearTools={}; let total=0;
+  DATA.forEach(e=>{
+    (e.s||[]).forEach(s=>{
+      const t=s.t||'Unknown';
+      toolCounts[t]=(toolCounts[t]||0)+1;
+      if(!campusTools[e.ca]) campusTools[e.ca]={};
+      campusTools[e.ca][t]=(campusTools[e.ca][t]||0)+1;
+      if(!yearTools[e.yl]) yearTools[e.yl]={};
+      yearTools[e.yl][t]=(yearTools[e.yl][t]||0)+1;
+      total++;
+    });
+  });
+  const sorted=Object.entries(toolCounts).sort((a,b)=>b[1]-a[1]).map(([name,count])=>({name,count,pct:total?Math.round(count/total*100):0}));
+  return {sorted,campusTools,yearTools,total};
+}
+
+function renderAudit(){
+  renderAuditChart();
+  if(CHAT_HISTORY.length===0) initChat();
+}
+
+function setAuditView(btn){
+  document.querySelectorAll('.view-tab[data-view]').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
-  document.getElementById('tab-' + tab).style.display = 'block';
-  document.getElementById('entry-detail').style.display = 'none';
-  if(tab === 'browse') renderBrowse();
+  const v=btn.dataset.view;
+  document.getElementById('audit-analytics').style.display=v==='analytics'?'block':'none';
+  document.getElementById('audit-chat').style.display=v==='chat'?'block':'none';
 }
 
-function renderBrowse() {
-  const q = document.getElementById('browse-search').value.toLowerCase();
-  const filtered = DATA.filter(e => (!q || e.th.toLowerCase().includes(q) || e.ca.toLowerCase().includes(q)));
-  document.getElementById('browse-list').innerHTML = filtered.map(e => `<div class="row" onclick="openEntry(${DATA.indexOf(e)})"><b>${e.yl}</b> — ${e.th}</div>`).join('');
+function setAnalyticsView(btn){
+  document.querySelectorAll('.view-tab[data-av]').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  AUDIT_VIEW=btn.dataset.av;
+  AUDIT_YEAR_CAMPUS='';
+  renderAuditChart();
 }
 
-function submitNewUnit() {
-  const ca=document.getElementById('new-ca').value, yl=document.getElementById('new-yl').value, th=document.getElementById('new-th').value;
-  if(!ca || !yl || !th) return alert("Fill all fields");
-  fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({ca,yl,th,ci:""})}).then(()=>alert("Added!"));
+function renderAuditChart(){
+  const stats=computeStats();
+  const container=document.getElementById('audit-chart');
+  const filterEl=document.getElementById('year-campus-filter');
+
+  if(AUDIT_VIEW==='tools'){
+    filterEl.innerHTML='';
+    const top=stats.sorted.slice(0,25), mx=top[0]?.count||1;
+    container.innerHTML=`<div class="card">
+      <span class="label">Tool frequency — ${stats.total} total suggestions — click any tool to browse entries</span>
+      ${top.map(({name,count,pct})=>`
+        <div class="bar-row" onclick="jumpToBrowse('${esc(name)}')">
+          <div class="bar-label">
+            <span>${esc(name)}</span>
+            <span style="color:var(--dim)">${count}× (${pct}%)</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:${(count/mx)*100}%"></div></div>
+        </div>`).join('')}
+    </div>`;
+  } else if(AUDIT_VIEW==='campus'){
+    filterEl.innerHTML='';
+    const campuses=[...new Set(DATA.map(e=>e.ca))].sort();
+    container.innerHTML=campuses.map(ca=>{
+      const tools=stats.campusTools[ca]||{};
+      const sorted=Object.entries(tools).sort((a,b)=>b[1]-a[1]).slice(0,12);
+      const mx=sorted[0]?.[1]||1;
+      const col=caCol(ca);
+      return `<div class="card" style="margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+          <div style="width:8px;height:8px;border-radius:50%;background:${col}"></div>
+          <span style="font-weight:600;font-size:14px">${esc(ca)}</span>
+          <span style="font-size:11px;color:var(--dim)">${Object.values(tools).reduce((a,b)=>a+b,0)} suggestions</span>
+        </div>
+        ${sorted.map(([n,c])=>`<div class="bar-row">
+          <div class="bar-label"><span>${esc(n)}</span><span style="color:var(--dim)">${c}×</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:${(c/mx)*100}%;background:${col};opacity:0.8"></div></div>
+        </div>`).join('')}
+      </div>`;
+    }).join('');
+  } else {
+    // Year view with campus filter
+    const campuses=[...new Set(DATA.map(e=>e.ca))].sort();
+    filterEl.innerHTML=`<button class="view-tab${AUDIT_YEAR_CAMPUS===''?' active':''}" onclick="setYrCampus('',this)">All</button>`
+      +campuses.map(ca=>`<button class="view-tab${AUDIT_YEAR_CAMPUS===ca?' active':''}" style="color:${caCol(ca)}" onclick="setYrCampus('${esc(ca)}',this)">${esc(ca)}</button>`).join('');
+    const fd=AUDIT_YEAR_CAMPUS?DATA.filter(e=>e.ca===AUDIT_YEAR_CAMPUS):DATA;
+    const yt={};
+    fd.forEach(e=>{ (e.s||[]).forEach(s=>{ const t=s.t||'Unknown'; if(!yt[e.yl])yt[e.yl]={}; yt[e.yl][t]=(yt[e.yl][t]||0)+1; }); });
+    const col=AUDIT_YEAR_CAMPUS?caCol(AUDIT_YEAR_CAMPUS):'#818cf8';
+    container.innerHTML=YR.filter(yr=>yt[yr]).map(yr=>{
+      const tools=yt[yr];
+      const sorted=Object.entries(tools).sort((a,b)=>b[1]-a[1]).slice(0,10);
+      const mx=sorted[0]?.[1]||1;
+      return `<div class="card" style="margin-bottom:14px">
+        <div style="font-weight:600;font-size:14px;color:var(--mint);margin-bottom:14px">${yr}${AUDIT_YEAR_CAMPUS?' — '+AUDIT_YEAR_CAMPUS:''}</div>
+        ${sorted.map(([n,c])=>`<div class="bar-row">
+          <div class="bar-label"><span>${esc(n)}</span><span style="color:var(--dim)">${c}×</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:${(c/mx)*100}%;background:${col};opacity:0.8"></div></div>
+        </div>`).join('')}
+      </div>`;
+    }).join('');
+  }
 }
 
-window.onload = () => {
-  const key = localStorage.getItem('dla_api_key');
-  if (key) showScreen('load'); else showScreen('setup');
-};
+function setYrCampus(ca,btn){
+  AUDIT_YEAR_CAMPUS=ca;
+  document.querySelectorAll('#year-campus-filter .view-tab').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderAuditChart();
+}
+
+function jumpToBrowse(toolName){
+  switchTab('browse',document.querySelector('.nav-item[data-tab="browse"]'));
+  document.getElementById('f-search').value=toolName;
+  renderBrowse();
+}
+
+// ─── AI Coach Chat ────────────────────────────────────────────────────────────
+function getCoachSystem(){
+  const stats=computeStats();
+  const dist=stats.sorted.slice(0,20).map(({name,count,pct})=>`${name}: ${count}× (${pct}%)`).join(', ');
+  const entryList=DATA.map((e,i)=>`${i}: ${e.ca} | ${e.yl} | ${e.th}`).join('\n');
+  return `You are an AI coaching assistant for the Wesley College Digital Learning Assistant. You help the Digital Learning Coach make strategic decisions about educational technology across ${DATA.length} lesson entries.
+
+Data structure: each entry has campus (ca), year level (yl), theme (th), central idea (ci), and 5 technology suggestions (s) each with tool name (t) and description (d).
+
+CURRENT TOOL DISTRIBUTION: ${dist}
+
+When the user asks to make bulk changes (e.g. "add more Minecraft", "reduce Seesaw", "replace iMovie with Canva Video"):
+1. Ask 2-3 focused clarifying questions — which year levels? which campuses? which unit themes would suit this best? How many changes?
+2. Once you have enough information, identify specific entries to update and propose the exact changes
+3. Ask for confirmation before applying
+4. When the user confirms, output the changes in this exact format at the end of your message:
+APPLY_CHANGES:[{"entryIdx":3,"sugIdx":1,"t":"Tool Name","d":"Description specific to that unit's content."}]
+
+Keep questions concise. Be conversational. When proposing changes, explain your reasoning briefly.
+
+ENTRY LIST:
+${entryList}`;
+}
+
+function initChat(){
+  CHAT_HISTORY=[{role:'model',text:"Hi! I'm your DLA AI Coach. I can help you make strategic changes across all entries — like adding more of a particular tool, balancing the distribution, or replacing overused tools.\n\nWhat would you like to change?",changes:null}];
+  renderChat();
+}
+
+function renderChat(){
+  const el=document.getElementById('chat-messages'); if(!el) return;
+  el.innerHTML=CHAT_HISTORY.map((msg,i)=>`
+    <div class="chat-msg ${msg.role}">
+      <div class="chat-bubble">${msg.role==='user'?esc(msg.text):formatModelText(msg.text)}</div>
+      ${msg.changes&&msg.changes.length?`
+        <div style="margin-top:10px;text-align:left">
+          <div style="font-size:11px;color:var(--dim);margin-bottom:6px">${msg.changes.length} change${msg.changes.length!==1?'s':''} proposed</div>
+          <button class="btn-pri" style="font-size:11px;padding:6px 14px" onclick="applyChanges(${i})">Apply these changes</button>
+        </div>`:''}
+    </div>`).join('');
+  el.scrollTop=el.scrollHeight;
+}
+
+function formatModelText(text){
+  // Strip APPLY_CHANGES block from display
+  const clean=text.replace(/APPLY_CHANGES:\s*\[[\s\S]*?\]/,'').trim();
+  return esc(clean).replace(/\n/g,'<br>');
+}
+
+async function sendChat(){
+  const input=document.getElementById('chat-input');
+  const msg=input.value.trim(); if(!msg) return;
+  input.value='';
+  const btn=document.getElementById('btn-send');
+  btn.disabled=true;
+
+  CHAT_HISTORY.push({role:'user',text:msg,changes:null});
+  renderChat();
+
+  try{
+    const contents=CHAT_HISTORY.map(m=>({
+      role:m.role==='model'?'model':'user',
+      parts:[{text:m.text}]
+    }));
+    const response=await callGemini(contents,getCoachSystem());
+
+    // Parse APPLY_CHANGES if present
+    let changes=null;
+    const match=response.match(/APPLY_CHANGES:\s*(\[[\s\S]*?\])/);
+    if(match){
+      try{ changes=JSON.parse(match[1]); }catch{}
+    }
+    CHAT_HISTORY.push({role:'model',text:response,changes});
+    renderChat();
+  }catch(e){
+    CHAT_HISTORY.push({role:'model',text:`Error: ${e.message}`,changes:null});
+    renderChat();
+  }
+  btn.disabled=false;
+}
+
+function applyChanges(msgIdx){
+  const msg=CHAT_HISTORY[msgIdx];
+  if(!msg||!msg.changes||!msg.changes.length) return;
+  let applied=0;
+  msg.changes.forEach(c=>{
+    const {entryIdx,sugIdx,t,d}=c;
+    if(entryIdx>=0&&entryIdx<DATA.length){
+      if(!DATA[entryIdx].s) DATA[entryIdx].s=[];
+      if(sugIdx>=0&&sugIdx<DATA[entryIdx].s.length){
+        DATA[entryIdx].s[sugIdx]={t,d};
+        applied++;
+      }
+    }
+  });
+  msg.changes=null; // Prevent double-apply
+  saveToDrive();
+  setStatus(`${applied} suggestion${applied!==1?'s':''} updated and saved`);
+  CHAT_HISTORY.push({role:'model',text:`Done — ${applied} suggestion${applied!==1?'s':''} updated across the library and saved to Drive. Want to make any other changes?`,changes:null});
+  renderChat();
+  renderAuditChart();
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+function checkKeyInput(){
+  const val=document.getElementById('api-key-input')?.value||'';
+  const badge=document.getElementById('key-badge');
+  if(badge) badge.textContent=val.length>10?'ready':'required';
+}
+
+function initNetworkCanvas(){
+  const canvas=document.getElementById('bg-canvas');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  let W=0,H=0,nodes=[];
+  function resize(){
+    W=canvas.width=window.innerWidth;
+    H=canvas.height=window.innerHeight;
+    nodes=Array.from({length:55},()=>({
+      x:Math.random()*W, y:Math.random()*H,
+      vx:(Math.random()-.5)*.25, vy:(Math.random()-.5)*.25,
+      r:Math.random()*1.5+.5
+    }));
+  }
+  resize();
+  window.addEventListener('resize',resize);
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(let i=0;i<nodes.length;i++){
+      for(let j=i+1;j<nodes.length;j++){
+        const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<160){
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x,nodes[i].y);
+          ctx.lineTo(nodes[j].x,nodes[j].y);
+          ctx.strokeStyle=`rgba(52,211,153,${0.09*(1-d/160)})`;
+          ctx.lineWidth=.6;
+          ctx.stroke();
+        }
+      }
+    }
+    nodes.forEach(n=>{
+      ctx.beginPath();
+      ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(0,230,118,0.45)';
+      ctx.fill();
+      n.x+=n.vx; n.y+=n.vy;
+      if(n.x<0||n.x>W) n.vx*=-1;
+      if(n.y<0||n.y>H) n.vy*=-1;
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+(function init(){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('app-content').style.display='none';
+  initNetworkCanvas();
+  const key=getKey();
+  if(key) showScreen('load');
+  else showScreen('setup');
+  document.getElementById('api-key-input')?.addEventListener('keydown',e=>{ if(e.key==='Enter') saveApiKey(); });
+  document.getElementById('chat-input')?.addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendChat(); }
+  });
+})();
 </script>
 </body>
 </html>
