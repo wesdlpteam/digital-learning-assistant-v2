@@ -812,7 +812,7 @@ function computeStats(){
   const toolCounts={}, campusTools={}, yearTools={}; let total=0;
   DATA.forEach(e=>{
     (e.s||[]).forEach(s=>{
-      const t=s.t||'Unknown';
+      const t=(s.t&&s.t.trim())?s.t.trim():`⚠ empty (entry ${DATA.indexOf(e)}, sug ${(e.s||[]).indexOf(s)})`;
       toolCounts[t]=(toolCounts[t]||0)+1;
       if(!campusTools[e.ca]) campusTools[e.ca]={};
       campusTools[e.ca][t]=(campusTools[e.ca][t]||0)+1;
@@ -855,15 +855,31 @@ function renderAuditChart(){
     filterEl.innerHTML='';
     const top=stats.sorted.slice(0,25), mx=top[0]?.count||1;
     container.innerHTML=`<div class="card">
-      <span class="label">Tool frequency — ${stats.total} total suggestions — click any tool to browse entries</span>
-      ${top.map(({name,count,pct})=>`
-        <div class="bar-row" onclick="jumpToBrowse('${esc(name)}')">
+      <span class="label">Tool frequency — ${stats.total} total suggestions — click any tool to see entries</span>
+      ${top.map(({name,count,pct})=>{
+        const isUnknown=name.startsWith('\u26a0');
+        const entries=DATA.map((e,idx)=>({e,idx})).filter(({e})=>(e.s||[]).some(s=>{
+          const t=(s.t&&s.t.trim())?s.t.trim():'';
+          return isUnknown ? !t : t===name;
+        }));
+        return `<div class="bar-row" id="bar-${encodeURIComponent(name).slice(0,20)}" onclick="toggleToolDrilldown(this,'${esc(name).replace(/'/g,'&#39;')}')">
           <div class="bar-label">
-            <span>${esc(name)}</span>
+            <span style="${isUnknown?'color:#f87171':''}">${esc(name)}</span>
             <span style="color:var(--dim)">${count}× (${pct}%)</span>
           </div>
-          <div class="bar-track"><div class="bar-fill" style="width:${(count/mx)*100}%"></div></div>
-        </div>`).join('')}
+          <div class="bar-track"><div class="bar-fill" style="width:${(count/mx)*100}%;${isUnknown?'background:#f87171':''}"></div></div>
+          <div class="tool-drilldown" style="display:none;margin-top:10px;padding:10px;background:#0a0a0a;border:1px solid var(--border);border-radius:6px">
+            ${entries.map(({e,idx})=>`
+              <div onclick="event.stopPropagation();openEntry(${idx})" style="display:flex;align-items:center;gap:8px;padding:6px 8px;cursor:pointer;border-radius:5px;font-size:11px" onmouseover="this.style.background='#1a1a1a'" onmouseout="this.style.background=''">
+                <span style="color:var(--dim);width:95px;flex-shrink:0">${esc(e.ca)}</span>
+                <span style="color:${caCol(e.ca)};width:58px;flex-shrink:0">${esc(e.yl)}</span>
+                <span style="color:#a3a3a3;flex:1">${esc(e.th)}</span>
+                ${isUnknown?`<span style="font-size:10px;color:#f87171;font-family:monospace">${esc((e.s||[]).filter(s=>!(s.t&&s.t.trim())).map((_,si)=>`sug ${si+1}: "${(e.s[si].t===undefined?'undefined':e.s[si].t===null?'null':e.s[si].t||'""')}"` ).join(', '))}</span>`:''}
+                <span style="color:var(--dim)">›</span>
+              </div>`).join('')}
+          </div>
+        </div>`;
+      }).join('')}
     </div>`;
   } else if(AUDIT_VIEW==='campus'){
     filterEl.innerHTML='';
@@ -920,6 +936,15 @@ function jumpToBrowse(toolName){
   switchTab('browse',document.querySelector('.nav-item[data-tab="browse"]'));
   document.getElementById('f-search').value=toolName;
   renderBrowse();
+}
+
+function toggleToolDrilldown(row, toolName){
+  const dd=row.querySelector('.tool-drilldown');
+  if(!dd) return;
+  const isOpen=dd.style.display!=='none';
+  // Close all others
+  document.querySelectorAll('.tool-drilldown').forEach(d=>d.style.display='none');
+  if(!isOpen) dd.style.display='block';
 }
 
 // ─── AI Coach Chat ────────────────────────────────────────────────────────────
