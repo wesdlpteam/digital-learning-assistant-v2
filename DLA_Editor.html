@@ -422,7 +422,8 @@ let AUDIT_YEAR_CAMPUS = '';
 let CHAT_HISTORY = [];
 
 const CLIENT_ID = '334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleusercontent.com';
-const GEMINI_MODEL = 'gemini-3.1-pro-preview';
+const GEMINI_MODEL = 'gemini-3.1-pro-preview';   // used for suggestion regeneration
+const GEMINI_CHAT_MODEL = 'gemini-3.1-flash-preview'; // used for AI coach chat
 const YR = ["Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"];
 const CAMPUS_COL = { Elsternwick:'#818cf8', 'Glen Waverley':'#34d399', 'St Kilda Road':'#fb923c' };
 
@@ -559,12 +560,13 @@ function downloadJSON(){
 }
 
 // ─── Gemini API ───────────────────────────────────────────────────────────────
-async function callGemini(contents, systemPrompt){
+async function callGemini(contents, systemPrompt, model){
   const key=getKey();
   if(!key) throw new Error('No API key — click ⚙ key to set it');
   const body={ contents };
   if(systemPrompt) body.systemInstruction={ parts:[{text:systemPrompt}] };
-  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${key}`,{
+  const m = model || GEMINI_MODEL;
+  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key}`,{
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify(body)
@@ -746,7 +748,7 @@ Keep responses concise and conversational.`,
   if(txtEl) txtEl.value='';
 
   try{
-    const response=await callGemini(chat.history, chat.system);
+    const response=await callGemini(chat.history, chat.system, GEMINI_CHAT_MODEL);
     chat.history.push({role:'model',parts:[{text:response}]});
 
     // Check if a proposal is included
@@ -1165,7 +1167,7 @@ async function sendChat(){
       role:m.role==='model'?'model':'user',
       parts:[{text:m.text}]
     }));
-    const response=await callGemini(contents,getCoachSystem());
+    const response=await callGemini(contents,getCoachSystem(),GEMINI_CHAT_MODEL);
 
     // Parse APPLY_CHANGES if present
     let changes=null;
