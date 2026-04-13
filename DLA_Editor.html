@@ -12,7 +12,7 @@
   --glow:rgba(52,211,153,0.35);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;min-height:100vh}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;min-height:100vh;font-size:15px;line-height:1.6}
 
 /* SIDEBAR */
 #sidebar{
@@ -22,10 +22,10 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
 }
 body.app-mode #sidebar{display:flex}
 body.app-mode #main{margin-left:240px}
-#logo{font-size:11px;font-weight:800;color:var(--mint);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:40px}
+#logo{font-size:13px;font-weight:800;color:var(--mint);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:40px}
 .nav-item{
-  padding:10px 14px;border-radius:8px;color:var(--dim);cursor:pointer;
-  margin-bottom:4px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:10px;
+  padding:12px 16px;border-radius:8px;color:var(--dim);cursor:pointer;
+  margin-bottom:6px;font-size:14px;font-weight:500;display:flex;align-items:center;gap:10px;
   transition:all 0.15s
 }
 .nav-item:hover{color:var(--text);background:#1a1a1a}
@@ -43,7 +43,7 @@ body.app-mode #main{margin-left:240px}
 /* APP */
 #app-content{display:none;padding:40px}
 body.app-mode #app-content{display:block}
-#status-bar{font-size:11px;color:var(--mint);text-align:right;min-height:18px;margin-bottom:16px}
+#status-bar{font-size:13px;color:var(--mint);text-align:right;min-height:18px;margin-bottom:16px}
 .panel{display:none;max-width:900px}
 .panel.active{display:block}
 
@@ -52,70 +52,70 @@ body.app-mode #app-content{display:block}
 .card2{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:10px}
 
 /* TYPE */
-.page-title{font-size:22px;font-weight:700;color:#fff;margin-bottom:6px}
-.page-sub{font-size:13px;color:var(--dim);margin-bottom:24px;line-height:1.6}
-.label{font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;letter-spacing:1px;margin-bottom:10px;display:block}
+.page-title{font-size:26px;font-weight:700;color:#fff;margin-bottom:6px}
+.page-sub{font-size:15px;color:var(--dim);margin-bottom:24px;line-height:1.6}
+.label{font-size:12px;color:var(--dim);text-transform:uppercase;font-weight:700;letter-spacing:1px;margin-bottom:10px;display:block}
 
 /* INPUTS */
-.inp{background:#000;border:1px solid var(--border);color:var(--text);border-radius:8px;padding:12px 14px;width:100%;outline:none;font-size:13px;font-family:inherit}
+.inp{background:#000;border:1px solid var(--border);color:var(--text);border-radius:8px;padding:14px 16px;width:100%;outline:none;font-size:15px;font-family:inherit}
 .inp:focus{border-color:var(--mint)}
 textarea.inp{resize:vertical;line-height:1.6}
 select.inp{cursor:pointer}
 
 /* BUTTONS */
-.btn{padding:8px 16px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:12px;font-family:inherit;transition:all 0.15s}
+.btn{padding:10px 18px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:13px;font-family:inherit;transition:all 0.15s}
 .btn:hover{color:var(--text);border-color:#444}
-.btn-pri{background:var(--mint);color:#000;border:none;padding:11px 20px;border-radius:8px;font-weight:700;cursor:pointer;font-size:13px;font-family:inherit}
+.btn-pri{background:var(--mint);color:#000;border:none;padding:13px 22px;border-radius:8px;font-weight:700;cursor:pointer;font-size:14px;font-family:inherit}
 .btn-pri:hover{background:#2fb888}
 .btn-pri.full{width:100%}
-.btn-sm{padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:11px;font-family:inherit}
+.btn-sm{padding:6px 12px;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:12px;font-family:inherit}
 .btn-sm:hover{color:var(--text)}
 button:disabled{opacity:.4;cursor:not-allowed}
 
 /* STATS */
 .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
 .stat-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:20px}
-.stat-num{font-size:26px;font-weight:800;color:var(--mint)}
-.stat-lbl{font-size:11px;color:var(--dim);margin-top:4px}
+.stat-num{font-size:32px;font-weight:800;color:var(--mint)}
+.stat-lbl{font-size:13px;color:var(--dim);margin-top:4px}
 
 /* ROWS */
-.row{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--card2);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;cursor:pointer;transition:background 0.1s}
+.row{display:flex;align-items:center;gap:10px;padding:16px 20px;background:var(--card2);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;cursor:pointer;transition:background 0.1s}
 .row:hover{background:#1a1a1a}
 
 /* SUGGESTION ROWS */
 .sug{border-radius:8px;margin-bottom:10px;overflow:hidden}
-.sug-main{padding:14px 16px;background:var(--card2);border:1px solid var(--border)}
-.sug-tool{font-size:13px;font-weight:600;color:var(--mint);margin-bottom:4px}
-.sug-desc{font-size:12px;color:#a3a3a3;line-height:1.5}
-.sug-fb{padding:12px 16px;background:#0d0d0d;border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px}
+.sug-main{padding:18px 20px;background:var(--card2);border:1px solid var(--border)}
+.sug-tool{font-size:15px;font-weight:600;color:var(--mint);margin-bottom:4px}
+.sug-desc{font-size:14px;color:#a3a3a3;line-height:1.5}
+.sug-fb{padding:16px 20px;background:#0d0d0d;border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px}
 
 /* BAR CHART */
 .bar-row{margin-bottom:10px;cursor:pointer}
 .bar-row:hover .bar-label span:first-child{color:var(--mint)}
-.bar-label{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px}
-.bar-track{height:5px;background:#1e1e1e;border-radius:3px}
+.bar-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+.bar-track{height:7px;background:#1e1e1e;border-radius:3px}
 .bar-fill{height:100%;border-radius:3px;background:var(--mint);transition:width 0.4s}
 
 /* CHAT */
 #chat-messages{background:#000;border:1px solid var(--border);border-radius:12px 12px 0 0;height:400px;overflow-y:auto;padding:20px}
 .chat-msg{margin-bottom:16px}
 .chat-msg.user{text-align:right}
-.chat-bubble{display:inline-block;padding:10px 14px;border-radius:10px;font-size:13px;line-height:1.6;max-width:82%;text-align:left}
+.chat-bubble{display:inline-block;padding:14px 18px;border-radius:10px;font-size:15px;line-height:1.6;max-width:82%;text-align:left}
 .chat-msg.user .chat-bubble{background:var(--mint);color:#000;font-weight:500}
 .chat-msg.model .chat-bubble{background:var(--card2);border:1px solid var(--border);color:var(--text);white-space:pre-wrap}
 .chat-input-row{display:flex;gap:10px;padding:14px;background:var(--card2);border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px}
 
 /* AUDIT TABS */
 .view-tabs{display:flex;gap:6px;margin-bottom:20px}
-.view-tab{padding:6px 14px;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--dim);cursor:pointer;font-size:12px;font-family:inherit}
+.view-tab{padding:8px 18px;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--dim);cursor:pointer;font-size:13px;font-family:inherit}
 .view-tab.active{background:#1a1a1a;color:var(--text);border-color:var(--border)}
 
-.back-btn{background:#1a1a1a;border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:7px;cursor:pointer;font-size:12px;font-family:inherit;margin-bottom:20px}
+.back-btn{background:#1a1a1a;border:1px solid var(--border);color:var(--text);padding:11px 18px;border-radius:7px;cursor:pointer;font-size:14px;font-family:inherit;margin-bottom:20px}
 
 /* PREVIEW BOX */
 .preview-ok{padding:12px;background:#052e16;border:1px solid #14532d;border-radius:6px;margin-bottom:8px}
-.preview-tool{font-size:12px;font-weight:600;color:#86efac;margin-bottom:3px}
-.preview-desc{font-size:11px;color:#737373;line-height:1.5}
+.preview-tool{font-size:14px;font-weight:600;color:#86efac;margin-bottom:3px}
+.preview-desc{font-size:13px;color:#737373;line-height:1.5}
 
 /* BACKGROUND CANVAS */
 #bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
@@ -642,10 +642,10 @@ function renderDashboard(){
   ];
   document.getElementById('issues-list').innerHTML=all.length
     ? all.map(({e,idx,type,detail})=>`<div class="row" onclick="openEntry(${idx})">
-        <span style="font-size:10px;padding:2px 8px;border-radius:3px;background:${type==='banned'?'#991b1b':'#9a3412'};color:${type==='banned'?'#fca5a5':'#fdba74'};flex-shrink:0">${type}</span>
-        <span style="font-size:11px;color:var(--dim);width:100px;flex-shrink:0">${esc(e.ca)}</span>
-        <span style="font-size:11px;color:${caCol(e.ca)};width:62px;flex-shrink:0">${esc(e.yl)}</span>
-        <span style="flex:1;font-size:12px">${esc(e.th)}</span>
+        <span style="font-size:12px;padding:3px 10px;border-radius:3px;background:${type==='banned'?'#991b1b':'#9a3412'};color:${type==='banned'?'#fca5a5':'#fdba74'};flex-shrink:0">${type}</span>
+        <span style="font-size:13px;color:var(--dim);width:110px;flex-shrink:0">${esc(e.ca)}</span>
+        <span style="font-size:13px;color:${caCol(e.ca)};width:70px;flex-shrink:0">${esc(e.yl)}</span>
+        <span style="flex:1;font-size:14px">${esc(e.th)}</span>
         <span style="font-size:11px;color:var(--dim)">${detail}</span>
         <span style="color:var(--dim)">›</span>
       </div>`).join('')
@@ -666,10 +666,10 @@ function renderBrowse(){
   document.getElementById('browse-count').textContent=`${filtered.length} entries`;
   document.getElementById('browse-list').innerHTML=filtered.map(({e,idx})=>`
     <div class="row" onclick="openEntry(${idx})">
-      <span style="font-size:11px;color:var(--dim);width:100px;flex-shrink:0">${esc(e.ca)}</span>
-      <span style="font-size:11px;color:${caCol(e.ca)};width:62px;flex-shrink:0">${esc(e.yl)}</span>
-      <span style="flex:1;font-size:12px">${esc(e.th)}</span>
-      <span style="font-size:11px;color:var(--dim)">${(e.s||[]).length}/5 ›</span>
+      <span style="font-size:13px;color:var(--dim);width:110px;flex-shrink:0">${esc(e.ca)}</span>
+      <span style="font-size:13px;color:${caCol(e.ca)};width:70px;flex-shrink:0">${esc(e.yl)}</span>
+      <span style="flex:1;font-size:14px">${esc(e.th)}</span>
+      <span style="font-size:13px;color:var(--dim)">${(e.s||[]).length}/5 ›</span>
     </div>`).join('');
 }
 
@@ -677,9 +677,9 @@ function renderBrowse(){
 function renderEntry(idx){
   const e=DATA[idx];
   document.getElementById('entry-header').innerHTML=`
-    <h2 style="font-size:20px;font-weight:700;color:#fff;margin-bottom:4px">${esc(e.th)}</h2>
-    <p style="font-size:12px;color:var(--dim)">${esc(e.ca)} · ${esc(e.yl)}</p>
-    ${e.ci?`<p style="font-size:12px;color:#737373;margin-top:8px;font-style:italic">${esc(e.ci)}</p>`:''}`;
+    <h2 style="font-size:24px;font-weight:700;color:#fff;margin-bottom:6px">${esc(e.th)}</h2>
+    <p style="font-size:14px;color:var(--dim)">${esc(e.ca)} · ${esc(e.yl)}</p>
+    ${e.ci?`<p style="font-size:14px;color:#737373;margin-top:10px;font-style:italic">${esc(e.ci)}</p>`:''}`;
   const sugs=e.s||[];
   document.getElementById('entry-sugs').innerHTML=sugs.length
     ? sugs.map((s,i)=>buildSugRow(s,idx,i)).join('')
@@ -786,12 +786,12 @@ Keep responses concise and conversational.`,
     const cleanResponse=response.replace(/PROPOSED:\s*\{[\s\S]*?\}/,'').trim();
     resEl.innerHTML=`
       <div style="background:#0a120a;border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px">
-        <div style="font-size:10px;color:var(--dim);margin-bottom:6px;letter-spacing:.5px">GEMINI</div>
-        <div style="font-size:12px;color:var(--text);line-height:1.6;white-space:pre-wrap">${esc(cleanResponse)}</div>
+        <div style="font-size:12px;color:var(--dim);margin-bottom:8px;letter-spacing:.5px">GEMINI</div>
+        <div style="font-size:14px;color:var(--text);line-height:1.7;white-space:pre-wrap">${esc(cleanResponse)}</div>
       </div>
       ${proposalHTML}
       ${!proposalHTML?`<div style="display:flex;gap:8px;margin-top:8px">
-        <textarea class="inp" id="${uid}-reply" rows="2" placeholder="Reply to continue the conversation..." style="flex:1;font-size:12px"></textarea>
+        <textarea class="inp" id="${uid}-reply" rows="2" placeholder="Reply to continue the conversation..." style="flex:1;font-size:14px"></textarea>
         <button class="btn-pri" style="font-size:11px;padding:6px 12px;align-self:flex-end" onclick="continueRegenChat('${entryIdx}','${sugIdx}','${uid}')">Send</button>
       </div>`:''}`;
   }catch(e){
@@ -955,7 +955,7 @@ function renderAuditChart(){
       return `<div class="card" style="margin-bottom:14px">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
           <div style="width:8px;height:8px;border-radius:50%;background:${col}"></div>
-          <span style="font-weight:600;font-size:14px">${esc(ca)}</span>
+          <span style="font-weight:600;font-size:16px">${esc(ca)}</span>
           <span style="font-size:11px;color:var(--dim)">${Object.values(tools).reduce((a,b)=>a+b,0)} suggestions</span>
         </div>
         ${sorted.map(([n,c])=>`<div class="bar-row">
@@ -978,7 +978,7 @@ function renderAuditChart(){
       const sorted=Object.entries(tools).sort((a,b)=>b[1]-a[1]).slice(0,10);
       const mx=sorted[0]?.[1]||1;
       return `<div class="card" style="margin-bottom:14px">
-        <div style="font-weight:600;font-size:14px;color:var(--mint);margin-bottom:14px">${yr}${AUDIT_YEAR_CAMPUS?' — '+AUDIT_YEAR_CAMPUS:''}</div>
+        <div style="font-weight:600;font-size:16px;color:var(--mint);margin-bottom:14px">${yr}${AUDIT_YEAR_CAMPUS?' — '+AUDIT_YEAR_CAMPUS:''}</div>
         ${sorted.map(([n,c])=>`<div class="bar-row">
           <div class="bar-label"><span>${esc(n)}</span><span style="color:var(--dim)">${c}×</span></div>
           <div class="bar-track"><div class="bar-fill" style="width:${(c/mx)*100}%;background:${col};opacity:0.8"></div></div>
