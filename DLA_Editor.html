@@ -172,9 +172,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
   <div class="nav-item" data-tab="audit" onclick="switchTab('audit',this)">
     <span>◎</span> Audit & AI Coach
   </div>
-  <div class="nav-item" data-tab="queue" onclick="switchTab('queue',this)">
-    <span>⊕</span> Planner Queue
-  </div>
+
   <div id="sidebar-footer">
     <svg width="38" height="38" viewBox="0 0 100 100" style="margin-bottom:10px;opacity:0.55">
       <circle cx="50" cy="38" r="20" fill="none" stroke="#34d399" stroke-width="3"/>
@@ -317,6 +315,40 @@ button:disabled{opacity:.4;cursor:not-allowed}
         <span class="label">Issues</span>
         <div id="issues-list"></div>
       </div>
+      <div class="card" style="margin-top:8px">
+        <span class="label">Add to Queue</span>
+        <p style="font-size:13px;color:var(--dim);margin-bottom:16px;line-height:1.6">
+          Submit a new unit to the auditor. The Apps Script engine picks it up within 10 minutes, finds the matching planner PDF on Drive, and fills in 5 AI-generated suggestions automatically.
+        </p>
+        <div style="display:grid;grid-template-columns:1fr 1fr 2fr;gap:10px;margin-bottom:12px">
+          <div>
+            <div style="font-size:11px;color:var(--dim);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">Campus</div>
+            <select id="q-campus" class="inp" style="margin-bottom:0">
+              <option value="">Select…</option>
+            </select>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--dim);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">Year Level</div>
+            <select id="q-year" class="inp" style="margin-bottom:0">
+              <option value="">Select…</option>
+            </select>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--dim);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">Unit Theme</div>
+            <input id="q-theme" class="inp" placeholder="e.g. How We Express Ourselves" style="margin-bottom:0">
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <button class="btn-pri" id="btn-add-queue" onclick="addToGASQueue()">Add to Queue →</button>
+          <span id="q-status" style="font-size:13px;font-weight:600"></span>
+        </div>
+        <div style="margin-top:14px;padding:12px 16px;background:var(--card2);border-radius:8px;border-left:3px solid var(--gold)">
+          <div style="font-size:11px;color:var(--gold);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">Planner naming convention</div>
+          <div style="font-size:12px;color:var(--dim);line-height:1.6;font-family:monospace">2026 - [Year Level] UOI Planners ([Campus Code]).pdf<br>
+          <span style="color:#888">e.g. 2026 - Year 4 UOI Planners (GW).pdf</span><br>
+          <span style="color:#888">Campus codes: EL = Elsternwick · GW = Glen Waverley · STK = St Kilda</span></div>
+        </div>
+      </div>
     </div>
 
     <!-- BROWSE -->
@@ -362,43 +394,6 @@ button:disabled{opacity:.4;cursor:not-allowed}
       </div>
     </div>
 
-    <!-- PLANNER QUEUE -->
-    <div id="panel-queue" class="panel">
-      <div class="page-title">Planner Queue</div>
-      <div class="page-sub">Upload planner PDFs, extract unit content, then run AI checks on all matching entries.</div>
-
-      <!-- Upload section -->
-      <div class="card">
-        <span class="label">Add to queue</span>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:4px">
-          <div style="flex:0 0 160px">
-            <div style="font-size:11px;color:var(--dim);font-weight:600;margin-bottom:6px;letter-spacing:.5px;text-transform:uppercase">Campus</div>
-            <select id="q-campus" class="inp" style="margin-bottom:0"></select>
-          </div>
-          <div style="flex:0 0 130px">
-            <div style="font-size:11px;color:var(--dim);font-weight:600;margin-bottom:6px;letter-spacing:.5px;text-transform:uppercase">Year level</div>
-            <select id="q-year" class="inp" style="margin-bottom:0"></select>
-          </div>
-          <button class="btn-pri" onclick="document.getElementById('q-pdf-input').click()" style="height:48px;padding:0 20px">Upload PDF</button>
-          <input type="file" id="q-pdf-input" accept=".pdf" style="display:none" onchange="addToQueue(event)">
-          <span id="q-upload-status" style="font-size:13px;color:var(--lime);font-weight:600;align-self:center"></span>
-        </div>
-        <p style="font-size:12px;color:var(--dim);margin-top:10px;line-height:1.5">If a planner has more than 100 pages, split it first at <a href="https://smallpdf.com/split-pdf" target="_blank" style="color:var(--gold)">smallpdf.com</a> and upload each half separately — they'll be merged.</p>
-      </div>
-
-      <!-- Queue list -->
-      <div id="queue-list"></div>
-
-      <!-- Progress -->
-      <div id="queue-progress" style="display:none" class="card">
-        <div style="font-size:13px;color:var(--lime);font-weight:600;margin-bottom:10px" id="queue-progress-label">Processing…</div>
-        <div style="height:6px;background:var(--card2);border-radius:3px">
-          <div id="queue-progress-bar" style="height:100%;border-radius:3px;background:var(--lime);transition:width .4s;width:0%"></div>
-        </div>
-      </div>
-      <div id="queue-results"></div>
-    </div>
-
     <!-- ENTRY DETAIL -->
     <div id="panel-entry" class="panel">
       <button class="back-btn" onclick="closeEntry()">← Back</button>
@@ -417,6 +412,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
 <script>
 // ─── State ────────────────────────────────────────────────────────────────────
 let DATA = [];
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUlNbBkcwXB8ImUUhEQDP7C3itYCUu-j_vRNKA7_Km2h4uJMIs0RVFJxUXKcFOFgIW/exec';
 let DRIVE_TOKEN = null;
 let DRIVE_FILE_ID = null;
 let CURRENT_ENTRY_IDX = null;
@@ -529,6 +525,13 @@ function ingest(arr){
     while(el.options.length>1) el.remove(1);
     yrs.forEach(y=>el.add(new Option(y,y)));
   });
+  // Populate Add to Queue dropdowns
+  const campuses2=[...new Set(DATA.map(e=>e.ca))].sort();
+  const yrs2=[...new Set(DATA.map(e=>e.yl))].sort((a,b)=>YR.indexOf(a)-YR.indexOf(b));
+  const qc=document.getElementById('q-campus');
+  const qy=document.getElementById('q-year');
+  if(qc){ while(qc.options.length>1) qc.remove(1); campuses2.forEach(c=>qc.add(new Option(c,c))); }
+  if(qy){ while(qy.options.length>1) qy.remove(1); yrs2.forEach(y=>qy.add(new Option(y,y))); }
   showApp();
   switchTab('dashboard',document.querySelector('.nav-item[data-tab="dashboard"]'));
   renderDashboard();
@@ -581,7 +584,7 @@ function switchTab(tab,btn){
   PREV_TAB=tab; CURRENT_ENTRY_IDX=null;
   if(tab==='browse') renderBrowse();
   if(tab==='audit') renderAudit();
-  if(tab==='queue'){ initQueueFilters(); renderQueue(); }
+
 }
 
 function openEntry(idx){
@@ -603,9 +606,9 @@ function closeEntry(){
 function getIssues(){
   const incomplete=[], banned=[];
   DATA.forEach((e,idx)=>{
-    const sugs=e.s||[];
+    const sugs=getSugs(e);
     if(sugs.length<5) incomplete.push({e,idx,detail:`${sugs.length}/5 suggestions`});
-    if(sugs.some(s=>(s.t||'').toLowerCase().includes('wevideo'))) banned.push({e,idx,detail:'WeVideo found'});
+    if(sugs.some(s=>s&&(s.t||'').toLowerCase().includes('wevideo'))) banned.push({e,idx,detail:'WeVideo found'});
   });
   return {incomplete,banned};
 }
@@ -654,7 +657,7 @@ function renderBrowse(){
       <span style="font-size:13px;color:#9ab89a;width:110px;flex-shrink:0">${esc(e.ca)}</span>
       <span style="font-size:13px;color:var(--gold);font-weight:700;width:70px;flex-shrink:0">${esc(e.yl)}</span>
       <span style="flex:1;font-size:14px;font-weight:600;color:var(--text)">${esc(e.th)}</span>
-      <span style="font-size:13px;color:#9ab89a">${(e.s||[]).length}/5 ›</span>
+      <span style="font-size:13px;color:#9ab89a">${getSugs(e).length}/5 ›</span>
     </div>`).join('');
 }
 
@@ -665,7 +668,7 @@ function renderEntry(idx){
     <h2 style="font-size:24px;font-weight:700;color:#fff;margin-bottom:6px">${esc(e.th)}</h2>
     <p style="font-size:14px;color:var(--dim);font-weight:500">${esc(e.ca)} · ${esc(e.yl)}</p>
     ${e.ci?`<p style="font-size:14px;color:var(--dim);margin-top:10px;font-style:italic;line-height:1.6">${esc(e.ci)}</p>`:''}`;
-  const sugs=e.s||[];
+  const sugs=getSugs(e);
   document.getElementById('entry-sugs').innerHTML=sugs.length
     ? sugs.map((s,i)=>buildSugRow(s,idx,i)).join('')
     : '<div class="card2" style="color:var(--dim);font-size:12px;font-style:italic">No suggestions yet.</div>';
@@ -856,11 +859,13 @@ function applyRegenAll(idx,pendingId){
 }
 
 // ─── Audit ────────────────────────────────────────────────────────────────────
+function getSugs(e){ const s=e.s; return Array.isArray(s)?s:[]; }
+
 function computeStats(){
   const toolCounts={}, campusTools={}, yearTools={}; let total=0;
   DATA.forEach(e=>{
-    (e.s||[]).forEach(s=>{
-      const t=(s.t&&s.t.trim())?s.t.trim():`⚠ empty (entry ${DATA.indexOf(e)}, sug ${(e.s||[]).indexOf(s)})`;
+    getSugs(e).forEach(s=>{
+      const t=(s&&s.t&&s.t.trim())?s.t.trim():`⚠ empty (entry ${DATA.indexOf(e)})`;
       toolCounts[t]=(toolCounts[t]||0)+1;
       if(!campusTools[e.ca]) campusTools[e.ca]={};
       campusTools[e.ca][t]=(campusTools[e.ca][t]||0)+1;
@@ -894,104 +899,164 @@ function setAnalyticsView(btn){
   renderAuditChart();
 }
 function renderAuditChart(){
-  const stats=computeStats();
-  const container=document.getElementById('audit-chart');
-  const filterEl=document.getElementById('year-campus-filter');
+  const stats = computeStats();
+  const container = document.getElementById('audit-chart');
+  const filterEl = document.getElementById('year-campus-filter');
   if(!container) return;
 
-  if(AUDIT_VIEW==='tools'){
-    if(filterEl) filterEl.innerHTML='';
-    if(!stats.sorted.length){ container.innerHTML='<div class="card" style="color:var(--dim);text-align:center;padding:40px">No data loaded yet.</div>'; return; }
-    const top=stats.sorted.slice(0,25), mx=top[0].count||1;
-    let rows='';
-    top.forEach(({name,count,pct})=>{
-      const isWarn=name.startsWith('\u26a0');
-      const barCol=isWarn?'#FF8080':'var(--lime)';
-      const nameCol=isWarn?'#FF8080':'var(--text)';
-      // Get entries using this tool
-      let entryRows='';
-      DATA.forEach((e,idx)=>{
-        const hasTool=(e.s||[]).some(s=>{
-          const t=(s.t&&s.t.trim())?s.t.trim():'';
-          return isWarn?!t:t===name;
-        });
-        if(hasTool) entryRows+=`<div onclick="event.stopPropagation();openEntry(${idx})" style="display:flex;align-items:center;gap:8px;padding:7px 10px;cursor:pointer;border-radius:6px;transition:background .1s" onmouseover="this.style.background='var(--card2)'" onmouseout="this.style.background=''">
-          <span style="color:var(--dim);font-size:12px;width:100px;flex-shrink:0">${esc(e.ca)}</span>
-          <span style="color:var(--gold);font-size:12px;font-weight:600;width:62px;flex-shrink:0">${esc(e.yl)}</span>
-          <span style="font-size:13px;flex:1">${esc(e.th)}</span>
-          <span style="color:var(--dim)">›</span>
-        </div>`;
-      });
-      const uid='bar-'+name.replace(/[^a-z0-9]/gi,'').slice(0,15);
-      rows+=`<div class="bar-row" onclick="toggleDrilldown('${uid}')">
-        <div class="bar-label">
-          <span style="color:${nameCol}">${esc(name)}</span>
-          <span>${count}× (${pct}%)</span>
-        </div>
-        <div class="bar-track"><div class="bar-fill" style="width:${(count/mx)*100}%;background:${barCol}"></div></div>
-        <div id="${uid}" style="display:none;margin-top:10px;padding:8px;background:var(--card2);border-radius:8px;border:1px solid var(--border)">${entryRows||'<div style="color:var(--dim);font-size:12px;padding:6px">No entries found</div>'}</div>
-      </div>`;
-    });
-    container.innerHTML=`<div class="card"><span class="label">Tool frequency — ${stats.total} suggestions — click to expand</span>${rows}</div>`;
+  // Clear
+  container.innerHTML = '';
+  if(filterEl) filterEl.innerHTML = '';
 
-  } else if(AUDIT_VIEW==='campus'){
-    if(filterEl) filterEl.innerHTML='';
-    const campuses=[...new Set(DATA.map(e=>e.ca))].sort();
-    const palette=['#F5A623','#C5E84A','#60B8F0','#9B8BFF','#52B95C','#FF8080'];
-    let html='';
-    campuses.forEach((ca,ci)=>{
-      const tools=stats.campusTools[ca]||{};
-      const sorted=Object.entries(tools).sort((a,b)=>b[1]-a[1]).slice(0,12);
-      const mx=sorted[0]?.[1]||1;
-      const col=palette[ci%palette.length];
-      let bars='';
-      sorted.forEach(([n,c])=>{
-        bars+=`<div class="bar-row"><div class="bar-label"><span>${esc(n)}</span><span>${c}×</span></div>
-          <div class="bar-track"><div class="bar-fill" style="width:${(c/mx)*100}%;background:${col}"></div></div></div>`;
+  if(!stats.sorted.length){
+    container.innerHTML = '<div style="padding:40px;text-align:center;color:var(--dim);font-size:14px">No suggestion data found in this dataset.</div>';
+    return;
+  }
+
+  if(AUDIT_VIEW === 'tools'){
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = '<span class="label">Tool frequency — ' + stats.total + ' total — click a bar to see entries</span>';
+
+    const top = stats.sorted.slice(0,25);
+    const mx = top[0].count || 1;
+
+    top.forEach(({name, count, pct}) => {
+      const isWarn = name.startsWith('\u26a0');
+      const barCol = isWarn ? '#FF8080' : 'var(--lime)';
+      const nameCol = isWarn ? '#FF8080' : 'var(--text)';
+      const uid = 'dd_' + name.replace(/\W/g,'').slice(0,18) + '_' + count;
+
+      const wrap = document.createElement('div');
+      wrap.style.cssText = 'margin-bottom:14px;cursor:pointer';
+
+      const labelRow = document.createElement('div');
+      labelRow.style.cssText = 'display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:5px';
+      labelRow.innerHTML = '<span style="color:'+nameCol+'">' + esc(name) + '</span><span style="color:var(--dim)">' + count + '\u00d7 (' + pct + '%)</span>';
+
+      const track = document.createElement('div');
+      track.style.cssText = 'height:6px;background:var(--card2);border-radius:3px;margin-bottom:0';
+      const fill = document.createElement('div');
+      fill.style.cssText = 'height:100%;border-radius:3px;background:'+barCol+';width:'+Math.round((count/mx)*100)+'%';
+      track.appendChild(fill);
+
+      // Drilldown entries list
+      const dd = document.createElement('div');
+      dd.id = uid;
+      dd.style.cssText = 'display:none;margin-top:10px;padding:8px;background:var(--card2);border-radius:8px;border:1px solid var(--border)';
+      DATA.forEach((e,idx2) => {
+        const hasTool = getSugs(e).some(s => {
+          const t = (s && s.t && s.t.trim()) ? s.t.trim() : '';
+          return isWarn ? !t : t === name;
+        });
+        if(!hasTool) return;
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:7px 10px;cursor:pointer;border-radius:6px;font-size:12px';
+        row.innerHTML = '<span style="color:var(--dim);width:100px;flex-shrink:0">'+esc(e.ca)+'</span>'
+          +'<span style="color:var(--gold);font-weight:600;width:62px;flex-shrink:0">'+esc(e.yl)+'</span>'
+          +'<span style="flex:1">'+esc(e.th)+'</span>'
+          +'<span style="color:var(--dim)">\u203a</span>';
+        row.onmouseover = () => row.style.background = 'var(--card)';
+        row.onmouseout = () => row.style.background = '';
+        row.onclick = (ev) => { ev.stopPropagation(); openEntry(idx2); };
+        dd.appendChild(row);
       });
-      html+=`<div class="card" style="margin-bottom:14px">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-          <div style="width:10px;height:10px;border-radius:3px;background:${col}"></div>
-          <span style="font-weight:800;font-size:16px">${esc(ca)}</span>
-          <span style="color:var(--dim);font-size:12px">${Object.values(tools).reduce((a,b)=>a+b,0)} suggestions</span>
-        </div>${bars}</div>`;
+      if(!dd.children.length) dd.innerHTML = '<div style="color:var(--dim);font-size:12px;padding:6px">No entries found</div>';
+
+      wrap.onclick = () => {
+        const open = dd.style.display !== 'none';
+        container.querySelectorAll('[id^="dd_"]').forEach(el => el.style.display = 'none');
+        dd.style.display = open ? 'none' : 'block';
+      };
+
+      wrap.appendChild(labelRow);
+      wrap.appendChild(track);
+      wrap.appendChild(dd);
+      card.appendChild(wrap);
     });
-    container.innerHTML=html||'<div class="card" style="color:var(--dim)">No data</div>';
+
+    container.appendChild(card);
+
+  } else if(AUDIT_VIEW === 'campus'){
+    const campuses = [...new Set(DATA.map(e => e.ca))].sort();
+    const palette = ['#F5A623','#C5E84A','#60B8F0','#9B8BFF','#52B95C','#FF8080'];
+    campuses.forEach((ca, ci) => {
+      const tools = stats.campusTools[ca] || {};
+      const sorted = Object.entries(tools).sort((a,b) => b[1]-a[1]).slice(0,12);
+      const mx = sorted[0]?.[1] || 1;
+      const col = palette[ci % palette.length];
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.style.marginBottom = '14px';
+      let html = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">'
+        + '<div style="width:10px;height:10px;border-radius:3px;background:'+col+'"></div>'
+        + '<span style="font-weight:800;font-size:16px">'+esc(ca)+'</span>'
+        + '<span style="color:var(--dim);font-size:12px">'
+        + Object.values(tools).reduce((a,b)=>a+b,0)+' suggestions</span></div>';
+      sorted.forEach(([n,c]) => {
+        html += '<div style="margin-bottom:12px">'
+          + '<div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:4px"><span>'+esc(n)+'</span><span style="color:var(--dim)">'+c+'\u00d7</span></div>'
+          + '<div style="height:6px;background:var(--card2);border-radius:3px"><div style="height:100%;border-radius:3px;background:'+col+';width:'+Math.round((c/mx)*100)+'%"></div></div>'
+          + '</div>';
+      });
+      card.innerHTML = html;
+      container.appendChild(card);
+    });
 
   } else {
-    // Year view
-    const campuses=[...new Set(DATA.map(e=>e.ca))].sort();
-    const palette=['#F5A623','#C5E84A','#9B8BFF'];
-    if(filterEl){
-      let btns=`<button class="view-tab${AUDIT_YEAR_CAMPUS===''?' active':''}" onclick="setYrCampus('',this)">All</button>`;
-      campuses.forEach(ca=>{ btns+=`<button class="view-tab${AUDIT_YEAR_CAMPUS===ca?' active':''}" onclick="setYrCampus('${esc(ca)}',this)">${esc(ca)}</button>`; });
-      filterEl.innerHTML=btns;
-    }
-    const fd=AUDIT_YEAR_CAMPUS?DATA.filter(e=>e.ca===AUDIT_YEAR_CAMPUS):DATA;
-    const yt={};
-    fd.forEach(e=>{(e.s||[]).forEach(s=>{ const t=(s.t&&s.t.trim())?s.t.trim():'Unknown'; if(!yt[e.yl])yt[e.yl]={}; yt[e.yl][t]=(yt[e.yl][t]||0)+1; });});
-    const col=AUDIT_YEAR_CAMPUS?palette[campuses.indexOf(AUDIT_YEAR_CAMPUS)%palette.length]:'#C5E84A';
-    let html='';
-    YR.filter(yr=>yt[yr]).forEach(yr=>{
-      const sorted=Object.entries(yt[yr]).sort((a,b)=>b[1]-a[1]).slice(0,10);
-      const mx=sorted[0]?.[1]||1;
-      let bars='';
-      sorted.forEach(([n,c])=>{
-        bars+=`<div class="bar-row"><div class="bar-label"><span>${esc(n)}</span><span>${c}×</span></div>
-          <div class="bar-track"><div class="bar-fill" style="width:${(c/mx)*100}%;background:${col}"></div></div></div>`;
-      });
-      html+=`<div class="card" style="margin-bottom:14px"><div style="font-weight:800;font-size:17px;color:var(--lime);margin-bottom:14px">${yr}${AUDIT_YEAR_CAMPUS?' — '+AUDIT_YEAR_CAMPUS:''}</div>${bars}</div>`;
+    // Year view with campus filter
+    const campuses = [...new Set(DATA.map(e => e.ca))].sort();
+    const palette = ['#F5A623','#C5E84A','#9B8BFF'];
+
+    // Filter buttons
+    const allBtn = document.createElement('button');
+    allBtn.className = 'view-tab' + (AUDIT_YEAR_CAMPUS===''?' active':'');
+    allBtn.textContent = 'All';
+    allBtn.onclick = () => setYrCampus('', allBtn);
+    if(filterEl) filterEl.appendChild(allBtn);
+
+    campuses.forEach(ca => {
+      const b = document.createElement('button');
+      b.className = 'view-tab' + (AUDIT_YEAR_CAMPUS===ca?' active':'');
+      b.textContent = ca;
+      b.onclick = () => setYrCampus(ca, b);
+      if(filterEl) filterEl.appendChild(b);
     });
-    container.innerHTML=html||'<div class="card" style="color:var(--dim)">No data</div>';
+
+    const fd = AUDIT_YEAR_CAMPUS ? DATA.filter(e => e.ca===AUDIT_YEAR_CAMPUS) : DATA;
+    const yt = {};
+    fd.forEach(e => {
+      getSugs(e).forEach(s => {
+        const t = (s && s.t && s.t.trim()) ? s.t.trim() : 'Unknown';
+        if(!yt[e.yl]) yt[e.yl] = {};
+        yt[e.yl][t] = (yt[e.yl][t]||0)+1;
+      });
+    });
+
+    const col = AUDIT_YEAR_CAMPUS
+      ? palette[campuses.indexOf(AUDIT_YEAR_CAMPUS) % palette.length]
+      : '#C5E84A';
+
+    YR.filter(yr => yt[yr]).forEach(yr => {
+      const sorted = Object.entries(yt[yr]).sort((a,b)=>b[1]-a[1]).slice(0,10);
+      const mx = sorted[0]?.[1] || 1;
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.style.marginBottom = '14px';
+      let html = '<div style="font-weight:800;font-size:17px;color:var(--lime);margin-bottom:14px">'
+        + yr + (AUDIT_YEAR_CAMPUS ? ' — '+AUDIT_YEAR_CAMPUS : '') + '</div>';
+      sorted.forEach(([n,c]) => {
+        html += '<div style="margin-bottom:12px">'
+          + '<div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:4px"><span>'+esc(n)+'</span><span style="color:var(--dim)">'+c+'\u00d7</span></div>'
+          + '<div style="height:6px;background:var(--card2);border-radius:3px"><div style="height:100%;border-radius:3px;background:'+col+';width:'+Math.round((c/mx)*100)+'%"></div></div>'
+          + '</div>';
+      });
+      card.innerHTML = html;
+      container.appendChild(card);
+    });
   }
 }
 
-function toggleDrilldown(uid){
-  const el=document.getElementById(uid); if(!el) return;
-  const isOpen=el.style.display!=='none';
-  document.querySelectorAll('[id^="bar-"]').forEach(d=>d.style.display='none');
-  if(!isOpen) el.style.display='block';
-}
 
 
 function setYrCampus(ca,btn){
@@ -1172,191 +1237,40 @@ function initNetworkCanvas(){
   draw();
 }
 
-// ─── Planner Queue ────────────────────────────────────────────────────────────
-const PLANNER_CACHE = {};   // ca|yl -> extracted units object
-const QUEUE = [];           // [{ca, yl, units, status}]
-
-function initQueueFilters(){
-  const campuses=[...new Set(DATA.map(e=>e.ca))].sort();
-  const yrs=[...new Set(DATA.map(e=>e.yl))].sort((a,b)=>YR.indexOf(a)-YR.indexOf(b));
-  ['q-campus'].forEach(id=>{
-    const el=document.getElementById(id); if(!el) return;
-    while(el.options.length>1) el.remove(1);
-    campuses.forEach(c=>el.add(new Option(c,c)));
-  });
-  ['q-year'].forEach(id=>{
-    const el=document.getElementById(id); if(!el) return;
-    while(el.options.length>1) el.remove(1);
-    yrs.forEach(y=>el.add(new Option(y,y)));
-  });
-  renderQueue();
-}
-
-async function addToQueue(e){
-  const file=e.target.files[0]; if(!file) return;
+async function addToGASQueue(){
   const ca=document.getElementById('q-campus')?.value||'';
   const yl=document.getElementById('q-year')?.value||'';
-  const statusEl=document.getElementById('q-upload-status');
-  if(!ca||!yl){ statusEl.textContent='Select campus and year level first'; statusEl.style.color='#FF8080'; e.target.value=''; return; }
+  const th=document.getElementById('q-theme')?.value.trim()||'';
+  const statusEl=document.getElementById('q-status');
+  const btn=document.getElementById('btn-add-queue');
 
-  statusEl.textContent='Reading PDF…'; statusEl.style.color='var(--dim)';
-  const reader=new FileReader();
-  reader.onload=async ev=>{
-    const b64=ev.target.result.split(',')[1];
-    statusEl.textContent='Extracting unit content…'; statusEl.style.color='#fbbf24';
-    try{
-      const units=await extractUnitsFromB64(b64, ca, yl, msg=>{ statusEl.textContent=msg; });
-      const key=ca+'|'+yl;
-      // Merge if already exists (handles split PDFs)
-      PLANNER_CACHE[key]=Object.assign({}, PLANNER_CACHE[key]||{}, units);
-      const existing=QUEUE.find(q=>q.ca===ca&&q.yl===yl);
-      if(existing){ existing.units=PLANNER_CACHE[key]; existing.status='ready'; }
-      else { QUEUE.push({ca,yl,units:PLANNER_CACHE[key],status:'ready'}); }
-      statusEl.textContent=`✓ ${Object.keys(PLANNER_CACHE[key]).length} units loaded`;
-      statusEl.style.color='var(--lime)';
-      renderQueue();
-      // Cooldown countdown before check is safe
-      for(let s=65;s>0;s--){
-        statusEl.textContent=`✓ Ready in ${s}s`;
-        statusEl.style.color=s>10?'#fbbf24':'var(--lime)';
-        await sleep(1000);
-      }
-      statusEl.textContent=`✓ ${ca} ${yl} ready`;
-      statusEl.style.color='var(--lime)';
-      renderQueue();
-    }catch(err){
-      const msg=err.message.includes('100 PDF pages')
-        ?'PDF exceeds 100 pages — split it at smallpdf.com and upload each half'
-        :err.message;
-      statusEl.textContent='Error: '+msg; statusEl.style.color='#FF8080';
-    }
-  };
-  reader.readAsDataURL(file);
-  e.target.value='';
-}
-
-async function extractUnitsFromB64(b64, ca, yl, onStatus){
-  onStatus('Extracting units from planner…');
-  const prompt=`This is a ${ca} ${yl} IB PYP unit planner PDF. For EACH unit of inquiry, write a summary of key activities, resources, vocabulary, and assessments. Use this exact format:
-
-===UNIT: How We Express Ourselves===
-Summary here
-===END===
-
-Include every unit. Use the exact unit theme name from the planner.`;
-  const raw=await callGemini([{role:'user',parts:[
-    {text:''},
-    {inline_data:{mime_type:'application/pdf',data:b64}},
-    {text:prompt}
-  ]}],null);
-  const units={};
-  raw.split('===UNIT:').slice(1).forEach(block=>{
-    const nameEnd=block.indexOf('==='); if(nameEnd===-1) return;
-    const name=block.slice(0,nameEnd).trim();
-    const contentEnd=block.indexOf('===END===');
-    const text=contentEnd===-1?block.slice(nameEnd+3).trim():block.slice(nameEnd+3,contentEnd).trim();
-    if(name&&text) units[name]=text;
-  });
-  if(!Object.keys(units).length) throw new Error('Could not extract units — try again');
-  return units;
-}
-
-function renderQueue(){
-  const el=document.getElementById('queue-list'); if(!el) return;
-  if(!QUEUE.length){ el.innerHTML='<div class="card" style="color:var(--dim);text-align:center;padding:30px;font-size:14px">No planners uploaded yet.<br><span style="font-size:12px;opacity:.6">Upload a PDF above to get started.</span></div>'; return; }
-  el.innerHTML=QUEUE.map((q,qi)=>{
-    const unitCount=Object.keys(q.units||{}).length;
-    const entryCount=DATA.filter(e=>e.ca===q.ca&&e.yl===q.yl).length;
-    const isReady=q.status==='ready';
-    const isDone=q.status==='done';
-    return `<div class="card" style="margin-bottom:10px;display:flex;align-items:center;gap:16px">
-      <div style="flex:1">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
-          <span style="font-size:15px;font-weight:800">${q.ca}</span>
-          <span style="font-size:13px;background:var(--gold);color:#111;padding:2px 10px;border-radius:20px;font-weight:700">${q.yl}</span>
-          <span style="font-size:12px;color:var(--dim)">${unitCount} units extracted · ${entryCount} entries to check</span>
-        </div>
-        <div style="font-size:12px;color:${isDone?'var(--lime)':isReady?'var(--dim)':'#fbbf24'};font-weight:600">
-          ${isDone?'✓ Done':'⏳ Ready to check'}
-        </div>
-      </div>
-      <div style="display:flex;gap:8px">
-        ${isReady?`<button class="btn-pri" style="font-size:12px;padding:8px 16px" onclick="runQueueItem(${qi})">Run check</button>`:''}
-        <button class="btn-sm" onclick="removeQueueItem(${qi})">Remove</button>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-async function runQueueItem(qi){
-  const item=QUEUE[qi]; if(!item) return;
-  const targets=DATA.map((e,idx)=>({e,idx})).filter(({e})=>e.ca===item.ca&&e.yl===item.yl);
-  if(!targets.length){ setStatus('No entries found for '+item.ca+' '+item.yl,'error'); return; }
-
-  const progEl=document.getElementById('queue-progress');
-  const barEl=document.getElementById('queue-progress-bar');
-  const lblEl=document.getElementById('queue-progress-label');
-  const resEl=document.getElementById('queue-results');
-  progEl.style.display='block'; resEl.innerHTML='';
-  let done=0, updated=0, failed=0;
-
-  for(let i=0;i<targets.length;i++){
-    const {e,idx}=targets[i];
-    done++; barEl.style.width=`${Math.round((done/targets.length)*100)}%`;
-    lblEl.textContent=`${done}/${targets.length}: ${e.yl} — ${e.th}`;
-    try{
-      // Find matching unit text
-      let unitText=item.units[e.th];
-      if(!unitText){
-        const key=Object.keys(item.units).find(k=>k.toLowerCase().includes(e.th.toLowerCase())||e.th.toLowerCase().includes(k.toLowerCase()));
-        unitText=key?item.units[key]:null;
-      }
-      if(!unitText){ resEl.innerHTML+=resultRow(e,idx,'skipped','Unit not found in planner'); continue; }
-
-      const prompt=`Improve these technology suggestions to better match this specific IB PYP unit.
-Unit: ${e.ca} | ${e.yl} | "${e.th}"
-Planner content: ${unitText}
-Current suggestions:
-${(e.s||[]).map((s,i)=>`${i+1}. ${s.t}: ${s.d}`).join('\n')}
-Keep the same tool names. Only update descriptions to reference specific planner content — activities, vocabulary, assessments. If already specific, leave unchanged.
-Return ONLY a JSON array: [{"t":"Tool Name","d":"description"},...]`;
-
-      const raw=await callGemini([{role:'user',parts:[{text:prompt}]}]);
-      const clean=raw.replace(/```json|```/g,'').trim();
-      const si=clean.indexOf('['), ei=clean.lastIndexOf(']');
-      if(si===-1||ei===-1) throw new Error('No JSON array');
-      const sugs=JSON.parse(clean.slice(si,ei+1));
-      DATA[idx].s=sugs; updated++;
-      saveToDrive();
-      resEl.innerHTML+=resultRow(e,idx,'updated','');
-    }catch(err){
-      failed++;
-      resEl.innerHTML+=resultRow(e,idx,'failed',err.message);
-    }
-    if(i<targets.length-1) await sleep(3000);
+  if(!ca||!yl||!th){
+    statusEl.textContent='Please fill in all three fields';
+    statusEl.style.color='#FF8080'; return;
   }
-  item.status='done'; renderQueue();
-  const tot=updated+failed;
-  lblEl.textContent=`Done — ${updated} updated, ${failed} failed`;
-  setStatus(`Planner check complete — ${updated}/${tot} entries updated`);
-}
 
-function resultRow(e,idx,status,msg){
-  const col=status==='updated'?'var(--lime)':status==='skipped'?'var(--dim)':'#FF8080';
-  const label=status==='updated'?'✓ updated':status==='skipped'?'— skipped':'✗ failed';
-  return `<div onclick="openEntry(${idx})" style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;cursor:pointer">
-    <span style="font-size:12px;font-weight:700;color:${col};width:80px;flex-shrink:0">${label}</span>
-    <span style="font-size:12px;color:var(--dim);width:100px;flex-shrink:0">${esc(e.ca)}</span>
-    <span style="font-size:12px;color:var(--gold);font-weight:600;width:62px;flex-shrink:0">${esc(e.yl)}</span>
-    <span style="font-size:13px;flex:1">${esc(e.th)}</span>
-    ${msg?`<span style="font-size:11px;color:var(--dim)">${esc(msg)}</span>`:''}
-    <span style="color:var(--dim)">›</span>
-  </div>`;
-}
+  btn.disabled=true; btn.textContent='Submitting…';
+  statusEl.textContent=''; statusEl.style.color='var(--lime)';
 
-function removeQueueItem(qi){
-  QUEUE.splice(qi,1);
-  renderQueue();
+  try{
+    await fetch(SCRIPT_URL, {
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ca, yl, th, ci:''})
+    });
+    // no-cors means we can't read the response, but if no error it went through
+    statusEl.textContent=`✓ "${th}" queued — the auditor will process it within 10 minutes`;
+    statusEl.style.color='var(--lime)';
+    document.getElementById('q-theme').value='';
+    // Optimistically add a placeholder entry to the local data
+    DATA.push({ca, yl, th, ci:'', lo:'', s:[], audited:false});
+    renderDashboard();
+  }catch(e){
+    statusEl.textContent='Failed to submit: '+e.message;
+    statusEl.style.color='#FF8080';
+  }
+  btn.disabled=false; btn.textContent='Add to Queue →';
 }
 
 (function init(){
