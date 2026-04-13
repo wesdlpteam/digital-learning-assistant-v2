@@ -11,6 +11,7 @@
     --border: rgba(255, 255, 255, 0.08); --text-dim: #888; --glow: rgba(52, 211, 153, 0.2);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  
   body { 
     background: var(--bg); color: #f0f0f0; 
     font-family: -apple-system, system-ui, sans-serif; 
@@ -22,7 +23,7 @@
 
   /* SIDEBAR */
   #sidebar { 
-    width: 280px; background: rgba(10, 10, 10, 0.6); border-right: 1px solid var(--border); 
+    width: 280px; background: rgba(10, 10, 10, 0.85); border-right: 1px solid var(--border); 
     display: none; flex-direction: column; padding: 45px 25px; position: fixed; 
     height: 100vh; backdrop-filter: blur(30px); z-index: 100;
   }
@@ -40,8 +41,8 @@
   .dot { width: 6px; height: 6px; background: var(--mint); border-radius: 50%; box-shadow: 0 0 10px var(--mint); animation: pulse 2s infinite; }
 
   /* MAIN STAGE */
-  #main-stage { flex: 1; padding: 80px; display: flex; justify-content: center; align-items: center; transition: margin-left 0.5s; }
-  .studio-layout { display: flex; gap: 40px; max-width: 1050px; width: 100%; align-items: stretch; }
+  #main-stage { flex: 1; display: flex; justify-content: center; align-items: center; transition: margin-left 0.4s ease; width: 100%; }
+  .studio-layout { display: flex; gap: 40px; max-width: 1050px; width: 90%; align-items: stretch; }
 
   /* GLASS CARDS */
   .glass-card { 
@@ -62,7 +63,6 @@
   .subtitle { color: var(--text-dim); font-size: 15px; margin-bottom: 40px; line-height: 1.6; }
   .label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; font-weight: 700; letter-spacing: 1.5px; margin-bottom: 14px; display: block; }
   
-  /* INPUTS & BUTTONS */
   .inp { 
     background: rgba(0,0,0,0.4); border: 1px solid var(--border); color: #fff; border-radius: 12px; 
     padding: 18px; width: 100%; outline: none; font-family: 'SF Mono', monospace; font-size: 14px;
@@ -122,7 +122,7 @@
 
   <div id="screen-load" class="screen">
     <div class="glass-card" style="max-width:500px; text-align:center">
-      <span class="label">Synchronizing</span>
+      <span class="label">Synchronising</span>
       <h2 id="load-status">Connecting to Google Drive...</h2>
       <div style="height:2px; background:#222; margin:30px 0; overflow:hidden; border-radius:2px">
         <div id="loader-progress" style="height:100%; background:var(--mint); width:0%; transition:width 0.5s"></div>
@@ -160,20 +160,43 @@
 let DATA = [];
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUlNbBkcwXB8ImUUhEQDP7C3itYCUu-j_vRNKA7_Km2h4uJMIs0RVFJxUXKcFOFgIW/exec';
 
+// --- ROBUST SCREEN MANAGER ---
 function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + id).classList.add('active');
-  if(id === 'screen-app') {
-    document.getElementById('sidebar').style.display = 'flex';
-    document.getElementById('main-stage').style.marginLeft = '280px';
+  try {
+    const targetId = 'screen-' + id;
+    const target = document.getElementById(targetId);
+    
+    if (!target) throw new Error("Missing screen element: " + targetId);
+
+    // Remove active class from all screens
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    
+    // Add active class to target
+    target.classList.add('active');
+
+    const sidebar = document.getElementById('sidebar');
+    const stage = document.getElementById('main-stage');
+
+    if (id === 'app') {
+      sidebar.style.display = 'flex';
+      stage.style.marginLeft = '280px';
+    } else {
+      sidebar.style.display = 'none';
+      stage.style.marginLeft = '0';
+    }
+  } catch (err) {
+    alert("Interface Error: " + err.message);
   }
 }
 
 function saveApiKey() {
   const k = document.getElementById('api-key-input').value.trim();
-  if(!k) return alert("Key required");
+  if(!k) {
+    alert("Please enter your API key to continue.");
+    return;
+  }
   localStorage.setItem('dla_api_key', k);
-  showScreen('screen-load');
+  showScreen('load');
 }
 
 async function loadFromDrive() {
@@ -195,7 +218,7 @@ async function loadFromDrive() {
     DATA = await fr.json();
     prog.style.width = "100%";
     renderDashboard();
-    showScreen('screen-app');
+    showScreen('app');
   } catch(e) { alert("Drive Error: " + e.message); }
 }
 
@@ -225,7 +248,20 @@ function submitNewUnit() {
   fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({ca,yl,th,ci:""})}).then(()=>alert("Added to Queue!"));
 }
 
-window.onload = () => { if(localStorage.getItem('dla_api_key')) showScreen('screen-load'); };
+// --- INITIALISE ---
+window.onload = () => {
+  try {
+    const key = localStorage.getItem('dla_api_key');
+    if (key) {
+      showScreen('load');
+    } else {
+      showScreen('setup');
+    }
+  } catch (err) {
+    // If local storage is blocked by browser security
+    showScreen('setup');
+  }
+};
 </script>
 </body>
 </html>
