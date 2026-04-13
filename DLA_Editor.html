@@ -313,6 +313,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
       <div class="stat-grid" id="stat-cards"></div>
       <div class="card">
         <span class="label">Issues</span>
+        <div id="fix-incomplete-bar" style="margin-bottom:14px"></div>
         <div id="issues-list"></div>
       </div>
       <div class="card" style="margin-top:8px">
@@ -630,6 +631,25 @@ function renderDashboard(){
     ...banned.map(({e,idx,detail})=>({e,idx,type:'banned',detail})),
     ...incomplete.map(({e,idx,detail})=>({e,idx,type:'incomplete',detail})),
   ];
+  // Fix incomplete button
+  const fixBar = document.getElementById('fix-incomplete-bar');
+  if(fixBar){
+    if(incomplete.length > 0){
+      fixBar.innerHTML=`<div style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:10px">
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:700;color:var(--orange)">${incomplete.length} incomplete entr${incomplete.length!==1?'ies':'y'}</div>
+          <div style="font-size:12px;color:var(--dim);margin-top:2px">Fewer than 5 suggestions — click to regenerate all using Gemini Pro</div>
+        </div>
+        <button class="btn-pri" id="btn-fix-incomplete" onclick="fixAllIncomplete()" style="background:var(--orange);color:#111;white-space:nowrap">Fix all incomplete</button>
+      </div>
+      <div id="fix-incomplete-progress" style="display:none;margin-top:10px;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px">
+        <div style="font-size:13px;color:var(--lime);font-weight:600;margin-bottom:8px" id="fix-incomplete-label">Starting…</div>
+        <div style="height:5px;background:var(--card2);border-radius:3px"><div id="fix-incomplete-bar-fill" style="height:100%;border-radius:3px;background:var(--lime);width:0%;transition:width .4s"></div></div>
+      </div>`;
+    } else {
+      fixBar.innerHTML='';
+    }
+  }
   document.getElementById('issues-list').innerHTML=all.length
     ? all.map(({e,idx,type,detail})=>`<div class="row" onclick="openEntry(${idx})">
         <span style="font-size:11px;padding:4px 11px;border-radius:20px;background:${type==='banned'?'#FF8080':'#F5A623'};color:#111;font-weight:800;letter-spacing:.3px;flex-shrink:0">${type}</span>
@@ -861,7 +881,12 @@ function applyRegenAll(idx,pendingId){
 }
 
 // ─── Audit ────────────────────────────────────────────────────────────────────
-function getSugs(e){ const s=e.s; return Array.isArray(s)?s:[]; }
+function getSugs(e){
+  const s=e.s;
+  if(Array.isArray(s)) return s.filter(x=>x&&typeof x==='object'&&x.t&&x.t!=='TBA');
+  if(s && typeof s==='object' && !Array.isArray(s)) return Object.values(s).filter(x=>x&&x.t&&x.t!=='TBA');
+  return [];
+}
 
 // Normalise campus names so "St Kilda" and "St Kilda Road" merge in stats
 function normCa(ca){
@@ -1001,7 +1026,6 @@ function renderAuditChart(){
     campuses.forEach((ca, ci) => {
       const tools = stats.campusTools[ca] || {};
       const totalSugs = Object.values(tools).reduce((a,b)=>a+b,0);
-      if(totalSugs === 0) return; // skip campuses with no audited suggestions yet
       const sorted = Object.entries(tools).sort((a,b) => b[1]-a[1]).slice(0,12);
       const mx = sorted[0]?.[1] || 1;
       const col = palette[ci % palette.length];
@@ -1011,8 +1035,8 @@ function renderAuditChart(){
       let html = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">'
         + '<div style="width:10px;height:10px;border-radius:3px;background:'+col+'"></div>'
         + '<span style="font-weight:800;font-size:16px">'+esc(ca)+'</span>'
-        + '<span style="color:var(--dim);font-size:12px">'
-        + Object.values(tools).reduce((a,b)=>a+b,0)+' suggestions</span></div>';
+        + '<span style="color:var(--dim);font-size:12px">'+totalSugs+' suggestions</span></div>';
+      if(totalSugs===0){ html+='<div style="color:var(--dim);font-size:13px;padding:8px 0">No audited suggestions yet</div>'; card.innerHTML=html; container.appendChild(card); return; }
       sorted.forEach(([n,c]) => {
         html += '<div style="margin-bottom:12px">'
           + '<div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:4px"><span>'+esc(n)+'</span><span style="color:var(--dim)">'+c+'\u00d7</span></div>'
@@ -1293,6 +1317,44 @@ async function addToGASQueue(){
     statusEl.style.color='#FF8080';
   }
   btn.disabled=false; btn.textContent='Add to Queue →';
+}
+
+async function fixAllIncomplete(){
+  const {incomplete} = getIssues();
+  if(!incomplete.length) return;
+  const btn=document.getElementById('btn-fix-incomplete');
+  const prog=document.getElementById('fix-incomplete-progress');
+  const lbl=document.getElementById('fix-incomplete-label');
+  const bar=document.getElementById('fix-incomplete-bar-fill');
+  if(btn) btn.disabled=true;
+  if(prog) prog.style.display='block';
+  let done=0, fixed=0, failed=0;
+  for(const {e,idx} of incomplete){
+    done++;
+    if(lbl) lbl.textContent=`${done}/${incomplete.length}: ${e.yl} — ${e.th}`;
+    if(bar) bar.style.width=`${Math.round((done/incomplete.length)*100)}%`;
+    const prompt=`Generate exactly 5 digital technology suggestions for this IB PYP unit.
+Campus: ${e.ca} | Year Level: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: "${e.ci}"`:''}${e.lo?`\nLines of Inquiry: "${e.lo}"`:''}
+Requirements: all 5 different tools, at least one ambitious project, every suggestion specific to this unit.
+Return ONLY a JSON array, no markdown: [{"t":"Tool Name","d":"One specific sentence."},...]`;
+    try{
+      const raw=await callGemini([{role:'user',parts:[{text:prompt}]}], null, GEMINI_MODEL);
+      const clean=raw.replace(/```json|```/g,'').trim();
+      const si=clean.indexOf('['), ei=clean.lastIndexOf(']');
+      if(si===-1||ei===-1) throw new Error('No JSON array');
+      const sugs=JSON.parse(clean.slice(si,ei+1));
+      if(!sugs.length) throw new Error('Empty array');
+      DATA[idx].s=sugs; DATA[idx].audited=true; fixed++;
+      saveToDrive();
+    }catch(err){
+      failed++;
+    }
+    if(done<incomplete.length) await sleep(2000);
+  }
+  if(lbl) lbl.textContent=`Done — ${fixed} fixed, ${failed} failed`;
+  if(btn){ btn.disabled=false; }
+  setStatus(`${fixed} incomplete entries fixed`);
+  renderDashboard();
 }
 
 (function init(){
