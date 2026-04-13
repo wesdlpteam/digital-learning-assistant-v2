@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DLA Editor v3 — Wesley College</title>
+<title>DLA Editor v3.1 — Wesley College</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
@@ -11,44 +11,38 @@
   h1,h2,h3,h4{font-family:system-ui,-apple-system,sans-serif}
   button{font-family:inherit;cursor:pointer}
   input,textarea,select{font-family:inherit;font-size:12px}
-  #header{background:#111;border-bottom:1px solid #222;padding:10px 16px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:100}
+  #header{background:#111;border-bottom:1px solid #222;padding:10px 16px;display:none;align-items:center;gap:8px;position:sticky;top:0;z-index:100}
   #logo{font-family:system-ui,sans-serif;font-weight:700;font-size:14px;color:#34d399;letter-spacing:-.5px}
-  #status-bar{font-size:11px;max-width:380px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   #main{padding:20px}
   .center{max-width:820px;margin:0 auto}
-  .btn{padding:5px 11px;border-radius:5px;border:1px solid #333;background:transparent;color:#a3a3a3;font-size:11px}
-  .btn:hover{border-color:#555;color:#e5e5e5}
-  .btn-pri{padding:5px 12px;border-radius:5px;border:none;background:#34d399;color:#0a0a0a;font-size:11px;font-weight:600}
+  .btn-pri{padding:8px 12px;border-radius:5px;border:none;background:#34d399;color:#0a0a0a;font-size:11px;font-weight:600}
   .btn-pri:hover{background:#2fb888}
-  .btn-sm{padding:3px 8px;border-radius:4px;border:1px solid #2a2a2a;background:transparent;color:#737373;font-size:10px}
-  .btn-tab{padding:3px 8px;border-radius:4px;border:1px solid transparent;background:transparent;color:#525252;font-size:10px}
+  .btn-tab{padding:4px 10px;border-radius:4px;border:1px solid transparent;background:transparent;color:#525252;font-size:10px}
   .btn-tab.active{background:#1e1e1e;color:#e5e5e5;border-color:#333}
   .card{background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:16px;margin-bottom:12px}
   .label{font-size:10px;color:#525252;letter-spacing:.08em;text-transform:uppercase;font-weight:500;display:block;margin-bottom:8px}
-  .inp{background:#0a0a0a;border:1px solid #2a2a2a;color:#e5e5e5;border-radius:4px;padding:6px 8px;outline:none;width:100%}
+  .inp{background:#0a0a0a;border:1px solid #2a2a2a;color:#e5e5e5;border-radius:4px;padding:8px;outline:none;width:100%}
   .badge{padding:2px 7px;border-radius:3px;font-size:10px;font-weight:600;display:inline-block}
-  .badge-banned{background:#991b1b;color:#fca5a5}
   .badge-incomplete{background:#9a3412;color:#fdba74}
-  .issue-row{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:6px;cursor:pointer;margin-bottom:5px;background:#161616;border:1px solid #222}
-  .issue-row:hover{border-color:#444}
-  .sug-row{border-radius:6px;margin-bottom:8px;background:#052e16;border:1px solid #14532d;padding:10px}
+  .issue-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:6px;cursor:pointer;margin-bottom:6px;background:#161616;border:1px solid #222}
   .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
   .stat-card{background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:16px}
   .stat-num{font-size:30px;font-weight:700;color:#34d399}
-  .screen{display:none}.screen.active{display:block}
-  #screen-apikey, #screen-load{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh}
+  .screen{display:none}
+  .screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh}
+  .tab-panel{display:none}
+  .tab-panel.active{display:block}
+  .sug-row{border-radius:6px;margin-bottom:8px;background:#052e16;border:1px solid #14532d;padding:12px}
 </style>
 </head>
 <body>
 
-<div id="header" style="display:none">
+<div id="header">
   <div id="logo">DLA Editor</div>
   <div style="flex:1"></div>
-  <span id="status-bar"></span>
-  <button class="btn-tab active" data-tab="dashboard" onclick="switchTab(this)">dashboard</button>
-  <button class="btn-tab" data-tab="browse" onclick="switchTab(this)">browse</button>
-  <button class="btn-tab" data-tab="audit" onclick="switchTab(this)">global feedback</button>
-  <button class="btn-pri" onclick="downloadJSON()" style="margin-left:8px">↓ json</button>
+  <button class="btn-tab active" onclick="switchTab('dashboard', this)">dashboard</button>
+  <button class="btn-tab" onclick="switchTab('browse', this)">browse</button>
+  <button class="btn-tab" onclick="switchTab('audit', this)">feedback</button>
 </div>
 
 <div id="main">
@@ -56,201 +50,160 @@
     <div class="card" style="width:340px">
       <span class="label">gemini api key</span>
       <input type="password" id="api-key-input" class="inp" placeholder="AIzaSy..." style="margin-bottom:12px">
-      <button class="btn-pri" onclick="saveApiKey()" style="width:100%">continue →</button>
+      <button class="btn-pri" onclick="saveApiKey()" style="width:100%">Continue →</button>
     </div>
   </div>
 
   <div id="screen-load" class="screen">
-    <button class="btn-pri" id="btn-drive-load" onclick="loadFromDrive()" style="width:280px;padding:12px">↑ load from Google Drive</button>
+    <div class="card" style="width:340px; text-align:center">
+      <span class="label">Connect to Database</span>
+      <button class="btn-pri" id="btn-drive-load" onclick="loadFromDrive()" style="width:100%; padding:12px">↑ Load from Google Drive</button>
+      <div id="load-status" style="margin-top:12px; font-size:11px; color:#525252"></div>
+    </div>
   </div>
 
-  <div id="screen-app" class="screen">
-    <div id="tab-dashboard" class="center tab-panel">
+  <div id="screen-app" class="screen" style="display:none; justify-content:flex-start; align-items:stretch">
+    <div id="tab-dashboard" class="center tab-panel active">
       <div class="stat-grid" id="stat-cards"></div>
       
       <div class="card" style="border-left: 4px solid #34d399;">
-        <span class="label" style="color:#34d399">Step 1: The Workflow</span>
-        <div style="background:#161616;padding:12px;border-radius:6px;margin-bottom:15px;font-size:11px;color:#a3a3a3">
-          1. Upload PDF to Drive Folder<br>
-          2. Name: <b>2026 - Year X UOI Planners (Campus).pdf</b><br>
-          3. Add to Queue below. AI audits every 10 mins.
-        </div>
-        <span class="label">Step 2: Add to AI Queue</span>
+        <span class="label" style="color:#34d399">Add to AI Queue</span>
         <div style="display:flex;gap:10px;margin-bottom:12px">
           <input type="text" id="new-ca" class="inp" placeholder="Campus">
           <input type="text" id="new-yl" class="inp" placeholder="Year Level">
           <input type="text" id="new-th" class="inp" placeholder="Theme">
         </div>
-        <button class="btn-pri" id="btn-submit-unit" onclick="submitNewUnit()">add to queue</button>
-        <span id="new-unit-status" style="margin-left:10px;font-size:11px"></span>
+        <button class="btn-pri" onclick="submitNewUnit()">Add to Queue</button>
       </div>
 
-      <div class="card"><span class="label">Units Needing Attention</span><div id="all-issues-list"></div></div>
+      <div class="card"><span class="label">Missing Planners</span><div id="all-issues-list"></div></div>
     </div>
 
-    <div id="tab-browse" class="center tab-panel" style="display:none">
-      <div style="display:flex;gap:10px;margin-bottom:15px">
-        <select id="browse-campus" class="inp" onchange="renderBrowse()" style="width:150px"><option value="">All Campuses</option></select>
-        <input id="browse-search" class="inp" placeholder="Search themes..." oninput="renderBrowse()">
-      </div>
+    <div id="tab-browse" class="center tab-panel">
+      <div class="card"><input id="browse-search" class="inp" placeholder="Search themes..." oninput="renderBrowse()"></div>
       <div id="browse-list"></div>
     </div>
 
-    <div id="tab-audit" class="center tab-panel" style="display:none">
+    <div id="tab-audit" class="center tab-panel">
       <div class="card">
         <span class="label">Global AI Feedback</span>
-        <p style="font-size:11px;color:#737373;margin-bottom:12px">This will redo suggestions for ALL units based on your guidance.</p>
-        <textarea id="audit-feedback" class="inp" rows="4" placeholder="e.g. Make all suggestions focus more on coding and robotics using our Wesley equipment..."></textarea>
-        <button class="btn-pri" id="btn-audit-apply" onclick="applyAuditFeedback()" style="margin-top:12px">apply to all units</button>
-        <div id="audit-status" style="margin-top:10px;font-size:11px"></div>
+        <textarea id="audit-feedback" class="inp" rows="4" placeholder="e.g. Focus more on robotics..."></textarea>
+        <button class="btn-pri" onclick="applyAuditFeedback()" style="margin-top:12px">Apply to All Units</button>
       </div>
     </div>
 
     <div id="entry-detail" style="display:none" class="center">
-      <button class="btn-sm" onclick="closeDetail()" style="margin-bottom:15px">← back to list</button>
+      <button class="btn-pri" onclick="closeDetail()" style="margin-bottom:15px; background:#222; color:#fff">← Back</button>
       <div class="card" id="detail-header"></div>
       <div id="sug-rows-list"></div>
-      <div class="card">
-        <span class="label">Individual Regeneration</span>
-        <textarea id="single-feedback" class="inp" placeholder="Add specific feedback for this unit (optional)..."></textarea>
-        <button class="btn-pri" onclick="genAllSugs()" style="margin-top:10px">Regenerate with 3.1 Pro</button>
-        <div id="gen-status" style="margin-top:8px;font-size:11px"></div>
-      </div>
     </div>
   </div>
 </div>
 
 <script>
-let DATA=[], ISSUES={banned:[],incomplete:[]}, CURRENT_ENTRY_IDX=null, DRIVE_TOKEN=null;
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUlNbBkcwXB8ImUUhEQDP7C3itYCUu-j_vRNKA7_Km2h4uJMIs0RVFJxUXKcFOFgIW/exec';
+// --- CORE UTILITIES ---
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+    s.style.display = 'none';
+  });
+  const target = document.getElementById(id);
+  target.classList.add('active');
+  target.style.display = (id === 'screen-app') ? 'block' : 'flex';
+  if(id === 'screen-app') document.getElementById('header').style.display = 'flex';
+}
 
-function saveApiKey(){const k=document.getElementById('api-key-input').value.trim();if(k){localStorage.setItem('dla_api_key',k);showScreen('screen-load');}}
-function getKey(){return localStorage.getItem('dla_api_key')||'';}
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');if(id==='screen-app')document.getElementById('header').style.display='flex';}
-
-async function loadFromDrive(){
+function saveApiKey() {
+  const k = document.getElementById('api-key-input').value.trim();
+  if(!k) { alert("Please enter your API key first."); return; }
   try {
-    const token = await getDriveToken();
-    const r = await fetch("https://www.googleapis.com/drive/v3/files?q=name='data.json'&fields=files(id)",{headers:{'Authorization':'Bearer '+token}});
-    const d = await r.json();
-    const fileId = d.files[0].id;
-    const fr = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,{headers:{'Authorization':'Bearer '+token}});
-    DATA = await fr.json();
-    refreshUI();
-    showScreen('screen-app');
-  } catch(e){alert("Drive Error: " + e.message);}
+    localStorage.setItem('dla_api_key', k);
+    showScreen('screen-load');
+  } catch(e) {
+    alert("Storage Error: Your browser might be blocking 'localStorage'. Ensure you aren't in a super-restricted Incognito mode.");
+  }
 }
 
-async function getDriveToken(){
-  return new Promise((res,rej)=>{google.accounts.oauth2.initTokenClient({client_id:'334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleusercontent.com',scope:'https://www.googleapis.com/auth/drive',callback:resp=>{res(resp.access_token);}}).requestAccessToken();});
-}
-
-function refreshUI(){
-  ISSUES.incomplete = DATA.filter(e => e.audited === false || e.s.some(s=>s.t==="TBA"));
-  ISSUES.banned = DATA.filter(e => e.s.some(s=>s.t.toLowerCase().includes('wevideo')));
-  
-  document.getElementById('stat-cards').innerHTML = `
-    <div class="stat-card"><div class="stat-num">${ISSUES.incomplete.length}</div><div class="stat-label">missing planner</div></div>
-    <div class="stat-card"><div class="stat-num" style="color:#f87171">${ISSUES.banned.length}</div><div class="stat-label">banned tools</div></div>
-    <div class="stat-card"><div class="stat-num" style="color:#a3a3a3">${DATA.length}</div><div class="stat-label">total units</div></div>
-  `;
-  
-  const issues = [...ISSUES.banned, ...ISSUES.incomplete];
-  document.getElementById('all-issues-list').innerHTML = issues.map(e => `
-    <div class="issue-row" onclick="openEntry(${DATA.indexOf(e)})">
-      <span class="badge ${e.audited?'badge-banned':'badge-incomplete'}">${e.audited?'banned':'missing planner'}</span>
-      ${e.yl} - ${e.th}
-    </div>`).join('');
-  initBrowseFilters();
-}
-
-function openEntry(idx){
-  CURRENT_ENTRY_IDX=idx;
-  const e = DATA[idx];
-  document.getElementById('tab-dashboard').style.display='none';
-  document.getElementById('tab-browse').style.display='none';
-  document.getElementById('tab-audit').style.display='none';
-  document.getElementById('entry-detail').style.display='block';
-  document.getElementById('detail-header').innerHTML = `<h3>${e.th}</h3><p style="color:#525252">${e.ca} · ${e.yl}</p>`;
-  document.getElementById('sug-rows-list').innerHTML = e.s.map(s=>`<div class="sug-row"><b>${s.t}</b><p style="font-size:11px;margin-top:4px">${s.d}</p></div>`).join('');
-}
-
-function closeDetail(){
-  document.getElementById('entry-detail').style.display='none';
-  switchTab(document.querySelector('.btn-tab.active'));
-}
-
-function switchTab(btn){
-  document.querySelectorAll('.btn-tab').forEach(b=>b.classList.remove('active'));
+function switchTab(tab, btn) {
+  document.querySelectorAll('.btn-tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  document.querySelectorAll('.tab-panel').forEach(p=>p.style.display='none');
-  document.getElementById('tab-'+btn.dataset.tab).style.display='block';
-  document.getElementById('entry-detail').style.display='none';
-  if(btn.dataset.tab === 'browse') renderBrowse();
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('entry-detail').style.display = 'none';
 }
 
-function initBrowseFilters(){
-  const campuses = [...new Set(DATA.map(e=>e.ca))].sort();
-  const sel = document.getElementById('browse-campus');
-  sel.innerHTML = '<option value="">All Campuses</option>' + campuses.map(c=>`<option value="${c}">${c}</option>`).join('');
-}
-
-function renderBrowse(){
-  const ca = document.getElementById('browse-campus').value;
-  const q = document.getElementById('browse-search').value.toLowerCase();
-  const filtered = DATA.filter(e => (!ca || e.ca===ca) && (!q || e.th.toLowerCase().includes(q)));
-  document.getElementById('browse-list').innerHTML = filtered.map(e => `
-    <div class="issue-row" onclick="openEntry(${DATA.indexOf(e)})">${e.yl} - ${e.th}</div>`).join('');
-}
-
-async function genAllSugs(){
-  const status = document.getElementById('gen-status');
-  const feedback = document.getElementById('single-feedback').value;
-  status.textContent = "AI is thinking (Gemini 3.1 Pro)...";
-  
-  const entry = DATA[CURRENT_ENTRY_IDX];
-  const prompt = `Rewrite tech suggestions for ${entry.th} (${entry.yl}). ${feedback ? 'Feedback: '+feedback : ''} Output JSON array of 5 {t,d} objects.`;
-  
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', { // Intercepted by our top script
-      method: 'POST',
-      headers: {'x-api-key': getKey()},
-      body: JSON.stringify({system: "Use Australian spelling. BANNED: WeVideo.", messages: [{role:'user', content: prompt}]})
-    });
-    const json = await res.json();
-    DATA[CURRENT_ENTRY_IDX].s = JSON.parse(json.content[0].text);
-    DATA[CURRENT_ENTRY_IDX].audited = true;
-    openEntry(CURRENT_ENTRY_IDX);
-    status.textContent = "✓ Updated!";
-  } catch(e) { status.textContent = "Error: " + e.message; }
-}
-
-async function applyAuditFeedback(){
-  const fb = document.getElementById('audit-feedback').value;
-  if(!fb) return alert("Enter feedback first");
-  if(!confirm("This will reset all units and start a bulk re-audit. Continue?")) return;
-  
-  DATA.forEach(e => { e.audited = false; e.feedback = fb; });
-  document.getElementById('audit-status').textContent = "✓ Global feedback applied. Engine will re-audit all units now.";
-  refreshUI();
-}
-
-function submitNewUnit(){
-  const ca=document.getElementById('new-ca').value, yl=document.getElementById('new-yl').value, th=document.getElementById('new-th').value;
-  const status=document.getElementById('new-unit-status');
-  status.textContent="Sending...";
-  fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({ca,yl,th,ci:""})}).then(()=>{
-    status.textContent="✓ Added to Queue";
-    document.getElementById('new-ca').value='';document.getElementById('new-yl').value='';document.getElementById('new-th').value='';
+// --- DRIVE LOGIC ---
+let DATA = [];
+async function getDriveToken() {
+  return new Promise((res) => {
+    google.accounts.oauth2.initTokenClient({
+      client_id: '334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleusercontent.com',
+      scope: 'https://www.googleapis.com/auth/drive',
+      callback: (resp) => res(resp.access_token)
+    }).requestAccessToken();
   });
 }
 
-function downloadJSON(){
-  const blob = new Blob([JSON.stringify(DATA,null,2)],{type:'application/json'});
-  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='data.json'; a.click();
+async function loadFromDrive() {
+  const status = document.getElementById('load-status');
+  status.textContent = "Authenticating...";
+  try {
+    const token = await getDriveToken();
+    status.textContent = "Searching for data.json...";
+    const r = await fetch("https://www.googleapis.com/drive/v3/files?q=name='data.json'&fields=files(id)", {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    const d = await r.json();
+    if(!d.files || d.files.length === 0) throw new Error("Could not find 'data.json' in your Drive.");
+    
+    status.textContent = "Downloading data...";
+    const fr = await fetch(`https://www.googleapis.com/drive/v3/files/${d.files[0].id}?alt=media`, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    DATA = await fr.json();
+    renderDashboard();
+    showScreen('screen-app');
+  } catch(e) {
+    alert("Drive Error: " + e.message);
+    status.textContent = "Error: " + e.message;
+  }
 }
 
-if(getKey()) showScreen('screen-load');
+// --- UI RENDERING ---
+function renderDashboard() {
+  const missing = DATA.filter(e => e.audited === false);
+  document.getElementById('stat-cards').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${missing.length}</div><div class="stat-label">missing planners</div></div>
+    <div class="stat-card"><div class="stat-num">${DATA.length}</div><div class="stat-label">total units</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:#34d399">3.1 Pro</div><div class="stat-label">AI Engine</div></div>
+  `;
+  document.getElementById('all-issues-list').innerHTML = missing.map(e => `
+    <div class="issue-row" onclick="openEntry(${DATA.indexOf(e)})">
+      <span class="badge badge-incomplete">missing planner</span>
+      ${e.yl} - ${e.th}
+    </div>`).join('');
+}
+
+function openEntry(idx) {
+  const e = DATA[idx];
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('entry-detail').style.display = 'block';
+  document.getElementById('detail-header').innerHTML = `<h3>${e.th}</h3><p>${e.ca} · ${e.yl}</p>`;
+  document.getElementById('sug-rows-list').innerHTML = e.s.map(s => `
+    <div class="sug-row"><b>${s.t}</b><p style="margin-top:5px; font-size:11px; opacity:0.8">${s.d}</p></div>`).join('');
+}
+
+function closeDetail() {
+  document.getElementById('entry-detail').style.display = 'none';
+  document.getElementById('tab-dashboard').classList.add('active');
+}
+
+// --- INITIALIZE ---
+window.onload = () => {
+  if(localStorage.getItem('dla_api_key')) {
+    showScreen('screen-load');
+  }
+};
 </script>
 </body>
 </html>
