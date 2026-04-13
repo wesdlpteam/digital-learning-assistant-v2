@@ -30,12 +30,10 @@
   .btn-blue:hover{background:#112847}
   .btn-tab{padding:3px 8px;border-radius:4px;border:1px solid transparent;background:transparent;color:#525252;font-size:10px}
   .btn-tab.active{background:#1e1e1e;color:#e5e5e5;border-color:#333}
-  button:disabled{opacity:.5;cursor:not-allowed}
   .card{background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:16px;margin-bottom:12px}
   .label{font-size:10px;color:#525252;letter-spacing:.08em;text-transform:uppercase;font-weight:500;display:block;margin-bottom:8px}
   .inp{background:#0a0a0a;border:1px solid #2a2a2a;color:#e5e5e5;border-radius:4px;padding:6px 8px;outline:none;width:100%}
   .inp:focus{border-color:#444}
-  select.inp{cursor:pointer}
   .badge{padding:2px 7px;border-radius:3px;font-size:10px;font-weight:600;display:inline-block}
   .badge-banned{background:#991b1b;color:#fca5a5}
   .badge-incomplete{background:#9a3412;color:#fdba74}
@@ -51,43 +49,29 @@
   .sug-banned{background:#450a0a;border:1px solid #7f1d1d}
   .sug-mismatch{background:#1c1917;border:1px solid #44403c}
   .sug-fb{padding:10px 12px;background:#0d0d0d;border:1px solid #2a2a2a;border-top:none;border-radius:0 0 6px 6px}
-  .bar-track{height:5px;background:#1e1e1e;border-radius:3px;margin-top:4px}
-  .bar-fill{height:100%;border-radius:3px;transition:width .3s}
   .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
   .stat-card{background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:16px 18px}
   .stat-num{font-size:30px;font-family:system-ui,sans-serif;font-weight:700;color:#34d399}
   .stat-label{font-size:11px;color:#525252;margin-top:4px}
-  .progress-track{height:3px;background:#1e1e1e;border-radius:2px;margin-top:10px}
-  .progress-fill{height:100%;background:#34d399;border-radius:2px;transition:width .4s}
   .ca-elsternwick{color:#818cf8}
   .ca-glen-waverley{color:#34d399}
   .ca-st-kilda{color:#fb923c}
   .screen{display:none}
   .screen.active{display:block}
-  #screen-apikey, #screen-load{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;text-align:center}
-  .back-row{margin-bottom:14px}
-  .tool-entries{margin-top:8px;display:flex;flex-direction:column;gap:4px}
-  .tool-entry-row{display:flex;align-items:center;gap:8px;padding:5px 10px;background:#0f0f0f;border:1px solid #2a2a2a;border-radius:4px;cursor:pointer;font-size:11px}
-  .tool-entry-row:hover{background:#161616}
+  #screen-apikey, #screen-load{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh}
   .pc-row{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:6px;margin-bottom:5px}
   .pc-ok{background:#052e16;border:1px solid #14532d;cursor:pointer}
-  .pc-ok:hover{opacity:.8}
-  .pc-err{background:#450a0a;border:1px solid #7f1d1d}
-  .regen-preview{margin-top:10px;padding:8px 10px;border-radius:4px}
-  .regen-ok{background:#052e16;border:1px solid #14532d}
-  .regen-err{background:#1c1917;border:1px solid #44403c}
-  @media(max-width:600px){.stat-grid{grid-template-columns:repeat(2,1fr)}.issue-row .ca-col{display:none}}
+  @media(max-width:600px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 <script>
+// GEMINI FLASH 2.5 INTERCEPTOR
 const originalFetch = window.fetch;
 window.fetch = async function() {
   if (typeof arguments[0] === 'string' && arguments[0].includes('api.anthropic.com')) {
-    const opts = arguments[1];
-    const body = JSON.parse(opts.body);
+    const opts = arguments[1], body = JSON.parse(opts.body);
     const key = opts.headers['x-api-key'] || document.getElementById('api-key-input').value || localStorage.getItem('dla_api_key');
     const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + key;
-    const sysText = body.system || "";
-    const usrText = Array.isArray(body.messages[0].content) ? body.messages[0].content.map(c => c.text).join('\n') : body.messages[0].content;
+    const sysText = body.system || "", usrText = Array.isArray(body.messages[0].content) ? body.messages[0].content.map(c => c.text).join('\n') : body.messages[0].content;
     const newBody = JSON.stringify({
       system_instruction: { parts: [{ text: sysText }] },
       contents: [{ role: "user", parts: [{ text: usrText }] }],
@@ -120,25 +104,12 @@ window.fetch = async function() {
 <div id="screen-apikey" class="screen active">
   <h1 style="font-family:system-ui,sans-serif;font-size:28px;font-weight:700;margin-bottom:8px">DLA Editor <span style="color:#34d399">v3</span></h1>
   <p style="color:#525252;font-size:12px;margin-bottom:40px">Wesley College · Carnegie Campus</p>
-  <div style="max-width:420px;width:100%">
-    <div class="card" style="text-align:left">
-      <span class="label">gemini api key</span>
-      <input type="password" id="api-key-input" class="inp" placeholder="AIzaSy..." style="margin-bottom:10px">
-      <span class="label">google oauth client id</span>
-      <input type="text" id="client-id-input" class="inp" placeholder="xxxx.apps.googleusercontent.com" value="334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleusercontent.com" style="margin-bottom:10px">
-      <button class="btn-pri" onclick="saveApiKey()" style="width:100%;padding:10px 0;font-size:13px">continue →</button>
-    </div>
-  </div>
+  <div style="max-width:420px;width:100%"><div class="card" style="text-align:left"><span class="label">gemini api key</span><input type="password" id="api-key-input" class="inp" placeholder="AIzaSy..." style="margin-bottom:10px"><button class="btn-pri" onclick="saveApiKey()" style="width:100%;padding:10px 0;font-size:13px">continue →</button></div></div>
 </div>
 <div id="screen-load" class="screen">
-  <h1 style="font-family:system-ui,sans-serif;font-size:28px;font-weight:700;margin-bottom:8px">DLA Editor <span style="color:#34d399">v3</span></h1>
-  <div style="display:flex;flex-direction:column;gap:10px;align-items:center;width:100%">
-    <button class="btn-pri" id="btn-drive-load" onclick="loadFromDrive()" style="width:280px;padding:11px 0;font-size:13px">↑ load from Google Drive</button>
-    <button class="btn" onclick="document.getElementById('file-input').click()" style="width:280px;padding:11px 0;font-size:13px">open local file</button>
-  </div>
-  <div id="drive-auth-status" style="margin-top:14px;font-size:11px;color:#525252"></div>
+  <div style="display:flex;flex-direction:column;gap:10px;align-items:center;width:100%"><button class="btn-pri" id="btn-drive-load" onclick="loadFromDrive()" style="width:280px;padding:11px 0;font-size:13px">↑ load from Google Drive</button><button class="btn" onclick="document.getElementById('file-input').click()" style="width:280px;padding:11px 0;font-size:13px">open local file</button></div>
   <input type="file" id="file-input" accept=".json" style="display:none" onchange="loadFromFile(event)">
-  <div id="load-error" style="display:none;margin-top:16px;color:#f87171;font-size:12px;padding:12px;background:#450a0a;border-radius:6px;max-width:340px;width:100%"></div>
+  <div id="load-error" style="display:none;margin-top:16px;color:#f87171;font-size:12px;padding:12px;background:#450a0a;border-radius:6px;"></div>
 </div>
 <div id="screen-app" class="screen">
   <div id="tab-dashboard" class="center tab-panel">
@@ -148,186 +119,53 @@ window.fetch = async function() {
       <span class="label" style="color: #34d399;">Step 1: The Workflow</span>
       <div style="background: #161616; padding: 12px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #222;">
         <ol style="margin-left: 18px; color: #a3a3a3; font-size: 11px; line-height: 1.6;">
-          <li><b>Upload:</b> Drop unit PDF into <a href="https://drive.google.com" target="_blank" style="color: #34d399;">Planners Drive Folder</a>.</li>
-          <li><b>Name:</b> Ensure it matches: <code style="color: #e5e5e5;">2026 - Year 3 UOI Planners (GW).pdf</code></li>
+          <li><b>Upload:</b> Drop unit PDF into your <b>Planners Drive Folder</b>.</li>
+          <li><b>Name:</b> Ensure it matches: <code style="color: #e5e5e5;">2026 - Year 3 UOI Planners (GW).pdf</code>.</li>
           <li><b>Queue:</b> Fill details below and click <b>Add to Queue</b>.</li>
           <li><b>Wait:</b> The AI engine checks every 10 mins and generates suggestions automatically.</li>
         </ol>
       </div>
       <span class="label">Step 2: Add to AI Queue</span>
-      <div style="display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
-         <input type="text" id="new-ca" class="inp" placeholder="Campus (e.g., Glen Waverley)" style="flex:1; min-width:140px">
-         <input type="text" id="new-yl" class="inp" placeholder="Year Level (e.g., Year 3)" style="flex:1; min-width:140px">
-         <input type="text" id="new-th" class="inp" placeholder="Theme (e.g., How the World Works)" style="flex:1; min-width:140px">
-      </div>
-      <div style="display:flex; align-items:center; gap:12px;">
-         <button class="btn-pri" id="btn-submit-unit" onclick="submitNewUnit()" style="padding: 8px 16px;">add to queue</button>
-         <span id="new-unit-status" style="font-size:11px;"></span>
-      </div>
+      <div style="display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap;"><input type="text" id="new-ca" class="inp" placeholder="Campus (e.g., Glen Waverley)" style="flex:1; min-width:140px"><input type="text" id="new-yl" class="inp" placeholder="Year Level (e.g., Year 3)" style="flex:1; min-width:140px"><input type="text" id="new-th" class="inp" placeholder="Theme (e.g., How the World Works)" style="flex:1; min-width:140px"></div>
+      <div style="display:flex; align-items:center; gap:12px;"><button class="btn-pri" id="btn-submit-unit" onclick="submitNewUnit()" style="padding: 8px 16px;">add to queue</button><span id="new-unit-status" style="font-size:11px;"></span></div>
     </div>
-    <div class="card">
-      <span class="label">all issues — click to fix individually</span>
-      <div id="all-issues-list"></div>
-    </div>
+    <div class="card"><span class="label">all issues — click to fix individually</span><div id="all-issues-list"></div></div>
   </div>
   <div id="tab-issues" class="center tab-panel" style="display:none">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap">
-      <h2 style="font-family:system-ui,sans-serif;font-size:16px;font-weight:600">issues</h2>
-      <div style="flex:1"></div>
-      <button class="btn-tab active" data-filter="all" onclick="setFilter(this)">all</button>
-      <button class="btn-tab" data-filter="banned" onclick="setFilter(this)">banned</button>
-      <button class="btn-tab" data-filter="incomplete" onclick="setFilter(this)">incomplete</button>
-      <button class="btn-tab" data-filter="mismatch" onclick="setFilter(this)">mismatch</button>
-    </div>
-    <div id="issues-fix-bar" style="margin-bottom:14px"></div>
-    <div id="filtered-issues-list"></div>
+    <div id="issues-fix-bar"></div><div id="filtered-issues-list"></div>
   </div>
   <div id="tab-browse" class="center tab-panel" style="display:none">
-    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
-      <select id="browse-campus" class="inp btn" onchange="renderBrowse()" style="width:auto;padding:5px 9px"><option value="">all campuses</option></select>
-      <select id="browse-year" class="inp btn" onchange="renderBrowse()" style="width:auto;padding:5px 9px"><option value="">all year levels</option></select>
-      <input id="browse-search" class="inp btn" placeholder="search themes…" oninput="renderBrowse()" style="flex:1;min-width:140px">
-      <span id="browse-count" style="font-size:11px;color:#525252;align-self:center"></span>
-    </div>
+    <div style="display:flex;gap:8px;margin-bottom:16px;"><select id="browse-campus" class="inp btn" onchange="renderBrowse()"><option value="">all campuses</option></select><input id="browse-search" class="inp btn" placeholder="search themes…" oninput="renderBrowse()" style="flex:1"></div>
     <div id="browse-list"></div>
   </div>
-  <div id="tab-planner" class="center tab-panel" style="display:none">
-    <h2 style="font-family:system-ui,sans-serif;font-size:16px;font-weight:600;margin-bottom:12px">bulk planner check</h2>
-    <div class="card" style="margin-bottom:16px">
-      <span class="label">upload planners</span>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
-        <select id="upload-ca" class="inp btn" style="width:auto;padding:5px 9px"><option value="">campus…</option></select>
-        <select id="upload-yl" class="inp btn" style="width:auto;padding:5px 9px"><option value="">year level…</option></select>
-        <button class="btn-blue" onclick="document.getElementById('planner-pdf-input').click()">upload pdf</button>
-        <input type="file" id="planner-pdf-input" accept=".pdf" style="display:none" onchange="handlePlannerUpload(event)">
-        <span id="upload-status" style="font-size:11px;color:#34d399"></span>
-      </div>
-      <div id="uploaded-planners" style="display:flex;flex-direction:column;gap:5px"></div>
-    </div>
-    <div id="pc-progress" style="display:none;margin-bottom:12px">
-      <div class="progress-track"><div class="progress-fill" id="pc-progress-bar" style="width:0%"></div></div>
-      <div id="pc-progress-label" style="font-size:11px;color:#fbbf24;margin-top:6px"></div>
-    </div>
-    <div id="pc-results"></div>
-    <div style="display:none">
-      <select id="pc-campus"><option value="">all campuses</option></select>
-      <select id="pc-year"><option value="">all year levels</option></select>
-      <span id="pc-count"></span>
-      <button id="btn-planner-run"></button>
-    </div>
-  </div>
-  <div id="tab-audit" class="center tab-panel" style="display:none">
-    <h2 style="font-family:system-ui,sans-serif;font-size:16px;font-weight:600;margin-bottom:16px">audit & analytics</h2>
-    <div class="stat-grid" id="audit-stats"></div>
-    <div style="display:flex;gap:6px;margin-bottom:16px">
-      <button class="btn-tab active" data-view="tools" onclick="setAuditView(this)">tools</button>
-      <button class="btn-tab" data-view="campus" onclick="setAuditView(this)">campus</button>
-      <button class="btn-tab" data-view="year" onclick="setAuditView(this)">year</button>
-    </div>
-    <div id="audit-chart"></div>
-    <div class="card" style="margin-top:20px">
-      <span class="label">adjust distribution with feedback</span>
-      <textarea id="audit-feedback" class="inp" rows="3" placeholder="Describe what you'd like to change…" style="display:block;resize:vertical;margin-bottom:10px;line-height:1.5"></textarea>
-      <button class="btn-pri" id="btn-audit-apply" onclick="applyAuditFeedback()">apply feedback across all entries</button>
-    </div>
-  </div>
   <div id="entry-detail" style="display:none">
-    <div class="center">
-      <div class="back-row"><button class="btn-sm" onclick="closeDetail()">← back</button></div>
-      <div class="card" id="detail-header"></div>
-      <div class="card" id="detail-manual">
-        <div style="display:flex;align-items:center"><span class="label" style="margin-bottom:0">type suggestions manually</span><div style="flex:1"></div><button class="btn-sm" id="btn-edit-toggle" onclick="toggleEdit()">edit</button></div>
-        <div id="manual-form" style="display:none;margin-top:14px"></div>
-      </div>
-      <div class="card" id="detail-planner">
-        <div style="display:flex;align-items:center"><span class="label" style="margin-bottom:0">check against planner</span><div style="flex:1"></div><button class="btn-blue" onclick="checkSinglePlanner()">check Drive planner</button></div>
-        <div id="planner-single-result" style="margin-top:10px"></div>
-      </div>
-      <div class="card" id="detail-generate">
-        <span class="label">regenerate all 5 with AI</span>
-        <button class="btn-pri" id="btn-gen-all" onclick="genAllSugs()">generate 5 suggestions</button>
-        <div id="gen-all-result" style="margin-top:10px"></div>
-      </div>
-    </div>
+    <div class="center"><div class="back-row"><button class="btn-sm" onclick="closeDetail()">← back</button></div><div class="card" id="detail-header"></div><div id="sug-rows-list"></div></div>
   </div>
 </div>
 </div>
 <script>
-let DATA=[], ISSUES={banned:[],incomplete:[],mismatch:[]}, CURRENT_ENTRY_IDX=null, CURRENT_FILTER="all", CURRENT_AUDIT_VIEW="tools", SELECTED_AUDIT_TOOL=null, AUDIT_YEAR_CAMPUS='', EDIT_MODE=false, BATCH_RUNNING=false, DRIVE_TOKEN=null, DRIVE_TOKEN_EXPIRY=0, DATA_JSON_FILE_ID=null, PLANNER_CACHE={};
-const DRIVE_SCOPE='https://www.googleapis.com/auth/drive', YR=["Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"], MODEL="gemini-2.5-flash", CAMPUS_COLORS={"Elsternwick":"#818cf8","Glen Waverley":"#34d399","St Kilda":"#fb923c"};
-const RULES=[{kw:["3d print"],min:4,max:6,name:"3D Printer"},{kw:["beebot"],min:0,max:1,name:"Beebots"},{kw:["cubetto"],min:0,max:2,name:"Cubetto"},{kw:["edison"],min:2,max:6,name:"Edison Robots"},{kw:["insta360"],min:2,max:6,name:"Insta360 Cam"},{kw:["lego spike"],min:2,max:6,name:"Lego Spike"},{kw:["makey makey"],min:3,max:6,name:"MakeyMakey"},{kw:["merge cube"],min:2,max:6,name:"Merge Cube"},{kw:["micro:bit"],min:3,max:6,name:"Micro:bit"},{kw:["ozobot"],min:1,max:6,name:"Ozobot"},{kw:["pico vr"],min:5,max:6,name:"Pico VR"},{kw:["green screen"],min:3,max:6,name:"Green Screen"},{kw:["rugged robot"],min:1,max:2,name:"Rugged Robot"},{kw:["sam lab"],min:3,max:6,name:"SAM Labs"},{kw:["smart brick"],min:1,max:3,name:"Smart Bricks"},{kw:["sphero"],min:4,max:6,name:"Spheros"},{kw:["scratch jr"],min:0,max:2,name:"Scratch Jr"}];
-const SYS=`You generate digital learning tool suggestions for Wesley College. Output ONLY a JSON array, no backticks. BANNED: WeVideo. SOFTWARE: Scratch Jr (Prep-Yr2), Scratch (Yr3+).`;
-
+let DATA=[], ISSUES={banned:[],incomplete:[],mismatch:[]}, CURRENT_ENTRY_IDX=null, DRIVE_TOKEN=null, DRIVE_TOKEN_EXPIRY=0, DATA_JSON_FILE_ID=null;
+const DRIVE_SCOPE='https://www.googleapis.com/auth/drive', YR=["Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"], CAMPUS_COLORS={"Elsternwick":"#818cf8","Glen Waverley":"#34d399","St Kilda":"#fb923c"};
 function getKey(){return localStorage.getItem('dla_api_key')||''}
-function getClientId(){return localStorage.getItem('dla_client_id')||''}
-function saveApiKey(){
-  const k=document.getElementById('api-key-input').value.trim();
-  const cid=document.getElementById('client-id-input').value.trim();
-  if(!k){alert('Enter key');return;}
-  localStorage.setItem('dla_api_key',k);
-  if(cid)localStorage.setItem('dla_client_id',cid);
-  showScreen('screen-load');
-}
-function showApiKeyScreen(){document.getElementById('api-key-input').value=getKey();document.getElementById('client-id-input').value=getClientId();showScreen('screen-apikey');}
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.style.display='none');
-  const el=document.getElementById(id);
-  if(el)el.style.display=(id==='screen-apikey'||id==='screen-load')?'flex':'block';
-  document.getElementById('header').style.display=id==='screen-app'?'flex':'none';
-}
-function switchTab(btn){
-  document.querySelectorAll('#header .btn-tab').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  const t=btn.dataset.tab;
-  document.querySelectorAll('.tab-panel').forEach(p=>p.style.display='none');
-  document.getElementById('tab-'+t).style.display='block';
-  document.getElementById('entry-detail').style.display='none';
-  if(t==='browse')renderBrowse();
-  if(t==='audit')renderAudit();
-  if(t==='planner')initPlannerFilters();
-}
-function setStatus(msg,type='ok'){const el=document.getElementById('status-bar');el.textContent=msg;el.style.color=type==='error'?'#f87171':type==='loading'?'#fbbf24':'#34d399';}
-function yrN(yl){if(!yl)return-1;const s=String(yl).toLowerCase();if(s==='prep')return 0;const m=s.match(/\d+/);return m?parseInt(m[0]):-1;}
-function checkTool(name,yn){
-  const t=String(name).toLowerCase().trim();
-  if(t.includes('wevideo'))return{ok:false,type:'banned',msg:'WeVideo is banned'};
-  for(const r of RULES){if(r.kw.some(k=>t.includes(k))){if(yn>=0&&(yn<r.min||yn>r.max))return{ok:false,type:'mismatch',msg:`${r.name} is for ${YR[r.min]}-${YR[r.max]}`};return{ok:true};}}
-  return{ok:true};
-}
+function saveApiKey(){const k=document.getElementById('api-key-input').value.trim();if(!k){alert('Enter key');return;}localStorage.setItem('dla_api_key',k);showScreen('screen-load');}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.style.display='none');const el=document.getElementById(id);if(el)el.style.display=(id==='screen-apikey'||id==='screen-load')?'flex':'block';document.getElementById('header').style.display=id==='screen-app'?'flex':'none';}
+function switchTab(btn){document.querySelectorAll('#header .btn-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');const t=btn.dataset.tab;document.querySelectorAll('.tab-panel').forEach(p=>p.style.display='none');document.getElementById('tab-'+t).style.display='block';document.getElementById('entry-detail').style.display='none';if(t==='browse')renderBrowse();}
+function ingest(arr){DATA=Array.isArray(arr)?arr:Object.values(arr);ISSUES=doAudit(DATA);showScreen('screen-app');renderDashboard();initBrowseFilters();}
 function doAudit(data){
   const banned=[],incomplete=[],mismatch=[];
   data.forEach((entry,idx)=>{
-    const yn=yrN(entry.yl), sugs=entry.s||[];
-    if(sugs.length<5){incomplete.push({idx,entry,type:'incomplete',details:`${sugs.length}/5 sugs`});return;}
-    const issues=[];
-    sugs.forEach((s,si)=>{const c=checkTool(s.t||'',yn);if(!c.ok)issues.push({si,...c,tool:s.t});});
-    if(issues.some(i=>i.type==='banned')) banned.push({idx,entry,type:'banned',issues,details:'Banned tool found'});
-    else if(issues.length) mismatch.push({idx,entry,type:'mismatch',issues,details:'Mismatch found'});
+    const sugs=entry.s||[];
+    if(sugs.length<5||sugs.some(s=>s.t==="TBA")){incomplete.push({idx,entry,type:'incomplete'});}
+    else if(sugs.some(s=>s.t.toLowerCase().includes('wevideo'))){banned.push({idx,entry,type:'banned'});}
   });
   return{banned,incomplete,mismatch};
 }
-function ingest(arr){DATA=Array.isArray(arr)?arr:Object.values(arr);ISSUES=doAudit(DATA);setStatus(`${DATA.length} loaded`);showScreen('screen-app');renderDashboard();initBrowseFilters();initPlannerFilters();}
 async function loadFromDrive(){
-  const btn=document.getElementById('btn-drive-load');btn.disabled=true;
-  try{
-    const token=await getDriveToken();
-    const r=await fetch(`https://www.googleapis.com/drive/v3/files?q=name='data.json'&fields=files(id)`,{headers:{'Authorization':'Bearer '+token}});
-    const d=await r.json();
-    if(!d.files.length)throw new Error('data.json not found');
-    DATA_JSON_FILE_ID=d.files[0].id;
-    const fr=await fetch(`https://www.googleapis.com/drive/v3/files/${DATA_JSON_FILE_ID}?alt=media`,{headers:{'Authorization':'Bearer '+token}});
-    const json=await fr.json();
-    ingest(json);
-  }catch(e){alert(e.message);}finally{btn.disabled=false;}
+  try{const token=await getDriveToken();const r=await fetch("https://www.googleapis.com/drive/v3/files?q=name='data.json'&fields=files(id)",{headers:{'Authorization':'Bearer '+token}});const d=await r.json();DATA_JSON_FILE_ID=d.files[0].id;const fr=await fetch(`https://www.googleapis.com/drive/v3/files/${DATA_JSON_FILE_ID}?alt=media`,{headers:{'Authorization':'Bearer '+token}});ingest(await fr.json());}catch(e){alert(e.message);}
 }
 async function getDriveToken(){
   if(DRIVE_TOKEN&&Date.now()<DRIVE_TOKEN_EXPIRY-60000)return DRIVE_TOKEN;
-  return new Promise((res,rej)=>{
-    google.accounts.oauth2.initTokenClient({client_id:getClientId(),scope:DRIVE_SCOPE,callback:resp=>{
-      if(resp.error){rej(resp.error);return;}
-      DRIVE_TOKEN=resp.access_token;DRIVE_TOKEN_EXPIRY=Date.now()+(resp.expires_in*1000);res(DRIVE_TOKEN);
-    }}).requestAccessToken();
-  });
+  return new Promise((res,rej)=>{google.accounts.oauth2.initTokenClient({client_id:'334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleusercontent.com',scope:DRIVE_SCOPE,callback:resp=>{if(resp.error){rej(resp.error);return;}DRIVE_TOKEN=resp.access_token;DRIVE_TOKEN_EXPIRY=Date.now()+(resp.expires_in*1000);res(DRIVE_TOKEN);}}).requestAccessToken();});
 }
 function submitNewUnit(){
   const scriptUrl='https://script.google.com/macros/s/AKfycbyUlNbBkcwXB8ImUUhEQDP7C3itYCUu-j_vRNKA7_Km2h4uJMIs0RVFJxUXKcFOFgIW/exec';
@@ -342,34 +180,16 @@ function submitNewUnit(){
   }).catch(()=>statusEl.textContent='Error').finally(()=>btn.disabled=false);
 }
 function renderDashboard(){
-  document.getElementById('stat-cards').innerHTML=[{k:'banned',l:'banned',c:'#f87171'},{k:'incomplete',l:'incomplete',c:'#fb923c'},{k:'mismatch',l:'mismatch',c:'#a3a3a3'}].map(s=>`
-    <div class="stat-card"><div class="stat-num" style="color:${s.c}">${ISSUES[s.k].length}</div><div class="stat-label">${s.l}</div></div>`).join('');
-  const all=[...ISSUES.banned,...ISSUES.incomplete,...ISSUES.mismatch];
-  document.getElementById('all-issues-list').innerHTML=all.map(i=>`
-    <div class="issue-row" onclick="openEntry(${i.idx})"><span class="badge badge-${i.type}">${i.type}</span> ${i.entry.yl} - ${i.entry.th}</div>`).join('');
+  document.getElementById('stat-cards').innerHTML=[{k:'banned',l:'banned',c:'#f87171'},{k:'incomplete',l:'missing planner',c:'#fb923c'}].map(s=>`<div class="stat-card"><div class="stat-num" style="color:${s.c}">${ISSUES[s.k].length}</div><div class="stat-label">${s.l}</div></div>`).join('');
+  const all=[...ISSUES.banned,...ISSUES.incomplete];
+  document.getElementById('all-issues-list').innerHTML=all.map(i=>`<div class="issue-row" onclick="openEntry(${i.idx})"><span class="badge badge-${i.type}">${i.type==='incomplete'?'missing planner':i.type}</span> ${i.entry.yl} - ${i.entry.th}</div>`).join('');
 }
 function openEntry(idx){CURRENT_ENTRY_IDX=idx;document.querySelectorAll('.tab-panel').forEach(p=>p.style.display='none');document.getElementById('entry-detail').style.display='block';renderEntryDetail();}
-function renderEntryDetail(){
-  const entry=DATA[CURRENT_ENTRY_IDX];
-  document.getElementById('detail-header').innerHTML=`<h3>${entry.th}</h3><p>${entry.ca} · ${entry.yl}</p>`;
-  document.getElementById('sug-rows-list').innerHTML=(entry.s||[]).map(s=>`<div class="sug-row sug-ok"><div class="sug-main"><b>${s.t}</b><p>${s.d}</p></div></div>`).join('');
-}
-function closeDetail(){document.getElementById('entry-detail').style.display='none';switchTab(document.querySelector('.btn-tab.active'));}
-function initBrowseFilters(){
-  const campuses=[...new Set(DATA.map(e=>e.ca))].sort();
-  const el=document.getElementById('browse-campus');campuses.forEach(c=>el.add(new Option(c,c)));
-  renderBrowse();
-}
-function renderBrowse(){
-  const ca=document.getElementById('browse-campus').value, q=document.getElementById('browse-search').value.toLowerCase();
-  const filtered=DATA.filter(e=>(!ca||e.ca===ca)&&(!q||e.th.toLowerCase().includes(q)));
-  document.getElementById('browse-list').innerHTML=filtered.map((e,i)=>`<div class="issue-row" onclick="openEntry(${DATA.indexOf(e)})">${e.yl} - ${e.th}</div>`).join('');
-}
-function initPlannerFilters(){/* Placeholder for full logic */}
-function downloadJSON(){
-  const blob=new Blob([JSON.stringify(DATA,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='data.json';a.click();
-}
+function renderEntryDetail(){const entry=DATA[CURRENT_ENTRY_IDX];document.getElementById('detail-header').innerHTML=`<h3>${entry.th}</h3><p>${entry.ca} · ${entry.yl}</p>`;document.getElementById('sug-rows-list').innerHTML=(entry.s||[]).map(s=>`<div class="sug-row sug-ok"><div class="sug-main"><b>${s.t}</b><p>${s.d}</p></div></div>`).join('');}
+function closeDetail(){document.getElementById('entry-detail').style.display='none';document.getElementById('tab-dashboard').style.display='block';}
+function initBrowseFilters(){const campuses=[...new Set(DATA.map(e=>e.ca))].sort();const el=document.getElementById('browse-campus');campuses.forEach(c=>el.add(new Option(c,c)));renderBrowse();}
+function renderBrowse(){const ca=document.getElementById('browse-campus').value, q=document.getElementById('browse-search').value.toLowerCase();const filtered=DATA.filter(e=>(!ca||e.ca===ca)&&(!q||e.th.toLowerCase().includes(q)));document.getElementById('browse-list').innerHTML=filtered.map(e=>`<div class="issue-row" onclick="openEntry(${DATA.indexOf(e)})">${e.yl} - ${e.th}</div>`).join('');}
+function downloadJSON(){const blob=new Blob([JSON.stringify(DATA,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='data.json';a.click();}
 (function init(){if(getKey())showScreen('screen-load');else showScreen('screen-apikey');})();
 </script>
 </body>
