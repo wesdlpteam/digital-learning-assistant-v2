@@ -443,7 +443,7 @@ let AUDIT_YEAR_CAMPUS = '';
 let CHAT_HISTORY = [];
 
 const CLIENT_ID = '334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleusercontent.com';
-const GEMINI_MODEL = 'gemini-2.0-flash';
+const GEMINI_MODEL = 'gemini-2.5-pro-preview-06-05';
 const YR = ["Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"];
 const CAMPUS_COL = { Elsternwick:'#818cf8', 'Glen Waverley':'#34d399', 'St Kilda':'#fb923c' };
 
@@ -702,7 +702,7 @@ function buildSugRow(sug,entryIdx,sugIdx){
     </div>
     <div class="sug-fb" id="${uid}-fb" style="display:none">
       <textarea class="inp" id="${uid}-txt" rows="2" placeholder="e.g. make it more hands-on, use a different tool, connect it to the central idea..." style="margin-bottom:8px;font-size:12px"></textarea>
-      <button class="btn-pri" style="font-size:11px;padding:6px 14px" onclick="regenOne(${entryIdx},${sugIdx},'${uid}')">Regenerate with Gemini</button>
+      <button class="btn-pri" style="font-size:11px;padding:6px 14px" onclick="regenOne(${entryIdx},${sugIdx},'${uid}')">Send feedback</button>
       <div id="${uid}-res" style="margin-top:10px"></div>
     </div>
   </div>`;
@@ -713,44 +713,107 @@ function toggleFb(uid){
   if(fb) fb.style.display=fb.style.display==='none'?'block':'none';
 }
 
+// Per-suggestion feedback chat history, keyed by uid
+const SUG_CHATS = {};
+
 async function regenOne(entryIdx,sugIdx,uid){
   const entry=DATA[entryIdx];
   const oldSug=(entry.s||[])[sugIdx];
   const feedback=document.getElementById(uid+'-txt')?.value||'';
+  if(!feedback.trim()){ 
+    document.getElementById(uid+'-res').innerHTML='<div style="font-size:11px;color:#fbbf24">Please enter some feedback first.</div>';
+    return;
+  }
   const resEl=document.getElementById(uid+'-res');
   const btn=document.querySelector(`#${uid} .sug-fb .btn-pri`);
-  if(btn){ btn.disabled=true; btn.textContent='Regenerating…'; }
+  if(btn){ btn.disabled=true; btn.textContent='Thinking…'; }
   resEl.innerHTML='';
-  const others=(entry.s||[]).filter((_,i)=>i!==sugIdx).map(s=>s.t).join(', ');
-  const prompt=`Regenerate ONE technology suggestion for an IB PYP unit.
+
+  // Initialise chat history for this suggestion if needed
+  if(!SUG_CHATS[uid]){
+    const others=(entry.s||[]).filter((_,i)=>i!==sugIdx).map(s=>s.t).join(', ');
+    SUG_CHATS[uid]={
+      entryIdx, sugIdx,
+      system:`You are helping a teacher at Wesley College improve a specific technology suggestion for an IB PYP unit.
 Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${entry.lo?`\nLines of Inquiry: "${entry.lo}"`:''}
-Current suggestion being replaced: ${oldSug?oldSug.t+' — '+oldSug.d:'(none)'}
-Teacher feedback: ${feedback||'improve this suggestion'}
-Other tools already used in this unit — do NOT repeat these: ${others||'none'}
-Return ONLY a JSON object with no markdown or backticks:
-{"t":"Tool Name","d":"One specific sentence about how students use it for this unit."}`;
+Current suggestion: ${oldSug?oldSug.t+' — '+oldSug.d:'(none)'}
+Other tools already used in this unit (do NOT repeat): ${others||'none'}
+
+Your job:
+1. Ask 1-2 short clarifying questions based on the teacher's feedback to make sure you understand what they want
+2. Once you have enough information, propose a specific replacement suggestion
+3. When proposing a replacement, end your message with this exact format on its own line:
+PROPOSED: {"t":"Tool Name","d":"One specific sentence about how students use it for this unit."}
+
+Keep responses concise and conversational.`,
+      history:[]
+    };
+  }
+
+  const chat=SUG_CHATS[uid];
+  chat.history.push({role:'user',parts:[{text:feedback}]});
+
+  // Clear the textarea
+  const txtEl=document.getElementById(uid+'-txt');
+  if(txtEl) txtEl.value='';
+
   try{
-    const raw=await callGemini([{role:'user',parts:[{text:prompt}]}]);
-    const clean=raw.replace(/```json|```/g,'').trim();
-    const si=clean.indexOf('{'), ei=clean.lastIndexOf('}');
-    if(si===-1||ei===-1) throw new Error('No JSON in response');
-    const newSug=JSON.parse(clean.slice(si,ei+1));
-    // Store pending suggestion index for apply
-    const applyId=`pending_${entryIdx}_${sugIdx}`;
-    window[applyId]=newSug;
+    const response=await callGemini(chat.history, chat.system);
+    chat.history.push({role:'model',parts:[{text:response}]});
+
+    // Check if a proposal is included
+    const proposalMatch=response.match(/PROPOSED:\s*(\{[\s\S]*?\})/);
+    let proposalHTML='';
+    if(proposalMatch){
+      try{
+        const newSug=JSON.parse(proposalMatch[1]);
+        const applyId=`pending_${entryIdx}_${sugIdx}`;
+        window[applyId]=newSug;
+        proposalHTML=`
+          <div class="preview-ok" style="margin-top:10px">
+            <div style="font-size:10px;color:var(--mint);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Proposed replacement</div>
+            <div class="preview-tool">${esc(newSug.t)}</div>
+            <div class="preview-desc">${esc(newSug.d)}</div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn-pri" style="font-size:11px;padding:5px 12px" onclick="applyOne(${entryIdx},${sugIdx},'${applyId}','${uid}')">✓ Apply this change</button>
+            <button class="btn-sm" onclick="resetSugChat('${uid}')">Start over</button>
+          </div>`;
+      }catch{}
+    }
+
+    // Display the conversation
+    const cleanResponse=response.replace(/PROPOSED:\s*\{[\s\S]*?\}/,'').trim();
     resEl.innerHTML=`
-      <div class="preview-ok">
-        <div class="preview-tool">${esc(newSug.t)}</div>
-        <div class="preview-desc">${esc(newSug.d)}</div>
+      <div style="background:#0a120a;border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px">
+        <div style="font-size:10px;color:var(--dim);margin-bottom:6px;letter-spacing:.5px">GEMINI</div>
+        <div style="font-size:12px;color:var(--text);line-height:1.6;white-space:pre-wrap">${esc(cleanResponse)}</div>
       </div>
-      <div style="display:flex;gap:8px;margin-top:6px">
-        <button class="btn-pri" style="font-size:11px;padding:5px 12px" onclick="applyOne(${entryIdx},${sugIdx},'${applyId}','${uid}')">Apply</button>
-        <button class="btn-sm" onclick="document.getElementById('${uid}-res').innerHTML=''">Discard</button>
-      </div>`;
+      ${proposalHTML}
+      ${!proposalHTML?`<div style="display:flex;gap:8px;margin-top:8px">
+        <textarea class="inp" id="${uid}-reply" rows="2" placeholder="Reply to continue the conversation..." style="flex:1;font-size:12px"></textarea>
+        <button class="btn-pri" style="font-size:11px;padding:6px 12px;align-self:flex-end" onclick="continueRegenChat('${entryIdx}','${sugIdx}','${uid}')">Send</button>
+      </div>`:''}`;
   }catch(e){
     resEl.innerHTML=`<div style="font-size:11px;color:#f87171">${esc(e.message)}</div>`;
   }
-  if(btn){ btn.disabled=false; btn.textContent='Regenerate with Gemini'; }
+  if(btn){ btn.disabled=false; btn.textContent='Send feedback'; }
+}
+
+async function continueRegenChat(entryIdx,sugIdx,uid){
+  const reply=document.getElementById(uid+'-reply')?.value.trim();
+  if(!reply) return;
+  // Move reply into the main feedback field and re-run
+  const txtEl=document.getElementById(uid+'-txt');
+  if(txtEl) txtEl.value=reply;
+  await regenOne(parseInt(entryIdx),parseInt(sugIdx),uid);
+}
+
+function resetSugChat(uid){
+  delete SUG_CHATS[uid];
+  document.getElementById(uid+'-res').innerHTML='';
+  const txtEl=document.getElementById(uid+'-txt');
+  if(txtEl) txtEl.value='';
 }
 
 function applyOne(entryIdx,sugIdx,applyId,uid){
