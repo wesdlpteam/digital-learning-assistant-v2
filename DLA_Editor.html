@@ -424,12 +424,12 @@ let CHAT_HISTORY = [];
 const CLIENT_ID = '334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleusercontent.com';
 const GEMINI_MODEL = 'gemini-3.1-pro-preview';
 const YR = ["Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"];
-const CAMPUS_COL = { Elsternwick:'#818cf8', 'Glen Waverley':'#34d399', 'St Kilda':'#fb923c', 'St Kilda Road':'#fb923c' };
+const CAMPUS_COL = { Elsternwick:'#818cf8', 'Glen Waverley':'#34d399', 'St Kilda Road':'#fb923c' };
 
 function getKey(){ return localStorage.getItem('dla_api_key')||''; }
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function caCol(ca){ return CAMPUS_COL[ca]||'#34d399'; }
+function caCol(ca){ return CAMPUS_COL[normCa(ca)]||CAMPUS_COL[ca]||'#818cf8'; }
 
 // ─── Screens ──────────────────────────────────────────────────────────────────
 function showScreen(id){
@@ -861,6 +861,13 @@ function applyRegenAll(idx,pendingId){
 // ─── Audit ────────────────────────────────────────────────────────────────────
 function getSugs(e){ const s=e.s; return Array.isArray(s)?s:[]; }
 
+// Normalise campus names so "St Kilda" and "St Kilda Road" merge in stats
+function normCa(ca){
+  if(!ca) return ca;
+  if(ca.toLowerCase().startsWith('st kilda')) return 'St Kilda Road';
+  return ca;
+}
+
 function computeStats(){
   const toolCounts={}, campusTools={}, yearTools={}; let total=0;
   // Only count audited entries with real suggestions
@@ -870,8 +877,9 @@ function computeStats(){
       const t=(s&&s.t&&s.t.trim()&&s.t.trim()!=='TBA')?s.t.trim():null;
       if(!t) return; // skip empty/TBA slots silently
       toolCounts[t]=(toolCounts[t]||0)+1;
-      if(!campusTools[e.ca]) campusTools[e.ca]={};
-      campusTools[e.ca][t]=(campusTools[e.ca][t]||0)+1;
+      const nca=normCa(e.ca);
+      if(!campusTools[nca]) campusTools[nca]={};
+      campusTools[nca][t]=(campusTools[nca][t]||0)+1;
       if(!yearTools[e.yl]) yearTools[e.yl]={};
       yearTools[e.yl][t]=(yearTools[e.yl][t]||0)+1;
       total++;
@@ -986,10 +994,12 @@ function renderAuditChart(){
     container.appendChild(card);
 
   } else if(AUDIT_VIEW === 'campus'){
-    const campuses = [...new Set(DATA.map(e => e.ca))].sort();
+    const campuses = [...new Set(DATA.map(e => normCa(e.ca)))].sort();
     const palette = ['#F5A623','#C5E84A','#60B8F0','#9B8BFF','#52B95C','#FF8080'];
     campuses.forEach((ca, ci) => {
       const tools = stats.campusTools[ca] || {};
+      const totalSugs = Object.values(tools).reduce((a,b)=>a+b,0);
+      if(totalSugs === 0) return; // skip campuses with no audited suggestions yet
       const sorted = Object.entries(tools).sort((a,b) => b[1]-a[1]).slice(0,12);
       const mx = sorted[0]?.[1] || 1;
       const col = palette[ci % palette.length];
@@ -1013,7 +1023,7 @@ function renderAuditChart(){
 
   } else {
     // Year view with campus filter
-    const campuses = [...new Set(DATA.map(e => e.ca))].sort();
+    const campuses = [...new Set(DATA.map(e => normCa(e.ca)))].sort();
     const palette = ['#F5A623','#C5E84A','#9B8BFF'];
 
     // Filter buttons
@@ -1031,7 +1041,7 @@ function renderAuditChart(){
       if(filterEl) filterEl.appendChild(b);
     });
 
-    const fd = AUDIT_YEAR_CAMPUS ? DATA.filter(e => e.ca===AUDIT_YEAR_CAMPUS) : DATA;
+    const fd = AUDIT_YEAR_CAMPUS ? DATA.filter(e => normCa(e.ca)===AUDIT_YEAR_CAMPUS) : DATA;
     const yt = {};
     fd.forEach(e => {
       if(e.audited === false) return;
