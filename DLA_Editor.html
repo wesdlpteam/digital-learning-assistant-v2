@@ -369,6 +369,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
     <div id="panel-audit" class="panel">
       <div class="page-title">Audit & AI Coach</div>
       <div class="page-sub">Analyse tool usage and chat with Gemini to make bulk changes across the library.</div>
+      <div id="audit-campus-debug" style="font-size:11px;color:var(--dim);margin-bottom:12px;padding:8px 12px;background:var(--card2);border-radius:6px;border:1px solid var(--border)"></div>
       <div class="view-tabs">
         <button class="view-tab active" data-view="analytics" onclick="setAuditView(this)">Analytics</button>
         <button class="view-tab" data-view="chat" onclick="setAuditView(this)">AI Coach Chat</button>
@@ -426,7 +427,7 @@ const CLIENT_ID = '334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleuser
 const GEMINI_MODEL = 'gemini-3.1-pro-preview';   // used for suggestion regeneration
 const GEMINI_CHAT_MODEL = 'gemini-3-flash-preview'; // used for AI coach chat
 const YR = ["Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"];
-const CAMPUS_COL = { Elsternwick:'#818cf8', 'Glen Waverley':'#34d399', 'St Kilda Road':'#fb923c' };
+const CAMPUS_COL = { Elsternwick:'#818cf8', 'Glen Waverley':'#34d399', 'St Kilda':'#fb923c', 'St Kilda Road':'#fb923c' };
 
 function getKey(){ return localStorage.getItem('dla_api_key')||''; }
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
@@ -610,8 +611,9 @@ function getIssues(){
   const incomplete=[], banned=[];
   DATA.forEach((e,idx)=>{
     const sugs=getSugs(e);
-    if(sugs.length<5) incomplete.push({e,idx,detail:`${sugs.length}/5 suggestions`});
-    if(sugs.some(s=>s&&(s.t||'').toLowerCase().includes('wevideo'))) banned.push({e,idx,detail:'WeVideo found'});
+    const realSugs=sugs.filter(isRealSug);
+    if(realSugs.length<5) incomplete.push({e,idx,detail:`${realSugs.length}/5 suggestions`});
+    if(sugs.some(s=>sugTool(s).toLowerCase().includes('wevideo'))) banned.push({e,idx,detail:'WeVideo found'});
   });
   return {incomplete,banned};
 }
@@ -708,7 +710,7 @@ function buildSugRow(sug,entryIdx,sugIdx){
         <div style="flex:1"></div>
         <button class="btn-sm" onclick="toggleFb('${uid}')">feedback</button>
       </div>
-      <div class="sug-desc">${esc(sug.d)}</div>
+      <div class="sug-desc">${esc(sugDesc(sug))}</div>
     </div>
     <div class="sug-fb" id="${uid}-fb" style="display:none">
       <textarea class="inp" id="${uid}-txt" rows="2" placeholder="e.g. make it more hands-on, use a different tool, connect it to the central idea..." style="margin-bottom:8px;font-size:12px"></textarea>
@@ -881,18 +883,51 @@ function applyRegenAll(idx,pendingId){
 }
 
 // ─── Audit ────────────────────────────────────────────────────────────────────
-function getSugs(e){
-  const s=e.s;
-  if(Array.isArray(s)) return s.filter(x=>x&&typeof x==='object'&&x.t&&x.t!=='TBA');
-  if(s && typeof s==='object' && !Array.isArray(s)) return Object.values(s).filter(x=>x&&x.t&&x.t!=='TBA');
-  return [];
+function getSugs(e){ return normEntry(e); }
+
+// Get the tool name from a suggestion regardless of field name convention
+function sugTool(s){
+  if(!s) return '';
+  if(typeof s==='string') return s;
+  return s.t||s.tool||s.technology||s.equipment||s.name||s.title||'';
 }
+
+// Get the description from a suggestion regardless of field name
+function sugDesc(s){
+  if(!s) return '';
+  if(typeof s==='string') return '';
+  return s.d||s.desc||s.description||s.integration_idea||s.activity_description
+    ||s.justification||s.unit_connection||s.application||s.suggested_activity
+    ||s.integration_suggestion||s.learning_experience||s.activity_idea
+    ||s.implementation_idea||s.text||'';
+}
+
+// Normalise a raw suggestion object to standard {t, d} format
+function normSug(s){
+  if(!s) return null;
+  if(typeof s==='string') return s.trim()?{t:s.trim(),d:''}:null;
+  const t=sugTool(s).trim();
+  const d=sugDesc(s).trim();
+  if(!t) return null;
+  return {t, d};
+}
+
+// Normalise an entire entry's s field to a clean array of {t,d} objects
+function normEntry(e){
+  const s=e.s;
+  let arr=[];
+  if(Array.isArray(s)) arr=s;
+  else if(s && typeof s==='object') arr=Object.values(s);
+  else return [];
+  return arr.map(normSug).filter(x=>x&&x.t&&x.t!=='TBA'&&x.t.trim()!=='');
+}
+
+// normEntry already strips TBA/empty, so all returned sugs are real
+function isRealSug(s){ return !!(s && sugTool(s).trim()); }
 
 // Normalise campus names so "St Kilda" and "St Kilda Road" merge in stats
 function normCa(ca){
-  if(!ca) return ca;
-  if(ca.toLowerCase().startsWith('st kilda')) return 'St Kilda Road';
-  return ca;
+  return ca||'';  // no renaming needed - data uses "St Kilda" consistently
 }
 
 function computeStats(){
@@ -947,6 +982,11 @@ function renderAuditChart(){
   // Clear
   container.innerHTML = '';
   if(filterEl) filterEl.innerHTML = '';
+
+  // Debug: show campus summary
+  const campusDebug = [...new Set(DATA.map(e=>e.ca))];
+  const debugEl = document.getElementById('audit-campus-debug');
+  if(debugEl) debugEl.innerHTML = 'Campuses in data: '+campusDebug.map(ca=>`<span style="margin-right:8px;color:${caCol(ca)}">${ca} (${DATA.filter(e=>e.ca===ca).length})</span>`).join('');
 
   if(!stats.sorted.length){
     container.innerHTML = '<div style="padding:40px;text-align:center;color:var(--dim);font-size:14px">No suggestion data found in this dataset.</div>';
@@ -1130,7 +1170,7 @@ function toggleToolDrilldown(row, toolName){
 // ─── AI Coach Chat ────────────────────────────────────────────────────────────
 function getCoachSystem(){
   const stats=computeStats();
-  const dist=stats.sorted.slice(0,20).map(({name,count,pct})=>`${name}: ${count}× (${pct}%)`).join(', ');
+  const dist=stats.sorted.filter(x=>x.name&&!x.name.startsWith('⚠')).slice(0,20).map(({name,count,pct})=>`${name}: ${count}× (${pct}%)`).join(', ');
   const entryList=DATA.map((e,i)=>`${i}: ${e.ca} | ${e.yl} | ${e.th}`).join('\n');
   return `You are an AI coaching assistant for the Wesley College Digital Learning Assistant. You help the Digital Learning Coach make strategic decisions about educational technology across ${DATA.length} lesson entries.
 
