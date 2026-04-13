@@ -7,16 +7,16 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 :root {
-  --mint:#34d399; --vivid:#00e676; --bg:#080e08; --card:#0d140d;
-  --card2:#131a13; --border:#1a2a1a; --dim:#4a6a4a; --text:#e0ffe0;
+  --mint:#34d399; --vivid:#00e676; --bg:#080e08; --card:#0f160f;
+  --card2:#151e15; --border:#253525; --dim:#8aaa8a; --text:#f0fff0;
   --glow:rgba(52,211,153,0.35);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;min-height:100vh;font-size:15px;line-height:1.6}
+body{background:var(--bg);color:#f0f0f0;font-family:system-ui,-apple-system,sans-serif;min-height:100vh;font-size:15px;line-height:1.6}
 
 /* SIDEBAR */
 #sidebar{
-  width:240px;background:var(--card);border-right:1px solid var(--border);
+  width:240px;background:#0c130c;border-right:1px solid #253525;
   position:fixed;top:0;left:0;height:100vh;
   display:none;flex-direction:column;padding:32px 20px;z-index:50
 }
@@ -24,11 +24,11 @@ body.app-mode #sidebar{display:flex}
 body.app-mode #main{margin-left:240px}
 #logo{font-size:13px;font-weight:800;color:var(--mint);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:40px}
 .nav-item{
-  padding:12px 16px;border-radius:8px;color:var(--dim);cursor:pointer;
-  margin-bottom:6px;font-size:14px;font-weight:500;display:flex;align-items:center;gap:10px;
+  padding:12px 16px;border-radius:8px;color:#9ab89a;cursor:pointer;
+  margin-bottom:6px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;
   transition:all 0.15s
 }
-.nav-item:hover{color:var(--text);background:#1a1a1a}
+.nav-item:hover{color:#fff;background:#1f2e1f}
 .nav-item.active{color:var(--mint);background:#1a1a1a}
 #sidebar-footer{margin-top:auto;padding-top:24px;border-top:1px solid var(--border)}
 
@@ -48,16 +48,16 @@ body.app-mode #app-content{display:block}
 .panel.active{display:block}
 
 /* CARDS */
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:16px}
-.card2{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:10px}
+.card{background:#141f14;border:1px solid #2a3e2a;border-radius:12px;padding:28px;margin-bottom:16px}
+.card2{background:#1a241a;border:1px solid #2a3e2a;border-radius:8px;padding:16px;margin-bottom:10px}
 
 /* TYPE */
 .page-title{font-size:26px;font-weight:700;color:#fff;margin-bottom:6px}
-.page-sub{font-size:15px;color:var(--dim);margin-bottom:24px;line-height:1.6}
-.label{font-size:12px;color:var(--dim);text-transform:uppercase;font-weight:700;letter-spacing:1px;margin-bottom:10px;display:block}
+.page-sub{font-size:15px;color:#9ab89a;margin-bottom:24px;line-height:1.6}
+.label{font-size:12px;color:#7ab87a;text-transform:uppercase;font-weight:700;letter-spacing:1px;margin-bottom:10px;display:block}
 
 /* INPUTS */
-.inp{background:#000;border:1px solid var(--border);color:var(--text);border-radius:8px;padding:14px 16px;width:100%;outline:none;font-size:15px;font-family:inherit}
+.inp{background:#0a0f0a;border:1px solid #2a3a2a;color:#f0f0f0;border-radius:8px;padding:14px 16px;width:100%;outline:none;font-size:15px;font-family:inherit}
 .inp:focus{border-color:var(--mint)}
 textarea.inp{resize:vertical;line-height:1.6}
 select.inp{cursor:pointer}
@@ -76,17 +76,17 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
 .stat-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:20px}
 .stat-num{font-size:32px;font-weight:800;color:var(--mint)}
-.stat-lbl{font-size:13px;color:var(--dim);margin-top:4px}
+.stat-lbl{font-size:13px;color:#9ab89a;margin-top:4px}
 
 /* ROWS */
-.row{display:flex;align-items:center;gap:10px;padding:16px 20px;background:var(--card2);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;cursor:pointer;transition:background 0.1s}
-.row:hover{background:#1a1a1a}
+.row{display:flex;align-items:center;gap:10px;padding:16px 20px;background:#161e16;border:1px solid #2a3a2a;border-radius:8px;margin-bottom:8px;cursor:pointer;transition:background 0.1s}
+.row:hover{background:#222e22}
 
 /* SUGGESTION ROWS */
 .sug{border-radius:8px;margin-bottom:10px;overflow:hidden}
-.sug-main{padding:18px 20px;background:var(--card2);border:1px solid var(--border)}
+.sug-main{padding:18px 20px;background:#1a241a;border:1px solid #2d422d}
 .sug-tool{font-size:15px;font-weight:600;color:var(--mint);margin-bottom:4px}
-.sug-desc{font-size:14px;color:#a3a3a3;line-height:1.5}
+.sug-desc{font-size:14px;color:#cce8cc;line-height:1.6}
 .sug-fb{padding:16px 20px;background:#0d0d0d;border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px}
 
 /* BAR CHART */
@@ -97,12 +97,12 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .bar-fill{height:100%;border-radius:3px;background:var(--mint);transition:width 0.4s}
 
 /* CHAT */
-#chat-messages{background:#000;border:1px solid var(--border);border-radius:12px 12px 0 0;height:400px;overflow-y:auto;padding:20px}
+#chat-messages{background:#0a100a;border:1px solid #253525;border-radius:12px 12px 0 0;height:400px;overflow-y:auto;padding:20px}
 .chat-msg{margin-bottom:16px}
 .chat-msg.user{text-align:right}
 .chat-bubble{display:inline-block;padding:14px 18px;border-radius:10px;font-size:15px;line-height:1.6;max-width:82%;text-align:left}
 .chat-msg.user .chat-bubble{background:var(--mint);color:#000;font-weight:500}
-.chat-msg.model .chat-bubble{background:var(--card2);border:1px solid var(--border);color:var(--text);white-space:pre-wrap}
+.chat-msg.model .chat-bubble{background:#182018;border:1px solid #2d422d;color:#f0f0f0;white-space:pre-wrap}
 .chat-input-row{display:flex;gap:10px;padding:14px;background:var(--card2);border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px}
 
 /* AUDIT TABS */
@@ -643,7 +643,7 @@ function renderDashboard(){
   document.getElementById('issues-list').innerHTML=all.length
     ? all.map(({e,idx,type,detail})=>`<div class="row" onclick="openEntry(${idx})">
         <span style="font-size:12px;padding:3px 10px;border-radius:3px;background:${type==='banned'?'#991b1b':'#9a3412'};color:${type==='banned'?'#fca5a5':'#fdba74'};flex-shrink:0">${type}</span>
-        <span style="font-size:13px;color:var(--dim);width:110px;flex-shrink:0">${esc(e.ca)}</span>
+        <span style="font-size:13px;color:#9ab89a;width:110px;flex-shrink:0">${esc(e.ca)}</span>
         <span style="font-size:13px;color:${caCol(e.ca)};width:70px;flex-shrink:0">${esc(e.yl)}</span>
         <span style="flex:1;font-size:14px">${esc(e.th)}</span>
         <span style="font-size:11px;color:var(--dim)">${detail}</span>
@@ -666,10 +666,10 @@ function renderBrowse(){
   document.getElementById('browse-count').textContent=`${filtered.length} entries`;
   document.getElementById('browse-list').innerHTML=filtered.map(({e,idx})=>`
     <div class="row" onclick="openEntry(${idx})">
-      <span style="font-size:13px;color:var(--dim);width:110px;flex-shrink:0">${esc(e.ca)}</span>
+      <span style="font-size:13px;color:#9ab89a;width:110px;flex-shrink:0">${esc(e.ca)}</span>
       <span style="font-size:13px;color:${caCol(e.ca)};width:70px;flex-shrink:0">${esc(e.yl)}</span>
       <span style="flex:1;font-size:14px">${esc(e.th)}</span>
-      <span style="font-size:13px;color:var(--dim)">${(e.s||[]).length}/5 ›</span>
+      <span style="font-size:13px;color:#9ab89a">${(e.s||[]).length}/5 ›</span>
     </div>`).join('');
 }
 
@@ -928,7 +928,7 @@ function renderAuditChart(){
         return `<div class="bar-row" id="bar-${encodeURIComponent(name).slice(0,20)}" onclick="toggleToolDrilldown(this,'${esc(name).replace(/'/g,'&#39;')}')">
           <div class="bar-label">
             <span style="${isUnknown?'color:#f87171':''}">${esc(name)}</span>
-            <span style="color:var(--dim)">${count}× (${pct}%)</span>
+            <span style="color:#9ab89a">${count}× (${pct}%)</span>
           </div>
           <div class="bar-track"><div class="bar-fill" style="width:${(count/mx)*100}%;${isUnknown?'background:#f87171':''}"></div></div>
           <div class="tool-drilldown" style="display:none;margin-top:10px;padding:10px;background:#0a0a0a;border:1px solid var(--border);border-radius:6px">
