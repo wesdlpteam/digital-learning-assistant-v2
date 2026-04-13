@@ -126,7 +126,7 @@ window.fetch = async function() {
     const body = JSON.parse(opts.body);
     const key = opts.headers['x-api-key'] || document.getElementById('api-key-input').value || localStorage.getItem('dla_api_key');
     
-    const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro-latest:generateContent?key=' + key;
+    const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + key;
     const sysText = body.system || "";
 const usrText = Array.isArray(body.messages[0].content) ? body.messages[0].content.map(c => c.text).join('\\n') : body.messages[0].content;
     
@@ -224,6 +224,68 @@ const usrText = Array.isArray(body.messages[0].content) ? body.messages[0].conte
   <div id="tab-dashboard" class="center tab-panel">
     <div class="stat-grid" id="stat-cards"></div>
     <div id="bulk-fix-card"></div>
+   <div class="card">
+      <span class="label">add missing planner to ai queue</span>
+      <p style="font-size:11px;color:#525252;margin-bottom:14px">Send a new unit to the Google Drive database. Ensure the PDF is already in the Drive folder.</p>
+      <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+         <input type="text" id="new-ca" class="inp" placeholder="Campus (e.g., Glen Waverley)" style="flex:1;min-width:140px">
+         <input type="text" id="new-yl" class="inp" placeholder="Year Level (e.g., Year 3)" style="flex:1;min-width:140px">
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+         <input type="text" id="new-th" class="inp" placeholder="Theme (e.g., How the World Works)" style="flex:1;min-width:140px">
+         <input type="text" id="new-ci" class="inp" placeholder="Central Idea" style="flex:1;min-width:140px">
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+         <button class="btn-pri" id="btn-submit-unit" onclick="submitNewUnit()">add to queue</button>
+         <span id="new-unit-status" style="font-size:11px;color:#34d399"></span>
+      </div>
+    </div>
+
+    <script>
+    function submitNewUnit() {
+      // Your connected Google Apps Script Web App
+      const scriptUrl = 'https://script.google.com/macros/s/AKfycbyUlNbBkcwXB8ImUUhEQDP7C3itYCUu-j_vRNKA7_Km2h4uJMIs0RVFJxUXKcFOFgIW/exec'; 
+      
+      const ca = document.getElementById('new-ca').value.trim();
+      const yl = document.getElementById('new-yl').value.trim();
+      const th = document.getElementById('new-th').value.trim();
+      const ci = document.getElementById('new-ci').value.trim();
+      
+      if(!ca || !yl || !th) {
+        alert("Campus, Year Level, and Theme are required!");
+        return;
+      }
+
+      const statusEl = document.getElementById('new-unit-status');
+      const btn = document.getElementById('btn-submit-unit');
+      
+      btn.disabled = true;
+      statusEl.textContent = 'Sending to Drive...';
+      statusEl.style.color = '#fbbf24'; 
+
+      const payload = { ca, yl, th, ci };
+
+      fetch(scriptUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify(payload)
+      }).then(() => {
+        statusEl.textContent = '✓ Added! AI will audit in < 10 mins.';
+        statusEl.style.color = '#34d399'; 
+        document.getElementById('new-ca').value = '';
+        document.getElementById('new-yl').value = '';
+        document.getElementById('new-th').value = '';
+        document.getElementById('new-ci').value = '';
+        setTimeout(() => { statusEl.textContent = ''; }, 5000);
+      }).catch(err => {
+        statusEl.textContent = 'Error sending data.';
+        statusEl.style.color = '#f87171'; 
+        console.error(err);
+      }).finally(() => {
+        btn.disabled = false;
+      });
+    }
+    </script>
     <div class="card">
       <span class="label">all issues — click to fix individually</span>
       <div id="all-issues-list"></div>
