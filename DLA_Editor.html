@@ -608,13 +608,14 @@ const CHANGE_HISTORY = []; // [{ts, entryIdx, th, ca, yl, oldS, newS}]
 const MAX_HISTORY = 20;
 
 const CLIENT_ID = '334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleusercontent.com';
+const BAKED_API_KEY = 'AIzaSyCl5Eqb7_5-oCr3oKDSDJ2hx-5Mzov4cZE'; // pre-baked — team members don't need their own
 const ANALYTICS_SHEET_ID = '1R4P4FJlc8SyRFlVWoM0HpHmfCNMNVOpI8cuEILFxBNY';
 const GEMINI_MODEL = 'gemini-3.1-pro-preview';   // used for suggestion regeneration
 const GEMINI_CHAT_MODEL = 'gemini-3-flash-preview'; // used for AI coach chat
 const YR = ["Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"];
 const CAMPUS_COL = { Elsternwick:'#818cf8', 'Glen Waverley':'#34d399', 'St Kilda':'#fb923c', 'St Kilda Road':'#fb923c' };
 
-function getKey(){ return localStorage.getItem('dla_api_key')||''; }
+function getKey(){ return localStorage.getItem('dla_api_key')||BAKED_API_KEY; }
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function caCol(ca){ return CAMPUS_COL[normCa(ca)]||CAMPUS_COL[ca]||'#818cf8'; }
@@ -2956,7 +2957,8 @@ function clearSession(){
   document.getElementById('app-content').style.display='none';
   initNetworkCanvas();
   const key=getKey();
-  if(!key){ showScreen('setup'); return; }
+  if(!key&&!BAKED_API_KEY){ showScreen('setup'); return; }
+  if(!key) localStorage.setItem('dla_api_key', BAKED_API_KEY); // auto-store baked key
 
   // Try to restore from cache first for instant load
   try{
