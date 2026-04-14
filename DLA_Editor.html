@@ -187,14 +187,9 @@ button:disabled{opacity:.4;cursor:not-allowed}
   </div>
 
   <div id="sidebar-footer">
-    <svg width="38" height="38" viewBox="0 0 100 100" style="margin-bottom:10px;opacity:0.55">
-      <circle cx="50" cy="38" r="20" fill="none" stroke="#34d399" stroke-width="3"/>
-      <ellipse cx="50" cy="76" rx="16" ry="10" fill="none" stroke="#34d399" stroke-width="2.5"/>
-      <path d="M36 38 Q50 24 64 38" fill="none" stroke="#34d399" stroke-width="2.5"/>
-      <circle cx="43" cy="41" r="2.5" fill="#34d399"/>
-      <circle cx="57" cy="41" r="2.5" fill="#34d399"/>
-      <path d="M44 50 Q50 56 56 50" fill="none" stroke="#34d399" stroke-width="2"/>
-    </svg>
+    <div style="width:38px;height:38px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;flex-shrink:0">
+      <span style="font-size:22px;font-weight:900;color:#111;font-family:system-ui,sans-serif;letter-spacing:-1px">W</span>
+    </div>
     <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text)">Wesley College</div>
     <div style="font-size:9px;color:var(--dim);margin-bottom:6px">Melbourne</div>
     <div style="font-size:9px;color:var(--mint)">● DLA Studio v4</div>
@@ -662,10 +657,12 @@ function saveApiKey(){
 }
 
 async function getDriveToken(){
+  // Return cached token if we already have one
+  if(DRIVE_TOKEN) return DRIVE_TOKEN;
   return new Promise((resolve,reject)=>{
     const client=google.accounts.oauth2.initTokenClient({
       client_id:CLIENT_ID,
-      scope:'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/userinfo.email',
+      scope:'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/userinfo.email',
       callback:async (resp)=>{
         if(resp.error){ reject(new Error(resp.error)); return; }
         // Verify Wesley College email domain
@@ -1812,7 +1809,7 @@ function showChangesPopup(changes){
   overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px';
 
   const popup=document.createElement('div');
-  popup.style.cssText='background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:700px;width:100%;max-height:85vh;display:flex;flex-direction:column;gap:0';
+  popup.style.cssText='background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;max-width:700px;width:100%;max-height:90vh;display:flex;flex-direction:column;gap:0;box-sizing:border-box';
 
   // Header
   const header=document.createElement('div');
@@ -1870,7 +1867,7 @@ function showChangesPopup(changes){
     detail.id=`card-detail-${ci}`;
     detail.style.cssText='display:none;padding:0 16px 14px';
 
-    detail.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+    detail.innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:12px">
       <div style="padding:10px;background:#1a0808;border:1px solid #3a1818;border-radius:8px">
         <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Replacing</div>
         <div style="font-size:13px;font-weight:700;color:#ff9999;margin-bottom:4px">${esc(oldTool)}</div>
@@ -1884,13 +1881,13 @@ function showChangesPopup(changes){
     </div>
     <div style="display:flex;gap:8px">
       <button onclick="setChangeState(${ci},'approved')" id="btn-approve-${ci}"
-        style="flex:1;padding:9px;border-radius:8px;border:1.5px solid var(--lime);background:transparent;color:var(--lime);font-weight:800;font-size:13px;cursor:pointer;transition:all .12s"
+        style="flex:1;padding:13px 8px;border-radius:10px;border:2px solid var(--lime);background:transparent;color:var(--lime);font-weight:900;font-size:14px;cursor:pointer;transition:all .12s;min-height:48px"
         onmouseover="this.style.background='var(--lime)';this.style.color='#111'"
         onmouseout="this.style.background='transparent';this.style.color='var(--lime)'">
         ✓ Approve
       </button>
       <button onclick="setChangeState(${ci},'declined')" id="btn-decline-${ci}"
-        style="flex:1;padding:9px;border-radius:8px;border:1.5px solid #FF8080;background:transparent;color:#FF8080;font-weight:800;font-size:13px;cursor:pointer;transition:all .12s"
+        style="flex:1;padding:13px 8px;border-radius:10px;border:2px solid #FF8080;background:transparent;color:#FF8080;font-weight:900;font-size:14px;cursor:pointer;transition:all .12s;min-height:48px"
         onmouseover="this.style.background='#FF8080';this.style.color='#111'"
         onmouseout="this.style.background='transparent';this.style.color='#FF8080'">
         ✗ Decline
@@ -1915,14 +1912,14 @@ function showChangesPopup(changes){
 
   // Footer buttons
   const footer=document.createElement('div');
-  footer.style.cssText='display:flex;gap:10px;flex-shrink:0;padding-top:4px;border-top:1px solid var(--border)';
+  footer.style.cssText='display:flex;gap:10px;flex-shrink:0;padding-top:12px;border-top:1px solid var(--border);flex-wrap:wrap';
   footer.innerHTML=`
     <button id="popup-apply-btn" disabled onclick="applyChangesFromPopup()" 
-      style="flex:1;padding:13px;background:var(--lime);color:#111;border:none;border-radius:10px;font-weight:900;font-size:14px;cursor:pointer;opacity:0.4">
+      style="flex:1;min-width:180px;padding:14px;background:var(--lime);color:#111;border:none;border-radius:10px;font-weight:900;font-size:15px;cursor:pointer;opacity:0.4">
       ✓ Apply 0 approved changes
     </button>
     <button onclick="document.getElementById('changes-popup-overlay').remove()"
-      style="padding:13px 20px;background:transparent;color:var(--dim);border:1.5px solid var(--border);border-radius:10px;font-weight:700;font-size:14px;cursor:pointer">
+      style="padding:14px 20px;background:transparent;color:var(--dim);border:1.5px solid var(--border);border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;min-width:80px">
       Close
     </button>`;
   popup.appendChild(footer);
