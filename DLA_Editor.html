@@ -156,6 +156,12 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .status-key{color:var(--dim);font-weight:500}
 .status-val{color:var(--text);font-weight:800}
 .status-dot{width:8px;height:8px;border-radius:50%;background:var(--lime);display:inline-block;margin-right:8px}
+
+  @media (max-width: 380px) {
+    .nav-label { display: none; }
+    .nav-item { min-width: 48px; }
+  }
+
 </style>
 </head>
 <body>
@@ -165,19 +171,19 @@ button:disabled{opacity:.4;cursor:not-allowed}
 <div id="sidebar">
   <div id="logo">DLA Studio</div>
   <div class="nav-item active" data-tab="dashboard" onclick="switchTab('dashboard',this)">
-    <span>◈</span> Dashboard
+    <span>◈</span><span class="nav-label"> Dashboard</span>
   </div>
   <div class="nav-item" data-tab="browse" onclick="switchTab('browse',this)">
-    <span>⊞</span> Browse Library
+    <span>⊞</span><span class="nav-label"> Browse</span>
   </div>
   <div class="nav-item" data-tab="audit" onclick="switchTab('audit',this)">
-    <span>◎</span> Audit & AI Coach
+    <span>◎</span><span class="nav-label"> Audit</span>
   </div>
   <div class="nav-item" data-tab="tools" onclick="switchTab('tools',this)">
-    <span>⚡</span> Bulk Tools
+    <span>⚡</span><span class="nav-label"> Bulk</span>
   </div>
   <div class="nav-item" data-tab="live" onclick="switchTab('live',this)">
-    <span>◉</span> Live Analytics
+    <span>◉</span><span class="nav-label"> Analytics</span>
   </div>
 
   <div id="sidebar-footer">
@@ -2881,7 +2887,156 @@ function exportHTML(){
     .sug-tool{font-size:14px;font-weight:700;margin-bottom:2px}
     .sug-desc{font-size:13px;color:#555}
     @media print{.entry{page-break-inside:avoid}}
-  </style></head><body>
+  
+/* ─── MOBILE RESPONSIVE ──────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+
+  /* Sidebar becomes bottom nav on mobile */
+  #sidebar {
+    width: 100% !important;
+    height: auto !important;
+    top: auto !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    flex-direction: row !important;
+    padding: 0 !important;
+    border-right: none !important;
+    border-top: 1px solid var(--border) !important;
+    z-index: 200 !important;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  body.app-mode #main { margin-left: 0 !important; margin-bottom: 64px; }
+  body.app-mode #sidebar { display: flex !important; }
+
+  #logo { display: none !important; }
+  #sidebar-footer { display: none !important; }
+
+  .nav-item {
+    flex-direction: column !important;
+    gap: 2px !important;
+    padding: 8px 12px !important;
+    font-size: 10px !important;
+    border-radius: 0 !important;
+    margin-bottom: 0 !important;
+    min-width: 60px;
+    text-align: center;
+    white-space: nowrap;
+    flex: 1;
+    justify-content: center;
+  }
+  .nav-item span { font-size: 18px; }
+  .nav-item.active { background: rgba(212,160,23,0.15) !important; border-bottom: 2px solid var(--gold) !important; }
+
+  /* Main content padding */
+  #app-content { padding: 16px !important; }
+
+  /* Page titles */
+  .page-title { font-size: 24px !important; }
+  .page-sub { font-size: 13px !important; }
+
+  /* Stat grid — 2 cols on mobile */
+  .stat-grid { grid-template-columns: repeat(2, 1fr) !important; }
+
+  /* Cards */
+  .card { padding: 16px !important; border-radius: 12px !important; }
+
+  /* Entry detail */
+  .sug-tool { font-size: 15px !important; }
+  .sug-desc { font-size: 13px !important; }
+
+  /* Browse filters stack vertically */
+  #panel-browse > div:first-child {
+    flex-direction: column !important;
+  }
+  #f-campus, #f-year, #f-tool, #f-search {
+    width: 100% !important;
+    min-width: unset !important;
+  }
+
+  /* Rows */
+  .row { padding: 12px 14px !important; flex-wrap: wrap; }
+
+  /* Chat */
+  #chat-messages { height: 300px !important; }
+  .chat-bubble { font-size: 14px !important; max-width: 90% !important; }
+
+  /* Comparison grid — single col */
+  #comparison-grid > div { grid-template-columns: 1fr !important; }
+
+  /* Heatmap scroll */
+  #coverage-heatmap, #live-heatmap { overflow-x: auto; }
+
+  /* Live analytics grids */
+  #live-overview-grid { grid-template-columns: repeat(2,1fr) !important; }
+  div[style*="grid-template-columns:1fr 1fr"] { grid-template-columns: 1fr !important; }
+
+  /* Popup overlays — full screen on mobile */
+  #changes-popup-overlay > div {
+    max-width: 100% !important;
+    max-height: 90vh !important;
+    border-radius: 16px 16px 0 0 !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+  }
+
+  /* History/keyboard panels */
+  #history-overlay {
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 70px !important;
+    width: auto !important;
+  }
+
+  /* Setup screen — stack on mobile */
+  #screen-setup { flex-direction: column !important; }
+  .setup-sidebar { width: 100% !important; flex-direction: row !important; align-items: center; padding: 12px 20px !important; height: 56px; }
+  .dla-wordmark { font-size: 20px !important; margin-bottom: 0 !important; margin-right: auto; }
+  .setup-nav-item { display: none !important; }
+  .setup-center { flex: none !important; width: 100% !important; padding: 24px 20px !important; }
+  .setup-right { display: none !important; }
+
+  /* Undo bar */
+  #undo-bar {
+    bottom: 74px !important;
+    left: 8px !important;
+    right: 8px !important;
+    flex-wrap: wrap;
+  }
+
+  /* Bulk tools */
+  #bulk-regen-campus, #bulk-regen-year,
+  #compare-year, #compare-theme,
+  #export-campus, #export-year {
+    width: 100% !important;
+  }
+
+  /* Entry back button */
+  .back-btn { margin-bottom: 14px !important; }
+
+  /* Conflict bar */
+  #conflict-bar { font-size: 12px !important; padding: 8px 14px !important; }
+
+  /* Status bar */
+  #status-bar { font-size: 11px !important; }
+
+  /* Feedback chat window */
+  .sug-chat-window { border-radius: 0 0 10px 10px; }
+  #changes-popup-overlay { align-items: flex-end !important; padding: 0 !important; }
+}
+
+@media (max-width: 480px) {
+  .stat-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .stat-num { font-size: 28px !important; }
+  .page-title { font-size: 22px !important; }
+  #app-content { padding: 12px !important; }
+}
+
+</style></head><body>
   <h1>${title}</h1>
   <div class="meta">Generated ${new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'})} · ${entries.length} entries</div>`;
 
