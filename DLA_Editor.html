@@ -605,7 +605,8 @@ let PREV_TAB = 'dashboard';
 let AUDIT_VIEW = 'tools';
 let AUDIT_YEAR_CAMPUS = '';
 let CHAT_HISTORY = [];
-const CHANGE_HISTORY = []; // [{ts, entryIdx, th, ca, yl, oldS, newS}]
+const CHANGE_HISTORY = [];
+const LOCKS = {}; // entryIdx -> {user, ts} — stored in Drive as _locks field // [{ts, entryIdx, th, ca, yl, oldS, newS}]
 const MAX_HISTORY = 20;
 
 const CLIENT_ID = '334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleusercontent.com';
@@ -936,7 +937,9 @@ function switchTab(tab,btn){
 
 }
 
-function openEntry(idx){
+async function openEntry(idx){
+  const allowed = await acquireLock(idx);
+  if(!allowed) return;
   CURRENT_ENTRY_IDX=idx;
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('panel-entry').classList.add('active');
@@ -944,6 +947,7 @@ function openEntry(idx){
 }
 
 function closeEntry(){
+  if(CURRENT_ENTRY_IDX !== null) releaseLock(CURRENT_ENTRY_IDX);
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   const panel=document.getElementById('panel-'+PREV_TAB);
   if(panel) panel.classList.add('active');
@@ -1108,7 +1112,16 @@ function renderBrowse(){
 // ─── Entry Detail ─────────────────────────────────────────────────────────────
 function renderEntry(idx){
   const e=DATA[idx];
-  document.getElementById('entry-header').innerHTML=`
+  // Show lock indicator if someone else has this entry locked
+  const existingLock = isLocked(idx);
+  const lockBanner = existingLock && !isLockedByMe(idx)
+    ? `<div style="padding:8px 14px;background:rgba(251,191,36,0.15);border:1px solid #fbbf24;border-radius:8px;margin-bottom:10px;font-size:12px;color:#fbbf24;font-weight:600">
+        🔒 ${existingLock.user} is also editing this entry — coordinate before saving
+      </div>`
+    : `<div style="padding:6px 14px;background:rgba(197,232,74,0.08);border:1px solid rgba(197,232,74,0.2);border-radius:8px;margin-bottom:10px;font-size:11px;color:var(--lime)">
+        ✓ Locked by you — others will see this entry is in use
+      </div>`;
+  document.getElementById('entry-header').innerHTML=lockBanner+`
     <h2 style="font-size:24px;font-weight:700;color:#fff;margin-bottom:6px">${esc(e.th)}</h2>
     <p style="font-size:14px;color:var(--dim);font-weight:500">${esc(e.ca)} · ${esc(e.yl)}</p>
     ${e.ci?`<p style="font-size:14px;color:var(--dim);margin-top:10px;font-style:italic;line-height:1.6">${esc(e.ci)}</p>`:''}`;
@@ -1306,6 +1319,7 @@ function applySugFeedback(entryIdx, sugIdx, uid, newSug, btn){
   };
   sugs[sugIdx] = normalised;
   DATA[entryIdx].s = sugs;
+  DATA[entryIdx].audited = true;
   recordChange(entryIdx, getSugs(DATA[entryIdx]), sugs);
   saveToDrive();
   setStatus('Suggestion updated and saved');
@@ -1372,6 +1386,7 @@ Requirements:
 function applyRegenAll(idx,pendingId){
   const sugs=window[pendingId]; if(!sugs) return;
   DATA[idx].s=sugs;
+  DATA[idx].audited=true;
   delete window[pendingId];
   setStatus('Saved'); saveToDrive();
   renderEntry(idx);
@@ -1972,6 +1987,7 @@ function applyChangesFromPopup(){
         if(sugIdx>=0&&sugIdx<DATA[entryIdx].s.length){
           DATA[entryIdx].s[sugIdx]={t,d};
           applied++;
+          DATA[entryIdx].audited=true;
         }
       } else {
         // Normalise to array first
@@ -1979,6 +1995,7 @@ function applyChangesFromPopup(){
         if(sugIdx>=0&&sugIdx<DATA[entryIdx].s.length){
           DATA[entryIdx].s[sugIdx]={t,d};
           applied++;
+          DATA[entryIdx].audited=true;
         }
       }
     }
@@ -2658,7 +2675,7 @@ Return ONLY a JSON array: [{"t":"Tool Name","d":"Specific description for this u
       if(si===-1||ei===-1) throw new Error('No JSON');
       const sugs=JSON.parse(clean.slice(si,ei+1));
       recordChange(idx, getSugs(DATA[idx]), sugs);
-      DATA[idx].s=sugs; fixed++;
+      DATA[idx].s=sugs; DATA[idx].audited=true; fixed++;
       saveToDrive();
     }catch(err){ failed++; }
     if(done<targets.length) await sleep(2000);
@@ -3104,6 +3121,120 @@ function clearSession(){
   document.getElementById('app-content').style.display='none';
   showScreen('load');
 }
+
+// ─── Entry Locking ────────────────────────────────────────────────────────────
+// Locks are stored as a _locks object in data.json so all users share them
+// Format: DATA._locks = { "42": { user: "Nathan", ts: 1234567890 } }
+const LOCK_TTL = 5 * 60 * 1000; // 5 minutes — auto-expires if user closes tab
+let LOCK_HEARTBEAT = null;
+let MY_LOCK_IDX = null;
+const MY_USER = 'User-' + Math.random().toString(36).slice(2,6).toUpperCase();
+
+function getLocks(){
+  // Locks stored on a special property of the DATA array
+  return DATA._locks || {};
+}
+
+function isLocked(idx){
+  const locks = getLocks();
+  const lock = locks[String(idx)];
+  if(!lock) return null;
+  // Check if lock has expired
+  if(Date.now() - lock.ts > LOCK_TTL) return null;
+  return lock;
+}
+
+function isLockedByMe(idx){
+  const lock = isLocked(idx);
+  return lock && lock.user === MY_USER;
+}
+
+async function acquireLock(idx){
+  if(isLockedByMe(idx)) return true; // already have it
+  const existing = isLocked(idx);
+  if(existing){
+    return confirm(`⚠ ${existing.user} is currently editing "${DATA[idx]?.th}"\n\nOpen it anyway? Their unsaved changes may be overwritten.`);
+  }
+  // Set lock
+  if(!DATA._locks) DATA._locks = {};
+  DATA._locks[String(idx)] = { user: MY_USER, ts: Date.now() };
+  MY_LOCK_IDX = idx;
+  await saveLocks();
+  startLockHeartbeat(idx);
+  return true;
+}
+
+async function releaseLock(idx){
+  if(!DATA._locks) return;
+  delete DATA._locks[String(idx)];
+  MY_LOCK_IDX = null;
+  stopLockHeartbeat();
+  await saveLocks();
+  renderLockIndicators();
+}
+
+async function saveLocks(){
+  if(!DRIVE_FILE_ID || !DRIVE_TOKEN) return;
+  try{
+    await fetch(`https://www.googleapis.com/upload/drive/v3/files/${DRIVE_FILE_ID}?uploadType=media`,{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+DRIVE_TOKEN},
+      body: JSON.stringify(DATA, null, 2)
+    });
+  }catch{}
+}
+
+function startLockHeartbeat(idx){
+  stopLockHeartbeat();
+  // Refresh lock every 2 minutes so it doesn't expire while editing
+  LOCK_HEARTBEAT = setInterval(async()=>{
+    if(!DATA._locks) DATA._locks = {};
+    DATA._locks[String(idx)] = { user: MY_USER, ts: Date.now() };
+    await saveLocks();
+  }, 2 * 60 * 1000);
+  // Release lock when user closes/navigates away
+  window.addEventListener('beforeunload', ()=>{ releaseLock(idx); });
+}
+
+function stopLockHeartbeat(){
+  if(LOCK_HEARTBEAT){ clearInterval(LOCK_HEARTBEAT); LOCK_HEARTBEAT = null; }
+}
+
+function renderLockIndicators(){
+  // Update lock badges on any visible browse/issue rows
+  document.querySelectorAll('[data-entry-idx]').forEach(el=>{
+    const idx = parseInt(el.dataset.entryIdx);
+    const lock = isLocked(idx);
+    const badge = el.querySelector('.lock-badge');
+    if(lock && !isLockedByMe(idx)){
+      if(badge) badge.textContent = '🔒 '+lock.user;
+      else {
+        const b = document.createElement('span');
+        b.className = 'lock-badge';
+        b.style.cssText = 'font-size:10px;color:#fbbf24;font-weight:700;margin-left:6px';
+        b.textContent = '🔒 '+lock.user;
+        el.appendChild(b);
+      }
+    } else if(badge){
+      badge.remove();
+    }
+  });
+}
+
+// Poll for lock changes every 30 seconds
+setInterval(async()=>{
+  if(!DRIVE_FILE_ID || !DRIVE_TOKEN || document.hidden) return;
+  try{
+    const r = await fetch(`https://www.googleapis.com/drive/v3/files/${DRIVE_FILE_ID}?alt=media`,{
+      headers:{'Authorization':'Bearer '+DRIVE_TOKEN}
+    });
+    const fresh = await r.json();
+    if(fresh._locks){
+      DATA._locks = fresh._locks;
+      renderLockIndicators();
+    }
+  }catch{}
+}, 30000);
 
 (function init(){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
