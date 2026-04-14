@@ -172,6 +172,9 @@ button:disabled{opacity:.4;cursor:not-allowed}
   <div class="nav-item" data-tab="audit" onclick="switchTab('audit',this)">
     <span>◎</span> Audit & AI Coach
   </div>
+  <div class="nav-item" data-tab="live" onclick="switchTab('live',this)">
+    <span>◉</span> Live Analytics
+  </div>
 
   <div id="sidebar-footer">
     <svg width="38" height="38" viewBox="0 0 100 100" style="margin-bottom:10px;opacity:0.55">
@@ -396,6 +399,69 @@ button:disabled{opacity:.4;cursor:not-allowed}
       </div>
     </div>
 
+    <!-- LIVE ANALYTICS -->
+    <div id="panel-live" class="panel">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+        <div class="page-title">Live Analytics</div>
+        <div id="live-dot" style="width:9px;height:9px;border-radius:50%;background:var(--lime);margin-left:4px"></div>
+        <button class="btn-sm" id="btn-refresh-live" onclick="loadLiveAnalytics()" style="margin-left:auto">↻ Refresh</button>
+      </div>
+      <div class="page-sub" id="live-last-updated">Loading from Google Sheets…</div>
+
+      <div id="live-loading" style="text-align:center;padding:60px;color:var(--dim)">
+        <div style="font-size:32px;margin-bottom:12px">◉</div>
+        <div style="font-size:14px;font-weight:600">Connecting to Google Sheets…</div>
+      </div>
+      <div id="live-content" style="display:none">
+
+        <!-- Weekly Scorecard -->
+        <div class="card" style="margin-bottom:14px">
+          <span class="label">weekly scorecard</span>
+          <div id="live-scorecard"></div>
+        </div>
+
+        <!-- Usage Overview -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px" id="live-overview-grid"></div>
+
+        <!-- Views by Campus -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+          <div class="card">
+            <span class="label">views by campus</span>
+            <div id="live-campus-chart"></div>
+          </div>
+          <div class="card">
+            <span class="label">reactions by tool</span>
+            <div id="live-reactions"></div>
+          </div>
+        </div>
+
+        <!-- Heatmap -->
+        <div class="card" style="margin-bottom:14px">
+          <span class="label">views by campus & year level</span>
+          <div id="live-heatmap" style="overflow-x:auto"></div>
+        </div>
+
+        <!-- Top pages + Feedback side by side -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+          <div class="card">
+            <span class="label">top 10 viewed pages</span>
+            <div id="live-top-pages"></div>
+          </div>
+          <div class="card">
+            <span class="label">teacher feedback</span>
+            <div id="live-feedback" style="max-height:400px;overflow-y:auto"></div>
+          </div>
+        </div>
+
+        <!-- Recently used -->
+        <div class="card">
+          <span class="label">tools marked as used by teachers</span>
+          <div id="live-used"></div>
+        </div>
+
+      </div>
+    </div>
+
     <!-- ENTRY DETAIL -->
     <div id="panel-entry" class="panel">
       <button class="back-btn" onclick="closeEntry()">← Back</button>
@@ -424,6 +490,7 @@ let AUDIT_YEAR_CAMPUS = '';
 let CHAT_HISTORY = [];
 
 const CLIENT_ID = '334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleusercontent.com';
+const ANALYTICS_SHEET_ID = '1R4P4FJlc8SyRFlVWoM0HpHmfCNMNVOpI8cuEILFxBNY';
 const GEMINI_MODEL = 'gemini-3.1-pro-preview';   // used for suggestion regeneration
 const GEMINI_CHAT_MODEL = 'gemini-3-flash-preview'; // used for AI coach chat
 const YR = ["Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"];
@@ -472,7 +539,7 @@ async function getDriveToken(){
   return new Promise((resolve,reject)=>{
     const client=google.accounts.oauth2.initTokenClient({
       client_id:CLIENT_ID,
-      scope:'https://www.googleapis.com/auth/drive',
+      scope:'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/spreadsheets.readonly',
       callback:(resp)=>{
         if(resp.error){ reject(new Error(resp.error)); return; }
         DRIVE_TOKEN=resp.access_token;
@@ -588,6 +655,7 @@ function switchTab(tab,btn){
   PREV_TAB=tab; CURRENT_ENTRY_IDX=null;
   if(tab==='browse') renderBrowse();
   if(tab==='audit') renderAudit();
+  if(tab==='live') loadLiveAnalytics();
 
 }
 
@@ -1292,92 +1360,206 @@ async function _doSendChat(msg){
 }
 
 function showChangesPopup(changes){
-  // Remove any existing popup
   const existing=document.getElementById('changes-popup-overlay');
   if(existing) existing.remove();
 
+  // Track approved/declined state per change
+  const states=changes.map(()=>'pending'); // 'pending','approved','declined'
+
   const overlay=document.createElement('div');
   overlay.id='changes-popup-overlay';
-  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px';
 
   const popup=document.createElement('div');
-  popup.style.cssText='background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:680px;width:100%;max-height:80vh;overflow-y:auto';
+  popup.style.cssText='background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:700px;width:100%;max-height:85vh;display:flex;flex-direction:column;gap:0';
 
-  let rowsHtml='';
+  // Header
+  const header=document.createElement('div');
+  header.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-shrink:0';
+  header.innerHTML=`<div style="width:10px;height:10px;border-radius:50%;background:var(--lime)"></div>
+    <h3 style="font-size:18px;font-weight:900">Review Proposed Changes</h3>
+    <span id="popup-counter" style="font-size:13px;color:var(--dim);margin-left:auto"></span>`;
+  popup.appendChild(header);
+
+  const subline=document.createElement('p');
+  subline.style.cssText='font-size:13px;color:var(--dim);margin-bottom:18px;flex-shrink:0';
+  subline.textContent='Approve or decline each suggestion individually, then apply your approved changes.';
+  popup.appendChild(subline);
+
+  // Scrollable rows
+  const rowsEl=document.createElement('div');
+  rowsEl.style.cssText='overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:10px;margin-bottom:16px';
+
+  function updateCounter(){
+    const approved=states.filter(s=>s==='approved').length;
+    const declined=states.filter(s=>s==='declined').length;
+    const pending=states.filter(s=>s==='pending').length;
+    document.getElementById('popup-counter').textContent=
+      `${approved} approved · ${declined} declined · ${pending} pending`;
+    const applyBtn=document.getElementById('popup-apply-btn');
+    if(applyBtn){
+      const n=states.filter(s=>s==='approved').length;
+      applyBtn.textContent=`✓ Apply ${n} approved change${n!==1?'s':''}`;
+      applyBtn.disabled=n===0;
+      applyBtn.style.opacity=n===0?'0.4':'1';
+    }
+  }
+
   changes.forEach((c,ci)=>{
     const e=DATA[c.entryIdx];
     const oldSug=getSugs(e)[c.sugIdx];
-    const oldTool=oldSug?sugTool(oldSug):'—';
-    const oldDesc=oldSug?sugDesc(oldSug):'—';
-    rowsHtml+=`<div style="padding:12px;background:var(--card2);border:1px solid var(--border);border-radius:10px;margin-bottom:10px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-        <span style="font-size:12px;color:var(--dim);width:90px;flex-shrink:0">${esc(e?e.ca:'')}</span>
-        <span style="font-size:12px;color:var(--gold);font-weight:700;width:62px;flex-shrink:0">${esc(e?e.yl:'')}</span>
-        <span style="font-size:13px;font-weight:700">${esc(e?e.th:'')}</span>
+    const oldTool=oldSug?sugTool(oldSug):'(empty slot)';
+    const oldDesc=oldSug?sugDesc(oldSug):'';
+
+    const card=document.createElement('div');
+    card.id=`change-card-${ci}`;
+    card.style.cssText='background:var(--card2);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .15s';
+
+    // Entry header row
+    const entryRow=document.createElement('div');
+    entryRow.style.cssText='display:flex;align-items:center;gap:8px;padding:12px 16px;cursor:pointer;user-select:none';
+    entryRow.innerHTML=`<span style="font-size:12px;color:var(--dim);width:90px;flex-shrink:0">${esc(e?e.ca:'')}</span>
+      <span style="font-size:12px;color:var(--gold);font-weight:700;width:62px;flex-shrink:0">${esc(e?e.yl:'')}</span>
+      <span style="font-size:14px;font-weight:700;flex:1">${esc(e?e.th:'')}</span>
+      <span id="card-status-${ci}" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--card);color:var(--dim)">PENDING</span>
+      <span id="card-chevron-${ci}" style="color:var(--dim);font-size:14px;margin-left:4px">▾</span>`;
+
+    // Expandable detail
+    const detail=document.createElement('div');
+    detail.id=`card-detail-${ci}`;
+    detail.style.cssText='display:none;padding:0 16px 14px';
+
+    detail.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div style="padding:10px;background:#1a0808;border:1px solid #3a1818;border-radius:8px">
+        <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Replacing</div>
+        <div style="font-size:13px;font-weight:700;color:#ff9999;margin-bottom:4px">${esc(oldTool)}</div>
+        <div style="font-size:12px;color:#666;line-height:1.5">${esc(oldDesc||'No description')}</div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div style="padding:8px;background:#1a0a0a;border:1px solid #3a1a1a;border-radius:6px">
-          <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Replacing</div>
-          <div style="font-size:12px;font-weight:700;color:#ff9999;margin-bottom:2px">${esc(oldTool)}</div>
-          <div style="font-size:11px;color:#666">${esc(oldDesc.slice(0,80)+(oldDesc.length>80?'…':''))}</div>
-        </div>
-        <div style="padding:8px;background:#0a1a0a;border:1px solid #1a3a1a;border-radius:6px">
-          <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">New suggestion</div>
-          <div style="font-size:12px;font-weight:700;color:var(--lime);margin-bottom:2px">${esc(c.t)}</div>
-          <div style="font-size:11px;color:#aaa">${esc((c.d||'').slice(0,80)+((c.d||'').length>80?'…':''))}</div>
-        </div>
+      <div style="padding:10px;background:#081808;border:1px solid #183818;border-radius:8px">
+        <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">New suggestion</div>
+        <div style="font-size:13px;font-weight:700;color:var(--lime);margin-bottom:4px">${esc(c.t)}</div>
+        <div style="font-size:12px;color:#aaa;line-height:1.5">${esc(c.d||'')}</div>
       </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button onclick="setChangeState(${ci},'approved')" id="btn-approve-${ci}"
+        style="flex:1;padding:9px;border-radius:8px;border:1.5px solid var(--lime);background:transparent;color:var(--lime);font-weight:800;font-size:13px;cursor:pointer;transition:all .12s"
+        onmouseover="this.style.background='var(--lime)';this.style.color='#111'"
+        onmouseout="this.style.background='transparent';this.style.color='var(--lime)'">
+        ✓ Approve
+      </button>
+      <button onclick="setChangeState(${ci},'declined')" id="btn-decline-${ci}"
+        style="flex:1;padding:9px;border-radius:8px;border:1.5px solid #FF8080;background:transparent;color:#FF8080;font-weight:800;font-size:13px;cursor:pointer;transition:all .12s"
+        onmouseover="this.style.background='#FF8080';this.style.color='#111'"
+        onmouseout="this.style.background='transparent';this.style.color='#FF8080'">
+        ✗ Decline
+      </button>
     </div>`;
+
+    // Toggle expand on click
+    let expanded=true; // start expanded
+    detail.style.display='block';
+    entryRow.onclick=()=>{
+      expanded=!expanded;
+      detail.style.display=expanded?'block':'none';
+      document.getElementById(`card-chevron-${ci}`).textContent=expanded?'▴':'▾';
+    };
+
+    card.appendChild(entryRow);
+    card.appendChild(detail);
+    rowsEl.appendChild(card);
   });
 
-  popup.innerHTML=`
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-      <div style="width:10px;height:10px;border-radius:50%;background:var(--lime)"></div>
-      <h3 style="font-size:18px;font-weight:900">Proposed Changes</h3>
-      <span style="font-size:13px;color:var(--dim);margin-left:auto">${changes.length} suggestion${changes.length!==1?'s':''}</span>
-    </div>
-    <p style="font-size:13px;color:var(--dim);margin-bottom:18px">Review each change below before applying.</p>
-    <div id="changes-popup-rows">${rowsHtml}</div>
-    <div style="display:flex;gap:10px;margin-top:20px">
-      <button onclick="applyChangesFromPopup()" style="flex:1;padding:13px;background:var(--lime);color:#111;border:none;border-radius:10px;font-weight:900;font-size:14px;cursor:pointer">✓ Apply all ${changes.length} changes</button>
-      <button onclick="document.getElementById('changes-popup-overlay').remove()" style="padding:13px 20px;background:transparent;color:var(--dim);border:1.5px solid var(--border);border-radius:10px;font-weight:700;font-size:14px;cursor:pointer">✗ Decline</button>
-    </div>`;
+  popup.appendChild(rowsEl);
+
+  // Footer buttons
+  const footer=document.createElement('div');
+  footer.style.cssText='display:flex;gap:10px;flex-shrink:0;padding-top:4px;border-top:1px solid var(--border)';
+  footer.innerHTML=`
+    <button id="popup-apply-btn" disabled onclick="applyChangesFromPopup()" 
+      style="flex:1;padding:13px;background:var(--lime);color:#111;border:none;border-radius:10px;font-weight:900;font-size:14px;cursor:pointer;opacity:0.4">
+      ✓ Apply 0 approved changes
+    </button>
+    <button onclick="document.getElementById('changes-popup-overlay').remove()"
+      style="padding:13px 20px;background:transparent;color:var(--dim);border:1.5px solid var(--border);border-radius:10px;font-weight:700;font-size:14px;cursor:pointer">
+      Close
+    </button>`;
+  popup.appendChild(footer);
 
   overlay.appendChild(popup);
-  document.body.appendChild(overlay);
-  // Store changes for apply
   overlay._changes=changes;
+  overlay._states=states;
+  document.body.appendChild(overlay);
+  updateCounter();
+
+  window._popupStates=states;
+  window._popupChanges=changes;
+  window._popupUpdateCounter=updateCounter;
+}
+
+function setChangeState(ci, state){
+  if(!window._popupStates) return;
+  window._popupStates[ci]=state;
+
+  const card=document.getElementById(`change-card-${ci}`);
+  const statusEl=document.getElementById(`card-status-${ci}`);
+
+  if(state==='approved'){
+    card.style.borderColor='var(--lime)';
+    statusEl.style.background='rgba(197,232,74,0.15)';
+    statusEl.style.color='var(--lime)';
+    statusEl.textContent='APPROVED';
+  } else {
+    card.style.borderColor='#FF8080';
+    statusEl.style.background='rgba(255,128,128,0.15)';
+    statusEl.style.color='#FF8080';
+    statusEl.textContent='DECLINED';
+  }
+  window._popupUpdateCounter();
 }
 
 function applyChangesFromPopup(){
   const overlay=document.getElementById('changes-popup-overlay');
   if(!overlay) return;
-  const changes=overlay._changes||[];
+  const changes=window._popupChanges||[];
+  const states=window._popupStates||[];
   let applied=0;
-  changes.forEach(c=>{
+
+  changes.forEach((c,ci)=>{
+    if(states[ci]!=='approved') return;
     const {entryIdx,sugIdx,t,d}=c;
     if(entryIdx>=0&&entryIdx<DATA.length){
       const sugs=getSugs(DATA[entryIdx]);
-      if(sugIdx>=0&&sugIdx<sugs.length){
-        // Write back in standard {t,d} format
-        if(Array.isArray(DATA[entryIdx].s)){
+      if(Array.isArray(DATA[entryIdx].s)){
+        if(sugIdx>=0&&sugIdx<DATA[entryIdx].s.length){
           DATA[entryIdx].s[sugIdx]={t,d};
-        } else {
-          if(!Array.isArray(DATA[entryIdx].s)) DATA[entryIdx].s=sugs.map((s,i)=>i===sugIdx?{t,d}:{t:sugTool(s),d:sugDesc(s)});
+          applied++;
         }
-        applied++;
+      } else {
+        // Normalise to array first
+        DATA[entryIdx].s=sugs.map((s,i)=>({t:sugTool(s),d:sugDesc(s)}));
+        if(sugIdx>=0&&sugIdx<DATA[entryIdx].s.length){
+          DATA[entryIdx].s[sugIdx]={t,d};
+          applied++;
+        }
       }
     }
   });
+
   overlay.remove();
+  delete window._popupStates;
+  delete window._popupChanges;
+  delete window._popupUpdateCounter;
+
   saveToDrive();
   setStatus(`${applied} suggestion${applied!==1?'s':''} updated and saved`);
   const lastMsg=CHAT_HISTORY[CHAT_HISTORY.length-1];
   if(lastMsg) lastMsg.changes=null;
-  CHAT_HISTORY.push({role:'model',text:`Done \u2014 ${applied} suggestion${applied!==1?'s':''} updated and saved to Drive. Want to make any other changes?`,changes:null,options:null});
+  CHAT_HISTORY.push({role:'model',text:`Done \u2014 ${applied} suggestion${applied!==1?'s':''} applied and saved to Drive. Want to make any other changes?`,changes:null,options:null});
   renderChat();
   renderAuditChart();
 }
+
 
 function applyChanges(msgIdx){
   // Legacy - redirect to popup
@@ -1511,6 +1693,286 @@ Return ONLY a JSON array, no markdown: [{"t":"Tool Name","d":"One specific sente
   if(btn){ btn.disabled=false; }
   setStatus(`${fixed} incomplete entries fixed`);
   renderDashboard();
+}
+
+// ─── Live Analytics ───────────────────────────────────────────────────────────
+async function readSheetRange(range){
+  const token = await getDriveToken();
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${ANALYTICS_SHEET_ID}/values/${encodeURIComponent(range)}`;
+  const r = await fetch(url, { headers: { 'Authorization': 'Bearer ' + token } });
+  const d = await r.json();
+  if(d.error) throw new Error(d.error.message);
+  return d.values || [];
+}
+
+async function readMultipleRanges(ranges){
+  const token = await getDriveToken();
+  const params = ranges.map(r => 'ranges=' + encodeURIComponent(r)).join('&');
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${ANALYTICS_SHEET_ID}/values:batchGet?${params}`;
+  const r = await fetch(url, { headers: { 'Authorization': 'Bearer ' + token } });
+  const d = await r.json();
+  if(d.error) throw new Error(d.error.message);
+  return d.valueRanges.map(vr => vr.values || []);
+}
+
+async function loadLiveAnalytics(){
+  const loading = document.getElementById('live-loading');
+  const contentEl = document.getElementById('live-content');
+  const lastUpdated = document.getElementById('live-last-updated');
+  const btn = document.getElementById('btn-refresh-live');
+  const dot = document.getElementById('live-dot');
+
+  if(loading) loading.style.display = 'block';
+  if(contentEl) contentEl.style.display = 'none';
+  if(btn) btn.disabled = true;
+  if(dot) dot.style.background = '#fbbf24';
+
+  try{
+    const [dashRows, analyticsRows, reactionsRows, feedbackRows, usedRows] = await readMultipleRanges([
+      'Dashboard!A1:F60',
+      'Analytics!A1:F500',
+      'Reactions!A1:G500',
+      'Feedback!A1:G100',
+      'Used!A1:G100'
+    ]);
+
+    renderLiveScorecard(dashRows);
+    renderLiveOverview(dashRows);
+    renderLiveCampusChart(dashRows);
+    renderLiveHeatmap(dashRows);
+    renderLiveReactions(dashRows);
+    renderLiveTopPages(dashRows);
+    renderLiveFeedback(feedbackRows);
+    renderLiveUsed(usedRows);
+
+    if(loading) loading.style.display = 'none';
+    if(contentEl) contentEl.style.display = 'block';
+    if(dot) dot.style.background = 'var(--lime)';
+    if(lastUpdated) lastUpdated.textContent = 'Last updated ' + new Date().toLocaleTimeString('en-AU') + ' — auto-updates as teachers use the app';
+  }catch(e){
+    if(loading) loading.innerHTML = `<div style="color:#FF8080;font-size:14px">Failed to load: ${esc(e.message)}</div>`;
+    if(dot) dot.style.background = '#FF8080';
+    console.error(e);
+  }
+  if(btn) btn.disabled = false;
+}
+
+function findSection(rows, headerText){
+  // Find a row containing headerText, return rows below it until empty row
+  let startIdx = -1;
+  for(let i=0; i<rows.length; i++){
+    if(rows[i].some(c => String(c||'').includes(headerText))){ startIdx = i; break; }
+  }
+  if(startIdx === -1) return [];
+  const result = [];
+  for(let i=startIdx+1; i<rows.length; i++){
+    if(!rows[i] || !rows[i].length || rows[i].every(c=>!c)) break;
+    result.push(rows[i]);
+  }
+  return result;
+}
+
+function renderLiveScorecard(rows){
+  const el = document.getElementById('live-scorecard'); if(!el) return;
+  const section = findSection(rows, 'WEEKLY SCORECARD');
+  // Skip header row
+  const data = section.slice(1);
+  if(!data.length){ el.innerHTML = '<div style="color:var(--dim);font-size:13px">No data</div>'; return; }
+
+  const statusColour = s => {
+    const v = String(s||'').toLowerCase();
+    if(v.includes('good') || v.includes('✓')) return 'var(--lime)';
+    if(v.includes('no data') || v.includes('⚪')) return 'var(--dim)';
+    if(v.includes('none') || v.includes('🔴')) return '#FF8080';
+    return '#fbbf24';
+  };
+
+  el.innerHTML = data.map(row => {
+    const [metric, , value, target, status, meaning] = row;
+    if(!metric) return '';
+    const col = statusColour(status);
+    return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div style="width:8px;height:8px;border-radius:50%;background:${col};flex-shrink:0"></div>
+      <div style="width:160px;flex-shrink:0;font-size:13px;font-weight:600">${esc(metric)}</div>
+      <div style="width:50px;font-size:20px;font-weight:900;color:${col}">${esc(value||'—')}</div>
+      <div style="width:80px;font-size:11px;color:var(--dim)">${esc(target||'')}</div>
+      <div style="flex:1;font-size:12px;color:#aaa">${esc(meaning||'')}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderLiveOverview(rows){
+  const el = document.getElementById('live-overview-grid'); if(!el) return;
+  const section = findSection(rows, 'USAGE OVERVIEW');
+  if(!section.length){ el.innerHTML=''; return; }
+
+  const metrics = [];
+  for(const row of section){
+    if(row[0] && row[1]) metrics.push([row[0], row[1]]);
+  }
+  const colours = ['var(--lime)','var(--gold)','#60B8F0','#9B8BFF','#F5A623','#FF8080'];
+  el.innerHTML = metrics.slice(0,6).map(([label,val],i) =>
+    `<div class="stat-card" style="background:var(--card2)">
+      <div class="stat-num" style="color:${colours[i%colours.length]}">${esc(val)}</div>
+      <div class="stat-lbl">${esc(label)}</div>
+    </div>`
+  ).join('');
+}
+
+function renderLiveCampusChart(rows){
+  const el = document.getElementById('live-campus-chart'); if(!el) return;
+  const section = findSection(rows, 'VIEWS BY CAMPUS');
+  // Skip header
+  const data = section.slice(1).filter(r=>r[0]&&r[1]);
+  if(!data.length){ el.innerHTML='<div style="color:var(--dim);font-size:13px">No data</div>'; return; }
+
+  const max = Math.max(...data.map(r=>parseInt(r[1])||0))||1;
+  const campusCols = {'Elsternwick':'#818cf8','Glen Waverley':'#34d399','St Kilda Rd':'#fb923c','St Kilda':'#fb923c'};
+  el.innerHTML = data.map(([campus,views,avgTime]) => {
+    const col = campusCols[campus] || 'var(--lime)';
+    const pct = Math.round(((parseInt(views)||0)/max)*100);
+    return `<div style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:5px">
+        <span style="color:${col}">${esc(campus)}</span>
+        <span style="color:var(--dim)">${esc(views)} views · ${esc(avgTime||'—')}s avg</span>
+      </div>
+      <div style="height:7px;background:var(--card2);border-radius:4px">
+        <div style="height:100%;border-radius:4px;background:${col};width:${pct}%"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderLiveHeatmap(rows){
+  const el = document.getElementById('live-heatmap'); if(!el) return;
+  const section = findSection(rows, 'VIEWS BY CAMPUS & YEAR LEVEL');
+  if(section.length < 2){ el.innerHTML='<div style="color:var(--dim);font-size:13px">No data</div>'; return; }
+
+  const headers = section[0]; // Year Level, Elsternwick, Glen Waverley, St Kilda Rd, Total
+  const dataRows = section.slice(1);
+  const campusCols = ['#818cf8','#34d399','#fb923c'];
+
+  let html = `<table style="width:100%;border-collapse:collapse;font-size:13px">
+    <thead><tr>`;
+  headers.forEach((h,i) => {
+    const col = i>0 && i<4 ? campusCols[i-1] : 'var(--text)';
+    html += `<th style="padding:8px 12px;text-align:${i===0?'left':'center'};color:${col};font-weight:700;border-bottom:1.5px solid var(--border)">${esc(h)}</th>`;
+  });
+  html += '</tr></thead><tbody>';
+
+  const allVals = dataRows.flatMap(r=>r.slice(1,4).map(v=>parseInt(v)||0)).filter(v=>v>0);
+  const maxVal = Math.max(...allVals)||1;
+
+  dataRows.forEach(row => {
+    const isTotalRow = String(row[0]||'').toLowerCase()==='total';
+    html += `<tr style="${isTotalRow?'font-weight:800;background:var(--card2)':''}">`;
+    row.forEach((cell,i) => {
+      const val = parseInt(cell)||0;
+      const intensity = i>0 && i<4 && val>0 ? Math.max(0.1, val/maxVal) : 0;
+      const bg = i>0 && i<4 && val>0
+        ? `rgba(${i===1?'129,140,248':i===2?'52,211,153':'251,146,60'},${intensity*0.4})`
+        : 'transparent';
+      const align = i===0?'left':'center';
+      html += `<td style="padding:9px 12px;text-align:${align};background:${bg};border-bottom:1px solid var(--border);font-size:${isTotalRow?'14px':'13px'}">${esc(cell||'—')}</td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  el.innerHTML = html;
+}
+
+function renderLiveReactions(rows){
+  const el = document.getElementById('live-reactions'); if(!el) return;
+  const section = findSection(rows, 'REACTIONS BY TOOL');
+  const data = section.slice(1).filter(r=>r[0]&&(r[1]||r[2]));
+  if(!data.length){ el.innerHTML='<div style="color:var(--dim);font-size:13px">No reactions yet</div>'; return; }
+
+  const sorted = [...data].sort((a,b)=>(parseInt(b[3])||0)-(parseInt(a[3])||0)).slice(0,10);
+  const max = Math.max(...sorted.map(r=>parseInt(r[3])||0))||1;
+
+  el.innerHTML = sorted.map(([tool,up,down,total]) => {
+    const u=parseInt(up)||0, d=parseInt(down)||0, t=parseInt(total)||u+d;
+    const pct = Math.round((t/max)*100);
+    const approvalPct = t>0?Math.round((u/t)*100):0;
+    const barCol = approvalPct>=80?'var(--lime)':approvalPct>=50?'#fbbf24':'#FF8080';
+    return `<div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;margin-bottom:4px">
+        <span>${esc(tool)}</span>
+        <span style="color:var(--dim)">👍${u} 👎${d}</span>
+      </div>
+      <div style="height:6px;background:var(--card2);border-radius:3px">
+        <div style="height:100%;border-radius:3px;background:${barCol};width:${pct}%"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderLiveTopPages(rows){
+  const el = document.getElementById('live-top-pages'); if(!el) return;
+  const section = findSection(rows, 'TOP 10 MOST VIEWED PAGES');
+  // skip header rows (Page / Views / Total Time, count / sum)
+  const data = section.slice(2).filter(r=>r[0]&&r[1]&&r[0]!=='Page');
+  if(!data.length){ el.innerHTML='<div style="color:var(--dim);font-size:13px">No data</div>'; return; }
+
+  const max = Math.max(...data.map(r=>parseInt(r[1])||0))||1;
+  el.innerHTML = data.slice(0,10).map(([page,views,totalTime]) => {
+    const pct = Math.round(((parseInt(views)||0)/max)*100);
+    const avgSec = views&&totalTime ? Math.round((parseInt(totalTime)||0)/(parseInt(views)||1)) : 0;
+    return `<div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;margin-bottom:4px">
+        <span style="flex:1">${esc(page)}</span>
+        <span style="color:var(--dim);margin-left:8px">${esc(views)} · ${avgSec}s avg</span>
+      </div>
+      <div style="height:5px;background:var(--card2);border-radius:3px">
+        <div style="height:100%;border-radius:3px;background:#60B8F0;width:${pct}%"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderLiveFeedback(rows){
+  const el = document.getElementById('live-feedback'); if(!el) return;
+  // Headers: Timestamp,Campus,Year Level,Theme,Tool,Phase,Feedback
+  const data = rows.slice(1).filter(r=>r[6]).reverse(); // most recent first
+  if(!data.length){ el.innerHTML='<div style="color:var(--dim);font-size:13px">No feedback yet</div>'; return; }
+
+  el.innerHTML = data.slice(0,20).map(row => {
+    const [ts,campus,yl,theme,tool,phase,feedback] = row;
+    const date = ts ? new Date(ts).toLocaleDateString('en-AU',{day:'numeric',month:'short'}) : '';
+    const campusCol = {'Elsternwick':'#818cf8','Glen Waverley':'#34d399','St Kilda Rd':'#fb923c'}[campus]||'var(--dim)';
+    return `<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap">
+        <span style="font-size:11px;color:${campusCol};font-weight:700">${esc(campus)}</span>
+        <span style="font-size:11px;color:var(--gold);font-weight:600">${esc(yl)}</span>
+        <span style="font-size:11px;color:var(--dim)">${esc(theme)}</span>
+        <span style="font-size:11px;color:var(--dim);margin-left:auto">${date}</span>
+      </div>
+      <div style="font-size:11px;color:#9B8BFF;margin-bottom:4px">${esc(tool)} · ${esc(phase)}</div>
+      <div style="font-size:13px;color:var(--text);line-height:1.5">${esc(feedback)}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderLiveUsed(rows){
+  const el = document.getElementById('live-used'); if(!el) return;
+  // Headers: Timestamp,Team,Campus,Year Level,Theme,Tool,Phase
+  const data = rows.slice(1).filter(r=>r[5]).reverse();
+  if(!data.length){ el.innerHTML='<div style="color:var(--dim);font-size:13px">No tools marked as used yet</div>'; return; }
+
+  el.innerHTML = `<div style="display:flex;flex-direction:column;gap:6px">` +
+    data.slice(0,15).map(row => {
+      const [ts,team,campus,yl,theme,tool] = row;
+      const date = ts ? new Date(ts).toLocaleDateString('en-AU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '';
+      const campusCol = {'Elsternwick':'#818cf8','Glen Waverley':'#34d399','St Kilda Rd':'#fb923c','St Kilda':'#fb923c'}[campus]||'var(--dim)';
+      return `<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;background:var(--card2);border-radius:8px;font-size:12px">
+        <span style="color:var(--lime);font-size:16px">✓</span>
+        <span style="color:${campusCol};font-weight:700;width:100px;flex-shrink:0">${esc(campus)}</span>
+        <span style="color:var(--gold);font-weight:600;width:62px;flex-shrink:0">${esc(yl)}</span>
+        <span style="flex:1;font-weight:600">${esc(tool)}</span>
+        <span style="color:var(--dim)">${esc(theme)}</span>
+        <span style="color:var(--dim);flex-shrink:0">${date}</span>
+      </div>`;
+    }).join('') + '</div>';
 }
 
 (function init(){
