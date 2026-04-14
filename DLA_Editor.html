@@ -76,7 +76,7 @@ select.inp{cursor:pointer}
 button:disabled{opacity:.4;cursor:not-allowed}
 
 /* STAT GRID */
-.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px}
+.stat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:28px}
 .stat-card{border:1px solid var(--border);border-radius:14px;padding:22px}
 .stat-num{font-size:40px;font-weight:900;letter-spacing:-1.5px;line-height:1}
 .stat-lbl{font-size:12px;margin-top:6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;opacity:.7}
@@ -188,6 +188,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
     <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text)">Wesley College</div>
     <div style="font-size:9px;color:var(--dim);margin-bottom:6px">Melbourne</div>
     <div style="font-size:9px;color:var(--mint)">● DLA Studio v4</div>
+    <div id="sidebar-user-email" style="font-size:10px;color:var(--dim);margin-top:4px;word-break:break-all"></div>
     <div style="margin-top:12px;display:flex;gap:8px">
       <button class="btn-sm" onclick="downloadJSON()">↓ JSON</button>
       <button class="btn-sm" onclick="showApiKeyScreen()">⚙ key</button>
@@ -391,9 +392,30 @@ button:disabled{opacity:.4;cursor:not-allowed}
 
       <!-- Chat -->
       <div id="audit-chat" style="display:none">
+
+        <!-- External library reference -->
+        <div id="library-ref-section" class="card" style="margin-bottom:14px;padding:20px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <span style="font-size:16px">🔗</span>
+            <span style="font-size:13px;font-weight:700">Cross-reference an external lesson library</span>
+            <button class="btn-sm" id="btn-clear-library" onclick="clearLibraryRef()" style="display:none;margin-left:auto">✕ Clear</button>
+          </div>
+          <div id="library-ref-loaded" style="display:none;padding:10px 14px;background:var(--card2);border-radius:8px;margin-bottom:10px;font-size:12px;color:var(--lime);font-weight:600"></div>
+          <div id="library-input-row" style="display:flex;gap:8px;margin-bottom:8px">
+            <input id="library-url-input" class="inp" placeholder="Paste a URL (e.g. https://education.minecraft.net/en-us/resources)" style="flex:1;margin-bottom:0">
+            <button class="btn-pri" onclick="fetchLibraryURL()" id="btn-fetch-url" style="white-space:nowrap;padding:10px 18px">Fetch</button>
+          </div>
+          <div id="library-paste-section" style="display:none">
+            <p style="font-size:12px;color:#fbbf24;margin-bottom:8px">⚠ That URL couldn't be fetched directly (site blocked access). Paste the page content manually instead:</p>
+            <textarea id="library-paste-input" class="inp" rows="5" placeholder="Copy all text from the lesson library page and paste it here..." style="margin-bottom:8px;font-size:12px"></textarea>
+            <button class="btn-pri" onclick="useLibraryPaste()" style="font-size:12px;padding:8px 16px">Use this content</button>
+          </div>
+          <p style="font-size:11px;color:var(--dim);line-height:1.6">Once loaded, the AI Coach can cross-reference the library against all your planners and suggest where lessons fit.</p>
+        </div>
+
         <div id="chat-messages"></div>
         <div class="chat-input-row">
-          <input id="chat-input" class="inp" placeholder="e.g. I want more Minecraft lessons — where could these fit?" style="flex:1">
+          <input id="chat-input" class="inp" placeholder="e.g. Where could Minecraft lessons fit across my planners?" style="flex:1">
           <button class="btn-pri" id="btn-send" onclick="sendChat()">Send</button>
         </div>
       </div>
@@ -472,6 +494,14 @@ button:disabled{opacity:.4;cursor:not-allowed}
         <button class="btn-pri" id="btn-regen-all" onclick="regenAll()">Generate 5 new suggestions</button>
         <div id="regen-all-result" style="margin-top:12px"></div>
       </div>
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
+          <span class="label" style="margin-bottom:0">Quality score</span>
+          <button class="btn-sm" id="btn-score-quality" onclick="scoreEntryQuality()">Score with Gemini</button>
+        </div>
+        <p style="font-size:12px;color:var(--dim);margin-bottom:10px">Rates each suggestion as Generic / Good / Excellent based on how specifically it connects to this unit's content.</p>
+        <div id="quality-score-result"></div>
+      </div>
     </div>
 
   </div><!-- end app-content -->
@@ -482,6 +512,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
 let DATA = [];
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUlNbBkcwXB8ImUUhEQDP7C3itYCUu-j_vRNKA7_Km2h4uJMIs0RVFJxUXKcFOFgIW/exec';
 let DRIVE_TOKEN = null;
+let CURRENT_USER_EMAIL = '';
 let DRIVE_FILE_ID = null;
 let CURRENT_ENTRY_IDX = null;
 let PREV_TAB = 'dashboard';
@@ -539,15 +570,57 @@ async function getDriveToken(){
   return new Promise((resolve,reject)=>{
     const client=google.accounts.oauth2.initTokenClient({
       client_id:CLIENT_ID,
-      scope:'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/spreadsheets.readonly',
-      callback:(resp)=>{
+      scope:'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/userinfo.email',
+      callback:async (resp)=>{
         if(resp.error){ reject(new Error(resp.error)); return; }
-        DRIVE_TOKEN=resp.access_token;
-        resolve(resp.access_token);
+        // Verify Wesley College email domain
+        try{
+          const info=await fetch('https://www.googleapis.com/oauth2/v2/userinfo',{
+            headers:{'Authorization':'Bearer '+resp.access_token}
+          });
+          const user=await info.json();
+          const email=user.email||'';
+          const domain=email.split('@')[1]||'';
+          const allowed=['wesleycollege.edu.au','wesley.edu.au'];
+          if(!allowed.some(d=>domain.endsWith(d))){
+            // Show access denied screen
+            showAccessDenied(email);
+            reject(new Error('Access restricted to Wesley College staff'));
+            return;
+          }
+          // Store user info
+          DRIVE_TOKEN=resp.access_token;
+          CURRENT_USER_EMAIL=email;
+          resolve(resp.access_token);
+        }catch(e){
+          // If email check fails, still allow (graceful degradation)
+          DRIVE_TOKEN=resp.access_token;
+          resolve(resp.access_token);
+        }
       }
     });
     client.requestAccessToken({prompt:DRIVE_TOKEN?'':'consent'});
   });
+}
+
+function showAccessDenied(email){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('app-content').style.display='none';
+  document.body.classList.remove('app-mode');
+  // Create denied screen if it doesn't exist
+  let el=document.getElementById('screen-denied');
+  if(!el){
+    el=document.createElement('div');
+    el.id='screen-denied';
+    el.style.cssText='min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center';
+    el.innerHTML=`<div style="font-size:48px;margin-bottom:20px">🔒</div>
+      <h2 style="font-size:24px;font-weight:900;color:var(--text);margin-bottom:10px">Access Restricted</h2>
+      <p style="font-size:15px;color:var(--dim);margin-bottom:6px">DLA Studio is only available to Wesley College staff.</p>
+      <p style="font-size:13px;color:#FF8080;margin-bottom:30px">Signed in as: ${esc(email)}</p>
+      <button class="btn-pri" onclick="showScreen('load')" style="padding:12px 28px">Try a different account</button>`;
+    document.getElementById('main').appendChild(el);
+  }
+  el.style.display='flex';
 }
 
 async function loadFromDrive(){
@@ -595,6 +668,9 @@ function ingest(arr){
     while(el.options.length>1) el.remove(1);
     yrs.forEach(y=>el.add(new Option(y,y)));
   });
+  // Store last modified time for conflict detection
+  getDriveFileModified().then(meta=>{ if(meta) LAST_KNOWN_MODIFIED=meta.modifiedTime; });
+  startConflictPolling();
   // Populate Add to Queue dropdowns
   const campuses2=[...new Set(DATA.map(e=>e.ca))].sort();
   const yrs2=[...new Set(DATA.map(e=>e.yl))].sort((a,b)=>YR.indexOf(a)-YR.indexOf(b));
@@ -603,20 +679,117 @@ function ingest(arr){
   if(qc){ while(qc.options.length>1) qc.remove(1); campuses2.forEach(c=>qc.add(new Option(c,c))); }
   if(qy){ while(qy.options.length>1) qy.remove(1); yrs2.forEach(y=>qy.add(new Option(y,y))); }
   showApp();
+  // Show signed-in user email in sidebar
+  const emailEl=document.getElementById('sidebar-user-email');
+  if(emailEl&&CURRENT_USER_EMAIL) emailEl.textContent=CURRENT_USER_EMAIL;
   switchTab('dashboard',document.querySelector('.nav-item[data-tab="dashboard"]'));
   renderDashboard();
 }
 
+// Track when we last loaded the file so we can detect remote changes
+let LAST_KNOWN_MODIFIED = null;
+let SAVE_USER_TAG = null; // set after OAuth
+
+async function getDriveFileModified(){
+  if(!DRIVE_FILE_ID||!DRIVE_TOKEN) return null;
+  try{
+    const r=await fetch(`https://www.googleapis.com/drive/v3/files/${DRIVE_FILE_ID}?fields=modifiedTime,lastModifyingUser`,{
+      headers:{'Authorization':'Bearer '+DRIVE_TOKEN}
+    });
+    const d=await r.json();
+    return d;
+  }catch{ return null; }
+}
+
 async function saveToDrive(){
   if(!DRIVE_FILE_ID||!DRIVE_TOKEN) return;
+
+  // Check if file was modified by someone else since we loaded it
+  const meta=await getDriveFileModified();
+  if(meta&&LAST_KNOWN_MODIFIED&&meta.modifiedTime!==LAST_KNOWN_MODIFIED){
+    const who=meta.lastModifyingUser?.displayName||'someone else';
+    const when=new Date(meta.modifiedTime).toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
+    const confirmed=confirm(`⚠ Conflict detected!
+
+${who} saved changes at ${when}.
+
+If you save now, their changes will be overwritten.
+
+Save anyway?`);
+    if(!confirmed){ setStatus('Save cancelled — reload to get latest changes','error'); return; }
+  }
+
   try{
+    // Embed a _meta field with who saved and when
+    const payload={...DATA};
+    if(Array.isArray(DATA)){
+      // DATA is array — we can't add meta directly; store separately
+    }
     await fetch(`https://www.googleapis.com/upload/drive/v3/files/${DRIVE_FILE_ID}?uploadType=media`,{
       method:'PATCH',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+DRIVE_TOKEN},
       body:JSON.stringify(DATA,null,2)
     });
-    setStatus('Saved to Drive');
+    // Update our known modified time
+    const updated=await getDriveFileModified();
+    if(updated) LAST_KNOWN_MODIFIED=updated.modifiedTime;
+    const now=new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
+    setStatus(`Saved to Drive at ${now}`);
+    updateConflictBar(null);
   }catch(e){ setStatus('Drive save failed: '+e.message,'error'); }
+}
+
+// Poll for remote changes every 60 seconds when the tab is visible
+let CONFLICT_POLL_INTERVAL=null;
+function startConflictPolling(){
+  if(CONFLICT_POLL_INTERVAL) return;
+  CONFLICT_POLL_INTERVAL=setInterval(async()=>{
+    if(document.hidden||!DRIVE_FILE_ID||!DRIVE_TOKEN) return;
+    const meta=await getDriveFileModified();
+    if(meta&&LAST_KNOWN_MODIFIED&&meta.modifiedTime!==LAST_KNOWN_MODIFIED){
+      const who=meta.lastModifyingUser?.displayName||'Someone';
+      const when=new Date(meta.modifiedTime).toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
+      updateConflictBar(`${who} updated the file at ${when} — your view may be out of date.`);
+    }
+  }, 60000);
+}
+
+function updateConflictBar(msg){
+  let bar=document.getElementById('conflict-bar');
+  if(!bar){
+    bar=document.createElement('div');
+    bar.id='conflict-bar';
+    bar.style.cssText='position:fixed;top:0;left:0;right:0;z-index:999;padding:10px 20px;background:#7C5CFF;color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;gap:12px;display:none';
+    bar.innerHTML=`<span id="conflict-bar-msg" style="flex:1"></span>
+      <button onclick="reloadFromDrive()" style="background:rgba(255,255,255,0.2);border:none;color:#fff;padding:5px 14px;border-radius:6px;cursor:pointer;font-weight:700;font-size:12px">Reload latest</button>
+      <button onclick="updateConflictBar(null)" style="background:transparent;border:none;color:rgba(255,255,255,0.7);cursor:pointer;font-size:16px;padding:0 4px">✕</button>`;
+    document.body.prepend(bar);
+  }
+  if(msg){
+    document.getElementById('conflict-bar-msg').textContent='⚠ '+msg;
+    bar.style.display='flex';
+  } else {
+    bar.style.display='none';
+  }
+}
+
+async function reloadFromDrive(){
+  if(!DRIVE_FILE_ID||!DRIVE_TOKEN) return;
+  updateConflictBar(null);
+  setStatus('Reloading…','loading');
+  try{
+    const r=await fetch(`https://www.googleapis.com/drive/v3/files/${DRIVE_FILE_ID}?alt=media`,{
+      headers:{'Authorization':'Bearer '+DRIVE_TOKEN}
+    });
+    const arr=await r.json();
+    DATA=Array.isArray(arr)?arr:Object.values(arr);
+    const meta=await getDriveFileModified();
+    if(meta) LAST_KNOWN_MODIFIED=meta.modifiedTime;
+    const now=new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
+    setStatus(`Reloaded at ${now} — showing latest version`);
+    renderDashboard();
+    if(CURRENT_ENTRY_IDX!==null) renderEntry(CURRENT_ENTRY_IDX);
+  }catch(e){ setStatus('Reload failed: '+e.message,'error'); }
 }
 
 function downloadJSON(){
@@ -675,15 +848,70 @@ function closeEntry(){
 }
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
+// Approved tool whitelist (from GAS system prompt)
+const TOOL_WHITELIST = [
+  // Microsoft
+  'teams','word','powerpoint','onenote','excel','forms','sway','flipgrid','flip','m365','microsoft',
+  // Hardware
+  'lego spike','codrone','micro:bit','microbit','sphero','merge explorer','beebot','beebots','cubetto',
+  // Creation
+  'seesaw','canva','book creator','padlet',
+  // Video/Audio/Animation
+  'garageband','scratchjr','scratch jr','scratch','stop motion studio','chatterpix','flipaclip',
+  'imovie','puppet pals','adobe express',
+  // Subject specific
+  'google maps','google earth','field guide','sky map','geoboard',
+  // Other
+  'clickview','epic','piccollage','brushes redux','word clouds','sketchbook',
+  'explain everything','freeform','delightex','kahoot','tinkercad','minecraft',
+  'pico','merge cube','lego','spike','insta360','rugged robot','smart bricks',
+  'indi robot','edison','stop motion'
+];
+
+function isWhitelisted(toolName){
+  if(!toolName) return true; // empty = caught by incomplete check
+  const t = toolName.toLowerCase();
+  return TOOL_WHITELIST.some(w => t.includes(w));
+}
+
 function getIssues(){
-  const incomplete=[], banned=[];
+  const incomplete=[], banned=[], duplicates=[], offWhitelist=[];
   DATA.forEach((e,idx)=>{
     const sugs=getSugs(e);
     const realSugs=sugs.filter(isRealSug);
-    if(realSugs.length<5) incomplete.push({e,idx,detail:`${realSugs.length}/5 suggestions`});
-    if(sugs.some(s=>sugTool(s).toLowerCase().includes('wevideo'))) banned.push({e,idx,detail:'WeVideo found'});
+    if(realSugs.length<5) incomplete.push({e,idx,type:'incomplete',detail:`${realSugs.length}/5 suggestions`});
+
+    // Banned tools
+    if(sugs.some(s=>sugTool(s).toLowerCase().includes('wevideo')))
+      banned.push({e,idx,type:'banned',detail:'WeVideo found'});
+
+    // Duplicate tools within same entry
+    const tools=realSugs.map(s=>sugTool(s).toLowerCase().trim());
+    const seen=new Set();
+    tools.forEach(t=>{ if(seen.has(t)) duplicates.push({e,idx,type:'duplicate',detail:`"${sugTool(realSugs[tools.indexOf(t)])}" appears twice`}); seen.add(t); });
+
+    // Off-whitelist tools
+    realSugs.forEach(s=>{
+      const t=sugTool(s);
+      if(t&&!isWhitelisted(t))
+        offWhitelist.push({e,idx,type:'offwhitelist',detail:`"${t}" not in approved list`});
+    });
   });
-  return {incomplete,banned};
+  return {incomplete,banned,duplicates,offWhitelist};
+}
+
+function filterIssueType(label){
+  // Scroll to issues and highlight by type
+  const map={'banned':'banned','off whitelist':'offwhitelist','duplicates':'duplicate','incomplete':'incomplete'};
+  const type=map[label];
+  const el=document.getElementById('issues-list');
+  if(!el) return;
+  const all=window._ALL_ISSUES||[];
+  const filtered=type?all.filter(i=>i.type===type):all;
+  el.innerHTML=filtered.length
+    ?filtered.map(iss=>issueRowHTML(iss)).join('')
+    :'<div style="padding:20px;color:var(--dim);text-align:center">No issues of this type ✓</div>';
+  el.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 function renderDashboard(){
@@ -694,13 +922,18 @@ function renderDashboard(){
     {label:'total entries',val:DATA.length,bg:'#C5E84A',col:'#111'},
     {label:'incomplete',val:incomplete.length,bg:incomplete.length>0?'#F5A623':'#1a1a1a',col:incomplete.length>0?'#111':'#888'},
     {label:'banned tools',val:banned.length,bg:banned.length>0?'#FF8080':'#1a1a1a',col:banned.length>0?'#111':'#888'},
+    {label:'duplicates',val:duplicates.length,bg:duplicates.length>0?'#9B8BFF':'#1a1a1a',col:duplicates.length>0?'#fff':'#888'},
+    {label:'off whitelist',val:offWhitelist.length,bg:offWhitelist.length>0?'#60B8F0':'#1a1a1a',col:offWhitelist.length>0?'#111':'#888'},
   ];
-  document.getElementById('stat-cards').innerHTML=statDefs.map(({label,val,bg,col})=>`<div class="stat-card" style="background:${bg};border-color:transparent"><div class="stat-num" style="color:${col}">${val}</div><div class="stat-lbl" style="color:${col}">${label}</div></div>`).join('');
+  document.getElementById('stat-cards').innerHTML=statDefs.map(({label,val,bg,col})=>`<div class="stat-card" style="background:${bg};border-color:transparent;cursor:pointer" onclick="filterIssueType('${label}')"><div class="stat-num" style="color:${col}">${val}</div><div class="stat-lbl" style="color:${col}">${label}</div></div>`).join('');
 
   const all=[
-    ...banned.map(({e,idx,detail})=>({e,idx,type:'banned',detail})),
-    ...incomplete.map(({e,idx,detail})=>({e,idx,type:'incomplete',detail})),
+    ...banned,
+    ...offWhitelist,
+    ...duplicates,
+    ...incomplete,
   ];
+  window._ALL_ISSUES = all;
   // Fix incomplete button
   const fixBar = document.getElementById('fix-incomplete-bar');
   if(fixBar){
@@ -721,14 +954,19 @@ function renderDashboard(){
     }
   }
   document.getElementById('issues-list').innerHTML=all.length
-    ? all.map(({e,idx,type,detail})=>`<div class="row" onclick="openEntry(${idx})">
-        <span style="font-size:11px;padding:4px 11px;border-radius:20px;background:${type==='banned'?'#FF8080':'#F5A623'};color:#111;font-weight:800;letter-spacing:.3px;flex-shrink:0">${type}</span>
-        <span style="font-size:13px;color:#9ab89a;width:110px;flex-shrink:0">${esc(e.ca)}</span>
-        <span style="font-size:13px;color:var(--gold);font-weight:700;width:70px;flex-shrink:0">${esc(e.yl)}</span>
-        <span style="flex:1;font-size:14px;font-weight:600;color:var(--text)">${esc(e.th)}</span>
-        <span style="font-size:11px;color:var(--dim)">${detail}</span>
-        <span style="color:var(--dim)">›</span>
-      </div>`).join('')
+    ? all.map(({e,idx,type,detail})=>{
+        const badgeBg={'banned':'#FF8080','incomplete':'#F5A623','duplicate':'#9B8BFF','offwhitelist':'#60B8F0'}[type]||'#888';
+        const badgeCol={'banned':'#111','incomplete':'#111','duplicate':'#fff','offwhitelist':'#111'}[type]||'#fff';
+        const label={'banned':'banned','incomplete':'incomplete','duplicate':'duplicate','offwhitelist':'off-list'}[type]||type;
+        return `<div class="row" onclick="openEntry(${idx})">
+          <span style="font-size:11px;padding:4px 11px;border-radius:20px;background:${badgeBg};color:${badgeCol};font-weight:800;letter-spacing:.3px;flex-shrink:0">${label}</span>
+          <span style="font-size:13px;color:#9ab89a;width:110px;flex-shrink:0">${esc(e.ca)}</span>
+          <span style="font-size:13px;color:var(--gold);font-weight:700;width:70px;flex-shrink:0">${esc(e.yl)}</span>
+          <span style="flex:1;font-size:14px;font-weight:600;color:var(--text)">${esc(e.th)}</span>
+          <span style="font-size:11px;color:var(--dim)">${detail}</span>
+          <span style="color:var(--dim)">›</span>
+        </div>`;
+      }).join('')
     : '<div style="text-align:center;padding:24px;color:var(--dim);font-size:13px">No issues found ✓</div>';
 }
 
@@ -1248,6 +1486,17 @@ function getCoachSystem(){
     return `[${i}] ${e.ca} | ${e.yl} | ${e.th}${e.ci?'\n  CI: '+e.ci:''}${plannerPart}${sugs.length?'\n  Current suggestions:\n'+sugStr:''}`;
   }).join('\n\n');
 
+  // Include external library content if loaded
+  const librarySection = LIBRARY_CONTENT
+    ? `
+
+EXTERNAL LESSON LIBRARY (${LIBRARY_SOURCE}):
+Use this content to find specific connections to Wesley's units. Reference actual lesson names and activities from the library when making recommendations.
+---
+${LIBRARY_CONTENT}
+---`
+    : '';
+
   return `You are an AI coaching assistant for the Wesley College Digital Learning Assistant. You help the Digital Learning Coach make thoughtful, strategic decisions about educational technology across ${DATA.length} IB PYP lesson entries.
 
 CURRENT TOOL DISTRIBUTION: ${dist}
@@ -1263,7 +1512,7 @@ APPLY_CHANGES:[{"entryIdx":3,"sugIdx":1,"t":"Tool Name","d":"Specific descriptio
 5. Explain your reasoning using actual planner content — name specific activities, vocabulary or assessments.
 
 FULL PLANNER DATA:
-${fullContext}`;
+${fullContext}${librarySection}`;
 }
 
 function initChat(){
@@ -1657,6 +1906,63 @@ async function addToGASQueue(){
   btn.disabled=false; btn.textContent='Add to Queue →';
 }
 
+async function scoreEntryQuality(){
+  if(CURRENT_ENTRY_IDX===null) return;
+  const idx=CURRENT_ENTRY_IDX;
+  const entry=DATA[idx];
+  const sugs=getSugs(entry);
+  const btn=document.getElementById('btn-score-quality');
+  const res=document.getElementById('quality-score-result');
+  if(!sugs.length){ res.innerHTML='<div style="color:var(--dim);font-size:13px">No suggestions to score yet.</div>'; return; }
+
+  btn.disabled=true; btn.textContent='Scoring…';
+  res.innerHTML='<div style="font-size:12px;color:#fbbf24">Analysing suggestion quality…</div>';
+
+  const prompt=`You are reviewing technology suggestions for an IB PYP unit.
+Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${entry.plannerText?`\nPlanner context: ${entry.plannerText}`:''}
+
+Rate each suggestion as one of:
+- GENERIC: Could apply to any unit, no specific connection to this unit's content
+- GOOD: Clear connection to the unit theme, reasonably specific
+- EXCELLENT: References specific activities, vocabulary, assessments or planner content
+
+Suggestions:
+${sugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}
+
+Return ONLY a JSON array with no markdown:
+[{"idx":0,"rating":"EXCELLENT","reason":"One sentence why."},...]`;
+
+  try{
+    const raw=await callGemini([{role:'user',parts:[{text:prompt}]}],null,GEMINI_MODEL);
+    const clean=raw.replace(/```json|```/g,'').trim();
+    const si=clean.indexOf('['), ei=clean.lastIndexOf(']');
+    if(si===-1||ei===-1) throw new Error('No JSON');
+    const scores=JSON.parse(clean.slice(si,ei+1));
+    const colours={EXCELLENT:'var(--lime)',GOOD:'#fbbf24',GENERIC:'#FF8080'};
+    const icons={EXCELLENT:'★★★',GOOD:'★★☆',GENERIC:'★☆☆'};
+    res.innerHTML=`<div style="display:flex;flex-direction:column;gap:8px">
+      ${scores.map(({idx:si,rating,reason})=>{
+        const sug=sugs[si];
+        if(!sug) return '';
+        const col=colours[rating]||'var(--dim)';
+        return `<div style="padding:10px 14px;background:var(--card2);border-radius:8px;border-left:3px solid ${col}">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <span style="font-size:13px;font-weight:700;color:${col}">${icons[rating]||'?'} ${rating}</span>
+            <span style="font-size:13px;font-weight:700;color:var(--text)">${esc(sugTool(sug))}</span>
+          </div>
+          <div style="font-size:12px;color:var(--dim);line-height:1.5">${esc(reason)}</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="margin-top:10px;font-size:12px;color:var(--dim)">
+      ${scores.filter(s=>s.rating==='EXCELLENT').length} excellent · ${scores.filter(s=>s.rating==='GOOD').length} good · ${scores.filter(s=>s.rating==='GENERIC').length} generic
+    </div>`;
+  }catch(e){
+    res.innerHTML=`<div style="font-size:12px;color:#FF8080">${esc(e.message)}</div>`;
+  }
+  btn.disabled=false; btn.textContent='Score with Gemini';
+}
+
 async function fixAllIncomplete(){
   const {incomplete} = getIssues();
   if(!incomplete.length) return;
@@ -1973,6 +2279,114 @@ function renderLiveUsed(rows){
         <span style="color:var(--dim);flex-shrink:0">${date}</span>
       </div>`;
     }).join('') + '</div>';
+}
+
+// ─── External Library Reference ───────────────────────────────────────────────
+let LIBRARY_CONTENT = null; // stores the fetched/pasted library text
+let LIBRARY_SOURCE = '';    // URL or description of source
+
+async function fetchLibraryURL(){
+  const input = document.getElementById('library-url-input');
+  const url = input?.value.trim();
+  if(!url){ return; }
+
+  const btn = document.getElementById('btn-fetch-url');
+  const pasteSection = document.getElementById('library-paste-section');
+  btn.disabled = true; btn.textContent = 'Fetching…';
+
+  try{
+    // Try fetching via a CORS proxy first, then direct
+    let text = null;
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+    try{
+      const r = await fetch(proxyUrl);
+      const d = await r.json();
+      if(d.contents && d.contents.length > 200){
+        // Strip HTML tags to get readable text
+        const tmp = document.createElement('div');
+        tmp.innerHTML = d.contents;
+        // Remove scripts and styles
+        tmp.querySelectorAll('script,style,nav,footer,header').forEach(el=>el.remove());
+        text = tmp.innerText || tmp.textContent || '';
+        text = text.replace(/\s{3,}/g,'\n\n').trim();
+      }
+    }catch{}
+
+    if(text && text.length > 200){
+      useLibraryContent(text, url);
+      if(pasteSection) pasteSection.style.display = 'none';
+    } else {
+      // Fetching failed — show paste fallback
+      if(pasteSection) pasteSection.style.display = 'block';
+      LIBRARY_SOURCE = url;
+    }
+  }catch(e){
+    const pasteSection = document.getElementById('library-paste-section');
+    if(pasteSection) pasteSection.style.display = 'block';
+    LIBRARY_SOURCE = url;
+  }
+  btn.disabled = false; btn.textContent = 'Fetch';
+}
+
+function useLibraryPaste(){
+  const text = document.getElementById('library-paste-input')?.value.trim();
+  if(!text){ return; }
+  const url = document.getElementById('library-url-input')?.value.trim() || 'pasted content';
+  useLibraryContent(text, url);
+}
+
+function useLibraryContent(text, source){
+  // Truncate to ~8000 chars to keep token usage reasonable
+  const maxChars = 8000;
+  LIBRARY_CONTENT = text.length > maxChars
+    ? text.slice(0, maxChars) + '\n\n[...content truncated for length]'
+    : text;
+  LIBRARY_SOURCE = source;
+
+  // Show loaded state
+  const loadedEl = document.getElementById('library-ref-loaded');
+  const inputRow = document.getElementById('library-input-row');
+  const pasteSection = document.getElementById('library-paste-section');
+  const clearBtn = document.getElementById('btn-clear-library');
+
+  if(loadedEl){
+    loadedEl.style.display = 'block';
+    const wordCount = LIBRARY_CONTENT.split(/\s+/).length;
+    loadedEl.textContent = `✓ Library loaded — ${wordCount.toLocaleString()} words from ${source.length > 60 ? source.slice(0,60)+'…' : source}`;
+  }
+  if(inputRow) inputRow.style.display = 'none';
+  if(pasteSection) pasteSection.style.display = 'none';
+  if(clearBtn) clearBtn.style.display = 'inline-block';
+
+  // Auto-trigger a greeting message about the library
+  const greeting = `I've loaded content from: ${source}\n\nI can now cross-reference this lesson library against all your planners. What would you like to know? For example:\n- "Where could these lessons fit across all campuses?"\n- "Which units have the best connection to this content?"\n- "Suggest which year levels these lessons suit best"`;
+
+  CHAT_HISTORY.push({
+    role:'model',
+    text: greeting,
+    changes: null,
+    options: ["Where could these fit across all planners?", "Which year levels suit these lessons?", "Find the strongest connections"]
+  });
+  renderChat();
+}
+
+function clearLibraryRef(){
+  LIBRARY_CONTENT = null;
+  LIBRARY_SOURCE = '';
+
+  const loadedEl = document.getElementById('library-ref-loaded');
+  const inputRow = document.getElementById('library-input-row');
+  const pasteSection = document.getElementById('library-paste-section');
+  const clearBtn = document.getElementById('btn-clear-library');
+  const urlInput = document.getElementById('library-url-input');
+  const pasteInput = document.getElementById('library-paste-input');
+
+  if(loadedEl){ loadedEl.style.display = 'none'; loadedEl.textContent = ''; }
+  if(inputRow) inputRow.style.display = 'flex';
+  if(pasteSection) pasteSection.style.display = 'none';
+  if(clearBtn) clearBtn.style.display = 'none';
+  if(urlInput) urlInput.value = '';
+  if(pasteInput) pasteInput.value = '';
 }
 
 (function init(){
