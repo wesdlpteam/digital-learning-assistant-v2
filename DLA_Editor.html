@@ -1824,7 +1824,7 @@ function showChangesPopup(changes){
   overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px';
 
   const popup=document.createElement('div');
-  popup.style.cssText='background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;max-width:700px;width:100%;max-height:90vh;display:flex;flex-direction:column;gap:0;box-sizing:border-box';
+  popup.style.cssText='background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;max-width:780px;width:100%;max-height:90vh;display:flex;flex-direction:column;gap:0;box-sizing:border-box';
 
   // Header
   const header=document.createElement('div');
@@ -1841,7 +1841,7 @@ function showChangesPopup(changes){
 
   // Scrollable rows
   const rowsEl=document.createElement('div');
-  rowsEl.style.cssText='overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:10px;margin-bottom:16px';
+  rowsEl.style.cssText='overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:12px;margin-bottom:16px;padding-right:4px';
 
   function updateCounter(){
     const approved=states.filter(s=>s==='approved').length;
@@ -1874,8 +1874,7 @@ function showChangesPopup(changes){
     entryRow.innerHTML=`<span style="font-size:12px;color:var(--dim);width:90px;flex-shrink:0">${esc(e?e.ca:'')}</span>
       <span style="font-size:12px;color:var(--gold);font-weight:700;width:62px;flex-shrink:0">${esc(e?e.yl:'')}</span>
       <span style="font-size:14px;font-weight:700;flex:1">${esc(e?e.th:'')}</span>
-      <span id="card-status-${ci}" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--card);color:var(--dim)">PENDING</span>
-      <span id="card-chevron-${ci}" style="color:var(--dim);font-size:14px;margin-left:4px">▾</span>`;
+      <span id="card-status-${ci}" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--card);color:var(--dim)">PENDING</span>`;
 
     // Expandable detail
     const detail=document.createElement('div');
@@ -1884,14 +1883,14 @@ function showChangesPopup(changes){
 
     detail.innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:12px">
       <div style="padding:10px;background:#1a0808;border:1px solid #3a1818;border-radius:8px">
-        <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Replacing</div>
-        <div style="font-size:13px;font-weight:700;color:#ff9999;margin-bottom:4px">${esc(oldTool)}</div>
-        <div style="font-size:12px;color:#666;line-height:1.5">${esc(oldDesc||'No description')}</div>
+        <div style="font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;font-weight:700">Replacing</div>
+        <div style="font-size:14px;font-weight:800;color:#ff9999;margin-bottom:5px">${esc(oldTool)}</div>
+        <div style="font-size:12px;color:#888;line-height:1.55">${esc(oldDesc||'No description')}</div>
       </div>
       <div style="padding:10px;background:#081808;border:1px solid #183818;border-radius:8px">
-        <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">New suggestion</div>
-        <div style="font-size:13px;font-weight:700;color:var(--lime);margin-bottom:4px">${esc(c.t)}</div>
-        <div style="font-size:12px;color:#aaa;line-height:1.5">${esc(c.d||'')}</div>
+        <div style="font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;font-weight:700">New suggestion</div>
+        <div style="font-size:14px;font-weight:800;color:var(--lime);margin-bottom:5px">${esc(c.t)}</div>
+        <div style="font-size:12px;color:#ccc;line-height:1.55">${esc(c.d||'')}</div>
       </div>
     </div>
     <div style="display:flex;gap:8px">
@@ -1909,14 +1908,10 @@ function showChangesPopup(changes){
       </button>
     </div>`;
 
-    // Toggle expand on click
-    let expanded=true; // start expanded
+    // Always expanded - no collapse
     detail.style.display='block';
-    entryRow.onclick=()=>{
-      expanded=!expanded;
-      detail.style.display=expanded?'block':'none';
-      document.getElementById(`card-chevron-${ci}`).textContent=expanded?'▴':'▾';
-    };
+    // Clicking header just scrolls into view
+    entryRow.style.cursor='default';
 
     card.appendChild(entryRow);
     card.appendChild(detail);
