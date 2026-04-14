@@ -947,24 +947,32 @@ function closeEntry(){
 }
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
-// Approved tool whitelist (from GAS system prompt)
+// Approved tool whitelist — matches GAS system prompt exactly
 const TOOL_WHITELIST = [
-  // Microsoft
-  'teams','word','powerpoint','onenote','excel','forms','sway','flipgrid','flip','m365','microsoft',
-  // Hardware
-  'lego spike','codrone','micro:bit','microbit','sphero','merge explorer','beebot','beebots','cubetto',
-  // Creation
+  // Microsoft M365
+  'microsoft','m365','teams','word','powerpoint','onenote','excel','forms','sway',
+  // Robotics & STEM Hardware
+  'beebot','beebots','sphero indi','sphero bolt','sphero','lego spike essential',
+  'lego spike prime','lego spike','lego','micro:bit','microbit','codrone','makey makey',
+  // Maker & A/V Hardware
+  '3d printer','classvr','merge cube','merge cubes','green screen',
+  'podcast equipment','rodecaster','digital camera','ipad','laptop',
+  // Core Creation
   'seesaw','canva','book creator','padlet',
   // Video/Audio/Animation
-  'garageband','scratchjr','scratch jr','scratch','stop motion studio','chatterpix','flipaclip',
-  'imovie','puppet pals','adobe express',
-  // Subject specific
-  'google maps','google earth','field guide','sky map','geoboard',
-  // Other
-  'clickview','epic','piccollage','brushes redux','word clouds','sketchbook',
-  'explain everything','freeform','delightex','kahoot','tinkercad','minecraft',
-  'pico','merge cube','lego','spike','insta360','rugged robot','smart bricks',
-  'indi robot','edison','stop motion'
+  'garageband','scratchjr','scratch jr','scratch','stop motion studio','stop motion',
+  'chatterpix','flip','flipaclip','imovie','puppet pals',
+  'adobe express','adobe express podcasting',
+  // Subject Specific
+  'google maps','google earth','field guide to victoria','field guide','sky map',
+  'geoboard',
+  // Other Apps
+  'clickview','epic','piccollage','brushes redux','word clouds','abcya',
+  'sketchbook','explain everything','freeform','delightex',
+  'kahoot','tinkercad','minecraft','minecraft education',
+  // Hardware catch-alls
+  'insta360','rugged robot','smart bricks','indi robot','edison',
+  'cubetto','pico vr','pico','merge explorer'
 ];
 
 function isWhitelisted(toolName){
