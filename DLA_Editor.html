@@ -1170,105 +1170,221 @@ function toggleToolDrilldown(row, toolName){
 // ─── AI Coach Chat ────────────────────────────────────────────────────────────
 function getCoachSystem(){
   const stats=computeStats();
-  const dist=stats.sorted.filter(x=>x.name&&!x.name.startsWith('⚠')).slice(0,20).map(({name,count,pct})=>`${name}: ${count}× (${pct}%)`).join(', ');
-  const entryList=DATA.map((e,i)=>`${i}: ${e.ca} | ${e.yl} | ${e.th}`).join('\n');
-  return `You are an AI coaching assistant for the Wesley College Digital Learning Assistant. You help the Digital Learning Coach make strategic decisions about educational technology across ${DATA.length} lesson entries.
+  const dist=stats.sorted.filter(x=>x.name&&!x.name.startsWith('\u26a0')).slice(0,20).map(({name,count,pct})=>`${name}: ${count}\u00d7 (${pct}%)`).join(', ');
+  // Full planner context — include plannerText if available
+  const hasPlannerText = DATA.some(e=>e.plannerText);
+  const fullContext=DATA.map((e,i)=>{
+    const sugs=getSugs(e);
+    const sugStr=sugs.map((s,si)=>`  ${si+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n');
+    const plannerPart=e.plannerText?`\n  PLANNER CONTENT: ${e.plannerText}`:'';
+    return `[${i}] ${e.ca} | ${e.yl} | ${e.th}${e.ci?'\n  CI: '+e.ci:''}${plannerPart}${sugs.length?'\n  Current suggestions:\n'+sugStr:''}`;
+  }).join('\n\n');
 
-Data structure: each entry has campus (ca), year level (yl), theme (th), central idea (ci), and 5 technology suggestions (s) each with tool name (t) and description (d).
+  return `You are an AI coaching assistant for the Wesley College Digital Learning Assistant. You help the Digital Learning Coach make thoughtful, strategic decisions about educational technology across ${DATA.length} IB PYP lesson entries.
 
 CURRENT TOOL DISTRIBUTION: ${dist}
+${hasPlannerText?'\nYou have full access to the actual planner content for each unit (PLANNER CONTENT fields below). Use this to make specific, context-aware recommendations — reference real activities, vocabulary and assessments from the planners.':'\nNote: planner summaries not yet loaded. Run backfillPlannerText() in GAS to enable deep planner access.'}
 
-When the user asks to make bulk changes (e.g. "add more Minecraft", "reduce Seesaw", "replace iMovie with Canva Video"):
-1. Ask 2-3 focused clarifying questions — which year levels? which campuses? which unit themes would suit this best? How many changes?
-2. Once you have enough information, identify specific entries to update and propose the exact changes
-3. Ask for confirmation before applying
-4. When the user confirms, output the changes in this exact format at the end of your message:
-APPLY_CHANGES:[{"entryIdx":3,"sugIdx":1,"t":"Tool Name","d":"Description specific to that unit's content."}]
+IMPORTANT RESPONSE RULES:
+1. Ask ONLY ONE clarifying question at a time.
+2. When asking a question with clear options, use this EXACT format on its own line:
+OPTIONS: ["Option A","Option B","Option C"]
+3. Keep questions short and conversational.
+4. Once you have enough to propose changes, end your message with:
+APPLY_CHANGES:[{"entryIdx":3,"sugIdx":1,"t":"Tool Name","d":"Specific description."}]
+5. Explain your reasoning using actual planner content — name specific activities, vocabulary or assessments.
 
-Keep questions concise. Be conversational. When proposing changes, explain your reasoning briefly.
-
-ENTRY LIST:
-${entryList}`;
+FULL PLANNER DATA:
+${fullContext}`;
 }
 
 function initChat(){
-  CHAT_HISTORY=[{role:'model',text:"Hi! I'm your DLA AI Coach. I can help you make strategic changes across all entries — like adding more of a particular tool, balancing the distribution, or replacing overused tools.\n\nWhat would you like to change?",changes:null}];
+  CHAT_HISTORY=[{role:'model',text:"Hi! I'm your DLA AI Coach. I can help you make strategic changes across all entries — like adding more of a particular tool, balancing the distribution, or replacing overused tools.\n\nWhat would you like to change?",changes:null,options:null}];
   renderChat();
 }
 
 function renderChat(){
   const el=document.getElementById('chat-messages'); if(!el) return;
-  el.innerHTML=CHAT_HISTORY.map((msg,i)=>`
-    <div class="chat-msg ${msg.role}">
-      <div class="chat-bubble">${msg.role==='user'?esc(msg.text):formatModelText(msg.text)}</div>
-      ${msg.changes&&msg.changes.length?`
-        <div style="margin-top:10px;text-align:left">
-          <div style="font-size:11px;color:var(--dim);margin-bottom:6px">${msg.changes.length} change${msg.changes.length!==1?'s':''} proposed</div>
-          <button class="btn-pri" style="font-size:11px;padding:6px 14px" onclick="applyChanges(${i})">Apply these changes</button>
-        </div>`:''}
-    </div>`).join('');
+  el.innerHTML='';
+  CHAT_HISTORY.forEach((msg,i)=>{
+    const wrap=document.createElement('div');
+    wrap.className='chat-msg '+msg.role;
+    // Bubble
+    const bubble=document.createElement('div');
+    bubble.className='chat-bubble';
+    if(msg.role==='user'){
+      bubble.textContent=msg.text;
+    } else {
+      const clean=msg.text
+        .replace(/OPTIONS:\s*\[.*?\]/gs,'')
+        .replace(/APPLY_CHANGES:\s*\[[\s\S]*?\]/,'')
+        .trim();
+      bubble.innerHTML=clean.replace(/\n/g,'<br>');
+    }
+    wrap.appendChild(bubble);
+    // Options buttons (only on last model message if no user reply yet)
+    if(msg.role==='model' && msg.options && i===CHAT_HISTORY.length-1){
+      const optRow=document.createElement('div');
+      optRow.style.cssText='display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;justify-content:flex-start';
+      msg.options.forEach(opt=>{
+        const btn=document.createElement('button');
+        btn.style.cssText='padding:8px 16px;border-radius:20px;border:1.5px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;transition:all .12s';
+        btn.textContent=opt;
+        btn.onmouseover=()=>{ btn.style.background='var(--gold)'; btn.style.color='#111'; };
+        btn.onmouseout=()=>{ btn.style.background='transparent'; btn.style.color='var(--gold)'; };
+        btn.onclick=()=>{ submitChat(opt); };
+        optRow.appendChild(btn);
+      });
+      wrap.appendChild(optRow);
+    }
+    el.appendChild(wrap);
+  });
   el.scrollTop=el.scrollHeight;
 }
 
-function formatModelText(text){
-  // Strip APPLY_CHANGES block from display
-  const clean=text.replace(/APPLY_CHANGES:\s*\[[\s\S]*?\]/,'').trim();
-  return esc(clean).replace(/\n/g,'<br>');
+async function submitChat(text){
+  const input=document.getElementById('chat-input');
+  input.value='';
+  await _doSendChat(text);
 }
 
 async function sendChat(){
   const input=document.getElementById('chat-input');
   const msg=input.value.trim(); if(!msg) return;
   input.value='';
+  await _doSendChat(msg);
+}
+
+async function _doSendChat(msg){
   const btn=document.getElementById('btn-send');
   btn.disabled=true;
-
-  CHAT_HISTORY.push({role:'user',text:msg,changes:null});
+  CHAT_HISTORY.push({role:'user',text:msg,changes:null,options:null});
   renderChat();
-
   try{
     const contents=CHAT_HISTORY.map(m=>({
       role:m.role==='model'?'model':'user',
-      parts:[{text:m.text}]
+      parts:[{text:m.role==='model'
+        ? m.text.replace(/OPTIONS:\s*\[.*?\]/gs,'').replace(/APPLY_CHANGES:\s*\[[\s\S]*?\]/,'').trim()
+        : m.text}]
     }));
     const response=await callGemini(contents,getCoachSystem(),GEMINI_CHAT_MODEL);
-
-    // Parse APPLY_CHANGES if present
-    let changes=null;
-    const match=response.match(/APPLY_CHANGES:\s*(\[[\s\S]*?\])/);
-    if(match){
-      try{ changes=JSON.parse(match[1]); }catch{}
+    // Parse OPTIONS
+    let options=null;
+    const optMatch=response.match(/OPTIONS:\s*(\[[\s\S]*?\])/);
+    if(optMatch){
+      try{ options=JSON.parse(optMatch[1]); }catch{}
     }
-    CHAT_HISTORY.push({role:'model',text:response,changes});
+    // Parse APPLY_CHANGES
+    let changes=null;
+    const changeMatch=response.match(/APPLY_CHANGES:\s*(\[[\s\S]*?\])/s);
+    if(changeMatch){
+      try{ changes=JSON.parse(changeMatch[1]); }catch{}
+    }
+    CHAT_HISTORY.push({role:'model',text:response,changes,options});
     renderChat();
+    // If changes proposed, show approval popup
+    if(changes&&changes.length) showChangesPopup(changes);
   }catch(e){
-    CHAT_HISTORY.push({role:'model',text:`Error: ${e.message}`,changes:null});
+    CHAT_HISTORY.push({role:'model',text:`Error: ${e.message}`,changes:null,options:null});
     renderChat();
   }
   btn.disabled=false;
 }
 
-function applyChanges(msgIdx){
-  const msg=CHAT_HISTORY[msgIdx];
-  if(!msg||!msg.changes||!msg.changes.length) return;
+function showChangesPopup(changes){
+  // Remove any existing popup
+  const existing=document.getElementById('changes-popup-overlay');
+  if(existing) existing.remove();
+
+  const overlay=document.createElement('div');
+  overlay.id='changes-popup-overlay';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px';
+
+  const popup=document.createElement('div');
+  popup.style.cssText='background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:680px;width:100%;max-height:80vh;overflow-y:auto';
+
+  let rowsHtml='';
+  changes.forEach((c,ci)=>{
+    const e=DATA[c.entryIdx];
+    const oldSug=getSugs(e)[c.sugIdx];
+    const oldTool=oldSug?sugTool(oldSug):'—';
+    const oldDesc=oldSug?sugDesc(oldSug):'—';
+    rowsHtml+=`<div style="padding:12px;background:var(--card2);border:1px solid var(--border);border-radius:10px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:12px;color:var(--dim);width:90px;flex-shrink:0">${esc(e?e.ca:'')}</span>
+        <span style="font-size:12px;color:var(--gold);font-weight:700;width:62px;flex-shrink:0">${esc(e?e.yl:'')}</span>
+        <span style="font-size:13px;font-weight:700">${esc(e?e.th:'')}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="padding:8px;background:#1a0a0a;border:1px solid #3a1a1a;border-radius:6px">
+          <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Replacing</div>
+          <div style="font-size:12px;font-weight:700;color:#ff9999;margin-bottom:2px">${esc(oldTool)}</div>
+          <div style="font-size:11px;color:#666">${esc(oldDesc.slice(0,80)+(oldDesc.length>80?'…':''))}</div>
+        </div>
+        <div style="padding:8px;background:#0a1a0a;border:1px solid #1a3a1a;border-radius:6px">
+          <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">New suggestion</div>
+          <div style="font-size:12px;font-weight:700;color:var(--lime);margin-bottom:2px">${esc(c.t)}</div>
+          <div style="font-size:11px;color:#aaa">${esc((c.d||'').slice(0,80)+((c.d||'').length>80?'…':''))}</div>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  popup.innerHTML=`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+      <div style="width:10px;height:10px;border-radius:50%;background:var(--lime)"></div>
+      <h3 style="font-size:18px;font-weight:900">Proposed Changes</h3>
+      <span style="font-size:13px;color:var(--dim);margin-left:auto">${changes.length} suggestion${changes.length!==1?'s':''}</span>
+    </div>
+    <p style="font-size:13px;color:var(--dim);margin-bottom:18px">Review each change below before applying.</p>
+    <div id="changes-popup-rows">${rowsHtml}</div>
+    <div style="display:flex;gap:10px;margin-top:20px">
+      <button onclick="applyChangesFromPopup()" style="flex:1;padding:13px;background:var(--lime);color:#111;border:none;border-radius:10px;font-weight:900;font-size:14px;cursor:pointer">✓ Apply all ${changes.length} changes</button>
+      <button onclick="document.getElementById('changes-popup-overlay').remove()" style="padding:13px 20px;background:transparent;color:var(--dim);border:1.5px solid var(--border);border-radius:10px;font-weight:700;font-size:14px;cursor:pointer">✗ Decline</button>
+    </div>`;
+
+  overlay.appendChild(popup);
+  document.body.appendChild(overlay);
+  // Store changes for apply
+  overlay._changes=changes;
+}
+
+function applyChangesFromPopup(){
+  const overlay=document.getElementById('changes-popup-overlay');
+  if(!overlay) return;
+  const changes=overlay._changes||[];
   let applied=0;
-  msg.changes.forEach(c=>{
+  changes.forEach(c=>{
     const {entryIdx,sugIdx,t,d}=c;
     if(entryIdx>=0&&entryIdx<DATA.length){
-      if(!DATA[entryIdx].s) DATA[entryIdx].s=[];
-      if(sugIdx>=0&&sugIdx<DATA[entryIdx].s.length){
-        DATA[entryIdx].s[sugIdx]={t,d};
+      const sugs=getSugs(DATA[entryIdx]);
+      if(sugIdx>=0&&sugIdx<sugs.length){
+        // Write back in standard {t,d} format
+        if(Array.isArray(DATA[entryIdx].s)){
+          DATA[entryIdx].s[sugIdx]={t,d};
+        } else {
+          if(!Array.isArray(DATA[entryIdx].s)) DATA[entryIdx].s=sugs.map((s,i)=>i===sugIdx?{t,d}:{t:sugTool(s),d:sugDesc(s)});
+        }
         applied++;
       }
     }
   });
-  msg.changes=null; // Prevent double-apply
+  overlay.remove();
   saveToDrive();
   setStatus(`${applied} suggestion${applied!==1?'s':''} updated and saved`);
-  CHAT_HISTORY.push({role:'model',text:`Done — ${applied} suggestion${applied!==1?'s':''} updated across the library and saved to Drive. Want to make any other changes?`,changes:null});
+  const lastMsg=CHAT_HISTORY[CHAT_HISTORY.length-1];
+  if(lastMsg) lastMsg.changes=null;
+  CHAT_HISTORY.push({role:'model',text:`Done \u2014 ${applied} suggestion${applied!==1?'s':''} updated and saved to Drive. Want to make any other changes?`,changes:null,options:null});
   renderChat();
   renderAuditChart();
 }
+
+function applyChanges(msgIdx){
+  // Legacy - redirect to popup
+  const msg=CHAT_HISTORY[msgIdx];
+  if(msg&&msg.changes) showChangesPopup(msg.changes);
+}
+
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
 function checkKeyInput(){
