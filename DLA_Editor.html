@@ -196,6 +196,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
     <div style="margin-top:12px;display:flex;gap:8px">
       <button class="btn-sm" onclick="downloadJSON()">↓ JSON</button>
       <button class="btn-sm" onclick="showKeyboardHelp()" title="Keyboard shortcuts">⌨</button>
+      <button class="btn-sm" onclick="clearSession()" title="Clear session & sign out" style="color:#FF8080">⏏</button>
       <button class="btn-sm" onclick="showApiKeyScreen()">⚙ key</button>
     </div>
   </div>
@@ -739,8 +740,14 @@ function loadFromPaste(){
   catch{ alert('Invalid JSON'); }
 }
 
-function ingest(arr){
+function ingest(arr, skipCache){
   DATA=Array.isArray(arr)?arr:Object.values(arr);
+  if(!skipCache){
+    try{
+      localStorage.setItem('dla_data', JSON.stringify(DATA));
+      if(DRIVE_FILE_ID) localStorage.setItem('dla_file_id', DRIVE_FILE_ID);
+    }catch(e){ /* storage full — skip cache */ }
+  }
   // Populate filter dropdowns
   const campuses=[...new Set(DATA.map(e=>e.ca))].sort();
   const yrs=[...new Set(DATA.map(e=>e.yl))].sort((a,b)=>YR.indexOf(a)-YR.indexOf(b));
@@ -825,6 +832,7 @@ Save anyway?`);
     if(updated) LAST_KNOWN_MODIFIED=updated.modifiedTime;
     const now=new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
     setStatus(`Saved to Drive at ${now}`);
+    try{ localStorage.setItem('dla_data', JSON.stringify(DATA)); }catch(e){}
     updateConflictBar(null);
   }catch(e){ setStatus('Drive save failed: '+e.message,'error'); }
 }
@@ -2846,13 +2854,49 @@ function exportCSV(){
   a.click(); URL.revokeObjectURL(url);
 }
 
+function clearSession(){
+  if(!confirm('Clear session and return to the load screen?\n\nYour Drive data is safe — this just clears the local cache.')) return;
+  localStorage.removeItem('dla_data');
+  localStorage.removeItem('dla_file_id');
+  DATA=[];
+  DRIVE_FILE_ID=null;
+  DRIVE_TOKEN=null;
+  LAST_KNOWN_MODIFIED=null;
+  if(CONFLICT_POLL_INTERVAL){ clearInterval(CONFLICT_POLL_INTERVAL); CONFLICT_POLL_INTERVAL=null; }
+  document.body.classList.remove('app-mode');
+  document.getElementById('app-content').style.display='none';
+  showScreen('load');
+}
+
 (function init(){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('app-content').style.display='none';
   initNetworkCanvas();
   const key=getKey();
-  if(key) showScreen('load');
-  else showScreen('setup');
+  if(!key){ showScreen('setup'); return; }
+
+  // Try to restore from cache first for instant load
+  try{
+    const cached=localStorage.getItem('dla_data');
+    const cachedFileId=localStorage.getItem('dla_file_id');
+    if(cached){
+      const arr=JSON.parse(cached);
+      if(Array.isArray(arr)&&arr.length>0){
+        if(cachedFileId) DRIVE_FILE_ID=cachedFileId;
+        ingest(arr, true); // skip re-caching on restore
+        // Silently re-auth Drive in background to enable saving
+        getDriveToken().then(tok=>{
+          DRIVE_TOKEN=tok;
+          getDriveFileModified().then(meta=>{ if(meta) LAST_KNOWN_MODIFIED=meta.modifiedTime; });
+          startConflictPolling();
+          setStatus('Session restored — connected to Drive');
+        }).catch(()=>{ setStatus('Session restored — reconnect Drive to save changes','error'); });
+        return;
+      }
+    }
+  }catch(e){}
+
+  showScreen('load');
   document.getElementById('api-key-input')?.addEventListener('keydown',e=>{ if(e.key==='Enter') saveApiKey(); });
   document.getElementById('chat-input')?.addEventListener('keydown',e=>{
     if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendChat(); }
