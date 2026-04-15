@@ -882,9 +882,30 @@
     "th": "How We Organise Ourselves",
     "ci": "Entrepreneurs have a responsibility to develop, market and sell sustainable products and services.",
     "lo": "The power of giving back; How our environment is impacted by the products we create; Sustainable business practices",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Microsoft Excel",
+        "d": "To support the 'Define' stage of the design thinking process, students can input their Junior School survey data into Excel. They can then use the charting tools to create data visuals like bar graphs or pie charts, directly addressing the planner's task to 'Analyse the data from the JS. Create a data visual' and fulfilling the Maths connection of interpreting data."
+      },
+      {
+        "t": "Tinkercad",
+        "d": "During the 'Prototype' phase (Weeks 4 & 5), students can design a 3D model of their sustainable product using Tinkercad for output on the 3D printers. This allows them to create a precise, tangible representation to show users for feedback, connecting directly to the task 'build real, tactile representations for a range of your ideas'."
+      },
+      {
+        "t": "Canva",
+        "d": "To prepare for the market stall, students can use Canva to complete the 'make an advertisement' task noted in the planner. They can design professional-looking posters or flyers that highlight their product's sustainable features, targeting their identified market (Junior School students) and practising persuasive communication skills."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "As an alternative to a static poster for the 'Advertise' task in Week 6, student groups can create a short, persuasive video advertisement. They can combine images of their product, text overlays about sustainability, and a voice-over to create a dynamic pitch for the market stall, developing their multimedia communication skills."
+      },
+      {
+        "t": "Microsoft Teams",
+        "d": "To facilitate group work throughout the unit, each student 'company' can use a dedicated channel in Teams. This provides a central hub to collaborate on their business plan, share research on corporate social responsibility, co-author their advertisement script in a Word document, and manage their budget in a shared Excel file, mirroring a real-world business workflow."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit guides students through an entrepreneurial journey using the design thinking process to create and sell a sustainable product. Students conduct market research by surveying younger peers, analyse data to define their product, and then ideate, prototype, and test their creations. The inquiry culminates in students advertising and selling their products at a market stall, requiring them to manage a budget and consider their business's environmental impact."
   },
   {
     "ca": "Elsternwick",
@@ -1016,9 +1037,30 @@
     "th": "How We Express Ourselves",
     "ci": "An inquiry into the ways in which we discover and express ideas, feelings, nature, culture, beliefs and values.",
     "lo": "Lines of inquiry to be confirmed once planner is uploaded",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Canva",
+        "d": "In Lesson 12, students create a 'unit of inquiry wall display' and are later tasked with creating a 'media campaign' in Lesson 14. Canva is explicitly mentioned as a tool and is perfect for designing a suite of visually consistent campaign materials like infographics, posters, and social media tiles to express their findings on their chosen issue."
+      },
+      {
+        "t": "Podcast Equipment / GarageBand",
+        "d": "To build their media campaign (Lesson 14), students can create a podcast series to explore their student-led inquiry. Using GarageBand, they can script, record, and edit audio episodes that explain their research, interview peers, or present their call to action, directly addressing the related concepts of 'Media' and 'Persuasion'."
+      },
+      {
+        "t": "Microsoft Sway",
+        "d": "As a final presentation medium for their inquiry, students can use Sway to create a dynamic, interactive digital portfolio of their entire project. This can serve as the central hub for their media campaign (Lesson 14), embedding their research, videos, Canva designs, and podcast audio into one polished and persuasive presentation."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Before creating their media campaign (Lesson 14), students can use Microsoft Forms to conduct primary research. They can design a survey to gather data on the school community's awareness and perspectives on their chosen topic, allowing them to analyse the results and tailor their persuasive messaging for greater impact."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "To add a dynamic video element to their media campaign (Lesson 14), students can use Adobe Express to create a short, animated 'explainer video'. This allows them to succinctly communicate the core problem and their proposed solutions, a key requirement of their inquiry, using a different and engaging medium."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit is the Year 6 PYP Exhibition, a student-led inquiry where groups identify a passion or issue, design their own unit of inquiry, and conduct research. The culmination of their work is the creation of a comprehensive media campaign designed to express their findings, persuade an audience, and advocate for action on their chosen topic."
   },
   {
     "ca": "Elsternwick",
@@ -1027,8 +1069,8 @@
     "ci": "Student-led exhibition (PYPEX) ? Students develop and present their own units of inquiry.",
     "lo": "Student-led transdisciplinary themes; Approaches to learning; Research and presentation skills",
     "s": [],
-    "audited": false,
-    "plannerText": ""
+    "audited": true,
+    "plannerText": "Not yet documented in PDF."
   },
   {
     "ca": "Elsternwick",
@@ -1036,9 +1078,30 @@
     "th": "How the World Works",
     "ci": "Energy may be converted, transformed, and used to support human progress.",
     "lo": "Different forms of energy and how they are used; The impact of different energy sources on the planet; Sustainable energy practices",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Lego Spike Prime",
+        "d": "Following the Rube Goldberg machine video in Activity 2, students use Lego Spike Prime to design, build, and code their own chain reaction machines. They must program motors and sensors to demonstrate at least three different energy transformations (e.g., potential to kinetic, kinetic to electrical), documenting each stage of energy conversion in a portfolio."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "To enhance the 'Explanation Game' thinking routine in Activity 5 about William's Dynamo, students use Adobe Express to create a short animated video. They can animate diagrams to show the conversion of mechanical energy from the wind into electrical energy, using voice narration to explain the principles of electromagnetic induction to their peers."
+      },
+      {
+        "t": "Microsoft OneNote",
+        "d": "For Activity 8, where students compare the energy sources of two Australian states, pairs use a collaborative page in the Microsoft OneNote Class Notebook. They can embed screenshots of the data, use the drawing tools to create a detailed Venn diagram, and write a shared analysis explaining why they think the states have different approaches to electricity production."
+      },
+      {
+        "t": "Book Creator",
+        "d": "As a culmination of the 'Renewable-Energy-Inquiry-Project' in Activity 11, students use Book Creator to publish their research on a chosen form of clean energy. They can create an interactive digital book incorporating text, images, embedded videos from Clickview, and audio narration to explain the advantages and disadvantages of their chosen energy source."
+      },
+      {
+        "t": "Minecraft Education",
+        "d": "To synthesize their learning on sustainable energy practices from LOI 3 and the Solar Buddy activity, students use Minecraft Education to design and build a sustainable house. They must incorporate renewable energy sources (e.g., using daylight sensors as solar panels, building functional windmills) and apply principles of energy conservation in their designs, explaining their choices in an accompanying screen recording."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores energy conversion and transformation through various hands-on and inquiry-based activities. Students investigate different forms of energy by analysing Rube Goldberg machines and the story of 'The Boy Who Harnessed the Wind', compare renewable and non-renewable energy sources across Australia, and apply their understanding by building Solar Buddy lights and researching clean energy solutions."
   },
   {
     "ca": "Elsternwick",
@@ -1046,9 +1109,30 @@
     "th": "Sharing the Planet",
     "ci": "Communities interact with the environment in different ways.",
     "lo": "How community values shape the management of the natural environment; The need for sustainable practices; Taking action for environmental stewardship",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Padlet",
+        "d": "For the Lesson 1 Provocation, after students view images of diverse environments, use a Padlet board for the group brainstorm on the question ?What is our responsibility to the environment??. Students can post their initial thoughts, definitions, and wonderings as digital sticky notes, creating a collaborative and visual collection of the class's starting points."
+      },
+      {
+        "t": "Google Earth",
+        "d": "To support the 'Find out' phase, students can use Google Earth to conduct virtual explorations of their case study locations, such as the Amazon rainforest, urban centres, or the traditional lands of the Gunaikurnai people in Victoria. This will help them visualise the environment, understand its scale, and identify potential human impacts before completing their analysis sheets."
+      },
+      {
+        "t": "Canva",
+        "d": "In the 'Sort out' activity, students can use Canva to create their comparison chart contrasting Traditional Gunaikurnai land management with modern approaches. They can use infographic templates, icons, and images to visually represent their findings, creating a clear and engaging summary of what can be learned from Indigenous knowledge."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "For the 'Go further' project, groups choosing to create an awareness video can use Adobe Express. Students can combine images, short video clips, voice-over narration, and text to produce a powerful call-to-action video promoting their chosen environmental stewardship initiative, such as a school clean-up or tree planting day."
+      },
+      {
+        "t": "Microsoft Teams",
+        "d": "To structure the 'Find out' environmental case studies activity, create a Team for the class with separate channels for each case study group (e.g., 'Aboriginal Land Management', 'Urban Pollution'). Students can use the channel's file space to collaboratively work on their analysis sheets in a shared Word document and use the Posts tab for discussion and resource sharing."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores human-environment interactions through reflections on the Camp Mallana experience and analysis of global environmental case studies. Students specifically investigate and compare traditional Gunaikurnai land management with modern approaches, then create and present their own environmental stewardship projects, such as awareness videos or posters, to promote positive action."
   },
   {
     "ca": "Elsternwick",
