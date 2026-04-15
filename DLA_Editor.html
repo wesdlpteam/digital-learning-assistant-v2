@@ -2754,11 +2754,12 @@ async function fixAllOfType(type){
       DATA[idx].s=sugs;
       DATA[idx].audited=true;
       fixed++;
-      saveToDrive();
     }catch(err){ failed++; console.error('fixAllOfType error',err); }
     if(done<entries.length) await sleep(2000);
   }
 
+  if(lbl) lbl.textContent=`Saving ${fixed} fix${fixed!==1?'es':''}…`;
+  if(fixed>0) await saveToDrive();
   if(lbl) lbl.textContent=`Done — ${fixed} fixed, ${failed} failed`;
   renderDashboard();
   setStatus(`Fixed ${fixed} ${type} issue${fixed!==1?'s':''}`);
