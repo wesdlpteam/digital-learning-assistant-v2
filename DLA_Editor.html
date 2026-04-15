@@ -5,164 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DLA Studio — Wesley College</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-
-:root {
-  --bg:#0d0d0d; --card:#1a1a1a; --card2:#222222;
-  --border:#2e2e2e; --text:#ffffff; --dim:#888888;
-  --gold:#D4A017; --lime:#C5E84A; --purple:#9B8BFF;
-  --blue:#60B8F0; --orange:#F5A623; --salmon:#FF8080;
-  --green:#52B95C; --olive:#2a3010;
-  /* compat aliases */
-  --mint:#C5E84A; --vivid:#C5E84A; --forest:#0d0d0d;
-  --cream:#ffffff; --yellow:#D4A017;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;font-size:15px;line-height:1.6}
-
-#bg-canvas{display:none}
-
-/* SIDEBAR */
-#sidebar{width:240px;background:#111;border-right:1px solid var(--border);position:fixed;top:0;left:0;height:100vh;display:none;flex-direction:column;padding:28px 20px;z-index:50}
-body.app-mode #sidebar{display:flex}
-body.app-mode #main{margin-left:240px}
-#logo{font-size:12px;font-weight:900;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:40px}
-.nav-item{padding:11px 14px;border-radius:10px;color:var(--dim);cursor:pointer;margin-bottom:4px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;transition:all 0.12s}
-.nav-item:hover{color:var(--text);background:var(--card2)}
-.nav-item.active{background:var(--gold);color:#111}
-#sidebar-footer{margin-top:auto;padding-top:24px;border-top:1px solid var(--border)}
-
-/* MAIN */
-#main{min-height:100vh;background:var(--bg)}
-
-/* SCREENS */
-.screen{display:none;min-height:100vh;align-items:center;justify-content:center;padding:40px 20px}
-.screen.active{display:flex;flex-direction:column}
-.screen-inner{width:100%;max-width:460px}
-
-/* APP */
-#app-content{display:none;padding:44px}
-body.app-mode #app-content{display:block}
-#status-bar{font-size:12px;color:var(--dim);text-align:right;min-height:18px;margin-bottom:16px;font-weight:500;letter-spacing:.3px}
-.panel{display:none;max-width:920px}
-.panel.active{display:block}
-
-/* CARDS */
-.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:14px}
-.card2{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:10px}
-
-/* TYPOGRAPHY */
-.page-title{font-size:34px;font-weight:900;color:var(--text);margin-bottom:6px;letter-spacing:-0.5px}
-.page-sub{font-size:15px;color:var(--dim);margin-bottom:28px;line-height:1.6;font-weight:500}
-
-/* LABELS */
-.label{font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;letter-spacing:1.5px;margin-bottom:12px;display:block}
-
-/* INPUTS */
-.inp{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:13px 16px;width:100%;outline:none;font-size:15px;font-family:inherit;font-weight:500;transition:border-color .15s}
-.inp:focus{border-color:var(--gold)}
-textarea.inp{resize:vertical;line-height:1.6}
-select.inp{cursor:pointer}
-
-/* BUTTONS */
-.btn{padding:10px 18px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:13px;font-family:inherit;font-weight:600;transition:all 0.12s}
-.btn:hover{color:var(--text);border-color:var(--dim)}
-.btn-pri{background:var(--gold);color:#111;border:none;padding:13px 24px;border-radius:12px;font-weight:800;cursor:pointer;font-size:14px;font-family:inherit;transition:all 0.12s}
-.btn-pri:hover{background:#c49010}
-.btn-pri.full{width:100%}
-.btn-sm{padding:6px 13px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:12px;font-family:inherit;font-weight:600}
-.btn-sm:hover{border-color:var(--dim);color:var(--text)}
-button:disabled{opacity:.4;cursor:not-allowed}
-
-/* STAT GRID */
-.stat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:28px}
-.stat-card{border:1px solid var(--border);border-radius:14px;padding:22px}
-.stat-num{font-size:40px;font-weight:900;letter-spacing:-1.5px;line-height:1}
-.stat-lbl{font-size:12px;margin-top:6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;opacity:.7}
-
-/* ROWS */
-.row{display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:all 0.1s}
-.row:hover{background:var(--card2);border-color:#444}
-
-/* SUGGESTION ROWS */
-.sug{border-radius:14px;margin-bottom:12px;overflow:hidden;border:1px solid var(--border)}
-.sug-main{padding:20px 22px;background:var(--card)}
-.sug-tool{font-size:18px;font-weight:800;color:var(--text);margin-bottom:6px;letter-spacing:-.3px}
-.sug-desc{font-size:14px;color:#aaa;line-height:1.65}
-.sug-fb{padding:16px 22px;background:var(--card2);border-top:1px solid var(--border)}
-
-/* BAR CHART */
-.bar-row{margin-bottom:13px;cursor:pointer}
-.bar-row:hover .bar-label span:first-child{color:var(--lime)}
-.bar-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;font-weight:600}
-.bar-label span:first-child{color:var(--text)}
-.bar-label span:last-child{color:var(--dim)}
-.bar-track{height:6px;background:var(--card2);border-radius:3px}
-.bar-fill{height:100%;border-radius:3px;background:var(--lime);transition:width 0.4s}
-
-/* CHAT */
-#chat-messages{background:var(--card);border:1px solid var(--border);border-radius:14px 14px 0 0;height:420px;overflow-y:auto;padding:14px 16px;transition:height .15s}
-.chat-msg{margin-bottom:10px}
-.chat-msg.user{text-align:right}
-.chat-bubble{display:inline-block;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.5;max-width:82%;text-align:left;font-weight:500}
-.chat-msg.user .chat-bubble{background:var(--gold);color:#111;font-weight:700}
-.chat-msg.model .chat-bubble{background:var(--card2);border:1px solid var(--border);color:var(--text);white-space:pre-wrap}
-.chat-input-row{display:flex;gap:10px;padding:14px;background:var(--card2);border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px}
-
-/* VIEW TABS */
-.view-tabs{display:flex;gap:8px;margin-bottom:22px}
-.view-tab{padding:8px 18px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:13px;font-family:inherit;font-weight:600;transition:all 0.12s}
-.view-tab.active{background:var(--text);color:var(--bg);border-color:var(--text)}
-
-/* BACK */
-.kb-focus{outline:2px solid var(--gold)!important;}
-.back-btn{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:10px 18px;border-radius:10px;cursor:pointer;font-size:13px;font-family:inherit;font-weight:700;margin-bottom:24px;transition:all .12s}
-.back-btn:hover{background:var(--card)}
-
-/* PREVIEW */
-.preview-ok{padding:16px;background:var(--olive);border:1px solid var(--lime);border-radius:10px;margin-bottom:10px}
-.preview-tool{font-size:15px;font-weight:800;color:var(--lime);margin-bottom:4px}
-.preview-desc{font-size:13px;color:#aaa;line-height:1.55}
-
-/* SETUP SCREEN */
-#screen-setup{flex-direction:row!important;align-items:stretch!important;justify-content:flex-start!important;padding:0!important;min-height:100vh}
-.setup-sidebar{width:200px;flex-shrink:0;background:#111;border-right:1px solid var(--border);display:flex;flex-direction:column;padding:32px 20px}
-.dla-wordmark{font-size:28px;font-weight:900;color:var(--gold);letter-spacing:1px;margin-bottom:48px}
-.setup-nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--dim);font-size:13px;font-weight:600;margin-bottom:5px;cursor:pointer}
-.setup-nav-item.active{color:var(--gold);background:rgba(212,160,23,0.1)}
-.setup-version{font-size:11px;color:#444;font-weight:700;margin-top:auto;margin-bottom:14px;letter-spacing:.5px}
-.wesley-brand{display:flex;align-items:center;gap:10px}
-.wesley-w{font-size:22px;font-weight:900;color:var(--gold)}
-.wesley-text{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;line-height:1.4}
-.setup-center{flex:0 0 480px;display:flex;align-items:center;justify-content:center;padding:40px 36px;background:var(--card);border-right:1px solid var(--border)}
-.setup-card{width:100%}
-.setup-card-title{font-size:22px;font-weight:900;color:var(--text);margin-bottom:6px;letter-spacing:-.3px;display:flex;align-items:center;gap:12px}
-.setup-card-sub{font-size:14px;color:var(--dim);margin-bottom:32px;line-height:1.6}
-.setup-field-label{font-size:10px;color:var(--dim);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.field-badge{font-size:10px;padding:3px 10px;border-radius:20px;background:rgba(212,160,23,0.15);color:var(--gold);font-weight:700;border:1px solid rgba(212,160,23,0.3)}
-.setup-inp{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:13px 16px;width:100%;outline:none;font-size:15px;font-family:'Inter',sans-serif;transition:border-color .15s;margin-bottom:20px;font-weight:500}
-.setup-inp:focus{border-color:var(--gold)}
-.setup-confirm{background:var(--gold);color:#111;border:none;padding:15px;border-radius:12px;font-weight:900;width:100%;cursor:pointer;font-size:14px;font-family:'Inter',sans-serif;letter-spacing:.5px;text-transform:uppercase;transition:background .12s}
-.setup-confirm:hover{background:#c49010}
-.setup-alt{display:flex;gap:8px;justify-content:center;margin-top:12px}
-.setup-right{flex:1;display:flex;flex-direction:column;justify-content:center;padding:60px 52px;background:var(--bg)}
-.setup-welcome-label{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:18px}
-.setup-headline{font-size:42px;font-weight:900;color:var(--text);line-height:1.1;margin-bottom:18px;letter-spacing:-1px}
-.setup-headline span{color:var(--lime)}
-.setup-tagline{font-size:15px;color:var(--dim);line-height:1.7;margin-bottom:40px;max-width:400px;font-weight:500}
-.status-cards{display:flex;flex-direction:column;gap:10px}
-.status-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600}
-.status-key{color:var(--dim);font-weight:500}
-.status-val{color:var(--text);font-weight:800}
-.status-dot{width:8px;height:8px;border-radius:50%;background:var(--lime);display:inline-block;margin-right:8px}
-
-  @media (max-width: 380px) {
-    .nav-label { display: none; }
-    .nav-item { min-width: 48px; }
-  }
-
-</style>
+<style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');:root{--bg:#0d0d0d;--card:#1a1a1a;--card2:#222222;--border:#2e2e2e;--text:#ffffff;--dim:#888888;--gold:#D4A017;--lime:#C5E84A;--purple:#9B8BFF;--blue:#60B8F0;--orange:#F5A623;--salmon:#FF8080;--green:#52B95C;--olive:#2a3010;--mint:#C5E84A;--vivid:#C5E84A;--forest:#0d0d0d;--cream:#ffffff;--yellow:#D4A017;}*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;font-size:15px;line-height:1.6}#bg-canvas{display:none}#sidebar{width:240px;background:#111;border-right:1px solid var(--border);position:fixed;top:0;left:0;height:100vh;display:none;flex-direction:column;padding:28px 20px;z-index:50}body.app-mode #sidebar{display:flex}body.app-mode #main{margin-left:240px}#logo{font-size:12px;font-weight:900;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:40px}.nav-item{padding:11px 14px;border-radius:10px;color:var(--dim);cursor:pointer;margin-bottom:4px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;transition:all 0.12s}.nav-item:hover{color:var(--text);background:var(--card2)}.nav-item.active{background:var(--gold);color:#111}#sidebar-footer{margin-top:auto;padding-top:24px;border-top:1px solid var(--border)}#main{min-height:100vh;background:var(--bg)}.screen{display:none;min-height:100vh;align-items:center;justify-content:center;padding:40px 20px}.screen.active{display:flex;flex-direction:column}.screen-inner{width:100%;max-width:460px}#app-content{display:none;padding:44px}body.app-mode #app-content{display:block}#status-bar{font-size:12px;color:var(--dim);text-align:right;min-height:18px;margin-bottom:16px;font-weight:500;letter-spacing:.3px}.panel{display:none;max-width:920px}.panel.active{display:block}.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:14px}.card2{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:10px}.page-title{font-size:34px;font-weight:900;color:var(--text);margin-bottom:6px;letter-spacing:-0.5px}.page-sub{font-size:15px;color:var(--dim);margin-bottom:28px;line-height:1.6;font-weight:500}.label{font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;letter-spacing:1.5px;margin-bottom:12px;display:block}.inp{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:13px 16px;width:100%;outline:none;font-size:15px;font-family:inherit;font-weight:500;transition:border-color .15s}.inp:focus{border-color:var(--gold)}textarea.inp{resize:vertical;line-height:1.6}select.inp{cursor:pointer}.btn{padding:10px 18px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:13px;font-family:inherit;font-weight:600;transition:all 0.12s}.btn:hover{color:var(--text);border-color:var(--dim)}.btn-pri{background:var(--gold);color:#111;border:none;padding:13px 24px;border-radius:12px;font-weight:800;cursor:pointer;font-size:14px;font-family:inherit;transition:all 0.12s}.btn-pri:hover{background:#c49010}.btn-pri.full{width:100%}.btn-sm{padding:6px 13px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:12px;font-family:inherit;font-weight:600}.btn-sm:hover{border-color:var(--dim);color:var(--text)}button:disabled{opacity:.4;cursor:not-allowed}.stat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:28px}.stat-card{border:1px solid var(--border);border-radius:14px;padding:22px}.stat-num{font-size:40px;font-weight:900;letter-spacing:-1.5px;line-height:1}.stat-lbl{font-size:12px;margin-top:6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;opacity:.7}.row{display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:all 0.1s}.row:hover{background:var(--card2);border-color:#444}.sug{border-radius:14px;margin-bottom:12px;overflow:hidden;border:1px solid var(--border)}.sug-main{padding:20px 22px;background:var(--card)}.sug-tool{font-size:18px;font-weight:800;color:var(--text);margin-bottom:6px;letter-spacing:-.3px}.sug-desc{font-size:14px;color:#aaa;line-height:1.65}.sug-fb{padding:16px 22px;background:var(--card2);border-top:1px solid var(--border)}.bar-row{margin-bottom:13px;cursor:pointer}.bar-row:hover .bar-label span:first-child{color:var(--lime)}.bar-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;font-weight:600}.bar-label span:first-child{color:var(--text)}.bar-label span:last-child{color:var(--dim)}.bar-track{height:6px;background:var(--card2);border-radius:3px}.bar-fill{height:100%;border-radius:3px;background:var(--lime);transition:width 0.4s}#chat-messages{background:var(--card);border:1px solid var(--border);border-radius:14px 14px 0 0;height:420px;overflow-y:auto;padding:14px 16px;transition:height .15s}.chat-msg{margin-bottom:10px}.chat-msg.user{text-align:right}.chat-bubble{display:inline-block;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.5;max-width:82%;text-align:left;font-weight:500}.chat-msg.user .chat-bubble{background:var(--gold);color:#111;font-weight:700}.chat-msg.model .chat-bubble{background:var(--card2);border:1px solid var(--border);color:var(--text);white-space:pre-wrap}.chat-input-row{display:flex;gap:10px;padding:14px;background:var(--card2);border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px}.view-tabs{display:flex;gap:8px;margin-bottom:22px}.view-tab{padding:8px 18px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:13px;font-family:inherit;font-weight:600;transition:all 0.12s}.view-tab.active{background:var(--text);color:var(--bg);border-color:var(--text)}.kb-focus{outline:2px solid var(--gold)!important;}.back-btn{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:10px 18px;border-radius:10px;cursor:pointer;font-size:13px;font-family:inherit;font-weight:700;margin-bottom:24px;transition:all .12s}.back-btn:hover{background:var(--card)}.preview-ok{padding:16px;background:var(--olive);border:1px solid var(--lime);border-radius:10px;margin-bottom:10px}.preview-tool{font-size:15px;font-weight:800;color:var(--lime);margin-bottom:4px}.preview-desc{font-size:13px;color:#aaa;line-height:1.55}#screen-setup{flex-direction:row!important;align-items:stretch!important;justify-content:flex-start!important;padding:0!important;min-height:100vh}.setup-sidebar{width:200px;flex-shrink:0;background:#111;border-right:1px solid var(--border);display:flex;flex-direction:column;padding:32px 20px}.dla-wordmark{font-size:28px;font-weight:900;color:var(--gold);letter-spacing:1px;margin-bottom:48px}.setup-nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--dim);font-size:13px;font-weight:600;margin-bottom:5px;cursor:pointer}.setup-nav-item.active{color:var(--gold);background:rgba(212,160,23,0.1)}.setup-version{font-size:11px;color:#444;font-weight:700;margin-top:auto;margin-bottom:14px;letter-spacing:.5px}.wesley-brand{display:flex;align-items:center;gap:10px}.wesley-w{font-size:22px;font-weight:900;color:var(--gold)}.wesley-text{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;line-height:1.4}.setup-center{flex:0 0 480px;display:flex;align-items:center;justify-content:center;padding:40px 36px;background:var(--card);border-right:1px solid var(--border)}.setup-card{width:100%}.setup-card-title{font-size:22px;font-weight:900;color:var(--text);margin-bottom:6px;letter-spacing:-.3px;display:flex;align-items:center;gap:12px}.setup-card-sub{font-size:14px;color:var(--dim);margin-bottom:32px;line-height:1.6}.setup-field-label{font-size:10px;color:var(--dim);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.field-badge{font-size:10px;padding:3px 10px;border-radius:20px;background:rgba(212,160,23,0.15);color:var(--gold);font-weight:700;border:1px solid rgba(212,160,23,0.3)}.setup-inp{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:13px 16px;width:100%;outline:none;font-size:15px;font-family:'Inter',sans-serif;transition:border-color .15s;margin-bottom:20px;font-weight:500}.setup-inp:focus{border-color:var(--gold)}.setup-confirm{background:var(--gold);color:#111;border:none;padding:15px;border-radius:12px;font-weight:900;width:100%;cursor:pointer;font-size:14px;font-family:'Inter',sans-serif;letter-spacing:.5px;text-transform:uppercase;transition:background .12s}.setup-confirm:hover{background:#c49010}.setup-alt{display:flex;gap:8px;justify-content:center;margin-top:12px}.setup-right{flex:1;display:flex;flex-direction:column;justify-content:center;padding:60px 52px;background:var(--bg)}.setup-welcome-label{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:18px}.setup-headline{font-size:42px;font-weight:900;color:var(--text);line-height:1.1;margin-bottom:18px;letter-spacing:-1px}.setup-headline span{color:var(--lime)}.setup-tagline{font-size:15px;color:var(--dim);line-height:1.7;margin-bottom:40px;max-width:400px;font-weight:500}.status-cards{display:flex;flex-direction:column;gap:10px}.status-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600}.status-key{color:var(--dim);font-weight:500}.status-val{color:var(--text);font-weight:800}.status-dot{width:8px;height:8px;border-radius:50%;background:var(--lime);display:inline-block;margin-right:8px}@media (max-width:380px){.nav-label{display:none;}.nav-item{min-width:48px;}}</style>
 </head>
 <body>
 <canvas id="bg-canvas"></canvas>
@@ -490,6 +333,26 @@ button:disabled{opacity:.4;cursor:not-allowed}
         <div id="comparison-grid"></div>
       </div>
 
+      <!-- Run Surgeon -->
+      <div class="card" style="margin-bottom:14px">
+        <span class="label">Run Surgeon</span>
+        <p style="font-size:13px;color:var(--dim);margin-bottom:14px;line-height:1.6">Remove a banned tool from all entries. Optionally force a specific replacement — otherwise the AI will choose the best fit.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+          <div>
+            <div style="font-size:11px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Tool to Remove <span style="color:#f87171">*</span></div>
+            <input id="surgeon-banned" class="inp" placeholder="e.g. Flip" style="margin-bottom:0">
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Force Replacement <span style="color:var(--dim)">(optional)</span></div>
+            <input id="surgeon-replacement" class="inp" placeholder="e.g. Padlet" style="margin-bottom:0">
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <button class="btn-pri" id="btn-surgeon" onclick="runSurgeon()">Run Surgeon →</button>
+          <span id="surgeon-status" style="font-size:13px;font-weight:600"></span>
+        </div>
+      </div>
+
       <!-- Coverage Heatmap -->
       <div class="card" style="margin-top:14px">
         <span class="label">Coverage heatmap</span>
@@ -604,7 +467,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
 </div><!-- end main -->
 
 <script>
-// ─── State ────────────────────────────────────────────────────────────────────
+
 let DATA = [];
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUlNbBkcwXB8ImUUhEQDP7C3itYCUu-j_vRNKA7_Km2h4uJMIs0RVFJxUXKcFOFgIW/exec';
 let DRIVE_TOKEN = null;
@@ -616,15 +479,15 @@ let AUDIT_VIEW = 'tools';
 let AUDIT_YEAR_CAMPUS = '';
 let CHAT_HISTORY = [];
 const CHANGE_HISTORY = [];
-const LOCKS = {}; // entryIdx -> {user, ts} — stored in Drive as _locks field // [{ts, entryIdx, th, ca, yl, oldS, newS}]
+const LOCKS = {}; 
 const MAX_HISTORY = 20;
 
 const CLIENT_ID = '334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleusercontent.com';
-const _k=['AIzaSy','DDRvNrkGs0f3','9J2-wPxaBqdTZ1wHlXHL8'];
-const BAKED_API_KEY=_k.join(''); // assembled at runtime
+const _k=['AIzaSy','C2aK2cd9BBLNgPe','rQTSKxgNVrxXI7iC_M'];
+const BAKED_API_KEY=_k.join(''); 
 const ANALYTICS_SHEET_ID = '1R4P4FJlc8SyRFlVWoM0HpHmfCNMNVOpI8cuEILFxBNY';
-const GEMINI_MODEL = 'gemini-2.5-flash';      // used for suggestion regeneration
-const GEMINI_CHAT_MODEL = 'gemini-2.5-flash'; // used for AI coach chat
+const GEMINI_MODEL = 'gemini-2.5-flash';      
+const GEMINI_CHAT_MODEL = 'gemini-2.5-flash'; 
 const YR = ["Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"];
 const CAMPUS_COL = { Elsternwick:'#818cf8', 'Glen Waverley':'#34d399', 'St Kilda':'#fb923c', 'St Kilda Road':'#fb923c' };
 
@@ -633,7 +496,6 @@ function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function caCol(ca){ return CAMPUS_COL[normCa(ca)]||CAMPUS_COL[ca]||'#818cf8'; }
 
-// ─── Screens ──────────────────────────────────────────────────────────────────
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.body.classList.remove('app-mode');
@@ -673,7 +535,6 @@ function showApiKeyScreen(){
   showScreen('setup');
 }
 
-// ─── Auth ─────────────────────────────────────────────────────────────────────
 function saveApiKey(){
   const k=document.getElementById('api-key-input').value.trim();
   if(!k){ alert('Please enter your Gemini API key'); return; }
@@ -682,7 +543,7 @@ function saveApiKey(){
 }
 
 async function getDriveToken(){
-  // Return cached token if we already have one
+  
   if(DRIVE_TOKEN) return DRIVE_TOKEN;
   return new Promise((resolve,reject)=>{
     const client=google.accounts.oauth2.initTokenClient({
@@ -690,7 +551,7 @@ async function getDriveToken(){
       scope:'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/userinfo.email',
       callback:async (resp)=>{
         if(resp.error){ reject(new Error(resp.error)); return; }
-        // Verify Wesley College email domain
+        
         try{
           const info=await fetch('https://www.googleapis.com/oauth2/v2/userinfo',{
             headers:{'Authorization':'Bearer '+resp.access_token}
@@ -700,12 +561,12 @@ async function getDriveToken(){
           const domain=email.split('@')[1]||'';
           const allowed=['wesleycollege.edu.au','wesley.edu.au'];
           if(!allowed.some(d=>domain.endsWith(d))){
-            // Show access denied screen
+            
             showAccessDenied(email);
             reject(new Error('Access restricted to Wesley College staff'));
             return;
           }
-          // Store user info + cache email for silent re-auth on next load
+          
           DRIVE_TOKEN=resp.access_token;
           CURRENT_USER_EMAIL=email;
           localStorage.setItem('dla_user_email', email);
@@ -716,8 +577,8 @@ async function getDriveToken(){
         }
       }
     });
-    // Use cached email as login_hint with empty prompt so Google silently
-    // re-authorises on refresh without showing the consent popup again.
+    
+    
     const hint = localStorage.getItem('dla_user_email') || '';
     client.requestAccessToken({ prompt: hint ? '' : 'select_account', login_hint: hint });
   });
@@ -727,7 +588,7 @@ function showAccessDenied(email){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('app-content').style.display='none';
   document.body.classList.remove('app-mode');
-  // Create denied screen if it doesn't exist
+  
   let el=document.getElementById('screen-denied');
   if(!el){
     el=document.createElement('div');
@@ -781,7 +642,7 @@ function ingest(arr, skipCache){
       if(DRIVE_FILE_ID) localStorage.setItem('dla_file_id', DRIVE_FILE_ID);
     }catch(e){ /* storage full — skip cache */ }
   }
-  // Populate filter dropdowns
+  
   const campuses=[...new Set(DATA.map(e=>e.ca))].sort();
   const yrs=[...new Set(DATA.map(e=>e.yl))].sort((a,b)=>YR.indexOf(a)-YR.indexOf(b));
   ['f-campus'].forEach(id=>{
@@ -794,14 +655,14 @@ function ingest(arr, skipCache){
     while(el.options.length>1) el.remove(1);
     yrs.forEach(y=>el.add(new Option(y,y)));
   });
-  // Populate tool filter
+  
   const allTools=[...new Set(DATA.flatMap(e=>getSugs(e).map(s=>sugTool(s)).filter(Boolean)))].sort();
   const toolEl=document.getElementById('f-tool');
   if(toolEl){ while(toolEl.options.length>1) toolEl.remove(1); allTools.forEach(t=>toolEl.add(new Option(t,t))); }
-  // Store last modified time for conflict detection
+  
   getDriveFileModified().then(meta=>{ if(meta) LAST_KNOWN_MODIFIED=meta.modifiedTime; });
   startConflictPolling();
-  // Populate Add to Queue dropdowns
+  
   const campuses2=[...new Set(DATA.map(e=>e.ca))].sort();
   const yrs2=[...new Set(DATA.map(e=>e.yl))].sort((a,b)=>YR.indexOf(a)-YR.indexOf(b));
   const qc=document.getElementById('q-campus');
@@ -809,16 +670,15 @@ function ingest(arr, skipCache){
   if(qc){ while(qc.options.length>1) qc.remove(1); campuses2.forEach(c=>qc.add(new Option(c,c))); }
   if(qy){ while(qy.options.length>1) qy.remove(1); yrs2.forEach(y=>qy.add(new Option(y,y))); }
   showApp();
-  // Show signed-in user email in sidebar
+  
   const emailEl=document.getElementById('sidebar-user-email');
   if(emailEl&&CURRENT_USER_EMAIL) emailEl.textContent=CURRENT_USER_EMAIL;
   switchTab('dashboard',document.querySelector('.nav-item[data-tab="dashboard"]'));
   renderDashboard();
 }
 
-// Track when we last loaded the file so we can detect remote changes
 let LAST_KNOWN_MODIFIED = null;
-let SAVE_USER_TAG = null; // set after OAuth
+let SAVE_USER_TAG = null; 
 
 async function getDriveFileModified(){
   if(!DRIVE_FILE_ID||!DRIVE_TOKEN) return null;
@@ -834,7 +694,7 @@ async function getDriveFileModified(){
 async function saveToDrive(){
   if(!DRIVE_FILE_ID||!DRIVE_TOKEN) return;
 
-  // Check if file was modified by someone else since we loaded it
+  
   const meta=await getDriveFileModified();
   if(meta&&LAST_KNOWN_MODIFIED&&meta.modifiedTime!==LAST_KNOWN_MODIFIED){
     const who=meta.lastModifyingUser?.displayName||'someone else';
@@ -850,17 +710,17 @@ Save anyway?`);
   }
 
   try{
-    // Embed a _meta field with who saved and when
+    
     const payload={...DATA};
     if(Array.isArray(DATA)){
-      // DATA is array — we can't add meta directly; store separately
+      
     }
     await fetch(`https://www.googleapis.com/upload/drive/v3/files/${DRIVE_FILE_ID}?uploadType=media`,{
       method:'PATCH',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+DRIVE_TOKEN},
       body:JSON.stringify(DATA,null,2)
     });
-    // Update our known modified time
+    
     const updated=await getDriveFileModified();
     if(updated) LAST_KNOWN_MODIFIED=updated.modifiedTime;
     const now=new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
@@ -870,7 +730,6 @@ Save anyway?`);
   }catch(e){ setStatus('Drive save failed: '+e.message,'error'); }
 }
 
-// Poll for remote changes every 60 seconds when the tab is visible
 let CONFLICT_POLL_INTERVAL=null;
 function startConflictPolling(){
   if(CONFLICT_POLL_INTERVAL) return;
@@ -932,11 +791,10 @@ function downloadJSON(){
   if(DRIVE_FILE_ID) saveToDrive();
 }
 
-// ─── Gemini API ───────────────────────────────────────────────────────────────
 async function callGemini(contents, systemPrompt, model, _attempt=0){
   const key=getKey();
   if(!key) throw new Error('No API key — click ⚙ key to set it');
-  // For chat (large system prompt + multi-turn), disable thinking to reduce latency
+  
   const isChat = model === GEMINI_CHAT_MODEL;
   const body={ contents, generationConfig:{
     maxOutputTokens: 8192,
@@ -964,7 +822,6 @@ async function callGemini(contents, systemPrompt, model, _attempt=0){
   return d.candidates[0].content.parts[0].text;
 }
 
-// ─── Navigation ───────────────────────────────────────────────────────────────
 function switchTab(tab,btn){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   if(btn) btn.classList.add('active');
@@ -997,37 +854,35 @@ function closeEntry(){
   if(PREV_TAB==='browse') renderBrowse();
 }
 
-// ─── Dashboard ────────────────────────────────────────────────────────────────
-// Approved tool whitelist — matches GAS system prompt exactly
 const TOOL_WHITELIST = [
-  // Microsoft M365
+  
   'microsoft','m365','teams','word','powerpoint','onenote','excel','forms','sway',
-  // Robotics & STEM Hardware
+  
   'beebot','beebots','sphero indi','sphero bolt','sphero','lego spike essential',
   'lego spike prime','lego spike','lego','micro:bit','microbit','codrone','makey makey',
-  // Maker & A/V Hardware
+  
   '3d printer','classvr','merge cube','merge cubes','green screen',
   'podcast equipment','rodecaster','digital camera','ipad','laptop',
-  // Core Creation
+  
   'seesaw','canva','book creator','padlet',
-  // Video/Audio/Animation
+  
   'garageband','scratchjr','scratch jr','scratch','stop motion studio','stop motion',
   'chatterpix','flip','flipaclip','imovie','puppet pals',
   'adobe express','adobe express podcasting',
-  // Subject Specific
+  
   'google maps','google earth','field guide to victoria','field guide','sky map',
   'geoboard',
-  // Other Apps
+  
   'clickview','epic','piccollage','brushes redux','word clouds','abcya',
   'sketchbook','explain everything','freeform','delightex',
   'kahoot','tinkercad','minecraft','minecraft education',
-  // Hardware catch-alls
+  
   'insta360','rugged robot','smart bricks','indi robot','edison',
   'cubetto','pico vr','pico','merge explorer'
 ];
 
 function isWhitelisted(toolName){
-  if(!toolName) return true; // empty = caught by incomplete check
+  if(!toolName) return true; 
   const t = toolName.toLowerCase();
   return TOOL_WHITELIST.some(w => t.includes(w));
 }
@@ -1039,16 +894,16 @@ function getIssues(){
     const realSugs=sugs.filter(isRealSug);
     if(realSugs.length<5) incomplete.push({e,idx,type:'incomplete',detail:`${realSugs.length}/5 suggestions`});
 
-    // Banned tools
+    
     if(sugs.some(s=>sugTool(s).toLowerCase().includes('wevideo')))
       banned.push({e,idx,type:'banned',detail:'WeVideo found'});
 
-    // Duplicate tools within same entry
+    
     const tools=realSugs.map(s=>sugTool(s).toLowerCase().trim());
     const seen=new Set();
     tools.forEach(t=>{ if(seen.has(t)) duplicates.push({e,idx,type:'duplicate',detail:`"${sugTool(realSugs[tools.indexOf(t)])}" appears twice`}); seen.add(t); });
 
-    // Off-whitelist tools
+    
     realSugs.forEach(s=>{
       const t=sugTool(s);
       if(t&&!isWhitelisted(t))
@@ -1059,7 +914,7 @@ function getIssues(){
 }
 
 function filterIssueType(label){
-  // Scroll to issues and highlight by type
+  
   const map={'banned':'banned','off whitelist':'offwhitelist','duplicates':'duplicate','incomplete':'incomplete'};
   const type=map[label];
   const el=document.getElementById('issues-list');
@@ -1092,7 +947,7 @@ function renderDashboard(){
     ...incomplete,
   ];
   window._ALL_ISSUES = all;
-  // Fix incomplete button
+  
   const fixBar = document.getElementById('fix-incomplete-bar');
   if(fixBar){
     if(incomplete.length > 0){
@@ -1128,7 +983,6 @@ function renderDashboard(){
     : '<div style="text-align:center;padding:24px;color:var(--dim);font-size:13px">No issues found ✓</div>';
 }
 
-// ─── Browse ───────────────────────────────────────────────────────────────────
 function renderBrowse(){
   const ca=document.getElementById('f-campus')?.value||'';
   const yr=document.getElementById('f-year')?.value||'';
@@ -1151,10 +1005,9 @@ function renderBrowse(){
     </div>`).join('');
 }
 
-// ─── Entry Detail ─────────────────────────────────────────────────────────────
 function renderEntry(idx){
   const e=DATA[idx];
-  // Show lock indicator if someone else has this entry locked
+  
   const existingLock = isLocked(idx);
   const lockBanner = existingLock && !isLockedByMe(idx)
     ? `<div style="padding:8px 14px;background:rgba(251,191,36,0.15);border:1px solid #fbbf24;border-radius:8px;margin-bottom:10px;font-size:12px;color:#fbbf24;font-weight:600">
@@ -1176,8 +1029,7 @@ function renderEntry(idx){
   document.getElementById('btn-regen-all').textContent=`Generate 5 new suggestions for ${e.yl}`;
 }
 
-// ─── Per-suggestion feedback chat ────────────────────────────────────────────
-const SUG_CHATS = {}; // uid -> {entryIdx, sugIdx, history:[]}
+const SUG_CHATS = {}; 
 
 function buildSugRow(sug, entryIdx, sugIdx){
   const uid = `s${entryIdx}_${sugIdx}`;
@@ -1196,19 +1048,19 @@ function buildSugRow(sug, entryIdx, sugIdx){
 }
 
 function openFeedbackChat(uid, entryIdx, sugIdx){
-  // Remove any existing chat window for a different suggestion
+  
   document.querySelectorAll('.sug-chat-window').forEach(el=>{
     if(el.id !== uid+'-chat') el.remove();
   });
 
-  // Toggle if already open
+  
   const existing = document.getElementById(uid+'-chat');
   if(existing){ existing.remove(); return; }
 
   const entry = DATA[entryIdx];
   const sug = getSugs(entry)[sugIdx];
 
-  // Initialise chat history if new
+  
   if(!SUG_CHATS[uid]){
     SUG_CHATS[uid] = {
       entryIdx, sugIdx,
@@ -1216,7 +1068,7 @@ function openFeedbackChat(uid, entryIdx, sugIdx){
     };
   }
 
-  // Build chat window and insert after the sug div
+  
   const sugEl = document.getElementById(uid);
   if(!sugEl) return;
 
@@ -1240,15 +1092,15 @@ function openFeedbackChat(uid, entryIdx, sugIdx){
 
   sugEl.after(chatWin);
 
-  // Add keydown on input
+  
   chatWin.querySelector(`#${uid}-input`).addEventListener('keydown', e=>{
     if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendSugFeedback(uid); }
   });
 
-  // Render existing history if any
+  
   renderSugChat(uid);
 
-  // If no history yet, show a greeting
+  
   if(!SUG_CHATS[uid].history.length){
     addSugMsg(uid, 'model', `Hi! I'm looking at **${sugTool(sug)}** — "${sugDesc(sug).slice(0,80)}${sugDesc(sug).length>80?'…':''}"\n\nWhat would you like to change about this suggestion?`);
   }
@@ -1276,11 +1128,11 @@ function renderSugChat(uid){
         ? 'background:var(--gold);color:#111;font-weight:600'
         : 'background:var(--card);border:1px solid var(--border);color:var(--text);white-space:pre-wrap');
 
-    // Strip PROPOSED block from display
+    
     const clean = msg.text.replace(/PROPOSED:\s*\{[\s\S]*?\}/,'').trim();
     bubble.textContent = clean;
 
-    // Show apply button if this message has a proposal
+    
     const proposalMatch = msg.text.match(/PROPOSED:\s*(\{[\s\S]*?\})/);
     wrap.appendChild(bubble);
     if(proposalMatch && msg.role==='model'){
@@ -1366,7 +1218,7 @@ function applySugFeedback(entryIdx, sugIdx, uid, newSug, btn){
   saveToDrive();
   setStatus('Suggestion updated and saved');
   if(btn){ btn.textContent='✓ Applied'; btn.disabled=true; btn.style.background='var(--dim)'; }
-  // Refresh the sug row in place
+  
   const sugEl = document.getElementById(`s${entryIdx}_${sugIdx}`);
   if(sugEl){
     const newRow = document.createElement('div');
@@ -1376,8 +1228,6 @@ function applySugFeedback(entryIdx, sugIdx, uid, newSug, btn){
 }
 
 function toggleFb(uid){ openFeedbackChat(uid.replace(/^s/,'s').split('_')[0].replace('s',''), ...uid.split('_').map(Number)); }
-
-
 
 function applyOne(entryIdx,sugIdx,applyId,uid){
   const newSug=window[applyId]; if(!newSug) return;
@@ -1434,17 +1284,14 @@ function applyRegenAll(idx,pendingId){
   renderEntry(idx);
 }
 
-// ─── Audit ────────────────────────────────────────────────────────────────────
 function getSugs(e){ return normEntry(e); }
 
-// Get the tool name from a suggestion regardless of field name convention
 function sugTool(s){
   if(!s) return '';
   if(typeof s==='string') return s;
   return s.t||s.tool||s.technology||s.equipment||s.name||s.title||'';
 }
 
-// Get the description from a suggestion regardless of field name
 function sugDesc(s){
   if(!s) return '';
   if(typeof s==='string') return '';
@@ -1454,7 +1301,6 @@ function sugDesc(s){
     ||s.implementation_idea||s.text||'';
 }
 
-// Normalise a raw suggestion object to standard {t, d} format
 function normSug(s){
   if(!s) return null;
   if(typeof s==='string') return s.trim()?{t:s.trim(),d:''}:null;
@@ -1464,7 +1310,6 @@ function normSug(s){
   return {t, d};
 }
 
-// Normalise an entire entry's s field to a clean array of {t,d} objects
 function normEntry(e){
   const s=e.s;
   let arr=[];
@@ -1474,22 +1319,20 @@ function normEntry(e){
   return arr.map(normSug).filter(x=>x&&x.t&&x.t!=='TBA'&&x.t.trim()!=='');
 }
 
-// normEntry already strips TBA/empty, so all returned sugs are real
 function isRealSug(s){ return !!(s && sugTool(s).trim()); }
 
-// Normalise campus names so "St Kilda" and "St Kilda Road" merge in stats
 function normCa(ca){
-  return ca||'';  // no renaming needed - data uses "St Kilda" consistently
+  return ca||'';  
 }
 
 function computeStats(){
   const toolCounts={}, campusTools={}, yearTools={}; let total=0;
-  // Only count audited entries with real suggestions
+  
   DATA.forEach(e=>{
-    if(e.audited === false) return; // skip TBA placeholders
+    if(e.audited === false) return; 
     getSugs(e).forEach(s=>{
       const t=(s&&s.t&&s.t.trim()&&s.t.trim()!=='TBA')?s.t.trim():null;
-      if(!t) return; // skip empty/TBA slots silently
+      if(!t) return; 
       toolCounts[t]=(toolCounts[t]||0)+1;
       const nca=normCa(e.ca);
       if(!campusTools[nca]) campusTools[nca]={};
@@ -1499,7 +1342,7 @@ function computeStats(){
       total++;
     });
   });
-  // Count incomplete entries separately for the warning row
+  
   const incompleteEntries = DATA.filter(e => e.audited === false || getSugs(e).length < 5 || getSugs(e).some(s=>!s||!s.t||!s.t.trim()||s.t.trim()==='TBA'));
   const sorted=Object.entries(toolCounts).sort((a,b)=>b[1]-a[1]).map(([name,count])=>({name,count,pct:total?Math.round(count/total*100):0}));
   return {sorted,campusTools,yearTools,total,incompleteCount:incompleteEntries.length};
@@ -1545,11 +1388,11 @@ function renderAuditChart(){
   const filterEl = document.getElementById('year-campus-filter');
   if(!container) return;
 
-  // Clear
+  
   container.innerHTML = '';
   if(filterEl) filterEl.innerHTML = '';
 
-  // Debug: show campus summary
+  
   const campusDebug = [...new Set(DATA.map(e=>e.ca))];
   const debugEl = document.getElementById('audit-campus-debug');
   if(debugEl) debugEl.innerHTML = 'Campuses in data: '+campusDebug.map(ca=>`<span style="margin-right:8px;color:${caCol(ca)}">${ca} (${DATA.filter(e=>e.ca===ca).length})</span>`).join('');
@@ -1589,7 +1432,7 @@ function renderAuditChart(){
       fill.style.cssText = 'height:100%;border-radius:3px;background:'+barCol+';width:'+Math.round((count/mx)*100)+'%';
       track.appendChild(fill);
 
-      // Drilldown entries list
+      
       const dd = document.createElement('div');
       dd.id = uid;
       dd.style.cssText = 'display:none;margin-top:10px;padding:8px;background:var(--card2);border-radius:8px;border:1px solid var(--border)';
@@ -1654,11 +1497,11 @@ function renderAuditChart(){
     });
 
   } else {
-    // Year view with campus filter
+    
     const campuses = [...new Set(DATA.map(e => normCa(e.ca)))].sort();
     const palette = ['#F5A623','#C5E84A','#9B8BFF'];
 
-    // Filter buttons
+    
     const allBtn = document.createElement('button');
     allBtn.className = 'view-tab' + (AUDIT_YEAR_CAMPUS===''?' active':'');
     allBtn.textContent = 'All';
@@ -1709,8 +1552,6 @@ function renderAuditChart(){
   }
 }
 
-
-
 function setYrCampus(ca,btn){
   AUDIT_YEAR_CAMPUS=ca;
   document.querySelectorAll('#year-campus-filter .view-tab').forEach(b=>b.classList.remove('active'));
@@ -1728,25 +1569,24 @@ function toggleToolDrilldown(row, toolName){
   const dd=row.querySelector('.tool-drilldown');
   if(!dd) return;
   const isOpen=dd.style.display!=='none';
-  // Close all others
+  
   document.querySelectorAll('.tool-drilldown').forEach(d=>d.style.display='none');
   if(!isOpen) dd.style.display='block';
 }
 
-// ─── AI Coach Chat ────────────────────────────────────────────────────────────
 function getCoachSystem(){
   const stats=computeStats();
   const dist=stats.sorted.filter(x=>x.name&&!x.name.startsWith('\u26a0')).slice(0,20).map(({name,count,pct})=>`${name}: ${count}\u00d7 (${pct}%)`).join(', ');
-  // Full planner context — include plannerText if available
+  
   const hasPlannerText = DATA.some(e=>e.plannerText);
   const fullContext=DATA.map((e,i)=>{
     const sugs=getSugs(e);
     const sugStr=sugs.map((s,si)=>`  ${si+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n');
-    // Omit plannerText — too large for chat context, slows responses significantly
+    
     return `[${i}] ${e.ca} | ${e.yl} | ${e.th}${e.ci?'\n  CI: '+e.ci:''}${sugs.length?'\n  Suggestions:\n'+sugStr:''}`;
   }).join('\n\n');
 
-  // Include external library content if loaded
+  
   let librarySection = '';
   if(LIBRARY_CONTENT){
     const isAIKnowledge = LIBRARY_CONTENT.startsWith('[AI_KNOWLEDGE:');
@@ -1770,7 +1610,7 @@ ${LIBRARY_CONTENT}
 ---`;
   }
 
-  // Pre-compute a tool index so Gemini doesn't have to scan entries itself
+  
   const toolIndex = {};
   DATA.forEach((e,i)=>{
     getSugs(e).forEach((s,si)=>{
@@ -1817,18 +1657,17 @@ function initChat(){
   renderChat();
 }
 
-// Convert basic markdown (links, bold) to safe HTML for chat bubbles
 function formatChatHTML(text){
   return text
-    // Markdown links: [label](url) → clickable anchor (external, opens new tab)
+    
     .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,
       '<a href="$2" target="_blank" rel="noopener" style="color:var(--lime);text-decoration:underline;font-weight:600">$1 ↗</a>')
-    // Plain URLs not already in a link
+    
     .replace(/(?<![">])(https?:\/\/[^\s<"]+)/g,
       '<a href="$1" target="_blank" rel="noopener" style="color:var(--lime);text-decoration:underline">$1 ↗</a>')
-    // Bold: **text**
+    
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-    // Newlines
+    
     .replace(/\n/g,'<br>');
 }
 
@@ -1838,7 +1677,7 @@ function renderChat(){
   CHAT_HISTORY.forEach((msg,i)=>{
     const wrap=document.createElement('div');
     wrap.className='chat-msg '+msg.role;
-    // Bubble
+    
     const bubble=document.createElement('div');
     bubble.className='chat-bubble';
     if(msg.role==='user'){
@@ -1851,7 +1690,7 @@ function renderChat(){
       bubble.innerHTML=formatChatHTML(clean);
     }
     wrap.appendChild(bubble);
-    // Options buttons (only on last model message if no user reply yet)
+    
     if(msg.role==='model' && msg.options && i===CHAT_HISTORY.length-1){
       const optRow=document.createElement('div');
       optRow.style.cssText='display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;justify-content:flex-start';
@@ -1884,19 +1723,17 @@ async function sendChat(){
   await _doSendChat(msg);
 }
 
-// Cleans common Gemini JSON formatting issues before parsing
 function cleanGeminiJSON(s){
   return s
-    // Remove markdown code fences
+    
     .replace(/```json|```/g,'')
-    // Unescaped newlines inside strings — replace literal newlines inside quotes with \n
+    
     .replace(/"([^"]*)"/g, (_,inner)=>'"'+inner.replace(/\n/g,'\\n').replace(/\r/g,'')+'"')
-    // Trailing commas before ] or }
+    
     .replace(/,\s*([\]}])/g,'$1')
     .trim();
 }
 
-// Normalise change objects regardless of field names Gemini used
 function normaliseChanges(raw){
   return raw
     .filter(c=>c&&c.entryIdx!=null)
@@ -1921,18 +1758,18 @@ async function _doSendChat(msg){
         : m.text}]
     }));
     const response=await callGemini(contents,getCoachSystem(),GEMINI_CHAT_MODEL);
-    // Parse OPTIONS
+    
     let options=null;
     const optMatch=response.match(/OPTIONS:\s*(\[[\s\S]*?\])/);
     if(optMatch){
       try{ options=JSON.parse(optMatch[1]); }catch{}
     }
-    // Parse APPLY_CHANGES
+    
     let changes=null;
     const changeMatch=response.match(/APPLY_CHANGES:\s*([\s\S]*?)(?=\n\n|$)/s);
     if(changeMatch){
       try{
-        // Extract the JSON array — grab from first [ to last ]
+        
         const jsonStr = changeMatch[1].trim();
         const arrStart = jsonStr.indexOf('[');
         const arrEnd = jsonStr.lastIndexOf(']');
@@ -1941,10 +1778,10 @@ async function _doSendChat(msg){
         changes=normaliseChanges(raw);
       }catch(err){
         console.warn('APPLY_CHANGES direct parse failed, trying recovery…', err.message);
-        // Recovery: extract individual {...} objects containing entryIdx
+        
         const recovered=[];
         const src=changeMatch[1];
-        // Find all {...} blobs that look like change objects
+        
         let depth=0, start=-1;
         for(let i=0;i<src.length;i++){
           if(src[i]==='{'){if(depth===0)start=i;depth++;}
@@ -1971,7 +1808,7 @@ async function _doSendChat(msg){
     }
     CHAT_HISTORY.push({role:'model',text:response,changes,options});
     renderChat();
-    // If changes proposed, show approval popup
+    
     if(changes&&changes.length) showChangesPopup(changes);
   }catch(e){
     CHAT_HISTORY.push({role:'model',text:`Error: ${e.message}`,changes:null,options:null});
@@ -1984,8 +1821,8 @@ function showChangesPopup(changes){
   const existing=document.getElementById('changes-popup-overlay');
   if(existing) existing.remove();
 
-  // Track approved/declined state per change
-  const states=changes.map(()=>'pending'); // 'pending','approved','declined'
+  
+  const states=changes.map(()=>'pending'); 
 
   const overlay=document.createElement('div');
   overlay.id='changes-popup-overlay';
@@ -1994,7 +1831,7 @@ function showChangesPopup(changes){
   const popup=document.createElement('div');
   popup.style.cssText='background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;max-width:780px;width:100%;height:88vh;max-height:860px;display:flex;flex-direction:column;gap:0;box-sizing:border-box';
 
-  // Header
+  
   const header=document.createElement('div');
   header.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-shrink:0';
   header.innerHTML=`<div style="width:10px;height:10px;border-radius:50%;background:var(--lime)"></div>
@@ -2007,7 +1844,7 @@ function showChangesPopup(changes){
   subline.textContent='Approve or decline each suggestion individually, then apply your approved changes.';
   popup.appendChild(subline);
 
-  // Scrollable rows
+  
   const rowsEl=document.createElement('div');
   rowsEl.style.cssText='overflow-y:auto;flex:1;min-height:0;display:flex;flex-direction:column;gap:12px;margin-bottom:16px;padding-right:4px';
 
@@ -2031,7 +1868,7 @@ function showChangesPopup(changes){
     const oldSug=getSugs(e)[c.sugIdx];
     const oldTool=oldSug?sugTool(oldSug):'(empty slot)';
     const oldDesc=oldSug?sugDesc(oldSug):'';
-    // Defensive: handle any field naming from Gemini response
+    
     const newTool = c.t||c.tool||c.technology||c.name||'(unknown tool)';
     const newDesc = c.d||c.desc||c.description||c.integration_idea||c.activity_description||'';
 
@@ -2039,7 +1876,7 @@ function showChangesPopup(changes){
     card.id=`change-card-${ci}`;
     card.style.cssText='background:var(--card2);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .15s;flex-shrink:0';
 
-    // Entry header row
+    
     const entryRow=document.createElement('div');
     entryRow.style.cssText='display:flex;align-items:center;gap:8px;padding:12px 16px;cursor:pointer;user-select:none';
     entryRow.innerHTML=`<span style="font-size:12px;color:var(--dim);width:90px;flex-shrink:0">${esc(e?e.ca:'')}</span>
@@ -2047,7 +1884,7 @@ function showChangesPopup(changes){
       <span style="font-size:14px;font-weight:700;flex:1">${esc(e?e.th:'')}</span>
       <span id="card-status-${ci}" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--card);color:var(--dim)">PENDING</span>`;
 
-    // Expandable detail
+    
     const detail=document.createElement('div');
     detail.id=`card-detail-${ci}`;
     detail.style.cssText='padding:0 16px 14px;';
@@ -2079,9 +1916,9 @@ function showChangesPopup(changes){
       </button>
     </div>`;
 
-    // Always expanded - no collapse
+    
     detail.style.display='block';
-    // Clicking header just scrolls into view
+    
     entryRow.style.cursor='default';
 
     card.appendChild(entryRow);
@@ -2091,7 +1928,7 @@ function showChangesPopup(changes){
 
   popup.appendChild(rowsEl);
 
-  // Footer buttons
+  
   const footer=document.createElement('div');
   footer.style.cssText='display:flex;gap:10px;flex-shrink:0;padding-top:12px;border-top:1px solid var(--border);flex-wrap:wrap';
   footer.innerHTML=`
@@ -2159,7 +1996,7 @@ function applyChangesFromPopup(){
           DATA[entryIdx].audited=true;
         }
       } else {
-        // Normalise to array first
+        
         DATA[entryIdx].s=sugs.map((s,i)=>({t:sugTool(s),d:sugDesc(s)}));
         if(sugIdx>=0&&sugIdx<DATA[entryIdx].s.length){
           DATA[entryIdx].s[sugIdx]={t,d};
@@ -2184,15 +2021,12 @@ function applyChangesFromPopup(){
   renderAuditChart();
 }
 
-
 function applyChanges(msgIdx){
-  // Legacy - redirect to popup
+  
   const msg=CHAT_HISTORY[msgIdx];
   if(msg&&msg.changes) showChangesPopup(msg.changes);
 }
 
-
-// ─── Init ─────────────────────────────────────────────────────────────────────
 function checkKeyInput(){
   const val=document.getElementById('api-key-input')?.value||'';
   const badge=document.getElementById('key-badge');
@@ -2267,11 +2101,11 @@ async function addToGASQueue(){
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({ca, yl, th, ci:''})
     });
-    // no-cors means we can't read the response, but if no error it went through
+    
     statusEl.textContent=`✓ "${th}" queued — the auditor will process it within 10 minutes`;
     statusEl.style.color='var(--lime)';
     document.getElementById('q-theme').value='';
-    // Optimistically add a placeholder entry to the local data
+    
     DATA.push({ca, yl, th, ci:'', lo:'', s:[], audited:false});
     renderDashboard();
   }catch(e){
@@ -2376,7 +2210,6 @@ Return ONLY a JSON array, no markdown: [{"t":"Tool Name","d":"One specific sente
   renderDashboard();
 }
 
-// ─── Live Analytics ───────────────────────────────────────────────────────────
 async function readSheetRange(range){
   const token = await getDriveToken();
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${ANALYTICS_SHEET_ID}/values/${encodeURIComponent(range)}`;
@@ -2439,7 +2272,7 @@ async function loadLiveAnalytics(){
 }
 
 function findSection(rows, headerText){
-  // Find a row containing headerText, return rows below it until empty row
+  
   let startIdx = -1;
   for(let i=0; i<rows.length; i++){
     if(rows[i].some(c => String(c||'').includes(headerText))){ startIdx = i; break; }
@@ -2456,7 +2289,7 @@ function findSection(rows, headerText){
 function renderLiveScorecard(rows){
   const el = document.getElementById('live-scorecard'); if(!el) return;
   const section = findSection(rows, 'WEEKLY SCORECARD');
-  // Skip header row
+  
   const data = section.slice(1);
   if(!data.length){ el.innerHTML = '<div style="color:var(--dim);font-size:13px">No data</div>'; return; }
 
@@ -2503,7 +2336,7 @@ function renderLiveOverview(rows){
 function renderLiveCampusChart(rows){
   const el = document.getElementById('live-campus-chart'); if(!el) return;
   const section = findSection(rows, 'VIEWS BY CAMPUS');
-  // Skip header
+  
   const data = section.slice(1).filter(r=>r[0]&&r[1]);
   if(!data.length){ el.innerHTML='<div style="color:var(--dim);font-size:13px">No data</div>'; return; }
 
@@ -2529,7 +2362,7 @@ function renderLiveHeatmap(rows){
   const section = findSection(rows, 'VIEWS BY CAMPUS & YEAR LEVEL');
   if(section.length < 2){ el.innerHTML='<div style="color:var(--dim);font-size:13px">No data</div>'; return; }
 
-  const headers = section[0]; // Year Level, Elsternwick, Glen Waverley, St Kilda Rd, Total
+  const headers = section[0]; 
   const dataRows = section.slice(1);
   const campusCols = ['#818cf8','#34d399','#fb923c'];
 
@@ -2591,7 +2424,7 @@ function renderLiveReactions(rows){
 function renderLiveTopPages(rows){
   const el = document.getElementById('live-top-pages'); if(!el) return;
   const section = findSection(rows, 'TOP 10 MOST VIEWED PAGES');
-  // skip header rows (Page / Views / Total Time, count / sum)
+  
   const data = section.slice(2).filter(r=>r[0]&&r[1]&&r[0]!=='Page');
   if(!data.length){ el.innerHTML='<div style="color:var(--dim);font-size:13px">No data</div>'; return; }
 
@@ -2613,8 +2446,8 @@ function renderLiveTopPages(rows){
 
 function renderLiveFeedback(rows){
   const el = document.getElementById('live-feedback'); if(!el) return;
-  // Headers: Timestamp,Campus,Year Level,Theme,Tool,Phase,Feedback
-  const data = rows.slice(1).filter(r=>r[6]).reverse(); // most recent first
+  
+  const data = rows.slice(1).filter(r=>r[6]).reverse(); 
   if(!data.length){ el.innerHTML='<div style="color:var(--dim);font-size:13px">No feedback yet</div>'; return; }
 
   el.innerHTML = data.slice(0,20).map(row => {
@@ -2636,7 +2469,7 @@ function renderLiveFeedback(rows){
 
 function renderLiveUsed(rows){
   const el = document.getElementById('live-used'); if(!el) return;
-  // Headers: Timestamp,Team,Campus,Year Level,Theme,Tool,Phase
+  
   const data = rows.slice(1).filter(r=>r[5]).reverse();
   if(!data.length){ el.innerHTML='<div style="color:var(--dim);font-size:13px">No tools marked as used yet</div>'; return; }
 
@@ -2656,11 +2489,9 @@ function renderLiveUsed(rows){
     }).join('') + '</div>';
 }
 
-// ─── External Library Reference ───────────────────────────────────────────────
-let LIBRARY_CONTENT = null; // stores the fetched/pasted library text
-let LIBRARY_SOURCE = '';    // URL or description of source
+let LIBRARY_CONTENT = null; 
+let LIBRARY_SOURCE = '';    
 
-// Known platforms Gemini has strong training knowledge of
 const KNOWN_PLATFORMS = [
   { match: /minecraft/i,        name: 'Minecraft Education',   desc: 'Gemini has extensive knowledge of the Minecraft Education lesson library, including subject areas, year levels, and curriculum connections.' },
   { match: /commonsense\.org/i, name: 'Common Sense Media',    desc: 'Gemini knows the Common Sense Education digital citizenship and media literacy curriculum.' },
@@ -2681,7 +2512,7 @@ async function fetchLibraryURL(){
   btn.disabled = true; btn.textContent = 'Fetching…';
   LIBRARY_SOURCE = url;
 
-  // Check if this is a known platform Gemini already knows well
+  
   const known = KNOWN_PLATFORMS.find(p => p.match.test(url));
   if(known){
     if(knownEl){
@@ -2694,7 +2525,7 @@ async function fetchLibraryURL(){
     return;
   }
 
-  // For unknown URLs — try a chain of CORS proxies then fall back to paste
+  
   try{
     const proxies = [
       u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
@@ -2736,7 +2567,6 @@ async function fetchLibraryURL(){
   btn.disabled = false; btn.textContent = 'Fetch';
 }
 
-// Use Gemini's built-in training knowledge for a known platform
 function useAIKnowledge(){
   const url = document.getElementById('library-url-input')?.value.trim() || LIBRARY_SOURCE;
   const known = KNOWN_PLATFORMS.find(p => p.match.test(url)) || { name: url };
@@ -2752,14 +2582,14 @@ function useLibraryPaste(){
 }
 
 function useLibraryContent(text, source){
-  // Truncate to ~8000 chars to keep token usage reasonable
+  
   const maxChars = 8000;
   LIBRARY_CONTENT = text.length > maxChars
     ? text.slice(0, maxChars) + '\n\n[...content truncated for length]'
     : text;
   LIBRARY_SOURCE = source;
 
-  // Show loaded state
+  
   const loadedEl = document.getElementById('library-ref-loaded');
   const inputRow = document.getElementById('library-input-row');
   const pasteSection = document.getElementById('library-paste-section');
@@ -2779,7 +2609,7 @@ function useLibraryContent(text, source){
   if(pasteSection) pasteSection.style.display = 'none';
   if(clearBtn) clearBtn.style.display = 'inline-block';
 
-  // Auto-trigger a greeting message about the library
+  
   const greeting = `I've loaded content from: ${source}\n\nI can now cross-reference this lesson library against all your planners. What would you like to know? For example:\n- "Where could these lessons fit across all campuses?"\n- "Which units have the best connection to this content?"\n- "Suggest which year levels these lessons suit best"`;
 
   CHAT_HISTORY.push({
@@ -2810,7 +2640,6 @@ function clearLibraryRef(){
   if(pasteInput) pasteInput.value = '';
 }
 
-// ─── Bulk Tools ───────────────────────────────────────────────────────────────
 function initBulkTools(){
   const campuses=[...new Set(DATA.map(e=>e.ca))].sort();
   const yrs=[...new Set(DATA.map(e=>e.yl))].sort((a,b)=>YR.indexOf(a)-YR.indexOf(b));
@@ -2827,10 +2656,10 @@ function initBulkTools(){
   updateBulkRegenCount();
   updateCompareThemes();
   renderCoverageHeatmap();
-  // Listen for filter changes
+  
   document.getElementById('bulk-regen-campus')?.addEventListener('change', updateBulkRegenCount);
   document.getElementById('bulk-regen-year')?.addEventListener('change', updateBulkRegenCount);
-  // Export dropdowns
+  
   ['export-campus'].forEach(id=>{
     const el=document.getElementById(id); if(!el) return;
     while(el.options.length>1) el.remove(1);
@@ -2853,6 +2682,42 @@ function updateBulkRegenCount(){
   });
   const el=document.getElementById('bulk-regen-count');
   if(el) el.textContent=`${targets.length} entries selected`;
+}
+
+async function runSurgeon(){
+  const bannedEl = document.getElementById('surgeon-banned');
+  const replacementEl = document.getElementById('surgeon-replacement');
+  const statusEl = document.getElementById('surgeon-status');
+  const btn = document.getElementById('btn-surgeon');
+
+  const bannedTool = bannedEl?.value.trim();
+  if(!bannedTool){ statusEl.textContent='⚠ Please enter a tool to remove'; statusEl.style.color='#f87171'; return; }
+
+  const replacementTool = replacementEl?.value.trim();
+  const payload = { action:'runSurgeon', bannedTool };
+  if(replacementTool) payload.replacementTool = replacementTool;
+
+  btn.disabled = true;
+  statusEl.style.color = '#fbbf24';
+  statusEl.textContent = 'Running…';
+
+  try{
+    const r = await fetch(SCRIPT_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    const d = await r.json();
+    if(d.error) throw new Error(d.error);
+    statusEl.style.color = 'var(--lime)';
+    statusEl.textContent = d.message || `✓ Surgeon complete`;
+    setStatus('Surgeon complete — reloading data');
+    await loadFromDrive();
+  }catch(e){
+    statusEl.style.color = '#f87171';
+    statusEl.textContent = '✗ ' + e.message;
+  }
+  btn.disabled = false;
 }
 
 async function runBulkRegen(){
@@ -2919,7 +2784,7 @@ function renderComparison(){
   const entries=DATA.map((e,idx)=>({e,idx})).filter(({e})=>e.th===theme&&(!yr||e.yl===yr));
   if(!entries.length){ grid.innerHTML='<div style="color:var(--dim);font-size:13px">No entries found for this theme.</div>'; return; }
 
-  // Group by campus
+  
   const byCampus={};
   entries.forEach(({e,idx})=>{ if(!byCampus[e.ca]) byCampus[e.ca]=[]; byCampus[e.ca].push({e,idx}); });
   const campuses=Object.keys(byCampus).sort();
@@ -2956,28 +2821,27 @@ function renderComparison(){
   grid.appendChild(container);
 }
 
-// ─── Keyboard shortcuts ───────────────────────────────────────────────────────
 document.addEventListener('keydown', function(e){
-  // Don't fire if user is typing in an input/textarea
+  
   if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) return;
-  // Don't fire if a modal/popup is open
+  
   if(document.getElementById('changes-popup-overlay')) return;
 
   switch(e.key){
-    case 'j': // next entry in browse
+    case 'j': 
       navigateBrowseEntry(1); break;
-    case 'k': // prev entry in browse
+    case 'k': 
       navigateBrowseEntry(-1); break;
-    case 'b': // back from entry detail
+    case 'b': 
       if(CURRENT_ENTRY_IDX!==null){ closeEntry(); } break;
-    case 'u': // undo
+    case 'u': 
       if(e.metaKey||e.ctrlKey){ e.preventDefault(); undoLastChange(); } break;
     case '1': switchTabByKey('dashboard'); break;
     case '2': switchTabByKey('browse'); break;
     case '3': switchTabByKey('audit'); break;
     case '4': switchTabByKey('tools'); break;
     case '5': switchTabByKey('live'); break;
-    case '/': // focus search
+    case '/': 
       e.preventDefault();
       const searchEl=document.getElementById('f-search');
       if(searchEl){ switchTabByKey('browse'); searchEl.focus(); }
@@ -2999,15 +2863,15 @@ function switchTabByKey(tab){
 let BROWSE_ENTRY_CACHE=[];
 function navigateBrowseEntry(dir){
   if(CURRENT_ENTRY_IDX!==null){
-    // In entry detail — navigate through all entries
+    
     const newIdx=CURRENT_ENTRY_IDX+dir;
     if(newIdx>=0&&newIdx<DATA.length) openEntry(newIdx);
     return;
   }
-  // In browse — navigate visible filtered entries
+  
   const rows=document.querySelectorAll('#browse-list .row');
   if(!rows.length) return;
-  // Find currently highlighted
+  
   const cur=[...rows].findIndex(r=>r.classList.contains('kb-focus'));
   const next=cur===-1?0:Math.max(0,Math.min(rows.length-1,cur+dir));
   rows.forEach(r=>r.classList.remove('kb-focus'));
@@ -3045,7 +2909,6 @@ function showKeyboardHelp(){
   document.body.appendChild(overlay);
 }
 
-// ─── Coverage Heatmap ─────────────────────────────────────────────────────────
 function renderCoverageHeatmap(){
   const el=document.getElementById('coverage-heatmap'); if(!el) return;
   const campuses=[...new Set(DATA.map(e=>e.ca))].sort();
@@ -3093,7 +2956,6 @@ function jumpToBrowseGroup(ca, yr){
   renderBrowse();
 }
 
-// ─── Export ───────────────────────────────────────────────────────────────────
 function exportHTML(){
   const ca=document.getElementById('export-campus')?.value||'';
   const yr=document.getElementById('export-year')?.value||'';
@@ -3105,168 +2967,7 @@ function exportHTML(){
 
   let html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
   <title>${title}</title>
-  <style>
-    body{font-family:system-ui,sans-serif;max-width:900px;margin:0 auto;padding:40px 20px;color:#1a1a1a;line-height:1.6}
-    h1{font-size:28px;font-weight:900;margin-bottom:4px}
-    .meta{font-size:14px;color:#666;margin-bottom:40px}
-    .entry{margin-bottom:32px;page-break-inside:avoid}
-    .entry-header{padding:14px 18px;border-radius:8px;margin-bottom:12px}
-    .entry-title{font-size:18px;font-weight:800;margin-bottom:2px}
-    .entry-meta{font-size:12px;opacity:.7}
-    .sug{padding:10px 14px;background:#f8f8f8;border-radius:6px;margin-bottom:8px;border-left:3px solid #ddd}
-    .sug-tool{font-size:14px;font-weight:700;margin-bottom:2px}
-    .sug-desc{font-size:13px;color:#555}
-    @media print{.entry{page-break-inside:avoid}}
-  
-/* ─── MOBILE RESPONSIVE ──────────────────────────────────────────────────── */
-@media (max-width: 768px) {
-
-  /* Sidebar becomes bottom nav on mobile */
-  #sidebar {
-    width: 100% !important;
-    height: auto !important;
-    top: auto !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    flex-direction: row !important;
-    padding: 0 !important;
-    border-right: none !important;
-    border-top: 1px solid var(--border) !important;
-    z-index: 200 !important;
-    overflow-x: auto;
-    overflow-y: hidden;
-  }
-
-  body.app-mode #main { margin-left: 0 !important; margin-bottom: 64px; }
-  body.app-mode #sidebar { display: flex !important; }
-
-  #logo { display: none !important; }
-  #sidebar-footer { display: none !important; }
-
-  .nav-item {
-    flex-direction: column !important;
-    gap: 2px !important;
-    padding: 8px 12px !important;
-    font-size: 10px !important;
-    border-radius: 0 !important;
-    margin-bottom: 0 !important;
-    min-width: 60px;
-    text-align: center;
-    white-space: nowrap;
-    flex: 1;
-    justify-content: center;
-  }
-  .nav-item span { font-size: 18px; }
-  .nav-item.active { background: rgba(212,160,23,0.15) !important; border-bottom: 2px solid var(--gold) !important; }
-
-  /* Main content padding */
-  #app-content { padding: 16px !important; }
-
-  /* Page titles */
-  .page-title { font-size: 24px !important; }
-  .page-sub { font-size: 13px !important; }
-
-  /* Stat grid — 2 cols on mobile */
-  .stat-grid { grid-template-columns: repeat(2, 1fr) !important; }
-
-  /* Cards */
-  .card { padding: 16px !important; border-radius: 12px !important; }
-
-  /* Entry detail */
-  .sug-tool { font-size: 15px !important; }
-  .sug-desc { font-size: 13px !important; }
-
-  /* Browse filters stack vertically */
-  #panel-browse > div:first-child {
-    flex-direction: column !important;
-  }
-  #f-campus, #f-year, #f-tool, #f-search {
-    width: 100% !important;
-    min-width: unset !important;
-  }
-
-  /* Rows */
-  .row { padding: 12px 14px !important; flex-wrap: wrap; }
-
-  /* Chat */
-  #chat-messages { height: 260px !important; }
-  .chat-bubble { font-size: 12px !important; max-width: 92% !important; }
-
-  /* Comparison grid — single col */
-  #comparison-grid > div { grid-template-columns: 1fr !important; }
-
-  /* Heatmap scroll */
-  #coverage-heatmap, #live-heatmap { overflow-x: auto; }
-
-  /* Live analytics grids */
-  #live-overview-grid { grid-template-columns: repeat(2,1fr) !important; }
-  div[style*="grid-template-columns:1fr 1fr"] { grid-template-columns: 1fr !important; }
-
-  /* Popup overlays — full screen on mobile */
-  #changes-popup-overlay > div {
-    max-width: 100% !important;
-    max-height: 90vh !important;
-    border-radius: 16px 16px 0 0 !important;
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-  }
-
-  /* History/keyboard panels */
-  #history-overlay {
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 70px !important;
-    width: auto !important;
-  }
-
-  /* Setup screen — stack on mobile */
-  #screen-setup { flex-direction: column !important; }
-  .setup-sidebar { width: 100% !important; flex-direction: row !important; align-items: center; padding: 12px 20px !important; height: 56px; }
-  .dla-wordmark { font-size: 20px !important; margin-bottom: 0 !important; margin-right: auto; }
-  .setup-nav-item { display: none !important; }
-  .setup-center { flex: none !important; width: 100% !important; padding: 24px 20px !important; }
-  .setup-right { display: none !important; }
-
-  /* Undo bar */
-  #undo-bar {
-    bottom: 74px !important;
-    left: 8px !important;
-    right: 8px !important;
-    flex-wrap: wrap;
-  }
-
-  /* Bulk tools */
-  #bulk-regen-campus, #bulk-regen-year,
-  #compare-year, #compare-theme,
-  #export-campus, #export-year {
-    width: 100% !important;
-  }
-
-  /* Entry back button */
-  .back-btn { margin-bottom: 14px !important; }
-
-  /* Conflict bar */
-  #conflict-bar { font-size: 12px !important; padding: 8px 14px !important; }
-
-  /* Status bar */
-  #status-bar { font-size: 11px !important; }
-
-  /* Feedback chat window */
-  .sug-chat-window { border-radius: 0 0 10px 10px; }
-  #changes-popup-overlay { align-items: flex-end !important; padding: 0 !important; }
-}
-
-@media (max-width: 480px) {
-  .stat-grid { grid-template-columns: repeat(2, 1fr) !important; }
-  .stat-num { font-size: 28px !important; }
-  .page-title { font-size: 22px !important; }
-  #app-content { padding: 12px !important; }
-}
-
-</style></head><body>
+  <style>body{font-family:system-ui,sans-serif;max-width:900px;margin:0 auto;padding:40px 20px;color:#1a1a1a;line-height:1.6}h1{font-size:28px;font-weight:900;margin-bottom:4px}.meta{font-size:14px;color:#666;margin-bottom:40px}.entry{margin-bottom:32px;page-break-inside:avoid}.entry-header{padding:14px 18px;border-radius:8px;margin-bottom:12px}.entry-title{font-size:18px;font-weight:800;margin-bottom:2px}.entry-meta{font-size:12px;opacity:.7}.sug{padding:10px 14px;background:#f8f8f8;border-radius:6px;margin-bottom:8px;border-left:3px solid #ddd}.sug-tool{font-size:14px;font-weight:700;margin-bottom:2px}.sug-desc{font-size:13px;color:#555}@media print{.entry{page-break-inside:avoid}}@media (max-width:768px){#sidebar{width:100% !important;height:auto !important;top:auto !important;bottom:0 !important;left:0 !important;right:0 !important;flex-direction:row !important;padding:0 !important;border-right:none !important;border-top:1px solid var(--border) !important;z-index:200 !important;overflow-x:auto;overflow-y:hidden;}body.app-mode #main{margin-left:0 !important;margin-bottom:64px;}body.app-mode #sidebar{display:flex !important;}#logo{display:none !important;}#sidebar-footer{display:none !important;}.nav-item{flex-direction:column !important;gap:2px !important;padding:8px 12px !important;font-size:10px !important;border-radius:0 !important;margin-bottom:0 !important;min-width:60px;text-align:center;white-space:nowrap;flex:1;justify-content:center;}.nav-item span{font-size:18px;}.nav-item.active{background:rgba(212,160,23,0.15) !important;border-bottom:2px solid var(--gold) !important;}#app-content{padding:16px !important;}.page-title{font-size:24px !important;}.page-sub{font-size:13px !important;}.stat-grid{grid-template-columns:repeat(2,1fr) !important;}.card{padding:16px !important;border-radius:12px !important;}.sug-tool{font-size:15px !important;}.sug-desc{font-size:13px !important;}#panel-browse>div:first-child{flex-direction:column !important;}#f-campus,#f-year,#f-tool,#f-search{width:100% !important;min-width:unset !important;}.row{padding:12px 14px !important;flex-wrap:wrap;}#chat-messages{height:260px !important;}.chat-bubble{font-size:12px !important;max-width:92% !important;}#comparison-grid>div{grid-template-columns:1fr !important;}#coverage-heatmap,#live-heatmap{overflow-x:auto;}#live-overview-grid{grid-template-columns:repeat(2,1fr) !important;}div[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr !important;}#changes-popup-overlay>div{max-width:100% !important;max-height:90vh !important;border-radius:16px 16px 0 0 !important;position:fixed !important;bottom:0 !important;left:0 !important;right:0 !important;}#history-overlay{left:0 !important;right:0 !important;bottom:70px !important;width:auto !important;}#screen-setup{flex-direction:column !important;}.setup-sidebar{width:100% !important;flex-direction:row !important;align-items:center;padding:12px 20px !important;height:56px;}.dla-wordmark{font-size:20px !important;margin-bottom:0 !important;margin-right:auto;}.setup-nav-item{display:none !important;}.setup-center{flex:none !important;width:100% !important;padding:24px 20px !important;}.setup-right{display:none !important;}#undo-bar{bottom:74px !important;left:8px !important;right:8px !important;flex-wrap:wrap;}#bulk-regen-campus,#bulk-regen-year,#compare-year,#compare-theme,#export-campus,#export-year{width:100% !important;}.back-btn{margin-bottom:14px !important;}#conflict-bar{font-size:12px !important;padding:8px 14px !important;}#status-bar{font-size:11px !important;}.sug-chat-window{border-radius:0 0 10px 10px;}#changes-popup-overlay{align-items:flex-end !important;padding:0 !important;}}@media (max-width:480px){.stat-grid{grid-template-columns:repeat(2,1fr) !important;}.stat-num{font-size:28px !important;}.page-title{font-size:22px !important;}#app-content{padding:12px !important;}}</style></head><body>
   <h1>${title}</h1>
   <div class="meta">Generated ${new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'})} · ${entries.length} entries</div>`;
 
@@ -3338,16 +3039,13 @@ function clearSession(){
   showScreen('load');
 }
 
-// ─── Entry Locking ────────────────────────────────────────────────────────────
-// Locks are stored as a _locks object in data.json so all users share them
-// Format: DATA._locks = { "42": { user: "Nathan", ts: 1234567890 } }
-const LOCK_TTL = 5 * 60 * 1000; // 5 minutes — auto-expires if user closes tab
+const LOCK_TTL = 5 * 60 * 1000; 
 let LOCK_HEARTBEAT = null;
 let MY_LOCK_IDX = null;
 const MY_USER = 'User-' + Math.random().toString(36).slice(2,6).toUpperCase();
 
 function getLocks(){
-  // Locks stored on a special property of the DATA array
+  
   return DATA._locks || {};
 }
 
@@ -3355,7 +3053,7 @@ function isLocked(idx){
   const locks = getLocks();
   const lock = locks[String(idx)];
   if(!lock) return null;
-  // Check if lock has expired
+  
   if(Date.now() - lock.ts > LOCK_TTL) return null;
   return lock;
 }
@@ -3366,12 +3064,12 @@ function isLockedByMe(idx){
 }
 
 async function acquireLock(idx){
-  if(isLockedByMe(idx)) return true; // already have it
+  if(isLockedByMe(idx)) return true; 
   const existing = isLocked(idx);
   if(existing){
     return confirm(`⚠ ${existing.user} is currently editing "${DATA[idx]?.th}"\n\nOpen it anyway? Their unsaved changes may be overwritten.`);
   }
-  // Set lock
+  
   if(!DATA._locks) DATA._locks = {};
   DATA._locks[String(idx)] = { user: MY_USER, ts: Date.now() };
   MY_LOCK_IDX = idx;
@@ -3402,13 +3100,13 @@ async function saveLocks(){
 
 function startLockHeartbeat(idx){
   stopLockHeartbeat();
-  // Refresh lock every 2 minutes so it doesn't expire while editing
+  
   LOCK_HEARTBEAT = setInterval(async()=>{
     if(!DATA._locks) DATA._locks = {};
     DATA._locks[String(idx)] = { user: MY_USER, ts: Date.now() };
     await saveLocks();
   }, 2 * 60 * 1000);
-  // Release lock when user closes/navigates away
+  
   window.addEventListener('beforeunload', ()=>{ releaseLock(idx); });
 }
 
@@ -3417,7 +3115,7 @@ function stopLockHeartbeat(){
 }
 
 function renderLockIndicators(){
-  // Update lock badges on any visible browse/issue rows
+  
   document.querySelectorAll('[data-entry-idx]').forEach(el=>{
     const idx = parseInt(el.dataset.entryIdx);
     const lock = isLocked(idx);
@@ -3437,7 +3135,6 @@ function renderLockIndicators(){
   });
 }
 
-// Poll for lock changes every 30 seconds
 setInterval(async()=>{
   if(!DRIVE_FILE_ID || !DRIVE_TOKEN || document.hidden) return;
   try{
@@ -3458,9 +3155,9 @@ setInterval(async()=>{
   initNetworkCanvas();
   const key=getKey();
   if(!key&&!BAKED_API_KEY){ showScreen('setup'); return; }
-  if(!key) localStorage.setItem('dla_api_key', BAKED_API_KEY); // auto-store baked key
+  if(!key) localStorage.setItem('dla_api_key', BAKED_API_KEY); 
 
-  // Try to restore from cache first for instant load
+  
   try{
     const cached=localStorage.getItem('dla_data');
     const cachedFileId=localStorage.getItem('dla_file_id');
@@ -3468,8 +3165,8 @@ setInterval(async()=>{
       const arr=JSON.parse(cached);
       if(Array.isArray(arr)&&arr.length>0){
         if(cachedFileId) DRIVE_FILE_ID=cachedFileId;
-        ingest(arr, true); // skip re-caching on restore
-        // Silently re-auth Drive in background to enable saving
+        ingest(arr, true); 
+        
         getDriveToken().then(tok=>{
           DRIVE_TOKEN=tok;
           getDriveFileModified().then(meta=>{ if(meta) LAST_KNOWN_MODIFIED=meta.modifiedTime; });
