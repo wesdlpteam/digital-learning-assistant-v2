@@ -1850,7 +1850,7 @@ function showChangesPopup(changes){
 
   // Scrollable rows
   const rowsEl=document.createElement('div');
-  rowsEl.style.cssText='overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:12px;margin-bottom:16px;padding-right:4px';
+  rowsEl.style.cssText='overflow-y:auto;flex:1;min-height:0;display:flex;flex-direction:column;gap:12px;margin-bottom:16px;padding-right:4px';
 
   function updateCounter(){
     const approved=states.filter(s=>s==='approved').length;
@@ -1897,12 +1897,12 @@ function showChangesPopup(changes){
       <div style="padding:8px 10px;background:#1a0808;border:1px solid #3a1818;border-radius:8px">
         <div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:700">Replacing</div>
         <div style="font-size:13px;font-weight:800;color:#ff9999;margin-bottom:3px">${esc(oldTool)}</div>
-        <div style="font-size:11px;color:#777;line-height:1.4;max-height:42px;overflow:hidden">${esc((oldDesc||'No description').slice(0,100))}</div>
+        <div style="font-size:11px;color:#777;line-height:1.5">${esc((oldDesc||'No description').slice(0,220))}</div>
       </div>
       <div style="padding:8px 10px;background:#081808;border:1px solid #183818;border-radius:8px">
         <div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:700">New suggestion</div>
         <div style="font-size:13px;font-weight:800;color:var(--lime);margin-bottom:3px">${esc(newTool)}</div>
-        <div style="font-size:11px;color:#aaa;line-height:1.4;max-height:42px;overflow:hidden">${esc(newDesc.slice(0,120))}</div>
+        <div style="font-size:11px;color:#aaa;line-height:1.5">${esc(newDesc.slice(0,220))}</div>
       </div>
     </div>
     <div style="display:flex;gap:8px">
