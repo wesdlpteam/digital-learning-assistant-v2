@@ -936,7 +936,12 @@ function downloadJSON(){
 async function callGemini(contents, systemPrompt, model, _attempt=0){
   const key=getKey();
   if(!key) throw new Error('No API key — click ⚙ key to set it');
-  const body={ contents, generationConfig:{ maxOutputTokens:8192 } };
+  // For chat (large system prompt + multi-turn), disable thinking to reduce latency
+  const isChat = model === GEMINI_CHAT_MODEL;
+  const body={ contents, generationConfig:{
+    maxOutputTokens: 8192,
+    ...(isChat ? { thinkingConfig:{ thinkingBudget:0 } } : {})
+  }};
   if(systemPrompt) body.systemInstruction={ parts:[{text:systemPrompt}] };
   const m = model || GEMINI_MODEL;
   const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key}`,{
@@ -1736,9 +1741,9 @@ function getCoachSystem(){
   const hasPlannerText = DATA.some(e=>e.plannerText);
   const fullContext=DATA.map((e,i)=>{
     const sugs=getSugs(e);
-    const sugStr=sugs.map((s,si)=>`  ${si+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n');
-    const plannerPart=e.plannerText?`\n  PLANNER CONTENT: ${e.plannerText}`:'';
-    return `[${i}] ${e.ca} | ${e.yl} | ${e.th}${e.ci?'\n  CI: '+e.ci:''}${plannerPart}${sugs.length?'\n  Current suggestions:\n'+sugStr:''}`;
+    const sugStr=sugs.map((s,si)=>`  ${si+1}. ${sugTool(s)}: ${sugDesc(s).slice(0,120)}`).join('\n');
+    // Omit plannerText from chat context — too large, slows responses significantly
+    return `[${i}] ${e.ca} | ${e.yl} | ${e.th}${e.ci?'\n  CI: '+e.ci.slice(0,200):''}${sugs.length?'\n  Suggestions:\n'+sugStr:''}`;
   }).join('\n\n');
 
   // Include external library content if loaded
