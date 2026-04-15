@@ -1881,27 +1881,27 @@ function showChangesPopup(changes){
     detail.id=`card-detail-${ci}`;
     detail.style.cssText='padding:0 16px 14px;';
 
-    detail.innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:12px">
-      <div style="padding:10px;background:#1a0808;border:1px solid #3a1818;border-radius:8px">
-        <div style="font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;font-weight:700">Replacing</div>
-        <div style="font-size:14px;font-weight:800;color:#ff9999;margin-bottom:5px">${esc(oldTool)}</div>
-        <div style="font-size:12px;color:#888;line-height:1.55">${esc(oldDesc||'No description')}</div>
+    detail.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+      <div style="padding:8px 10px;background:#1a0808;border:1px solid #3a1818;border-radius:8px">
+        <div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:700">Replacing</div>
+        <div style="font-size:13px;font-weight:800;color:#ff9999;margin-bottom:3px">${esc(oldTool)}</div>
+        <div style="font-size:11px;color:#777;line-height:1.4;max-height:42px;overflow:hidden">${esc((oldDesc||'No description').slice(0,100))}</div>
       </div>
-      <div style="padding:10px;background:#081808;border:1px solid #183818;border-radius:8px">
-        <div style="font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;font-weight:700">New suggestion</div>
-        <div style="font-size:14px;font-weight:800;color:var(--lime);margin-bottom:5px">${esc(c.t)}</div>
-        <div style="font-size:12px;color:#ccc;line-height:1.55">${esc(c.d||'')}</div>
+      <div style="padding:8px 10px;background:#081808;border:1px solid #183818;border-radius:8px">
+        <div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:700">New suggestion</div>
+        <div style="font-size:13px;font-weight:800;color:var(--lime);margin-bottom:3px">${esc(c.t)}</div>
+        <div style="font-size:11px;color:#aaa;line-height:1.4;max-height:42px;overflow:hidden">${esc((c.d||'').slice(0,100))}</div>
       </div>
     </div>
     <div style="display:flex;gap:8px">
       <button onclick="setChangeState(${ci},'approved')" id="btn-approve-${ci}"
-        style="flex:1;padding:13px 8px;border-radius:10px;border:2px solid var(--lime);background:transparent;color:var(--lime);font-weight:900;font-size:14px;cursor:pointer;transition:all .12s;min-height:48px"
+        style="flex:1;padding:10px 8px;border-radius:9px;border:2px solid var(--lime);background:transparent;color:var(--lime);font-weight:900;font-size:14px;cursor:pointer;transition:all .12s"
         onmouseover="this.style.background='var(--lime)';this.style.color='#111'"
         onmouseout="this.style.background='transparent';this.style.color='var(--lime)'">
         ✓ Approve
       </button>
       <button onclick="setChangeState(${ci},'declined')" id="btn-decline-${ci}"
-        style="flex:1;padding:13px 8px;border-radius:10px;border:2px solid #FF8080;background:transparent;color:#FF8080;font-weight:900;font-size:14px;cursor:pointer;transition:all .12s;min-height:48px"
+        style="flex:1;padding:10px 8px;border-radius:9px;border:2px solid #FF8080;background:transparent;color:#FF8080;font-weight:900;font-size:14px;cursor:pointer;transition:all .12s"
         onmouseover="this.style.background='#FF8080';this.style.color='#111'"
         onmouseout="this.style.background='transparent';this.style.color='#FF8080'">
         ✗ Decline
