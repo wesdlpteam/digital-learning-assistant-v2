@@ -1796,7 +1796,7 @@ function renderChat(){
     } else {
       const clean=msg.text
         .replace(/OPTIONS:\s*\[.*?\]/gs,'')
-        .replace(/APPLY_CHANGES:\s*\[[\s\S]*?\]/,'')
+        .replace(/APPLY_CHANGES:[\s\S]*/,'')
         .trim();
       bubble.innerHTML=formatChatHTML(clean);
     }
@@ -1843,7 +1843,7 @@ async function _doSendChat(msg){
     const contents=CHAT_HISTORY.map(m=>({
       role:m.role==='model'?'model':'user',
       parts:[{text:m.role==='model'
-        ? m.text.replace(/OPTIONS:\s*\[.*?\]/gs,'').replace(/APPLY_CHANGES:\s*\[[\s\S]*?\]/,'').trim()
+        ? m.text.replace(/OPTIONS:\s*\[.*?\]/gs,'').replace(/APPLY_CHANGES:[\s\S]*/,'').trim()
         : m.text}]
     }));
     const response=await callGemini(contents,getCoachSystem(),GEMINI_CHAT_MODEL);
