@@ -2752,7 +2752,7 @@ async function fixAllOfType(type){
       if(!sugs.length) throw new Error('Empty');
       recordChange(idx,getSugs(DATA[idx]),sugs);
       DATA[idx].s=sugs;
-      DATA[idx].audited=true;
+      DATA[idx].audited=false;
       fixed++;
     }catch(err){ failed++; console.error('fixAllOfType error',err); }
     if(done<entries.length) await sleep(2000);
