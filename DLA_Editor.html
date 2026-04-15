@@ -950,20 +950,29 @@ function renderDashboard(){
   
   const fixBar = document.getElementById('fix-incomplete-bar');
   if(fixBar){
-    if(incomplete.length > 0){
-      fixBar.innerHTML=`<div style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:10px">
-        <div style="flex:1">
-          <div style="font-size:14px;font-weight:700;color:var(--orange)">${incomplete.length} incomplete entr${incomplete.length!==1?'ies':'y'}</div>
-          <div style="font-size:12px;color:var(--dim);margin-top:2px">Fewer than 5 suggestions — click to regenerate all using Gemini Pro</div>
+    const fixBtns = [];
+    if(incomplete.length>0) fixBtns.push({count:incomplete.length, label:'Fix incomplete', color:'var(--orange)', type:'incomplete', fn:'fixAllOfType("incomplete")'});
+    if(duplicates.length>0) fixBtns.push({count:duplicates.length, label:'Fix duplicates', color:'#9B8BFF', type:'duplicate', fn:'fixAllOfType("duplicate")'});
+    if(banned.length>0) fixBtns.push({count:banned.length, label:'Fix banned tools', color:'#FF8080', type:'banned', fn:'fixAllOfType("banned")'});
+    if(offWhitelist.length>0) fixBtns.push({count:offWhitelist.length, label:'Fix off-list', color:'#60B8F0', type:'offwhitelist', fn:'fixAllOfType("offwhitelist")'});
+
+    if(fixBtns.length > 0){
+      fixBar.innerHTML=`
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px">
+          ${fixBtns.map(b=>`
+            <div style="flex:1;min-width:200px;display:flex;align-items:center;gap:12px;padding:12px 16px;background:rgba(255,255,255,0.04);border:1px solid ${b.color}44;border-radius:10px">
+              <div style="flex:1">
+                <div style="font-size:13px;font-weight:700;color:${b.color}">${b.count} ${b.label.toLowerCase().replace('fix ','')}</div>
+              </div>
+              <button onclick="${b.fn}" style="padding:7px 14px;background:${b.color};color:#111;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">${b.label}</button>
+            </div>`).join('')}
         </div>
-        <button class="btn-pri" id="btn-fix-incomplete" onclick="fixAllIncomplete()" style="background:var(--orange);color:#111;white-space:nowrap">Fix all incomplete</button>
-      </div>
-      <div id="fix-incomplete-progress" style="display:none;margin-top:10px;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px">
-        <div style="font-size:13px;color:var(--lime);font-weight:600;margin-bottom:8px" id="fix-incomplete-label">Starting…</div>
-        <div style="height:5px;background:var(--card2);border-radius:3px"><div id="fix-incomplete-bar-fill" style="height:100%;border-radius:3px;background:var(--lime);width:0%;transition:width .4s"></div></div>
-      </div>`;
+        <div id="fix-all-progress" style="display:none;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:10px">
+          <div style="font-size:13px;color:var(--lime);font-weight:600;margin-bottom:8px" id="fix-all-label">Starting…</div>
+          <div style="height:5px;background:var(--card2);border-radius:3px"><div id="fix-all-bar" style="height:100%;border-radius:3px;background:var(--lime);width:0%;transition:width .4s"></div></div>
+        </div>`;
     } else {
-      fixBar.innerHTML='';
+      fixBar.innerHTML='<div style="padding:10px 14px;background:rgba(197,232,74,0.08);border:1px solid rgba(197,232,74,0.2);border-radius:8px;font-size:13px;color:var(--lime);font-weight:600">✓ No issues — all entries look good</div>';
     }
   }
   document.getElementById('issues-list').innerHTML=all.length
