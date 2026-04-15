@@ -951,10 +951,10 @@ function renderDashboard(){
   const fixBar = document.getElementById('fix-incomplete-bar');
   if(fixBar){
     const fixBtns = [];
-    if(incomplete.length>0) fixBtns.push({count:incomplete.length, label:'Fix incomplete', color:'var(--orange)', type:'incomplete', fn:'fixAllOfType("incomplete")'});
-    if(duplicates.length>0) fixBtns.push({count:duplicates.length, label:'Fix duplicates', color:'#9B8BFF', type:'duplicate', fn:'fixAllOfType("duplicate")'});
-    if(banned.length>0) fixBtns.push({count:banned.length, label:'Fix banned tools', color:'#FF8080', type:'banned', fn:'fixAllOfType("banned")'});
-    if(offWhitelist.length>0) fixBtns.push({count:offWhitelist.length, label:'Fix off-list', color:'#60B8F0', type:'offwhitelist', fn:'fixAllOfType("offwhitelist")'});
+    if(incomplete.length>0) fixBtns.push({count:incomplete.length, label:'Fix incomplete', color:'var(--orange)', type:'incomplete', fn:"fixAllOfType('incomplete')"});
+    if(duplicates.length>0) fixBtns.push({count:duplicates.length, label:'Fix duplicates', color:'#9B8BFF', type:'duplicate', fn:"fixAllOfType('duplicate')"});
+    if(banned.length>0) fixBtns.push({count:banned.length, label:'Fix banned tools', color:'#FF8080', type:'banned', fn:"fixAllOfType('banned')"});
+    if(offWhitelist.length>0) fixBtns.push({count:offWhitelist.length, label:'Fix off-list', color:'#60B8F0', type:'offwhitelist', fn:"fixAllOfType('offwhitelist')"});
 
     if(fixBtns.length > 0){
       fixBar.innerHTML=`
