@@ -648,10 +648,24 @@ function showApp(){
   document.body.classList.add('app-mode');
 }
 
-function setStatus(msg,type){
+function setStatus(msg,type,html){
   const el=document.getElementById('status-bar'); if(!el) return;
-  el.textContent=msg;
+  if(html){ el.innerHTML=msg; } else { el.textContent=msg; }
   el.style.color=type==='error'?'#f87171':type==='loading'?'#fbbf24':'#34d399';
+}
+
+async function reconnectDrive(){
+  const el=document.getElementById('status-bar');
+  if(el){ el.textContent='Reconnecting to Drive…'; el.style.color='#fbbf24'; }
+  try{
+    const tok=await getDriveToken();
+    DRIVE_TOKEN=tok;
+    getDriveFileModified().then(meta=>{ if(meta) LAST_KNOWN_MODIFIED=meta.modifiedTime; });
+    startConflictPolling();
+    setStatus('Reconnected to Drive ✓');
+  }catch(e){
+    setStatus('Could not reconnect — check your Google account','error');
+  }
 }
 
 function showApiKeyScreen(){
@@ -3371,7 +3385,7 @@ setInterval(async()=>{
           getDriveFileModified().then(meta=>{ if(meta) LAST_KNOWN_MODIFIED=meta.modifiedTime; });
           startConflictPolling();
           setStatus('Session restored — connected to Drive');
-        }).catch(()=>{ setStatus('Session restored — reconnect Drive to save changes','error'); });
+        }).catch(()=>{ setStatus('Session restored — <span onclick="reconnectDrive()" style="text-decoration:underline;cursor:pointer;font-weight:700">click here to reconnect Drive</span> to save changes','error',true); });
         return;
       }
     }
