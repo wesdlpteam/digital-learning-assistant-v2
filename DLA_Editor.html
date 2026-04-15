@@ -296,6 +296,21 @@
         <div id="comparison-grid"></div>
       </div>
 
+      <!-- Bulk AI Edit -->
+      <div class="card" style="margin-bottom:14px">
+        <span class="label">Bulk AI Edit</span>
+        <p style="font-size:13px;color:var(--dim);margin-bottom:14px;line-height:1.6">Describe a change in plain English. Gemini 3.1 Pro will analyse all entries and propose specific changes for you to approve or decline.</p>
+        <textarea id="bulk-ai-instruction" class="inp" rows="3" placeholder="e.g. Replace generic Adobe Express suggestions with more specific Animate from Audio or Podcasting versions where they connect to the unit theme" style="margin-bottom:12px;font-size:13px"></textarea>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <button class="btn-pri" id="btn-bulk-ai" onclick="runBulkAIEdit()">Analyse & Propose Changes →</button>
+          <span id="bulk-ai-status" style="font-size:13px;font-weight:600"></span>
+        </div>
+        <div id="bulk-ai-progress" style="display:none;margin-top:14px;padding:12px 16px;background:var(--card2);border-radius:10px;border:1px solid var(--border)">
+          <div style="font-size:13px;color:var(--lime);font-weight:600;margin-bottom:8px" id="bulk-ai-label">Analysing entries…</div>
+          <div style="height:5px;background:var(--card);border-radius:3px"><div id="bulk-ai-bar" style="height:100%;border-radius:3px;background:var(--lime);width:0%;transition:width .4s"></div></div>
+        </div>
+      </div>
+
       <!-- Run Surgeon -->
       <div class="card" style="margin-bottom:14px">
         <span class="label">Run Surgeon</span>
@@ -1012,6 +1027,10 @@ function buildSugRow(sug, entryIdx, sugIdx){
   const uid = `s${entryIdx}_${sugIdx}`;
   const tool = sugTool(sug);
   const desc = sugDesc(sug);
+  const url = sug.url || null;
+  const linkHtml = url
+    ? `<a href="${esc(url)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--lime);text-decoration:none;font-weight:700;margin-top:6px;padding:3px 8px;border:1px solid var(--lime);border-radius:6px">↗ View lesson</a>`
+    : '';
   return `<div class="sug" id="${uid}">
     <div class="sug-main">
       <div style="display:flex;align-items:center;gap:8px">
@@ -1020,6 +1039,7 @@ function buildSugRow(sug, entryIdx, sugIdx){
         <button class="btn-sm" onclick="openFeedbackChat('${uid}',${entryIdx},${sugIdx})">💬 feedback</button>
       </div>
       <div class="sug-desc">${esc(desc)}</div>
+      ${linkHtml}
     </div>
   </div>`;
 }
@@ -1284,7 +1304,9 @@ function normSug(s){
   const t=sugTool(s).trim();
   const d=sugDesc(s).trim();
   if(!t) return null;
-  return {t, d};
+  const out = {t, d};
+  if(s.url) out.url = s.url;
+  return out;
 }
 
 function normEntry(e){
@@ -1540,6 +1562,141 @@ function toggleToolDrilldown(row, toolName){
 
 
 
+
+function showChangesPopup(changes){
+  const existing=document.getElementById('changes-popup-overlay');
+  if(existing) existing.remove();
+  const states=changes.map(()=>'pending');
+
+  const overlay=document.createElement('div');
+  overlay.id='changes-popup-overlay';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px';
+
+  const popup=document.createElement('div');
+  popup.style.cssText='background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;max-width:780px;width:100%;height:88vh;max-height:860px;display:flex;flex-direction:column;gap:0;box-sizing:border-box';
+
+  const header=document.createElement('div');
+  header.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-shrink:0';
+  header.innerHTML=`<div style="width:10px;height:10px;border-radius:50%;background:var(--lime)"></div>
+    <h3 style="font-size:18px;font-weight:900">Review Proposed Changes</h3>
+    <span id="popup-counter" style="font-size:13px;color:var(--dim);margin-left:auto"></span>`;
+  popup.appendChild(header);
+
+  const subline=document.createElement('p');
+  subline.style.cssText='font-size:13px;color:var(--dim);margin-bottom:18px;flex-shrink:0';
+  subline.textContent='Approve or decline each suggestion individually, then apply your approved changes.';
+  popup.appendChild(subline);
+
+  const rowsEl=document.createElement('div');
+  rowsEl.style.cssText='overflow-y:auto;flex:1;min-height:0;display:flex;flex-direction:column;gap:12px;margin-bottom:16px;padding-right:4px';
+
+  function updateCounter(){
+    const approved=states.filter(s=>s==='approved').length;
+    const declined=states.filter(s=>s==='declined').length;
+    const pending=states.filter(s=>s==='pending').length;
+    document.getElementById('popup-counter').textContent=`${approved} approved · ${declined} declined · ${pending} pending`;
+    const applyBtn=document.getElementById('popup-apply-btn');
+    if(applyBtn){
+      const n=states.filter(s=>s==='approved').length;
+      applyBtn.textContent=`✓ Apply ${n} approved change${n!==1?'s':''}`;
+      applyBtn.disabled=n===0;
+      applyBtn.style.opacity=n===0?'0.4':'1';
+    }
+  }
+
+  changes.forEach((c,ci)=>{
+    const e=DATA[c.entryIdx];
+    const oldSug=getSugs(e)[c.sugIdx];
+    const oldTool=oldSug?sugTool(oldSug):'(empty slot)';
+    const oldDesc=oldSug?sugDesc(oldSug):'';
+    const newTool=c.t||c.tool||c.technology||c.name||'(unknown tool)';
+    const newDesc=c.d||c.desc||c.description||c.integration_idea||c.activity||'';
+
+    const card=document.createElement('div');
+    card.id=`change-card-${ci}`;
+    card.style.cssText='background:var(--card2);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .15s;flex-shrink:0';
+
+    const entryRow=document.createElement('div');
+    entryRow.style.cssText='display:flex;align-items:center;gap:8px;padding:12px 16px;user-select:none';
+    entryRow.innerHTML=`<span style="font-size:12px;color:var(--dim);width:90px;flex-shrink:0">${esc(e?e.ca:'')}</span>
+      <span style="font-size:12px;color:var(--gold);font-weight:700;width:62px;flex-shrink:0">${esc(e?e.yl:'')}</span>
+      <span style="font-size:14px;font-weight:700;flex:1">${esc(e?e.th:'')}</span>
+      <span id="card-status-${ci}" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--card);color:var(--dim)">PENDING</span>`;
+
+    const detail=document.createElement('div');
+    detail.style.cssText='padding:0 16px 14px;display:block';
+    detail.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+      <div style="padding:8px 10px;background:#1a0808;border:1px solid #3a1818;border-radius:8px">
+        <div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:700">Replacing</div>
+        <div style="font-size:13px;font-weight:800;color:#ff9999;margin-bottom:3px">${esc(oldTool)}</div>
+        <div style="font-size:11px;color:#777;line-height:1.5">${esc((oldDesc||'No description').slice(0,220))}</div>
+      </div>
+      <div style="padding:8px 10px;background:#081808;border:1px solid #183818;border-radius:8px">
+        <div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:700">New suggestion</div>
+        <div style="font-size:13px;font-weight:800;color:var(--lime);margin-bottom:3px">${esc(newTool)}</div>
+        <div style="font-size:11px;color:#aaa;line-height:1.5">${esc(newDesc.slice(0,220))}</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button onclick="setChangeState(${ci},'approved')" id="btn-approve-${ci}"
+        style="flex:1;padding:10px 8px;border-radius:9px;border:2px solid var(--lime);background:transparent;color:var(--lime);font-weight:900;font-size:14px;cursor:pointer;transition:all .12s"
+        onmouseover="this.style.background='var(--lime)';this.style.color='#111'"
+        onmouseout="this.style.background='transparent';this.style.color='var(--lime)'">✓ Approve</button>
+      <button onclick="setChangeState(${ci},'declined')" id="btn-decline-${ci}"
+        style="flex:1;padding:10px 8px;border-radius:9px;border:2px solid #FF8080;background:transparent;color:#FF8080;font-weight:900;font-size:14px;cursor:pointer;transition:all .12s"
+        onmouseover="this.style.background='#FF8080';this.style.color='#111'"
+        onmouseout="this.style.background='transparent';this.style.color='#FF8080'">✗ Decline</button>
+    </div>`;
+
+    card.appendChild(entryRow);
+    card.appendChild(detail);
+    rowsEl.appendChild(card);
+  });
+
+  popup.appendChild(rowsEl);
+
+  const footer=document.createElement('div');
+  footer.style.cssText='display:flex;gap:10px;flex-shrink:0;padding-top:12px;border-top:1px solid var(--border);flex-wrap:wrap';
+  footer.innerHTML=`
+    <button id="popup-apply-btn" disabled onclick="applyChangesFromPopup()"
+      style="flex:1;min-width:180px;padding:14px;background:var(--lime);color:#111;border:none;border-radius:10px;font-weight:900;font-size:15px;cursor:pointer;opacity:0.4">
+      ✓ Apply 0 approved changes
+    </button>
+    <button onclick="document.getElementById('changes-popup-overlay').remove()"
+      style="padding:14px 20px;background:transparent;color:var(--dim);border:1.5px solid var(--border);border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;min-width:80px">
+      Close
+    </button>`;
+  popup.appendChild(footer);
+  overlay.appendChild(popup);
+  overlay._changes=changes;
+  overlay._states=states;
+  document.body.appendChild(overlay);
+  window._popupStates=states;
+  window._popupChanges=changes;
+  window._popupUpdateCounter=updateCounter;
+  updateCounter();
+}
+
+function setChangeState(ci, state){
+  const states=window._popupStates; if(!states) return;
+  states[ci]=state;
+  const card=document.getElementById(`change-card-${ci}`);
+  const statusEl=document.getElementById(`card-status-${ci}`);
+  const approveBtn=document.getElementById(`btn-approve-${ci}`);
+  const declineBtn=document.getElementById(`btn-decline-${ci}`);
+  if(state==='approved'){
+    if(card) card.style.borderColor='var(--lime)';
+    if(statusEl){ statusEl.textContent='APPROVED'; statusEl.style.background='var(--lime)'; statusEl.style.color='#111'; }
+    if(approveBtn){ approveBtn.style.background='var(--lime)'; approveBtn.style.color='#111'; }
+    if(declineBtn){ declineBtn.style.background='transparent'; declineBtn.style.color='#FF8080'; }
+  } else {
+    if(card) card.style.borderColor='#FF8080';
+    if(statusEl){ statusEl.textContent='DECLINED'; statusEl.style.background='#FF8080'; statusEl.style.color='#111'; }
+    if(declineBtn){ declineBtn.style.background='#FF8080'; declineBtn.style.color='#111'; }
+    if(approveBtn){ approveBtn.style.background='transparent'; approveBtn.style.color='var(--lime)'; }
+  }
+  if(window._popupUpdateCounter) window._popupUpdateCounter();
+}
 
 function applyChangesFromPopup(){
   const overlay=document.getElementById('changes-popup-overlay');
@@ -2175,6 +2332,122 @@ async function fixAllOfType(type){
   if(lbl) lbl.textContent=`Done — ${fixed} fixed, ${failed} failed`;
   renderDashboard();
   setStatus(`Fixed ${fixed} ${type} issue${fixed!==1?'s':''}`);
+}
+
+async function runBulkAIEdit(){
+  const instruction = document.getElementById('bulk-ai-instruction')?.value.trim();
+  if(!instruction){ 
+    const s = document.getElementById('bulk-ai-status');
+    s.textContent='⚠ Please describe what you want to change'; s.style.color='#f87171'; return;
+  }
+
+  const btn = document.getElementById('btn-bulk-ai');
+  const statusEl = document.getElementById('bulk-ai-status');
+  const prog = document.getElementById('bulk-ai-progress');
+  const lbl = document.getElementById('bulk-ai-label');
+  const bar = document.getElementById('bulk-ai-bar');
+
+  btn.disabled = true;
+  statusEl.textContent = '';
+  prog.style.display = 'block';
+  lbl.textContent = 'Sending to Gemini 3.1 Pro…';
+  bar.style.width = '20%';
+
+  // Build full context
+  const toolIndex = {};
+  DATA.forEach((e,i)=>{
+    getSugs(e).forEach((s,si)=>{
+      const t = sugTool(s).trim().toLowerCase();
+      if(!t) return;
+      if(!toolIndex[t]) toolIndex[t]=[];
+      toolIndex[t].push({entryIdx:i, sugIdx:si});
+    });
+  });
+  const toolIndexStr = Object.entries(toolIndex)
+    .sort((a,b)=>b[1].length-a[1].length)
+    .map(([tool,entries])=>`${tool} (${entries.length}x): `+entries.map(e=>`[${e.entryIdx}]s${e.sugIdx}`).join(', '))
+    .join('\n');
+
+  const fullContext = DATA.map((e,i)=>{
+    const sugs = getSugs(e);
+    const sugStr = sugs.map((s,si)=>`  ${si+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n');
+    return `[${i}] ${e.ca} | ${e.yl} | ${e.th}${e.ci?'\n  CI: '+e.ci:''}${sugs.length?'\n  Suggestions:\n'+sugStr:''}`;
+  }).join('\n\n');
+
+  const system = `You are a Digital Learning Coach at Wesley College, an IB PYP school.
+
+APPROVED TOOLS (Wesley College — Microsoft school):
+- Microsoft M365 (Teams for Year 4+ ONLY), Beebots, Sphero, Lego Spike, Micro:bits, CoDrone, Makey Makey
+- 3D Printers, ClassVR, Merge Cubes, Green Screen, Podcast Equipment, iPads
+- Seesaw, Canva, Book Creator, Padlet
+- GarageBand, ScratchJR, Stop Motion Studio, ChatterPix Kids, iMovie, Puppet Pals, Adobe Express
+- Google Maps, Google Earth, Field Guide to Victoria, Sky Map, Geoboard
+- Clickview, Epic, PicCollage, Brushes Redux, Word Clouds ABCya, Sketchbook, Explain Everything, Freeform, Delightex, Kahoot, Tinkercad, Minecraft Education
+
+TOOL INDEX (exact location of every suggestion):
+${toolIndexStr}
+
+INSTRUCTION FROM COORDINATOR: ${instruction}
+
+Analyse ALL ${DATA.length} entries and propose ONLY the changes that genuinely fulfil the instruction. Be selective — only propose a change where there is a clear, specific benefit. Do not change entries that are already appropriate.
+
+For each proposed change, use the exact entryIdx and sugIdx from the TOOL INDEX above.
+
+Respond with your reasoning (2-3 sentences), then end with:
+APPLY_CHANGES:[{"entryIdx":3,"sugIdx":1,"t":"Tool Name","d":"Specific description connected to the unit."}]
+
+The JSON must be complete and valid. Include ALL proposed changes in one array.
+
+FULL ENTRY DATA:
+${fullContext}`;
+
+  try{
+    bar.style.width = '60%';
+    lbl.textContent = 'Analysing all entries…';
+
+    const response = await callGemini(
+      [{role:'user', parts:[{text:'Please carry out the instruction and propose changes.'}]}],
+      system,
+      'gemini-3.1-pro-preview'
+    );
+
+    bar.style.width = '90%';
+    lbl.textContent = 'Parsing proposed changes…';
+
+    // Parse APPLY_CHANGES
+    const changeMatch = response.match(/APPLY_CHANGES:\s*([\s\S]*?)(?:\s*$)/s);
+    let changes = null;
+    if(changeMatch){
+      try{
+        const jsonStr = changeMatch[1].trim();
+        const arrStart = jsonStr.indexOf('[');
+        const arrEnd = jsonStr.lastIndexOf(']');
+        if(arrStart !== -1 && arrEnd !== -1){
+          const raw = JSON.parse(cleanGeminiJSON(jsonStr.slice(arrStart, arrEnd+1)));
+          changes = normaliseChanges(raw);
+        }
+      }catch(err){
+        console.error('Bulk AI parse error', err);
+      }
+    }
+
+    bar.style.width = '100%';
+    prog.style.display = 'none';
+
+    if(changes && changes.length){
+      statusEl.style.color = 'var(--lime)';
+      statusEl.textContent = `✓ ${changes.length} change${changes.length!==1?'s':''} proposed — review below`;
+      showChangesPopup(changes);
+    } else {
+      statusEl.style.color = 'var(--dim)';
+      statusEl.textContent = 'No changes proposed — try rephrasing your instruction';
+    }
+  }catch(e){
+    prog.style.display = 'none';
+    statusEl.style.color = '#f87171';
+    statusEl.textContent = '✗ ' + e.message;
+  }
+  btn.disabled = false;
 }
 
 async function runSurgeon(){
