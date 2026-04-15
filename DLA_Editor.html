@@ -493,6 +493,11 @@ const CAMPUS_COL = { Elsternwick:'#818cf8', 'Glen Waverley':'#34d399', 'St Kilda
 
 function getKey(){ return localStorage.getItem('dla_api_key')||BAKED_API_KEY; }
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+function recordChange(idx, oldSugs, newSugs){
+  CHANGE_HISTORY.unshift({ idx, oldSugs, newSugs, ts: Date.now() });
+  if(CHANGE_HISTORY.length > MAX_HISTORY) CHANGE_HISTORY.pop();
+}
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function caCol(ca){ return CAMPUS_COL[normCa(ca)]||CAMPUS_COL[ca]||'#818cf8'; }
 
