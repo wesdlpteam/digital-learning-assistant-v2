@@ -416,9 +416,19 @@ button:disabled{opacity:.4;cursor:not-allowed}
             <button class="btn-pri" onclick="fetchLibraryURL()" id="btn-fetch-url" style="white-space:nowrap;padding:10px 18px">Fetch</button>
           </div>
           <div id="library-paste-section" style="display:none">
-            <p style="font-size:12px;color:#fbbf24;margin-bottom:8px">⚠ That URL couldn't be fetched directly (site blocked access). Paste the page content manually instead:</p>
-            <textarea id="library-paste-input" class="inp" rows="5" placeholder="Copy all text from the lesson library page and paste it here..." style="margin-bottom:8px;font-size:12px"></textarea>
-            <button class="btn-pri" onclick="useLibraryPaste()" style="font-size:12px;padding:8px 16px">Use this content</button>
+            <div id="library-known-platform" style="display:none;padding:12px 14px;background:#0a1a0a;border:1px solid var(--lime);border-radius:10px;margin-bottom:10px">
+              <div style="font-size:12px;font-weight:800;color:var(--lime);margin-bottom:4px" id="library-known-title">✓ Known platform detected</div>
+              <div style="font-size:12px;color:#aaa;line-height:1.5;margin-bottom:10px" id="library-known-desc">The AI Coach has built-in knowledge of this lesson library and can cross-reference it directly — no copy-paste needed.</div>
+              <button onclick="useAIKnowledge()" style="padding:8px 18px;background:var(--lime);color:#111;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer">Use AI's built-in knowledge →</button>
+            </div>
+            <div id="library-paste-manual">
+              <p style="font-size:12px;color:#fbbf24;margin-bottom:8px">⚠ That URL couldn't be fetched directly (the site blocks automated access). Paste the page content below, or use the AI's built-in knowledge if it knows this platform.</p>
+              <textarea id="library-paste-input" class="inp" rows="5" placeholder="Copy all text from the lesson library page and paste it here..." style="margin-bottom:8px;font-size:12px"></textarea>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                <button class="btn-pri" onclick="useLibraryPaste()" style="font-size:12px;padding:8px 16px">Use this content</button>
+                <button onclick="useAIKnowledge()" style="padding:8px 16px;background:transparent;color:var(--lime);border:1px solid var(--lime);border-radius:8px;font-weight:700;font-size:12px;cursor:pointer">Use AI's built-in knowledge instead</button>
+              </div>
+            </div>
           </div>
           <p style="font-size:11px;color:var(--dim);line-height:1.6">Once loaded, the AI Coach can cross-reference the library against all your planners and suggest where lessons fit.</p>
         </div>
@@ -1694,15 +1704,28 @@ function getCoachSystem(){
   }).join('\n\n');
 
   // Include external library content if loaded
-  const librarySection = LIBRARY_CONTENT
-    ? `
+  let librarySection = '';
+  if(LIBRARY_CONTENT){
+    const isAIKnowledge = LIBRARY_CONTENT.startsWith('[AI_KNOWLEDGE:');
+    const platformName = isAIKnowledge
+      ? LIBRARY_CONTENT.replace('[AI_KNOWLEDGE:','').replace(']','')
+      : LIBRARY_SOURCE;
+    librarySection = isAIKnowledge
+      ? `
+
+EXTERNAL LESSON LIBRARY — AI KNOWLEDGE MODE (${platformName}):
+Draw on your full training knowledge of the ${platformName} lesson library. Reference specific lesson titles, subject areas, year level recommendations, and curriculum connections from ${platformName} when making suggestions. The user wants you to map ${platformName} lessons to Wesley's IB PYP units.
+
+IMPORTANT — LINKS: For every ${platformName} lesson you mention, include a direct clickable link using Markdown format: [Lesson Title](https://...). Use the real URL for that lesson on the ${platformName} website. Teachers will click these links to view the full lesson details. If you are not certain of the exact URL for a specific lesson, link to the most relevant section of the ${platformName} lesson library instead.
+---`
+      : `
 
 EXTERNAL LESSON LIBRARY (${LIBRARY_SOURCE}):
 Use this content to find specific connections to Wesley's units. Reference actual lesson names and activities from the library when making recommendations.
 ---
 ${LIBRARY_CONTENT}
----`
-    : '';
+---`;
+  }
 
   return `You are an AI coaching assistant for the Wesley College Digital Learning Assistant. You help the Digital Learning Coach make thoughtful, strategic decisions about educational technology across ${DATA.length} IB PYP lesson entries.
 
@@ -1727,6 +1750,21 @@ function initChat(){
   renderChat();
 }
 
+// Convert basic markdown (links, bold) to safe HTML for chat bubbles
+function formatChatHTML(text){
+  return text
+    // Markdown links: [label](url) → clickable anchor (external, opens new tab)
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,
+      '<a href="$2" target="_blank" rel="noopener" style="color:var(--lime);text-decoration:underline;font-weight:600">$1 ↗</a>')
+    // Plain URLs not already in a link
+    .replace(/(?<![">])(https?:\/\/[^\s<"]+)/g,
+      '<a href="$1" target="_blank" rel="noopener" style="color:var(--lime);text-decoration:underline">$1 ↗</a>')
+    // Bold: **text**
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    // Newlines
+    .replace(/\n/g,'<br>');
+}
+
 function renderChat(){
   const el=document.getElementById('chat-messages'); if(!el) return;
   el.innerHTML='';
@@ -1743,7 +1781,7 @@ function renderChat(){
         .replace(/OPTIONS:\s*\[.*?\]/gs,'')
         .replace(/APPLY_CHANGES:\s*\[[\s\S]*?\]/,'')
         .trim();
-      bubble.innerHTML=clean.replace(/\n/g,'<br>');
+      bubble.innerHTML=formatChatHTML(clean);
     }
     wrap.appendChild(bubble);
     // Options buttons (only on last model message if no user reply yet)
@@ -2504,6 +2542,16 @@ function renderLiveUsed(rows){
 let LIBRARY_CONTENT = null; // stores the fetched/pasted library text
 let LIBRARY_SOURCE = '';    // URL or description of source
 
+// Known platforms Gemini has strong training knowledge of
+const KNOWN_PLATFORMS = [
+  { match: /minecraft/i,        name: 'Minecraft Education',   desc: 'Gemini has extensive knowledge of the Minecraft Education lesson library, including subject areas, year levels, and curriculum connections.' },
+  { match: /commonsense\.org/i, name: 'Common Sense Media',    desc: 'Gemini knows the Common Sense Education digital citizenship and media literacy curriculum.' },
+  { match: /tinkercad/i,        name: 'Tinkercad',             desc: "Gemini knows Tinkercad's lesson library for 3D design and circuits." },
+  { match: /code\.org/i,        name: 'Code.org',              desc: 'Gemini has strong knowledge of Code.org courses and lesson plans.' },
+  { match: /scratchfoundation|scratch\.mit/i, name: 'Scratch', desc: 'Gemini knows the Scratch educator resources and lesson library.' },
+  { match: /canva\.com\/edu/i,  name: 'Canva for Education',  desc: "Gemini knows Canva's education lesson templates and resources." },
+];
+
 async function fetchLibraryURL(){
   const input = document.getElementById('library-url-input');
   const url = input?.value.trim();
@@ -2511,40 +2559,71 @@ async function fetchLibraryURL(){
 
   const btn = document.getElementById('btn-fetch-url');
   const pasteSection = document.getElementById('library-paste-section');
+  const knownEl = document.getElementById('library-known-platform');
   btn.disabled = true; btn.textContent = 'Fetching…';
+  LIBRARY_SOURCE = url;
 
+  // Check if this is a known platform Gemini already knows well
+  const known = KNOWN_PLATFORMS.find(p => p.match.test(url));
+  if(known){
+    if(knownEl){
+      document.getElementById('library-known-title').textContent = '✓ ' + known.name + ' detected';
+      document.getElementById('library-known-desc').textContent = known.desc;
+      knownEl.style.display = 'block';
+    }
+    if(pasteSection) pasteSection.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Fetch';
+    return;
+  }
+
+  // For unknown URLs — try a chain of CORS proxies then fall back to paste
   try{
-    // Try fetching via a CORS proxy first, then direct
+    const proxies = [
+      u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
+      u => `https://api.allorigins.win/get?url=${encodeURIComponent(u)}`,
+      u => `https://thingproxy.freeboard.io/fetch/${u}`,
+    ];
     let text = null;
-    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-    try{
-      const r = await fetch(proxyUrl);
-      const d = await r.json();
-      if(d.contents && d.contents.length > 200){
-        // Strip HTML tags to get readable text
-        const tmp = document.createElement('div');
-        tmp.innerHTML = d.contents;
-        // Remove scripts and styles
-        tmp.querySelectorAll('script,style,nav,footer,header').forEach(el=>el.remove());
-        text = tmp.innerText || tmp.textContent || '';
-        text = text.replace(/\s{3,}/g,'\n\n').trim();
-      }
-    }catch{}
+    for(const makeProxy of proxies){
+      if(text) break;
+      try{
+        const r = await fetch(makeProxy(url), {signal: AbortSignal.timeout(7000)});
+        let raw = '';
+        const ct = r.headers.get('content-type')||'';
+        if(ct.includes('json')){
+          const d = await r.json();
+          raw = d.contents || d.body || '';
+        } else {
+          raw = await r.text();
+        }
+        if(raw.length > 200){
+          const tmp = document.createElement('div');
+          tmp.innerHTML = raw;
+          tmp.querySelectorAll('script,style,nav,footer,header,iframe').forEach(el=>el.remove());
+          const t = (tmp.innerText || tmp.textContent || '').replace(/\s{3,}/g,'\n\n').trim();
+          if(t.length > 200) text = t;
+        }
+      }catch{}
+    }
 
     if(text && text.length > 200){
       useLibraryContent(text, url);
       if(pasteSection) pasteSection.style.display = 'none';
     } else {
-      // Fetching failed — show paste fallback
       if(pasteSection) pasteSection.style.display = 'block';
-      LIBRARY_SOURCE = url;
     }
   }catch(e){
-    const pasteSection = document.getElementById('library-paste-section');
     if(pasteSection) pasteSection.style.display = 'block';
-    LIBRARY_SOURCE = url;
   }
   btn.disabled = false; btn.textContent = 'Fetch';
+}
+
+// Use Gemini's built-in training knowledge for a known platform
+function useAIKnowledge(){
+  const url = document.getElementById('library-url-input')?.value.trim() || LIBRARY_SOURCE;
+  const known = KNOWN_PLATFORMS.find(p => p.match.test(url)) || { name: url };
+  const sentinel = `[AI_KNOWLEDGE:${known.name}]`;
+  useLibraryContent(sentinel, known.name);
 }
 
 function useLibraryPaste(){
@@ -2570,8 +2649,13 @@ function useLibraryContent(text, source){
 
   if(loadedEl){
     loadedEl.style.display = 'block';
-    const wordCount = LIBRARY_CONTENT.split(/\s+/).length;
-    loadedEl.textContent = `✓ Library loaded — ${wordCount.toLocaleString()} words from ${source.length > 60 ? source.slice(0,60)+'…' : source}`;
+    const isAIKnowledge = LIBRARY_CONTENT.startsWith('[AI_KNOWLEDGE:');
+    if(isAIKnowledge){
+      loadedEl.textContent = `✓ AI knowledge mode — using built-in knowledge of ${source}`;
+    } else {
+      const wordCount = LIBRARY_CONTENT.split(/\s+/).length;
+      loadedEl.textContent = `✓ Library loaded — ${wordCount.toLocaleString()} words from ${source.length > 60 ? source.slice(0,60)+'…' : source}`;
+    }
   }
   if(inputRow) inputRow.style.display = 'none';
   if(pasteSection) pasteSection.style.display = 'none';
