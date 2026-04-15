@@ -1848,6 +1848,30 @@ async function sendChat(){
   await _doSendChat(msg);
 }
 
+// Cleans common Gemini JSON formatting issues before parsing
+function cleanGeminiJSON(s){
+  return s
+    // Remove markdown code fences
+    .replace(/```json|```/g,'')
+    // Unescaped newlines inside strings — replace literal newlines inside quotes with \n
+    .replace(/"([^"]*)"/g, (_,inner)=>'"'+inner.replace(/\n/g,'\\n').replace(/\r/g,'')+'"')
+    // Trailing commas before ] or }
+    .replace(/,\s*([\]}])/g,'$1')
+    .trim();
+}
+
+// Normalise change objects regardless of field names Gemini used
+function normaliseChanges(raw){
+  return raw
+    .filter(c=>c&&c.entryIdx!=null)
+    .map(c=>({
+      entryIdx: c.entryIdx!=null?c.entryIdx:(c.entry_idx!=null?c.entry_idx:0),
+      sugIdx:   c.sugIdx!=null?c.sugIdx:(c.sug_idx!=null?c.sug_idx:0),
+      t: c.t||c.tool||c.technology||c.name||c.toolName||'',
+      d: c.d||c.desc||c.description||c.integration_idea||c.activity||c.suggestion||''
+    }));
+}
+
 async function _doSendChat(msg){
   const btn=document.getElementById('btn-send');
   btn.disabled=true;
@@ -1869,28 +1893,44 @@ async function _doSendChat(msg){
     }
     // Parse APPLY_CHANGES
     let changes=null;
-    const changeMatch=response.match(/APPLY_CHANGES:\s*(\[[\s\S]*?\])/s);
+    const changeMatch=response.match(/APPLY_CHANGES:\s*([\s\S]*?)(?=\n\n|$)/s);
     if(changeMatch){
       try{
-        const raw=JSON.parse(changeMatch[1]);
-        // Normalise — Gemini sometimes uses different field names
-        changes=raw.map(c=>({
-          entryIdx: c.entryIdx!=null?c.entryIdx:(c.entry_idx!=null?c.entry_idx:0),
-          sugIdx:   c.sugIdx!=null?c.sugIdx:(c.sug_idx!=null?c.sug_idx:0),
-          t: c.t||c.tool||c.technology||c.name||c.toolName||'',
-          d: c.d||c.desc||c.description||c.integration_idea||c.activity||c.suggestion||''
-        }));
+        // Extract the JSON array — grab from first [ to last ]
+        const jsonStr = changeMatch[1].trim();
+        const arrStart = jsonStr.indexOf('[');
+        const arrEnd = jsonStr.lastIndexOf(']');
+        if(arrStart===-1||arrEnd===-1) throw new Error('No array found');
+        const raw=JSON.parse(cleanGeminiJSON(jsonStr.slice(arrStart, arrEnd+1)));
+        changes=normaliseChanges(raw);
       }catch(err){
-        console.error('APPLY_CHANGES parse error',err);
-        // Show a visible warning so the user knows to ask Gemini to retry
-        const rawBlock = changeMatch[1];
-        const truncated = rawBlock.length > 100 && !rawBlock.trim().endsWith(']');
-        changes = null;
-        CHAT_HISTORY.push({role:'model',
-          text: truncated
-            ? '⚠ The changes list was too long and got cut off before it could be parsed. Please ask me to "try again with the changes in smaller batches of 10 at a time".'
-            : '⚠ Could not parse the proposed changes (invalid format). Please ask me to "retry proposing the changes".',
-          changes:null, options:['Try again in batches of 10','Retry proposing changes']});
+        console.warn('APPLY_CHANGES direct parse failed, trying recovery…', err.message);
+        // Recovery: extract individual {...} objects containing entryIdx
+        const recovered=[];
+        const src=changeMatch[1];
+        // Find all {...} blobs that look like change objects
+        let depth=0, start=-1;
+        for(let i=0;i<src.length;i++){
+          if(src[i]==='{'){if(depth===0)start=i;depth++;}
+          else if(src[i]==='}'){depth--;if(depth===0&&start!==-1){
+            try{
+              const obj=JSON.parse(cleanGeminiJSON(src.slice(start,i+1)));
+              if(obj.entryIdx!=null) recovered.push(obj);
+            }catch{}
+            start=-1;
+          }}
+        }
+        if(recovered.length){
+          changes=normaliseChanges(recovered);
+          console.log('Recovered',changes.length,'changes from partial JSON');
+        } else {
+          const truncated=!changeMatch[1].trim().match(/\]\s*$/);
+          CHAT_HISTORY.push({role:'model',
+            text: truncated
+              ? '⚠ The changes list was cut off before it finished. Ask me to "retry in batches of 10".'
+              : '⚠ Could not parse the proposed changes. Ask me to "retry proposing the changes".',
+            changes:null, options:['Retry in batches of 10','Retry proposing changes']});
+        }
       }
     }
     CHAT_HISTORY.push({role:'model',text:response,changes,options});
