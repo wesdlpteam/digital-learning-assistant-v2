@@ -726,21 +726,16 @@ function startConflictPolling(){
 }
 
 function updateConflictBar(msg){
-  let bar=document.getElementById('conflict-bar');
-  if(!bar){
-    bar=document.createElement('div');
-    bar.id='conflict-bar';
-    bar.style.cssText='position:fixed;top:0;left:0;right:0;z-index:999;padding:10px 20px;background:#7C5CFF;color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;gap:12px;display:none';
-    bar.innerHTML=`<span id="conflict-bar-msg" style="flex:1"></span>
-      <button onclick="reloadFromDrive()" style="background:rgba(255,255,255,0.2);border:none;color:#fff;padding:5px 14px;border-radius:6px;cursor:pointer;font-weight:700;font-size:12px">Reload latest</button>
-      <button onclick="updateConflictBar(null)" style="background:transparent;border:none;color:rgba(255,255,255,0.7);cursor:pointer;font-size:16px;padding:0 4px">✕</button>`;
-    document.body.prepend(bar);
-  }
   if(msg){
-    document.getElementById('conflict-bar-msg').textContent='⚠ '+msg;
-    bar.style.display='flex';
-  } else {
-    bar.style.display='none';
+    setStatus('⚠ '+msg+' — ', 'error', true);
+    const el=document.getElementById('status-bar');
+    if(el){
+      const link=document.createElement('span');
+      link.textContent='Reload latest';
+      link.style.cssText='text-decoration:underline;cursor:pointer;font-weight:700';
+      link.onclick=reloadFromDrive;
+      el.appendChild(link);
+    }
   }
 }
 
@@ -1021,7 +1016,6 @@ function renderEntry(idx){
   document.getElementById('btn-regen-all').textContent=`Generate 5 new suggestions for ${e.yl}`;
 }
 
-const SUG_CHATS = {}; 
 
 function buildSugRow(sug, entryIdx, sugIdx){
   const uid = `s${entryIdx}_${sugIdx}`;
@@ -1045,195 +1039,113 @@ function buildSugRow(sug, entryIdx, sugIdx){
 }
 
 function openFeedbackChat(uid, entryIdx, sugIdx){
-  
   document.querySelectorAll('.sug-chat-window').forEach(el=>{
     if(el.id !== uid+'-chat') el.remove();
   });
-
-  
   const existing = document.getElementById(uid+'-chat');
   if(existing){ existing.remove(); return; }
 
   const entry = DATA[entryIdx];
   const sug = getSugs(entry)[sugIdx];
-
-  
-  if(!SUG_CHATS[uid]){
-    SUG_CHATS[uid] = {
-      entryIdx, sugIdx,
-      history: []
-    };
-  }
-
-  
   const sugEl = document.getElementById(uid);
   if(!sugEl) return;
 
-  const chatWin = document.createElement('div');
-  chatWin.id = uid+'-chat';
-  chatWin.className = 'sug-chat-window';
-  chatWin.style.cssText = 'background:#0a0f0a;border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;overflow:hidden;margin-bottom:12px';
-
-  chatWin.innerHTML = `
+  const panel = document.createElement('div');
+  panel.id = uid+'-chat';
+  panel.className = 'sug-chat-window';
+  panel.style.cssText = 'background:#0a0f0a;border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;overflow:hidden;margin-bottom:12px';
+  panel.innerHTML = `
     <div style="padding:10px 16px;background:var(--card2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
-      <span style="font-size:11px;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:.5px">Feedback Chat</span>
+      <span style="font-size:11px;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:.5px">Edit Suggestion</span>
       <span style="font-size:11px;color:var(--gold);font-weight:600">${esc(sugTool(sug))}</span>
       <div style="flex:1"></div>
       <button onclick="document.getElementById('${uid}-chat').remove()" style="background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:16px;padding:0">✕</button>
     </div>
-    <div id="${uid}-msgs" style="padding:14px 16px;max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:10px"></div>
-    <div style="display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--border);background:var(--card2)">
-      <input id="${uid}-input" class="inp" placeholder="e.g. make it more hands-on, try a different tool..." style="flex:1;margin-bottom:0;font-size:13px">
-      <button class="btn-pri" id="${uid}-send" onclick="sendSugFeedback('${uid}')" style="padding:10px 16px;font-size:13px">Send</button>
+    <div style="padding:12px 16px;border-top:1px solid var(--border);background:var(--card2)">
+      <div style="font-size:11px;color:var(--dim);margin-bottom:8px;line-height:1.5">Describe what you want changed — Gemini 2.5 Pro will apply it instantly.</div>
+      <div style="display:flex;gap:8px">
+        <input id="${uid}-input" class="inp" placeholder="e.g. make it more hands-on, use a different tool, connect to the provocation..." style="flex:1;margin-bottom:0;font-size:13px" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();applySugFeedbackDirect('${uid}',${entryIdx},${sugIdx})}">
+        <button class="btn-pri" id="${uid}-send" onclick="applySugFeedbackDirect('${uid}',${entryIdx},${sugIdx})" style="padding:10px 16px;font-size:13px;white-space:nowrap">Apply →</button>
+      </div>
+      <div id="${uid}-result" style="margin-top:10px"></div>
     </div>`;
 
-  sugEl.after(chatWin);
-
-  
-  chatWin.querySelector(`#${uid}-input`).addEventListener('keydown', e=>{
-    if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendSugFeedback(uid); }
-  });
-
-  
-  renderSugChat(uid);
-
-  
-  if(!SUG_CHATS[uid].history.length){
-    addSugMsg(uid, 'model', `Hi! I'm looking at **${sugTool(sug)}** — "${sugDesc(sug).slice(0,80)}${sugDesc(sug).length>80?'…':''}"\n\nWhat would you like to change about this suggestion?`);
-  }
-
-  chatWin.querySelector(`#${uid}-input`).focus();
+  sugEl.after(panel);
+  panel.querySelector(`#${uid}-input`).focus();
 }
 
-function addSugMsg(uid, role, text){
-  const chat = SUG_CHATS[uid]; if(!chat) return;
-  chat.history.push({role, text});
-  renderSugChat(uid);
-}
-
-function renderSugChat(uid){
-  const msgsEl = document.getElementById(uid+'-msgs'); if(!msgsEl) return;
-  const chat = SUG_CHATS[uid]; if(!chat) return;
-  msgsEl.innerHTML = '';
-  chat.history.forEach((msg, i)=>{
-    const isUser = msg.role==='user';
-    const wrap = document.createElement('div');
-    wrap.style.cssText = `display:flex;justify-content:${isUser?'flex-end':'flex-start'}`;
-    const bubble = document.createElement('div');
-    bubble.style.cssText = `max-width:85%;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.6;`
-      + (isUser
-        ? 'background:var(--gold);color:#111;font-weight:600'
-        : 'background:var(--card);border:1px solid var(--border);color:var(--text);white-space:pre-wrap');
-
-    
-    const clean = msg.text.replace(/PROPOSED:\s*\{[\s\S]*?\}/,'').trim();
-    bubble.textContent = clean;
-
-    
-    const proposalMatch = msg.text.match(/PROPOSED:\s*(\{[\s\S]*?\})/);
-    wrap.appendChild(bubble);
-    if(proposalMatch && msg.role==='model'){
-      try{
-        const newSug = JSON.parse(proposalMatch[1]);
-        const applyWrap = document.createElement('div');
-        applyWrap.style.cssText = 'display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-top:4px';
-        const preview = document.createElement('div');
-        preview.style.cssText = 'padding:10px 14px;background:#0a1a0a;border:1px solid var(--lime);border-radius:8px;max-width:85%';
-        preview.innerHTML = `<div style="font-size:11px;color:var(--lime);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Proposed replacement</div>
-          <div style="font-size:13px;font-weight:700;color:var(--lime);margin-bottom:2px">${esc(newSug.t||newSug.tool||'')}</div>
-          <div style="font-size:12px;color:#aaa;line-height:1.5">${esc(newSug.d||newSug.desc||newSug.description||'')}</div>`;
-        const applyBtn = document.createElement('button');
-        applyBtn.style.cssText = 'background:var(--lime);color:#111;border:none;padding:7px 16px;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer';
-        applyBtn.textContent = '✓ Apply this change';
-        applyBtn.onclick = ()=> applySugFeedback(chat.entryIdx, chat.sugIdx, uid, newSug, applyBtn);
-        const discardBtn = document.createElement('button');
-        discardBtn.style.cssText = 'background:transparent;border:1px solid var(--border);color:var(--dim);padding:7px 14px;border-radius:8px;font-weight:600;font-size:12px;cursor:pointer';
-        discardBtn.textContent = 'Keep going';
-        discardBtn.onclick = ()=>{ applyWrap.remove(); };
-        applyWrap.appendChild(preview);
-        const btnRow = document.createElement('div');
-        btnRow.style.cssText='display:flex;gap:8px';
-        btnRow.appendChild(applyBtn); btnRow.appendChild(discardBtn);
-        applyWrap.appendChild(btnRow);
-        wrap.insertAdjacentElement('afterend', applyWrap);
-      }catch{}
-    }
-    msgsEl.appendChild(wrap);
-  });
-  msgsEl.scrollTop = msgsEl.scrollHeight;
-}
-
-async function sendSugFeedback(uid){
-  const chat = SUG_CHATS[uid]; if(!chat) return;
+async function applySugFeedbackDirect(uid, entryIdx, sugIdx){
   const input = document.getElementById(uid+'-input');
   const sendBtn = document.getElementById(uid+'-send');
-  const msg = input?.value.trim(); if(!msg) return;
-  input.value = '';
+  const resultEl = document.getElementById(uid+'-result');
+  const instruction = input?.value.trim();
+  if(!instruction) return;
+
+  const entry = DATA[entryIdx];
+  const sug = getSugs(entry)[sugIdx];
+  const others = getSugs(entry).filter((_,i)=>i!==sugIdx).map(s=>sugTool(s)).join(', ');
+
   sendBtn.disabled = true;
+  sendBtn.textContent = 'Thinking…';
+  resultEl.innerHTML = '';
 
-  addSugMsg(uid, 'user', msg);
+  const prompt = `You are a Digital Learning Coach at Wesley College improving a specific technology suggestion for an IB PYP unit.
 
-  const entry = DATA[chat.entryIdx];
-  const sug = getSugs(entry)[chat.sugIdx];
-  const others = getSugs(entry).filter((_,i)=>i!==chat.sugIdx).map(s=>sugTool(s)).join(', ');
-
-  const system = `You are helping a teacher at Wesley College improve a specific technology suggestion for an IB PYP unit.
-Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${entry.lo?`\nLines of Inquiry: "${entry.lo}"`:''}${entry.plannerText?`\nPlanner content: ${entry.plannerText}`:''}
+Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${entry.plannerText?`\nPlanner: ${entry.plannerText}`:''}
 Current suggestion: ${sugTool(sug)} — ${sugDesc(sug)}
 Other tools already in this unit (do not repeat): ${others||'none'}
 
-APPROVED TOOLS ONLY — suggest only from Wesley's approved list: Microsoft M365 (Teams for Year 4+ ONLY), Beebots, Sphero, Lego Spike, Micro:bits, CoDrone, Makey Makey, 3D Printers, ClassVR, Merge Cubes, Green Screen, Podcast Equipment, iPads, Seesaw, Canva, Book Creator, Padlet, GarageBand, ScratchJR, Stop Motion Studio, ChatterPix, iMovie, Puppet Pals, Adobe Express, Google Maps, Google Earth, Field Guide to Victoria, Sky Map, Geoboard, Clickview, Epic, PicCollage, Brushes Redux, Word Clouds ABCya, Sketchbook, Explain Everything, Freeform, Delightex, Kahoot, Tinkercad, Minecraft Education.
+APPROVED TOOLS ONLY (Microsoft Teams for Year 4+ only): Microsoft M365, Beebots, Sphero, Lego Spike, Micro:bits, CoDrone, Makey Makey, 3D Printers, ClassVR, Merge Cubes, Green Screen, Podcast Equipment, iPads, Seesaw, Canva, Book Creator, Padlet, GarageBand, ScratchJR, Stop Motion Studio, ChatterPix Kids, iMovie, Puppet Pals, Adobe Express, Google Maps, Google Earth, Field Guide to Victoria, Sky Map, Geoboard, Clickview, Epic, PicCollage, Brushes Redux, Word Clouds ABCya, Sketchbook, Explain Everything, Freeform, Delightex, Kahoot, Tinkercad, Minecraft Education.
 
-Ask ONE clarifying question at a time if needed. When ready to propose a replacement, end your message with:
-PROPOSED: {"t":"Tool Name","d":"Specific description connected to the planner content."}`;
+Instruction from teacher: ${instruction}
 
-  const contents = chat.history.map(m=>({
-    role: m.role==='model'?'model':'user',
-    parts: [{text: m.text.replace(/PROPOSED:\s*\{[\s\S]*?\}/,'').trim()}]
-  }));
+Apply the instruction and return ONLY JSON: {"t":"Tool Name","d":"Specific description connected to this unit."}`;
 
   try{
-    const response = await callGemini(contents, system, 'gemini-2.5-pro');
-    addSugMsg(uid, 'model', response);
+    const raw = await callGemini([{role:'user',parts:[{text:prompt}]}], null, GEMINI_MODEL);
+    const clean = raw.replace(/\`\`\`json|\`\`\`/g,'').trim();
+    const si = clean.indexOf('{'), ei = clean.lastIndexOf('}');
+    if(si===-1||ei===-1) throw new Error('No JSON returned');
+    const newSug = JSON.parse(clean.slice(si, ei+1));
+    if(!newSug.t||!newSug.d) throw new Error('Invalid suggestion format');
+
+    // Show preview with apply/discard
+    resultEl.innerHTML = `
+      <div style="padding:10px 14px;background:#0a1a0a;border:1px solid var(--lime);border-radius:8px;margin-bottom:8px">
+        <div style="font-size:11px;color:var(--lime);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Proposed replacement</div>
+        <div style="font-size:13px;font-weight:700;color:var(--lime);margin-bottom:2px">${esc(newSug.t)}</div>
+        <div style="font-size:12px;color:#aaa;line-height:1.5">${esc(newSug.d)}</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button onclick="confirmSugFeedback(${entryIdx},${sugIdx},'${uid}',${JSON.stringify(JSON.stringify(newSug))})" style="padding:8px 16px;background:var(--lime);color:#111;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer">✓ Apply</button>
+        <button onclick="document.getElementById('${uid}-result').innerHTML='';document.getElementById('${uid}-input').value=''" style="padding:8px 14px;background:transparent;border:1px solid var(--border);color:var(--dim);border-radius:8px;font-weight:600;font-size:12px;cursor:pointer">Try again</button>
+      </div>`;
   }catch(e){
-    addSugMsg(uid, 'model', `Error: ${e.message}`);
+    resultEl.innerHTML = `<div style="font-size:12px;color:#f87171">✗ ${esc(e.message)} — try rephrasing</div>`;
   }
   sendBtn.disabled = false;
-  input.focus();
+  sendBtn.textContent = 'Apply →';
 }
 
-function applySugFeedback(entryIdx, sugIdx, uid, newSug, btn){
+function confirmSugFeedback(entryIdx, sugIdx, uid, newSugJSON){
+  const newSug = JSON.parse(newSugJSON);
   const sugs = [...getSugs(DATA[entryIdx])];
-  const normalised = {
-    t: newSug.t||newSug.tool||newSug.technology||'',
-    d: newSug.d||newSug.desc||newSug.description||newSug.integration_idea||''
-  };
-  sugs[sugIdx] = normalised;
+  sugs[sugIdx] = {t: newSug.t, d: newSug.d};
+  recordChange(entryIdx, getSugs(DATA[entryIdx]), sugs);
   DATA[entryIdx].s = sugs;
   DATA[entryIdx].audited = true;
-  recordChange(entryIdx, getSugs(DATA[entryIdx]), sugs);
   saveToDrive();
   setStatus('Suggestion updated and saved');
-  if(btn){ btn.textContent='✓ Applied'; btn.disabled=true; btn.style.background='var(--dim)'; }
-  
+  document.getElementById(uid+'-chat')?.remove();
   const sugEl = document.getElementById(`s${entryIdx}_${sugIdx}`);
   if(sugEl){
     const newRow = document.createElement('div');
-    newRow.innerHTML = buildSugRow(normalised, entryIdx, sugIdx);
+    newRow.innerHTML = buildSugRow(sugs[sugIdx], entryIdx, sugIdx);
     sugEl.replaceWith(newRow.firstElementChild);
   }
 }
 
-function toggleFb(uid){ openFeedbackChat(uid.replace(/^s/,'s').split('_')[0].replace('s',''), ...uid.split('_').map(Number)); }
 
-function applyOne(entryIdx,sugIdx,applyId,uid){
-  const newSug=window[applyId]; if(!newSug) return;
-  if(!DATA[entryIdx].s) DATA[entryIdx].s=[];
-  DATA[entryIdx].s[sugIdx]=newSug;
-  delete window[applyId];
-  setStatus('Saved'); saveToDrive();
-  renderEntry(entryIdx);
-}
 
 async function regenAll(){
   if(CURRENT_ENTRY_IDX===null) return;
