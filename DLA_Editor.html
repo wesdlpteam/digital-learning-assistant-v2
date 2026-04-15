@@ -1799,7 +1799,16 @@ async function _doSendChat(msg){
     let changes=null;
     const changeMatch=response.match(/APPLY_CHANGES:\s*(\[[\s\S]*?\])/s);
     if(changeMatch){
-      try{ changes=JSON.parse(changeMatch[1]); }catch{}
+      try{
+        const raw=JSON.parse(changeMatch[1]);
+        // Normalise — Gemini sometimes uses different field names
+        changes=raw.map(c=>({
+          entryIdx: c.entryIdx!=null?c.entryIdx:(c.entry_idx!=null?c.entry_idx:0),
+          sugIdx:   c.sugIdx!=null?c.sugIdx:(c.sug_idx!=null?c.sug_idx:0),
+          t: c.t||c.tool||c.technology||c.name||c.toolName||'',
+          d: c.d||c.desc||c.description||c.integration_idea||c.activity||c.suggestion||''
+        }));
+      }catch(err){ console.error('APPLY_CHANGES parse error',err); }
     }
     CHAT_HISTORY.push({role:'model',text:response,changes,options});
     renderChat();
@@ -1863,6 +1872,9 @@ function showChangesPopup(changes){
     const oldSug=getSugs(e)[c.sugIdx];
     const oldTool=oldSug?sugTool(oldSug):'(empty slot)';
     const oldDesc=oldSug?sugDesc(oldSug):'';
+    // Defensive: handle any field naming from Gemini response
+    const newTool = c.t||c.tool||c.technology||c.name||'(unknown tool)';
+    const newDesc = c.d||c.desc||c.description||c.integration_idea||c.activity_description||'';
 
     const card=document.createElement('div');
     card.id=`change-card-${ci}`;
@@ -1889,8 +1901,8 @@ function showChangesPopup(changes){
       </div>
       <div style="padding:8px 10px;background:#081808;border:1px solid #183818;border-radius:8px">
         <div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:700">New suggestion</div>
-        <div style="font-size:13px;font-weight:800;color:var(--lime);margin-bottom:3px">${esc(c.t)}</div>
-        <div style="font-size:11px;color:#aaa;line-height:1.4;max-height:42px;overflow:hidden">${esc((c.d||'').slice(0,100))}</div>
+        <div style="font-size:13px;font-weight:800;color:var(--lime);margin-bottom:3px">${esc(newTool)}</div>
+        <div style="font-size:11px;color:#aaa;line-height:1.4;max-height:42px;overflow:hidden">${esc(newDesc.slice(0,120))}</div>
       </div>
     </div>
     <div style="display:flex;gap:8px">
@@ -1975,7 +1987,10 @@ function applyChangesFromPopup(){
 
   changes.forEach((c,ci)=>{
     if(states[ci]!=='approved') return;
-    const {entryIdx,sugIdx,t,d}=c;
+    const entryIdx=c.entryIdx;
+    const sugIdx=c.sugIdx;
+    const t=c.t||c.tool||c.technology||c.name||'';
+    const d=c.d||c.desc||c.description||c.integration_idea||'';
     if(entryIdx>=0&&entryIdx<DATA.length){
       const sugs=getSugs(DATA[entryIdx]);
       if(Array.isArray(DATA[entryIdx].s)){
