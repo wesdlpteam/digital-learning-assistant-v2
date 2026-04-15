@@ -229,7 +229,7 @@
       <div id="audit-campus-debug" style="font-size:11px;color:var(--dim);margin-bottom:12px;padding:8px 12px;background:var(--card2);border-radius:6px;border:1px solid var(--border)"></div>
       <div class="view-tabs">
         <button class="view-tab active" data-view="analytics" onclick="setAuditView(this)">Analytics</button>
-        <button class="view-tab" data-view="chat" onclick="setAuditView(this)">Bulk Actions</button>
+        <button class="view-tab" data-view="chat" onclick="setAuditView(this)">AI Coach Chat</button>
       </div>
 
       <!-- Analytics -->
@@ -243,68 +243,44 @@
         <div id="audit-chart"></div>
       </div>
 
-      <!-- Bulk Actions -->
+      <!-- Chat -->
       <div id="audit-chat" style="display:none">
 
-        <!-- Cross-reference library -->
-        <div id="library-ref-section" class="card" style="margin-bottom:14px;padding:18px">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-            <span style="font-size:15px">🔗</span>
-            <span style="font-size:13px;font-weight:700">Cross-reference a lesson library</span>
+        <!-- External library reference -->
+        <div id="library-ref-section" class="card" style="margin-bottom:14px;padding:20px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <span style="font-size:16px">🔗</span>
+            <span style="font-size:13px;font-weight:700">Cross-reference an external lesson library</span>
             <button class="btn-sm" id="btn-clear-library" onclick="clearLibraryRef()" style="display:none;margin-left:auto">✕ Clear</button>
           </div>
-          <div id="library-ref-loaded" style="display:none;padding:8px 12px;background:var(--card2);border-radius:8px;margin-bottom:10px;font-size:12px;color:var(--lime);font-weight:600"></div>
-          <div id="library-input-row" style="display:flex;gap:8px;margin-bottom:6px">
-            <input id="library-url-input" class="inp" placeholder="Paste a URL (e.g. https://education.minecraft.net/en-us/resources)" style="flex:1;margin-bottom:0;font-size:13px">
-            <button class="btn-pri" onclick="fetchLibraryURL()" id="btn-fetch-url" style="white-space:nowrap;padding:10px 16px;font-size:13px">Fetch</button>
+          <div id="library-ref-loaded" style="display:none;padding:10px 14px;background:var(--card2);border-radius:8px;margin-bottom:10px;font-size:12px;color:var(--lime);font-weight:600"></div>
+          <div id="library-input-row" style="display:flex;gap:8px;margin-bottom:8px">
+            <input id="library-url-input" class="inp" placeholder="Paste a URL (e.g. https://education.minecraft.net/en-us/resources)" style="flex:1;margin-bottom:0">
+            <button class="btn-pri" onclick="fetchLibraryURL()" id="btn-fetch-url" style="white-space:nowrap;padding:10px 18px">Fetch</button>
           </div>
           <div id="library-paste-section" style="display:none">
-            <p style="font-size:12px;color:#fbbf24;margin-bottom:6px">⚠ Site blocked direct fetch — paste the page content manually:</p>
-            <textarea id="library-paste-input" class="inp" rows="4" placeholder="Copy all text from the page and paste here..." style="margin-bottom:8px;font-size:12px"></textarea>
-            <button class="btn-pri" onclick="useLibraryPaste()" style="font-size:12px;padding:7px 16px">Use this content</button>
-          </div>
-          <p style="font-size:11px;color:var(--dim);line-height:1.5;margin-top:4px">Load a lesson library to find connections across your planners.</p>
-        </div>
-
-        <!-- Bulk Action Builder -->
-        <div class="card" style="margin-bottom:14px">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-            <span style="font-size:15px">⚡</span>
-            <span style="font-size:14px;font-weight:800">Bulk Action</span>
-          </div>
-          <p style="font-size:13px;color:var(--dim);margin-bottom:14px;line-height:1.6">Describe a change you want to make across multiple entries. Be specific — the more context you give, the better the results.</p>
-
-          <div style="margin-bottom:10px">
-            <div style="font-size:11px;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Filter (optional)</div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <select id="ba-campus" class="inp" style="width:160px;margin-bottom:0;font-size:13px">
-                <option value="">All campuses</option>
-              </select>
-              <select id="ba-year" class="inp" style="width:150px;margin-bottom:0;font-size:13px">
-                <option value="">All year levels</option>
-              </select>
+            <div id="library-known-platform" style="display:none;padding:12px 14px;background:#0a1a0a;border:1px solid var(--lime);border-radius:10px;margin-bottom:10px">
+              <div style="font-size:12px;font-weight:800;color:var(--lime);margin-bottom:4px" id="library-known-title">✓ Known platform detected</div>
+              <div style="font-size:12px;color:#aaa;line-height:1.5;margin-bottom:10px" id="library-known-desc">The AI Coach has built-in knowledge of this lesson library and can cross-reference it directly — no copy-paste needed.</div>
+              <button onclick="useAIKnowledge()" style="padding:8px 18px;background:var(--lime);color:#111;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer">Use AI's built-in knowledge →</button>
+            </div>
+            <div id="library-paste-manual">
+              <p style="font-size:12px;color:#fbbf24;margin-bottom:8px">⚠ That URL couldn't be fetched directly (the site blocks automated access). Paste the page content below, or use the AI's built-in knowledge if it knows this platform.</p>
+              <textarea id="library-paste-input" class="inp" rows="5" placeholder="Copy all text from the lesson library page and paste it here..." style="margin-bottom:8px;font-size:12px"></textarea>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                <button class="btn-pri" onclick="useLibraryPaste()" style="font-size:12px;padding:8px 16px">Use this content</button>
+                <button onclick="useAIKnowledge()" style="padding:8px 16px;background:transparent;color:var(--lime);border:1px solid var(--lime);border-radius:8px;font-weight:700;font-size:12px;cursor:pointer">Use AI's built-in knowledge instead</button>
+              </div>
             </div>
           </div>
-
-          <div style="margin-bottom:12px">
-            <div style="font-size:11px;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">What do you want to change?</div>
-            <textarea id="ba-instruction" class="inp" rows="3" placeholder="e.g. Add more Adobe Express (Animate from Audio) suggestions across Prep–Year 2 entries where students are doing creative or storytelling work&#10;e.g. Replace all Seesaw suggestions in Year 5–6 with something more challenging&#10;e.g. Where could Micro:bit fit given the planner content?" style="font-size:13px"></textarea>
-          </div>
-
-          <!-- Quick suggestion chips -->
-          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px" id="ba-chips">
-            <span style="font-size:11px;color:var(--dim);align-self:center">Quick:</span>
-          </div>
-
-          <button class="btn-pri" id="btn-ba-run" onclick="runBulkAction()" style="width:100%;padding:13px;font-size:14px;font-weight:900">✦ Find changes to make</button>
-          <div id="ba-progress" style="display:none;margin-top:12px;padding:12px;background:var(--card2);border-radius:8px">
-            <div style="font-size:13px;color:var(--lime);font-weight:600" id="ba-progress-label">Analysing entries…</div>
-          </div>
+          <p style="font-size:11px;color:var(--dim);line-height:1.6">Once loaded, the AI Coach can cross-reference the library against all your planners and suggest where lessons fit.</p>
         </div>
 
-        <!-- Results area -->
-        <div id="ba-results"></div>
-
+        <div id="chat-messages"></div>
+        <div class="chat-input-row">
+          <input id="chat-input" class="inp" placeholder="e.g. Where could Minecraft lessons fit across my planners?" style="flex:1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}">
+          <button class="btn-pri" id="btn-send" onclick="sendChat()">Send</button>
+        </div>
       </div>
     </div>
 
@@ -401,33 +377,6 @@
           <button class="btn" onclick="exportCSV()">Export as CSV</button>
           <button class="btn" onclick="downloadJSON()">↓ Full JSON</button>
         </div>
-
-      <!-- Bulk Surgeon -->
-      <div class="card" style="margin-top:14px;border-color:rgba(255,128,128,0.3)">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-          <span style="font-size:18px">⚕</span>
-          <span class="label" style="margin-bottom:0;color:#FF8080">Bulk Surgeon</span>
-        </div>
-        <p style="font-size:13px;color:var(--dim);margin-bottom:16px;line-height:1.6">
-          Find every suggestion using a banned tool and either replace it or flag it as TBA for regeneration. Runs via your GAS backend — affects all 127 entries instantly.
-        </p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
-          <div>
-            <div style="font-size:11px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Banned tool to remove <span style="color:#FF8080">*</span></div>
-            <input id="surgeon-banned" class="inp" placeholder="e.g. Flip" style="margin-bottom:0">
-          </div>
-          <div>
-            <div style="font-size:11px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Replacement tool <span style="color:var(--dim)">(optional)</span></div>
-            <input id="surgeon-replace" class="inp" placeholder="e.g. Padlet — leave blank to flag as TBA" style="margin-bottom:0">
-          </div>
-        </div>
-        <div style="padding:10px 14px;background:rgba(255,128,128,0.08);border:1px solid rgba(255,128,128,0.2);border-radius:8px;margin-bottom:14px;font-size:12px;color:#FF8080;line-height:1.5">
-          ⚠ This runs immediately on your live data.json via GAS. If no replacement is given, matched suggestions are set to TBA so the auditor regenerates them on its next run.
-        </div>
-        <button class="btn-pri" id="btn-surgeon" onclick="runBulkSurgeon()" style="background:#FF8080;color:#111">⚕ Run Bulk Surgeon</button>
-        <div id="surgeon-result" style="margin-top:12px"></div>
-      </div>
-
       </div>
     </div>
 
@@ -528,6 +477,7 @@ let CURRENT_ENTRY_IDX = null;
 let PREV_TAB = 'dashboard';
 let AUDIT_VIEW = 'tools';
 let AUDIT_YEAR_CAMPUS = '';
+let CHAT_HISTORY = [];
 const CHANGE_HISTORY = [];
 const LOCKS = {}; 
 const MAX_HISTORY = 20;
@@ -536,8 +486,8 @@ const CLIENT_ID = '334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleuser
 const _k=['AIzaSy','C2aK2cd9BBLNgPe','rQTSKxgNVrxXI7iC_M'];
 const BAKED_API_KEY=_k.join(''); 
 const ANALYTICS_SHEET_ID = '1R4P4FJlc8SyRFlVWoM0HpHmfCNMNVOpI8cuEILFxBNY';
-const GEMINI_MODEL = 'gemini-3.1-flash-preview';      
-const GEMINI_CHAT_MODEL = 'gemini-3.1-flash-preview'; 
+const GEMINI_MODEL = 'gemini-2.5-flash';      
+const GEMINI_CHAT_MODEL = 'gemini-2.5-flash'; 
 const YR = ["Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"];
 const CAMPUS_COL = { Elsternwick:'#818cf8', 'Glen Waverley':'#34d399', 'St Kilda':'#fb923c', 'St Kilda Road':'#fb923c' };
 
@@ -1000,23 +950,20 @@ function renderDashboard(){
   
   const fixBar = document.getElementById('fix-incomplete-bar');
   if(fixBar){
-    const fixBtns=[];
-    if(incomplete.length>0) fixBtns.push({type:'incomplete',count:incomplete.length,label:'Fix incomplete',color:'#F5A623',fn:'fixAllOfType("incomplete")'});
-    if(duplicates.length>0) fixBtns.push({type:'duplicate',count:duplicates.length,label:'Fix duplicates',color:'#9B8BFF',fn:'fixAllOfType("duplicate")'});
-    if(banned.length>0) fixBtns.push({type:'banned',count:banned.length,label:'Fix banned tools',color:'#FF8080',fn:'fixAllOfType("banned")'});
-    if(offWhitelist.length>0) fixBtns.push({type:'offwhitelist',count:offWhitelist.length,label:'Fix off-list',color:'#60B8F0',fn:'fixAllOfType("offwhitelist")'});
-    if(fixBtns.length>0){
-      fixBar.innerHTML=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-        ${fixBtns.map(b=>`<button onclick="${b.fn}" style="padding:9px 16px;border-radius:9px;border:none;background:${b.color};color:#111;font-weight:800;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px">
-          <span style="background:rgba(0,0,0,0.15);border-radius:10px;padding:1px 7px">${b.count}</span> ${b.label}
-        </button>`).join('')}
+    if(incomplete.length > 0){
+      fixBar.innerHTML=`<div style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:10px">
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:700;color:var(--orange)">${incomplete.length} incomplete entr${incomplete.length!==1?'ies':'y'}</div>
+          <div style="font-size:12px;color:var(--dim);margin-top:2px">Fewer than 5 suggestions — click to regenerate all using Gemini Pro</div>
+        </div>
+        <button class="btn-pri" id="btn-fix-incomplete" onclick="fixAllIncomplete()" style="background:var(--orange);color:#111;white-space:nowrap">Fix all incomplete</button>
       </div>
-      <div id="fix-all-progress" style="display:none;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:10px">
-        <div style="font-size:13px;color:var(--lime);font-weight:600;margin-bottom:8px" id="fix-all-label">Starting…</div>
-        <div style="height:5px;background:var(--card2);border-radius:3px"><div id="fix-all-bar" style="height:100%;border-radius:3px;background:var(--lime);width:0%;transition:width .4s"></div></div>
+      <div id="fix-incomplete-progress" style="display:none;margin-top:10px;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px">
+        <div style="font-size:13px;color:var(--lime);font-weight:600;margin-bottom:8px" id="fix-incomplete-label">Starting…</div>
+        <div style="height:5px;background:var(--card2);border-radius:3px"><div id="fix-incomplete-bar-fill" style="height:100%;border-radius:3px;background:var(--lime);width:0%;transition:width .4s"></div></div>
       </div>`;
     } else {
-      fixBar.innerHTML='<div style="padding:10px 14px;background:rgba(197,232,74,0.08);border:1px solid rgba(197,232,74,0.2);border-radius:8px;font-size:13px;color:var(--lime);font-weight:600">✓ No issues — all entries look good</div>';
+      fixBar.innerHTML='';
     }
   }
   document.getElementById('issues-list').innerHTML=all.length
@@ -1093,104 +1040,194 @@ function buildSugRow(sug, entryIdx, sugIdx){
       <div style="display:flex;align-items:center;gap:8px">
         <div class="sug-tool">${esc(tool)}</div>
         <div style="flex:1"></div>
-        <button class="btn-sm" onclick="toggleSugFix('${uid}')" id="${uid}-btn">✏ Fix</button>
+        <button class="btn-sm" onclick="openFeedbackChat('${uid}',${entryIdx},${sugIdx})">💬 feedback</button>
       </div>
       <div class="sug-desc">${esc(desc)}</div>
-    </div>
-    <div id="${uid}-fix" style="display:none;margin-top:10px;padding:12px;background:var(--card2);border-radius:8px;border:1px solid var(--border)">
-      <div style="font-size:11px;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">What needs changing?</div>
-      <textarea id="${uid}-input" class="inp" rows="2" placeholder="e.g. Use a different tool, make it more hands-on, connect it to the central idea..." style="font-size:12px;margin-bottom:8px"></textarea>
-      <div style="display:flex;gap:8px">
-        <button class="btn-pri" id="${uid}-go" onclick="applyDirectFix('${uid}',${entryIdx},${sugIdx})" style="font-size:12px;padding:7px 16px">✦ Fix with AI</button>
-        <button onclick="toggleSugFix('${uid}')" style="background:transparent;border:1px solid var(--border);color:var(--dim);padding:7px 12px;border-radius:8px;font-size:12px;cursor:pointer">Cancel</button>
-      </div>
-      <div id="${uid}-result" style="margin-top:8px"></div>
     </div>
   </div>`;
 }
 
-function toggleSugFix(uid){
-  const fix = document.getElementById(uid+'-fix');
-  if(!fix) return;
-  const isOpen = fix.style.display !== 'none';
-  fix.style.display = isOpen ? 'none' : 'block';
-  if(!isOpen) document.getElementById(uid+'-input')?.focus();
-}
+function openFeedbackChat(uid, entryIdx, sugIdx){
+  
+  document.querySelectorAll('.sug-chat-window').forEach(el=>{
+    if(el.id !== uid+'-chat') el.remove();
+  });
 
-async function applyDirectFix(uid, entryIdx, sugIdx){
-  const input = document.getElementById(uid+'-input');
-  const feedback = input?.value.trim();
-  if(!feedback) return;
-
-  const btn = document.getElementById(uid+'-go');
-  const result = document.getElementById(uid+'-result');
-  btn.disabled=true; btn.textContent='Fixing…';
-  result.innerHTML='<div style="font-size:12px;color:#fbbf24">Generating replacement…</div>';
+  
+  const existing = document.getElementById(uid+'-chat');
+  if(existing){ existing.remove(); return; }
 
   const entry = DATA[entryIdx];
   const sug = getSugs(entry)[sugIdx];
-  const others = getSugs(entry).filter((_,i)=>i!==sugIdx).map(s=>sugTool(s)).filter(Boolean).join(', ');
 
-  const prompt = `${GAS_RULES}
+  
+  if(!SUG_CHATS[uid]){
+    SUG_CHATS[uid] = {
+      entryIdx, sugIdx,
+      history: []
+    };
+  }
 
-You are fixing a specific technology suggestion for an IB PYP unit.
-Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`
-Central Idea: "${entry.ci}"`:''}${entry.plannerText?`
-Planner context: ${entry.plannerText}`:''}
+  
+  const sugEl = document.getElementById(uid);
+  if(!sugEl) return;
+
+  const chatWin = document.createElement('div');
+  chatWin.id = uid+'-chat';
+  chatWin.className = 'sug-chat-window';
+  chatWin.style.cssText = 'background:#0a0f0a;border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;overflow:hidden;margin-bottom:12px';
+
+  chatWin.innerHTML = `
+    <div style="padding:10px 16px;background:var(--card2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
+      <span style="font-size:11px;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:.5px">Feedback Chat</span>
+      <span style="font-size:11px;color:var(--gold);font-weight:600">${esc(sugTool(sug))}</span>
+      <div style="flex:1"></div>
+      <button onclick="document.getElementById('${uid}-chat').remove()" style="background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:16px;padding:0">✕</button>
+    </div>
+    <div id="${uid}-msgs" style="padding:14px 16px;max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:10px"></div>
+    <div style="display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--border);background:var(--card2)">
+      <input id="${uid}-input" class="inp" placeholder="e.g. make it more hands-on, try a different tool..." style="flex:1;margin-bottom:0;font-size:13px">
+      <button class="btn-pri" id="${uid}-send" onclick="sendSugFeedback('${uid}')" style="padding:10px 16px;font-size:13px">Send</button>
+    </div>`;
+
+  sugEl.after(chatWin);
+
+  
+  chatWin.querySelector(`#${uid}-input`).addEventListener('keydown', e=>{
+    if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendSugFeedback(uid); }
+  });
+
+  
+  renderSugChat(uid);
+
+  
+  if(!SUG_CHATS[uid].history.length){
+    addSugMsg(uid, 'model', `Hi! I'm looking at **${sugTool(sug)}** — "${sugDesc(sug).slice(0,80)}${sugDesc(sug).length>80?'…':''}"\n\nWhat would you like to change about this suggestion?`);
+  }
+
+  chatWin.querySelector(`#${uid}-input`).focus();
+}
+
+function addSugMsg(uid, role, text){
+  const chat = SUG_CHATS[uid]; if(!chat) return;
+  chat.history.push({role, text});
+  renderSugChat(uid);
+}
+
+function renderSugChat(uid){
+  const msgsEl = document.getElementById(uid+'-msgs'); if(!msgsEl) return;
+  const chat = SUG_CHATS[uid]; if(!chat) return;
+  msgsEl.innerHTML = '';
+  chat.history.forEach((msg, i)=>{
+    const isUser = msg.role==='user';
+    const wrap = document.createElement('div');
+    wrap.style.cssText = `display:flex;justify-content:${isUser?'flex-end':'flex-start'}`;
+    const bubble = document.createElement('div');
+    bubble.style.cssText = `max-width:85%;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.6;`
+      + (isUser
+        ? 'background:var(--gold);color:#111;font-weight:600'
+        : 'background:var(--card);border:1px solid var(--border);color:var(--text);white-space:pre-wrap');
+
+    
+    const clean = msg.text.replace(/PROPOSED:\s*\{[\s\S]*?\}/,'').trim();
+    bubble.textContent = clean;
+
+    
+    const proposalMatch = msg.text.match(/PROPOSED:\s*(\{[\s\S]*?\})/);
+    wrap.appendChild(bubble);
+    if(proposalMatch && msg.role==='model'){
+      try{
+        const newSug = JSON.parse(proposalMatch[1]);
+        const applyWrap = document.createElement('div');
+        applyWrap.style.cssText = 'display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-top:4px';
+        const preview = document.createElement('div');
+        preview.style.cssText = 'padding:10px 14px;background:#0a1a0a;border:1px solid var(--lime);border-radius:8px;max-width:85%';
+        preview.innerHTML = `<div style="font-size:11px;color:var(--lime);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Proposed replacement</div>
+          <div style="font-size:13px;font-weight:700;color:var(--lime);margin-bottom:2px">${esc(newSug.t||newSug.tool||'')}</div>
+          <div style="font-size:12px;color:#aaa;line-height:1.5">${esc(newSug.d||newSug.desc||newSug.description||'')}</div>`;
+        const applyBtn = document.createElement('button');
+        applyBtn.style.cssText = 'background:var(--lime);color:#111;border:none;padding:7px 16px;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer';
+        applyBtn.textContent = '✓ Apply this change';
+        applyBtn.onclick = ()=> applySugFeedback(chat.entryIdx, chat.sugIdx, uid, newSug, applyBtn);
+        const discardBtn = document.createElement('button');
+        discardBtn.style.cssText = 'background:transparent;border:1px solid var(--border);color:var(--dim);padding:7px 14px;border-radius:8px;font-weight:600;font-size:12px;cursor:pointer';
+        discardBtn.textContent = 'Keep going';
+        discardBtn.onclick = ()=>{ applyWrap.remove(); };
+        applyWrap.appendChild(preview);
+        const btnRow = document.createElement('div');
+        btnRow.style.cssText='display:flex;gap:8px';
+        btnRow.appendChild(applyBtn); btnRow.appendChild(discardBtn);
+        applyWrap.appendChild(btnRow);
+        wrap.insertAdjacentElement('afterend', applyWrap);
+      }catch{}
+    }
+    msgsEl.appendChild(wrap);
+  });
+  msgsEl.scrollTop = msgsEl.scrollHeight;
+}
+
+async function sendSugFeedback(uid){
+  const chat = SUG_CHATS[uid]; if(!chat) return;
+  const input = document.getElementById(uid+'-input');
+  const sendBtn = document.getElementById(uid+'-send');
+  const msg = input?.value.trim(); if(!msg) return;
+  input.value = '';
+  sendBtn.disabled = true;
+
+  addSugMsg(uid, 'user', msg);
+
+  const entry = DATA[chat.entryIdx];
+  const sug = getSugs(entry)[chat.sugIdx];
+  const others = getSugs(entry).filter((_,i)=>i!==chat.sugIdx).map(s=>sugTool(s)).join(', ');
+
+  const system = `You are helping a teacher at Wesley College improve a specific technology suggestion for an IB PYP unit.
+Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${entry.lo?`\nLines of Inquiry: "${entry.lo}"`:''}${entry.plannerText?`\nPlanner content: ${entry.plannerText}`:''}
 Current suggestion: ${sugTool(sug)} — ${sugDesc(sug)}
 Other tools already in this unit (do not repeat): ${others||'none'}
 
-Teacher feedback: "${feedback}"
+APPROVED TOOLS ONLY — suggest only from Wesley's approved list: Microsoft M365, Beebots, Sphero, Lego Spike, Micro:bits, CoDrone, Makey Makey, 3D Printers, ClassVR, Merge Cubes, Green Screen, Podcast Equipment, iPads, Seesaw, Canva, Book Creator, Padlet, GarageBand, ScratchJR, Stop Motion Studio, ChatterPix, Flip, Flipaclip, iMovie, Puppet Pals, Adobe Express, Google Maps, Google Earth, Field Guide to Victoria, Sky Map, Geoboard, Clickview, Epic, PicCollage, Brushes Redux, Word Clouds ABCya, Sketchbook, Explain Everything, Freeform, Delightex, Kahoot, Tinkercad, Minecraft Education.
 
-Apply the feedback and return ONE improved suggestion.
-Return ONLY JSON (no markdown): {"t":"Tool Name","d":"Specific description connected to this unit."}`;
+Ask ONE clarifying question at a time if needed. When ready to propose a replacement, end your message with:
+PROPOSED: {"t":"Tool Name","d":"Specific description connected to the planner content."}`;
+
+  const contents = chat.history.map(m=>({
+    role: m.role==='model'?'model':'user',
+    parts: [{text: m.text.replace(/PROPOSED:\s*\{[\s\S]*?\}/,'').trim()}]
+  }));
 
   try{
-    const raw = await callGemini([{role:'user',parts:[{text:prompt}]}], null, GEMINI_CHAT_MODEL);
-    const clean = raw.replace(/```json|```/g,'').trim();
-    const si=clean.indexOf('{'), ei=clean.lastIndexOf('}');
-    if(si===-1||ei===-1) throw new Error('No JSON');
-    const newSug = JSON.parse(clean.slice(si,ei+1));
-    const t = newSug.t||newSug.tool||newSug.technology||'';
-    const d = newSug.d||newSug.desc||newSug.description||'';
-    if(!t) throw new Error('No tool name');
-
-    result.innerHTML=`<div style="padding:10px;background:#081808;border:1px solid #1a3a1a;border-radius:8px;margin-top:4px">
-      <div style="font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Replacement</div>
-      <div style="font-size:13px;font-weight:700;color:var(--lime);margin-bottom:3px">${esc(t)}</div>
-      <div style="font-size:12px;color:#aaa;line-height:1.5">${esc(d)}</div>
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <button onclick="confirmDirectFix('${uid}',${entryIdx},${sugIdx},'${t.replace(/'/g,"\'")}','${d.replace(/'/g,"\'")}',this)" style="flex:1;padding:8px;background:var(--lime);color:#111;border:none;border-radius:8px;font-weight:800;font-size:13px;cursor:pointer">✓ Apply</button>
-        <button onclick="document.getElementById('${uid}-result').innerHTML=''" style="padding:8px 14px;background:transparent;border:1px solid var(--border);color:var(--dim);border-radius:8px;font-size:13px;cursor:pointer">Try again</button>
-      </div>
-    </div>`;
-  }catch(err){
-    result.innerHTML=`<div style="color:#FF8080;font-size:12px">Error: ${esc(err.message)}</div>`;
+    const response = await callGemini(contents, system, GEMINI_CHAT_MODEL);
+    addSugMsg(uid, 'model', response);
+  }catch(e){
+    addSugMsg(uid, 'model', `Error: ${e.message}`);
   }
-  btn.disabled=false; btn.textContent='✦ Fix with AI';
+  sendBtn.disabled = false;
+  input.focus();
 }
 
-function confirmDirectFix(uid, entryIdx, sugIdx, t, d, btn){
-  const sugs = getSugs(DATA[entryIdx]).map((s,i)=>i===sugIdx?{t,d}:{t:sugTool(s),d:sugDesc(s)});
-  recordChange(entryIdx, getSugs(DATA[entryIdx]), sugs);
+function applySugFeedback(entryIdx, sugIdx, uid, newSug, btn){
+  const sugs = [...getSugs(DATA[entryIdx])];
+  const normalised = {
+    t: newSug.t||newSug.tool||newSug.technology||'',
+    d: newSug.d||newSug.desc||newSug.description||newSug.integration_idea||''
+  };
+  sugs[sugIdx] = normalised;
   DATA[entryIdx].s = sugs;
   DATA[entryIdx].audited = true;
+  recordChange(entryIdx, getSugs(DATA[entryIdx]), sugs);
   saveToDrive();
   setStatus('Suggestion updated and saved');
-  // Refresh the row in place
-  const sugEl = document.getElementById(uid);
+  if(btn){ btn.textContent='✓ Applied'; btn.disabled=true; btn.style.background='var(--dim)'; }
+  
+  const sugEl = document.getElementById(`s${entryIdx}_${sugIdx}`);
   if(sugEl){
-    const tmp = document.createElement('div');
-    tmp.innerHTML = buildSugRow({t,d}, entryIdx, sugIdx);
-    sugEl.replaceWith(tmp.firstElementChild);
+    const newRow = document.createElement('div');
+    newRow.innerHTML = buildSugRow(normalised, entryIdx, sugIdx);
+    sugEl.replaceWith(newRow.firstElementChild);
   }
 }
 
-
-
-
-
-
+function toggleFb(uid){ openFeedbackChat(uid.replace(/^s/,'s').split('_')[0].replace('s',''), ...uid.split('_').map(Number)); }
 
 function applyOne(entryIdx,sugIdx,applyId,uid){
   const newSug=window[applyId]; if(!newSug) return;
@@ -1335,7 +1372,6 @@ function setAuditView(btn){
   const v=btn.dataset.view;
   document.getElementById('audit-analytics').style.display=v==='analytics'?'block':'none';
   document.getElementById('audit-chat').style.display=v==='chat'?'block':'none';
-  if(v==='chat') initBulkActions();
   if(v==='chat') requestAnimationFrame(resizeChatMessages);
 }
 
@@ -1538,9 +1574,88 @@ function toggleToolDrilldown(row, toolName){
   if(!isOpen) dd.style.display='block';
 }
 
+function getCoachSystem(){
+  const stats=computeStats();
+  const dist=stats.sorted.filter(x=>x.name&&!x.name.startsWith('\u26a0')).slice(0,20).map(({name,count,pct})=>`${name}: ${count}\u00d7 (${pct}%)`).join(', ');
+  
+  const hasPlannerText = DATA.some(e=>e.plannerText);
+  const fullContext=DATA.map((e,i)=>{
+    const sugs=getSugs(e);
+    const sugStr=sugs.map((s,si)=>`  ${si+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n');
+    
+    return `[${i}] ${e.ca} | ${e.yl} | ${e.th}${e.ci?'\n  CI: '+e.ci:''}${sugs.length?'\n  Suggestions:\n'+sugStr:''}`;
+  }).join('\n\n');
 
+  
+  let librarySection = '';
+  if(LIBRARY_CONTENT){
+    const isAIKnowledge = LIBRARY_CONTENT.startsWith('[AI_KNOWLEDGE:');
+    const platformName = isAIKnowledge
+      ? LIBRARY_CONTENT.replace('[AI_KNOWLEDGE:','').replace(']','')
+      : LIBRARY_SOURCE;
+    librarySection = isAIKnowledge
+      ? `
 
+EXTERNAL LESSON LIBRARY — AI KNOWLEDGE MODE (${platformName}):
+Draw on your full training knowledge of the ${platformName} lesson library. Reference specific lesson titles, subject areas, year level recommendations, and curriculum connections from ${platformName} when making suggestions. The user wants you to map ${platformName} lessons to Wesley's IB PYP units.
 
+IMPORTANT — LINKS: For every ${platformName} lesson you mention, include a direct clickable link using Markdown format: [Lesson Title](https://...). Use the real URL for that lesson on the ${platformName} website. Teachers will click these links to view the full lesson details. If you are not certain of the exact URL for a specific lesson, link to the most relevant section of the ${platformName} lesson library instead.
+---`
+      : `
+
+EXTERNAL LESSON LIBRARY (${LIBRARY_SOURCE}):
+Use this content to find specific connections to Wesley's units. Reference actual lesson names and activities from the library when making recommendations.
+---
+${LIBRARY_CONTENT}
+---`;
+  }
+
+  
+  const toolIndex = {};
+  DATA.forEach((e,i)=>{
+    getSugs(e).forEach((s,si)=>{
+      const t = sugTool(s).trim().toLowerCase();
+      if(!t) return;
+      if(!toolIndex[t]) toolIndex[t]=[];
+      toolIndex[t].push({entryIdx:i, sugIdx:si, ca:e.ca, yl:e.yl, th:e.th});
+    });
+  });
+  const toolIndexStr = Object.entries(toolIndex)
+    .sort((a,b)=>b[1].length-a[1].length)
+    .map(([tool,entries])=>
+      `${tool} (${entries.length}x): `+entries.map(e=>`[${e.entryIdx}]s${e.sugIdx}`).join(', ')
+    ).join('\n');
+
+  return `You are an AI coaching assistant for the Wesley College Digital Learning Assistant. You help the Digital Learning Coach make thoughtful, strategic decisions about educational technology across ${DATA.length} IB PYP lesson entries.
+
+CURRENT TOOL DISTRIBUTION: ${dist}
+
+TOOL INDEX — EXACT LOCATIONS (entryIdx + sugIdx for every tool):
+${toolIndexStr}
+
+CRITICAL RULE: When the user asks you to replace or modify a specific tool (e.g. "Flip"), you MUST ONLY target entries listed under that exact tool in the TOOL INDEX above. Do NOT modify any entry that is not listed there. The tool index is ground truth — do not guess or infer from the planner data.
+
+IMPORTANT RESPONSE RULES:
+1. Ask ONLY ONE clarifying question at a time.
+2. When asking a question with clear options, use this EXACT format on its own line:
+OPTIONS: ["Option A","Option B","Option C"]
+3. Keep questions short and conversational.
+4. Once you have enough to propose changes, end your message with a valid JSON array:
+APPLY_CHANGES:[{"entryIdx":3,"sugIdx":1,"t":"Tool Name","d":"Specific description."},{"entryIdx":7,"sugIdx":0,"t":"Another Tool","d":"Another description."}]
+   - You may include many changes in one array — include ALL changes in a single APPLY_CHANGES block.
+   - NEVER say you have "applied", "made", or "updated" changes in your message text. ONLY output the APPLY_CHANGES block — the system handles the actual approval and applying. If you narrate that changes were made, nothing will actually happen.
+   - The JSON must be complete and valid — never truncate the array.
+   - Cross-check every entryIdx and sugIdx against the TOOL INDEX before including it.
+5. Explain your reasoning using actual planner content — name specific activities, vocabulary or assessments.
+
+FULL PLANNER DATA:
+${fullContext}${librarySection}`;
+}
+
+function initChat(){
+  CHAT_HISTORY=[{role:'model',text:"Hi! I'm your DLA AI Coach. I can help you make strategic changes across all entries — like adding more of a particular tool, balancing the distribution, or replacing overused tools.\n\nWhat would you like to change?",changes:null,options:null}];
+  renderChat();
+}
 
 function formatChatHTML(text){
   return text
@@ -1556,7 +1671,57 @@ function formatChatHTML(text){
     .replace(/\n/g,'<br>');
 }
 
+function renderChat(){
+  const el=document.getElementById('chat-messages'); if(!el) return;
+  el.innerHTML='';
+  CHAT_HISTORY.forEach((msg,i)=>{
+    const wrap=document.createElement('div');
+    wrap.className='chat-msg '+msg.role;
+    
+    const bubble=document.createElement('div');
+    bubble.className='chat-bubble';
+    if(msg.role==='user'){
+      bubble.textContent=msg.text;
+    } else {
+      const clean=msg.text
+        .replace(/OPTIONS:\s*\[.*?\]/gs,'')
+        .replace(/APPLY_CHANGES:[\s\S]*/,'')
+        .trim();
+      bubble.innerHTML=formatChatHTML(clean);
+    }
+    wrap.appendChild(bubble);
+    
+    if(msg.role==='model' && msg.options && i===CHAT_HISTORY.length-1){
+      const optRow=document.createElement('div');
+      optRow.style.cssText='display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;justify-content:flex-start';
+      msg.options.forEach(opt=>{
+        const btn=document.createElement('button');
+        btn.style.cssText='padding:6px 13px;border-radius:20px;border:1.5px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;transition:all .12s';
+        btn.textContent=opt;
+        btn.onmouseover=()=>{ btn.style.background='var(--gold)'; btn.style.color='#111'; };
+        btn.onmouseout=()=>{ btn.style.background='transparent'; btn.style.color='var(--gold)'; };
+        btn.onclick=()=>{ submitChat(opt); };
+        optRow.appendChild(btn);
+      });
+      wrap.appendChild(optRow);
+    }
+    el.appendChild(wrap);
+  });
+  el.scrollTop=el.scrollHeight;
+}
 
+async function submitChat(text){
+  const input=document.getElementById('chat-input');
+  input.value='';
+  await _doSendChat(text);
+}
+
+async function sendChat(){
+  const input=document.getElementById('chat-input');
+  const msg=input.value.trim(); if(!msg) return;
+  input.value='';
+  await _doSendChat(msg);
+}
 
 function cleanGeminiJSON(s){
   return s
@@ -1578,6 +1743,78 @@ function normaliseChanges(raw){
       t: c.t||c.tool||c.technology||c.name||c.toolName||'',
       d: c.d||c.desc||c.description||c.integration_idea||c.activity||c.suggestion||''
     }));
+}
+
+async function _doSendChat(msg){
+  const btn=document.getElementById('btn-send');
+  btn.disabled=true;
+  CHAT_HISTORY.push({role:'user',text:msg,changes:null,options:null});
+  renderChat();
+  try{
+    const contents=CHAT_HISTORY.map(m=>({
+      role:m.role==='model'?'model':'user',
+      parts:[{text:m.role==='model'
+        ? m.text.replace(/OPTIONS:\s*\[.*?\]/gs,'').replace(/APPLY_CHANGES:[\s\S]*/,'').trim()
+        : m.text}]
+    }));
+    const response=await callGemini(contents,getCoachSystem(),GEMINI_CHAT_MODEL);
+    
+    let options=null;
+    const optMatch=response.match(/OPTIONS:\s*(\[[\s\S]*?\])/);
+    if(optMatch){
+      try{ options=JSON.parse(optMatch[1]); }catch{}
+    }
+    
+    let changes=null;
+    const changeMatch=response.match(/APPLY_CHANGES:\s*([\s\S]*?)(?=\n\n|$)/s);
+    if(changeMatch){
+      try{
+        
+        const jsonStr = changeMatch[1].trim();
+        const arrStart = jsonStr.indexOf('[');
+        const arrEnd = jsonStr.lastIndexOf(']');
+        if(arrStart===-1||arrEnd===-1) throw new Error('No array found');
+        const raw=JSON.parse(cleanGeminiJSON(jsonStr.slice(arrStart, arrEnd+1)));
+        changes=normaliseChanges(raw);
+      }catch(err){
+        console.warn('APPLY_CHANGES direct parse failed, trying recovery…', err.message);
+        
+        const recovered=[];
+        const src=changeMatch[1];
+        
+        let depth=0, start=-1;
+        for(let i=0;i<src.length;i++){
+          if(src[i]==='{'){if(depth===0)start=i;depth++;}
+          else if(src[i]==='}'){depth--;if(depth===0&&start!==-1){
+            try{
+              const obj=JSON.parse(cleanGeminiJSON(src.slice(start,i+1)));
+              if(obj.entryIdx!=null) recovered.push(obj);
+            }catch{}
+            start=-1;
+          }}
+        }
+        if(recovered.length){
+          changes=normaliseChanges(recovered);
+          console.log('Recovered',changes.length,'changes from partial JSON');
+        } else {
+          const truncated=!changeMatch[1].trim().match(/\]\s*$/);
+          CHAT_HISTORY.push({role:'model',
+            text: truncated
+              ? '⚠ The changes list was cut off before it finished. Ask me to "retry in batches of 10".'
+              : '⚠ Could not parse the proposed changes. Ask me to "retry proposing the changes".',
+            changes:null, options:['Retry in batches of 10','Retry proposing changes']});
+        }
+      }
+    }
+    CHAT_HISTORY.push({role:'model',text:response,changes,options});
+    renderChat();
+    
+    if(changes&&changes.length) showChangesPopup(changes);
+  }catch(e){
+    CHAT_HISTORY.push({role:'model',text:`Error: ${e.message}`,changes:null,options:null});
+    renderChat();
+  }
+  btn.disabled=false;
 }
 
 function showChangesPopup(changes){
@@ -2447,6 +2684,77 @@ function updateBulkRegenCount(){
   if(el) el.textContent=`${targets.length} entries selected`;
 }
 
+const GAS_RULES = `You are an Expert Digital Learning Coach at Wesley College (MICROSOFT school).
+APPROVED TOOLS ONLY:
+- Microsoft M365: Teams, Word, PowerPoint, OneNote, etc.
+- Robotics/STEM Hardware: Beebots, Sphero Indi, Sphero BOLT, Lego Spike Essential, Lego Spike Prime, Micro:bits, CoDrone EDU, Makey Makey
+- Maker/A/V Hardware: 3D Printers, ClassVR, Merge Cubes, Green Screen Kits, Podcast Equipment, Digital Cameras, iPads, Laptops
+- Core Creation: Seesaw, Canva, Book Creator, Padlet
+- Video/Audio/Animation: GarageBand, ScratchJR, Stop Motion Studio, ChatterPix Kids, Flip, Flipaclip, iMovie, Puppet Pals, Adobe Express (Podcasting, video, character animations, website designer)
+- Subject Specific: Google Maps, Google Earth (ONLY Google tools allowed), Field Guide to Victoria, Sky Map, Geoboard
+- Other: Clickview, Epic, PicCollage, Brushes Redux, Word Clouds ABCya, Sketchbook, Explain Everything, Freeform, Delightex, Kahoot, Tinkercad, Minecraft Education
+PROHIBITED: Google Suite (Docs/Slides/Sheets), any tool NOT on the above list, WeVideo.
+YEAR-LEVEL RULES: Upper primary (Yr4-6): Teams ok. Early years (Prep-Yr2): no Teams, prefer Seesaw/Canva/Book Creator. Mid (Yr3): no Teams/Seesaw overuse.
+Each suggestion must connect specifically to the unit content — no generic descriptions.`;
+
+async function fixAllOfType(type){
+  const {incomplete,banned,duplicates,offWhitelist}=getIssues();
+  const typeMap={incomplete,banned,duplicate:duplicates,offwhitelist:offWhitelist};
+  const issues=typeMap[type]||[];
+  if(!issues.length) return;
+
+  const prog=document.getElementById('fix-all-progress');
+  const bar=document.getElementById('fix-all-bar');
+  const lbl=document.getElementById('fix-all-label');
+  if(prog) prog.style.display='block';
+
+  let done=0, fixed=0, failed=0;
+
+  const byEntry={};
+  issues.forEach(iss=>{ if(!byEntry[iss.idx]) byEntry[iss.idx]=[]; byEntry[iss.idx].push(iss); });
+  const entries=Object.keys(byEntry);
+
+  for(const idxStr of entries){
+    const idx=parseInt(idxStr);
+    const e=DATA[idx];
+    done++;
+    if(bar) bar.style.width=`${Math.round((done/entries.length)*100)}%`;
+    if(lbl) lbl.textContent=`${done}/${entries.length}: ${e.yl} — ${e.th}`;
+
+    try{
+      const currentSugs=getSugs(e);
+      let prompt='';
+
+      if(type==='incomplete'){
+        prompt=`${GAS_RULES}\n\nGenerate exactly 5 digital technology suggestions for this IB PYP unit.\nCampus: ${e.ca} | Year: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: "${e.ci}"`:''}${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nReturn ONLY JSON array: [{"t":"Tool Name","d":"Specific description for this unit."},...]`;
+
+      } else if(type==='banned'||type==='offwhitelist'){
+        prompt=`${GAS_RULES}\n\nReplace these non-approved suggestions for this unit. Return 5 total suggestions.\nUnit: ${e.ca} | ${e.yl} | "${e.th}"${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nCurrent suggestions (keep ones that are approved, replace the rest):\n${currentSugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}\nReturn ONLY JSON array of exactly 5: [{"t":"Tool Name","d":"Specific description."},...]`;
+
+      } else if(type==='duplicate'){
+        prompt=`${GAS_RULES}\n\nFix duplicate tools in this unit — each suggestion must use a DIFFERENT tool.\nUnit: ${e.ca} | ${e.yl} | "${e.th}"${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nCurrent suggestions (fix any duplicates, keep unique ones):\n${currentSugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}\nReturn ONLY JSON array of exactly 5 with NO repeated tools: [{"t":"Tool Name","d":"Specific description."},...]`;
+      }
+
+      const raw=await callGemini([{role:'user',parts:[{text:prompt}]}],null,GEMINI_MODEL);
+      const clean=raw.replace(/```json|```/g,'').trim();
+      const si=clean.indexOf('['),ei=clean.lastIndexOf(']');
+      if(si===-1||ei===-1) throw new Error('No JSON array');
+      const sugs=JSON.parse(clean.slice(si,ei+1));
+      if(!sugs.length) throw new Error('Empty');
+      recordChange(idx,getSugs(DATA[idx]),sugs);
+      DATA[idx].s=sugs;
+      DATA[idx].audited=true;
+      fixed++;
+      saveToDrive();
+    }catch(err){ failed++; console.error('fixAllOfType error',err); }
+    if(done<entries.length) await sleep(2000);
+  }
+
+  if(lbl) lbl.textContent=`Done — ${fixed} fixed, ${failed} failed`;
+  renderDashboard();
+  setStatus(`Fixed ${fixed} ${type} issue${fixed!==1?'s':''}`);
+}
+
 async function runSurgeon(){
   const bannedEl = document.getElementById('surgeon-banned');
   const replacementEl = document.getElementById('surgeon-replacement');
@@ -2911,154 +3219,6 @@ setInterval(async()=>{
     }
   }catch{}
 }, 30000);
-
-// ─── Bulk Surgeon ─────────────────────────────────────────────────────────────
-async function runBulkSurgeon(){
-  const banned  = document.getElementById('surgeon-banned')?.value.trim();
-  const replace = document.getElementById('surgeon-replace')?.value.trim();
-  const res     = document.getElementById('surgeon-result');
-  const btn     = document.getElementById('btn-surgeon');
-
-  if(!banned){
-    res.innerHTML='<div style="color:#FF8080;font-size:13px">Please enter a tool name to remove.</div>';
-    return;
-  }
-
-  const action = replace
-    ? `Replace all "${banned}" with "${replace}"`
-    : `Flag all "${banned}" as TBA (will be regenerated by auditor)`;
-
-  if(!confirm(`⚕ Bulk Surgeon\n\n${action}\n\nThis updates your live data.json via GAS immediately. Continue?`)) return;
-
-  btn.disabled=true; btn.textContent='Running…';
-  res.innerHTML='<div style="color:#fbbf24;font-size:13px">Contacting GAS backend…</div>';
-
-  try{
-    const payload={ action:'runSurgeon', bannedTool:banned };
-    if(replace) payload.replacementTool=replace;
-
-    const r=await fetch(SCRIPT_URL,{
-      method:'POST',
-      mode:'no-cors', // GAS requires no-cors from browser
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(payload)
-    });
-
-    // no-cors means we can't read the response body — but if no error thrown it succeeded
-    // Reload data from Drive to reflect changes
-    res.innerHTML='<div style="color:#fbbf24;font-size:13px">Reloading updated data from Drive…</div>';
-    await reloadFromDrive();
-
-    const {incomplete,banned:bannedIssues,duplicates,offWhitelist}=getIssues();
-    res.innerHTML=`<div style="padding:12px 16px;background:rgba(197,232,74,0.1);border:1px solid var(--lime);border-radius:8px">
-      <div style="font-size:14px;font-weight:800;color:var(--lime);margin-bottom:4px">✓ Surgeon complete</div>
-      <div style="font-size:13px;color:var(--dim)">
-        Removed <strong style="color:var(--text)">"${banned}"</strong>
-        ${replace?`→ replaced with <strong style="color:var(--lime)">"${replace}"</strong>`:'→ flagged as <strong style="color:#fbbf24">TBA</strong> for regeneration'}<br>
-        Data reloaded — ${bannedIssues.length} banned tool issue${bannedIssues.length!==1?'s':''} remaining.
-      </div>
-    </div>`;
-    renderDashboard();
-  }catch(e){
-    res.innerHTML=`<div style="color:#FF8080;font-size:13px">Error: ${esc(e.message)}</div>`;
-  }
-  btn.disabled=false; btn.textContent='⚕ Run Bulk Surgeon';
-}
-
-// ─── Fix All by Type ─────────────────────────────────────────────────────────
-const GAS_RULES = `You are an Expert Digital Learning Coach at Wesley College (MICROSOFT school).
-APPROVED TOOLS ONLY:
-- Microsoft M365: Teams, Word, PowerPoint, OneNote, etc.
-- Robotics/STEM Hardware: Beebots, Sphero Indi, Sphero BOLT, Lego Spike Essential, Lego Spike Prime, Micro:bits, CoDrone EDU, Makey Makey
-- Maker/A/V Hardware: 3D Printers, ClassVR, Merge Cubes, Green Screen Kits, Podcast Equipment, Digital Cameras, iPads, Laptops
-- Core Creation: Seesaw, Canva, Book Creator, Padlet
-- Video/Audio/Animation: GarageBand, ScratchJR, Stop Motion Studio, ChatterPix Kids, Flip, Flipaclip, iMovie, Puppet Pals, Adobe Express (Podcasting, video, character animations, website designer)
-- Subject Specific: Google Maps, Google Earth (ONLY Google tools allowed), Field Guide to Victoria, Sky Map, Geoboard
-- Other: Clickview, Epic, PicCollage, Brushes Redux, Word Clouds ABCya, Sketchbook, Explain Everything, Freeform, Delightex, Kahoot, Tinkercad, Minecraft Education
-PROHIBITED: Google Suite (Docs/Slides/Sheets), any tool NOT on the above list, WeVideo.
-YEAR-LEVEL RULES: Upper primary (Yr4-6): Teams ok. Early years (Prep-Yr2): no Teams, prefer Seesaw/Canva/Book Creator. Mid (Yr3): no Teams/Seesaw overuse.
-Each suggestion must connect specifically to the unit content — no generic descriptions.`;
-
-async function fixAllOfType(type){
-  const {incomplete,banned,duplicates,offWhitelist}=getIssues();
-  const typeMap={incomplete,banned,duplicate:duplicates,offwhitelist:offWhitelist};
-  const issues=typeMap[type]||[];
-  if(!issues.length) return;
-
-  const prog=document.getElementById('fix-all-progress');
-  const bar=document.getElementById('fix-all-bar');
-  const lbl=document.getElementById('fix-all-label');
-  if(prog) prog.style.display='block';
-
-  let done=0, fixed=0, failed=0;
-
-  // Group by entry to batch fixes per entry
-  const byEntry={};
-  issues.forEach(iss=>{ if(!byEntry[iss.idx]) byEntry[iss.idx]=[]; byEntry[iss.idx].push(iss); });
-  const entries=Object.keys(byEntry);
-
-  for(const idxStr of entries){
-    const idx=parseInt(idxStr);
-    const e=DATA[idx];
-    done++;
-    if(bar) bar.style.width=`${Math.round((done/entries.length)*100)}%`;
-    if(lbl) lbl.textContent=`${done}/${entries.length}: ${e.yl} — ${e.th}`;
-
-    try{
-      const currentSugs=getSugs(e);
-      let prompt='';
-
-      if(type==='incomplete'){
-        prompt=`${GAS_RULES}
-
-Generate exactly 5 digital technology suggestions for this IB PYP unit.
-Campus: ${e.ca} | Year: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: "${e.ci}"`:''}${e.plannerText?`\nPlanner: ${e.plannerText}`:''}
-Return ONLY JSON array: [{"t":"Tool Name","d":"Specific description for this unit."},...]`;
-
-      } else if(type==='banned'||type==='offwhitelist'){
-        const badSugs=currentSugs.filter(s=>{
-          const t=sugTool(s).toLowerCase();
-          if(type==='banned') return t.includes('wevideo');
-          return !isWhitelisted(sugTool(s));
-        });
-        const others=currentSugs.filter(s=>!badSugs.includes(s)).map(s=>sugTool(s)).join(', ');
-        prompt=`${GAS_RULES}
-
-Replace these non-approved suggestions for this unit. Return 5 total suggestions.
-Unit: ${e.ca} | ${e.yl} | "${e.th}"${e.plannerText?`\nPlanner: ${e.plannerText}`:''}
-Current suggestions (keep ones that are approved, replace the rest):
-${currentSugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}
-Return ONLY JSON array of exactly 5: [{"t":"Tool Name","d":"Specific description."},...]`;
-
-      } else if(type==='duplicate'){
-        prompt=`${GAS_RULES}
-
-Fix duplicate tools in this unit — each suggestion must use a DIFFERENT tool.
-Unit: ${e.ca} | ${e.yl} | "${e.th}"${e.plannerText?`\nPlanner: ${e.plannerText}`:''}
-Current suggestions (fix any duplicates, keep unique ones):
-${currentSugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}
-Return ONLY JSON array of exactly 5 with NO repeated tools: [{"t":"Tool Name","d":"Specific description."},...]`;
-      }
-
-      const raw=await callGemini([{role:'user',parts:[{text:prompt}]}],null,GEMINI_MODEL);
-      const clean=raw.replace(/```json|```/g,'').trim();
-      const si=clean.indexOf('['),ei=clean.lastIndexOf(']');
-      if(si===-1||ei===-1) throw new Error('No JSON array');
-      const sugs=JSON.parse(clean.slice(si,ei+1));
-      if(!sugs.length) throw new Error('Empty');
-      recordChange(idx,getSugs(DATA[idx]),sugs);
-      DATA[idx].s=sugs;
-      DATA[idx].audited=true;
-      fixed++;
-      saveToDrive();
-    }catch(err){ failed++; }
-    if(done<entries.length) await sleep(2000);
-  }
-
-  if(lbl) lbl.textContent=`Done — ${fixed} fixed, ${failed} failed`;
-  renderDashboard();
-  setStatus(`Fixed ${fixed} ${type} issue${fixed!==1?'s':''}`);
-}
 
 (function init(){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
