@@ -681,18 +681,21 @@ async function getDriveToken(){
             reject(new Error('Access restricted to Wesley College staff'));
             return;
           }
-          // Store user info
+          // Store user info + cache email for silent re-auth on next load
           DRIVE_TOKEN=resp.access_token;
           CURRENT_USER_EMAIL=email;
+          localStorage.setItem('dla_user_email', email);
           resolve(resp.access_token);
         }catch(e){
-          // If email check fails, still allow (graceful degradation)
           DRIVE_TOKEN=resp.access_token;
           resolve(resp.access_token);
         }
       }
     });
-    client.requestAccessToken({prompt:DRIVE_TOKEN?'':'consent'});
+    // Use cached email as login_hint with empty prompt so Google silently
+    // re-authorises on refresh without showing the consent popup again.
+    const hint = localStorage.getItem('dla_user_email') || '';
+    client.requestAccessToken({ prompt: hint ? '' : 'select_account', login_hint: hint });
   });
 }
 
@@ -3122,6 +3125,7 @@ function clearSession(){
   if(!confirm('Clear session and return to the load screen?\n\nYour Drive data is safe — this just clears the local cache.')) return;
   localStorage.removeItem('dla_data');
   localStorage.removeItem('dla_file_id');
+  localStorage.removeItem('dla_user_email');
   DATA=[];
   DRIVE_FILE_ID=null;
   DRIVE_TOKEN=null;
