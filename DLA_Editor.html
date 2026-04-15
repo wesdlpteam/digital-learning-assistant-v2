@@ -435,7 +435,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
 
         <div id="chat-messages"></div>
         <div class="chat-input-row">
-          <input id="chat-input" class="inp" placeholder="e.g. Where could Minecraft lessons fit across my planners?" style="flex:1">
+          <input id="chat-input" class="inp" placeholder="e.g. Where could Minecraft lessons fit across my planners?" style="flex:1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}">
           <button class="btn-pri" id="btn-send" onclick="sendChat()">Send</button>
         </div>
       </div>
