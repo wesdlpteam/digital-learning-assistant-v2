@@ -102,10 +102,10 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .bar-fill{height:100%;border-radius:3px;background:var(--lime);transition:width 0.4s}
 
 /* CHAT */
-#chat-messages{background:var(--card);border:1px solid var(--border);border-radius:14px 14px 0 0;height:420px;overflow-y:auto;padding:22px;transition:height .15s}
-.chat-msg{margin-bottom:16px}
+#chat-messages{background:var(--card);border:1px solid var(--border);border-radius:14px 14px 0 0;height:420px;overflow-y:auto;padding:14px 16px;transition:height .15s}
+.chat-msg{margin-bottom:10px}
 .chat-msg.user{text-align:right}
-.chat-bubble{display:inline-block;padding:14px 18px;border-radius:14px;font-size:14px;line-height:1.6;max-width:82%;text-align:left;font-weight:500}
+.chat-bubble{display:inline-block;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.5;max-width:82%;text-align:left;font-weight:500}
 .chat-msg.user .chat-bubble{background:var(--gold);color:#111;font-weight:700}
 .chat-msg.model .chat-bubble{background:var(--card2);border:1px solid var(--border);color:var(--text);white-space:pre-wrap}
 .chat-input-row{display:flex;gap:10px;padding:14px;background:var(--card2);border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px}
@@ -1818,10 +1818,10 @@ function renderChat(){
     // Options buttons (only on last model message if no user reply yet)
     if(msg.role==='model' && msg.options && i===CHAT_HISTORY.length-1){
       const optRow=document.createElement('div');
-      optRow.style.cssText='display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;justify-content:flex-start';
+      optRow.style.cssText='display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;justify-content:flex-start';
       msg.options.forEach(opt=>{
         const btn=document.createElement('button');
-        btn.style.cssText='padding:8px 16px;border-radius:20px;border:1.5px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;transition:all .12s';
+        btn.style.cssText='padding:6px 13px;border-radius:20px;border:1.5px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;transition:all .12s';
         btn.textContent=opt;
         btn.onmouseover=()=>{ btn.style.background='var(--gold)'; btn.style.color='#111'; };
         btn.onmouseout=()=>{ btn.style.background='transparent'; btn.style.color='var(--gold)'; };
@@ -3115,7 +3115,7 @@ function exportHTML(){
 
   /* Chat */
   #chat-messages { height: 260px !important; }
-  .chat-bubble { font-size: 14px !important; max-width: 90% !important; }
+  .chat-bubble { font-size: 12px !important; max-width: 92% !important; }
 
   /* Comparison grid — single col */
   #comparison-grid > div { grid-template-columns: 1fr !important; }
