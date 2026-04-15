@@ -2099,7 +2099,7 @@ async function addToGASQueue(){
       method:'POST',
       mode:'no-cors',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({ca, yl, th, ci:''})
+      body:JSON.stringify({action:'addToQueue', ca, yl, th, ci:''})
     });
     
     statusEl.textContent=`✓ "${th}" queued — the auditor will process it within 10 minutes`;
