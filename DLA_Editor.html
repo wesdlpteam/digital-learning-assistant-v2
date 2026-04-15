@@ -1741,9 +1741,9 @@ function getCoachSystem(){
   const hasPlannerText = DATA.some(e=>e.plannerText);
   const fullContext=DATA.map((e,i)=>{
     const sugs=getSugs(e);
-    const sugStr=sugs.map((s,si)=>`  ${si+1}. ${sugTool(s)}: ${sugDesc(s).slice(0,120)}`).join('\n');
-    // Omit plannerText from chat context — too large, slows responses significantly
-    return `[${i}] ${e.ca} | ${e.yl} | ${e.th}${e.ci?'\n  CI: '+e.ci.slice(0,200):''}${sugs.length?'\n  Suggestions:\n'+sugStr:''}`;
+    const sugStr=sugs.map((s,si)=>`  ${si+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n');
+    // Omit plannerText — too large for chat context, slows responses significantly
+    return `[${i}] ${e.ca} | ${e.yl} | ${e.th}${e.ci?'\n  CI: '+e.ci:''}${sugs.length?'\n  Suggestions:\n'+sugStr:''}`;
   }).join('\n\n');
 
   // Include external library content if loaded
