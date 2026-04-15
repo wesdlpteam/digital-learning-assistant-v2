@@ -463,7 +463,7 @@ const CLIENT_ID = '334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleuser
 const _k=['AIzaSy','C2aK2cd9BBLNgPe','rQTSKxgNVrxXI7iC_M'];
 const BAKED_API_KEY=_k.join(''); 
 const ANALYTICS_SHEET_ID = '1R4P4FJlc8SyRFlVWoM0HpHmfCNMNVOpI8cuEILFxBNY';
-const GEMINI_MODEL = 'gemini-2.5-flash';      
+const GEMINI_MODEL = 'gemini-2.5-pro';      
 const YR = ["Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"];
 const CAMPUS_COL = { Elsternwick:'#818cf8', 'Glen Waverley':'#34d399', 'St Kilda':'#fb923c', 'St Kilda Road':'#fb923c' };
 
@@ -1193,7 +1193,7 @@ PROPOSED: {"t":"Tool Name","d":"Specific description connected to the planner co
   }));
 
   try{
-    const response = await callGemini(contents, system, 'gemini-3.1-pro-preview');
+    const response = await callGemini(contents, system, 'gemini-2.5-pro');
     addSugMsg(uid, 'model', response);
   }catch(e){
     addSugMsg(uid, 'model', `Error: ${e.message}`);
@@ -2408,7 +2408,7 @@ ${fullContext}`;
     const response = await callGemini(
       [{role:'user', parts:[{text:'Please carry out the instruction and propose changes.'}]}],
       system,
-      'gemini-3.1-pro-preview'
+      'gemini-2.5-pro'
     );
 
     bar.style.width = '90%';
