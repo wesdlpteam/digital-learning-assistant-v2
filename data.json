@@ -1037,9 +1037,30 @@
     "th": "How We Express Ourselves",
     "ci": "An inquiry into the ways in which we discover and express ideas, feelings, nature, culture, beliefs and values.",
     "lo": "Lines of inquiry to be confirmed once planner is uploaded",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Padlet",
+        "d": "In Lesson 2, when students brainstorm the positive and negative elements surrounding their interests, each inquiry group can use a collaborative Padlet board. This allows them to visually organise their initial thoughts, post questions, and gather ideas in a shared digital space before deciding on their final inquiry issue."
+      },
+      {
+        "t": "Microsoft OneNote",
+        "d": "For the research phase starting in Lesson 14, each group can use a shared section in the Class OneNote Notebook. This will function as a digital research journal where they can collate notes, embed links, add images, and synthesise information for each of their lines of inquiry, supporting the development of their information literacy skills."
+      },
+      {
+        "t": "Canva",
+        "d": "To create their unit of inquiry wall display in Lesson 12 and the 30+ media items for their campaign in the 'Making' phase (Lessons 14-18), students can use Canva. They can design a variety of visual media such as posters, infographics, and social media mock-ups to communicate their findings and persuade their audience."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "As part of their media campaign creation (Lessons 14-18), students can use Adobe Express to produce short, animated videos. This allows them to express their ideas and call to action using voice-overs, images, and text, directly addressing the unit's related concepts of 'Media', 'Persuasion', and 'Action'."
+      },
+      {
+        "t": "Microsoft Sway",
+        "d": "For the final presentation of their inquiry, students can use Sway to create a dynamic, web-based portfolio of their work. They can embed their research, media assets created in Canva and Adobe Express, and written reflections to present their entire learning journey in a polished and engaging format for the Exhibition audience."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit is the Year 6 PYP Exhibition, a student-led inquiry where learners explore a passion or issue of their choice. Students work in groups to develop their own unit of inquiry, including a central idea and research questions, before conducting in-depth research. The unit culminates in the creation and presentation of a multi-faceted media campaign designed to inform, persuade, and inspire action from their audience."
   },
   {
     "ca": "Elsternwick",
@@ -1047,30 +1068,9 @@
     "th": "How We Organise Ourselves",
     "ci": "Student-led exhibition (PYPEX) ? Students develop and present their own units of inquiry.",
     "lo": "Student-led transdisciplinary themes; Approaches to learning; Research and presentation skills",
-    "s": [
-      {
-        "t": "Microsoft Teams",
-        "d": "Establish a dedicated Team for each PYPEX group to serve as their central collaboration hub. Students can use the Posts tab for discussions, the Files tab to co-author their 'Journal (Student).pptx' and store research, and a shared OneNote for brainstorming, directly supporting the group-based work outlined from Lesson 2 onwards."
-      },
-      {
-        "t": "Canva",
-        "d": "In Lesson 12, students are tasked with creating a 'unit of inquiry wall display' and later a full media campaign. Students can use Canva's collaborative features to design their wall display, posters, infographics, and other visual media required for their campaign, directly addressing the task of creating '30 + items of media per group' in Lesson 14."
-      },
-      {
-        "t": "Adobe Express",
-        "d": "To support the 'Making' phase (Lessons 14-17) where students create a media campaign, groups can produce a short, persuasive video using Adobe Express. They can combine images, text, voice-overs, and video clips to communicate their findings and call to action, aligning with the unit's focus on 'Media' and 'Persuasion'."
-      },
-      {
-        "t": "Microsoft Forms",
-        "d": "To enhance the 'Research' component of their inquiry (Lesson 14), students can design and distribute a survey using Microsoft Forms. This allows them to gather primary data from the school community about their chosen issue, analyse the automated charts and results, and use this evidence to strengthen their media campaign and final presentation."
-      },
-      {
-        "t": "GarageBand",
-        "d": "As part of creating diverse media for their campaign (Lesson 14), students can use the podcast equipment and GarageBand to produce a short podcast episode. They can script an interview or a discussion about their topic, allowing them to present their research and perspectives in an engaging audio format, developing their communication skills."
-      }
-    ],
+    "s": [],
     "audited": true,
-    "plannerText": "This Year 6 PYP Exhibition unit guides students through a self-directed inquiry process, beginning with identifying personal passions and forming collaborative groups. Students then develop their own complete unit of inquiry, including a central idea and lines of inquiry, before conducting research and creating a multi-faceted media campaign to present their findings and advocate for action on their chosen issue."
+    "plannerText": "Not yet documented in PDF."
   },
   {
     "ca": "Elsternwick",
@@ -1081,27 +1081,27 @@
     "s": [
       {
         "t": "Lego Spike Prime",
-        "d": "In connection with Activity 2 (Investigating Energy Transformations), students can work in small groups to design and build a simple machine that demonstrates energy transfer, similar to a Rube Goldberg machine. They can program the hub to activate motors and sensors, creating a physical chain reaction that converts potential energy into kinetic energy, making the concept of energy transformation tangible."
-      },
-      {
-        "t": "PowerPoint",
-        "d": "To extend Activity 5's task of drawing a dynamo, students can create an animated digital diagram. Using shapes, icons, and motion path animations, they can illustrate the step-by-step process of how a windmill's mechanical energy is converted into electrical energy, showing the blades spinning, the shaft rotating, and the current flowing, reinforcing the concept from 'The Boy Who Harnessed the Wind'."
-      },
-      {
-        "t": "Microsoft Excel",
-        "d": "For Activity 8, where students analyse energy data from different Australian states, they can use Excel to input the data and create comparative charts like pie or bar graphs. This allows them to visually analyse the energy mix (renewable vs. non-renewable) for two states before creating their Venn diagram, developing their data literacy skills."
-      },
-      {
-        "t": "Book Creator",
-        "d": "As a culmination of their 'Renewable-Energy-Inquiry-Project' in Activity 11, students can publish their findings in an interactive digital book. They can synthesize their research on a chosen clean energy source, embedding images, videos from Clickview, and their own audio narration to explain the energy conversion process and its benefits for the planet."
+        "d": "Following Activity 2's viewing of a Rube Goldberg machine, students can use Lego Spike Prime to build their own simple energy transformation machines. They can program motors and sensors to create a chain reaction, providing a hands-on demonstration of converting electrical energy into kinetic and potential energy, directly linking to the investigation of energy transformations."
       },
       {
         "t": "Minecraft Education",
-        "d": "Addressing LOI 3 on Sustainable Energy Practices, students can collaborate in Minecraft Education to design and build a sustainable house or small community. They can incorporate renewable energy sources like solar panels (daylight sensors) and wind turbines, and use redstone to create simple circuits, demonstrating how energy can be used efficiently to support human progress with minimal environmental impact."
+        "d": "To support the exploration of electrical circuits in Activity 9/10 (building a Solar Buddy light), students can use Redstone in Minecraft Education. They can build and test virtual circuits to power lamps, demonstrating their understanding of switches, power sources, and loads, allowing for safe and complex experimentation with energy flow."
+      },
+      {
+        "t": "Canva",
+        "d": "For Activity 8, where students analyse a website and create a Venn diagram comparing energy sources in two Australian states, they can use Canva to design a compelling infographic. This allows them to present their data on renewable vs. non-renewable energy production with professional graphs, icons, and text, enhancing their digital communication skills."
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "To extend their learning in Activity 5 about how a dynamo works, students can create a stop-motion animation. Using simple materials, they can animate the process of wind turning blades, a shaft spinning, and electricity being generated, adding voice-overs to explain the conversion of mechanical energy to electrical energy as seen in 'The Boy Who Harnessed the Wind'."
+      },
+      {
+        "t": "Book Creator",
+        "d": "As a summative presentation for the 'Renewable-Energy-Inquiry-Project' mentioned in Activity 11, students can publish their findings in an interactive digital book. They can create chapters on different clean energy types, embed videos, record audio explanations of energy conversion, and include labelled diagrams, creating a rich multimedia artifact of their learning."
       }
     ],
     "audited": true,
-    "plannerText": "The unit investigates energy conversion and transformation through activities like analyzing Rube Goldberg machines, creating mind maps of energy types, and exploring electricity generation from sources like windmills and coal power stations. Students engage in hands-on learning by building a Solar Buddy light, conduct data analysis on Australian energy sources, and complete a research project on clean energy to understand its role in human progress."
+    "plannerText": "The unit investigates different forms of energy and their transformations through activities like analysing Rube Goldberg machines and the story of 'The Boy Who Harnessed the Wind'. Students explore the impact of energy sources by comparing Australian states' energy data, examining power stations, and discussing the consequences of blackouts. The inquiry culminates in hands-on learning about sustainable practices, including building a Solar Buddy light and conducting a research project on clean energy."
   },
   {
     "ca": "Elsternwick",
@@ -1112,27 +1112,27 @@
     "s": [
       {
         "t": "Canva",
-        "d": "After researching their assigned environmental case study in the 'Find Out' phase (e.g., urban pollution, Amazon conservation), students work in small groups to create a Canva infographic. The infographic must visually represent the key findings from their analysis sheets: identifying the community, the environment, the human impact, and the stewardship actions being taken, providing a clear summary of their investigation."
+        "d": "In the 'Go Further' stage, students are tasked with creating a small project to promote environmental stewardship, with posters listed as an option. Students can use Canva to design visually compelling and informative posters for their chosen action, such as a school clean-up or tree planting day, integrating persuasive text and images to advocate for their cause."
       },
       {
         "t": "Google Earth",
-        "d": "To provide geographical context for the 'Environmental Case Studies' activity, students can use Google Earth to virtually visit the locations they are researching. They can use the historical imagery feature to observe changes over time in places like the Amazon rainforest or areas affected by urban pollution, and take screenshots to add as evidence to their analysis sheets."
+        "d": "To support the 'Find Out' activity involving environmental case studies (e.g., Aboriginal land management, urban pollution, Amazon conservation), students can use Google Earth. They can create a virtual tour with placemarks to explore these specific locations, compare different environments, and visually document the human impact they are researching for their analysis sheets."
       },
       {
-        "t": "Adobe Express",
-        "d": "For the 'Go Further' action project, groups choosing to create an awareness video can use Adobe Express. They can combine short video clips filmed on iPads, images, text overlays, and voice-over narration to produce a compelling video promoting a specific environmental stewardship action, such as a school clean-up or the importance of planting native trees."
-      },
-      {
-        "t": "Microsoft OneNote",
-        "d": "During the 'Sort Out' activity, students can use a collaborative OneNote Class Notebook page to build their comparison chart of Traditional Gunaikurnai versus Modern land management. The teacher can create a two-column table where students collectively add notes, images, and links, creating a shared digital resource that synthesizes their understanding of Indigenous stewardship."
+        "t": "iMovie",
+        "d": "For the 'Go Further' project, where creating an 'awareness video' is an option, students can use iMovie on iPads. They can film their environmental action, such as a school clean-up, and edit it with voiceover narration explaining their learning about stewardship and their explicit link to one of the lines of inquiry, ready to present in the 'Reflect and Act' stage."
       },
       {
         "t": "Padlet",
-        "d": "To create a dynamic 'Peer Gallery Walk' for the 'Reflect and Act' phase, students can upload their completed projects (Canva infographics, Adobe Express videos, photos of posters) to a class Padlet board. This creates a digital exhibition of their learning journey where they can view each other's work and leave constructive comments, consolidating their understanding of the central idea."
+        "d": "To capture the initial 'Provocation' activity, students can post their 'What do we notice? What do we wonder?' responses to a class Padlet. This digital wall can be revisited throughout the unit and used again for the final 'Peer Gallery Walk of learning journey', where groups post their completed projects for classmates to view and leave feedback."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "During the 'Sort Out' activity, after researching Gunaikurnai practices, students can use Microsoft Forms to create a short quiz for their peers. This quiz can test understanding of the comparison between traditional and modern land care approaches, serving as a tool for reflection on what can be learned from Indigenous knowledge."
       }
     ],
     "audited": true,
-    "plannerText": "This unit begins with a provocation exploring diverse environments and includes reflective tasks from Camp Mallana focusing on water ecosystems, biodiversity, and Indigenous knowledge. Students then investigate environmental case studies, compare traditional Gunaikurnai land care with modern approaches, and culminate their learning by creating and sharing a small project to promote environmental stewardship."
+    "plannerText": "This unit begins with a provocation exploring diverse human-environment interactions and reflective tasks based on the Camp Mallana experience. Students then analyse environmental case studies, such as Aboriginal land management and urban pollution, before creating and sharing their own small projects to promote environmental stewardship."
   },
   {
     "ca": "Elsternwick",
@@ -1142,28 +1142,28 @@
     "lo": "What is a significant event; Why these events occurred; Impact of significant events",
     "s": [
       {
-        "t": "Google Earth",
-        "d": "To support the 'Map - Provocation' activity, students can use Google Earth's project tool to create an interactive digital map of their family's migration journey. They can drop pins on origin and destination locations, add text descriptions, and include images to create a rich, personal narrative that visualises the unit's focus on journeys and place."
+        "t": "Google Maps",
+        "d": "To support the provocation activity where students map their family's migration origins on a classroom map, use the 'My Maps' feature in Google Maps. Students can collaboratively create a digital map, pinning their family's origin points and drawing migration paths to Melbourne. This digitises the physical map activity, creating an interactive and data-rich resource the class can analyse for patterns."
+      },
+      {
+        "t": "Microsoft Sway",
+        "d": "For the activity requiring students to create a number line of significant migration dates, use Sway to build a collaborative, interactive digital timeline. Groups can be assigned different historical periods (e.g., Gold Rush, post-WWII) and add text, images, and embedded Clickview videos to a class Sway, creating a much richer multimedia resource than a static number line."
       },
       {
         "t": "Padlet",
-        "d": "For the 'Why do people migrate?' sorting activity, a Padlet board can be set up with 'Push Factors' and 'Pull Factors' columns. Students can collaboratively post their ideas using digital sticky notes, adding text, images, or links to create a dynamic and collective brainstorm that can be saved and revisited throughout the inquiry."
+        "d": "To enhance the 'What makes an event historically significant?' brainstorming session, use a Padlet board instead of physical post-it notes. Students can post their ideas on what defines 'significance'. The teacher can then post key events, and students can use the comment or rating features to rank them and justify their reasoning, creating a digital and easily saved record of the class discussion."
       },
       {
         "t": "Book Creator",
-        "d": "As an alternative to the summative assessment PowerPoint, students can present their personal inquiry on a significant event using Book Creator. This allows them to create a multimedia e-book, embedding videos, audio narration, image galleries, and text to demonstrate their research on how their chosen event shaped a place."
+        "d": "As an alternative to the summative PowerPoint presentation, students can present their personal inquiry research by creating a multimedia e-book in Book Creator. This allows them to integrate text, images, audio narration, and video to demonstrate their understanding of their chosen significant event, offering more creative agency and developing digital publishing skills."
       },
       {
         "t": "Adobe Express",
-        "d": "Connecting to the 'Across the Seas - Impacts of Migration on Culture' lesson, students can create short documentary-style videos using Adobe Express. They can synthesise their research by combining archival images, text overlays, and voice-over narration to explain how a specific migration event has shaped Australian culture."
-      },
-      {
-        "t": "Microsoft Forms",
-        "d": "To deepen the 'What makes an event historically significant?' activity, create a Microsoft Form to survey the class after their initial discussion. Use a ranking question for students to order various historical events by significance and a text field to justify their top choice, allowing the class to analyse the data and discuss differing perspectives."
+        "d": "Following the lesson comparing migrants and refugees, students can create a short animated explainer video using Adobe Express. Instead of just a Venn diagram, they can use icons, images, text, and their own voice-over to clearly explain the similarities and differences, consolidating their understanding and practicing their communication skills in a digital format."
       }
     ],
     "audited": true,
-    "plannerText": "This unit explores how significant events, particularly migration, shape places. Students begin by mapping their own family migration stories and brainstorming the push and pull factors for moving, before investigating the concept of historical significance and researching major waves of migration to Australia. Key activities include creating timelines of migration and examining primary sources to understand the impacts on culture, culminating in a personal inquiry project where students research and present on a significant event of their choice."
+    "plannerText": "This unit explores how significant events shape a place, with a strong focus on migration, personal histories, and the interconnectedness of civilizations. Key learning experiences involve students mapping their own family migration stories, researching the push and pull factors for migration to Australia, and creating timelines of significant historical events. For their summative task, students conduct a personal inquiry into a significant event of their choice and present their findings to the class."
   },
   {
     "ca": "Elsternwick",
@@ -1173,28 +1173,28 @@
     "lo": "Physical, social, emotional and intellectual changes that occur throughout life; Influences that shape our identity; Developing a sense of self",
     "s": [
       {
-        "t": "Puppet Pals",
-        "d": "To enhance the 'You, At Your Best' storytelling provocation, students can use Puppet Pals to create a short animated narrative. They can choose characters and backgrounds that represent their story, record their own voice narrating the event, and share this digital story with their small group to help peers identify their character strengths."
-      },
-      {
-        "t": "ChatterPix Kids",
-        "d": "For the 'Superpower Showcase' activity, after designing their superhero on paper, students can take a photo and import it into ChatterPix Kids. They can then record a 30-second audio clip where the superhero introduces itself and explains how its powers, representing an Approach to Learning, help tackle learning challenges."
-      },
-      {
         "t": "Book Creator",
-        "d": "To support the 'Personal Goal Setting' activity, students can create a private digital journal in Book Creator. Each student can design their own book to set academic, social, and personal goals, adding text, images, and audio notes to explain why these goals are important and how they plan to achieve them."
+        "d": "To synthesize their understanding of the central idea, students can create a personal digital journal titled 'My Evolving Sense of Self'. Following the 'Character Strengths 360' and 'Personal Goal Setting' activities, students can dedicate pages to their identified strengths, document their personal goals with text and audio notes, and add reflections on key changes and influences they experience throughout the unit."
       },
       {
-        "t": "Microsoft OneNote",
-        "d": "As a collaborative tool for the 'Classroom Essential Agreement,' the class can use the Collaboration Space in their Microsoft OneNote Class Notebook. Students can work together to brainstorm and categorise the influences and environmental factors they want in their learning space, using text, digital ink, and images on a shared page."
+        "t": "Adobe Express",
+        "d": "For the 'Superpower Showcase' activity, students can use the 'Animate from audio' feature to bring their superhero character to life. After designing their character, they can record a short narration explaining how their ATL-related superpower helps them overcome learning challenges, creating a dynamic and engaging presentation to share with the class."
       },
       {
-        "t": "Microsoft Forms",
-        "d": "To facilitate safe discussions during the 'Toolbox - Emotional Regulation' and 'Sex Education' sessions, the teacher can use Microsoft Forms to anonymously survey students about their feelings regarding personal changes. The aggregated, anonymous responses can then be used as prompts for a sensitive and relevant whole-class discussion."
+        "t": "Puppet Pals",
+        "d": "To apply learning from the 'Toolbox - Emotional Regulation' workshop, students can work in small groups to create short animated skits. They can devise a scenario related to the physical, social, or emotional changes they are learning about, and use the puppets to act out and narrate how they would use the taught strategies to navigate the situation effectively."
+      },
+      {
+        "t": "Microsoft Teams",
+        "d": "In connection with the Line of Inquiry 'Influences all around us' and the 'Sex Education' session on social media, the teacher can facilitate a structured discussion in a Teams channel. By posing questions about how online interactions and media influence perceptions and sense of self, students can engage in a safe, threaded conversation, building on each other's ideas about responsible digital citizenship."
+      },
+      {
+        "t": "GarageBand",
+        "d": "To explore the central idea through storytelling, students can create a short, personal podcast episode. They can script and record a 1-2 minute narrative about a significant personal change or an important influence in their life, adding simple background music or sound effects. This provides a powerful audio-based medium for reflection and sharing, connecting directly to their 'evolving sense of self'."
       }
     ],
     "audited": true,
-    "plannerText": "This unit explores the evolving self, with students investigating personal influences and character strengths through storytelling and peer feedback activities. Students also create 'superhero' characters to understand different learning approaches and participate in workshops on emotional regulation, puberty, and cyber safety to better navigate personal changes."
+    "plannerText": "This unit prompts students to explore their evolving sense of self through various reflective activities. Key learning experiences include identifying personal character strengths through the 'VIA Classification' and peer feedback, setting academic and social goals, creating 'superhero' characters to represent different learning approaches, and engaging in workshops on emotional regulation and online safety."
   },
   {
     "ca": "Glen Waverley",
@@ -1202,9 +1202,30 @@
     "th": "How We Express Ourselves",
     "ci": "Emotions influence our wellbeing.",
     "lo": "How our feelings and emotions affect us; How feelings and emotions are interpreted; How our emotions and behaviour affect relationships",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "ChatterPix Kids",
+        "d": "To support the 'Language Acquisition' goal of describing emotions, students can take a photo of their 'Colour Monster' artwork. They can then use ChatterPix Kids to draw a mouth on their monster and record their voice explaining the emotion it represents, what might cause that feeling, and what it feels like in their body."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Building on the activity of reading and discussing picture story books about emotions, students can create their own simple digital social stories. In Book Creator, they can draw pictures or import photos of their artwork and use the audio record button to narrate a short story about a time they felt a strong emotion, connecting feelings to personal experiences."
+      },
+      {
+        "t": "PicCollage",
+        "d": "For the 'Colour Monster' artwork activity, students can create a digital version using PicCollage on iPads. They can select a background colour to match a feeling, use the drawing tools to create their monster, and add digital stickers or text (with teacher support) to label the emotion, reinforcing the connection between colours and feelings."
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "To dynamically express their understanding of how emotions can change, students can use Stop Motion Studio with clay or Lego figures. They can create a very short animation showing a character's emotional state changing in response to an event, which can then be shared and discussed, linking to how emotions and behaviour affect relationships."
+      },
+      {
+        "t": "Microsoft Sway",
+        "d": "As a whole class, create a collaborative digital 'Emotions Wall' using Sway. The teacher can upload photos of students' Yayoi Kusama-inspired artwork or photos from the summative assessment, and students can contribute by recording audio clips describing the emotion in each picture, creating a shared resource for the classroom."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how emotions influence wellbeing, with students identifying and describing feelings through various activities. Key learning experiences include watching 'Inside Out', reading 'The Colour Monster', creating 'Colour Monster' and Yayoi Kusama-inspired artworks, and discussing how music can represent different moods. The unit culminates in a Seesaw assessment where students photograph themselves portraying an emotion and verbally explain their choice."
   },
   {
     "ca": "Glen Waverley",
@@ -1212,9 +1233,30 @@
     "th": "How We Organise Ourselves",
     "ci": "The products people use go through a process of change.",
     "lo": "Where food comes from; How food can be changed for different purposes; An appreciation of food",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Stop Motion Studio",
+        "d": "To document the 'process of change' central to the unit, students can use Stop Motion Studio on iPads to capture the growth of the seeds they plant in the prep garden. By taking a photo every few days, they can create a short video showing the transformation from seed to plant, making the central idea visible and tangible."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Building on the 'Making connections' activity, students can create a digital learning journal in Seesaw. For various food items, they can use the drawing tools to illustrate the source (e.g., a cow) and the final product (e.g., cheese), then use the voice recording tool to verbally explain the process of change, justifying their connections as mentioned in the planner."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "Following the Chesterfield Farm visit, students can use ChatterPix Kids to demonstrate their understanding of where food comes from. They can take a photo of a farm animal or plant, draw a mouth on it, and record a short sentence from its perspective, such as an apple saying 'I can be changed into apple juice or apple pie!'"
+      },
+      {
+        "t": "Book Creator",
+        "d": "To align with the activity of creating flowcharts for making honey or peanut butter, students can create a simple 'How To' digital book. They can take photos of the steps for a simple recipe (like making a fruit salad), sequence them on different pages, and use the audio record function to explain each step, creating a Prep-friendly procedural text."
+      },
+      {
+        "t": "PicCollage",
+        "d": "To explore 'how food can be changed for different purposes', students can create a visual collage. They can place a source ingredient like 'milk' in the centre and then find and arrange images of all the products it can become (cheese, yoghurt, butter, ice cream) around it, visually representing the concept of transformation."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how products, particularly food, go through a process of change from their source to the final product. Key learning activities include planting and monitoring seeds, making connections between raw ingredients and foods, creating flowcharts to show processes like making honey, visiting a farm, and inquiring into food waste."
   },
   {
     "ca": "Glen Waverley",
@@ -1222,9 +1264,30 @@
     "th": "How the World Works",
     "ci": "The properties of materials influence how objects move and their use.",
     "lo": "Properties of materials; How objects move; How we use materials",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Seesaw",
+        "d": "After conducting the 'Slide and roll tests' with ramps, students can use Seesaw on an iPad to record a short video of their experiment. They can then use the voice recording tool to explain their prediction about how an object will move and then describe their observation of what actually happened, directly addressing the 'how objects move' line of inquiry."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "To document their learning from the 'Materials Gallery' exploration, students can take a photo of a specific material like sandpaper or foil. Using ChatterPix Kids, they can make the material 'talk' by recording a short sentence describing its properties, such as \"I am foil. I am shiny and waterproof,\" reinforcing the scientific vocabulary in a playful way."
+      },
+      {
+        "t": "Book Creator",
+        "d": "To document the iterative process of the 'Design an object' challenge, students can create a simple digital journal in Book Creator. They can take a photo of their initial design drawing, a photo of their built floater, a short video of it being tested in water, and then add a voice note explaining the adaptations they made to improve it."
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "Connecting to the 'Toy sort' activity, students can create a very short animation in Stop Motion Studio showing different types of movement. For example, they can take a series of photos to show a toy car rolling smoothly versus a block sliding with friction, visually demonstrating their understanding of how an object's properties affect its movement."
+      },
+      {
+        "t": "Beebots",
+        "d": "To further explore the 'How objects move' line of inquiry, students can use Beebots. After their hands-on tests with ramps, they can be challenged to program the Beebot to replicate different movements, such as a straight 'slide' or a push-and-stop motion, introducing concepts of directional force and simple algorithms."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit involves a hands-on inquiry where students explore the properties of materials through a 'Materials Gallery' and 'Mystery bags'. They investigate how objects move by conducting 'Slide and roll tests' with ramps, sorting toys, and then apply their understanding in a design challenge to build and test a floater from various provided materials."
   },
   {
     "ca": "Glen Waverley",
@@ -1242,9 +1305,30 @@
     "th": "Where We Are in Place and Time",
     "ci": "Family histories shape who we are and what we value",
     "lo": "What makes a family; The people in your family; Your family history; What is important to your family",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Google Earth",
+        "d": "To support the activity 'Where does your family come from- map out on the map...', the teacher can use Google Earth on the main screen. Students can come up and, with assistance, place a pin on the locations where their family members were born, creating a visual, interactive map of the class's collective heritage."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "Connecting to the homework task where students choose something important to their family, they can take a photo of their object or a family photo. Using ChatterPix Kids, they can draw a mouth and record a short sentence explaining its significance, bringing their family history to life in a simple, engaging way."
+      },
+      {
+        "t": "Book Creator",
+        "d": "To create the 'Booklet celebrating student families' mentioned in the Action section, students can each design a page in a collaborative class Book Creator project. They can add a family photo, a drawing of their family tree, and use the audio record button to narrate who is in their family and what they value."
+      },
+      {
+        "t": "PicCollage",
+        "d": "To share and compare the family photos brought from home, students can use PicCollage on iPads. They can create a simple digital collage with photos of their family, adding digital stickers or simple text labels (with teacher support) to highlight family members or special events, addressing the 'people in your family' line of inquiry."
+      },
+      {
+        "t": "GarageBand",
+        "d": "Building on the Music connection where students share songs from their culture, each student can create a simple 'My Family Soundscape' in GarageBand. They can use the microphone to record a family member saying a greeting in their home language or a snippet of a special family song, creating an auditory representation of their family's identity."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This Prep unit explores how family histories shape identity and values, under the central idea 'Family histories shape who we are and what we value'. Key learning experiences involve students creating family trees, sharing family photos and stories, mapping their family origins on a world map, and discussing important cultural traditions, celebrations, and objects with their peers and visiting family members."
   },
   {
     "ca": "Glen Waverley",
