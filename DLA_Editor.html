@@ -1770,10 +1770,30 @@ ${LIBRARY_CONTENT}
 ---`;
   }
 
+  // Pre-compute a tool index so Gemini doesn't have to scan entries itself
+  const toolIndex = {};
+  DATA.forEach((e,i)=>{
+    getSugs(e).forEach((s,si)=>{
+      const t = sugTool(s).trim().toLowerCase();
+      if(!t) return;
+      if(!toolIndex[t]) toolIndex[t]=[];
+      toolIndex[t].push({entryIdx:i, sugIdx:si, ca:e.ca, yl:e.yl, th:e.th});
+    });
+  });
+  const toolIndexStr = Object.entries(toolIndex)
+    .sort((a,b)=>b[1].length-a[1].length)
+    .map(([tool,entries])=>
+      `${tool} (${entries.length}x): `+entries.map(e=>`[${e.entryIdx}]s${e.sugIdx}`).join(', ')
+    ).join('\n');
+
   return `You are an AI coaching assistant for the Wesley College Digital Learning Assistant. You help the Digital Learning Coach make thoughtful, strategic decisions about educational technology across ${DATA.length} IB PYP lesson entries.
 
 CURRENT TOOL DISTRIBUTION: ${dist}
-${hasPlannerText?'\nYou have full access to the actual planner content for each unit (PLANNER CONTENT fields below). Use this to make specific, context-aware recommendations — reference real activities, vocabulary and assessments from the planners.':'\nNote: planner summaries not yet loaded. Run backfillPlannerText() in GAS to enable deep planner access.'}
+
+TOOL INDEX — EXACT LOCATIONS (entryIdx + sugIdx for every tool):
+${toolIndexStr}
+
+CRITICAL RULE: When the user asks you to replace or modify a specific tool (e.g. "Flip"), you MUST ONLY target entries listed under that exact tool in the TOOL INDEX above. Do NOT modify any entry that is not listed there. The tool index is ground truth — do not guess or infer from the planner data.
 
 IMPORTANT RESPONSE RULES:
 1. Ask ONLY ONE clarifying question at a time.
@@ -1785,6 +1805,7 @@ APPLY_CHANGES:[{"entryIdx":3,"sugIdx":1,"t":"Tool Name","d":"Specific descriptio
    - You may include many changes in one array — include ALL changes in a single APPLY_CHANGES block.
    - NEVER say you have "applied", "made", or "updated" changes in your message text. ONLY output the APPLY_CHANGES block — the system handles the actual approval and applying. If you narrate that changes were made, nothing will actually happen.
    - The JSON must be complete and valid — never truncate the array.
+   - Cross-check every entryIdx and sugIdx against the TOOL INDEX before including it.
 5. Explain your reasoning using actual planner content — name specific activities, vocabulary or assessments.
 
 FULL PLANNER DATA:
