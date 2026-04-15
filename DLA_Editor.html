@@ -110,7 +110,7 @@
         </div>
         <div class="status-card">
           <span class="status-key">Processing Mode</span>
-          <span class="status-val">AI Coach + Feedback</span>
+          <span class="status-val">Per-suggestion feedback</span>
           <span><span class="status-dot"></span></span>
         </div>
         <div class="status-card">
@@ -224,12 +224,12 @@
 
     <!-- AUDIT -->
     <div id="panel-audit" class="panel">
-      <div class="page-title">Audit & AI Coach</div>
+      <div class="page-title">Audit</div>
       <div class="page-sub">Analyse tool usage and chat with Gemini to make bulk changes across the library.</div>
       <div id="audit-campus-debug" style="font-size:11px;color:var(--dim);margin-bottom:12px;padding:8px 12px;background:var(--card2);border-radius:6px;border:1px solid var(--border)"></div>
       <div class="view-tabs">
         <button class="view-tab active" data-view="analytics" onclick="setAuditView(this)">Analytics</button>
-        <button class="view-tab" data-view="chat" onclick="setAuditView(this)">AI Coach Chat</button>
+        
       </div>
 
       <!-- Analytics -->
@@ -244,44 +244,7 @@
       </div>
 
       <!-- Chat -->
-      <div id="audit-chat" style="display:none">
-
-        <!-- External library reference -->
-        <div id="library-ref-section" class="card" style="margin-bottom:14px;padding:20px">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-            <span style="font-size:16px">🔗</span>
-            <span style="font-size:13px;font-weight:700">Cross-reference an external lesson library</span>
-            <button class="btn-sm" id="btn-clear-library" onclick="clearLibraryRef()" style="display:none;margin-left:auto">✕ Clear</button>
-          </div>
-          <div id="library-ref-loaded" style="display:none;padding:10px 14px;background:var(--card2);border-radius:8px;margin-bottom:10px;font-size:12px;color:var(--lime);font-weight:600"></div>
-          <div id="library-input-row" style="display:flex;gap:8px;margin-bottom:8px">
-            <input id="library-url-input" class="inp" placeholder="Paste a URL (e.g. https://education.minecraft.net/en-us/resources)" style="flex:1;margin-bottom:0">
-            <button class="btn-pri" onclick="fetchLibraryURL()" id="btn-fetch-url" style="white-space:nowrap;padding:10px 18px">Fetch</button>
-          </div>
-          <div id="library-paste-section" style="display:none">
-            <div id="library-known-platform" style="display:none;padding:12px 14px;background:#0a1a0a;border:1px solid var(--lime);border-radius:10px;margin-bottom:10px">
-              <div style="font-size:12px;font-weight:800;color:var(--lime);margin-bottom:4px" id="library-known-title">✓ Known platform detected</div>
-              <div style="font-size:12px;color:#aaa;line-height:1.5;margin-bottom:10px" id="library-known-desc">The AI Coach has built-in knowledge of this lesson library and can cross-reference it directly — no copy-paste needed.</div>
-              <button onclick="useAIKnowledge()" style="padding:8px 18px;background:var(--lime);color:#111;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer">Use AI's built-in knowledge →</button>
-            </div>
-            <div id="library-paste-manual">
-              <p style="font-size:12px;color:#fbbf24;margin-bottom:8px">⚠ That URL couldn't be fetched directly (the site blocks automated access). Paste the page content below, or use the AI's built-in knowledge if it knows this platform.</p>
-              <textarea id="library-paste-input" class="inp" rows="5" placeholder="Copy all text from the lesson library page and paste it here..." style="margin-bottom:8px;font-size:12px"></textarea>
-              <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-                <button class="btn-pri" onclick="useLibraryPaste()" style="font-size:12px;padding:8px 16px">Use this content</button>
-                <button onclick="useAIKnowledge()" style="padding:8px 16px;background:transparent;color:var(--lime);border:1px solid var(--lime);border-radius:8px;font-weight:700;font-size:12px;cursor:pointer">Use AI's built-in knowledge instead</button>
-              </div>
-            </div>
-          </div>
-          <p style="font-size:11px;color:var(--dim);line-height:1.6">Once loaded, the AI Coach can cross-reference the library against all your planners and suggest where lessons fit.</p>
-        </div>
-
-        <div id="chat-messages"></div>
-        <div class="chat-input-row">
-          <input id="chat-input" class="inp" placeholder="e.g. Where could Minecraft lessons fit across my planners?" style="flex:1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}">
-          <button class="btn-pri" id="btn-send" onclick="sendChat()">Send</button>
-        </div>
-      </div>
+      
     </div>
 
     <!-- BULK TOOLS -->
@@ -477,7 +440,6 @@ let CURRENT_ENTRY_IDX = null;
 let PREV_TAB = 'dashboard';
 let AUDIT_VIEW = 'tools';
 let AUDIT_YEAR_CAMPUS = '';
-let CHAT_HISTORY = [];
 const CHANGE_HISTORY = [];
 const LOCKS = {}; 
 const MAX_HISTORY = 20;
@@ -487,7 +449,6 @@ const _k=['AIzaSy','C2aK2cd9BBLNgPe','rQTSKxgNVrxXI7iC_M'];
 const BAKED_API_KEY=_k.join(''); 
 const ANALYTICS_SHEET_ID = '1R4P4FJlc8SyRFlVWoM0HpHmfCNMNVOpI8cuEILFxBNY';
 const GEMINI_MODEL = 'gemini-2.5-flash';      
-const GEMINI_CHAT_MODEL = 'gemini-2.5-flash'; 
 const YR = ["Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"];
 const CAMPUS_COL = { Elsternwick:'#818cf8', 'Glen Waverley':'#34d399', 'St Kilda':'#fb923c', 'St Kilda Road':'#fb923c' };
 
@@ -1212,7 +1173,7 @@ PROPOSED: {"t":"Tool Name","d":"Specific description connected to the planner co
   }));
 
   try{
-    const response = await callGemini(contents, system, GEMINI_CHAT_MODEL);
+    const response = await callGemini(contents, system, 'gemini-3.1-pro-preview');
     addSugMsg(uid, 'model', response);
   }catch(e){
     addSugMsg(uid, 'model', `Error: ${e.message}`);
@@ -1366,29 +1327,16 @@ function computeStats(){
 
 function renderAudit(){
   renderAuditChart();
-  if(CHAT_HISTORY.length===0) initChat();
 }
 
-function resizeChatMessages(){
-  const msgs = document.getElementById('chat-messages');
-  if(!msgs) return;
-  const chat = document.getElementById('audit-chat');
-  if(!chat || chat.style.display === 'none') return;
-  const inputRow = msgs.nextElementSibling;
-  const top = msgs.getBoundingClientRect().top;
-  const inputH = inputRow ? inputRow.offsetHeight : 68;
-  const available = window.innerHeight - top - inputH - 20;
-  msgs.style.height = Math.max(220, available) + 'px';
-}
-window.addEventListener('resize', resizeChatMessages);
+
 
 function setAuditView(btn){
   document.querySelectorAll('.view-tab[data-view]').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   const v=btn.dataset.view;
   document.getElementById('audit-analytics').style.display=v==='analytics'?'block':'none';
-  document.getElementById('audit-chat').style.display=v==='chat'?'block':'none';
-  if(v==='chat') requestAnimationFrame(resizeChatMessages);
+
 }
 
 function setAnalyticsView(btn){
@@ -1590,405 +1538,8 @@ function toggleToolDrilldown(row, toolName){
   if(!isOpen) dd.style.display='block';
 }
 
-function getCoachSystem(){
-  const stats=computeStats();
-  const dist=stats.sorted.filter(x=>x.name&&!x.name.startsWith('\u26a0')).slice(0,20).map(({name,count,pct})=>`${name}: ${count}\u00d7 (${pct}%)`).join(', ');
-  
-  const hasPlannerText = DATA.some(e=>e.plannerText);
-  const fullContext=DATA.map((e,i)=>{
-    const sugs=getSugs(e);
-    const sugStr=sugs.map((s,si)=>`  ${si+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n');
-    
-    return `[${i}] ${e.ca} | ${e.yl} | ${e.th}${e.ci?'\n  CI: '+e.ci:''}${sugs.length?'\n  Suggestions:\n'+sugStr:''}`;
-  }).join('\n\n');
 
-  
-  let librarySection = '';
-  if(LIBRARY_CONTENT){
-    const isAIKnowledge = LIBRARY_CONTENT.startsWith('[AI_KNOWLEDGE:');
-    const platformName = isAIKnowledge
-      ? LIBRARY_CONTENT.replace('[AI_KNOWLEDGE:','').replace(']','')
-      : LIBRARY_SOURCE;
-    librarySection = isAIKnowledge
-      ? `
 
-EXTERNAL LESSON LIBRARY — AI KNOWLEDGE MODE (${platformName}):
-Draw on your full training knowledge of the ${platformName} lesson library. Reference specific lesson titles, subject areas, year level recommendations, and curriculum connections from ${platformName} when making suggestions. The user wants you to map ${platformName} lessons to Wesley's IB PYP units.
-
-IMPORTANT — LINKS: For every ${platformName} lesson you mention, include a direct clickable link using Markdown format: [Lesson Title](https://...). Use the real URL for that lesson on the ${platformName} website. Teachers will click these links to view the full lesson details. If you are not certain of the exact URL for a specific lesson, link to the most relevant section of the ${platformName} lesson library instead.
----`
-      : `
-
-EXTERNAL LESSON LIBRARY (${LIBRARY_SOURCE}):
-Use this content to find specific connections to Wesley's units. Reference actual lesson names and activities from the library when making recommendations.
----
-${LIBRARY_CONTENT}
----`;
-  }
-
-  
-  const toolIndex = {};
-  DATA.forEach((e,i)=>{
-    getSugs(e).forEach((s,si)=>{
-      const t = sugTool(s).trim().toLowerCase();
-      if(!t) return;
-      if(!toolIndex[t]) toolIndex[t]=[];
-      toolIndex[t].push({entryIdx:i, sugIdx:si, ca:e.ca, yl:e.yl, th:e.th});
-    });
-  });
-  const toolIndexStr = Object.entries(toolIndex)
-    .sort((a,b)=>b[1].length-a[1].length)
-    .map(([tool,entries])=>
-      `${tool} (${entries.length}x): `+entries.map(e=>`[${e.entryIdx}]s${e.sugIdx}`).join(', ')
-    ).join('\n');
-
-  return `You are an AI coaching assistant for the Wesley College Digital Learning Assistant. You help the Digital Learning Coach make thoughtful, strategic decisions about educational technology across ${DATA.length} IB PYP lesson entries.
-
-CURRENT TOOL DISTRIBUTION: ${dist}
-
-TOOL INDEX — EXACT LOCATIONS (entryIdx + sugIdx for every tool):
-${toolIndexStr}
-
-CRITICAL RULE: When the user asks you to replace or modify a specific tool (e.g. "Flip"), you MUST ONLY target entries listed under that exact tool in the TOOL INDEX above. Do NOT modify any entry that is not listed there. The tool index is ground truth — do not guess or infer from the planner data.
-
-IMPORTANT RESPONSE RULES:
-1. Ask ONLY ONE clarifying question at a time.
-2. When asking a question with clear options, use this EXACT format on its own line:
-OPTIONS: ["Option A","Option B","Option C"]
-3. Keep questions short and conversational.
-4. Once you have enough to propose changes, end your message with a valid JSON array:
-APPLY_CHANGES:[{"entryIdx":3,"sugIdx":1,"t":"Tool Name","d":"Specific description."},{"entryIdx":7,"sugIdx":0,"t":"Another Tool","d":"Another description."}]
-   - You may include many changes in one array — include ALL changes in a single APPLY_CHANGES block.
-   - NEVER say you have "applied", "made", or "updated" changes in your message text. ONLY output the APPLY_CHANGES block — the system handles the actual approval and applying. If you narrate that changes were made, nothing will actually happen.
-   - The JSON must be complete and valid — never truncate the array.
-   - Cross-check every entryIdx and sugIdx against the TOOL INDEX before including it.
-5. Explain your reasoning using actual planner content — name specific activities, vocabulary or assessments.
-
-FULL PLANNER DATA:
-${fullContext}${librarySection}`;
-}
-
-function initChat(){
-  CHAT_HISTORY=[{role:'model',text:"Hi! I'm your DLA AI Coach. I can help you make strategic changes across all entries — like adding more of a particular tool, balancing the distribution, or replacing overused tools.\n\nWhat would you like to change?",changes:null,options:null}];
-  renderChat();
-}
-
-function formatChatHTML(text){
-  return text
-    
-    .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,
-      '<a href="$2" target="_blank" rel="noopener" style="color:var(--lime);text-decoration:underline;font-weight:600">$1 ↗</a>')
-    
-    .replace(/(?<![">])(https?:\/\/[^\s<"]+)/g,
-      '<a href="$1" target="_blank" rel="noopener" style="color:var(--lime);text-decoration:underline">$1 ↗</a>')
-    
-    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-    
-    .replace(/\n/g,'<br>');
-}
-
-function renderChat(){
-  const el=document.getElementById('chat-messages'); if(!el) return;
-  el.innerHTML='';
-  CHAT_HISTORY.forEach((msg,i)=>{
-    const wrap=document.createElement('div');
-    wrap.className='chat-msg '+msg.role;
-    
-    const bubble=document.createElement('div');
-    bubble.className='chat-bubble';
-    if(msg.role==='user'){
-      bubble.textContent=msg.text;
-    } else {
-      const clean=msg.text
-        .replace(/OPTIONS:\s*\[.*?\]/gs,'')
-        .replace(/APPLY_CHANGES:[\s\S]*/,'')
-        .trim();
-      bubble.innerHTML=formatChatHTML(clean);
-    }
-    wrap.appendChild(bubble);
-    
-    if(msg.role==='model' && msg.options && i===CHAT_HISTORY.length-1){
-      const optRow=document.createElement('div');
-      optRow.style.cssText='display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;justify-content:flex-start';
-      msg.options.forEach(opt=>{
-        const btn=document.createElement('button');
-        btn.style.cssText='padding:6px 13px;border-radius:20px;border:1.5px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;transition:all .12s';
-        btn.textContent=opt;
-        btn.onmouseover=()=>{ btn.style.background='var(--gold)'; btn.style.color='#111'; };
-        btn.onmouseout=()=>{ btn.style.background='transparent'; btn.style.color='var(--gold)'; };
-        btn.onclick=()=>{ submitChat(opt); };
-        optRow.appendChild(btn);
-      });
-      wrap.appendChild(optRow);
-    }
-    el.appendChild(wrap);
-  });
-  el.scrollTop=el.scrollHeight;
-}
-
-async function submitChat(text){
-  const input=document.getElementById('chat-input');
-  input.value='';
-  await _doSendChat(text);
-}
-
-async function sendChat(){
-  const input=document.getElementById('chat-input');
-  const msg=input.value.trim(); if(!msg) return;
-  input.value='';
-  await _doSendChat(msg);
-}
-
-function cleanGeminiJSON(s){
-  return s
-    
-    .replace(/```json|```/g,'')
-    
-    .replace(/"([^"]*)"/g, (_,inner)=>'"'+inner.replace(/\n/g,'\\n').replace(/\r/g,'')+'"')
-    
-    .replace(/,\s*([\]}])/g,'$1')
-    .trim();
-}
-
-function normaliseChanges(raw){
-  return raw
-    .filter(c=>c&&c.entryIdx!=null)
-    .map(c=>({
-      entryIdx: c.entryIdx!=null?c.entryIdx:(c.entry_idx!=null?c.entry_idx:0),
-      sugIdx:   c.sugIdx!=null?c.sugIdx:(c.sug_idx!=null?c.sug_idx:0),
-      t: c.t||c.tool||c.technology||c.name||c.toolName||'',
-      d: c.d||c.desc||c.description||c.integration_idea||c.activity||c.suggestion||''
-    }));
-}
-
-async function _doSendChat(msg){
-  const btn=document.getElementById('btn-send');
-  btn.disabled=true;
-  CHAT_HISTORY.push({role:'user',text:msg,changes:null,options:null});
-  renderChat();
-  try{
-    const contents=CHAT_HISTORY.map(m=>({
-      role:m.role==='model'?'model':'user',
-      parts:[{text:m.role==='model'
-        ? m.text.replace(/OPTIONS:\s*\[.*?\]/gs,'').replace(/APPLY_CHANGES:[\s\S]*/,'').trim()
-        : m.text}]
-    }));
-    const response=await callGemini(contents,getCoachSystem(),GEMINI_CHAT_MODEL);
-    
-    let options=null;
-    const optMatch=response.match(/OPTIONS:\s*(\[[\s\S]*?\])/);
-    if(optMatch){
-      try{ options=JSON.parse(optMatch[1]); }catch{}
-    }
-    
-    let changes=null;
-    const changeMatch=response.match(/APPLY_CHANGES:\s*([\s\S]*?)(?=\n\n|$)/s);
-    if(changeMatch){
-      try{
-        
-        const jsonStr = changeMatch[1].trim();
-        const arrStart = jsonStr.indexOf('[');
-        const arrEnd = jsonStr.lastIndexOf(']');
-        if(arrStart===-1||arrEnd===-1) throw new Error('No array found');
-        const raw=JSON.parse(cleanGeminiJSON(jsonStr.slice(arrStart, arrEnd+1)));
-        changes=normaliseChanges(raw);
-      }catch(err){
-        console.warn('APPLY_CHANGES direct parse failed, trying recovery…', err.message);
-        
-        const recovered=[];
-        const src=changeMatch[1];
-        
-        let depth=0, start=-1;
-        for(let i=0;i<src.length;i++){
-          if(src[i]==='{'){if(depth===0)start=i;depth++;}
-          else if(src[i]==='}'){depth--;if(depth===0&&start!==-1){
-            try{
-              const obj=JSON.parse(cleanGeminiJSON(src.slice(start,i+1)));
-              if(obj.entryIdx!=null) recovered.push(obj);
-            }catch{}
-            start=-1;
-          }}
-        }
-        if(recovered.length){
-          changes=normaliseChanges(recovered);
-          console.log('Recovered',changes.length,'changes from partial JSON');
-        } else {
-          const truncated=!changeMatch[1].trim().match(/\]\s*$/);
-          CHAT_HISTORY.push({role:'model',
-            text: truncated
-              ? '⚠ The changes list was cut off before it finished. Ask me to "retry in batches of 10".'
-              : '⚠ Could not parse the proposed changes. Ask me to "retry proposing the changes".',
-            changes:null, options:['Retry in batches of 10','Retry proposing changes']});
-        }
-      }
-    }
-    CHAT_HISTORY.push({role:'model',text:response,changes,options});
-    renderChat();
-    
-    if(changes&&changes.length) showChangesPopup(changes);
-  }catch(e){
-    CHAT_HISTORY.push({role:'model',text:`Error: ${e.message}`,changes:null,options:null});
-    renderChat();
-  }
-  btn.disabled=false;
-}
-
-function showChangesPopup(changes){
-  const existing=document.getElementById('changes-popup-overlay');
-  if(existing) existing.remove();
-
-  
-  const states=changes.map(()=>'pending'); 
-
-  const overlay=document.createElement('div');
-  overlay.id='changes-popup-overlay';
-  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px';
-
-  const popup=document.createElement('div');
-  popup.style.cssText='background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;max-width:780px;width:100%;height:88vh;max-height:860px;display:flex;flex-direction:column;gap:0;box-sizing:border-box';
-
-  
-  const header=document.createElement('div');
-  header.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-shrink:0';
-  header.innerHTML=`<div style="width:10px;height:10px;border-radius:50%;background:var(--lime)"></div>
-    <h3 style="font-size:18px;font-weight:900">Review Proposed Changes</h3>
-    <span id="popup-counter" style="font-size:13px;color:var(--dim);margin-left:auto"></span>`;
-  popup.appendChild(header);
-
-  const subline=document.createElement('p');
-  subline.style.cssText='font-size:13px;color:var(--dim);margin-bottom:18px;flex-shrink:0';
-  subline.textContent='Approve or decline each suggestion individually, then apply your approved changes.';
-  popup.appendChild(subline);
-
-  
-  const rowsEl=document.createElement('div');
-  rowsEl.style.cssText='overflow-y:auto;flex:1;min-height:0;display:flex;flex-direction:column;gap:12px;margin-bottom:16px;padding-right:4px';
-
-  function updateCounter(){
-    const approved=states.filter(s=>s==='approved').length;
-    const declined=states.filter(s=>s==='declined').length;
-    const pending=states.filter(s=>s==='pending').length;
-    document.getElementById('popup-counter').textContent=
-      `${approved} approved · ${declined} declined · ${pending} pending`;
-    const applyBtn=document.getElementById('popup-apply-btn');
-    if(applyBtn){
-      const n=states.filter(s=>s==='approved').length;
-      applyBtn.textContent=`✓ Apply ${n} approved change${n!==1?'s':''}`;
-      applyBtn.disabled=n===0;
-      applyBtn.style.opacity=n===0?'0.4':'1';
-    }
-  }
-
-  changes.forEach((c,ci)=>{
-    const e=DATA[c.entryIdx];
-    const oldSug=getSugs(e)[c.sugIdx];
-    const oldTool=oldSug?sugTool(oldSug):'(empty slot)';
-    const oldDesc=oldSug?sugDesc(oldSug):'';
-    
-    const newTool = c.t||c.tool||c.technology||c.name||'(unknown tool)';
-    const newDesc = c.d||c.desc||c.description||c.integration_idea||c.activity_description||'';
-
-    const card=document.createElement('div');
-    card.id=`change-card-${ci}`;
-    card.style.cssText='background:var(--card2);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .15s;flex-shrink:0';
-
-    
-    const entryRow=document.createElement('div');
-    entryRow.style.cssText='display:flex;align-items:center;gap:8px;padding:12px 16px;cursor:pointer;user-select:none';
-    entryRow.innerHTML=`<span style="font-size:12px;color:var(--dim);width:90px;flex-shrink:0">${esc(e?e.ca:'')}</span>
-      <span style="font-size:12px;color:var(--gold);font-weight:700;width:62px;flex-shrink:0">${esc(e?e.yl:'')}</span>
-      <span style="font-size:14px;font-weight:700;flex:1">${esc(e?e.th:'')}</span>
-      <span id="card-status-${ci}" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--card);color:var(--dim)">PENDING</span>`;
-
-    
-    const detail=document.createElement('div');
-    detail.id=`card-detail-${ci}`;
-    detail.style.cssText='padding:0 16px 14px;';
-
-    detail.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-      <div style="padding:8px 10px;background:#1a0808;border:1px solid #3a1818;border-radius:8px">
-        <div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:700">Replacing</div>
-        <div style="font-size:13px;font-weight:800;color:#ff9999;margin-bottom:3px">${esc(oldTool)}</div>
-        <div style="font-size:11px;color:#777;line-height:1.5">${esc((oldDesc||'No description').slice(0,220))}</div>
-      </div>
-      <div style="padding:8px 10px;background:#081808;border:1px solid #183818;border-radius:8px">
-        <div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:700">New suggestion</div>
-        <div style="font-size:13px;font-weight:800;color:var(--lime);margin-bottom:3px">${esc(newTool)}</div>
-        <div style="font-size:11px;color:#aaa;line-height:1.5">${esc(newDesc.slice(0,220))}</div>
-      </div>
-    </div>
-    <div style="display:flex;gap:8px">
-      <button onclick="setChangeState(${ci},'approved')" id="btn-approve-${ci}"
-        style="flex:1;padding:10px 8px;border-radius:9px;border:2px solid var(--lime);background:transparent;color:var(--lime);font-weight:900;font-size:14px;cursor:pointer;transition:all .12s"
-        onmouseover="this.style.background='var(--lime)';this.style.color='#111'"
-        onmouseout="this.style.background='transparent';this.style.color='var(--lime)'">
-        ✓ Approve
-      </button>
-      <button onclick="setChangeState(${ci},'declined')" id="btn-decline-${ci}"
-        style="flex:1;padding:10px 8px;border-radius:9px;border:2px solid #FF8080;background:transparent;color:#FF8080;font-weight:900;font-size:14px;cursor:pointer;transition:all .12s"
-        onmouseover="this.style.background='#FF8080';this.style.color='#111'"
-        onmouseout="this.style.background='transparent';this.style.color='#FF8080'">
-        ✗ Decline
-      </button>
-    </div>`;
-
-    
-    detail.style.display='block';
-    
-    entryRow.style.cursor='default';
-
-    card.appendChild(entryRow);
-    card.appendChild(detail);
-    rowsEl.appendChild(card);
-  });
-
-  popup.appendChild(rowsEl);
-
-  
-  const footer=document.createElement('div');
-  footer.style.cssText='display:flex;gap:10px;flex-shrink:0;padding-top:12px;border-top:1px solid var(--border);flex-wrap:wrap';
-  footer.innerHTML=`
-    <button id="popup-apply-btn" disabled onclick="applyChangesFromPopup()" 
-      style="flex:1;min-width:180px;padding:14px;background:var(--lime);color:#111;border:none;border-radius:10px;font-weight:900;font-size:15px;cursor:pointer;opacity:0.4">
-      ✓ Apply 0 approved changes
-    </button>
-    <button onclick="document.getElementById('changes-popup-overlay').remove()"
-      style="padding:14px 20px;background:transparent;color:var(--dim);border:1.5px solid var(--border);border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;min-width:80px">
-      Close
-    </button>`;
-  popup.appendChild(footer);
-
-  overlay.appendChild(popup);
-  overlay._changes=changes;
-  overlay._states=states;
-  document.body.appendChild(overlay);
-  updateCounter();
-
-  window._popupStates=states;
-  window._popupChanges=changes;
-  window._popupUpdateCounter=updateCounter;
-}
-
-function setChangeState(ci, state){
-  if(!window._popupStates) return;
-  window._popupStates[ci]=state;
-
-  const card=document.getElementById(`change-card-${ci}`);
-  const statusEl=document.getElementById(`card-status-${ci}`);
-
-  if(state==='approved'){
-    card.style.borderColor='var(--lime)';
-    statusEl.style.background='rgba(197,232,74,0.15)';
-    statusEl.style.color='var(--lime)';
-    statusEl.textContent='APPROVED';
-  } else {
-    card.style.borderColor='#FF8080';
-    statusEl.style.background='rgba(255,128,128,0.15)';
-    statusEl.style.color='#FF8080';
-    statusEl.textContent='DECLINED';
-  }
-  window._popupUpdateCounter();
-}
 
 function applyChangesFromPopup(){
   const overlay=document.getElementById('changes-popup-overlay');
@@ -2030,17 +1581,7 @@ function applyChangesFromPopup(){
 
   saveToDrive();
   setStatus(`${applied} suggestion${applied!==1?'s':''} updated and saved`);
-  const lastMsg=CHAT_HISTORY[CHAT_HISTORY.length-1];
-  if(lastMsg) lastMsg.changes=null;
-  CHAT_HISTORY.push({role:'model',text:`Done \u2014 ${applied} suggestion${applied!==1?'s':''} applied and saved to Drive. Want to make any other changes?`,changes:null,options:null});
-  renderChat();
   renderAuditChart();
-}
-
-function applyChanges(msgIdx){
-  
-  const msg=CHAT_HISTORY[msgIdx];
-  if(msg&&msg.changes) showChangesPopup(msg.changes);
 }
 
 function checkKeyInput(){
@@ -2505,156 +2046,7 @@ function renderLiveUsed(rows){
     }).join('') + '</div>';
 }
 
-let LIBRARY_CONTENT = null; 
-let LIBRARY_SOURCE = '';    
 
-const KNOWN_PLATFORMS = [
-  { match: /minecraft/i,        name: 'Minecraft Education',   desc: 'Gemini has extensive knowledge of the Minecraft Education lesson library, including subject areas, year levels, and curriculum connections.' },
-  { match: /commonsense\.org/i, name: 'Common Sense Media',    desc: 'Gemini knows the Common Sense Education digital citizenship and media literacy curriculum.' },
-  { match: /tinkercad/i,        name: 'Tinkercad',             desc: "Gemini knows Tinkercad's lesson library for 3D design and circuits." },
-  { match: /code\.org/i,        name: 'Code.org',              desc: 'Gemini has strong knowledge of Code.org courses and lesson plans.' },
-  { match: /scratchfoundation|scratch\.mit/i, name: 'Scratch', desc: 'Gemini knows the Scratch educator resources and lesson library.' },
-  { match: /canva\.com\/edu/i,  name: 'Canva for Education',  desc: "Gemini knows Canva's education lesson templates and resources." },
-];
-
-async function fetchLibraryURL(){
-  const input = document.getElementById('library-url-input');
-  const url = input?.value.trim();
-  if(!url){ return; }
-
-  const btn = document.getElementById('btn-fetch-url');
-  const pasteSection = document.getElementById('library-paste-section');
-  const knownEl = document.getElementById('library-known-platform');
-  btn.disabled = true; btn.textContent = 'Fetching…';
-  LIBRARY_SOURCE = url;
-
-  
-  const known = KNOWN_PLATFORMS.find(p => p.match.test(url));
-  if(known){
-    if(knownEl){
-      document.getElementById('library-known-title').textContent = '✓ ' + known.name + ' detected';
-      document.getElementById('library-known-desc').textContent = known.desc;
-      knownEl.style.display = 'block';
-    }
-    if(pasteSection) pasteSection.style.display = 'block';
-    btn.disabled = false; btn.textContent = 'Fetch';
-    return;
-  }
-
-  
-  try{
-    const proxies = [
-      u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
-      u => `https://api.allorigins.win/get?url=${encodeURIComponent(u)}`,
-      u => `https://thingproxy.freeboard.io/fetch/${u}`,
-    ];
-    let text = null;
-    for(const makeProxy of proxies){
-      if(text) break;
-      try{
-        const r = await fetch(makeProxy(url), {signal: AbortSignal.timeout(7000)});
-        let raw = '';
-        const ct = r.headers.get('content-type')||'';
-        if(ct.includes('json')){
-          const d = await r.json();
-          raw = d.contents || d.body || '';
-        } else {
-          raw = await r.text();
-        }
-        if(raw.length > 200){
-          const tmp = document.createElement('div');
-          tmp.innerHTML = raw;
-          tmp.querySelectorAll('script,style,nav,footer,header,iframe').forEach(el=>el.remove());
-          const t = (tmp.innerText || tmp.textContent || '').replace(/\s{3,}/g,'\n\n').trim();
-          if(t.length > 200) text = t;
-        }
-      }catch{}
-    }
-
-    if(text && text.length > 200){
-      useLibraryContent(text, url);
-      if(pasteSection) pasteSection.style.display = 'none';
-    } else {
-      if(pasteSection) pasteSection.style.display = 'block';
-    }
-  }catch(e){
-    if(pasteSection) pasteSection.style.display = 'block';
-  }
-  btn.disabled = false; btn.textContent = 'Fetch';
-}
-
-function useAIKnowledge(){
-  const url = document.getElementById('library-url-input')?.value.trim() || LIBRARY_SOURCE;
-  const known = KNOWN_PLATFORMS.find(p => p.match.test(url)) || { name: url };
-  const sentinel = `[AI_KNOWLEDGE:${known.name}]`;
-  useLibraryContent(sentinel, known.name);
-}
-
-function useLibraryPaste(){
-  const text = document.getElementById('library-paste-input')?.value.trim();
-  if(!text){ return; }
-  const url = document.getElementById('library-url-input')?.value.trim() || 'pasted content';
-  useLibraryContent(text, url);
-}
-
-function useLibraryContent(text, source){
-  
-  const maxChars = 8000;
-  LIBRARY_CONTENT = text.length > maxChars
-    ? text.slice(0, maxChars) + '\n\n[...content truncated for length]'
-    : text;
-  LIBRARY_SOURCE = source;
-
-  
-  const loadedEl = document.getElementById('library-ref-loaded');
-  const inputRow = document.getElementById('library-input-row');
-  const pasteSection = document.getElementById('library-paste-section');
-  const clearBtn = document.getElementById('btn-clear-library');
-
-  if(loadedEl){
-    loadedEl.style.display = 'block';
-    const isAIKnowledge = LIBRARY_CONTENT.startsWith('[AI_KNOWLEDGE:');
-    if(isAIKnowledge){
-      loadedEl.textContent = `✓ AI knowledge mode — using built-in knowledge of ${source}`;
-    } else {
-      const wordCount = LIBRARY_CONTENT.split(/\s+/).length;
-      loadedEl.textContent = `✓ Library loaded — ${wordCount.toLocaleString()} words from ${source.length > 60 ? source.slice(0,60)+'…' : source}`;
-    }
-  }
-  if(inputRow) inputRow.style.display = 'none';
-  if(pasteSection) pasteSection.style.display = 'none';
-  if(clearBtn) clearBtn.style.display = 'inline-block';
-
-  
-  const greeting = `I've loaded content from: ${source}\n\nI can now cross-reference this lesson library against all your planners. What would you like to know? For example:\n- "Where could these lessons fit across all campuses?"\n- "Which units have the best connection to this content?"\n- "Suggest which year levels these lessons suit best"`;
-
-  CHAT_HISTORY.push({
-    role:'model',
-    text: greeting,
-    changes: null,
-    options: ["Where could these fit across all planners?", "Which year levels suit these lessons?", "Find the strongest connections"]
-  });
-  renderChat();
-}
-
-function clearLibraryRef(){
-  LIBRARY_CONTENT = null;
-  LIBRARY_SOURCE = '';
-
-  const loadedEl = document.getElementById('library-ref-loaded');
-  const inputRow = document.getElementById('library-input-row');
-  const pasteSection = document.getElementById('library-paste-section');
-  const clearBtn = document.getElementById('btn-clear-library');
-  const urlInput = document.getElementById('library-url-input');
-  const pasteInput = document.getElementById('library-paste-input');
-
-  if(loadedEl){ loadedEl.style.display = 'none'; loadedEl.textContent = ''; }
-  if(inputRow) inputRow.style.display = 'flex';
-  if(pasteSection) pasteSection.style.display = 'none';
-  if(clearBtn) clearBtn.style.display = 'none';
-  if(urlInput) urlInput.value = '';
-  if(pasteInput) pasteInput.value = '';
-}
 
 function initBulkTools(){
   const campuses=[...new Set(DATA.map(e=>e.ca))].sort();
