@@ -833,7 +833,7 @@ const TOOL_WHITELIST = [
   'seesaw','canva','book creator','padlet',
   
   'garageband','scratchjr','scratch jr','scratch','stop motion studio','stop motion',
-  'chatterpix','flip','flipaclip','imovie','puppet pals',
+  'chatterpix','imovie','puppet pals',
   'adobe express','adobe express podcasting',
   
   'google maps','google earth','field guide to victoria','field guide','sky map',
@@ -1162,7 +1162,7 @@ Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`\nCentral Idea: "${en
 Current suggestion: ${sugTool(sug)} — ${sugDesc(sug)}
 Other tools already in this unit (do not repeat): ${others||'none'}
 
-APPROVED TOOLS ONLY — suggest only from Wesley's approved list: Microsoft M365, Beebots, Sphero, Lego Spike, Micro:bits, CoDrone, Makey Makey, 3D Printers, ClassVR, Merge Cubes, Green Screen, Podcast Equipment, iPads, Seesaw, Canva, Book Creator, Padlet, GarageBand, ScratchJR, Stop Motion Studio, ChatterPix, Flip, Flipaclip, iMovie, Puppet Pals, Adobe Express, Google Maps, Google Earth, Field Guide to Victoria, Sky Map, Geoboard, Clickview, Epic, PicCollage, Brushes Redux, Word Clouds ABCya, Sketchbook, Explain Everything, Freeform, Delightex, Kahoot, Tinkercad, Minecraft Education.
+APPROVED TOOLS ONLY — suggest only from Wesley's approved list: Microsoft M365 (Teams for Year 4+ ONLY), Beebots, Sphero, Lego Spike, Micro:bits, CoDrone, Makey Makey, 3D Printers, ClassVR, Merge Cubes, Green Screen, Podcast Equipment, iPads, Seesaw, Canva, Book Creator, Padlet, GarageBand, ScratchJR, Stop Motion Studio, ChatterPix, iMovie, Puppet Pals, Adobe Express, Google Maps, Google Earth, Field Guide to Victoria, Sky Map, Geoboard, Clickview, Epic, PicCollage, Brushes Redux, Word Clouds ABCya, Sketchbook, Explain Everything, Freeform, Delightex, Kahoot, Tinkercad, Minecraft Education.
 
 Ask ONE clarifying question at a time if needed. When ready to propose a replacement, end your message with:
 PROPOSED: {"t":"Tool Name","d":"Specific description connected to the planner content."}`;
@@ -2098,12 +2098,13 @@ APPROVED TOOLS ONLY:
 - Robotics/STEM Hardware: Beebots, Sphero Indi, Sphero BOLT, Lego Spike Essential, Lego Spike Prime, Micro:bits, CoDrone EDU, Makey Makey
 - Maker/A/V Hardware: 3D Printers, ClassVR, Merge Cubes, Green Screen Kits, Podcast Equipment, Digital Cameras, iPads, Laptops
 - Core Creation: Seesaw, Canva, Book Creator, Padlet
-- Video/Audio/Animation: GarageBand, ScratchJR, Stop Motion Studio, ChatterPix Kids, Flip, Flipaclip, iMovie, Puppet Pals, Adobe Express (Podcasting, video, character animations, website designer)
+- Video/Audio/Animation: GarageBand, ScratchJR, Stop Motion Studio, ChatterPix Kids, iMovie, Puppet Pals, Adobe Express (Podcasting, video, character animations, website designer)
 - Subject Specific: Google Maps, Google Earth (ONLY Google tools allowed), Field Guide to Victoria, Sky Map, Geoboard
 - Other: Clickview, Epic, PicCollage, Brushes Redux, Word Clouds ABCya, Sketchbook, Explain Everything, Freeform, Delightex, Kahoot, Tinkercad, Minecraft Education
 PROHIBITED: Google Suite (Docs/Slides/Sheets), any tool NOT on the above list, WeVideo.
-YEAR-LEVEL RULES: Upper primary (Yr4-6): Teams ok. Early years (Prep-Yr2): no Teams, prefer Seesaw/Canva/Book Creator. Mid (Yr3): no Teams/Seesaw overuse.
-Each suggestion must connect specifically to the unit content — no generic descriptions.`;
+YEAR-LEVEL RULES: Microsoft Teams ONLY for Year 4, 5, 6 — NEVER suggest Teams for Prep, Year 1, Year 2, or Year 3. Early years (Prep-Yr2): prefer Seesaw/Canva/Book Creator. Mid (Yr3): Canva, Book Creator, Adobe Express preferred.
+Each suggestion must connect specifically to the unit content — no generic descriptions.
+For Minecraft Education suggestions, include a direct link to the specific lesson: [Lesson Title](https://education.minecraft.net/en-us/lessons/LESSON-SLUG).`;
 
 async function fixAllOfType(type){
   const {incomplete,banned,duplicates,offWhitelist}=getIssues();
