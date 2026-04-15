@@ -102,7 +102,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .bar-fill{height:100%;border-radius:3px;background:var(--lime);transition:width 0.4s}
 
 /* CHAT */
-#chat-messages{background:var(--card);border:1px solid var(--border);border-radius:14px 14px 0 0;height:420px;overflow-y:auto;padding:22px}
+#chat-messages{background:var(--card);border:1px solid var(--border);border-radius:14px 14px 0 0;height:420px;overflow-y:auto;padding:22px;transition:height .15s}
 .chat-msg{margin-bottom:16px}
 .chat-msg.user{text-align:right}
 .chat-bubble{display:inline-block;padding:14px 18px;border-radius:14px;font-size:14px;line-height:1.6;max-width:82%;text-align:left;font-weight:500}
@@ -1495,12 +1495,26 @@ function renderAudit(){
   if(CHAT_HISTORY.length===0) initChat();
 }
 
+function resizeChatMessages(){
+  const msgs = document.getElementById('chat-messages');
+  if(!msgs) return;
+  const chat = document.getElementById('audit-chat');
+  if(!chat || chat.style.display === 'none') return;
+  const inputRow = msgs.nextElementSibling;
+  const top = msgs.getBoundingClientRect().top;
+  const inputH = inputRow ? inputRow.offsetHeight : 68;
+  const available = window.innerHeight - top - inputH - 20;
+  msgs.style.height = Math.max(220, available) + 'px';
+}
+window.addEventListener('resize', resizeChatMessages);
+
 function setAuditView(btn){
   document.querySelectorAll('.view-tab[data-view]').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   const v=btn.dataset.view;
   document.getElementById('audit-analytics').style.display=v==='analytics'?'block':'none';
   document.getElementById('audit-chat').style.display=v==='chat'?'block':'none';
+  if(v==='chat') requestAnimationFrame(resizeChatMessages);
 }
 
 function setAnalyticsView(btn){
@@ -3100,7 +3114,7 @@ function exportHTML(){
   .row { padding: 12px 14px !important; flex-wrap: wrap; }
 
   /* Chat */
-  #chat-messages { height: 300px !important; }
+  #chat-messages { height: 260px !important; }
   .chat-bubble { font-size: 14px !important; max-width: 90% !important; }
 
   /* Comparison grid — single col */
