@@ -1030,12 +1030,70 @@ function buildSugRow(sug, entryIdx, sugIdx){
       <div style="display:flex;align-items:center;gap:8px">
         <div class="sug-tool">${esc(tool)}</div>
         <div style="flex:1"></div>
+        <button class="btn-sm" id="${uid}-regen" onclick="regenSingleSug(${entryIdx},${sugIdx})" title="Regenerate this suggestion">↻</button>
         <button class="btn-sm" onclick="openFeedbackChat('${uid}',${entryIdx},${sugIdx})">💬 feedback</button>
       </div>
       <div class="sug-desc">${esc(desc)}</div>
       ${linkHtml}
     </div>
   </div>`;
+}
+
+async function regenSingleSug(entryIdx, sugIdx){
+  const uid = `s${entryIdx}_${sugIdx}`;
+  const btn = document.getElementById(uid+'-regen');
+  if(btn){ btn.textContent='…'; btn.disabled=true; }
+
+  const entry = DATA[entryIdx];
+  const others = getSugs(entry).filter((_,i)=>i!==sugIdx).map(s=>sugTool(s)).join(', ');
+
+  // Use existing audit stats to find underutilised tools — no rescan needed
+  const stats = computeStats();
+  const usedTools = new Set(stats.sorted.map(s => s.name.toLowerCase()));
+  const allApproved = ['Microsoft M365','Beebots','Sphero','Lego Spike','Micro:bits','CoDrone','Makey Makey','3D Printers','ClassVR','Merge Cubes','Green Screen','Podcast Equipment','iPads','Seesaw','Canva','Book Creator','Padlet','GarageBand','ScratchJR','Stop Motion Studio','ChatterPix Kids','iMovie','Puppet Pals','Adobe Express','Google Maps','Google Earth','Field Guide to Victoria','Sky Map','Geoboard','Clickview','Epic','PicCollage','Brushes Redux','Word Clouds ABCya','Sketchbook','Explain Everything','Freeform','Delightex','Kahoot','Tinkercad','Minecraft Education'];
+  const othersLower = (others||'').toLowerCase();
+  // Tools not yet used at all come first, then lowest usage from stats
+  const statsMap = Object.fromEntries(stats.sorted.map(s => [s.name.toLowerCase(), s.count]));
+  const underutilised = allApproved
+    .filter(t => !othersLower.includes(t.toLowerCase()))
+    .sort((a,b) => (statsMap[a.toLowerCase()]||0) - (statsMap[b.toLowerCase()]||0))
+    .slice(0, 8)
+    .join(', ');
+
+  const prompt = `You are a Digital Learning Coach at Wesley College generating a fresh technology suggestion for an IB PYP unit.
+
+Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${entry.plannerText?`\nPlanner: ${entry.plannerText}`:''}
+Tools already used in this unit (do not repeat): ${others||'none'}
+
+APPROVED TOOLS ONLY (Microsoft Teams for Year 4+ only): ${allApproved.join(', ')}.
+
+PRIORITY: These tools are currently underutilised across the library — strongly prefer one of these if it genuinely connects to the unit: ${underutilised}.
+
+Generate ONE fresh suggestion. Connect specifically to this unit's content — no generic descriptions.
+Return ONLY JSON: {"t":"Tool Name","d":"Specific description for this unit."}`;
+
+  try{
+    const raw = await callGemini([{role:'user',parts:[{text:prompt}]}], null, GEMINI_MODEL);
+    const clean = raw.replace(/```json|```/g,'').trim();
+    const si = clean.indexOf('{'), ei = clean.lastIndexOf('}');
+    if(si===-1||ei===-1) throw new Error('No JSON');
+    const newSug = JSON.parse(clean.slice(si, ei+1));
+    if(!newSug.t||!newSug.d) throw new Error('Invalid');
+    const sugs = [...getSugs(DATA[entryIdx])];
+    recordChange(entryIdx, sugs, [...sugs.slice(0,sugIdx), newSug, ...sugs.slice(sugIdx+1)]);
+    DATA[entryIdx].s[sugIdx] = newSug;
+    saveToDrive();
+    setStatus('Suggestion regenerated');
+    const sugEl = document.getElementById(uid);
+    if(sugEl){
+      const newRow = document.createElement('div');
+      newRow.innerHTML = buildSugRow(newSug, entryIdx, sugIdx);
+      sugEl.replaceWith(newRow.firstElementChild);
+    }
+  }catch(e){
+    setStatus('Regen failed: '+e.message, 'error');
+    if(btn){ btn.textContent='↻'; btn.disabled=false; }
+  }
 }
 
 function openFeedbackChat(uid, entryIdx, sugIdx){
