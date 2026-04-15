@@ -109,8 +109,8 @@
     "ci": "Discovering our past helps us know more about ourselves today.",
     "lo": "Our personal stories and histories; Reflecting on and recording our past; Our ancestry and families",
     "s": [],
-    "audited": false,
-    "plannerText": ""
+    "audited": true,
+    "plannerText": "Not yet documented in PDF."
   },
   {
     "ca": "Elsternwick",
@@ -149,9 +149,30 @@
     "th": "How We Express Ourselves",
     "ci": "Emotions can be expressed in different ways.",
     "lo": "Recognising our own and others' emotions; Responding to and interpreting our emotions; Different ways we express emotions",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Seesaw",
+        "d": "Students can capture photos of the emotion masks they create in Visual Art and use the microphone tool to explain how their chosen colours and facial features represent a specific feeling."
+      },
+      {
+        "t": "GarageBand",
+        "d": "Supporting the Music integration, students can use smart instruments to experiment with tempo, pitch, and dynamics to create a digital soundscape that reflects happy, sad, or scary emotions."
+      },
+      {
+        "t": "Book Creator",
+        "d": "After reading texts like 'My Many Coloured Days', students can design their own interactive feelings book by drawing 'feelings faces' and recording audio of themselves communicating their emotions."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students can take a photograph of their group emotion collage or individual mask, draw a mouth, and record a voiceover of the artwork expressing its feelings to practice emotional literacy."
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "Using playdough or loose parts, students can animate a face transitioning between different emotions, visually demonstrating how feelings can change and be regulated over time."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this Year 1 unit, students explore how emotions can be expressed in different ways through art, music, literature, and physical education. Key activities include reading texts like 'The Colour Monster', creating emotion masks and collages, and developing musical soundscapes to represent different feelings. Students also focus on emotional regulation and communication during collaborative challenges."
   },
   {
     "ca": "Elsternwick",
@@ -159,9 +180,30 @@
     "th": "How We Organise Ourselves",
     "ci": "Services are established to help the needs of people in the community.",
     "lo": "Local services; Why we need local services in our community; How services meet personal and community needs",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Seesaw",
+        "d": "Students can use Seesaw to document their school community learning walk by taking photos of school services, such as the library or nurse's office, and using the microphone tool to explain how these services help people."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Instead of a paper mini-book, students can use Book Creator to design an interactive community helpers information report, adding voice recordings, photos, and drawings of local heroes like the Royal Flying Doctor Service."
+      },
+      {
+        "t": "Canva",
+        "d": "To support the 'Reflect and Act' task of writing a letter to local heroes, students can use Canva to design digital thank-you cards or posters for their guest speakers, incorporating relevant icons and text."
+      },
+      {
+        "t": "Beebots",
+        "d": "Connecting to the 'Moving to Mars' community design activity, students can navigate Beebots across a custom floor grid, programming the robots to travel between different essential services they decided their new community would need."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "After researching a chosen community helper, students can take a photo of their drawing or a printed image of the worker, and use ChatterPix Kids to record their own voice explaining the specific service that person provides."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this Year 1 unit, students explore how local services meet the needs of the community through learning walks, guest speaker visits, and interviews. Key activities include designing a new community on Mars, researching a chosen community helper, and writing letters of appreciation to local heroes."
   },
   {
     "ca": "Elsternwick",
@@ -169,9 +211,30 @@
     "th": "How the World Works",
     "ci": "Patterns help us to interpret the world around us.",
     "lo": "Patterns and cycles in our lives; Different patterns around us; How patterns can be created, interpreted and extended",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "PicCollage",
+        "d": "Students can use iPads to photograph patterns found in nature around the school grounds, such as leaves or bricks, and compile them into a visual grid using PicCollage to highlight the repeating shapes and colors."
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "After creating physical models of the butterfly life cycle, students can use Stop Motion Studio to animate the transformation from caterpillar to chrysalis to butterfly, demonstrating their understanding of biological cycles."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students can create a digital butterfly observation journal in Book Creator, combining their daily photos of the classroom chrysalis with audio recordings and text to document the changes they observe over the three weeks."
+      },
+      {
+        "t": "ScratchJR",
+        "d": "Students can use ScratchJR to code a simple sequence showing a caterpillar eating different foods in a pattern, reinforcing the cyclical nature of the days of the week from The Very Hungry Caterpillar."
+      },
+      {
+        "t": "Seesaw",
+        "d": "For their home learning task, students can use Seesaw's drawing and voice recording tools to illustrate and explain their chosen animal or plant life cycle, allowing them to easily share their research with families and peers."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this Year 1 unit, students explore how patterns and cycles help us interpret the world, focusing on life cycles, seasons, and the water cycle. Key activities include observing a live butterfly chrysalis, using iPads to photograph patterns in the school grounds, researching animal life cycles on Epic, and creating models of a butterfly's life cycle. Students also connect patterns to literature, such as the days of the week in The Very Hungry Caterpillar, and draw patterns found in nature."
   },
   {
     "ca": "Elsternwick",
@@ -180,8 +243,8 @@
     "ci": "Plants are a life sustaining resource.",
     "lo": "Products derived from plants; Plants all around us; The interconnectedness of plants",
     "s": [],
-    "audited": false,
-    "plannerText": ""
+    "audited": true,
+    "plannerText": "Not yet documented in PDF."
   },
   {
     "ca": "Elsternwick",
@@ -189,9 +252,30 @@
     "th": "Where We Are in Place and Time",
     "ci": "Homes reflect our culture and environment.",
     "lo": "Different types of homes; Characteristics of a home; The importance of sustainable living spaces",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Book Creator",
+        "d": "Students can create a digital 'Homes Around the World' fact file, using the audio recording feature to verbally share what they love about their home and inserting photos of the physical mini homes they built."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Utilise the drawing and labeling tools to create a digital Venn diagram comparing and contrasting two different types of homes, such as a Mongolian Yurt and a Netherlands houseboat, fulfilling the unit's 'Sort out' activity."
+      },
+      {
+        "t": "Google Earth",
+        "d": "Take students on a virtual tour to observe how homes reflect their environment by 'visiting' Coober Pedy to see cave homes or Iceland to see turf homes, helping them visualize the connection between geography and housing styles."
+      },
+      {
+        "t": "Minecraft Education",
+        "d": "As an extension to building mini houses, students can work in a digital environment to construct a specific type of home, considering the virtual materials and environmental factors needed for structures like an apartment or a gunya hut."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "Connecting to the Dance and Drama activity involving non-human personification, students can take a photo of their crafted mini home, draw a mouth on it, and record a voiceover from the perspective of the house explaining its unique cultural characteristics."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this unit, Year 1 students explore how homes reflect culture and environment by researching diverse global dwellings such as yurts, gunya huts, and cave homes. Key activities include comparing different types of houses using Venn diagrams, building physical mini homes, and presenting their findings in a learning showcase."
   },
   {
     "ca": "Elsternwick",
@@ -199,9 +283,30 @@
     "th": "Who We Are",
     "ci": "The actions we take influence our safety and wellbeing.",
     "lo": "Safe environments; How our actions affect ourselves and others; Keeping our body and mind healthy",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Book Creator",
+        "d": "Students can use Book Creator to publish their 'My Human Body Book', combining text, audio recordings of their explanations, and digital drawings of body systems to share at their Student-Led Conferences."
+      },
+      {
+        "t": "Seesaw",
+        "d": "During the Healthy Habits Inquiry Stations, students can use Seesaw to capture photos or short videos of their hygiene role-plays and exercise routines, using the microphone tool to reflect on how these actions influence their wellbeing."
+      },
+      {
+        "t": "Kahoot",
+        "d": "To digitise their 'Quiz Book' for Student-Led Conferences, students can collaborate to design a Kahoot featuring their own multiple-choice and true/false questions about body systems and healthy living to play with their families."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "After creating their paper organs or life-size skeletons, students can take a photo of their model using ChatterPix Kids and record a voiceover from the perspective of a specific organ, explaining its function and how healthy choices keep it safe."
+      },
+      {
+        "t": "Canva",
+        "d": "Students can use Canva to design a vibrant, multi-modal poster for their Healthy Habits presentation, dragging and dropping images of 'everyday' versus 'sometimes' foods to visually communicate their understanding of nutrition."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this 'Who We Are' unit, Year 1 students explore how their actions influence their safety and wellbeing by investigating human body systems and healthy habits. Key activities include creating life-size body models of skeletons and organs, participating in healthy habit inquiry stations, and authoring an informative 'My Human Body Book'. The unit culminates in Student-Led Conferences where learners share their multimodal presentations and student-generated quizzes about physical health."
   },
   {
     "ca": "Elsternwick",
@@ -209,9 +314,30 @@
     "th": "How We Express Ourselves",
     "ci": "Artistic appreciation and expressions inspire our imagination and creativity.",
     "lo": "Forms of expression; Expressing thoughts and ideas; Understanding and appreciating art",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Book Creator",
+        "d": "Building on the planner's 'I am poem' activity, students can use Book Creator to publish their poems digitally. They can import photographs of their watercolour artworks and use the audio recording tool to practice reading their poetry aloud with expression, directly supporting the literacy goals."
+      },
+      {
+        "t": "Canva",
+        "d": "To support the artist study on Andy Warhol and Julian Opie, students can use Canva to create digital pop-art. They can upload a photo for their 'pet portrait' activity and apply vibrant colour filters and duplication effects to mimic Warhol's iconic style, exploring visual forms of expression."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Connecting to the 'Learner Profile comic book creating' task, students can use Seesaw's drawing, shape, and text label tools to design a digital comic strip. This allows them to creatively illustrate how they demonstrate attributes like Risk-Taker or Balanced in their daily lives."
+      },
+      {
+        "t": "GarageBand",
+        "d": "As students explore music forms and express feelings through the Arts, they can use GarageBand's Smart Instruments or Live Loops to compose a short digital soundtrack. They can experiment with different tempos and instruments to communicate specific emotions, complementing their work with Chrome Music Lab."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "Following the 'Little Archie's Portrait competition' or their pet portrait creations, students can photograph their physical artwork and bring it to life using ChatterPix Kids. They can record a short audio reflection explaining their creative choices, intentions, and how the artwork makes them feel."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this Year 2 unit, students explore how artistic appreciation and expression inspire imagination and creativity across various mediums. Key activities include writing and publishing poetry, conducting artist studies on figures like Andy Warhol, and creating personal artworks such as pet portraits. Learners also engage in music composition and reflect on their creative processes to develop Learner Profile attributes like being a Risk-Taker and Balanced."
   },
   {
     "ca": "Elsternwick",
@@ -219,9 +345,30 @@
     "th": "How We Organise Ourselves",
     "ci": "Marketplaces reflect the needs and wants of communities.",
     "lo": "Needs and wants; The changing needs of communities; The design process",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Seesaw",
+        "d": "Students can use Seesaw to complete a digital 'Needs vs. Wants' sorting activity, replacing the traditional paper collage. Teachers can upload a template with various items, and students can use the drag-and-drop tool to categorize them, recording an audio explanation to justify why certain items are essential for survival versus luxury wants."
+      },
+      {
+        "t": "Book Creator",
+        "d": "As students engage in the Design Thinking process to create a product for their immediate community, they can use Book Creator to maintain a digital design journal. They can document their empathizing, creating, testing, and improving phases using photos of their physical prototypes, audio reflections, and drawn diagrams to present at the Share Fair."
+      },
+      {
+        "t": "Puppet Pals",
+        "d": "To support the literacy connection of retelling stories using the 'Somebody Wanted But So Then' strategy, students can use Puppet Pals. They can animate characters from mentor texts like 'Those Shoes' or 'Maddi's Fridge' to act out the narrative, demonstrating their understanding of the characters' specific needs and wants."
+      },
+      {
+        "t": "GarageBand",
+        "d": "Connecting to the 'I Want, I Need' song or chant activity, students can use GarageBand to record their original lyrics. They can experiment with different loops, voice recordings, and audio effects to create a catchy backing track that reinforces the concepts of basic needs versus wants through music."
+      },
+      {
+        "t": "Lego Spike Essential",
+        "d": "During the prototyping phase of the design process, students can use Lego Spike Essential to build and program interactive models of their community products. For example, if designing a solution for wheelchair accessibility on campus, they can build a motorized ramp or automated door, bringing their innovative ideas to life."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this Year 2 unit, students explore how marketplaces reflect the needs and wants of communities by distinguishing between essential needs and luxury wants through sorting games, collages, and role-play. They engage in the design thinking process to empathize, create, test, and improve products that address specific community needs, such as wheelchair accessibility. The unit culminates in a Share Fair where students showcase their innovative solutions and demonstrate their understanding of community responsibility."
   },
   {
     "ca": "Elsternwick",
@@ -229,9 +376,30 @@
     "th": "How the World Works",
     "ci": "Forces and motion are all around us.",
     "lo": "Forces around us; Scientific laws of motion; Innovations in technology",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Seesaw",
+        "d": "During the 'Push and Pull for Kids' school walk, students can use Seesaw to capture photos of different objects and use the drawing and voice recording tools to classify and label them as either a push or a pull."
+      },
+      {
+        "t": "Book Creator",
+        "d": "For their summative writing task, students can publish their Simple Machine Information Reports in Book Creator, embedding photos of their Maker Space models and adding audio to sound like scientists explaining gravity and friction."
+      },
+      {
+        "t": "Lego Spike Essential",
+        "d": "Enhance the Maker Space immersion by having students build motorized cars with Lego Spike Essential, allowing them to program different speeds and test how friction on various surfaces affects motion."
+      },
+      {
+        "t": "Sphero Indi",
+        "d": "To explore how forces make objects start, stop, and change direction, students can use Sphero Indi and its colour tiles to design pathways, observing the cause and effect of programmed motion."
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "Students can use Stop Motion Studio to animate their toy car and ramp experiments, visually breaking down the effects of inclined planes, gravity, and friction frame by frame."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this Year 2 unit, students inquire into how forces and motion are all around us by exploring concepts like gravity, friction, and magnetism. Through hands-on Maker Space immersions and playground observations, they investigate simple machines and the scientific laws of motion. The unit culminates in students applying their knowledge of pushes and pulls to design and construct their own Rube Goldberg machines."
   },
   {
     "ca": "Elsternwick",
@@ -239,9 +407,30 @@
     "th": "Sharing the Planet",
     "ci": "Taking care of our Earth starts with the choices we make.",
     "lo": "Earth's resources; How our actions affect the environment; Ways we can care for our planet",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Seesaw",
+        "d": "Students can use Seesaw to take photos of their lunchboxes each day and use the drawing and labeling tools to categorize their waste into compostable, recyclable, and general waste, creating a digital waste audit portfolio."
+      },
+      {
+        "t": "Canva",
+        "d": "Students can use Canva to design persuasive posters advocating for Nude Food days or the 5Rs, utilizing its vast library of environmental graphics to visually support their call to action for school leaders."
+      },
+      {
+        "t": "Book Creator",
+        "d": "As a collaborative class project, students can use Book Creator to build a digital Waste Timeline book, adding voice recordings and illustrations to explain how long different materials take to break down in the environment."
+      },
+      {
+        "t": "ScratchJR",
+        "d": "Students can use ScratchJR to code a simple interactive animation showing a character making a positive environmental choice, such as sorting rubbish into the correct recycling or compost bin."
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "Using Stop Motion Studio and physical materials like clean recyclables or natural loose parts, students can create short animations that demonstrate the process of recycling or the lifecycle of a natural resource."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In the Sharing the Planet unit, Year 2 students explore how their choices impact the environment by investigating Earth's resources and waste management strategies like the 5Rs. Key activities include auditing lunchbox waste, creating waste timelines, and writing persuasive speeches to encourage positive environmental action at school."
   },
   {
     "ca": "Elsternwick",
@@ -249,9 +438,30 @@
     "th": "Where We Are in Place and Time",
     "ci": "Landmarks and places of significance tell stories about our history.",
     "lo": "The significance of places to different people and cultures; The connection between landmarks and identity; How landmarks and symbols represent our history",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Beebots",
+        "d": "Aligning with the unit's mapping and location focus, students can program Beebots to navigate across a large floor map of Australia, practicing giving directional commands to travel between the different states, territories, and significant landmarks they have researched."
+      },
+      {
+        "t": "Book Creator",
+        "d": "After exploring Aboriginal Dreaming stories and creating their own artworks using Indigenous symbols, students can use Book Creator to publish their narratives. They can insert photos of their Greta Laundy-inspired landscapes and use the audio tool to record themselves retelling their creation stories."
+      },
+      {
+        "t": "Google Earth",
+        "d": "To support the 'virtual holiday' activity where students travel to different natural and built landmarks, Google Earth can be used to safely explore sites like Uluru, the Great Barrier Reef, and the 12 Apostles in 3D, helping them visualize the geography and scale of these significant places."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Following the Elsternwick and campus walking excursions, students can upload photos of the local monuments and landmarks they visited into Seesaw. Using the drawing and microphone tools, they can annotate the images with symbols and record an explanation of why these sites are historically significant."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "As students collect facts about various Australian landmarks, they can use ChatterPix Kids to bring a photo of their chosen site to life. By drawing a mouth on the landmark, they can record their own voice sharing key historical facts and explaining why the site is preserved for the future."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this Year 2 unit, students explore how landmarks and places of significance tell stories about our history, with a strong focus on Australian geography and Indigenous perspectives. Key activities include researching natural and built landmarks, mapping states and territories, and investigating the connection between place and Aboriginal Dreaming stories. Students also participate in local walking tours and create their own artworks and stories using Indigenous symbols to understand how historical sites are preserved and remembered."
   },
   {
     "ca": "Elsternwick",
@@ -259,9 +469,30 @@
     "th": "Who We Are",
     "ci": "Our relationships with others impact our lives.",
     "lo": "Importance of relationships; Developing and maintaining healthy relationships; The impact of relationships on wellbeing",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Seesaw",
+        "d": "Students can use Seesaw to document their emotional regulation strategies from the Toolbox Education incursion. They can take photos of themselves practicing tools like mindful breathing or body scans, and use the microphone feature to explain how these strategies help calm their emotions."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Learners can design a digital 'How to Apologize' or 'Friendology' manual. Using the drawing and audio recording tools, they can illustrate scenarios of resolving 'friendship fires' and narrate the steps of the talk-it-out strategy to demonstrate empathy and social intelligence."
+      },
+      {
+        "t": "Puppet Pals",
+        "d": "This animation app is perfect for role-playing social situations. Students can animate characters navigating a conflict or practicing taking turns, allowing them to safely demonstrate their understanding of interpersonal relationships and conflict resolution."
+      },
+      {
+        "t": "Canva",
+        "d": "Connecting to the unit's focus on identity and wellbeing, students can use Canva to design their own 'Character Strengths' posters. They can select graphics and fonts that represent what makes them a great friend and share these visually with the class."
+      },
+      {
+        "t": "Sphero Indi",
+        "d": "To practically apply the teamwork and fair play skills discussed in PSPE, students can work in small groups to navigate Sphero Indi cars through a collaborative maze. This hands-on challenge requires them to practice taking turns, sharing, and communicating respectfully."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this Year 2 unit, students explore how their relationships with others impact their lives, focusing on social and emotional intelligence, empathy, and conflict resolution. Key activities include learning emotional regulation strategies through the Toolbox Education program, exploring character strengths, and navigating 'friendship fires' using the UR Strong Friendology program. Students also apply these concepts practically by demonstrating teamwork, fair play, and respectful relationships during Physical Education games."
   },
   {
     "ca": "Elsternwick",
@@ -269,9 +500,30 @@
     "th": "How We Express Ourselves",
     "ci": "Celebrations and traditions shape the culture of a community.",
     "lo": "The ways personal and cultural events are celebrated; Our appreciation of the diversity of cultures; How celebrations shape community identity",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Book Creator",
+        "d": "Students can create a digital book for their Personal Project researching significant cultural events, customs, and food. They can use the audio recording feature to share how to pronounce traditional greetings or songs from their culture, and embed images of their family traditions and flags."
+      },
+      {
+        "t": "Canva",
+        "d": "Students can use Canva to design a visually engaging poster about a specific part of Australian culture, such as the First Nations Flag, traditional food, or flora and fauna. They can utilize the extensive graphics library to visually represent the diversity of Australian celebrations and share their findings with the class."
+      },
+      {
+        "t": "Google Earth",
+        "d": "To support the activity where students find out where their ancestors came from, they can use Google Earth to virtually travel from Melbourne to their family's country of origin. This allows them to explore the geographical distance and view landmarks of their cultural heritage, extending the physical string-and-map activity."
+      },
+      {
+        "t": "ScratchJR",
+        "d": "To explore the concept of perspective and the 'My Two Blankets' provocation, students can code a short interactive animation showing two characters from different cultural backgrounds meeting. They can program the characters to exchange a traditional greeting and share a celebration, demonstrating how diversity enriches a community."
+      },
+      {
+        "t": "Padlet",
+        "d": "For the Celebration versus Commemoration sorting activity, the teacher can set up a Padlet board with distinct columns. Students can digitally sort images, videos, and facts about events like ANZAC Day into the correct columns, adding their own 'Think, See, Wonder' reflections as comments under each post."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this unit, students explore how celebrations and traditions shape community culture by investigating their own family histories and the diverse backgrounds of their peers. Key activities include researching specific aspects of Australian culture, comparing celebrations versus commemorations like ANZAC Day, and completing a personal project on their cultural customs and food. The unit culminates in a collaborative assembly performance of 'I am Australian' accompanied by student-created visual presentations."
   },
   {
     "ca": "Elsternwick",
@@ -279,9 +531,30 @@
     "th": "How We Organise Ourselves",
     "ci": "The rights and responsibilities of citizens are determined by the rules and laws of a community.",
     "lo": "The differences between rules and laws; People responsible for enforcing rules and laws; Rights and responsibilities of citizens; The consequences when rules, laws and rights are not met",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Canva",
+        "d": "Students can use Canva to design visually engaging persuasive campaign posters advocating for a new school rule or law, directly supporting their English persuasive writing tasks."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students can collaboratively author an interactive digital handbook outlining the rights and responsibilities of citizens, using text and audio to explain the differences between rules and laws."
+      },
+      {
+        "t": "Minecraft Education",
+        "d": "To deeply understand local government and community structures, students can collaboratively build a virtual town where they must establish democratic rules, zoning laws, and experience the consequences of their governance in real-time."
+      },
+      {
+        "t": "Puppet Pals",
+        "d": "Students can animate role-play scenarios that demonstrate what happens when rules and laws are not followed, addressing the line of inquiry regarding the consequences of unmet rights and responsibilities."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Simulating democratic decision-making, students can create a survey to propose and vote on new classroom rules, analyzing the collected data to understand how local governments make decisions on behalf of a community."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this unit, Year 3 students explore the differences between rules and laws, and how they determine the rights and responsibilities of citizens. Key activities include creating and teaching original card games to understand the necessity of rules, writing persuasive texts about school rules or new laws, and investigating the role of local government in democratic decision-making."
   },
   {
     "ca": "Elsternwick",
@@ -289,9 +562,30 @@
     "th": "How the World Works",
     "ci": "Humans use their understanding of scientific principles to take action.",
     "lo": "The work of scientists; The process of learning; How science brings about new understandings and changes",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Canva",
+        "d": "Students can use Canva to design their final Science Fair infographic, visually presenting the biography of their chosen scientist, their motivations, and the impact their scientific discoveries had on society."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students can use Book Creator to design a digital science journal, documenting their fair testing experiments on heat transfer (conduction, convection, radiation) with photos, labeled diagrams, and audio reflections on their findings."
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "Using iPads and Stop Motion Studio, students can animate the process of changing states of matter, such as showing how marshmallow 'molecules' speed up and spread apart when heat energy is applied to turn a solid into a liquid or gas."
+      },
+      {
+        "t": "Merge Cubes",
+        "d": "Students can use Merge Cubes to hold and examine 3D models of different molecules (like H2O or CO2) in augmented reality, helping them visualize how atoms combine and how their volume and shape differ across solids, liquids, and gases."
+      },
+      {
+        "t": "Excel",
+        "d": "Students can use Microsoft Excel to input data collected from their heat conduction experiments (such as timing how long it takes for sugar cubes to fall off plastic, wood, and metal spoons), creating digital column graphs to identify patterns in thermal conductivity."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this unit, Year 3 students explore how humans use scientific principles to take action by investigating the work of famous scientists and the scientific method. Key activities include conducting fair tests on heat transfer (conduction, convection, and radiation), exploring states of matter by building molecule models, and creating a Science Fair project. Students also connect their learning to data collection in Maths and write biographies of scientists whose discoveries have impacted society."
   },
   {
     "ca": "Elsternwick",
@@ -299,9 +593,30 @@
     "th": "Sharing the Planet",
     "ci": "Adaptation and sustainability ensure the survival of living things in changing environments.",
     "lo": "Adaptations and structural features of living things; Roles of living things in an ecosystem; Actions that benefit or harm ecosystems",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Canva",
+        "d": "For the 'Missing Link' assessment, students can use Canva to digitally illustrate their imaginary animal. They can use the design and labeling tools to highlight the four specific structural features they chose and create a visual information report explaining how these adaptations help the creature survive in its environment."
+      },
+      {
+        "t": "ClassVR",
+        "d": "To build background knowledge on the different ecosystems assigned for their documentaries (such as the Amazon Forest, Serengeti, or Great Barrier Reef), students can use ClassVR headsets. This immersive experience allows them to observe habitats and animal behaviors up close before writing their scripts."
+      },
+      {
+        "t": "Green Screen Kits",
+        "d": "Supporting the planned 'green screen session', students can use Green Screen Kits while filming their endangered animal documentaries. This allows them to superimpose themselves directly into their researched habitats, acting as on-site reporters discussing UN Goals 14 and 15."
+      },
+      {
+        "t": "Freeform",
+        "d": "When exploring the roles of living things and creating food webs, students can use Freeform on their iPads. The infinite canvas is perfect for collaboratively mapping out producers, consumers, and decomposers, allowing them to easily draw connections and visualize the impact of a destroyed ecosystem."
+      },
+      {
+        "t": "Minecraft Education",
+        "d": "Students can use Minecraft Education to demonstrate their understanding of habitats and sustainability. They can explore different biomes to observe how spawned animals interact with their environment, or actively build a protected, sustainable wildlife reserve that aligns with UN Goal 15 (Life on Land)."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In the 'Sharing the Planet' unit, Year 3 students investigate how adaptation and sustainability ensure the survival of living things in changing environments. Key activities include researching animal adaptations, exploring ecosystems and food webs, and understanding UN Sustainable Development Goals 14 and 15. The unit culminates in students designing an imaginary 'Missing Link' animal and working in teams to script and film a documentary about endangered animals in specific habitats."
   },
   {
     "ca": "Elsternwick",
@@ -309,9 +624,30 @@
     "th": "Where We Are in Place and Time",
     "ci": "Exploration leads to new discoveries that can shape and change society.",
     "lo": "The factors that motivate exploration (Causation); How people reflect on discoveries from the past to inform change (Change); How exploration brings about change and new understandings for people, places and society (Change)",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Minecraft Education",
+        "d": "For the Mars Colony project, students can collaboratively build their sustainable settlement in Minecraft Education. They can construct housing, water, and food systems that align with the UN Sustainability Goals, demonstrating how their new society functions in a harsh environment."
+      },
+      {
+        "t": "Book Creator",
+        "d": "When researching famous explorers, students can use Book Creator to design an interactive biography. They can include a timeline of the explorer's achievements, type up their fact files, and record audio explaining the push and pull factors that motivated the exploration."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "To document life aboard the First Fleet, students can use Adobe Express to create a digital video diary. Taking on the perspective of a convict, captain, or free settler, they can combine historical images, text, and voiceovers to share their daily experiences and feelings about the voyage."
+      },
+      {
+        "t": "Canva",
+        "d": "During the investigation into Indigenous perspectives of the First Fleet's arrival, students can use Canva to design a visual 'Compass Points' thinking routine. They can use the platform's graphic design tools to respectfully contrast the views of the European settlers with the First Nations peoples."
+      },
+      {
+        "t": "Google Earth",
+        "d": "To enhance the First Fleet voyage mapping activity, students can use Google Earth to digitally trace the route from Great Britain to Australia. They can drop interactive pins at key historical stops, adding their summarized facts and descriptions of the journey to each location."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this unit, students investigate how exploration leads to new discoveries that shape society, focusing on historical events like the First Fleet and future possibilities like colonising Mars. Key activities include researching famous explorers, mapping historical voyages, writing diary entries from various perspectives, and exploring the impact of British colonisation on First Nations Australians."
   },
   {
     "ca": "Elsternwick",
@@ -319,9 +655,30 @@
     "th": "Who We Are",
     "ci": "An inquiry into the nature of the self; beliefs and values; personal, physical, mental, social and spiritual health; human relationships.",
     "lo": "Lines of inquiry to be confirmed once planner is uploaded",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Canva",
+        "d": "Students can use Canva to design their 'How to get unstuck' posters, visually categorising fixed versus growth mindset statements using custom graphics and text to reinforce their learning from Lesson 3."
+      },
+      {
+        "t": "Book Creator",
+        "d": "To support the URStrong 'Friendology' lessons, students can build an interactive digital 'Friendship Map' in Book Creator, adding voice recordings and illustrations to explain how they resolve 'Friendship Fires' and manage tricky situations."
+      },
+      {
+        "t": "Kahoot",
+        "d": "Connecting directly to the planner's suggestion, students can work in small groups to design and host a Kahoot quiz that tests their peers on the different resilience strategies and 'Grow Your Mind' concepts they have learned."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students can use the drawing and audio recording tools in Seesaw to complete their 'Animals in the Brain' task, visually mapping out the roles of the Guard Dog and Sensitive Octopus while verbally explaining what triggers their emotions."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "Using Adobe Express, students can create a short animated video or digital presentation demonstrating the '4 steps to resilience GYM', providing a creative way to showcase their understanding of personal strategies to manage change."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this 'Who We Are' unit, Year 3 students explore personal strategies to overcome challenges, manage change, and maintain healthy relationships. Key activities include investigating growth versus fixed mindsets, understanding brain functions through the 'Grow Your Mind' program, and roleplaying conflict resolution using 'Friendology' strategies. Students also focus on personal responsibility, cyber safety, and building resilience to keep themselves safe both online and face-to-face."
   },
   {
     "ca": "Elsternwick",
@@ -329,9 +686,30 @@
     "th": "How We Express Ourselves",
     "ci": "Technology transforms how we create and share ideas.",
     "lo": "How technology expands creative possibilities; The evolution of communication tools; The impact of technology on expression",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Microsoft Forms",
+        "d": "In Lesson 6, students can use Microsoft Forms to collaboratively design and distribute surveys to teachers about their classroom technology use. They can then use the built-in analytics in Lesson 8 to sort the responses, identify popular apps, and create visual representations of the data."
+      },
+      {
+        "t": "Canva",
+        "d": "For Lesson 10, students can use Canva to design their cybersafety posters aimed at Prep-3 learners. The platform provides accessible icons, templates, and visual elements that will help the Year 4 students clearly communicate principled online choices and safety rules to a younger audience."
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "During the App Exploration in Lesson 11, students can experiment with Stop Motion Studio to understand its creative possibilities. They can evaluate its strengths and limitations for storytelling before selecting it as one of the tools to teach the younger students in their final tech workshops."
+      },
+      {
+        "t": "Padlet",
+        "d": "To support Lesson 4's focus on the evolution of communication, students can use a timeline-formatted Padlet. They can collaboratively post images, strengths, and limitations of historical tools like typewriters and radios, comparing them to modern digital platforms to see how technology has transformed idea sharing."
+      },
+      {
+        "t": "Microsoft Teams",
+        "d": "During Lessons 12-15, students can use Microsoft Teams to collaborate on planning their technology workshops for the Prep-3 students. They can use channels to share their workshop steps, upload their digital resources, and provide '2 Stars and a Wish' peer feedback on each other's draft presentations."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this unit, Year 4 students explore how technology transforms communication by investigating the evolution of digital tools and the importance of cybersafety. They gather data by surveying teachers about classroom technology use and analyse the results to understand creative possibilities. Finally, students apply their learning by designing and delivering interactive technology workshops to teach Prep-3 learners how to safely use various digital creation apps."
   },
   {
     "ca": "Elsternwick",
