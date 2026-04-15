@@ -2747,14 +2747,26 @@ async function fixAllOfType(type){
       const raw=await callGemini([{role:'user',parts:[{text:prompt}]}],null,GEMINI_MODEL);
       const clean=raw.replace(/```json|```/g,'').trim();
       const si=clean.indexOf('['),ei=clean.lastIndexOf(']');
-      if(si===-1||ei===-1) throw new Error('No JSON array');
+      if(si===-1||ei===-1) throw new Error('No JSON array in response');
       const sugs=JSON.parse(clean.slice(si,ei+1));
-      if(!sugs.length) throw new Error('Empty');
+      if(!sugs.length) throw new Error('Empty suggestions returned');
+
+      // Validate no duplicates in the returned suggestions
+      const toolNames = sugs.map(s=>(s.t||'').toLowerCase().trim());
+      const uniqueTools = new Set(toolNames);
+      if(uniqueTools.size < toolNames.length) throw new Error('Gemini returned duplicates again — will retry on next run');
+
       recordChange(idx,getSugs(DATA[idx]),sugs);
       DATA[idx].s=sugs;
       DATA[idx].audited=false;
       fixed++;
-    }catch(err){ failed++; console.error('fixAllOfType error',err); }
+      if(lbl) lbl.textContent=`${done}/${entries.length}: ✓ ${e.yl} — ${e.th}`;
+    }catch(err){
+      failed++;
+      console.error('fixAllOfType error for entry',idx,err);
+      if(lbl) lbl.textContent=`${done}/${entries.length}: ✗ ${e.yl} — ${e.th} (${err.message})`;
+      await sleep(1000);
+    }
     if(done<entries.length) await sleep(2000);
   }
 
