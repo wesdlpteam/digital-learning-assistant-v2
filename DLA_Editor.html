@@ -922,7 +922,7 @@ function downloadJSON(){
 async function callGemini(contents, systemPrompt, model){
   const key=getKey();
   if(!key) throw new Error('No API key — click ⚙ key to set it');
-  const body={ contents };
+  const body={ contents, generationConfig:{ maxOutputTokens:8192 } };
   if(systemPrompt) body.systemInstruction={ parts:[{text:systemPrompt}] };
   const m = model || GEMINI_MODEL;
   const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key}`,{
@@ -1737,8 +1737,11 @@ IMPORTANT RESPONSE RULES:
 2. When asking a question with clear options, use this EXACT format on its own line:
 OPTIONS: ["Option A","Option B","Option C"]
 3. Keep questions short and conversational.
-4. Once you have enough to propose changes, end your message with:
-APPLY_CHANGES:[{"entryIdx":3,"sugIdx":1,"t":"Tool Name","d":"Specific description."}]
+4. Once you have enough to propose changes, end your message with a valid JSON array:
+APPLY_CHANGES:[{"entryIdx":3,"sugIdx":1,"t":"Tool Name","d":"Specific description."},{"entryIdx":7,"sugIdx":0,"t":"Another Tool","d":"Another description."}]
+   - You may include many changes in one array — include ALL changes in a single APPLY_CHANGES block.
+   - NEVER say you have "applied", "made", or "updated" changes in your message text. ONLY output the APPLY_CHANGES block — the system handles the actual approval and applying. If you narrate that changes were made, nothing will actually happen.
+   - The JSON must be complete and valid — never truncate the array.
 5. Explain your reasoning using actual planner content — name specific activities, vocabulary or assessments.
 
 FULL PLANNER DATA:
@@ -1849,7 +1852,18 @@ async function _doSendChat(msg){
           t: c.t||c.tool||c.technology||c.name||c.toolName||'',
           d: c.d||c.desc||c.description||c.integration_idea||c.activity||c.suggestion||''
         }));
-      }catch(err){ console.error('APPLY_CHANGES parse error',err); }
+      }catch(err){
+        console.error('APPLY_CHANGES parse error',err);
+        // Show a visible warning so the user knows to ask Gemini to retry
+        const rawBlock = changeMatch[1];
+        const truncated = rawBlock.length > 100 && !rawBlock.trim().endsWith(']');
+        changes = null;
+        CHAT_HISTORY.push({role:'model',
+          text: truncated
+            ? '⚠ The changes list was too long and got cut off before it could be parsed. Please ask me to "try again with the changes in smaller batches of 10 at a time".'
+            : '⚠ Could not parse the proposed changes (invalid format). Please ask me to "retry proposing the changes".',
+          changes:null, options:['Try again in batches of 10','Retry proposing changes']});
+      }
     }
     CHAT_HISTORY.push({role:'model',text:response,changes,options});
     renderChat();
