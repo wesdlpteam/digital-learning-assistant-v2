@@ -617,6 +617,8 @@ function loadFromPaste(){
 
 function ingest(arr, skipCache){
   DATA=Array.isArray(arr)?arr:Object.values(arr);
+  // Clean any combined tool names (e.g. "Minecraft & OneNote") on load
+  DATA = splitCombinedSugs(DATA);
   if(!skipCache){
     try{
       localStorage.setItem('dla_data', JSON.stringify(DATA));
@@ -1297,6 +1299,27 @@ function normEntry(e){
 
 function isRealSug(s){ return !!(s && sugTool(s).trim()); }
 
+// Split any suggestion that has combined tools like "Minecraft & OneNote" into two separate suggestions
+// Called during ingest and after any bulk operation
+function splitCombinedSugs(data){
+  return data.map(e=>{
+    if(!e.s || !Array.isArray(e.s)) return e;
+    const expanded = [];
+    e.s.forEach(s=>{
+      const tool = (s.t||'').trim();
+      const parts = tool.split(/\s*[&+]\s*|\s+and\s+/i).map(t=>t.trim()).filter(Boolean);
+      if(parts.length > 1){
+        // Split into separate suggestions, keeping the description on the first one
+        parts.forEach((t,i)=>expanded.push({t, d: i===0 ? (s.d||'') : ''}));
+      } else {
+        expanded.push(s);
+      }
+    });
+    // Keep only first 5
+    return {...e, s: expanded.slice(0,5)};
+  });
+}
+
 function normCa(ca){
   return ca||'';  
 }
@@ -1305,17 +1328,21 @@ function computeStats(){
   const toolCounts={}, campusTools={}, yearTools={}; let total=0;
   
   DATA.forEach(e=>{
-    if(e.audited === false) return; 
+    if(e.audited === false) return;
     getSugs(e).forEach(s=>{
-      const t=(s&&s.t&&s.t.trim()&&s.t.trim()!=='TBA')?s.t.trim():null;
-      if(!t) return; 
-      toolCounts[t]=(toolCounts[t]||0)+1;
-      const nca=normCa(e.ca);
-      if(!campusTools[nca]) campusTools[nca]={};
-      campusTools[nca][t]=(campusTools[nca][t]||0)+1;
-      if(!yearTools[e.yl]) yearTools[e.yl]={};
-      yearTools[e.yl][t]=(yearTools[e.yl][t]||0)+1;
-      total++;
+      const raw=(s&&s.t&&s.t.trim()&&s.t.trim()!=='TBA')?s.t.trim():null;
+      if(!raw) return;
+      // Split combined tool names like "Minecraft Education & OneNote" into individual tools
+      const tools = raw.split(/\s*[&+]\s*|\s+and\s+/i).map(t=>t.trim()).filter(Boolean);
+      tools.forEach(t=>{
+        toolCounts[t]=(toolCounts[t]||0)+1;
+        const nca=normCa(e.ca);
+        if(!campusTools[nca]) campusTools[nca]={};
+        campusTools[nca][t]=(campusTools[nca][t]||0)+1;
+        if(!yearTools[e.yl]) yearTools[e.yl]={};
+        yearTools[e.yl][t]=(yearTools[e.yl][t]||0)+1;
+        total++;
+      });
     });
   });
   
