@@ -771,7 +771,7 @@ async function callGemini(contents, systemPrompt, model, _attempt=0){
   const key=getKey();
   if(!key) throw new Error('No API key — click ⚙ key to set it');
   
-  const isChat = model === GEMINI_CHAT_MODEL;
+  const isChat = false;
   const body={ contents, generationConfig:{
     maxOutputTokens: 8192,
     ...(isChat ? { thinkingConfig:{ thinkingBudget:0 } } : {})
