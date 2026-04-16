@@ -1791,9 +1791,30 @@
     "th": "How We Express Ourselves",
     "ci": "Creativity allows people to express their understanding of the world.",
     "lo": "The ways people use technology to express creativity; How texts and images work together; How technology influences our creativity",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Adobe Express",
+        "d": "In connection with the stop motion animation task, students can use Adobe Express on iPads to design and create digital assets. They can design characters, backgrounds, and title cards, which can then be printed and used as physical props or incorporated into a green screen project, directly addressing the line of inquiry on how text and images work together."
+      },
+      {
+        "t": "GarageBand",
+        "d": "To enhance their stop motion animations, students can compose an original musical score or soundscape using GarageBand. Linking to the unit's Music connection, they can use smart instruments and record their own sound effects to match the mood of their story, moving beyond generic sound effects and deeply exploring how sound can express ideas and emotions."
+      },
+      {
+        "t": "Microsoft Sway",
+        "d": "Students can create a digital portfolio in Microsoft Sway to showcase their creative journey throughout the unit. They can embed their final stop motion video, upload pages from their Book Creator graphic novel, and add photos of their Yayoi Kusama-inspired artwork, along with written reflections on their creative process. This synthesises their learning and addresses the central idea of expressing understanding."
+      },
+      {
+        "t": "Microsoft PowerPoint",
+        "d": "App smash PowerPoint with Book Creator to create dynamic graphic novels. Students can use PowerPoint's simple animation tools to create short animated GIFs of characters or objects. These GIFs can then be exported and imported into their Book Creator comic, adding a layer of movement and technological creativity to their final summative piece."
+      },
+      {
+        "t": "Canva",
+        "d": "For the 'Graphic Novel' creation task, students can use Canva to design compelling cover pages or promotional posters for their stories. They can experiment with typography, layout, and image filters to create a professional-looking product that communicates the theme and genre of their graphic novel, connecting directly to the exploration of how text and images work together to convey a message."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores creativity through various media, focusing on how technology can be used for expression. Key activities include a 'That's not a box' provocation, creating stop motion animations with paper and props, and designing graphic novels using digital tools like Book Creator. Students also engage with the art of Yayoi Kusama, participate in an ACMI excursion, and ultimately create their own digital stories combining text and images."
   },
   {
     "ca": "Glen Waverley",
@@ -2018,9 +2039,30 @@
     "th": "How the World Works",
     "ci": "The design and use of products can have an impact on the natural world.",
     "lo": "How material properties determine their use; Material solutions for a sustainable future; How research solves problems in the natural world",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Tinkercad and Microsoft OneNote",
+        "d": "To support the 'Taking Action' task of designing an animal enrichment toy, students first create a 3D digital prototype in Tinkercad. They can then export images of their design into a dedicated page in their OneNote Class Notebook. On this page, they will annotate their design, justifying their material choices based on the science experiments and explaining how the toy's features address the specific behavioural needs of their chosen animal, ensuring a strong connection between research and creation."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "For the 'Making Conclusions' science experiments (sink/float, friction, etc.), students use iPads to film their tests. They then import these short clips into Adobe Express to create a scientific video report. Students can add text overlays to label materials, record voice-over narrations to explain their predictions and observations, and compile their clips into a single video that summarises their findings on material properties."
+      },
+      {
+        "t": "Book Creator and Stop Motion Studio",
+        "d": "To enhance the science journals mentioned in the 'Finding Out' section, students can document their experiments using animation. For example, they can use Stop Motion Studio to create a short film showing the process of a material decomposing or an object sinking. This video file can then be directly embedded into their Book Creator digital journal, alongside their written observations and reflections, creating a rich multimedia record of their learning."
+      },
+      {
+        "t": "Sphero BOLT",
+        "d": "To explore the Line of Inquiry on sustainable material solutions, students can code a Sphero BOLT to simulate a product's lifecycle. On a large floor map, they program the robot's path from 'factory' to 'home' and then to either a 'landfill' or a 'recycling centre'. They can use the Sphero's LED matrix to display different icons or colours representing the environmental impact at each stage, providing a physical, systems-thinking model of sustainability."
+      },
+      {
+        "t": "Microsoft PowerPoint and Forms",
+        "d": "During the 'Going Further' research into animal needs, students create a short, interactive presentation in PowerPoint about a specific zoo animal. They can use action buttons to create non-linear pathways for viewers to explore the animal's habitat, diet, and natural behaviours. To conclude, they can embed a link to a Microsoft Form on the final slide to quiz their peers on the key facts, gathering audience responses directly."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how the design and use of products impact the natural world, guided by the central idea that design choices have consequences. Students investigate the properties of various materials through hands-on science experiments, such as testing for magnetism and waterproofing, and document their findings in digital science journals. The inquiry culminates in students designing and creating a prototype of an enrichment toy for a zoo or classroom animal, considering material sustainability and the specific behavioural needs of their animal."
   },
   {
     "ca": "Glen Waverley",
@@ -2048,9 +2090,30 @@
     "th": "Who We Are",
     "ci": "People's beliefs contribute to the diversity of human life.",
     "lo": "Spiritual or religious beliefs; Similarities and differences of spiritual beliefs; Contributions of different religions to human diversity",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "ClassVR",
+        "d": "To directly support the planned Week 7 activity, students use ClassVR headsets to take virtual tours of significant places of worship from the religions they are researching (e.g., a Sikh Gurdwara, a Buddhist temple, the Western Wall). App smash this by having students use the Freeform app on their iPads afterwards to collaboratively mind map their observations and questions, connecting visual details from the virtual tour to the 'Place of Worship' section of their research fact files."
+      },
+      {
+        "t": "Book Creator",
+        "d": "For the 'Sorting Out' research task, students synthesise their findings from the 'My Religion Fact File' and Clickview videos into a multimedia e-book. They can include text, images, and audio recordings explaining key beliefs and practices. To app smash, students can first design infographics about religious symbols or festivals in Canva, then export them as images to embed into their Book Creator pages, creating a rich, interactive information report."
+      },
+      {
+        "t": "Microsoft Sway",
+        "d": "As a digital alternative to the 'Taking Action' cultural posters, students create a personal 'Cultural Profile' using Microsoft Sway. They can embed photos, write about their family traditions and beliefs, and record audio clips in their home language. The final Sways can be shared via a link in a Microsoft Teams channel, creating a dynamic digital gallery for the class to explore and comment on."
+      },
+      {
+        "t": "Padlet",
+        "d": "To digitise the 'Finding Out' question wall activity, create a class Padlet with columns for each religion being studied. As students engage with texts and videos, they can post their questions, wonderings, and new learnings to the relevant column. This creates a live, collaborative, and multimedia-rich resource that the whole class can contribute to and draw from throughout the inquiry."
+      },
+      {
+        "t": "Minecraft Education",
+        "d": "In small groups, students apply their research by building a key place of worship in Minecraft Education, ensuring they accurately include significant symbols and architectural features. App smash this by having them use the in-game camera and portfolio to document their creation, then import these screenshots into a Microsoft PowerPoint presentation to explain the cultural and religious significance of each part of their build."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores the diversity of human beliefs, beginning with a gallery walk of cultural images and the creation of question walls to spark inquiry into world religions like Judaism, Buddhism, and Christianity. Students conduct research using fact files and Clickview videos to produce information reports on a chosen religion, focusing on sacred texts, symbols, and places of worship. The inquiry culminates with students creating and sharing cultural posters or digital presentations about their own identity, beliefs, and heritage."
   },
   {
     "ca": "Glen Waverley",
@@ -2100,8 +2163,8 @@
     "ci": "The interactions between living things, materials, and light enable us to make decisions about the world",
     "lo": "How structural features and adaptations help living things survive; How weathering and erosion cause change to Earth's surface; How light is used in science and technology",
     "s": [],
-    "audited": true,
-    "plannerText": "Not yet documented in PDF."
+    "audited": false,
+    "plannerText": ""
   },
   {
     "ca": "Glen Waverley",
@@ -2109,30 +2172,9 @@
     "th": "Sharing the Planet",
     "ci": "Communities interact with the environment in different ways.",
     "lo": "The need for conservation; Community values inform management of the natural environment; Ways environmental stewardship can drive change",
-    "s": [
-      {
-        "t": "Google Earth and Microsoft OneNote",
-        "d": "In connection with Lesson 9 on local council initiatives, students use Google Earth to map out their local area, identifying parks, nature reserves, and sustainability projects. They can take screenshots of their annotated maps and embed them into a collaborative Microsoft OneNote page, where they add research notes and links, creating a shared digital journal about how their community manages the natural environment."
-      },
-      {
-        "t": "Digital Cameras and Book Creator",
-        "d": "For the nature walk in Lessons 7 & 8, students use digital cameras on iPads to photograph local flora and fauna. They then 'App Smash' by importing these images into Book Creator to create a 'Field Guide to Wesley's Biodiversity'. On each page, they can add their photo, text labels based on their research, and use the audio record button to explain their observations and ideas for conservation."
-      },
-      {
-        "t": "Canva and Microsoft PowerPoint",
-        "d": "To support their 'Taking Action' task (Lessons 10-13), students use Canva to design a visually compelling advertisement for their chosen environmental initiative. They can then export this ad as an image and embed it into a Microsoft PowerPoint presentation. This allows them to build a structured, persuasive pitch that incorporates their own high-quality graphic design assets to persuade their audience."
-      },
-      {
-        "t": "Minecraft Education",
-        "d": "As a direct response to the '2040' film provocation in Lesson 2, students work in teams to build their vision of a sustainable school or local community in Minecraft Education. They can incorporate features like renewable energy, water collection systems, and green spaces, using the camera and book & quill tools to document and explain how their design choices support positive interactions with the environment."
-      },
-      {
-        "t": "Microsoft Forms and Excel",
-        "d": "To inform their final pitch in 'Making Conclusions' (Lesson 9), students create a survey in Microsoft Forms to gather data on the environmental values and priorities of their peers. The results automatically populate in Excel, where students can generate simple charts to visualise the data. They can then use this evidence in their persuasive presentation to demonstrate that their proposed initiative is supported by the community."
-      }
-    ],
-    "audited": true,
-    "plannerText": "Students begin by exploring future possibilities inspired by the film '2040' and analyse environmental themes in 'The Lorax'. They then investigate First Nations' connection to Country and research their own local environment by conducting a nature walk and taking photos of flora and fauna. The unit culminates in students researching local council initiatives, choosing one to adapt for the school, and creating a persuasive presentation and advertisement to pitch their idea for environmental action."
+    "s": [],
+    "audited": false,
+    "plannerText": ""
   },
   {
     "ca": "Glen Waverley",
@@ -2140,9 +2182,30 @@
     "th": "Where We Are in Place and Time",
     "ci": "The discovery of resources has impacted the growth and development of nations.",
     "lo": "Significance of resource discovery in development of societies; Impact of migration on cultural, social and economic growth; Exploration and settlement effects on Indigenous and colonial populations",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Google Earth",
+        "d": "To deepen their understanding of the 'Hidden History of the Gold Rush' (Finding Out, Lesson 4), students can create a narrated tour in Google Earth. They will plot significant locations for the Wadawurrung People, adding placemarks with text, images, and recorded audio to explain the pre-colonial landscape and the specific impacts of the Gold Rush on Country. Students can plan their tour script in Microsoft OneNote before recording in Google Earth."
+      },
+      {
+        "t": "Book Creator",
+        "d": "For the 'Perspective Taking' letter writing task (Finding Out, Lesson 5), students can 'app smash' by first designing an authentic-looking aged paper background in Canva. They can then import this into Book Creator to create a multimedia journal. Students will not only type their letter but also record audio of themselves reading it with emotion, and embed historical images or their own drawings to vividly portray life on the goldfields from their chosen persona's point of view."
+      },
+      {
+        "t": "Microsoft Sway",
+        "d": "When conducting their 'Case Studies and Research' on other Australian resources (Going Further, Lesson 1), students can present their findings as a dynamic digital report using Microsoft Sway. After organising their notes in OneNote, they can build a Sway that incorporates text, images, and embedded Clickview videos. This creates a more engaging and interactive information report than a traditional document, which can be easily shared and presented via Teams."
+      },
+      {
+        "t": "Minecraft Education",
+        "d": "To visualise the environmental consequences explored in the STEM lessons (Finding Out, Lesson 1), students can build 'before' and 'after' dioramas of a Victorian landscape impacted by the Gold Rush. They will first construct a pre-colonial environment, then show the effects of mining, land clearing, and settlement. Using the in-game camera and Book & Quill tool, they can document these changes, explaining the cause and effect, and export their findings to their OneNote portfolio."
+      },
+      {
+        "t": "Padlet",
+        "d": "To collaboratively build on the 'Timeline' activity (Sorting Out, Lesson 1), the class can use Padlet's timeline layout. Each group researches a key event of the Gold Rush, creates a summary slide in Microsoft PowerPoint, and then uploads it as an image to their post on the shared Padlet. This allows them to add descriptions and links, creating a rich, multimedia class resource that visually sequences the development of Australia during this period."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores the Australian Gold Rush and the discovery of other resources. Students investigate push and pull factors for migration, the events of the Eureka Stockade, and the significant impact of resource discovery on First Nations peoples and the environment. They conduct research on a chosen resource, write information reports, and take on the perspective of a person from the Gold Rush era to write a letter."
   },
   {
     "ca": "Glen Waverley",
@@ -2152,28 +2215,28 @@
     "lo": "Establishing, managing and maintaining relationships; Managing behaviours in digital situations; Managing changes associated with puberty",
     "s": [
       {
-        "t": "Microsoft Teams and Padlet",
-        "d": "To support reflections on the class novel 'Wonder', create a dedicated Team for the unit. Within the Team, embed different Padlet boards for key characters. After reading, students post to the Padlets from a character's perspective, analysing the changes they face and the strategies they use. This app smash uses a collaborative M365 hub to manage a more visual and dynamic reflection tool, directly addressing the themes of vulnerability and managing change from the 'Tuning In' phase."
+        "t": "Book Creator & Canva",
+        "d": "To deepen the 'Wellbeing Journal' activity, students can create a private digital journal in Book Creator. They can 'App Smash' by first designing visual metaphors for their inner dialogue and feelings in Canva, then importing these images into their Book Creator journal. Students can add text, audio recordings of their reflections, and even video entries to document their strategies for managing change, directly addressing the central idea."
       },
       {
-        "t": "Book Creator and GarageBand",
-        "d": "In response to the 'Wellbeing Journal' activity, students create a private digital journal in Book Creator. To explore their 'inner dialogue and self talk', they can use GarageBand to record short audio clips reflecting on a personal experience with change, perhaps using two voices to represent different perspectives. This audio can be embedded directly onto the pages of their Book Creator journal, providing a rich, multimodal way to document their understanding of personal change and the strategies they use."
+        "t": "Adobe Express & Microsoft PowerPoint",
+        "d": "To demonstrate their understanding from the cyber safety lessons (LOI 2), students can work in groups to create short animated social stories using Adobe Express. They can first design characters and backgrounds in Microsoft PowerPoint, save them as images, and then import these assets into Adobe Express to animate scenarios about managing online relationships and digital conflict, reinforcing strategies for positive online behaviour."
       },
       {
-        "t": "Brushes Redux and Microsoft PowerPoint",
-        "d": "Connecting to the Visual Arts task of creating a digital self-portrait, students use the Brushes Redux app on iPads to create an artwork that reflects their identity. They can then export this image and insert it into a Microsoft PowerPoint slide. On the slide, students use text boxes and annotations to explain how their artistic choices (colour, style, expression) symbolise their personal values and their journey with change, linking artistic expression directly to the unit's central idea."
+        "t": "ChatterPix Kids & Sketchbook",
+        "d": "After creating their digital self-portraits in an app like Sketchbook as part of the Visual Arts connection, students can import their artwork into ChatterPix Kids. They can then record a short audio reflection, giving their portrait a voice to share their understanding of the central idea, inspired by the themes of acceptance and identity in the novel 'Wonder'."
       },
       {
-        "t": "Adobe Express",
-        "d": "To address Line of Inquiry 2 ('How to manage behaviours and action in digital situations'), students work in groups to create short animated videos using Adobe Express. Each video will present a common cyber-safety scenario and demonstrate both a negative and a positive strategy for managing it, highlighting the different outcomes. This allows students to rehearse and share effective strategies for managing change in online environments."
+        "t": "Padlet",
+        "d": "To build on the Microsoft Teams reflections about the novel 'Wonder', students can use Padlet to create a collaborative 'Strategy Wall'. Each student can post a digital sticky note outlining a specific strategy for managing change or showing acceptance, inspired by a character or event in the book. They can add images, links, or short text descriptions, creating a shared resource for the class."
       },
       {
-        "t": "Canva",
-        "d": "As a summative task, students create a 'Guide to Managing Change' for a younger audience. Using Canva's templates, they can design a series of visually engaging infographics or comic strips that explain key strategies learned throughout the unit, drawing on examples from 'Wonder', their wellbeing journals, and cyber-safety lessons. This task allows them to synthesise their knowledge and demonstrate their understanding of the central idea in a creative and practical format."
+        "t": "Microsoft Forms & Microsoft Sway",
+        "d": "To support the 'Bodyworks Program' (LOI 3), students can use Microsoft Forms to anonymously submit questions they have about managing the changes associated with puberty. The teacher can then use these questions to create a visually engaging and informative Microsoft Sway presentation that provides accurate knowledge and strategies, ensuring a safe and confidential way for students to gain understanding."
       }
     ],
     "audited": true,
-    "plannerText": "This unit explores the central idea that managing change requires acceptance, knowledge, and strategies. Key learning experiences include reading and reflecting on the novel 'Wonder' to understand vulnerability, using a wellbeing journal to discover inner dialogue and self-talk, and a Visual Arts integration involving the creation of digital self-portraits to explore identity. The inquiry also covers managing relationships, digital citizenship through cyber safety lessons, and the changes associated with puberty."
+    "plannerText": "The unit explores managing personal change through various activities. Students read and reflect on the novel 'Wonder' to understand vulnerability and risk-taking, use a wellbeing journal to discover inner dialogue, and engage in cyber safety lessons to manage digital behaviours. A key Visual Arts connection involves students creating digital self-portraits on iPads to explore changing identity."
   },
   {
     "ca": "Glen Waverley",
