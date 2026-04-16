@@ -2080,9 +2080,30 @@
     "th": "Where We Are in Place and Time",
     "ci": "Exploration leads to discoveries, opportunities and new understandings.",
     "lo": "Reasons for exploration; How people have explored over time; Consequences of exploration",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Google Maps and Microsoft PowerPoint",
+        "d": "To support the \"Explore the middle school\" mapping activity, students use Google Maps' 'My Maps' feature to create a digital map of the campus. During their physical exploration, they use iPads to photograph key locations, then use Microsoft PowerPoint to design custom info cards for each spot. They can then upload these images as custom pins on their My Map, creating an interactive tour that documents their discoveries and new understandings of the space."
+      },
+      {
+        "t": "Book Creator and Canva",
+        "d": "Students research an Australian explorer or a First Fleet convict and create a multimodal digital journal in Book Creator. To 'app smash', they can use Canva to design aged maps and historical document replicas. They can also use ChatterPix Kids to make a portrait of their chosen historical figure narrate a key part of their journey, embedding this short video directly into their Book Creator journal to bring their historical narrative to life."
+      },
+      {
+        "t": "Microsoft Sway and Padlet",
+        "d": "Connecting to the provocation on exploration tools, students work in pairs to compare a historical tool (e.g., sextant) with its modern equivalent (e.g., GPS). They first use Padlet as a collaborative space to gather and organise their research, images, and video links. They then synthesise this information into a dynamic Microsoft Sway presentation, contrasting the past and present technologies to demonstrate how new tools lead to new discoveries."
+      },
+      {
+        "t": "Sphero BOLT and iMovie",
+        "d": "To model the \"journeys of the Australian coastline,\" students research a section of Captain Cook's voyage. Using a large floor map of Australia, they program a Sphero BOLT to navigate the path, programming it to stop and change colour at significant locations like Botany Bay. They then 'app smash' by recording this coded journey on an iPad and importing the footage into iMovie, where they add voiceover narration to explain the discoveries and consequences at each point."
+      },
+      {
+        "t": "Minecraft Education and Microsoft OneNote",
+        "d": "To understand the consequences of the First Fleet's arrival, students collaboratively research and build a representation of the early Sydney Cove settlement in Minecraft Education. To document their process, students use the in-game camera and book tools to create a journal explaining their design choices, which they then export and share in a class Microsoft OneNote notebook, creating a gallery of their historical reconstructions."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The unit begins with students exploring historical and modern tools of exploration and then mapping their own local environment, the middle school campus. Students investigate historical explorations, focusing on Australian explorers like James Cook and the First Fleet, culminating in writing historical narratives from a convict's perspective. The unit concludes with students conducting personal research into an area of exploration and presenting their findings using various digital formats."
   },
   {
     "ca": "Glen Waverley",
@@ -2163,8 +2184,8 @@
     "ci": "The interactions between living things, materials, and light enable us to make decisions about the world",
     "lo": "How structural features and adaptations help living things survive; How weathering and erosion cause change to Earth's surface; How light is used in science and technology",
     "s": [],
-    "audited": false,
-    "plannerText": ""
+    "audited": true,
+    "plannerText": "Not yet documented in PDF."
   },
   {
     "ca": "Glen Waverley",
@@ -2172,9 +2193,30 @@
     "th": "Sharing the Planet",
     "ci": "Communities interact with the environment in different ways.",
     "lo": "The need for conservation; Community values inform management of the natural environment; Ways environmental stewardship can drive change",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Minecraft Education & Book Creator",
+        "d": "To support the 'Taking Action' phase (Lessons 10-13), students can build a model of their proposed school sustainability initiative in a shared Minecraft world. They can then document their design process by exporting screenshots and screen recordings into Book Creator, creating a multimedia proposal that visually explains their idea and its potential impact on the school environment."
+      },
+      {
+        "t": "Google Earth & Canva",
+        "d": "During the 'Finding Out' lessons on First Nations communities (Lessons 3-6), students can use Google Earth to explore the traditional lands they are studying, including Wurundjeri Country. They can capture images of the landscape and integrate them into a digital poster created in Canva, combining geographical context with their research on caring for Country to fulfil the poster-making task."
+      },
+      {
+        "t": "Adobe Express & Microsoft Teams",
+        "d": "For the final 'Taking Action' task (Lessons 10-13), students can create a persuasive video advertisement for their environmental initiative using Adobe Express. They can combine video clips, images, voice-overs, and text to create a compelling pitch. The final videos can be uploaded to a dedicated channel in their Class Team for peer feedback and sharing with the class."
+      },
+      {
+        "t": "Digital Cameras & Microsoft OneNote",
+        "d": "To enhance the 'Sorting Out' local environment study (Lessons 7-8), students can use the digital cameras on their iPads during the nature walk to photograph local flora and fauna. They can then create a collaborative digital field guide in a shared OneNote Class Notebook, inserting their photos, annotating them with identifications, and adding research notes from the council wildlife guide."
+      },
+      {
+        "t": "Padlet & Microsoft PowerPoint",
+        "d": "In the 'Going Further' lesson (Lesson 9), students can use a collaborative Padlet map to pin and share their research on the environmental initiatives run by the local Monash council. For their final pitch in 'Making Conclusions', they can screenshot this collaborative data and embed it into a Microsoft PowerPoint presentation as evidence to support their argument for implementing a specific initiative at Wesley."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how communities interact with their environment, focusing on conservation and stewardship. Students analyse texts like 'The Lorax' and 'Blueback', investigate First Nations' connection to Country, and research their local environment and council sustainability initiatives. The unit culminates in students designing, pitching, and creating an advertisement for a new environmental initiative they believe the school should implement."
   },
   {
     "ca": "Glen Waverley",
@@ -2216,27 +2258,27 @@
     "s": [
       {
         "t": "Book Creator & Canva",
-        "d": "To deepen the 'Wellbeing Journal' activity, students can create a private digital journal in Book Creator. They can 'App Smash' by first designing visual metaphors for their inner dialogue and feelings in Canva, then importing these images into their Book Creator journal. Students can add text, audio recordings of their reflections, and even video entries to document their strategies for managing change, directly addressing the central idea."
+        "d": "To explore the theme of change from the novel 'Wonder', students can use Canva to design visual metaphors or character portraits representing acceptance and different perspectives. They can then 'app smash' by importing these graphics into a Book Creator journal, where they add text and audio narration to document a character's journey or reflect on their own 'inner dialogue and self talk', directly linking to the wellbeing journal activity."
       },
       {
-        "t": "Adobe Express & Microsoft PowerPoint",
-        "d": "To demonstrate their understanding from the cyber safety lessons (LOI 2), students can work in groups to create short animated social stories using Adobe Express. They can first design characters and backgrounds in Microsoft PowerPoint, save them as images, and then import these assets into Adobe Express to animate scenarios about managing online relationships and digital conflict, reinforcing strategies for positive online behaviour."
+        "t": "Brushes Redux & Microsoft PowerPoint",
+        "d": "Connecting to the Visual Arts component, students can use the Brushes Redux app on iPads to create the digital self-portraits mentioned in the planner, focusing on a personal style that reflects who they are. They can then insert their completed artwork into a PowerPoint presentation. On the slides, they can annotate their work, explaining how their artistic choices represent their identity and their understanding of personal growth and change."
       },
       {
-        "t": "ChatterPix Kids & Sketchbook",
-        "d": "After creating their digital self-portraits in an app like Sketchbook as part of the Visual Arts connection, students can import their artwork into ChatterPix Kids. They can then record a short audio reflection, giving their portrait a voice to share their understanding of the central idea, inspired by the themes of acceptance and identity in the novel 'Wonder'."
+        "t": "Puppet Pals & OneNote",
+        "d": "To address the Line of Inquiry on managing digital situations, students can first use a collaborative OneNote page to storyboard a cyber safety scenario. They will then use Puppet Pals to create a short animated video that acts out the scenario and demonstrates positive strategies for managing online relationships and conflict, reinforcing the unit's focus on applying knowledge and strategies to manage change."
       },
       {
-        "t": "Padlet",
-        "d": "To build on the Microsoft Teams reflections about the novel 'Wonder', students can use Padlet to create a collaborative 'Strategy Wall'. Each student can post a digital sticky note outlining a specific strategy for managing change or showing acceptance, inspired by a character or event in the book. They can add images, links, or short text descriptions, creating a shared resource for the class."
+        "t": "Padlet & Microsoft Teams",
+        "d": "After reading key chapters of 'Wonder', students can post individual reflections on a class Padlet, responding to prompts about a character's challenges and the strategies they used. Following this, the teacher can use the posts as a stimulus for small group discussions in Microsoft Teams breakout rooms, where students collaboratively develop a summary of effective strategies for managing social and emotional change."
       },
       {
-        "t": "Microsoft Forms & Microsoft Sway",
-        "d": "To support the 'Bodyworks Program' (LOI 3), students can use Microsoft Forms to anonymously submit questions they have about managing the changes associated with puberty. The teacher can then use these questions to create a visually engaging and informative Microsoft Sway presentation that provides accurate knowledge and strategies, ensuring a safe and confidential way for students to gain understanding."
+        "t": "GarageBand & Microsoft Word",
+        "d": "To deepen their understanding of 'inner dialogue', students can first write a short script or poem in Microsoft Word that captures a character's internal thoughts during a pivotal moment of change in 'Wonder'. They can then record this as a dramatic reading in GarageBand, adding sound effects or music to convey emotion. This creates a mini 'Wellbeing Podcast' that explores the mental and emotional aspects of managing transitions."
       }
     ],
     "audited": true,
-    "plannerText": "The unit explores managing personal change through various activities. Students read and reflect on the novel 'Wonder' to understand vulnerability and risk-taking, use a wellbeing journal to discover inner dialogue, and engage in cyber safety lessons to manage digital behaviours. A key Visual Arts connection involves students creating digital self-portraits on iPads to explore changing identity."
+    "plannerText": "This unit explores the central idea that managing change requires acceptance, knowledge, and strategies, with a focus on personal, social, and physical health. Key learning experiences include reading and reflecting on the novel 'Wonder' by R.J. Palacio, engaging in wellbeing journaling to discover inner dialogue, and creating digital self-portraits in Visual Arts to explore identity. The lines of inquiry address establishing relationships, managing behaviour in digital situations through cyber safety lessons, and understanding the changes associated with puberty."
   },
   {
     "ca": "Glen Waverley",
@@ -2245,8 +2287,8 @@
     "ci": "The media engages its audience and invites a response",
     "lo": "How media targets audiences; Techniques used to engage and persuade; Critical evaluation of media messages",
     "s": [],
-    "audited": false,
-    "plannerText": ""
+    "audited": true,
+    "plannerText": "Not yet documented in PDF."
   },
   {
     "ca": "Glen Waverley",
