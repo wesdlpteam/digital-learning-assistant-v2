@@ -2988,9 +2988,30 @@
     "th": "How We Express Ourselves",
     "ci": "Methods of communication have different features which impact their effectiveness",
     "lo": "The forms of verbal, non-verbal and visual communication; How the correct form enhances the effectiveness of a message; How people interpret messages and bring their own meaning to interactions",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "iMovie",
+        "d": "App smash iMovie, Canva, and GarageBand for the summative silent movie project. Students can film their non-verbal performances on iPads and edit them in iMovie. They can design and import vintage-style title cards from Canva to communicate the narrative, and compose a simple piano score in GarageBand to explore how changing tempo and dynamics impacts the audience's emotional response, directly linking to the unit's music-focused activities."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Explore symbolic communication by app smashing Canva and Book Creator. Students can use Canva to design a personal set of symbols or 'hieroglyphs' for common feelings or actions, connecting to the unit's Visual Arts link with Ancient Egyptians. They then import these symbols into Book Creator to write a short story, using the audio record feature to explain their symbolic language and how it effectively communicates their narrative."
+      },
+      {
+        "t": "Sphero BOLT",
+        "d": "Make historical communication methods tangible by using Sphero BOLT robots to encode and send messages in Morse code. Students can work in pairs to program the BOLT's LED matrix to flash short and long lights (dots and dashes) to spell out words. This hands-on activity directly connects to the 'Find Out' lesson on Morse code and allows students to evaluate the effectiveness and features of this communication method."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "Investigate non-verbal communication by exploring facial expressions, directly addressing a key student inquiry. Students take a photo of themselves showing a specific emotion (e.g., surprise, confusion) and use ChatterPix Kids to draw a mouth and record a short explanation of what emotion they are conveying and which facial features (e.g., raised eyebrows, open mouth) make the communication effective."
+      },
+      {
+        "t": "Canva",
+        "d": "App smash Microsoft Forms and Canva to analyse and present data on communication methods. Students can design a simple survey in Forms to collect data on the communication types they and their peers use, linking to the 'Sort Out' tallying activity. They will then represent this data visually by creating a compelling infographic in Canva, evaluating which methods are most common and discussing their features and effectiveness."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how different methods of communication have features that impact their effectiveness. Students investigate verbal, non-verbal, and symbolic communication by analysing musical elements like tempo and dynamics, researching systems like Morse code and Auslan, and discussing the purpose of communication for different audiences. The key summative task involves students planning, rehearsing, and producing their own silent movie to demonstrate their understanding of how to convey a story and emotion without words."
   },
   {
     "ca": "St Kilda",
@@ -2998,9 +3019,30 @@
     "th": "How We Organise Ourselves",
     "ci": "Ethical decision making supports online choices.",
     "lo": "How choice of action and reaction affects others online; How informed choices can make a positive difference; Our right to feel safe online and the responsibility to make ethical decisions",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Canva",
+        "d": "In groups, students use Canva's templates to design a vibrant 'Online Essential Agreement' poster. App smash this by having students use the iPad camera to take photos of themselves modelling safe online practices, which they can then upload and incorporate into their collaborative design, creating a powerful visual reminder for the classroom."
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "Students use Stop Motion Studio with LEGO figures or plasticine to create short animations depicting online dilemmas, such as cyberbullying or receiving a strange friend request. They must animate two different endings: one showing a poor choice and one reflecting an ethical choice from their class agreement, reinforcing the concept of consequences."
+      },
+      {
+        "t": "Microsoft PowerPoint",
+        "d": "Students build an interactive 'Choose Your Own Adventure' cyber safety story in PowerPoint. They will design slides presenting a scenario and two hyperlinked choices, leading to different outcome slides. This directly engages them in the process of ethical decision-making and allows them to explore the potential impact of their online actions in a safe, simulated environment."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Using the comic templates in Book Creator, students create a narrative about making a safe choice online. They can design characters and use speech bubbles to show their thinking process. App smash by using Microsoft Word to create custom text boxes or graphics which can be screenshotted and imported into their comic, then use Book Creator's audio recording feature to narrate the story."
+      },
+      {
+        "t": "Sphero BOLT",
+        "d": "Create a large floor mat with online scenarios written at different points. In teams, students code their Sphero BOLT to travel to a scenario, discuss the ethical choice, and then program the Sphero's LED matrix to display a green tick for a safe choice or a red cross for an unsafe one. This kinesthetic task makes the abstract concept of online cause-and-effect tangible and memorable."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit focuses on developing digital citizenship skills through the Cyber Safety Project. Students engage in discussions about their family's online usage, collaboratively create an 'Online Essential Agreement' to guide their choices, and use this agreement to navigate and reflect on various online scenarios. Assessment involves monitoring students' application of these skills and their ability to self-assess their online behaviour using a traffic light system."
   },
   {
     "ca": "St Kilda",
@@ -3008,9 +3050,30 @@
     "th": "How the World Works",
     "ci": "Materials behave and interact in certain ways, which poses challenges and solutions",
     "lo": "The three states of matter and their properties; How matter changes states depending on particles, temperature and energy; Responsible and ethical use of materials like glass and plastic",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Stop Motion Studio & Book Creator",
+        "d": "To document the 'Ooblek Lesson' or the 'melt ice cubes' experiment, students use Stop Motion Studio on an iPad to capture the process of a material changing state. They can then 'App Smash' by importing their finished animation into Book Creator, where they can add audio narration to explain their scientific observations and use text labels to identify the states of matter (solid, liquid), directly addressing the 'Change' line of inquiry."
+      },
+      {
+        "t": "Canva",
+        "d": "Following the 'Go Further' activity where students watch a video on how chocolate is made, they can use Canva to create a digital flowchart. Using simple shapes, arrows, and images (either from Canva's library or photos taken in class), they can visually sequence the process of chocolate changing from a solid to a liquid and back to a solid, reinforcing their understanding of how temperature affects materials."
+      },
+      {
+        "t": "Microsoft PowerPoint",
+        "d": "For the 'Find Out' task requiring students to find examples of each state of matter, they can create a simple, interactive PowerPoint presentation. On a single slide with three columns ('Solids', 'Liquids', 'Gases'), students can use the iPad camera to take photos of examples around the classroom and insert them into the correct column. They can then use PowerPoint's audio recording feature on each image to explain their reasoning, fulfilling the planner's requirement to 'use the mic to explain'."
+      },
+      {
+        "t": "Tinkercad",
+        "d": "Connecting to the 'Responsibility' line of inquiry and student actions around recycling plastics, students can use Tinkercad to design a new object made from recycled materials. After a brainstorming session, they could design a simple product like a bird feeder or a plant pot. This task allows them to conceptualise a solution to the challenge of material waste, and they can screenshot their 3D model to share in Seesaw."
+      },
+      {
+        "t": "ScratchJR",
+        "d": "To explore the 'Responsibility' and 'Adaptation' lines of inquiry, students can use ScratchJR to code a short, animated story about the lifecycle of a plastic bottle. They can program the bottle to go on a journey from the shop to a person's home, and then show two different endings: one where it goes to landfill and one where it is recycled into something new. This provides a simple, visual way for them to demonstrate their understanding of responsible material disposal."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students investigate the three main states of matter (solids, liquids, gases) through hands-on science experiments, such as observing the properties of a candy bar, melting ice cubes, and exploring non-Newtonian fluids like Ooblek. The unit connects this scientific understanding to real-world applications by examining the changing states of chocolate, the problem of melting glaciers, and the responsible use and disposal of materials like glass and plastic. Key activities include photographing examples of matter, designing solutions, and creating flow charts to explain scientific processes."
   },
   {
     "ca": "St Kilda",
@@ -3038,9 +3101,30 @@
     "th": "Who We Are",
     "ci": "Health and wellbeing are impacted by the choices we make",
     "lo": "How our body systems connect and function; How our choices affect physical, emotional and mental wellbeing; Strategies to measure and maintain the health of the human body",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Book Creator",
+        "d": "To publish the information report on a chosen body system, students can create a multi-page digital book. App smash this by having students first use the iPad app Sketchbook to create detailed, hand-drawn diagrams of their system. They can then export these images and import them into their Book Creator pages to label and explain, directly addressing the planner's task to 'add hand drawn diagrams' and 'bind the reports into a booklet'."
+      },
+      {
+        "t": "Microsoft Excel",
+        "d": "To support the goal-setting activity, use a scaffolded Excel template for students to log their data from the fitness tests. They can enter their scores at the start and end of the unit to track progress. App smash by taking a screenshot of their data table or a simple chart and inserting it into Seesaw, where they can use the record tool to verbally reflect on how their choices impacted their fitness results."
+      },
+      {
+        "t": "Canva",
+        "d": "In small groups, students can use Canva to create an informative digital poster about one of the 'components of fitness'. They can research their component and use Canva's templates to explain it and provide examples of healthy choices that support it. To personalise their work, they can use the Digital Camera on their iPad to take photos of classmates demonstrating relevant exercises and upload them into their design."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "To explain their understanding of healthy choices, students can take a photo of a healthy food item, a water bottle, or a book. They can then use ChatterPix Kids to make the object 'talk', recording a short script from its perspective explaining how it contributes to physical or mental wellbeing. The final videos can be uploaded to Seesaw for students to share their understanding with peers and families."
+      },
+      {
+        "t": "Microsoft OneNote",
+        "d": "As a digital research journal, students can use OneNote to collate their findings for their 'Investigate Body Systems' task. They can create a page for their chosen system to gather text, images, and links from approved sources like Epic or Clickview. This helps them organise their information from multiple sources before beginning their Book Creator report, supporting the research and notetaking skills mentioned in the planner."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how personal choices impact health and wellbeing, with a focus on the human body's systems and physical fitness. Students research and produce information reports on a chosen body system, and they also set and track personal fitness goals by comparing test results over time."
   },
   {
     "ca": "St Kilda",
@@ -3048,9 +3132,30 @@
     "th": "How We Express Ourselves",
     "ci": "The creative process involves understanding and applying artistic elements to communicate ideas and emotions across disciplines",
     "lo": "How colour, movement and music communicate character and mood; The creative process of making a multi-disciplinary presentation; The effort and commitment required to produce a live performance",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Book Creator",
+        "d": "App smash Microsoft PowerPoint with Book Creator to create a comprehensive digital portfolio of the creative process. Students can design title pages or graphic organisers in PowerPoint about the symbolism of colours in Beijing Opera, save them as images, and import them into a Book Creator portfolio. This portfolio can also house photos of their physical masks, videos of their vignette performances, and written reflections, documenting their entire learning journey from research to performance as mentioned in the 'Sort Out' phase."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "To bring their character masks to life, students first design and draw their masks using an app like Sketchbook or Brushes Redux. They then import the finished image into ChatterPix Kids, draw a mouth, and record themselves reading the character 'script' they wrote in class. This activity directly supports the mask creation and scriptwriting tasks by merging visual art with dramatic voice performance."
+      },
+      {
+        "t": "GarageBand",
+        "d": "Connecting to the unit's music component, students can compose a short musical theme for their Beijing Opera character using GarageBand. By exploring the smart instruments and loops, they can create a soundscape that reflects their character's personality (e.g., sneaky, brave, or funny), directly addressing the inquiry of 'How is music used to introduce a character or tell the story?'."
+      },
+      {
+        "t": "iMovie",
+        "d": "Elevate the 'vignette' performance task by using Green Screen Kits and iMovie. Students can use Canva to find an appropriate background image, such as a traditional Chinese theatre stage, and then film their 'no dialogue, body acting' performance in front of a green screen. Using iMovie's green screen effect, they can superimpose themselves onto the background, creating a more polished and immersive film for their Seesaw portfolio."
+      },
+      {
+        "t": "Makey Makey",
+        "d": "Create an interactive art piece based on the 'Students study poses of the Chinese opera' activity. Students can make a large drawing of their character, using foil or graphite for conductive touchpoints on different parts of the body. By connecting these points to a Makey Makey, they can trigger pre-recorded audio clips in ScratchJR that explain the meaning of each pose, combining physical art, drama, and basic coding principles."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this unit, students explore the creative process by investigating how artistic elements communicate ideas and emotions. They focus on Chinese culture, researching the meaning of colours to design and create their own Beijing Opera character masks. Students then develop their character by writing a script, studying opera poses, and working in partnerships to create and film a non-verbal vignette that expresses their character's personality."
   },
   {
     "ca": "St Kilda",
