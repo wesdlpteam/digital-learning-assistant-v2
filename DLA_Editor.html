@@ -1144,49 +1144,55 @@ async function applySugFeedbackDirect(uid, entryIdx, sugIdx){
   const others = getSugs(entry).filter((_,i)=>i!==sugIdx).map(s=>sugTool(s)).join(', ');
 
   sendBtn.disabled = true;
-  sendBtn.textContent = 'Thinking…';
+  sendBtn.textContent = 'Thinking\u2026';
   resultEl.innerHTML = '';
 
-  const prompt = `You are a Digital Learning Coach at Wesley College improving a specific technology suggestion for an IB PYP unit.
+  const prompt = `You are a Digital Learning Coach at Wesley College improving a technology suggestion for an IB PYP unit.
 
 Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${entry.plannerText?`\nPlanner: ${entry.plannerText}`:''}
-Current suggestion: ${sugTool(sug)} — ${sugDesc(sug)}
+Current suggestion: ${sugTool(sug)} \u2014 ${sugDesc(sug)}
 Other tools already in this unit (do not repeat): ${others||'none'}
 
 APPROVED TOOLS ONLY (Microsoft Teams for Year 4+ only): Microsoft M365, Beebots, Sphero, Lego Spike, Micro:bits, CoDrone, Makey Makey, 3D Printers, ClassVR, Merge Cubes, Green Screen, Podcast Equipment, iPads, Seesaw, Canva, Book Creator, Padlet, GarageBand, ScratchJR, Stop Motion Studio, ChatterPix Kids, iMovie, Puppet Pals, Adobe Express, Google Maps, Google Earth, Field Guide to Victoria, Sky Map, Geoboard, Clickview, Epic, PicCollage, Brushes Redux, Word Clouds ABCya, Sketchbook, Explain Everything, Freeform, Delightex, Kahoot, Tinkercad, Minecraft Education.
 
-Instruction from teacher: ${instruction}
+Instruction: ${instruction}
 
-Apply the instruction and return ONLY JSON: {"t":"Tool Name","d":"Specific description connected to this unit."}`;
+Return ONLY a JSON array of exactly 3 different suggestions applying the instruction, each using a different tool:
+[{"t":"Tool Name","d":"Specific description."},{"t":"Tool Name","d":"Specific description."},{"t":"Tool Name","d":"Specific description."}]`;
 
   try{
     const raw = await callGemini([{role:'user',parts:[{text:prompt}]}], null, GEMINI_MODEL);
-    const clean = raw.replace(/\`\`\`json|\`\`\`/g,'').trim();
-    const si = clean.indexOf('{'), ei = clean.lastIndexOf('}');
-    if(si===-1||ei===-1) throw new Error('No JSON returned');
-    const newSug = JSON.parse(clean.slice(si, ei+1));
-    if(!newSug.t||!newSug.d) throw new Error('Invalid suggestion format');
+    const clean = raw.replace(/```json|```/g,'').trim();
+    const si = clean.indexOf('['), ei = clean.lastIndexOf(']');
+    if(si===-1||ei===-1) throw new Error('No suggestions returned');
+    const suggestions = JSON.parse(clean.slice(si, ei+1));
+    if(!suggestions.length) throw new Error('Empty response');
 
-    // Show preview with apply/discard
-    resultEl.innerHTML = `
-      <div style="padding:10px 14px;background:#0a1a0a;border:1px solid var(--lime);border-radius:8px;margin-bottom:8px">
-        <div style="font-size:11px;color:var(--lime);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Proposed replacement</div>
-        <div style="font-size:13px;font-weight:700;color:var(--lime);margin-bottom:2px">${esc(newSug.t)}</div>
-        <div style="font-size:12px;color:#aaa;line-height:1.5">${esc(newSug.d)}</div>
-      </div>
-      <div style="display:flex;gap:8px">
-        <button onclick="confirmSugFeedback(${entryIdx},${sugIdx},'${uid}',${JSON.stringify(JSON.stringify(newSug))})" style="padding:8px 16px;background:var(--lime);color:#111;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer">✓ Apply</button>
-        <button onclick="document.getElementById('${uid}-result').innerHTML='';document.getElementById('${uid}-input').value=''" style="padding:8px 14px;background:transparent;border:1px solid var(--border);color:var(--dim);border-radius:8px;font-weight:600;font-size:12px;cursor:pointer">Try again</button>
-      </div>`;
+    window['_fbsugs_'+uid] = suggestions;
+
+    resultEl.innerHTML = suggestions.map((s,i) => `
+      <div style="padding:10px 14px;background:#0a1a0a;border:1px solid #1e3a1e;border-radius:8px;margin-bottom:8px">
+        <div style="display:flex;align-items:flex-start;gap:8px">
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:700;color:var(--lime);margin-bottom:2px">${esc(s.t)}</div>
+            <div style="font-size:12px;color:#aaa;line-height:1.5">${esc(s.d)}</div>
+          </div>
+          <button onclick="confirmSugFeedback(${entryIdx},${sugIdx},'${uid}',${i})" style="flex-shrink:0;padding:7px 14px;background:var(--lime);color:#111;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer">Apply</button>
+        </div>
+      </div>`).join('') +
+      `<button onclick="document.getElementById('${uid}-result').innerHTML='';document.getElementById('${uid}-input').value=''" style="padding:6px 12px;background:transparent;border:1px solid var(--border);color:var(--dim);border-radius:8px;font-weight:600;font-size:11px;cursor:pointer;margin-top:4px">Try again</button>`;
+
   }catch(e){
-    resultEl.innerHTML = `<div style="font-size:12px;color:#f87171">✗ ${esc(e.message)} — try rephrasing</div>`;
+    resultEl.innerHTML = `<div style="font-size:12px;color:#f87171">\u2717 ${esc(e.message)} \u2014 try rephrasing</div>`;
   }
   sendBtn.disabled = false;
-  sendBtn.textContent = 'Apply →';
+  sendBtn.textContent = 'Apply \u2192';
 }
 
-function confirmSugFeedback(entryIdx, sugIdx, uid, newSugJSON){
-  const newSug = JSON.parse(newSugJSON);
+function confirmSugFeedback(entryIdx, sugIdx, uid, choiceIdx){
+  const suggestions = window['_fbsugs_'+uid];
+  if(!suggestions || !suggestions[choiceIdx]) return;
+  const newSug = suggestions[choiceIdx];
   const sugs = [...getSugs(DATA[entryIdx])];
   sugs[sugIdx] = {t: newSug.t, d: newSug.d};
   recordChange(entryIdx, getSugs(DATA[entryIdx]), sugs);
@@ -1194,6 +1200,7 @@ function confirmSugFeedback(entryIdx, sugIdx, uid, newSugJSON){
   DATA[entryIdx].audited = true;
   saveToDrive();
   setStatus('Suggestion updated and saved');
+  delete window['_fbsugs_'+uid];
   document.getElementById(uid+'-chat')?.remove();
   const sugEl = document.getElementById(`s${entryIdx}_${sugIdx}`);
   if(sugEl){
