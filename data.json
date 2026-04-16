@@ -1006,9 +1006,30 @@
     "th": "Who We Are",
     "ci": "People's choices are influenced by their beliefs and values and can impact others.",
     "lo": "How values and beliefs impact choices; How people's choices and actions impact others; Responsible decision-making",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Book Creator",
+        "d": "To complete the PSPE 'portfolio reflection task', students create a multimedia digital portfolio in Book Creator. They can use text to describe a decision made during a team game, record audio narration to explain its impact on others, and use the drawing tools to illustrate the different perspectives involved, directly addressing the central idea."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "Responding to the provocations on self-efficacy and positive self-talk, students create short animated videos in Adobe Express. They can design a 'choose your own adventure' style narrative showing how a character's choices, influenced by either positive or negative beliefs about themselves, lead to different outcomes and impacts on others."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "To explore the line of inquiry 'How values and beliefs impact choices', students can co-construct a survey in Microsoft Forms. They can anonymously poll their peers on various ethical dilemmas or scenarios related to fairness and inclusion in games, then analyse the aggregated data to discuss how shared or differing values influence decision-making in their community."
+      },
+      {
+        "t": "Padlet",
+        "d": "Following a collaborative PSPE game, use a Padlet board with columns for different perspectives (e.g., 'My View', 'My Teammate's View', 'The Other Team's View'). Students can anonymously post reflections on a specific in-game event, creating a visual map of how one action was perceived differently by various people, reinforcing the concept of impact."
+      },
+      {
+        "t": "Minecraft Education",
+        "d": "Students work in a shared Minecraft world to build a sustainable community, forcing them to make responsible decisions about shared resources. App Smash this by having them use the in-game camera and portfolio tools to document key choices and their consequences, then export these to a collaborative OneNote page to write reflections on how their individual actions impacted the entire group."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how choices, influenced by beliefs and values, can impact others. Learning is heavily integrated with PSPE, where students participate in team-based games and complete a portfolio reflection task to analyse their decisions, their impact, and the perspectives of others. The inquiry is also guided by provocations on concepts like self-efficacy and positive self-talk."
   },
   {
     "ca": "Elsternwick",
@@ -1047,9 +1068,30 @@
     "th": "How We Organise Ourselves",
     "ci": "Student-led exhibition (PYPEX) ? Students develop and present their own units of inquiry.",
     "lo": "Student-led transdisciplinary themes; Approaches to learning; Research and presentation skills",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Adobe Express",
+        "d": "For the Lesson 6 activity where students create a 3-minute training video on how laws are made, they can use Adobe Express. Students can first design informational graphics and flowcharts in Canva to explain each stage of a bill passing through parliament, then import these assets into Adobe Express to produce a polished video, complete with voice-over narration and titles. This app-smashing workflow enhances their communication and digital production skills."
+      },
+      {
+        "t": "Microsoft PowerPoint",
+        "d": "To support the Lesson 7 and Lesson 8/9 activities, students can design their campaign posters using Microsoft PowerPoint. After researching a real Member of Parliament or creating a platform for their fictional party, students can set their slide size to A3 and use PowerPoint's design tools to create a persuasive poster, incorporating images, slogans, and key policy points, demonstrating their understanding of political communication."
+      },
+      {
+        "t": "Padlet",
+        "d": "To enhance the research in Lesson 2/3/4 on government structures, students can use a class Padlet as a collaborative 'Dot Jot' wall. In pairs, they can post key facts, images, and video links about their assigned topic (e.g., Prime Minister, Judiciary). This creates a shared digital space for initial brainstorming before students synthesise this information into their individual OneNote as required by the planner."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Following the jigsaw activity in Lesson 13, where students research different political systems, each 'expert' group can create a 2-page summary in Book Creator. These individual pages can then be combined into a single class book. This creates a collaborative digital text that serves as a consolidated summary of their collective research on democracy, monarchy, communism, and more."
+      },
+      {
+        "t": "Minecraft Education",
+        "d": "In preparation for the House of Representatives Role Play in Lesson 10, students can work collaboratively in Minecraft Education to build a digital replica of the parliamentary chamber. This construction task helps them understand the physical layout and roles within parliament. The subsequent role-play can then take place within their bespoke Minecraft world, which can be recorded using Microsoft Teams for reflection."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how values and structures determine the operation of government systems, focusing on Australia's political landscape. Students investigate the three levels of government, the roles of parliament, the process of creating laws, and different political systems. Key learning experiences include researching parliamentary roles, creating training videos and campaign posters, and participating in debates and a mock election."
   },
   {
     "ca": "Elsternwick",
@@ -1057,9 +1099,30 @@
     "th": "How the World Works",
     "ci": "Energy may be converted, transformed, and used to support human progress.",
     "lo": "Different forms of energy and how they are used; The impact of different energy sources on the planet; Sustainable energy practices",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Minecraft Education & Microsoft OneNote",
+        "d": "In connection with Activity 2's exploration of Rube Goldberg machines, students will design and build their own virtual energy transformation machine in Minecraft Education. They must use elements like redstone, pistons, and minecarts to demonstrate at least three energy conversions (e.g., potential to kinetic, kinetic to electrical). Students will use the in-game camera and book & quill to document each stage, then export their work into a shared Microsoft OneNote notebook where they can add detailed annotations explaining the scientific principles of energy transfer and transformation at each step."
+      },
+      {
+        "t": "Lego Spike Prime & iMovie",
+        "d": "Building on Activity 5's study of William's Dynamo and the teacher's reflection about needing more construction tasks, students will work in small groups to engineer and code a working windmill using Lego Spike Prime. They will program the motor and sensors to measure blade speed and activate a light or sound to signify energy generation. To document their learning, they will film their model in action, import the footage into iMovie to edit a short explanatory video, and add a voiceover explaining how their model converts mechanical energy into electrical energy, mirroring the principles of a real-world turbine."
+      },
+      {
+        "t": "Book Creator & Microsoft Excel",
+        "d": "To synthesize learning from Activity 7 (PMI charts) and Activity 8 (analysing state energy data), students will create a persuasive digital book advocating for a specific renewable energy source for Victoria. They will first use Microsoft Excel to analyse data and create compelling charts and graphs comparing energy production. Students will then 'app smash' by exporting these visuals into Book Creator, where they will design an interactive publication complete with text, embedded videos, and audio narration arguing their case for sustainable energy progress."
+      },
+      {
+        "t": "Stop Motion Studio & Adobe Express",
+        "d": "Inspired by Activity 4's discussion of blackout scenarios and Activity 12's viewing of the documentary '2040', students will create a short stop-motion animation telling a story of a community's transition to sustainable energy. Using clay, LEGO, or drawings, they will animate a narrative that shows the negative impacts of fossil fuels and the positive solutions offered by renewable energy. They can then import their completed animation into Adobe Express to add professional titles, a compelling soundtrack, and captions, turning it into a powerful Public Service Announcement (PSA)."
+      },
+      {
+        "t": "Padlet & ChatterPix Kids",
+        "d": "To extend the mind mapping in Activity 1 and research from Activity 3 ('The Boy Who Harnessed the Wind'), students will create a collaborative digital inquiry board using Padlet. Each group will be assigned a different form of energy (solar, wind, coal, etc.). They will post research findings, diagrams, and videos to the board. To make it more dynamic, they will use ChatterPix Kids on iPads to animate a picture of their energy source, having it 'speak' and explain its own advantages and disadvantages, then upload the short video clip to the Padlet board for a rich, multimedia learning resource."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores energy conversion and transformation through various hands-on and inquiry-based activities. Students investigate different forms of energy, analyse Rube Goldberg machines and William Kamkwamba's windmill, explore electrical circuits, and research the impact of renewable and non-renewable energy sources on the planet."
   },
   {
     "ca": "Elsternwick",
@@ -1077,9 +1140,30 @@
     "th": "Where We Are in Place and Time",
     "ci": "Significant events shape a place",
     "lo": "What is a significant event; Why these events occurred; Impact of significant events",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Padlet",
+        "d": "To enhance the 'Map - Provocation' activity, students use a Padlet with the map layout. Each student pins their family's country of origin, uploading a short text, image, or a mini-infographic created in Canva to explain their family's migration story. This creates a collaborative, multimedia-rich digital map that visualises the classroom's diverse heritage."
+      },
+      {
+        "t": "Microsoft Sway",
+        "d": "Connecting to the activity on creating a timeline of migration to Australia, students research significant events and build an interactive timeline using Microsoft Sway. They can embed videos from Clickview, primary source images, and their own written analysis to explain the 'causation' and 'change' associated with each wave of migration, creating a dynamic report instead of a static document."
+      },
+      {
+        "t": "Book Creator",
+        "d": "For the 'Across the Seas - Stories of Migration' lesson and the summative personal inquiry, students create a multimedia digital book. They can synthesize their research on a significant event, embed primary source documents, record audio narration explaining push/pull factors, and even insert short video summaries created in Adobe Express. This allows for a rich, student-led presentation of their findings."
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "As a creative option for their summative assessment, students can produce a stop-motion animation to explain their chosen significant event. They could animate the journey of a migrant group or the development of a place shaped by an event. App-smash this by using iMovie to add a detailed voice-over, titles, and sound effects to complete their historical narrative."
+      },
+      {
+        "t": "Minecraft Education",
+        "d": "To explore the central idea 'Significant events shape a place', students research an event like the Victorian Gold Rush and then build a historically-informed representation of a place from that era (e.g., a goldfield or a street in Ballarat). They can use in-game tools like the camera and Book & Quill to document their build, explaining how the event shaped the location. Students can then export their evidence into a shared Microsoft OneNote page to create a digital portfolio of their learning."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how significant events, particularly migration, shape places and cultures. Students investigate personal family histories by mapping their origins, research major waves of migration to Australia, and analyse the push and pull factors that cause people to move. For their summative assessment, students conduct a personal inquiry into a significant historical event of their choice and present their findings in a report or presentation."
   },
   {
     "ca": "Elsternwick",
@@ -1087,9 +1171,30 @@
     "th": "Who We Are",
     "ci": "Personal changes and influences contribute to our evolving sense of self.",
     "lo": "Physical, social, emotional and intellectual changes that occur throughout life; Influences that shape our identity; Developing a sense of self",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Book Creator and Microsoft PowerPoint",
+        "d": "To align with the 'You, At Your Best' storytelling activity, students can create a digital narrative. They can design custom graphics and scenes in PowerPoint, export them as images, and then import them into Book Creator to add text, voice narration, and video reflections, creating a rich multimodal story about a key moment that shaped their sense of self."
+      },
+      {
+        "t": "Stop Motion Studio and Microsoft OneNote",
+        "d": "Connecting to the 'Superpower Showcase' activity, students can bring their 'Learning Superhero' to life. They can use Stop Motion Studio with LEGO or clay to animate a short film showing their hero overcoming a challenge. The process can be documented with a storyboard in OneNote, and the final video can be embedded in their OneNote portfolio with a written reflection on their chosen Approach to Learning."
+      },
+      {
+        "t": "GarageBand and Microsoft Sway",
+        "d": "To explore the Line of Inquiry 'Influences all around us', students can work in groups to produce a short podcast episode using GarageBand. They can interview each other about the people, places, and experiences that have influenced them. The final audio can be embedded into a Microsoft Sway presentation, creating a dynamic digital story with accompanying text and images to share their findings."
+      },
+      {
+        "t": "PicCollage and Microsoft Forms",
+        "d": "For the 'All About Me' activity, students can create a digital collage in PicCollage representing their current identity, interests, and values. To deepen the reflection on their 'evolving sense of self', they can embed their finished collage into a Microsoft Form and answer structured questions about their design choices and how they predict their collage might change in the future."
+      },
+      {
+        "t": "Microsoft PowerPoint and Seesaw",
+        "d": "To document the 'physical, social, emotional and intellectual changes' throughout their lives, students can create an interactive timeline in PowerPoint. Using hyperlinks, they can connect key events on the timeline to other slides with detailed reflections, photos, or videos. This non-linear presentation can then be uploaded to Seesaw to share their personal journey and evolving identity with their families."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit focuses on personal identity, with students exploring the changes and influences that shape their sense of self. Key activities include creating a digital 'All About Me' presentation using Canva, brainstorming a classroom agreement on Padlet, and engaging in storytelling about personal strengths. Students also design a 'superhero' character representing an Approach to Learning and publish their creation to Seesaw, alongside setting personal goals and participating in workshops on emotional regulation and cyber safety."
   },
   {
     "ca": "Glen Waverley",
