@@ -1646,9 +1646,30 @@
     "th": "How the World Works (Solar System)",
     "ci": "Patterns in the sky help us understand our place in the universe.",
     "lo": "Earth's place in the solar system; Observable patterns in the sky; Tools and methods we use to observe the sky",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Seesaw",
+        "d": "To support the 'Sky Journal' and 'Moon Diary' activities, students can create a digital journal in Seesaw. They can use drawing tools to illustrate the moon's shape each night, upload photos, and use the microphone tool to record their verbal observations about the weather and sky patterns, which is ideal for developing communication skills at this age."
+      },
+      {
+        "t": "Book Creator",
+        "d": "For the 'Planet Research Projects', students can work in small groups to create a collaborative digital book about a chosen planet. They can combine simple typed text, images, their own drawings, and voice recordings to present the informative text they have created, demonstrating their understanding of their planet's features and its place in the solar system."
+      },
+      {
+        "t": "Sphero BOLT",
+        "d": "To create a dynamic 'Solar System Model', students can program Sphero BOLTs to represent planets. They can use block coding to make the Spheros orbit a central point (the sun) and spin on their axis, providing a concrete, kinesthetic understanding of the difficult concepts of revolution and rotation mentioned in the planner."
+      },
+      {
+        "t": "Green Screen Kit",
+        "d": "To enhance the 'Weather Reporter Roleplay' and 'Mini-Exhibition' tasks, students can use the green screen to create a 'sky news' broadcast. They can record themselves in front of images or videos of planets, stars, or weather patterns, allowing them to creatively share their learning about observable patterns in the sky as a culminating presentation."
+      },
+      {
+        "t": "Sky Map",
+        "d": "Directly addressing LOI 3 ('tools and methods we use to observe the sky') and the 'Cultural Inquiry', students can use the Sky Map app on iPads. This allows them to explore constellations, identify planets, and specifically investigate Southern Hemisphere constellations like the 'Emu in the Sky', connecting to the unit's focus on Aboriginal and Torres Strait Islander Peoples' sky knowledge."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores the solar system and patterns in the sky through a variety of hands-on activities. Students conduct daily observations of the sun and moon in a sky journal, track shadows to understand the sun's movement, and engage in cultural inquiries about how First Nations Peoples use sky knowledge. They consolidate their learning by creating solar system models, researching planets, and presenting their findings in a mini-exhibition."
   },
   {
     "ca": "Glen Waverley",
