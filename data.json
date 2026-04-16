@@ -2090,9 +2090,30 @@
     "th": "Who We Are",
     "ci": "People's beliefs contribute to the diversity of human life.",
     "lo": "Spiritual or religious beliefs; Similarities and differences of spiritual beliefs; Contributions of different religions to human diversity",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "ClassVR",
+        "d": "Directly support the planned activity on page 17 by having students take a virtual tour of different places of worship. Students can work in small groups to explore locations like a Sikh temple, a mosque, or a synagogue, using the headsets to observe symbols, architecture, and practices, thereby deepening their understanding of the 'Place of worship' research category."
+      },
+      {
+        "t": "Padlet",
+        "d": "Digitise the 'question walls' activity from the 'Finding Out' phase (page 20). Create a separate Padlet board for each religion being studied (Buddhism, Hinduism, etc.). Students can post their questions as digital notes, allowing for multimedia additions like images of symbols, and enabling collaborative answering throughout the unit."
+      },
+      {
+        "t": "Book Creator",
+        "d": "For the summative assessment task where students create an information report on one world religion (page 24), they can use Book Creator. This allows them to produce a multimedia e-book incorporating text, images of symbols and practices, audio narration explaining key beliefs, and links to relevant Clickview videos they used for research."
+      },
+      {
+        "t": "Google Earth",
+        "d": "When students are researching different religions for their 'My Religion Fact File' (pages 21-22), they can use Google Earth to locate significant sites. They can find and explore the surroundings of key places of worship, such as the Golden Temple in Amritsar or the Western Wall in Jerusalem, to gain a geographical and cultural context for these global beliefs."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "To support the 'Making Conclusions' phase (page 23), create a quiz in Microsoft Forms to assess students' ability to sort and identify symbols, sacred texts, and practices from the different religions studied. This provides valuable formative assessment data on their understanding of the similarities and differences between beliefs."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores the diversity of human beliefs and religions through various learning experiences. Students engage in a gallery walk of cultural images, create question walls for different faiths like Judaism, Christianity, and Islam, and conduct research on specific religions using fact files and Clickview resources. The unit culminates in students creating an information report on a chosen world religion and a cultural poster about themselves."
   },
   {
     "ca": "Glen Waverley",
@@ -2100,9 +2121,30 @@
     "th": "How We Express Ourselves",
     "ci": "People design for purpose.",
     "lo": "How design thinking creates in various ways; Design thinking meets community needs; Effective ways to engage an audience",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Google Earth",
+        "d": "To support the 'Finding Out' phase in Week 3, students can use Google Earth to create custom digital maps analysing bushfire risk. They can add placemarks for towns, draw polygons for fire-affected zones, and layer infrastructure data to visually represent the impact on supply chains, directly addressing the planner's mapping activity."
+      },
+      {
+        "t": "Padlet",
+        "d": "During the 'Empathise' lesson in Week 5, student groups can use a Padlet board as a collaborative digital canvas to build their empathy maps. They can use separate columns for 'Says,' 'Thinks,' 'Does,' and 'Feels,' adding text, images, and research links to deepen their understanding of their chosen stakeholder."
+      },
+      {
+        "t": "Book Creator",
+        "d": "For the 'Ideation' stage in Week 6, students can use Book Creator to construct their eight-panel team storyboard. Each page can serve as a panel, allowing them to combine drawings, text, and recorded audio narration to clearly communicate the user journey of their proposed solution before prototyping."
+      },
+      {
+        "t": "Tinkercad",
+        "d": "To enhance the 'Prototyping' phase in Week 7, students can design a 3D model of their solution in Tinkercad. This is ideal for creating detailed digital prototypes of physical objects, such as the earthquake-resistant buildings mentioned in the maths context, allowing for easy refinement and visualisation."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "For the final 'Pitching & Presenting' task in Week 8, students can use Adobe Express to create a short, persuasive animated video. They can combine images, text, icons, and a voice-over to professionally present their design journey, from empathy and research to their final prototype, to their audience."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit guides students through the design thinking process to address challenges posed by natural disasters and their impact on communities, particularly in relation to children's rights. Students research specific hazards like bushfires and floods, use mapping tools to analyse data, and create empathy maps for affected stakeholders. The inquiry culminates in students working collaboratively to ideate, prototype, and present a persuasive pitch for a solution they have designed for a specific purpose."
   },
   {
     "ca": "Glen Waverley",
@@ -2110,9 +2152,30 @@
     "th": "How We Organise Ourselves",
     "ci": "Economic systems are an integral part of human society.",
     "lo": "Wealth is more than money; Responsibilities when managing income; Income is earned and managed in many ways",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Canva",
+        "d": "In Week 4, when students develop 'Side Hustles', they can use Canva to design professional business cards and create persuasive digital advertisements. This directly addresses the planned activities of creating business cards and advertisements, allowing students to apply design principles to promote their services within the classroom economy."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "To support the 'Careers & Employment' lessons in Week 3, the teacher can create digital job applications using Microsoft Forms. Students would fill out the form to apply for roles in the classroom economy, mimicking a real-world online application process and allowing for easy collection and review of their submissions."
+      },
+      {
+        "t": "Padlet",
+        "d": "For the 'What is wealth?' provocation in Week 1, students can contribute to a collaborative Padlet board instead of a physical 'idea wall'. They can post text, images, and links to represent different types of wealth (financial, emotional, etc.), creating a dynamic digital resource that can be revisited throughout the unit."
+      },
+      {
+        "t": "Minecraft Education",
+        "d": "Connecting to the 'Ideal Community' project in Week 7, students can work in groups to build their planned community in a shared Minecraft world. They must adhere to their $1 million tax budget by assigning costs to structures, providing a highly engaging, three-dimensional way to model their understanding of public services and resource allocation."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "During the 'Job Interviews & Side Hustles' lesson in Week 4, students can create short, persuasive video pitches for their side hustles using Adobe Express. This allows them to move beyond a simple verbal pitch, combining video, text, and images to create a dynamic advertisement for their service."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores economic systems by first examining personal concepts of wealth, rights, and responsibilities through discussions and analysis of texts. Students then engage in a classroom economy simulation using the Banqer platform, where they learn about income, budgeting, savings, and apply for jobs. The inquiry extends to community needs, the role of taxes, government spending, and culminates in students designing and budgeting for their own ideal community."
   },
   {
     "ca": "Glen Waverley",
@@ -2121,8 +2184,8 @@
     "ci": "The interactions between living things, materials, and light enable us to make decisions about the world",
     "lo": "How structural features and adaptations help living things survive; How weathering and erosion cause change to Earth's surface; How light is used in science and technology",
     "s": [],
-    "audited": false,
-    "plannerText": ""
+    "audited": true,
+    "plannerText": "Not yet documented in PDF."
   },
   {
     "ca": "Glen Waverley",
@@ -2130,9 +2193,30 @@
     "th": "Sharing the Planet",
     "ci": "Communities interact with the environment in different ways.",
     "lo": "The need for conservation; Community values inform management of the natural environment; Ways environmental stewardship can drive change",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Seesaw",
+        "d": "During the 'Our local environment' nature walk in Lesson 7 & 8, students can use iPads with Seesaw to take photos and record video observations of local flora and fauna. Back in class, they can annotate their posts with labels from the council guide and add an audio recording explaining the importance of conservation in their local area, creating a rich multimedia journal of their investigation."
+      },
+      {
+        "t": "Google Earth",
+        "d": "To support the 'First Nations communities' focus in Lessons 3-6, students can use Google Earth to explore the Glen Waverley campus and surrounding areas. They can add placemarks to significant natural features like local creeks and parks, annotating them with information about Wurundjeri connection to Country, providing a modern, spatial layer to their understanding of the AITSAS map."
+      },
+      {
+        "t": "Freeform",
+        "d": "For Lesson 9, where students research local council initiatives, they can work in small groups on a shared Freeform board. This allows them to collaboratively create a digital mind map, adding text, images, and links to the Monash council website to visually organise the different environmental programs before deciding on an initiative to pitch."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "In the final 'Values in Action' task (Lessons 10-13), students can create a short, persuasive video advertisement to promote their chosen environmental initiative for the school. They can easily combine images, video clips, text overlays, and a recorded voiceover to produce a compelling and engaging presentation designed to persuade their audience."
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "After watching and discussing 'The Lorax' in Lesson 4, students can use Stop Motion Studio to create a short animation that shows an alternate ending or a sequel to the story. This task allows them to creatively express their understanding of the consequences of environmental neglect and the possibilities of positive community action and stewardship."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how communities interact with their environment, using provocations like the film '2040' and texts such as 'The Lorax' to analyse community values and impact. Students investigate First Nations' connection to Country, research their local flora and fauna through a nature walk, and explore environmental initiatives from their local council before pitching their own persuasive idea for action within the school community."
   },
   {
     "ca": "Glen Waverley",
