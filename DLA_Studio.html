@@ -1158,9 +1158,11 @@ Current suggestion: ${sugTool(sug)} \u2014 ${sugDesc(sug)}
 Other tools already in this unit (do not repeat): ${others||'none'}
 
 APPROVED TOOLS ONLY (Microsoft Teams for Year 4+ only): Microsoft M365, Beebots, Sphero, Lego Spike, Micro:bits, CoDrone, Makey Makey, 3D Printers, ClassVR, Merge Cubes, Green Screen, Podcast Equipment, iPads, Seesaw, Canva, Book Creator, Padlet, GarageBand, ScratchJR, Stop Motion Studio, ChatterPix Kids, iMovie, Puppet Pals, Adobe Express, Google Maps, Google Earth, Field Guide to Victoria, Sky Map, Geoboard, Clickview, Epic, PicCollage, Brushes Redux, Word Clouds ABCya, Sketchbook, Explain Everything, Freeform, Delightex, Kahoot, Tinkercad, Minecraft Education.
+ONE TOOL PER SUGGESTION — never combine tools in the 't' field.
 
 Instruction: ${instruction}
 
+Name ONE tool only in the "t" field — do NOT combine tools (no app smashes like "Book Creator & PowerPoint").
 Return ONLY a JSON array of exactly 3 different suggestions applying the instruction, each using a different tool:
 [{"t":"Tool Name","d":"Specific description."},{"t":"Tool Name","d":"Specific description."},{"t":"Tool Name","d":"Specific description."}]`;
 
@@ -2266,7 +2268,8 @@ APPROVED TOOLS ONLY:
 - Other: Clickview, Epic, PicCollage, Brushes Redux, Word Clouds ABCya, Sketchbook, Explain Everything, Freeform, Delightex, Kahoot, Tinkercad, Minecraft Education
 PROHIBITED: Google Suite (Docs/Slides/Sheets), any tool NOT on the above list, WeVideo.
 YEAR-LEVEL RULES: Microsoft Teams ONLY for Year 4, 5, 6 — NEVER suggest Teams for Prep, Year 1, Year 2, or Year 3. Early years (Prep-Yr2): prefer Seesaw/Canva/Book Creator. Mid (Yr3): Canva, Book Creator, Adobe Express preferred.
-Each suggestion must connect specifically to the unit content — no generic descriptions.
+ONE TOOL PER SUGGESTION — never combine tools (e.g. never write 'Book Creator & PowerPoint'). The tool name must be a single tool only.
+Each suggestion must connect specifically to the unit content — no generic descriptions. Name ONE tool only — do NOT combine tools (no app smashes like "Book Creator & PowerPoint").
 For Minecraft Education suggestions, include a direct link to the specific lesson: [Lesson Title](https://education.minecraft.net/en-us/lessons/LESSON-SLUG).`;
 
 async function fixAllOfType(type){
