@@ -345,9 +345,30 @@
     "th": "How We Organise Ourselves",
     "ci": "Marketplaces reflect the needs and wants of communities.",
     "lo": "Needs and wants; The changing needs of communities; The design process",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Seesaw",
+        "d": "Directly supporting the home learning task, students can use the Seesaw camera to photograph items at a market. They can then use the label and microphone tools to classify each item as a 'need' or a 'want' and explain their reasoning, creating a multimodal journal entry that connects their real-world observations to the classroom sorting activities."
+      },
+      {
+        "t": "Book Creator and PowerPoint",
+        "d": "As a digital alternative to the 'Need or Want Collage' activity, students can 'app smash' by using PowerPoint to create simple visual assets of various items. They can then import these images into a two-page spread in Book Creator, sorting them onto dedicated 'Needs' and 'Wants' pages and recording audio narration to justify their choices."
+      },
+      {
+        "t": "Tinkercad",
+        "d": "To support the 'Go Further' phase where students engage in the Design Thinking Process, they can create a simple 3D model of their proposed product. This allows them to prototype their idea digitally, consider its form and function, and easily share a visual representation with peers for feedback before attempting a physical build."
+      },
+      {
+        "t": "Padlet",
+        "d": "For the 'Classroom Needs and Wants Poll' and 'Shipwrecked Provocation', a teacher can set up a two-column Padlet. Students can post their chosen items as text or images into the 'Needs' or 'Wants' columns, creating a dynamic, class-wide visual board to facilitate discussion and compare different perspectives on what is essential."
+      },
+      {
+        "t": "Stop Motion Studio and Lego Spike Essential",
+        "d": "To extend the 'Needs and Wants Role-Play' activity, students can use Lego Spike Essential to build models of items for a scenario like a camping trip. They can then use Stop Motion Studio on an iPad to create a short animation showing their characters packing their 'needs' first, visually demonstrating their understanding of prioritisation through storytelling."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The unit begins with provocations like the 'Shipwrecked' activity and classroom polls to differentiate between needs and wants. Students engage in sorting games, create collages, and use role-play to explore these concepts in different contexts, culminating in using the design thinking process to design and prototype a product that responds to a real community need."
   },
   {
     "ca": "Elsternwick",
@@ -355,9 +376,30 @@
     "th": "How the World Works",
     "ci": "Forces and motion are all around us.",
     "lo": "Forces around us; Scientific laws of motion; Innovations in technology",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Seesaw",
+        "d": "For the gravity experiments, students use an iPad's slow-motion camera to record object drops as described in the planner. They upload the video to Seesaw and use the voice recording tool to explain their predictions and observations, using key vocabulary like 'gravity' and 'force'. This captures their scientific thinking without requiring complex writing."
+      },
+      {
+        "t": "Book Creator",
+        "d": "To create the 'Information reports on Simple Machines', students can app smash Canva and Book Creator. They can use a simple Canva template to design a labelled diagram of a simple machine (e.g., a lever), then import this image into Book Creator. On the page, they can type a simple sentence and record audio explaining how their machine works."
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "To document their summative Rube Goldberg machines, students use Stop Motion Studio on an iPad to create a short animation of their machine in action. This visual sequence helps them break down the chain reaction of forces. They can then import the video into iMovie to add text labels for each simple machine and record a voiceover explanation."
+      },
+      {
+        "t": "Sphero Indi",
+        "d": "To investigate the friction experiments with ramps and surfaces, students program the Sphero Indi car using the coloured tiles to travel over different materials (carpet, wood, sandpaper). They can observe how friction affects the Indi's speed and distance, providing a hands-on, kinesthetic understanding of the concept."
+      },
+      {
+        "t": "PicCollage",
+        "d": "Following the 'Push and Pull' school walk, students import the photos they took with the iPad's digital camera into PicCollage. They can create a digital poster, sorting their images into two columns labelled 'Push' and 'Pull' to visually classify the different forces they observed in their environment."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores forces and motion through hands-on investigations, beginning with a provocation at Twisted Science and Maker Space tinkering with simple machines. Students conduct experiments on magnetism, gravity (using slow-mo video), and friction (testing cars on ramps and different surfaces). The inquiry culminates with students designing and building their own Rube Goldberg machines as a summative assessment to demonstrate their understanding of forces and simple machines in a chain reaction."
   },
   {
     "ca": "Elsternwick",
@@ -365,9 +407,30 @@
     "th": "Sharing the Planet",
     "ci": "Taking care of our Earth starts with the choices we make.",
     "lo": "Earth's resources; How our actions affect the environment; Ways we can care for our planet",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Microsoft Excel & Digital Cameras",
+        "d": "Connect to the 'Lunchbox waste collection' activity by having students act as data scientists. App Smash by first using iPads (Digital Cameras) to photograph the waste collected each day. Then, using a pre-made template in Microsoft Excel, students can tally the items into categories (compost, recycle, landfill) and use the chart tool to create a simple bar graph, visually representing the week's waste data and making the impact of their choices tangible."
+      },
+      {
+        "t": "Book Creator & Canva",
+        "d": "To address the Line of Inquiry 'Ways we can care for our Earth', students can create a collaborative digital guide. App Smash by using Canva's simple templates to design posters about the '5Rs' (Refuse, Reduce, Reuse, Recycle, Rot). They can then import these images into a shared Book Creator book, adding photos of positive environmental actions around the school, drawings, and voice recordings to explain each action, creating a multimodal resource."
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "To make the abstract concept of decomposition concrete, students can create an animation for the 'waste timeline' activity. Using recycled materials, clay, and drawings of items like apple cores or plastic bottles, students can use Stop Motion Studio on an iPad to animate how long things take to break down. They can add text cards between frames to state the time (e.g., '2 months' or '500 years'), visually reinforcing the long-term impact of waste."
+      },
+      {
+        "t": "Green Screen Kit & Microsoft PowerPoint",
+        "d": "Elevate the 'persuasive speech' task by having students present as environmental reporters. App Smash by first using Microsoft PowerPoint to create a single slide with a powerful background image (e.g., a pristine forest or a polluted beach). Students can then use the Green Screen Kit and an iPad to record their speech, using their PowerPoint slide as the background to add professional polish and emotional impact to their persuasive message."
+      },
+      {
+        "t": "Bee-Bots",
+        "d": "Reinforce waste sorting concepts from the 'waste management' focus with a hands-on coding challenge. Create a large floor mat with pictures of different waste items (banana peel, paper, plastic bottle) and designated 'bin' zones. Students must program a Bee-Bot to travel from a specific item to the correct bin (compost, recycling, or landfill), integrating computational thinking and sequencing skills to solve a real-world problem."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores Earth's resources, how human actions affect the environment, and ways to care for our planet. Key learning experiences include a provocation excursion to CERES focusing on zero waste, a week-long lunchbox waste audit to analyse consumption, and learning about the 5Rs of waste management. To synthesise their understanding, students write and share persuasive speeches advocating for positive environmental change in the school community."
   },
   {
     "ca": "Elsternwick",
@@ -375,9 +438,30 @@
     "th": "Where We Are in Place and Time",
     "ci": "Landmarks and places of significance tell stories about our history.",
     "lo": "The significance of places to different people and cultures; The connection between landmarks and identity; How landmarks and symbols represent our history",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Bee-Bots and Google Maps",
+        "d": "Connect to the Maths inquiry into location and direction by having students first explore a local landmark in Google Maps. They then program Bee-Bots on a printed floor map of that landmark to navigate to key features, reinforcing their understanding of mapping, symbols, and sequencing instructions."
+      },
+      {
+        "t": "Book Creator and ChatterPix Kids",
+        "d": "App smash to bring landmarks to life. Students research a significant Australian landmark, use ChatterPix Kids to animate a photo of it to 'tell' a key fact or story, and then embed this video into a Book Creator e-book. They can add further text, drawings, and audio narration to create a rich, multimedia report, directly addressing the central idea that places tell stories."
+      },
+      {
+        "t": "Seesaw and Digital Cameras",
+        "d": "During the planned campus walking tour to find monuments, students use iPads to photograph significant places within the school. They upload these images to a Seesaw template, using the label and microphone tools to annotate their findings and explain the story or history behind each school landmark, connecting the inquiry to their immediate environment."
+      },
+      {
+        "t": "Microsoft PowerPoint and Puppet Pals",
+        "d": "To retell the Dreaming stories learned in the unit (like Tiddalik the Frog), students can 'app smash' by first creating their own landscape backdrops using the drawing tools in PowerPoint. After saving these as images, they import them into Puppet Pals to create an animated retelling of the story, recording their own narration and demonstrating their understanding of the connection between story and place."
+      },
+      {
+        "t": "Google Earth and Padlet",
+        "d": "To support the 'virtual holiday' activity, use Google Earth to fly to and explore various Australian landmarks in 3D. Students can take screenshots of significant places and post them to a collaborative Padlet map, adding a short caption explaining the landmark's story or importance. This provides a dynamic and visual way to collate and share their research findings."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how landmarks and significant places tell stories about history, with a focus on Australian and Indigenous perspectives. Students engage in activities such as mapping Australian landmarks, researching their stories, exploring local monuments on a campus tour, and learning about the connection between place and Dreaming stories."
   },
   {
     "ca": "Elsternwick",
@@ -385,9 +469,30 @@
     "th": "Who We Are",
     "ci": "Our relationships with others impact our lives.",
     "lo": "Importance of relationships; Developing and maintaining healthy relationships; The impact of relationships on wellbeing",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Book Creator",
+        "d": "Following the 'Toolbox Education' incursion, students create a personal digital book titled 'My Calm Down Toolbox'. Each page details one of the five strategies learned (e.g., 'Mindful Breathing', 'Think of a Happy Place'). Students can use the drawing tools, add photos of themselves demonstrating the strategy, and use the microphone to record themselves explaining how and when they would use each tool."
+      },
+      {
+        "t": "Canva",
+        "d": "To address the activity 'What character strengths make me a great friend?', students work in pairs to design a collaborative poster in Canva. They can choose icons and simple graphics that represent strengths like kindness, listening, and sharing, and add text labels to create a visual guide to being a good friend, which can then be shared with the class."
+      },
+      {
+        "t": "Puppet Pals",
+        "d": "To explore the 'Friendology' program's focus on 'friendship fires', students create short animated scenes using Puppet Pals. They can choose characters and backgrounds to act out a common playground scenario, recording a dialogue that demonstrates both the problem and a positive resolution using a 'talk-it-out' strategy, directly applying their learning in a creative context."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Use Seesaw as a year-long digital portfolio to document students' understanding of relationships, connecting to the PSPE portfolio task. Teachers can post weekly prompts like, 'Share a time you showed you were a caring friend' or 'What does a respectful friendship look like?'. Students respond using Seesaw's multimodal tools, such as voice notes, drawings, and video reflections."
+      },
+      {
+        "t": "ScratchJr",
+        "d": "Students can code a simple, two-scene social story that reflects the 'changeable nature of relationships'. The first scene can show two characters having a disagreement, and the second scene can show them using a positive strategy (like apologizing) to resolve the conflict. This introduces basic coding concepts of sequencing while reinforcing the unit's core social-emotional themes."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit focuses on social-emotional learning, with students exploring the qualities of healthy relationships and how interactions impact their lives. Key activities include a 'Toolbox Education' incursion where students learn five strategies to calm their emotions, creating posters on the character strengths of a good friend, and engaging with the 'Friendology' program to learn how to resolve 'friendship fires'."
   },
   {
     "ca": "Elsternwick",
