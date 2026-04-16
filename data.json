@@ -3608,9 +3608,30 @@
     "th": "How the World Works",
     "ci": "The relationships between the Earth, Moon and Sun create predictable patterns that shape life on our planet and are understood through both scientific and cultural perspectives.",
     "lo": "The movement of the Earth, Moon and Sun causes predictable patterns such as day/night, moon phases, tides and seasons (Causation) ? Different cultures, including Indigenous knowledge systems, interpret the night sky in unique and meaningful ways (Perspective) ? The Earth, Moon and Sun have specific structures, positions and relationships that can be represented through models and simulations (Form)",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Stop Motion Studio",
+        "d": "To animate the lunar cycle for Lesson 5, students can use iPads and Stop Motion Studio. They can photograph a model (using a ball and light source, or even Oreo cookies as suggested in the planner) at each stage, creating a film that visually explains the moon phases. App smash by adding explanatory voiceovers in iMovie and sharing the final video in a class Microsoft Teams channel for peer feedback."
+      },
+      {
+        "t": "Sphero BOLT",
+        "d": "To create a dynamic model of day and night for Lesson 3, students can program a Sphero BOLT to both rotate on its axis and orbit a central light source (the 'Sun'). They can use the BOLT's LED matrix to visually represent the illuminated and dark sides of the Earth. Students can then screen record their working model and use Explain Everything to annotate the video, demonstrating their understanding of Earth's rotation."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Connecting to Lesson 7's focus on cultural perspectives, students can research an Indigenous Australian constellation and its associated story. They can then use Book Creator to produce a multimedia digital book, app smashing with Canva to create custom illustrations of the constellation. Students can record themselves narrating the story and embed the audio, sharing their final book via a link in the class OneNote."
+      },
+      {
+        "t": "GarageBand",
+        "d": "Directly supporting the 'Go Further' podcast task, students can use the school's podcasting equipment with GarageBand on iPads. After scripting their research on a chosen topic (like tides or seasons) in Microsoft Word, they can record their episode, edit the audio, and add royalty-free music or sound effects. The final MP3 files can be collated into a class 'SpaceCast' series on Microsoft Stream."
+      },
+      {
+        "t": "Minecraft Education",
+        "d": "To synthesise their understanding of the entire Earth-Moon-Sun system, students can work collaboratively in Minecraft Education to build a large-scale, interactive model. They can demonstrate the Earth's axial tilt to explain seasons and build a mechanism to show the Moon's orbit, allowing them to observe phases from the 'Earth'. Students can document their build process with screenshots and annotations in a shared OneNote journal, explaining the scientific principles behind their design choices."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores the relationship between the Earth, Moon, and Sun, with students investigating concepts like day and night, seasons, moon phases, and tides through hands-on activities like using globes, flashlights, and Oreo cookies. The inquiry also examines different cultural perspectives on astronomy, including Indigenous knowledge, and culminates in students creating a research podcast on a chosen topic."
   },
   {
     "ca": "St Kilda",
@@ -3670,7 +3691,7 @@
     "ci": "",
     "lo": "",
     "s": [],
-    "audited": false,
-    "plannerText": ""
+    "audited": true,
+    "plannerText": "Not yet documented in PDF."
   }
 ]
