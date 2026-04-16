@@ -3525,9 +3525,30 @@
     "th": "How We Express Ourselves",
     "ci": "Understanding global issues and using effective communication empowers us to raise awareness and inspire action.",
     "lo": "Global issues are caused by interconnected factors that require collective solutions (Causation) ? Presentations in the media can reflect the perspective of the author rather than the truth (Perspective) ? We must make responsible choices when responding to and creating media (Responsibility) ? Messages can be expressed through a range of mediums and elements can be adjusted to enhance effectiveness (Communication) ? Design choices contribute to the effectiveness of a message (Influence)",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Podcast Equipment + GarageBand",
+        "d": "To align with the 'Advocacy' action pathway and podcast upskilling, students can script a podcast series in Microsoft Word about their chosen global issue. They can then use the Podcast Equipment and GarageBand on iPads to record, edit, and add sound effects, creating a professional audio presentation to raise awareness during their Exhibition showcase."
+      },
+      {
+        "t": "Microsoft Sway + Microsoft Forms",
+        "d": "Students can create a dynamic digital advocacy campaign by building an interactive presentation in Microsoft Sway, incorporating text, images, and video. They can 'App Smash' this by embedding a Microsoft Forms quiz at the beginning to gauge prior knowledge and a survey at the end to measure impact and gather pledges for action from their audience."
+      },
+      {
+        "t": "Green Screen Kit + Adobe Express",
+        "d": "Directly addressing the planned 'Green Screen: Film' activity, students can write a news report script and present their findings as a special report. They can create background graphics and data visualisations in Canva or PowerPoint, then use the Green Screen Kit and an iPad to film their report, editing it all together in Adobe Express to create a compelling piece of media."
+      },
+      {
+        "t": "Tinkercad + 3D Printers",
+        "d": "To move from awareness to tangible action, students investigating environmental or engineering-based issues can design a prototype solution in Tinkercad. For example, they could design a simple water filter or a device to help wildlife. They can document their design process in OneNote and then use the 3D Printers to create a physical model to display as part of their Exhibition action plan."
+      },
+      {
+        "t": "Stop Motion Studio + iMovie",
+        "d": "As an alternative to a live-action film, students can communicate the core message of their issue through a powerful animated narrative. They can storyboard their idea in a digital journal like Seesaw, build their scenes, and capture the animation using Stop Motion Studio. The final video can be exported to iMovie to add a compelling voiceover, music, and titles, creating a unique and effective communication piece."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This PYP Exhibition unit sees Year 6 students research a global issue of their choice, developing a central idea and lines of inquiry to guide their investigation. Key activities include root cause analysis, research using the MISO method, creating campaign materials like logos and slogans, and upskilling in tools like Canva and PowerPoint. The unit culminates in students taking action and presenting a media campaign, which can include films, podcasts, or live presentations, to raise awareness and inspire their community."
   },
   {
     "ca": "St Kilda",
@@ -3537,28 +3558,28 @@
     "lo": "The key institutions and functions of Australia's democratic system of government (Function) ? How government decisions impact citizens at federal, state and local levels (Causation) ? The rights and responsibilities of Australian citizens and their obligations as global citizens (Equality/Citizenship)",
     "s": [
       {
-        "t": "Microsoft PowerPoint + Canva",
-        "d": "To complete the 'Local Government Task' in the Go Further section, students research their local council's website. They can use Canva to design engaging infographics and custom graphics illustrating council services (e.g., waste collection, libraries, parks). These assets can then be imported into a Microsoft PowerPoint presentation, where students add hyperlinks to the council website and use the record narration feature to present their findings, demonstrating how local government impacts their lives."
+        "t": "Microsoft PowerPoint & Canva",
+        "d": "For the 'Local Government Task' in the Go Further section, students will research their local council. They can use Canva to design visually engaging infographics about council services, a custom logo, and a map of their LGA. These assets can then be imported into a Microsoft PowerPoint presentation to structure their research on the council's name, services, and their family's personal connections to them, combining Canva's design flair with PowerPoint's presentation capabilities."
       },
       {
-        "t": "Stop Motion Studio + Microsoft OneNote",
-        "d": "Connecting to the 'Passing a Bill in Parliament' lesson, students can create a stop-motion animation to explain this complex process. After storyboarding the key stages in a OneNote page, they can use LEGO figures or drawings to represent the House of Representatives and the Senate. Using Stop Motion Studio on an iPad, they can animate the bill's journey and record a voiceover explaining each step, from the first reading to royal assent."
+        "t": "Adobe Express & Microsoft Teams",
+        "d": "To demonstrate their understanding of 'Passing a Bill in Parliament' from the Find Out section, students can work in groups to create a short animated explainer video using Adobe Express. They can animate the key stages a bill goes through, using simple text, icons, and voice narration. The final videos can be shared in a dedicated channel on Microsoft Teams for peer review and to build a class resource library."
       },
       {
-        "t": "Book Creator + PicCollage",
-        "d": "To demonstrate understanding of the central idea, students can create an interactive e-book titled 'A Day in the Life of a Citizen'. They can take photos of government-provided services in their community (e.g., post box, school, rubbish bin) and create a montage for each of the three levels of government using PicCollage. These images can be imported into Book Creator, where students add text, audio narration, and video to explain how each level of government impacts their daily lives."
+        "t": "Google Earth & Book Creator",
+        "d": "Connecting to the '3 Levels of Government' and Federation map activities, students can use Google Earth to locate and place markers on their local council chambers, state parliament, and federal parliament in Canberra. They can take screenshots of these annotated locations and import them into Book Creator to produce a multi-page digital book explaining the distinct roles and responsibilities of each level of government, creating an interactive virtual tour."
       },
       {
-        "t": "GarageBand + Microsoft Teams",
-        "d": "For the 'Under 16 Social Media Ban' activity, students can extend their pros and cons list into a formal debate podcast. Working in groups within a Microsoft Teams channel to collaborate on research and scriptwriting, they can then use the school's Podcast Equipment and GarageBand on an iPad. They will record, edit, and produce a podcast episode that presents both sides of the argument, exploring a real-world example of how government decisions impact young citizens."
+        "t": "Podcast Equipment/GarageBand & Microsoft Sway",
+        "d": "Following the 'Citizenship' lesson in the Sort Out stage, students can script and record a short podcast episode exploring the rights and responsibilities of being an Australian citizen. Using GarageBand on iPads, they can edit their audio and add intro music. The final audio file can be embedded into a Microsoft Sway, which will serve as the podcast's webpage, featuring the audio, a transcript, and key vocabulary."
       },
       {
-        "t": "Google Earth + Microsoft Forms",
-        "d": "Building on the 'Citizenship' lesson in the Sort Out section, students can explore Australia's diversity. They can create a simple, anonymous survey in Microsoft Forms to gather data on their class's cultural heritage. Using this data, they can then use Google Earth to create a collaborative world map, placing pins on countries of origin and adding short, researched notes about the cultural contributions of these groups to Australian society, linking governance (immigration policy) to citizen diversity."
+        "t": "Padlet & Microsoft Forms",
+        "d": "For the 'Bill to Parliament' task in the Reflect and Act section, students can post a summary of their proposed bill on a class Padlet wall to simulate a parliamentary debate, where peers can post arguments for and against. To conclude the debate, the student group will create a Microsoft Form to serve as an official ballot, allowing the class to vote 'Yes' or 'No' on the bill and provide a justification, mirroring a democratic voting process."
       }
     ],
     "audited": true,
-    "plannerText": "This unit unpacks the concepts of government and federation, including a mapping activity of Australia. Students investigate the three levels of Australian government, the roles of parliament, and the process of passing a bill. The inquiry extends to exploring Australian citizenship, researching local government services, and debating a proposed social media ban, culminating in students planning and researching their own parliamentary bill."
+    "plannerText": "This unit explores the function of government and its impact on citizens' lives. Students investigate the three levels of Australian government, the process of passing a bill in parliament, and the rights and responsibilities of citizenship. Key activities include researching local councils to create a PowerPoint, planning their own bill to propose, and reflecting on their educational trip to Canberra."
   },
   {
     "ca": "St Kilda",
@@ -3576,9 +3597,30 @@
     "th": "Sharing the Planet",
     "ci": "Peoples' actions affect the balance of nature.",
     "lo": "What the environment is comprised of and how ecosystems function (Form) ? Our responsibility to care for and protect the natural world (Responsibility) ? The interdependence between humans, animals and the environment (Interdependence) ? The consequences of human actions on the balance of nature (Consequences)",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Tinkercad & Microsoft PowerPoint",
+        "d": "For the 'STEM Design Project: Zoo Design', students can move beyond the cardboard models mentioned in the reflection and create detailed 3D digital prototypes of their conservation technology in Tinkercad. This allows for more complex and iterative designs. They can then 'App Smash' by exporting images or screen recordings of their 3D models into a Microsoft PowerPoint presentation, using the Morph transition to create a dynamic showcase of their invention's features for the final presentation phase."
+      },
+      {
+        "t": "Minecraft Education & Microsoft OneNote",
+        "d": "To deepen their 'Research & Investigation' for the STEM Design Project, students can build a scientifically accurate biome for their chosen Australian animal in Minecraft Education. Within this virtual habitat, they can then construct and test a working model of their conservation technology (e.g., using Redstone for sensors). Students can document their entire process using the in-game Camera and Portfolio tools, exporting their findings and reflections into a shared OneNote Class Notebook as a digital design journal."
+      },
+      {
+        "t": "Stop Motion Studio & Seesaw",
+        "d": "In the 'Find Out' phase, after creating a 6-section storyboard for the Gunaikurnai story of 'Borun and Tuk', students can bring their narrative to life using Stop Motion Studio. They can use drawings, clay, or natural materials to animate the story, recording their rewritten version as a voiceover directly in the app. The final animation can be uploaded to their Seesaw journal, providing a creative and multimodal way to demonstrate their understanding of the story."
+      },
+      {
+        "t": "Podcast Equipment & GarageBand",
+        "d": "As an alternative to a slide-based presentation for the 'Zoo Design Thinking Challenge', student groups can script and record a 'Conservation Tech Pitch' podcast. Using GarageBand, they can explain their chosen animal's challenges, the features of their designed technology, and its benefits. This allows students to focus on their persuasive language and communication skills, and the final audio file can be shared via Seesaw or Teams for the gallery walk."
+      },
+      {
+        "t": "Microsoft Forms & Sway",
+        "d": "To structure the 'Testing & Feedback' stage of the STEM project, each group can create a Microsoft Form with targeted questions for their peers to answer during the gallery walk. They can generate a QR code linking to the Form and display it with their prototype. After collecting feedback, students can analyse the data from Forms and embed the summary charts and their reflections into a Microsoft Sway, creating an interactive digital report that details their design journey and the improvements made based on peer input."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit focuses on the central idea that people's actions affect the balance of nature, with a core component being a STEM Design Project where students research a threatened Australian animal and design a technology to aid its survival. Learning is supported by a zoo excursion to investigate existing conservation tech, an exploration of the Indigenous story of 'Borun and Tuk', and reflections on environmental interactions during Camp Mallana. The unit culminates in students prototyping, presenting, and receiving feedback on their designs through a gallery walk."
   },
   {
     "ca": "St Kilda",
