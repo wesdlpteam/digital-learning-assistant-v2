@@ -3505,9 +3505,30 @@
     "th": "Where We Are in Place and Time",
     "ci": "Colonisation has had a lasting impact on different countries and their people",
     "lo": "The reasons, methods and impact of colonisation; How colonisation transformed society and culture; The responsibility of colonisers and the perspectives of those colonised",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Book Creator & Microsoft PowerPoint",
+        "d": "To deepen their analysis of 'The Rabbits' from the 'Tune In' phase, students can create a collaborative digital book. Using PowerPoint, they can design custom graphics like the 'sunglasses' template mentioned in the planner to represent different perspectives. They can then import these images into Book Creator, adding audio narration to explain their thinking and embedding the Australian History video from the 'Find Out' phase to create a rich, multimedia analysis of colonisation's impact."
+      },
+      {
+        "t": "Google Earth & Seesaw",
+        "d": "During the 'Find Out' research phase, students can use Google Earth's creation tools to map the global reach of the British Empire or the specific voyages of colonisers to Australia. They can add placemarks with historical details and images at key locations. Students can then screen record a narrated virtual tour of their map, explaining the process and impact of colonisation, and upload the video to their Seesaw journal to share their findings."
+      },
+      {
+        "t": "Minecraft Education & OneNote",
+        "d": "To represent the 'transformation of society & culture due to colonisation', students can work in a shared Minecraft world to build contrasting scenes: one depicting a pre-colonisation Indigenous community and another an early British settlement. This provides a powerful visual representation of the changes to the environment and way of life. They can document their build with screenshots and written reflections in a shared Class OneNote, justifying their design choices and connecting them to their research."
+      },
+      {
+        "t": "Adobe Express & Green Screen Kit",
+        "d": "As an alternative to the final PowerPoint presentation, students can create a 'History Reporter' news segment on the colonisation of their chosen country. They can write a script and use the green screen to place themselves 'on location' with historical images as a backdrop. Students can then use Adobe Express to edit their video, adding titles, music, and archival footage to produce a professional and engaging presentation for their oral assessment."
+      },
+      {
+        "t": "Microsoft Teams & Padlet",
+        "d": "For the research project on Britain, set up collaborative channels in Microsoft Teams for student groups. Each group can use an embedded Padlet board as a digital wall to collate their research, posting links, key facts from the ClickView videos, images, and questions. This creates a collaborative and visual workspace for students to organise their information before creating their final presentations, allowing the teacher to monitor progress in real-time."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores the impact of colonisation, beginning with an analysis of the picture book 'The Rabbits' to understand different perspectives. Students then conduct research into the history of British colonisation in Australia using videos and online resources. The unit culminates in students choosing a country, researching its colonisation, and delivering an oral presentation of their findings to the class."
   },
   {
     "ca": "St Kilda",
@@ -3670,9 +3691,30 @@
     "th": "Where We Are in Place and Time",
     "ci": "Human migration is a response to challenges, risks and opportunities.",
     "lo": "The causes for and consequences of migration (Causation) ? The changes in societies as a result of migration (Change) ? The impact of migration on the individual, both positive and negative (Impact) ? Migration results in a more diverse society (Diversity)",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Google Earth & Microsoft Word",
+        "d": "Students will research a specific migration story, such as those of Ahn Do or Cuc Lam mentioned in the 'Find Out' phase, and map the journey from origin to Australia using Google Earth's creation tools. They can write scripts for key locations in Microsoft Word, then add these as descriptions to placemarks in Google Earth, incorporating images to visualise the challenges, risks, and opportunities faced at each stage of the journey."
+      },
+      {
+        "t": "Book Creator & Microsoft PowerPoint",
+        "d": "To present their findings from the 'Go Further' interview task, students will create an interactive biography in Book Creator. They can 'app smash' by designing visual assets like timelines or maps of migration routes in Microsoft PowerPoint, saving them as images, and importing them into their Book Creator project alongside text, photos, and audio recordings of their interview."
+      },
+      {
+        "t": "Stop Motion Studio & iMovie",
+        "d": "Building on the 'Find Out' activity of creating a storyboard for Hamid's life, students can produce a short stop-motion animation depicting a key part of a migration journey. Using Stop Motion Studio with LEGO or drawings, they can animate a scene, then import the video into iMovie to add a narrated explanation of the push and pull factors at play, demonstrating their understanding of the causes of migration."
+      },
+      {
+        "t": "Canva & Microsoft Excel",
+        "d": "Inspired by the 'Australian Immigration History' infographic, students can research historical or current Australian immigration data. They can use Microsoft Excel to organise their findings and create charts or graphs, which they then export and embed into a visually compelling infographic using Canva. This allows them to synthesise and present complex information about migration trends and consequences."
+      },
+      {
+        "t": "GarageBand & Microsoft Teams",
+        "d": "For the culminating 'Micro Lab' presentation, students will transform their migration stories into a podcast episode. They can collaboratively script their narrative in a shared document within Microsoft Teams, then use Podcast Equipment and GarageBand to record their story, edit in sound effects or music, and share the final audio file with the class via a dedicated Teams channel, creating an authentic oral history archive."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this unit, students investigate migration by exploring push and pull factors, examining personal stories like those of Hamid from 'Boy Overboard' and Ahn Do, and analysing infographics and videos about refugees. The inquiry culminates in students conducting their own interviews with migrants, sorting the information to create a biography, and presenting their completed migration stories in a 'Micro Lab' format."
   },
   {
     "ca": "St Kilda",
