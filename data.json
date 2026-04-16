@@ -2565,9 +2565,30 @@
     "th": "Sharing the Planet",
     "ci": "Human actions change the environment.",
     "lo": "How people interact with different environments; The effect people have on the environment; Ways in which people can take action and care for the environment",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Seesaw",
+        "d": "Connecting to the 'Find Out' activity of identifying living and non-living things, students use the Seesaw camera on an iPad to photograph the playground. They then use the drawing and voice recording tools to circle and explain one living and one non-living thing, reinforcing their understanding of natural versus built environments."
+      },
+      {
+        "t": "Book Creator",
+        "d": "To address the 'Reflect and Act' goal of creating a story about caring for the environment, students collaboratively build a digital book. Each Prep student can design a page illustrating an environmental problem and a positive human action, using the simple drawing tools and recording their own narration, making the task accessible for emerging writers."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "App Smashing: Building on the 'Go Further' task and the visual arts focus on marine life, students take a photo of their own drawing or ceramic sea creature. They import it into ChatterPix Kids to make it 'talk', recording a simple message about how human actions like littering affect their ocean home."
+      },
+      {
+        "t": "Bee-Bots",
+        "d": "Inspired by the inquiry into bees and their life cycles mentioned in the assessment notes, students can program a Bee-Bot on a custom floor mat. They will code the robot to travel from a hive to various flowers to 'collect pollen' and return, providing a hands-on, screen-free introduction to sequencing and reinforcing the concept of pollination."
+      },
+      {
+        "t": "Canva",
+        "d": "App Smashing: To contribute to the 'underwater exhibition in the prep tunnel', students take photos of the ceramic marine animals they made in class. They then import these into a Canva ocean template, creating a digital collage that combines their physical artwork with digital design skills, which can then be shared or printed for the display."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores different environments like deserts and oceans, focusing on the impact of human actions such as pollution and the responsibility to make sustainable choices. Students learn about living and non-living things, read 'Tiddalick the Frog', visit an aquarium, and create artworks of marine animals for a collaborative underwater exhibition."
   },
   {
     "ca": "St Kilda",
@@ -2576,8 +2597,8 @@
     "ci": "An inquiry into orientation in place and time; personal histories; the relationship between and the interconnectedness of individuals and civilisations.",
     "lo": "Lines of inquiry to be confirmed once planner is uploaded",
     "s": [],
-    "audited": false,
-    "plannerText": ""
+    "audited": true,
+    "plannerText": "Not yet documented in PDF."
   },
   {
     "ca": "St Kilda",
@@ -2647,9 +2668,30 @@
     "th": "How We Organise Ourselves",
     "ci": "Systems are involved in preparing products for consumers.",
     "lo": "Where products come from; The systems products go through; How people choose their products",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Book Creator",
+        "d": "To demonstrate their understanding of sequencing, students create a 'Farm to Table' digital book about the journey of milk or apples. They can draw each stage, photograph their drawings to import into the book, and use the audio record feature to narrate each step, applying key vocabulary like 'process', 'transportation', and 'factory'."
+      },
+      {
+        "t": "Bee-Bots",
+        "d": "Students can code a Bee-Bot's journey on a large floor mat representing the product system. The mat would feature key locations like 'farm', 'factory', and 'supermarket'. This kinesthetic activity allows them to program the correct sequence a product follows, reinforcing their understanding of the systems involved in getting products to consumers."
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "Connecting to the 'Go Further' activity on the journey of clothing, students use clay or LEGO to create a short stop-motion animation. They can visually represent the process of cotton being picked, processed in a factory, and turned into a t-shirt, demonstrating the concept of 'change' within a system."
+      },
+      {
+        "t": "Microsoft PowerPoint",
+        "d": "In response to the teacher inquiry about flowcharts, students use a single PowerPoint slide on their iPads to create a simple visual map of a product's journey. They can use the built-in icon library (e.g., for 'farm', 'truck', 'shop') and shape tools to add arrows, visually sequencing the process and then share their slide to Seesaw to add a voice-over explanation."
+      },
+      {
+        "t": "Green Screen Kit",
+        "d": "For the 'Reflect and Act' phase, students can create a short news report about the journey of clothing. Using the green screen, they can place themselves 'on location' at a cotton farm or in a factory. They can then import their clips into iMovie to edit them together, creating a final video that explains the entire system from raw material to consumer product."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores the systems that bring products to consumers by investigating where food comes from. Students watch videos and use Seesaw to learn about the journey of items like apples and milk, mapping the stages from farm to plate. They also explore the process of how clothing is made and reflect on the concept of waste through hands-on activities."
   },
   {
     "ca": "St Kilda",
@@ -2657,9 +2699,30 @@
     "th": "How the World Works",
     "ci": "Weather affects our lives in different ways.",
     "lo": "Types of weather conditions; How weather impacts our lives (clothing, activities, food, feelings); Why weather changes (seasons, patterns)",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Seesaw and Canva",
+        "d": "To support the 'Daily Weather graph' activity, students can create a digital weather journal. Teachers can design a weekly template in Canva with days of the week and weather icons (sunny, cloudy, rainy), which students then use in Seesaw. Each day, students add the correct icon, take a photo of the sky through the window, and use the microphone tool to record a sentence describing the weather and how it makes them feel, directly addressing the data collection and observation task."
+      },
+      {
+        "t": "iMovie and PowerPoint",
+        "d": "Building on the 'frozen tableaux' and 'weather report' activities, students can become weather presenters. First, they create a simple weather map background in PowerPoint using shapes and icons, then save it as an image. Using a Green Screen Kit and an iPad, they can then record themselves in iMovie, replacing the green background with their PowerPoint weather map to present a forecast, explaining clothing choices for the predicted weather."
+      },
+      {
+        "t": "Book Creator and GarageBand",
+        "d": "Connecting to the Music learning goal 'Use sound to represent weather', students can create a multi-modal weather book. In Book Creator, they can draw a picture of a weather event like a thunderstorm or a windy day. Then, using GarageBand, they can create a simple soundscape to match their picture. They can then import their audio recording from GarageBand onto the page in Book Creator, combining their art and sound compositions."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "To animate the Chinese pictographic characters for weather (rain, sun, thunder, snow), students can import images of these symbols into ChatterPix Kids. They can draw a mouth on the character and record themselves saying the Chinese word and its English meaning, and then describing that type of weather. This provides a fun, creative way to consolidate their learning from the Chinese specialist lessons."
+      },
+      {
+        "t": "ScratchJr",
+        "d": "To explore the concepts of 'Pattern' and 'Change' in weather, students can use ScratchJr to create a simple animated weather sequence. They can program a sun sprite to appear, then have a cloud sprite move in front of it, followed by raindrop sprites falling. This task allows them to represent a sequence of weather changes using basic, icon-based coding blocks, reinforcing their understanding of how weather conditions can shift over time."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how weather affects daily life by having students observe and create a daily weather graph, sort appropriate clothing for different conditions, and research seasons. Learning experiences are enriched through specialist connections, including creating weather reports using songs in Chinese, exploring pictographic characters, and using sound to represent weather in Music."
   },
   {
     "ca": "St Kilda",
@@ -2729,9 +2792,30 @@
     "th": "Who We Are",
     "ci": "We learn about ourselves through the games we play.",
     "lo": "How to identify and manage emotions; How players' choices affect relationships; Our responsibilities when playing games",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Book Creator & Canva",
+        "d": "App smash to address the 'PSPE Create your own team' task. Students first use Canva's simple drag-and-drop interface to design their team's logo and uniform, focusing on colours and symbols that represent them. They then import these images into Book Creator to create a digital team profile, adding drawings of their mascot and using the audio record feature to perform their team song or chant, directly linking to the unit's exploration of team identity elements."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "To explore emotions and team identity, students draw a picture of their team's mascot or a character from the 'Kimochis Story'. They import a photo of their drawing into ChatterPix Kids, draw a mouth, and record a short audio clip. The mascot can introduce the team, explain a team rule, or describe a feeling (e.g., 'I feel proud when we show good sportsmanship'), connecting directly to the unit's focus on emotions and behaviour in games."
+      },
+      {
+        "t": "Seesaw",
+        "d": "In line with the planner's mention of 'reflecting on real life scenarios in the playground', students use Seesaw's drawing and voice recording tools. They can draw a picture of a playground conflict or a moment of teamwork, and then record themselves explaining what is happening, how the people feel, and what URStrong strategy they could use to ensure a positive outcome. This directly supports the development of social skills and vocabulary."
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "In small groups, students use classroom toys or plasticine to create a short stop motion animation that tells a story about playing a game. This can be used to demonstrate their understanding of concepts like fairness, following rules, or resolving conflict. This creative task allows them to represent and reflect on the 'unwritten expectations for behaviour in sport and games' in a narrative format."
+      },
+      {
+        "t": "Padlet",
+        "d": "Following a class game or PE session, use Padlet as a digital reflection wall to capture different perspectives. The teacher can set up columns like 'What was fair?', 'What was challenging?', and 'How did you feel?'. Students can contribute by recording short audio comments or, with teacher support, adding simple text or drawings, providing a platform to articulate their experiences and learn about others' points of view."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this unit, students explore the central idea 'We learn about ourselves through the games we play' by discussing emotions, rules, and teamwork. They analyse elements of team identity like mascots, colours, and songs from major sporting events and reflect on real-life playground scenarios using strategies from the URStrong program. The unit culminates in a task where students create their own team, designing its identity to reflect their understanding of positive relationships and personal expression in sport."
   },
   {
     "ca": "St Kilda",
@@ -2739,30 +2823,9 @@
     "th": "How We Express Ourselves",
     "ci": "Artefacts provide a window into the beliefs and values of cultures.",
     "lo": "Beliefs and values contribute to a culture; The importance of rituals and traditions; How artefacts capture history and cultural expression",
-    "s": [
-      {
-        "t": "ChatterPix Kids and Seesaw",
-        "d": "Following the 'Visit from Kaylea Fern with artefacts' and during their 'Mini research project', students photograph a cultural artefact. Using ChatterPix Kids, they make the artefact 'speak' by recording a short explanation of its cultural significance and purpose. The resulting video is then uploaded to their Seesaw journal, allowing them to share their understanding of how artefacts represent cultural beliefs and values with their families."
-      },
-      {
-        "t": "Microsoft PowerPoint",
-        "d": "Connecting to the 'Puzzle piece Template' activity, students use a pre-made puzzle piece slide in PowerPoint to represent an aspect of their culture. They can add images of food, flags, or traditions and use the audio record function to explain their choices. The teacher can then digitally assemble all the individual pieces into a whole-class collage, visually representing how their diverse cultures create a complete picture, which can then be shared with the community."
-      },
-      {
-        "t": "Padlet",
-        "d": "To support the inquiry into family origins and cultural connections, create a class Padlet using the 'Map' layout. Each student places a pin on a country connected to their family's heritage. In the post, they can upload a picture of a cultural game, food, or tradition from that place and record a short audio clip explaining it. This creates an interactive, visual representation of the classroom's cultural diversity."
-      },
-      {
-        "t": "Puppet Pals",
-        "d": "After becoming 'experts' in a particular cultural dance, students use Puppet Pals to create a simple animation. They can select characters, add images of traditional costumes, and record a voiceover explaining the dance's origin and meaning while moving the characters. This allows them to creatively express their understanding of how dance communicates cultural stories and traditions."
-      },
-      {
-        "t": "Book Creator",
-        "d": "As a summative task, students create a multi-page digital book titled 'My Culture and Me'. Each page can document a different learning experience from the unit: a drawing of a family celebration, a photo of a personal artefact with an audio explanation, and a short video of them demonstrating a cultural dance they learned. This allows students to synthesise their learning about personal identity, traditions, and cultural expression in a highly accessible and creative format."
-      }
-    ],
-    "audited": true,
-    "plannerText": "In this unit, Year 2 students explore cultural expression by investigating artefacts, traditions, and family origins. Key activities include a guest visit with artefacts, drawing family celebrations, learning about Chinese New Year, and creating homework to interview family about their cultural connections. Students become 'experts' in specific cultural dances, research an artefact of personal interest, and create their own celebration dances to demonstrate their understanding."
+    "s": [],
+    "audited": false,
+    "plannerText": ""
   },
   {
     "ca": "St Kilda",
