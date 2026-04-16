@@ -1801,9 +1801,30 @@
     "th": "How We Organise Ourselves",
     "ci": "Needs can be met with digital systems.",
     "lo": "What are digital systems; Ideas and information can be organised and shared in safe online environments; Being a responsible digital citizen",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Book Creator",
+        "d": "To document the 'Digital systems walk' (p.39), students use iPads to photograph digital systems around the school (e.g., printers, smartboards, laptops). They can create a collaborative book, with each page dedicated to a different system, adding text labels to identify hardware/software components and recording audio to explain how that system meets a specific need at school."
+      },
+      {
+        "t": "Canva",
+        "d": "In response to the 'Making Conclusions' task (p.59), students use Canva's infographic or poster templates to design and publish their individual 'Essential Agreement' for being a responsible digital citizen. They can use icons and graphics to visually represent key concepts like managing their digital footprint, consumption vs. creation, and navigating public vs. private online spaces."
+      },
+      {
+        "t": "Minecraft Education",
+        "d": "Connecting to the Cyber Safety Project lessons on online spaces (p.45), students can build a 'Digital Systems School' in a shared world. Different rooms can represent different digital systems they have learned about, using signs and NPCs to explain their function, hardware, software, and peripherals. This provides a creative, hands-on way to demonstrate their understanding of how systems are organised to meet needs."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "To explore their 'Digital Footprint' (p.45), students create a short animated video. They can use the simple animation tools in Adobe Express to show icons representing their online activities (gaming, learning, creating) forming a path. Students can record a voiceover explaining how their online actions create a lasting footprint and the importance of making kind and responsible choices."
+      },
+      {
+        "t": "Sphero BOLT",
+        "d": "Following the 'Look inside a Sphero' activity (p.44), students can use the Sphero Edu app to explore the relationship between input and output. They can write a simple block code (input) and then film the Sphero executing the commands (output). They can then use Seesaw to present the video of their code and the robot's action side-by-side, using labels and voice recording to explain how the digital system works."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The unit focuses on understanding how needs are met with digital systems. Key activities include sorting technology into 'Then & Now', conducting a 'digital systems walk' to identify hardware and peripherals around the school, exploring the concepts of digital footprints and online safety, and creating a personal 'Essential Agreement' for being a responsible digital citizen."
   },
   {
     "ca": "Glen Waverley",
@@ -1811,9 +1832,30 @@
     "th": "How the World Works",
     "ci": "Observing how materials change helps us make sense of the physical world.",
     "lo": "Observable properties of solids and liquids; How heating and cooling change state; Scientific thinking helps solve everyday problems",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Stop Motion Studio",
+        "d": "To document the 'Heat it up' and 'Freeze it!' experiments, students can use the time-lapse feature in Stop Motion Studio on an iPad to capture materials like chocolate, butter, or ice changing state. This creates a powerful visual record of the scientific process of melting and freezing."
+      },
+      {
+        "t": "Book Creator",
+        "d": "App Smash: Students can create a digital science journal to document their investigations. They can import their time-lapse videos from Stop Motion Studio, add photos of their experiments, and use the text tool to write predictions, observations, and conclusions using scientific vocabulary, directly addressing the 'Collecting and recording data' and 'Presenting' skills outlined in the planner."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "To explain their understanding of how heating and cooling change materials, students can take a photo of a solid (e.g., an ice cube) and a liquid (e.g., a puddle of water). They can then use ChatterPix Kids to animate the photos, making them 'talk' and explain the scientific process of changing state from their 'perspective'."
+      },
+      {
+        "t": "Microsoft Excel",
+        "d": "For the 'Break it up' investigation into how shape affects melting rates, students can use Excel on iPads to record their data. They can create a simple table to log the time it takes for different shapes of chocolate to melt and then use the chart function to generate a bar graph, visually comparing the results and helping them interpret their data."
+      },
+      {
+        "t": "Canva",
+        "d": "As a summative task, students can design a scientific poster in Canva to demonstrate their understanding of the central idea. They can use templates to create sections for solids, liquids, heating (melting), and cooling (freezing), incorporating photos from their experiments and key vocabulary to explain the observable properties and changes."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit focuses on hands-on investigations into how materials change state when heated or cooled. Students conduct experiments with familiar materials like ice cubes, butter, and chocolate to observe the properties of solids and liquids and the process of melting and freezing. Learning experiences also include investigating how shape affects melting rates and exploring how First Nations Australians use materials such as beeswax."
   },
   {
     "ca": "Glen Waverley",
@@ -1821,9 +1863,30 @@
     "th": "Sharing the Planet",
     "ci": "The diversity of soils, rocks, and minerals shapes the way people value and use Earth's resources.",
     "lo": "Observable properties of soils, rocks and minerals; Earth's resources are vital and must be used responsibly; First Nations knowledge of soils and rocks",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Book Creator",
+        "d": "Following the 'Local Soil Study' and 'Rock and Mineral Hunt', students use the iPad camera to take close-up photos of their collected samples. They then import these images into Book Creator to create a digital field guide, adding text labels for properties (colour, texture, grain) and recording audio observations to document their findings."
+      },
+      {
+        "t": "Canva",
+        "d": "To connect with the 'Going Further' exploration of First Nations' culture, students use Canva to design an informational poster. They can research and add images of ochre and traditional art, using text boxes to explain how different minerals were used as pigments and their cultural significance, directly supporting the 'Making Conclusions' task."
+      },
+      {
+        "t": "Google Earth",
+        "d": "To support the 'Sorting Out' task of comparing Australia with a neighbouring country, students use Google Earth to conduct a virtual fly-over of both locations. App Smashing: They can take screenshots of significant landforms (e.g., volcanoes in Indonesia, deserts in Australia) and import them into a Microsoft PowerPoint to create a comparative slideshow with annotations."
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "To present their research on how minerals are used in everyday life ('Sorting Out' phase), students create a short stop-motion animation. For example, they can use clay and small objects to animate the journey of graphite from being mined to becoming the lead in a pencil, providing a creative and hands-on way to share their learning."
+      },
+      {
+        "t": "Minecraft Education",
+        "d": "Connecting to their research on how rocks are used in everyday life (e.g., buildings), students can work in a Minecraft world to identify different rock and mineral blocks (e.g., granite, iron ore, coal). They can 'mine' these resources and then construct a simple building, documenting with screenshots and signs to explain which real-world materials their blocks represent."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores Earth's resources, beginning with students conducting a 'Geology Quest' to find and study local soils and rocks, observing their properties like colour and texture. Students then research the everyday uses of minerals, compare the natural features of Australia with a neighbouring country, and investigate the traditional uses of rocks and minerals by First Nations Australians, culminating in designing a digital presentation."
   },
   {
     "ca": "Glen Waverley",
@@ -1862,9 +1925,30 @@
     "th": "Who We Are",
     "ci": "The choices and actions we make contribute to our health and wellbeing.",
     "lo": "What it means to be healthy; Choices and their impact on health; Actions to maintain a healthy mind and body",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Book Creator & Canva",
+        "d": "To demonstrate their understanding of making healthy choices, students create a personal health action plan as a digital comic in Book Creator. They can design custom graphics, like a 'Sleep is Super!' poster in Canva, and import them into their comic, which details their goal and the steps they will take to improve their wellbeing in areas like nutrition, sleep, or exercise."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "After learning about the benefits of different foods during the 'Finding Out' phase, students create a short animated video using Adobe Express. Each student can choose a nutrient or food group, select an icon, and record a voice-over explaining its role in the body, such as 'I'm protein and I help build strong muscles!'"
+      },
+      {
+        "t": "Stop Motion Studio & iMovie",
+        "d": "Connecting to the 'Healthy Lunchbox' activity, students work in groups to create a stop motion animation showing healthy foods being chosen and packed. They can then import their animation into iMovie to add a title sequence, a narration explaining their food choices, and background music, effectively demonstrating their knowledge of a balanced meal."
+      },
+      {
+        "t": "Microsoft Excel & Seesaw",
+        "d": "For the Maths statistics investigation, students collect class data on healthy habits, such as hours of sleep. With teacher guidance, they input this data into a pre-made Excel template to digitally generate a bar graph. Students can then screenshot the graph, upload it to Seesaw, and use the voice recording tool to explain what the data shows about their class's health habits."
+      },
+      {
+        "t": "GarageBand",
+        "d": "Linking to the unit's focus on maintaining a healthy mind and the 'mindfulness/brain breaks' activity, students write and record their own short, guided breathing exercise. Using GarageBand on the iPad, they can record their voice and add calming background music from the loop library, creating a resource for the class to use."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores health and wellbeing through various hands-on activities, including a 'See, Think, Wonder' with health-related images and unpacking the central idea. Students investigate the impact of food, exercise, and sleep on their bodies, listen to guest speakers like dieticians, create personal health action plans, and engage in data collection and graphing related to healthy habits."
   },
   {
     "ca": "Glen Waverley",
@@ -1874,28 +1958,28 @@
     "lo": "Ways forms of expression convey messages; Creative and critical thinking skills; The language used to respond to The Arts",
     "s": [
       {
-        "t": "Canva & Microsoft Teams",
-        "d": "For the 'Taking Action' art show, students can use Canva to design a professional-looking plaque for their artwork, detailing the title, media, and artist's statement. They can then upload their final plaque design to a dedicated 'Art Show Gallery' channel in Microsoft Teams for peer feedback before printing, creating a digital archive of their expressive intentions."
+        "t": "ChatterPix Kids & Microsoft Teams",
+        "d": "Following the NGV excursion, students select a photo of an artwork and use ChatterPix Kids to animate it. They record a 30-second audio clip from the artwork's 'perspective', analysing its mood, composition, and intended message. Students then upload their video to a dedicated channel in their Year 4 Microsoft Team, where they can view and provide peer feedback on each other's interpretations, directly addressing the line of inquiry on 'the language used to respond to The Arts'."
       },
       {
-        "t": "Adobe Express & Microsoft PowerPoint",
-        "d": "To deepen their analysis of paintings from the NGV excursion, students can use PowerPoint to annotate an image of an artwork, highlighting elements like composition and salience. They can then 'App Smash' by importing these annotated slides into Adobe Express to create a short video, recording a voiceover that explains their interpretation and how the artwork promotes their thinking."
+        "t": "GarageBand & Microsoft PowerPoint",
+        "d": "Connecting to the Music specialist lesson, students create an original artwork inspired by Yayoi Kusama. They then use GarageBand on their iPads to compose a short musical piece that reflects the mood, colours, and patterns of their artwork. To present their work, students will 'app smash' by inserting both their artwork image and the audio file of their composition into a Microsoft PowerPoint slide, adding text to explain the connection using musical vocabulary."
       },
       {
-        "t": "Book Creator & ChatterPix Kids",
-        "d": "When publishing their poems (haiku, limerick, etc.), students can create a multimedia anthology in Book Creator. To enhance their expression, they can take a photo of a drawing related to their poem, animate it using ChatterPix Kids to 'speak' their poem, and then embed the resulting video back into their Book Creator page alongside the text."
+        "t": "Book Creator & Brushes Redux",
+        "d": "To publish the various poems written during the unit (haiku, limerick, etc.), students will create a personal digital poetry anthology in Book Creator. For each poem, they will use the Brushes Redux app to create a unique digital illustration that captures the poem's theme. They will import their illustration, type their poem, and use the audio record feature in Book Creator to perform a reading, creating a rich, multi-modal text that showcases their expressive skills."
       },
       {
-        "t": "GarageBand & Microsoft OneNote",
-        "d": "Connecting to the Music specialist task, students can respond to a piece of visual art by creating an original composition in GarageBand, using chords and instruments to reflect the artwork's mood. They can export the audio and embed it into a reflection page in their Class OneNote, where they also post the image and write about how their musical choices convey a specific interpretation."
+        "t": "Canva & Microsoft Forms",
+        "d": "For the culminating Year 4 Art Show, students will use Canva to design a professional-looking plaque for their artwork. The plaque will include the title, medium, and a short artist's statement. To make the exhibition interactive, students will create a simple feedback survey in Microsoft Forms and generate a QR code, which they will add to their Canva design. Art show visitors can scan the code to leave comments, providing students with authentic responses to their artistic expression."
       },
       {
-        "t": "Padlet",
-        "d": "Following the provocation visit to the Coates Pavillion art prize, create a class Padlet board featuring images of the artworks seen. Students can post digital sticky notes with their responses, answering the key questions: 'What did you see?', 'How did it make you feel?', and 'What did you think about it?', fostering a collaborative analysis of different artistic expressions."
+        "t": "Minecraft Education & OneNote",
+        "d": "Inspired by Yayoi Kusama's immersive installations, students work in small groups in Minecraft Education to build a virtual art gallery or a single 'expressive room'. They must use blocks, light, and space to convey a specific message or emotion. To document their process, students will take screenshots of their build and insert them into a shared Microsoft OneNote page, where they will write reflections on their artistic choices and how their creation 'promotes thinking' in the viewer, linking directly to the central idea."
       }
     ],
     "audited": true,
-    "plannerText": "In this unit, students explore various forms of artistic expression by visiting an art prize, analysing poetry, paintings, and song lyrics, and discussing how these works make them think and feel. They learn about artists like Yayoi Kusama and create their own musical compositions inspired by images. For their final action, students plan and create their own artwork and an accompanying plaque for a Year 4 Art Show."
+    "plannerText": "This unit immerses students in various forms of artistic expression, including analysing paintings from an NGV excursion, studying the work of Yayoi Kusama, and writing different poetic forms like haikus and limericks. Students also compose music in response to visual art and analyse song lyrics to understand how messages are conveyed. The inquiry culminates in a Year 4 Art Show, where each student plans, creates, and displays their own original artwork, complete with a descriptive plaque, to share their expression with the school community."
   },
   {
     "ca": "Glen Waverley",
@@ -1913,30 +1997,9 @@
     "th": "How the World Works",
     "ci": "The design and use of products can have an impact on the natural world.",
     "lo": "How material properties determine their use; Material solutions for a sustainable future; How research solves problems in the natural world",
-    "s": [
-      {
-        "t": "Tinkercad and Microsoft OneNote",
-        "d": "To address the 'Taking Action' task of designing a prototype enrichment toy, students can first research an animal's natural behaviours in a OneNote Class Notebook. They can then design a 3D model of their enrichment toy in Tinkercad, focusing on sustainable materials and features that mimic natural behaviours. Students can then 'App Smash' by embedding screenshots of their 3D models into their OneNote research page, annotating how their design choices solve problems for the animal, directly addressing the teacher reflection about needing more scaffolding to connect research to design."
-      },
-      {
-        "t": "Lego Spike Essential and iMovie",
-        "d": "For the 'Making Conclusions' science experiments on material properties (sink/float, strength), students can build simple testing machines with Lego Spike Essential. For example, they could construct a device to test the strength of different materials for their prototype. They can then film their experiments using an iPad and edit a short scientific report in iMovie, explaining their methodology, results, and conclusions about which materials are most suitable for their animal enrichment toy."
-      },
-      {
-        "t": "Stop Motion Studio and Microsoft PowerPoint",
-        "d": "To explore the central idea's concept of a product's 'impact on the natural world', students can create a stop-motion animation showing the life cycle of a common product. They can first storyboard their animation in PowerPoint, with each slide representing a scene from material sourcing to decomposition. Then, using Stop Motion Studio and a mix of drawings and recycled materials, they can animate the product's journey, visually representing its environmental impact."
-      },
-      {
-        "t": "Canva and ChatterPix Kids",
-        "d": "In the 'Going Further' phase, students research animal enrichment at zoos. After their research, they can design a persuasive digital poster in Canva that explains the purpose and benefits of their proposed enrichment toy. To present their findings, they can import an image of their chosen animal into ChatterPix Kids, making the animal 'speak' and explain the key features of the toy and how it supports its wellbeing, providing a creative way to share their learning."
-      },
-      {
-        "t": "Minecraft Education",
-        "d": "To directly address the assessment reflection that students 'missed connection to the animals' natural behaviours', students can work in groups to build a detailed replica of their chosen animal's natural habitat in Minecraft Education. This requires them to research and recreate key environmental features. They can then use the in-game camera and Book & Quill to document their build, which serves as a direct reference point when they begin designing their physical prototype enrichment toy."
-      }
-    ],
-    "audited": true,
-    "plannerText": "This unit explores how the design and use of products impact the natural world, focusing on material properties and sustainability. Students engage in hands-on science experiments, investigate materials, and research animal enrichment needs for a culminating project where they design, create, and test a prototype enrichment toy for an animal, documenting their learning journey in a science journal."
+    "s": [],
+    "audited": false,
+    "plannerText": ""
   },
   {
     "ca": "Glen Waverley",
