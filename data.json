@@ -1357,30 +1357,9 @@
     "th": "Who We Are",
     "ci": "Schools are organised to help students learn and work together",
     "lo": "The organisation of the Junior School; Routines that allow developing independence; How to make the classroom and playground healthy and safe",
-    "s": [
-      {
-        "t": "Book Creator",
-        "d": "To address LO1's focus on 'Who do we know that works in the Junior School?', students can create a collaborative class book titled 'The Helpers at Wesley'. App smash this by using iPads to take photos of staff members (librarian, nurse, office staff), then use ChatterPix Kids to make the photos 'speak' a simple sentence about their job. These short video clips can be embedded into the Book Creator pages, creating a rich, multimedia resource that students can revisit to familiarise themselves with the school community."
-      },
-      {
-        "t": "Bee-Bots",
-        "d": "Connect to LO3, 'How to make the classroom and playground healthy and safe', and the maths focus on positional language. Create a large floor mat representing the school playground or classroom. In small groups, students program the Bee-Bot to move safely from one area to another (e.g., from the slide to the drinking fountain), reinforcing concepts like 'walking feet' and navigating shared spaces responsibly through simple, sequential coding."
-      },
-      {
-        "t": "ScratchJR",
-        "d": "In connection with LO2, 'Routines that allow developing independence', students can create simple animations to sequence a specific school routine. For example, they could animate the steps for 'entering the music room' or 'packing our bags for home time'. Using the icon-based coding blocks, Prep students can make characters move across the screen to demonstrate their understanding of these important daily procedures in a creative and logical way."
-      },
-      {
-        "t": "Canva",
-        "d": "To support the creation of the 'Essential Agreement' in LO3, students can create a collaborative digital poster. The teacher can set up a template with the core agreements. Students can then add digital drawings or use the iPad camera to take photos of themselves demonstrating the positive behaviours (e.g., 'helping a friend'). This visual representation of their promises can be displayed on the class screen and reinforces their collective responsibility for a safe classroom."
-      },
-      {
-        "t": "PicCollage",
-        "d": "Following the 'Tour around campus' in LO1, students can consolidate their spatial awareness by creating a simple visual map of the Junior School. Using photos they took on the tour with iPads, they can import images of key locations like the library, Prep classrooms, and the swimming pool into PicCollage. They can arrange the photos to represent the school layout and, with teacher support, add simple text or drawing labels, helping them to understand the organisation of their new environment."
-      }
-    ],
-    "audited": true,
-    "plannerText": "This unit focuses on how schools are organised to help Prep students learn and work together, with the central idea that 'Schools are organised to help students learn and work together'. Key learning experiences involve students touring the campus to identify important people and places, learning and practicing various classroom and specialist routines to develop independence, and co-creating a class 'Essential Agreement' to ensure a healthy and safe environment. The summative assessment requires students to use Seesaw to draw and record a voice-over explaining four things they have learned about the Wesley College Junior School community."
+    "s": [],
+    "audited": false,
+    "plannerText": ""
   },
   {
     "ca": "Glen Waverley",
@@ -1645,9 +1624,30 @@
     "th": "Where We Are in Place and Time",
     "ci": "Exploring the past helps us to understand the present.",
     "lo": "Evidence and its significance in a place; Connections between the past and present within a place; Personal history shapes the present",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Seesaw and ChatterPix Kids",
+        "d": "For the 'Wonder Walk', students use the Seesaw camera to photograph historical evidence like plaques and statues. They then 'app smash' by importing a photo into ChatterPix Kids to make the object 'talk' and explain its history. The resulting video is uploaded back to Seesaw, where students add a voice recording to reflect on the evidence they found, directly addressing the provocation 'How do you know it is old?'."
+      },
+      {
+        "t": "Book Creator",
+        "d": "To connect with the 'Viewing images' activity, students create a 'Then and Now' digital book. On each page, they place a historical photo of the school or a Melbourne landmark next to a current one. Using the pen and audio recording tools, they can circle key changes and orally explain the connections between the past and present, creating a digital version of the 'similarities and differences' chart."
+      },
+      {
+        "t": "Microsoft PowerPoint",
+        "d": "Following the 'plaque hunt', students create a simple interactive timeline. Using a teacher-created template in PowerPoint, students insert the photos of the plaques they took in chronological order. They can then use PowerPoint's audio recording feature on each image to explain the significance of that moment in the school's history, sequencing events visually and audibly."
+      },
+      {
+        "t": "Puppet Pals",
+        "d": "After the 'Campbell Place Aged Care Residence Visit' or interviewing an older family member, students retell a story from that person's past. They select characters and backgrounds to represent the time period and record their own voice narrating the story. This creative retelling helps them process and share the interview, demonstrating how personal history shapes the present."
+      },
+      {
+        "t": "Merge Cube",
+        "d": "For the summative 'Artefact Project', students create a virtual museum exhibit. They take photos of their personal artefact and use a simple app to create a 3D model viewable on the Merge Cube. They then record a video presenting their artefact, holding the Merge Cube to show the 3D model while they orally explain its history and significance, connecting their personal story to the unit's central idea."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this unit, students investigate history by participating in a 'Wonder Walk' to photograph evidence like plaques and statues around the Wesley campus. They compare past and present images of the school and Melbourne, interview older community members about their lives, and analyze personal and school artefacts to understand the connections between the past and present. The inquiry culminates in a summative project where students research and present on a significant artefact."
   },
   {
     "ca": "Glen Waverley",
