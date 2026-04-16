@@ -1334,19 +1334,17 @@ function computeStats(){
     getSugs(e).forEach(s=>{
       const raw=(s&&s.t&&s.t.trim()&&s.t.trim()!=='TBA')?s.t.trim():null;
       if(!raw) return;
-      // Normalise combined tool names to a consistent label for the chart
-      // e.g. "Minecraft Education & OneNote" / "Minecraft Education and Microsoft OneNote" → same key
-      const t = raw
-        .replace(/\s*(\band\b|[&+])\s*/gi, ' & ')  // normalise separator to " & "
-        .replace(/\s+/g, ' ')
-        .trim();
-      toolCounts[t]=(toolCounts[t]||0)+1;
+      // Split combined tool names (e.g. "Minecraft & OneNote") into individual tools for counting
+      const parts = raw.split(/\s*(?:\band\b|[&+])\s*/i).map(t=>t.trim()).filter(Boolean);
       const nca=normCa(e.ca);
-      if(!campusTools[nca]) campusTools[nca]={};
-      campusTools[nca][t]=(campusTools[nca][t]||0)+1;
-      if(!yearTools[e.yl]) yearTools[e.yl]={};
-      yearTools[e.yl][t]=(yearTools[e.yl][t]||0)+1;
-      total++;
+      parts.forEach(t=>{
+        toolCounts[t]=(toolCounts[t]||0)+1;
+        if(!campusTools[nca]) campusTools[nca]={};
+        campusTools[nca][t]=(campusTools[nca][t]||0)+1;
+        if(!yearTools[e.yl]) yearTools[e.yl]={};
+        yearTools[e.yl][t]=(yearTools[e.yl][t]||0)+1;
+        total++;
+      });
     });
   });
   
