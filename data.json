@@ -3412,9 +3412,30 @@
     "th": "How We Organise Ourselves",
     "ci": "Goods and services are exchanged within a marketplace",
     "lo": "The production of goods from raw materials through manufacturing to consumer; The exchange of currency for goods and services in a functioning economy; Ethics and responsible decision-making in the marketplace",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Minecraft Education & Microsoft OneNote",
+        "d": "To support the 'Launch Suburb' activity, students can work in collaborative groups to design and build their suburb's floor plan, including streets and individual business shopfronts, in a shared Minecraft world. They can then 'App Smash' by taking screenshots of their completed builds and inserting them into a shared Microsoft OneNote page, where they can annotate their designs and write their business proposals, creating a comprehensive digital plan for their marketplace."
+      },
+      {
+        "t": "Microsoft Excel & Canva",
+        "d": "For the 'Intro Spreadsheet/Budget' task, each student business group will use a pre-populated Microsoft Excel spreadsheet to manage their start-up bonus, track expenses, and calculate profit and loss during the trading sessions. To promote their businesses, they can use Canva to design professional logos, flyers, and price lists, which can then be inserted as images back into a 'Marketing' tab in their Excel workbook."
+      },
+      {
+        "t": "Book Creator",
+        "d": "To demonstrate their understanding of 'Production Chains', students can create a multimedia digital book. Each page can detail a stage of their chosen product's journey: primary (raw materials), secondary (manufacturing), and final (retailing and distribution). Students can combine text, images, and audio narration to explain the process, showcasing a deep understanding of how goods are produced."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "Following the 'Cause & Effect' activity where students watch BTN clips on inflation, they can use Adobe Express to create short, animated explainer videos. Students can animate simple characters and icons to illustrate an economic concept, such as how a change in supply affects the price of a popular good within their classroom marketplace, providing a creative way to articulate their understanding."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Before setting up their businesses, students can act as entrepreneurs and use Microsoft Forms to conduct market research. They can design a survey to poll their classmates (the consumers) on which goods and services are in highest demand. The automatically generated charts and data will help them make informed decisions when writing their business proposals, directly connecting to the unit's focus on supply and demand."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students explore economic concepts by defining financial terminology and investigating production chains, supply, and demand. The unit culminates in a large-scale simulation, 'Launch Suburb', where students design a city, apply for jobs, write business proposals, manage budgets with spreadsheets, and trade goods and services within their own classroom marketplace."
   },
   {
     "ca": "St Kilda",
