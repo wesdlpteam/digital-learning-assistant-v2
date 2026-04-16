@@ -2493,8 +2493,8 @@
     "ci": "An inquiry into the natural world and its laws; the interaction between the natural world and human societies.",
     "lo": "Lines of inquiry to be confirmed once planner is uploaded",
     "s": [],
-    "audited": false,
-    "plannerText": ""
+    "audited": true,
+    "plannerText": "Not yet documented in PDF."
   },
   {
     "ca": "St Kilda",
@@ -2605,9 +2605,30 @@
     "th": "How We Organise Ourselves",
     "ci": "Systems are involved in preparing products for consumers.",
     "lo": "Where products come from; The systems products go through; How people choose their products",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Stop Motion Studio",
+        "d": "To demonstrate their understanding of sequencing, students use classroom objects like toy animals, trucks, and drawings to create a short stop-motion animation. This animation will visually represent the stages of milk processing, directly connecting to the 'Map the stages' activity and reinforcing the key concept of 'Sequences'."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students create a simple digital book documenting the journey of a product, such as an apple. Each page can feature a student's drawing of a stage (farm, transport, supermarket) and a recorded narration explaining that step. This directly supports the 'Apples' Find Out activity and the assessment goal of showing understanding through drawing and voice recording."
+      },
+      {
+        "t": "Beebots",
+        "d": "Create a large floor mat with pictures representing the key stages in a product's journey (farm, factory, supermarket, home). Students program the Beebot to travel the correct path from the farm to the home, reinforcing the sequential steps of the system in a hands-on, kinesthetic way."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "After watching the 'Cotton with George the Farmer' video, students can take a photo of an item of their own clothing. They can then use ChatterPix Kids to make the item 'talk', recording a short explanation of the journey it took from a cotton plant to become their clothing, using vocabulary from the unit."
+      },
+      {
+        "t": "Canva",
+        "d": "As a 'Tune In' or provocation, students use Canva's simple drag-and-drop tools to create a visual flowchart showing where they think their lunch comes from. They can use icons for farms, trucks, and stores. This serves as an excellent pre-assessment of their understanding of production systems before they investigate specific products."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores the systems involved in getting products to consumers, with a central idea that systems are involved in preparing products for consumers. Students investigate the journey of items like apples, milk, and cotton by watching videos, mapping the stages from farm to factory to shop, and documenting the sequence through illustrations, sentences, and voice recordings. Key activities include mapping the milk processing stages, watching videos on the journey of apples, and discussing the production of clothing after viewing 'Cotton with George the Farmer'."
   },
   {
     "ca": "St Kilda",
@@ -2615,9 +2636,30 @@
     "th": "How the World Works",
     "ci": "Weather affects our lives in different ways.",
     "lo": "Types of weather conditions; How weather impacts our lives (clothing, activities, food, feelings); Why weather changes (seasons, patterns)",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Seesaw",
+        "d": "To support the 'Daily Weather graph' activity, students can use Seesaw to create a digital weather journal. Each day, they can take a photo of the sky, add weather icons using the drawing tools, and use the microphone to record a verbal observation, such as 'Today it is sunny and cold.' This creates a multimodal, ongoing record of their data collection."
+      },
+      {
+        "t": "Canva",
+        "d": "For the 'Sorting for appropriate weather' activity, use Canva to create an interactive sorting game. A teacher can design a template with different weather scenes (e.g., a sunny beach, a rainy street). Students can then drag and drop digital clothing stickers onto the correct scene to show their understanding of appropriate attire."
+      },
+      {
+        "t": "iMovie",
+        "d": "To enhance the 'frozen tableaux' green screen activity, use iMovie on an iPad. After students create their tableau representing a seasonal activity, film them against the green screen. In iMovie, replace the green background with a relevant image or video, such as a snowy park or a sunny beach, to bring their scene to life."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "Connecting to the 'weather report in songs' activity, students can use ChatterPix Kids to create an animated weather forecast. They can draw a picture of a weather symbol (like a sun or a cloud), import it into the app, and record themselves singing their weather song, making the drawing appear to sing the forecast."
+      },
+      {
+        "t": "Book Creator",
+        "d": "To support the 'Writing Information Report' on a chosen season, students can use Book Creator to publish their research. They can create a multi-page digital book about Summer or Winter, combining simple typed sentences, their own drawings of seasonal activities, imported images, and voice recordings to explain their findings, making the task accessible for all literacy levels."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students investigate how weather affects their lives by observing and collecting daily weather data for a graph, sorting appropriate clothing for different conditions, and researching seasons, including Indigenous seasons. They communicate their understanding by creating frozen tableaux of seasonal activities in front of a green screen and writing information reports about a chosen season."
   },
   {
     "ca": "St Kilda",
@@ -2656,9 +2698,30 @@
     "th": "Where We Are in Place and Time",
     "ci": "History and culture connect the past, present and future.",
     "lo": "How technology has changed over time; The purpose and significance of artefacts; How the past connects to the present and future",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Seesaw",
+        "d": "To support the 'Find Out' activity where students examine artefacts, they can use Seesaw to create a digital museum. Students take a photo of an artefact (e.g., a cassette tape, an old phone from home) and use the voice recording tool to explain what it is, what it was used for, and how it is different from technology today. This creates a personal, multimodal record of their historical inquiry."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "To animate the past, students can take a photo of one of the historical artefacts studied, such as the Walkman or projector mentioned in the planner. They can then use ChatterPix Kids to draw a mouth on the object and record a short sentence from its perspective, explaining its function (e.g., \"I used to play music from tapes before phones could!\"). This is a highly engaging way for Year 1 students to demonstrate their understanding."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Connecting to the theme of personal and family histories, students can create a simple 'Then and Now' digital book. On one page, they can insert a photo of their grandparents or an old family photo and record a story about the past. On the next page, they can add a current photo and record how things have changed, directly addressing the unit's focus on change over time."
+      },
+      {
+        "t": "Padlet",
+        "d": "To visually represent the timeline sorting activity, create a class Padlet with three columns: 'Past', 'Present', and 'Future'. The teacher can upload images of the technologies discussed in the unit (phones, Walkman, etc.), and students can collaboratively drag and drop them into the correct column. This provides a dynamic and interactive alternative to a physical timeline."
+      },
+      {
+        "t": "Canva",
+        "d": "Building on the 'Go Further' activity where students predict future mobile devices, students can use Canva's simple drawing tools, shapes, and icons to design an advertisement for their own future invention. This allows them to creatively express their predictions about the future, directly linking to the student reflection about designing a 'flying car for the furture'."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this unit, students explore the concepts of past, present, and future by examining and discussing historical artefacts like old mobile phones, encyclopedias, and cassettes. They engage in activities such as sorting photos of technology onto a timeline, watching videos on the evolution of devices, and comparing dances from different eras to understand change over time. The unit culminates in students making predictions about what technology will look and function like in the future."
   },
   {
     "ca": "St Kilda",
@@ -2666,9 +2729,30 @@
     "th": "Who We Are",
     "ci": "We learn about ourselves through the games we play.",
     "lo": "How to identify and manage emotions; How players' choices affect relationships; Our responsibilities when playing games",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Canva",
+        "d": "In connection with the 'PSPE Create your own team' activity, students can use Canva's simple drag-and-drop interface to design a digital logo or jumper for their team. They can select team colours, add shapes, and search for simple graphics to represent their team mascot, directly addressing the learning experience of building a team identity."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "To support the 'Brainstorm of different emotions' and reflections on playground scenarios, students can draw a picture of a game or a mascot and take a photo. They can then use ChatterPix Kids to make their drawing speak, recording a short sentence about an emotion they felt during a game, such as 'I felt excited when we worked together as a team'."
+      },
+      {
+        "t": "Book Creator",
+        "d": "To explore the concept of rules and fairness, students can create a simple digital 'Playground Games Rulebook'. Each page can feature a photo they take of a game being played, a drawing, and a voice recording where they explain one important rule and why it helps everyone have fun, connecting directly to understanding game structure and responsibility."
+      },
+      {
+        "t": "ScratchJR",
+        "d": "To understand causation in games ('rules need to be followed or consequences will result'), students can create a simple two-character animation in ScratchJR. They can code a scenario like one character passing a ball to another, exploring different outcomes based on their coding sequence, which makes the concept of actions and consequences tangible and interactive."
+      },
+      {
+        "t": "GarageBand",
+        "d": "Linking to the task of creating a team identity, including a 'song, uniform, body language/signals', students can work in small groups to create a team chant. Using GarageBand on an iPad, they can record their voices and add a simple, pre-made drum loop to create an anthem for the team they designed, fostering collaboration and creative expression."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this unit, students explore how they learn about themselves, their emotions, and relationships through the games and sports they play. Key activities include discussing the components of games like rules and fairness, exploring how to build a team identity with mascots and songs, and reflecting on real-life playground scenarios. The unit culminates with students creating their own unique team, applying their understanding of collaboration and personal expression."
   },
   {
     "ca": "St Kilda",
