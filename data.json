@@ -2369,9 +2369,30 @@
     "th": "How the World Works",
     "ci": "Scientists undertake experimentation to confirm, contest and create new theories.",
     "lo": "The scientific method; How experiments lead to new understandings; The relationship between planets and the Sun; Energy transfer and transformation in circuits",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Minecraft Education + OneNote",
+        "d": "To model the 'transfer and transformation of energy in electrical circuits', students will use Minecraft Education's redstone features to build and test virtual circuits. This directly supports the 'virtual lab' activity mentioned in the planner. App Smash this by having students take screen recordings of their working circuits and embed them into a OneNote science journal, where they can annotate the components and draw corresponding real-world circuit diagrams, fulfilling another lesson requirement."
+      },
+      {
+        "t": "Stop Motion Studio + Microsoft PowerPoint",
+        "d": "To document the 'reversible and irreversible changes' from the chemistry experiments (e.g., bicarb soda and vinegar), students can create a stop-motion animation of the process. This encourages close observation. App Smash by importing the finished video into a Microsoft PowerPoint presentation, which will serve as their digital lab report. Students can add slides with their hypothesis, method, observations, and conclusion, using PowerPoint's audio recording feature to narrate their findings."
+      },
+      {
+        "t": "Canva + Explain Everything",
+        "d": "To explain 'the movement of the Earth and other planets relative to the sun', students can first design high-quality, scientifically accurate images of the planets and sun in Canva. App Smash by importing these assets into Explain Everything. On the infinite canvas, they can then animate the planets' rotation and revolution, recording a voiceover to explain how Earth's tilt and movement cause seasons and day/night, creating a detailed animated scientific model."
+      },
+      {
+        "t": "Microsoft Forms + Book Creator",
+        "d": "In preparation for the 'Science Fair', students can use Microsoft Forms to design and conduct a survey to gather initial data or opinions related to their chosen experiment topic, as prompted in the 'Sorting Out' phase. App Smash by embedding the charts and data from Forms into a Book Creator digital book. This book becomes their interactive science fair presentation, with pages dedicated to each step of the scientific method, including embedded photos and videos of their experiment in action."
+      },
+      {
+        "t": "Tinkercad + iMovie (with Green Screen)",
+        "d": "As an extension to the 'squishy circuits' activity, students can use Tinkercad to design and prototype a 3D model of a custom component for their circuit, such as a unique switch or battery holder. App Smash this by exporting an image of their 3D design and using the Green Screen Kit with iMovie. Students can film themselves presenting their invention, compositing the image of their 3D model into the video to create a professional 'product pitch' that explains its design and function."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit immerses students in the scientific process through a series of hands-on investigations. They explore physical science by building and testing electrical circuits using physical and virtual materials, investigate chemical science through experiments on reversible and irreversible changes, and study earth science by modelling the movement of planets. The inquiry culminates in a science fair where students design, conduct, and present their own experiments, demonstrating their understanding of how scientists confirm, contest and create new theories."
   },
   {
     "ca": "Glen Waverley",
@@ -2410,9 +2431,30 @@
     "th": "Where We Are in Place and Time",
     "ci": "Human needs drive the development of nations.",
     "lo": "How human needs drive national development; Role of migration in nation building; Impacts of development on Indigenous and colonial populations",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Book Creator & Microsoft Teams",
+        "d": "For the 'Night of the Aussie Notables' project, students can use a private channel in Microsoft Teams to collate their research, links, and images about their chosen notable Australian. They can then 'app smash' this research into Book Creator to produce a rich multimedia biography, incorporating text, their curated images, audio narration, and even a video of them presenting a short speech in character."
+      },
+      {
+        "t": "Google Maps & Canva",
+        "d": "To explore the Line of Inquiry on 'the relationship between migration and needs', students can research a specific migration wave to Australia (e.g., post-WWII, Vietnam War). They can use the 'My Maps' feature in Google Maps to plot the journey, adding pins with notes on push and pull factors. Students can then screenshot their map and embed it into a Canva infographic that visually explains the journey, the needs that drove it, and its impact on Australia's development."
+      },
+      {
+        "t": "Adobe Express & Microsoft Word",
+        "d": "Connecting to the argumentative writing task ('Should Australia have a black prime minister' or changing the date of Australia Day), students can first draft their persuasive script in Microsoft Word. They can then produce a powerful one-minute video using Adobe Express, recording their voice-over and combining it with impactful stock footage, images, and text overlays to create a compelling piece of digital advocacy."
+      },
+      {
+        "t": "Minecraft Education & Seesaw",
+        "d": "To address the 'comparison of pre and post colonised Australia', students can work in groups in Minecraft Education to build two contrasting models: one representing an Indigenous community with its unique systems (e.g., songlines, resource management) and another depicting an early colonial settlement. They can use the camera and portfolio tools to document their builds and then upload screenshots to Seesaw, using the voice recording and annotation tools to explain the key differences and the impact of colonisation."
+      },
+      {
+        "t": "Sway & PowerPoint",
+        "d": "To create the 'Footprints' class timeline, each student can be assigned a key event or period in Australian history related to the unit. They can design a single, informative slide in PowerPoint summarizing their topic. The teacher can then compile these individual slides into a collaborative and interactive Microsoft Sway, creating a dynamic, scrolling timeline of the development of the nation that the whole class has contributed to."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how human needs have driven the development of Australia, with a focus on migration, governance, and citizenship. Students compare pre and post-colonised Australia by watching 'First Australians' and visiting the Bunjilaka museum, investigate migration through concepts like push/pull factors and the White Australia Policy, and research the contributions of notable Australians. Key activities include creating timelines, writing persuasive pieces on national issues, and a summative assessment where they reflect on key concepts using Seesaw."
   },
   {
     "ca": "Glen Waverley",
@@ -2451,9 +2493,30 @@
     "th": "How We Express Ourselves",
     "ci": "People recognise important events through celebrations and traditions.",
     "lo": "The traditions of our families and communities; How and why people celebrate; The similarities and differences between celebrations",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Bee-Bots",
+        "d": "To connect with the 'Lion Dancing: Chinese New Year' activity, students can work in small groups to program Bee-Bots to perform a 'parade'. They can design a large floor mat with symbols of Chinese New Year and code the Bee-Bot to travel from one symbol to another, simulating the path of a parade and reinforcing their learning about the celebration's traditions in a kinesthetic way."
+      },
+      {
+        "t": "Book Creator & Microsoft PowerPoint",
+        "d": "App smash to document family traditions. Students first use the simple drawing tools in PowerPoint on an iPad to create a background scene for a family celebration (e.g., a Christmas dinner, a Hanukkah table). They save this as an image and import it into a page in Book Creator. On top of their custom background, they can add photos, further drawings, and use the record button to orally explain their family's tradition, directly linking to the classroom brainstorms on family celebrations."
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "In response to the 'Dance Around the World' and specific cultural dance activities (e.g., Mexican Hat Dance), students can use playdough or small figurines to create a short stop-motion animation. This allows them to creatively express their understanding of how dance is used in celebrations, focusing on the costumes and key movements they have learned in class."
+      },
+      {
+        "t": "Canva",
+        "d": "To address the 'Go Further' task of creating a poster for an imaginary celebration, students can use Canva. With its simple drag-and-drop interface, they can select icons, shapes, and use drawing tools to design a poster for a 'Pet's Birthday' or 'Day of the First Holiday'. This is highly age-appropriate and allows them to apply their understanding of the common features of celebrations (food, activities, people)."
+      },
+      {
+        "t": "ChatterPix Kids & Microsoft Sway",
+        "d": "App smash to create a class 'Celebration Museum'. Students bring in or take a photo of an artefact from a family celebration (like the Menora or Christmas items mentioned in the 'Tune In' phase). They use ChatterPix Kids to make the object 'talk' and explain its significance in one or two sentences. The teacher can then collate these short video clips into a class Microsoft Sway to share with the parent community, celebrating the diversity of traditions within the classroom."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how people express themselves through various celebrations and traditions, with a central idea that people recognise important events through these practices. Students engage in cultural experiences such as Chinese New Year lion dancing, making moon cakes with clay, and learning about Hanukkah, Divali, and Christmas through stories and artefacts. They also learn and compare cultural dances, discuss their own family traditions, and create posters and artwork to share their understanding."
   },
   {
     "ca": "St Kilda",
@@ -2461,9 +2524,30 @@
     "th": "How We Organise Ourselves",
     "ci": "We all have roles and responsibilities in the community",
     "lo": "Roles people play; Responsibilities in the community; How working together helps everyone",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "ChatterPix Kids",
+        "d": "To explore the roles of community helpers, students use the iPad's Digital Camera to photograph staff around the school or find images of helpers like firefighters. They import these into ChatterPix Kids, draw a mouth, and record a simple sentence describing that person's role and responsibility, directly linking to the brainstorming activity about staff in the Wesley community."
+      },
+      {
+        "t": "Bee-Bots",
+        "d": "Students create a large floor map of the school, identifying key locations where different staff members work (library, office, art room). They can design simple location markers in Canva, print them, and then program the Bee-Bots to travel from their classroom to these different areas. This activity makes the abstract idea of the school community and its different roles a concrete, navigable experience."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Following the class brainstorm of school roles, students create a collaborative digital book titled 'Our Classroom Jobs'. Each student takes a photo of a classmate performing a specific role (e.g., line leader). They then import the photo into Book Creator and use the audio record button to explain the responsibilities of that job, creating a multimodal resource that reinforces their essential agreements."
+      },
+      {
+        "t": "Canva",
+        "d": "To support student agency and morning routines, the teacher creates a visual checklist template in Canva using simple icons for each task (e.g., hang up bag, put lunchbox away). This template is then 'app smashed' by importing it into a Seesaw activity, where students use the drawing tools to check off each completed task, documenting their personal responsibility as mentioned in the planner."
+      },
+      {
+        "t": "Green Screen Kits",
+        "d": "To enhance the 'Role Play' activity, students act out responsible behaviours like sharing or playing fairly. Using the green screen, they can superimpose themselves onto photos of real locations around the school, such as the playground or classroom. This allows them to practice their roles and responsibilities within a familiar visual context, making the learning more authentic."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit focuses on students understanding their roles and responsibilities within their new school community. Key learning experiences include reading books about starting school, brainstorming the jobs of various school staff and community helpers, creating classroom and playground essential agreements, and using role-play to act out responsible behaviours like sharing and taking turns."
   },
   {
     "ca": "St Kilda",
@@ -2472,8 +2556,8 @@
     "ci": "An inquiry into the natural world and its laws; the interaction between the natural world and human societies.",
     "lo": "Lines of inquiry to be confirmed once planner is uploaded",
     "s": [],
-    "audited": false,
-    "plannerText": ""
+    "audited": true,
+    "plannerText": "Not yet documented in PDF."
   },
   {
     "ca": "St Kilda",
