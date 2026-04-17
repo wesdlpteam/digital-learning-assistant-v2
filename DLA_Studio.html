@@ -473,6 +473,19 @@ const YR = ["Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"];
 const CAMPUS_COL = { Elsternwick:'#818cf8', 'Glen Waverley':'#34d399', 'St Kilda':'#fb923c', 'St Kilda Road':'#fb923c' };
 
 function getKey(){ return localStorage.getItem('dla_api_key')||BAKED_API_KEY; }
+function cleanGeminiJSON(s){
+  return s.replace(/```json|```/g,'').replace(/"([^"]*)"/g,(_,inner)=>'"'+inner.replace(/\n/g,' ').replace(/\r/g,'')+'"').replace(/,\s*([\]}])/g,'$1').trim();
+}
+
+function normaliseChanges(raw){
+  return raw.filter(c=>c&&c.entryIdx!=null).map(c=>({
+    entryIdx:c.entryIdx!=null?c.entryIdx:(c.entry_idx!=null?c.entry_idx:0),
+    sugIdx:c.sugIdx!=null?c.sugIdx:(c.sug_idx!=null?c.sug_idx:0),
+    t:c.t||c.tool||c.technology||c.name||'',
+    d:c.d||c.desc||c.description||c.integration_idea||c.activity||c.suggestion||''
+  }));
+}
+
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
 
 function recordChange(idx, oldSugs, newSugs){
@@ -2457,6 +2470,11 @@ ${fullContext}`;
   try{
     bar.style.width = '60%';
     lbl.textContent = 'Analysing all entries…';
+    // Animate the bar slowly while waiting so it doesn't look frozen
+    let animPct = 60;
+    const animInterval = setInterval(()=>{
+      if(animPct < 88){ animPct += 0.5; bar.style.width = animPct + '%'; }
+    }, 1000);
 
     const response = await callGemini(
       [{role:'user', parts:[{text:'Please carry out the instruction and propose changes.'}]}],
@@ -2464,6 +2482,7 @@ ${fullContext}`;
       'gemini-2.5-pro'
     );
 
+    clearInterval(animInterval);
     bar.style.width = '90%';
     lbl.textContent = 'Parsing proposed changes…';
 
@@ -2519,6 +2538,7 @@ ${fullContext}`;
       console.log('Gemini response (no changes parsed):', response.slice(0,500));
     }
   }catch(e){
+    clearInterval(animInterval);
     prog.style.display = 'none';
     statusEl.style.color = '#f87171';
     statusEl.textContent = '✗ ' + e.message;
