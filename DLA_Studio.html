@@ -862,6 +862,18 @@ function switchTab(tab,btn){
 
 }
 
+async function deleteEntry(idx){
+  const e = DATA[idx];
+  if(!e) return;
+  if(!confirm(`Delete "${e.th}" (${e.ca} ${e.yl})?\n\nThis cannot be undone.`)) return;
+  DATA.splice(idx, 1);
+  await saveToDrive();
+  setStatus(`"${e.th}" deleted`);
+  closeEntry();
+  renderBrowse();
+  renderDashboard();
+}
+
 async function openEntry(idx){
   const allowed = await acquireLock(idx);
   if(!allowed) return;
@@ -1054,9 +1066,14 @@ function renderEntry(idx){
         ✓ Locked by you — others will see this entry is in use
       </div>`;
   document.getElementById('entry-header').innerHTML=lockBanner+`
-    <h2 style="font-size:24px;font-weight:700;color:#fff;margin-bottom:6px">${esc(e.th)}</h2>
-    <p style="font-size:14px;color:var(--dim);font-weight:500">${esc(e.ca)} · ${esc(e.yl)}</p>
-    ${e.ci?`<p style="font-size:14px;color:var(--dim);margin-top:10px;font-style:italic;line-height:1.6">${esc(e.ci)}</p>`:''}`;
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+      <div>
+        <h2 style="font-size:24px;font-weight:700;color:#fff;margin-bottom:6px">${esc(e.th)}</h2>
+        <p style="font-size:14px;color:var(--dim);font-weight:500">${esc(e.ca)} · ${esc(e.yl)}</p>
+        ${e.ci?`<p style="font-size:14px;color:var(--dim);margin-top:10px;font-style:italic;line-height:1.6">${esc(e.ci)}</p>`:''}
+      </div>
+      <button onclick="deleteEntry(${idx})" style="flex-shrink:0;padding:7px 14px;background:transparent;border:1px solid #FF8080;color:#FF8080;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit" title="Delete this entry">🗑 Delete</button>
+    </div>`;
   const sugs=getSugs(e);
   document.getElementById('entry-sugs').innerHTML=sugs.length
     ? sugs.map((s,i)=>buildSugRow(s,idx,i)).join('')
@@ -1380,6 +1397,33 @@ function normCa(ca){
   return ca||'';  
 }
 
+function normaliseToolName(t){
+  // Canonical forms for known variants
+  const map = {
+    'bee-bot':'Beebots','bee-bots':'Beebots','beebot':'Beebots','beebots':'Beebots',
+    'micro:bit':'Micro:bit','microbit':'Micro:bit','micro:bits':'Micro:bit','microbits':'Micro:bit',
+    'scratchjr':'ScratchJr','scratch jr':'ScratchJr','scratch junior':'ScratchJr',
+    'chatterpix':'ChatterPix Kids','chatterpix kids':'ChatterPix Kids',
+    'stop motion studio':'Stop Motion Studio','stopmotion':'Stop Motion Studio',
+    'adobe express animate from audio':'Adobe Express Animate from Audio',
+    'adobe express podcasting':'Adobe Express Podcasting',
+    'adobe express video':'Adobe Express Video',
+    'lego spike prime':'Lego Spike Prime','lego spike essential':'Lego Spike Essential',
+    'sphero bolt':'Sphero BOLT','sphero indi':'Sphero Indi',
+    'microsoft onenote':'Microsoft OneNote','onenote':'Microsoft OneNote',
+    'microsoft powerpoint':'Microsoft PowerPoint','powerpoint':'Microsoft PowerPoint',
+    'microsoft word':'Microsoft Word','microsoft teams':'Microsoft Teams',
+    'microsoft forms':'Microsoft Forms','microsoft sway':'Microsoft Sway',
+    'google earth':'Google Earth','google maps':'Google Maps',
+    'book creator':'Book Creator','garageband':'GarageBand',
+    'imovie':'iMovie','piccollage':'PicCollage','tinkercad':'Tinkercad',
+    'minecraft education':'Minecraft Education',
+    'puppet pals':'Puppet Pals','padlet':'Padlet','seesaw':'Seesaw','canva':'Canva',
+  };
+  const key = t.toLowerCase().trim();
+  return map[key] || t;
+}
+
 function computeStats(){
   const toolCounts={}, campusTools={}, yearTools={}; let total=0;
   
@@ -1391,7 +1435,9 @@ function computeStats(){
       // Split combined tool names (e.g. "Minecraft & OneNote") into individual tools for counting
       const parts = raw.split(/\s*(?:\band\b|[&+])\s*/i).map(t=>t.trim()).filter(Boolean);
       const nca=normCa(e.ca);
-      parts.forEach(t=>{
+      parts.forEach(rawT=>{
+        // Normalise variants: remove hyphens, fix capitalisation for known tools
+        const t = normaliseToolName(rawT);
         toolCounts[t]=(toolCounts[t]||0)+1;
         if(!campusTools[nca]) campusTools[nca]={};
         campusTools[nca][t]=(campusTools[nca][t]||0)+1;
