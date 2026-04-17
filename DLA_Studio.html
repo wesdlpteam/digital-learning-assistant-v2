@@ -779,7 +779,7 @@ async function callGemini(contents, systemPrompt, model, _attempt=0){
   // Disable thinking for Flash (unnecessary latency) — Pro keeps default thinking
   const isFlash = (model||GEMINI_MODEL).includes('flash');
   const body={ contents, generationConfig:{
-    maxOutputTokens: 8192,
+    maxOutputTokens: 16384,
     ...(isFlash ? { thinkingConfig:{ thinkingBudget:0 } } : {})
   }};
   if(systemPrompt) body.systemInstruction={ parts:[{text:systemPrompt}] };
@@ -2446,10 +2446,10 @@ Analyse ALL ${DATA.length} entries and propose changes wherever the instruction 
 
 For each proposed change, use the exact entryIdx and sugIdx from the TOOL INDEX above.
 
-Respond with your reasoning (2-3 sentences), then end with:
-APPLY_CHANGES:[{"entryIdx":3,"sugIdx":1,"t":"Tool Name","d":"Specific description connected to the unit."}]
+Output ONLY the APPLY_CHANGES block — no preamble, no reasoning, no explanation. Go straight to the JSON:
+APPLY_CHANGES:[{"entryIdx":3,"sugIdx":1,"t":"Tool Name","d":"Specific description connected to the unit."},{"entryIdx":7,"sugIdx":2,"t":"Tool Name","d":"Description."}]
 
-The JSON must be complete and valid. Include ALL proposed changes in one array.
+The JSON must be complete and valid. Include ALL proposed changes in one array. Do not write anything before or after the APPLY_CHANGES line.
 
 FULL ENTRY DATA:
 ${fullContext}`;
