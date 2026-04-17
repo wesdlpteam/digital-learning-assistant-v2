@@ -379,22 +379,22 @@
       },
       {
         "t": "Book Creator",
-        "d": "To create 'Information Reports on Simple Machines', students use Book Creator to make a multi-page digital book. On each page, they can use the drawing tools to sketch a simple machine (e.g., a lever), type a simple sentence, and record audio explaining how that machine works."
+        "d": "To create the 'Information reports on Simple Machines', students can app smash Canva and Book Creator. They can use a simple Canva template to design a labelled diagram of a simple machine (e.g., a lever), then import this image into Book Creator. On the page, they can type a simple sentence and record audio explaining how their machine works."
       },
       {
-        "t": "Stop Motion Studio",
-        "d": "To document their summative Rube Goldberg machine, students create a short animation using Stop Motion Studio. By taking a photo of each sequential step in the chain reaction, they can produce a video that clearly demonstrates their understanding of cause and effect, forces, and the function of each simple machine in their creation."
+        "t": "Minecraft Education",
+        "d": "To document their summative Rube Goldberg machines, students can use the 'Rube Goldberg Challenge' world. This lesson tasks them with creating a chain reaction machine to complete a simple task, allowing them to digitally prototype and demonstrate their understanding of forces, motion, and simple machines. To find this lesson, search Rube Goldberg Challenge at education.minecraft.net/en-us/resources/explore-lessons"
       },
       {
         "t": "Sphero Indi",
-        "d": "To investigate friction, students program the Sphero Indi car using the coloured tiles to travel over different surfaces like carpet, wood, and sandpaper. They can observe and discuss how friction affects the Indi's speed and distance, providing a hands-on, kinesthetic understanding of the concept."
+        "d": "To investigate the friction experiments with ramps and surfaces, students program the Sphero Indi car using the coloured tiles to travel over different materials (carpet, wood, sandpaper). They can observe how friction affects the Indi's speed and distance, providing a hands-on, kinesthetic understanding of the concept."
       },
       {
         "t": "PicCollage",
-        "d": "Following the 'Push and Pull' school walk, students import photos they took with a digital camera into PicCollage. They create a digital poster, sorting their images into two columns labelled 'Push' and 'Pull' to visually classify the different forces they observed in their environment."
+        "d": "Following the 'Push and Pull' school walk, students import the photos they took with the iPad's digital camera into PicCollage. They can create a digital poster, sorting their images into two columns labelled 'Push' and 'Pull' to visually classify the different forces they observed in their environment."
       }
     ],
-    "audited": false,
+    "audited": true,
     "plannerText": "This unit explores forces and motion through hands-on investigations, beginning with a provocation at Twisted Science and Maker Space tinkering with simple machines. Students conduct experiments on magnetism, gravity (using slow-mo video), and friction (testing cars on ramps and different surfaces). The inquiry culminates with students designing and building their own Rube Goldberg machines as a summative assessment to demonstrate their understanding of forces and simple machines in a chain reaction."
   },
   {
@@ -405,27 +405,27 @@
     "lo": "Earth's resources; How our actions affect the environment; Ways we can care for our planet",
     "s": [
       {
-        "t": "Seesaw",
-        "d": "To document the 'Lunchbox waste collection' activity, students take daily photos of their lunchbox waste and use Seesaw's annotation tools to label items as compost, recycling, or landfill. They can add a voice recording to explain their findings and reflect on their choices."
+        "t": "Seesaw and Microsoft Excel",
+        "d": "To document the 'Lunchbox waste collection' activity, students take daily photos of their lunchbox waste and use Seesaw's tools to label items as compost, recycling, or landfill. App smash this by having students use a teacher-created template in Microsoft Excel to create a simple bar chart of their weekly waste, then upload a screenshot to their Seesaw journal to explain their findings and reflect on their choices."
       },
       {
         "t": "Book Creator",
-        "d": "In connection with making a 'waste timeline', students create a digital book about decomposition. Each page can feature a different item (e.g., apple core, plastic bottle), an image, and its decomposition time. Students can use the audio recording feature to read their facts, demonstrating their understanding of how choices create long-lasting waste."
+        "d": "In connection with making a 'waste timeline', students create a digital book about decomposition. Each page can feature a different item (e.g., apple core, plastic bottle), an image, and its decomposition time. Students can use the audio recording feature to read their facts, demonstrating their understanding of how our choices create long-lasting waste."
       },
       {
         "t": "Micro:bit",
-        "d": "To enhance data collection on environmental impact, students can use the Micro:bit to build a simple litter-counting device. This hands-on activity allows them to collect and analyse data on waste found around the school, directly addressing the central idea about choices and taking care of the Earth."
+        "d": "To support the 'Lunchbox waste collection' activity, students can use Micro:bit to build a litter-counting device by following the [Barefoot Litter Hunt](https://microbit.org/teach/lessons/?selected=barefoot-litter-hunt) lesson. This allows them to collect and analyse data on waste, directly addressing the central idea about choices and taking care of the Earth."
+      },
+      {
+        "t": "Minecraft Education",
+        "d": "As part of their 'personalised inquiry project', students can explore the 'Sustainability City' world. They can investigate sustainable practices like waste management and renewable energy in a large-scale city environment, then build their own sustainable solutions, directly connecting to the central idea about making positive choices for the Earth. To find this lesson, search Sustainability City at education.minecraft.net/en-us/resources/explore-lessons"
       },
       {
         "t": "Padlet",
-        "d": "For the 'walking excursion to care for our environment', create a class Padlet with columns like 'Earth's Resources' and 'Human Impact'. During the walk, students use iPads to photograph examples for each category and upload them to the collaborative board. Back in class, this becomes a shared visual record for discussion."
-      },
-      {
-        "t": "ChatterPix Kids",
-        "d": "To deliver their persuasive speeches, students take a photograph of an object, like the Earth or a piece of rubbish. They use ChatterPix Kids to draw a mouth on the object and record their persuasive speech, giving a voice to the environment and encouraging others to make positive changes."
+        "d": "For the 'walking excursion to care for our environment', create a class Padlet with columns like 'Earth's Resources' and 'Human Impact'. During the walk, students use iPads to photograph examples for each category and upload them to the collaborative board. Back in class, this becomes a shared visual record for discussion and reflection."
       }
     ],
-    "audited": false,
+    "audited": true,
     "plannerText": "This unit explores Earth's resources and how human actions impact the environment, guided by the central idea that taking care of our Earth starts with our choices. Key activities include a 'Towards Zero Waste' excursion to CERES, a week-long lunchbox waste audit, creating a waste decomposition timeline, and writing persuasive speeches to encourage positive environmental change."
   },
   {
@@ -568,8 +568,8 @@
         "d": "To directly support the hands-on experiments with conductors and insulators, students can complete the Micro:bit [Electrical Conductors](https://microbit.org/teach/lessons/?selected=electrical-conductors) lesson. They will build and code a device to test different materials, providing a hands-on way to understand scientific principles of heat and electrical transfer."
       },
       {
-        "t": "Book Creator",
-        "d": "Students will use Book Creator to publish a rich, multi-modal digital biography of a scientist they have researched. They can combine text, images, and audio narration to detail the scientist's life and key discoveries. This tool can also be used to create a digital science journal, allowing students to document each stage of their science fair experiment?from hypothesis to conclusion?using photos, videos, and written observations to explain concepts like heat transfer."
+        "t": "Minecraft Education",
+        "d": "To make the abstract concept of molecules and states of matter more concrete, students can engage with the 'States of Matter' lesson. This world allows them to shrink down to the atomic level and observe how particles behave as solids, liquids, and gases, visually demonstrating scientific principles of energy transfer. To find this lesson, search States of Matter at education.minecraft.net/en-us/resources/explore-lessons"
       },
       {
         "t": "Sphero BOLT + Microsoft Excel",
@@ -607,8 +607,8 @@
         "d": "Connecting to the summative documentary project on an endangered animal, students can use the Micro:bit [Protecting Animals](https://microbit.org/teach/lessons/?selected=protecting-animals) lesson to design and code a prototype animal tracker. This project allows them to explore how technology can be used for conservation and to protect animals in changing environments."
       },
       {
-        "t": "Adobe Express",
-        "d": "Students will use Adobe Express to produce their documentary on an endangered animal. They can combine their research, images, and maps into a video format, recording voice-over narration to explain the animal's adaptations, habitat, and the conservation efforts needed for its survival. This allows them to practice digital storytelling skills to advocate for their chosen animal."
+        "t": "Minecraft Education",
+        "d": "To explore their endangered animal documentary project, students can use the 'Extinction! A Biodiversity Crisis' lesson. They become eco-detectives, exploring different biomes, documenting endangered species, and investigating the causes of extinction, directly connecting to the unit's focus on adaptation and sustainability. To find this lesson, search Extinction! A Biodiversity Crisis at education.minecraft.net/en-us/resources/explore-lessons"
       }
     ],
     "audited": true,
@@ -638,8 +638,8 @@
         "d": "For the 'Life on Mars' project, students can use Canva to design their promotional poster for a new sustainable colony. To make the planning collaborative, they can first use Microsoft Forms to create a simple survey for their group or class to vote on key aspects of the colony, such as its name, primary law, or most important UN Sustainable Goal to focus on. The data from Forms can then directly inform the content and design of their final poster in Canva."
       },
       {
-        "t": "Book Creator",
-        "d": "Students will design and publish a multi-page digital book to present their sustainable Mars colony. Each page can detail a different system, such as food production, shelter, and energy, incorporating researched text, drawings, and images. Earlier in the unit, students can use it to create a convict's diary for the First Fleet voyage or a biography of their chosen explorer."
+        "t": "Minecraft Education",
+        "d": "To explore multiple perspectives of the First Fleet's arrival, students can engage with 'The First Fleet' lesson. This world allows them to experience the journey and arrival from the viewpoints of both the colonists and the Indigenous peoples, providing an immersive way to understand this significant historical exploration. To find this lesson, search The First Fleet at education.minecraft.net/en-us/resources/explore-lessons"
       }
     ],
     "audited": true,
@@ -692,8 +692,8 @@
         "d": "For Lesson 10, where students create cybersafety posters for a Prep-3 audience, they can first design characters and key messages as images in Canva. Then, they can 'app smash' by importing these images into Puppet Pals to create short, engaging animated videos that explain a cybersafety rule, making the content highly accessible for their younger audience."
       },
       {
-        "t": "Microsoft Teams",
-        "d": "Students can use a dedicated Class Team as a collaborative hub to plan their 'Teach Meet' workshops. In private channels, groups can analyse their teacher technology survey data, co-author their lesson plans in Word, and collate resources before presenting their creative app workshops to younger students."
+        "t": "Microsoft OneNote",
+        "d": "During Lessons 12 and 13 (Workshop Planning), each student group can use a dedicated page in a shared OneNote Class Notebook. They can collaboratively plan their 'Teach Meet' session by creating checklists, writing scripts, embedding their example creations, and outlining their cybersafety guidance, allowing for direct teacher feedback within the planning document."
       },
       {
         "t": "Microsoft Sway",
@@ -715,27 +715,27 @@
     "lo": "Human systems; The interconnections that exist within and across systems; The influence of systems on communities",
     "s": [
       {
-        "t": "Microsoft PowerPoint",
-        "d": "Following the 'Systems around us' lesson, students photograph various systems around the school (e.g., canteen ordering, library borrowing). In PowerPoint, they will create an interactive map of the school's systems, using the photos they've taken. With shapes, lines, and hyperlinks, they will illustrate the parts, purpose, and interconnections of each system, demonstrating their understanding of how these elements work together."
-      },
-      {
-        "t": "Canva",
-        "d": "Students will design an infographic in Canva to visually represent and explain a complex system they are investigating. They can create a detailed flowchart for a human-made system like the school's recycling program, or a diagram illustrating a natural system such as a local food web. This allows them to synthesise their research and demonstrate their understanding of how interconnected systems function."
-      },
-      {
-        "t": "Tinkercad",
-        "d": "Connecting to the 'Exploring Recycling' lesson, students will design a 3D model of a simplified recycling plant in Tinkercad. They will build and label the key components of the system they have learned about, such as sorting machines, compactors, and balers, to demonstrate their spatial and systemic understanding of the recycling process from collection to reuse."
-      },
-      {
-        "t": "Book Creator",
-        "d": "As a summative task, students create a multi-page digital book in Book Creator titled 'Systems Connect Us'. Each page will focus on a different system studied (e.g., school library, water cycle, food web). Students will embed various media like photos of their hands-on experiments, video explanations, and text to build a comprehensive portfolio that showcases their understanding of the unit's central idea."
+        "t": "Microsoft PowerPoint and Digital Camera",
+        "d": "Following the 'Systems around us' lesson (Session 3), students use an iPad's digital camera to photograph various systems around the school (e.g., canteen ordering, library borrowing). They then 'App Smash' by importing these images into a PowerPoint slide, creating an interactive map of the school's systems. Using shapes, lines, and text boxes, they can illustrate the parts, purpose, and interconnections of each system, moving beyond a simple photo upload."
       },
       {
         "t": "Minecraft Education",
-        "d": "To understand natural systems, students will engage with [The Water Cycle](https://education.minecraft.net/en-us/lessons/the-water-cycle) lesson in Minecraft Education. They will explore a pre-built world to witness the processes of evaporation, condensation, and precipitation firsthand. By navigating this interactive environment, students will build a tangible understanding of how the components of this vital natural system are interconnected."
+        "d": "To model the water cycle as a system, students can explore the 'Water Cycle World'. They follow water as it moves through a large-scale environment, observing evaporation, condensation, and precipitation. This provides a dynamic, 3D model that illustrates how the parts of this natural system connect and function. To find this lesson, search Water Cycle World at education.minecraft.net/en-us/resources/explore-lessons"
+      },
+      {
+        "t": "Sphero BOLT and OneNote",
+        "d": "To digitally model 'The Web of Life with String' activity (Session 5), students can create a large floor map of a local ecosystem. They program a Sphero BOLT to represent the flow of energy, moving from one organism to the next. To simulate the 'collapse', they remove an organism and must debug their code to show the broken connections. Students can record videos of their coded pathways and document their thinking and code blocks in a shared Class OneNote."
+      },
+      {
+        "t": "Tinkercad and Canva",
+        "d": "Connecting to the 'Exploring Recycling' lesson, students design a 3D model of a simplified recycling plant in Tinkercad, ensuring they include all the key parts of the system they learned about. They can then take screenshots of their 3D model and import them into Canva to design an infographic. The infographic will label the parts of their recycling system and explain the process from collection to reuse, demonstrating their understanding of how the system functions."
+      },
+      {
+        "t": "Book Creator",
+        "d": "As a summative task, students create a multi-page digital book titled 'Systems Connect Us'. Each page can focus on a different system studied in the unit (e.g., school systems, water cycle, ecosystems, recycling). Students can 'App Smash' by embedding content they've created throughout the unit, such as their Stop Motion animations, photos of their hands-on experiments, and infographics, to create a comprehensive portfolio of their learning."
       }
     ],
-    "audited": false,
+    "audited": true,
     "plannerText": "This unit explores how human and natural systems are interconnected through the central idea 'Systems connect us'. Students investigate systems within their own school, such as the library and recycling programs, and conduct hands-on experiments to understand natural systems like the water cycle and local ecosystems' food webs. The inquiry also covers the function and importance of human-made systems like recycling and composting."
   },
   {
@@ -754,8 +754,8 @@
         "d": "To model the natural disasters being studied, students can use the Micro:bit [Volcano Animations](https://microbit.org/teach/lessons/?selected=volcano-animations) lesson. This project allows them to code a simple animation of a geological event, providing a direct connection to understanding and representing the powerful changes to the Earth."
       },
       {
-        "t": "Adobe Express",
-        "d": "Students can use Adobe Express to create compelling video news broadcasts about the causes and effects of bushfires, incorporating images, text, and voiceovers. For their summative task, they can design a dynamic webpage or a video presentation to share their research on a specific natural disaster, effectively communicating its impact and the community's response."
+        "t": "Minecraft Education",
+        "d": "For the 'Compare Two Earthquakes' research task, students can use the 'Earthquake Simulator' lesson. This world allows them to build structures and then simulate earthquakes of varying magnitudes to see the impact, providing a powerful, hands-on understanding of how these geological changes impact communities. To find this lesson, search Earthquake Simulator at education.minecraft.net/en-us/resources/explore-lessons"
       },
       {
         "t": "Google Earth",
@@ -781,8 +781,8 @@
         "d": "In Session 6, when learning about First Nation Peoples' Language, students can create a collaborative Woiwurrung visual dictionary. They can use Canva to design or source culturally appropriate images for each word, then 'App Smash' by importing these visuals into a shared PowerPoint. Each slide can feature the Woiwurrung word, the English translation, and the student-created image, which can then be shared via Teams as a class resource."
       },
       {
-        "t": "Adobe Express",
-        "d": "Students can create a dynamic webpage to serve as their digital portfolio for the unit. This allows them to document and share their learning journey by integrating their research on First Nations' connection to Country, retelling Dreaming stories with video and audio, and showcasing their personal totems. The webpage format enables them to embed visuals from the approved Google Maps to illustrate the significance of Country, effectively combining research, creation, and mapping in one place."
+        "t": "Google Earth and OneNote",
+        "d": "To deepen the research on Indigenous servicemen in Session 9, students can plot the journey of a veteran like Captain Reg Saunders using placemarks in Google Earth. They can add notes and images to the map, take screenshots, and embed these into a collaborative OneNote page. This 'App Smashed' page can also house their written timeline and research notes, creating a rich, multimedia biography."
       },
       {
         "t": "Book Creator & Brushes Redux",
@@ -896,8 +896,8 @@
         "d": "Students can create a comprehensive 'Design Thinking Journal' using Book Creator to document their entire entrepreneurial process. They can embed their Microsoft Forms survey questions, photos of their prototypes, their final Adobe Express advertisement, and written reflections for each stage, fulfilling the requirement to 'record thoughts/actions of each stage'."
       },
       {
-        "t": "Canva",
-        "d": "Students will use Canva to design the branding and marketing materials for their sustainable enterprise. In the ideation and prototyping phases, they will create digital mood boards, product sketches, and packaging mockups. To prepare for their market stall, students will design compelling advertisements, logos, and posters that communicate their product's unique sustainable features to their target audience in the junior school."
+        "t": "Minecraft Education",
+        "d": "To simulate the entrepreneurial process, students can engage with the 'My First Business' lesson. This world guides them through identifying a community need, sourcing materials, crafting a product, and marketing it to villagers, directly addressing the central idea of developing and selling products. To find this lesson, search My First Business at education.minecraft.net/en-us/resources/explore-lessons"
       }
     ],
     "audited": true,
@@ -911,27 +911,27 @@
     "lo": "The nature and impact of natural hazards (Causation); How design processes are used to generate and test solutions (Function); The ethical and practical considerations in human responses to natural challenges (Responsibility)",
     "s": [
       {
-        "t": "Tinkercad",
-        "d": "In the 'Earthquake-resistant structure design challenge', students will use Tinkercad to design a detailed 3D model of their prototype solution. This allows them to visualise and refine their innovative ideas, such as a community shelter or an early warning system, before moving to physical prototyping."
+        "t": "Tinkercad & Microsoft Excel",
+        "d": "In Week 5's 'Earthquake-resistant structure design challenge', students can design a 3D model of their prototype solution (e.g., a community shelter or early warning system) in Tinkercad. They can then 'app smash' by exporting an image of their design into Microsoft Excel to create a detailed budget, linking directly to the Financial Mathematics task (AC9M5N10) of estimating costs for their prototype."
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "During 'Prototyping Week', student teams will use Lego Spike Prime to build and code a programmable shake table. They can then test their earthquake-resistant structures, using the sensors to collect and analyse data on stability, providing a hands-on engineering experience."
+        "t": "Lego Spike Prime & iMovie",
+        "d": "For the 'Prototyping Week' challenge, student teams use Lego Spike Prime to build and code a programmable shake table. They will test their earthquake-resistant structures, using the sensors to collect data on stability. They can then film the tests in slow-motion and use iMovie to create a scientific video report, analysing their design's effectiveness and justifying their creative response to the challenge."
       },
       {
-        "t": "Minecraft Education",
-        "d": "To virtually test their solutions, students will use the [Earthquake-Resistant Building](https://education.minecraft.net/en-us/lessons/earthquake-resistant-building) lesson to construct and test their designs against simulated seismic events within a block-based world, allowing for rapid iteration and problem-solving."
+        "t": "Google Earth & Microsoft OneNote",
+        "d": "To support the 'Finding Out' and 'Sorting Out' phases (Weeks 3-4), students can use Google Earth to complete the mapping tasks, such as identifying fire risk zones or plotting the impact of the Lismore floods. They can capture screenshots of their maps and import them into a collaborative OneNote page to annotate with research notes, data, and analysis of how the hazard impacts communities."
       },
       {
         "t": "Canva",
-        "d": "For the 'School Showcase and Pitch Presentations' in Week 7, students will use Canva to design a professional and persuasive presentation. This supports the 'persuasive pitch structure' by allowing them to create compelling infographics and diagrams that effectively communicate their solution and justify their design decisions."
+        "d": "For the 'School Showcase and Pitch Presentations' in Week 7, students can use Canva to design a professional and persuasive presentation. This directly supports the learning experience of using a 'persuasive pitch structure' by allowing them to create compelling infographics, diagrams of their design process, and visual aids to effectively communicate their solution's purpose and justify their design decisions to an audience."
       },
       {
-        "t": "Google Earth",
-        "d": "In the initial research phase, students will use Google Earth to investigate the real-world impact of natural hazards. They can map tectonic plate boundaries, track historical bushfire paths, or visualise flood-prone areas, enabling them to use authentic spatial data to inform their design solutions."
+        "t": "Minecraft Education",
+        "d": "To respond creatively to challenges from natural hazards, students can complete the 'Radical Rescue' lesson. They must design and code a solution to help people and animals after a disaster, applying the design thinking process in an immersive, problem-based environment that directly links to the central idea. To find this lesson, search Radical Rescue at education.minecraft.net/en-us/resources/explore-lessons"
       }
     ],
-    "audited": false,
+    "audited": true,
     "plannerText": "This unit guides students through the design thinking process to create solutions for natural hazards like bushfires, floods, and earthquakes. Students will research the causes and impacts of these events, use mapping and data analysis to understand risks, and then design, build, and test prototypes such as earthquake-resistant structures or community warning systems. The inquiry culminates in students creating persuasive pitches to present their innovative solutions to the community."
   },
   {
@@ -973,16 +973,16 @@
     "lo": "The impact of colonisation; Colonisation stories; The effects of colonisation ? past, present and future",
     "s": [
       {
-        "t": "Canva",
-        "d": "Students will use Canva to create a compelling infographic or collaborative digital map. They can plot the locations of colonial massacres, integrating historical information and First Nations' perspectives from the 'Unsettled' exhibition. This allows them to visually synthesise their understanding of concepts like terra nullius and communicate the lasting impact of colonisation on shaping Australian society."
+        "t": "Google Earth & Microsoft OneNote",
+        "d": "Students will use the 'Colonial Frontier Massacres' map resource mentioned in Lesson 5 to create an interactive timeline tour in Google Earth. They can plot key locations, embed primary source information and images researched via library databases, and record short narrations for each point, explaining the past and present effects of these events. Their research notes and tour script can be drafted and organised in a collaborative OneNote Class Notebook page."
       },
       {
         "t": "Adobe Express",
         "d": "To explore the different perspectives on historical events like Cook's voyage (Lesson 3), students create a short 'Breaking News' video report from 1770 using Adobe Express. They can adopt different personas (e.g., a sailor on the Endeavour, a member of the Yuin nation), combining text, images of primary sources, and their own voice-over narration to report on the 'discovery' or 'arrival' of Cook's fleet, directly addressing the unit's focus on contrasting viewpoints of colonisation."
       },
       {
-        "t": "Adobe Express",
-        "d": "Students will use Adobe Express to create compelling digital narratives, such as short videos or web pages, that communicate their understanding of First Nations' perspectives on Australian history. They can synthesize research from the 'Unsettled' exhibition to explain the impact of terra nullius or create an animated timeline mapping the history of colonisation, providing a powerful platform to share their learning from the unit."
+        "t": "Minecraft Education",
+        "d": "To explore the different perspectives on historical events like Cook's voyage, students can engage with 'The First Fleet' lesson. This immersive world allows them to experience the journey and arrival from the viewpoints of both the colonists and the First Nations peoples, directly addressing the unit's focus on the contrasting experiences of colonisation. To find this lesson, search The First Fleet at education.minecraft.net/en-us/resources/explore-lessons"
       },
       {
         "t": "Microsoft Sway",
@@ -1035,8 +1035,8 @@
     "lo": "Lines of inquiry to be confirmed once planner is uploaded",
     "s": [
       {
-        "t": "Microsoft Teams",
-        "d": "Establish a private Teams channel for each PYP Exhibition group. This creates a central hub for their entire inquiry journey, replacing OneNote as their collaborative digital workspace. Students can use the 'Posts' tab for daily updates and communication with their mentors, and the 'Files' tab to co-author research in Word and manage resources for their media campaign, effectively creating a living portfolio of their process."
+        "t": "OneNote",
+        "d": "For the initial 'Tuning In' and 'Finding Out' stages (Lessons 1-7), student groups can use a dedicated section in their Teams' OneNote Class Notebook as their central inquiry hub. They can embed a collaborative Padlet board directly onto a OneNote page to brainstorm their passions and questions, then use surrounding pages to collate research, synthesise information, and collaboratively plan their media campaign (Lesson 13)."
       },
       {
         "t": "Canva",
@@ -1105,8 +1105,8 @@
         "d": "To support the inquiry into renewable energy and data analysis (Activities 7 & 8), students can complete the Micro:bit [Energy Awareness](https://microbit.org/teach/lessons/?selected=energy-awareness) lesson. They will build a device to measure energy consumption, allowing them to collect and analyse data about how energy is used, directly addressing the central idea."
       },
       {
-        "t": "Tinkercad",
-        "d": "Students can use the 'Circuits' feature to design, build, and simulate virtual electrical circuits, directly exploring energy conversion from a source to outputs like lights and motors. They can also use the '3D Designs' space to model components for their Rube Goldberg machines or design a virtual version of William Kamkwamba's windmill, applying their understanding of energy transformation in a digital environment."
+        "t": "Minecraft Education",
+        "d": "To synthesize their learning on renewable energy, students can explore the 'Renewable Energy' world. This lesson challenges them to investigate different sources like solar and wind, and then design a sustainable power system for a community, directly linking their understanding of energy conversion to supporting human progress. To find this lesson, search Renewable Energy at education.minecraft.net/en-us/resources/explore-lessons"
       },
       {
         "t": "Stop Motion Studio & Adobe Express",
@@ -1194,8 +1194,8 @@
         "d": "To align with the 'You, At Your Best' storytelling activity, students can create a digital narrative. They can design custom graphics and scenes in PowerPoint, export them as images, and then import them into Book Creator to add text, voice narration, and video reflections, creating a rich multimodal story about a key moment that shaped their sense of self."
       },
       {
-        "t": "Adobe Express",
-        "d": "Students can use Adobe Express's animation and design tools to bring their 'Approaches to Learning' superhero to life. They can create a short, animated video telling the origin story of their superhero, showcasing their personal strengths and how they overcome challenges. This creative process allows students to deeply explore and express their identity, aligning perfectly with the 'Who We Are' theme."
+        "t": "Stop Motion Studio and Microsoft OneNote",
+        "d": "Connecting to the 'Superpower Showcase' activity, students can bring their 'Learning Superhero' to life. They can use Stop Motion Studio with LEGO or clay to animate a short film showing their hero overcoming a challenge. The process can be documented with a storyboard in OneNote, and the final video can be embedded in their OneNote portfolio with a written reflection on their chosen Approach to Learning."
       },
       {
         "t": "GarageBand and Microsoft Sway",
@@ -1890,8 +1890,8 @@
         "d": "Connecting to the Visual Art link and the inquiry into First Nations' cultural use of minerals, students use Canva to design an informative digital poster. After researching how ochre is used for ceremony and art, they can source appropriate images and use Canva's design tools to explain the cultural significance of this Earth resource, demonstrating their understanding of how people value and use minerals."
       },
       {
-        "t": "Book Creator",
-        "d": "Students will use Book Creator to publish a digital field guide based on their 'Geology Quest'. They can dedicate pages to different rocks, soils, and minerals they have investigated, incorporating photos, drawings, and text to describe their properties and everyday uses. Students can also use the audio recording feature to narrate their research on First Nations Australians' knowledge of Earth's resources, creating a comprehensive digital presentation."
+        "t": "Minecraft Education",
+        "d": "To demonstrate their understanding of how people use Earth's resources, students can engage with the 'Mining and Metals' lesson. This world allows them to identify and mine different ores, and then learn how they are processed and used to create tools and materials, directly linking to the central idea. To find this lesson, search Mining and Metals at education.minecraft.net/en-us/resources/explore-lessons"
       },
       {
         "t": "Google Earth",
@@ -2037,8 +2037,8 @@
     "lo": "How material properties determine their use; Material solutions for a sustainable future; How research solves problems in the natural world",
     "s": [
       {
-        "t": "Canva",
-        "d": "Students will create a multi-page digital science journal in Canva to document their investigations into material properties, embedding photos and videos of their experiments. They will then use Canva's design tools to create a detailed blueprint for their animal enrichment toy, labelling sustainable materials and explaining how their design choices meet the animal's needs."
+        "t": "Tinkercad and Microsoft OneNote",
+        "d": "To support the 'Taking Action' task of designing an animal enrichment toy, students first create a 3D digital prototype in Tinkercad. They can then export images of their design into a dedicated page in their OneNote Class Notebook. On this page, they will annotate their design, justifying their material choices based on the science experiments and explaining how the toy's features address the specific behavioural needs of their chosen animal, ensuring a strong connection between research and creation."
       },
       {
         "t": "Adobe Express",
@@ -2161,8 +2161,8 @@
     "lo": "How design thinking creates in various ways; Design thinking meets community needs; Effective ways to engage an audience",
     "s": [
       {
-        "t": "Canva",
-        "d": "Students will use Canva's collaborative design features to support their design thinking process. Groups can create visual assets such as stakeholder empathy maps, 2D blueprints of their proposed solution for a natural disaster scenario, and infographics to present their data. This work culminates in designing and delivering a professional and persuasive pitch presentation to communicate their final idea."
+        "t": "Google Earth & Microsoft OneNote",
+        "d": "During the 'Finding Out' phase (Weeks 3-4), when students are researching bushfire and flood impacts, they can use Google Earth's historical imagery and measurement tools to analyse affected areas like Lismore. Students can capture annotated screenshots of their findings and embed them into a collaborative Microsoft OneNote notebook, creating a shared research journal where they add text analysis, data from infographics, and audio recordings explaining their discoveries about hazard impacts."
       },
       {
         "t": "Canva",
@@ -2245,8 +2245,8 @@
         "d": "For the 'Taking Action' phase, students designing a school sustainability initiative can design a 3D prototype of their idea in Tinkercad. This could be a custom-designed water-saving nozzle for a tap or a label for a new recycling bin. They can then use the school's 3D printers to create a physical model, turning their idea into a tangible object to support their final pitch."
       },
       {
-        "t": "Microsoft Teams",
-        "d": "Students will collaborate within a dedicated Team channel to research, plan, and design their environmental initiative advertisement. They will use their Team to share findings on local sustainability, collate notes from texts like 'The Lorax', and upload photos and videos of their local environment taken on school devices. This central hub will support their entire project, from initial investigation to creating the final pitch for their school-based initiative."
+        "t": "Digital Cameras & Microsoft OneNote",
+        "d": "To enhance the 'Sorting Out' local environment study (Lessons 7-8), students can use the digital cameras on their iPads during the nature walk to photograph local flora and fauna. They can then create a collaborative digital field guide in a shared OneNote Class Notebook, inserting their photos, annotating them with identifications, and adding research notes from the council wildlife guide."
       },
       {
         "t": "Padlet & Microsoft PowerPoint",
@@ -2303,8 +2303,8 @@
         "d": "Connecting to the Visual Arts component, students can use the Brushes Redux app on iPads to create the digital self-portraits mentioned in the planner, focusing on a personal style that reflects who they are. They can then insert their completed artwork into a PowerPoint presentation. On the slides, they can annotate their work, explaining how their artistic choices represent their identity and their understanding of personal growth and change."
       },
       {
-        "t": "Adobe Express",
-        "d": "Students will use Adobe Express's video animation feature to create short social stories, exploring scenarios from the novel 'Wonder' and demonstrating strategies for managing relationships and cyber safety. They will also design a multi-page \"All About Me\" webpage to serve as a digital self-portrait and wellbeing journal, combining text, images, and video to reflect on personal identity and the changes associated with puberty."
+        "t": "Puppet Pals & OneNote",
+        "d": "To address the Line of Inquiry on managing digital situations, students can first use a collaborative OneNote page to storyboard a cyber safety scenario. They will then use Puppet Pals to create a short animated video that acts out the scenario and demonstrates positive strategies for managing online relationships and conflict, reinforcing the unit's focus on applying knowledge and strategies to manage change."
       },
       {
         "t": "Adobe Express Podcasting",
@@ -2367,8 +2367,8 @@
     "lo": "The scientific method; How experiments lead to new understandings; The relationship between planets and the Sun; Energy transfer and transformation in circuits",
     "s": [
       {
-        "t": "Canva",
-        "d": "Students will use Canva to create professional scientific posters and digital presentations for the end-of-unit science fair. They can design clear diagrams of their electrical circuits, create infographics to explain the results of their chemical change experiments, and develop models to illustrate planetary movement. Canva will be the primary tool for communicating their scientific findings, from documenting their experimental process to presenting their final conclusions."
+        "t": "Lego Spike Prime & OneNote",
+        "d": "To model the transfer of energy in electrical circuits, students will use the Lego Spike Prime kit to build and test various circuits. This hands-on experimentation allows them to physically manipulate components and use the hub to measure voltage. They can then document their findings by embedding photos and circuit diagrams into a OneNote science journal, explaining the scientific principles they observed."
       },
       {
         "t": "Stop Motion Studio + Microsoft PowerPoint",
@@ -2406,8 +2406,8 @@
         "d": "For Part 2 of the summative assessment, where students create a multimodal text to take action, they can write and record a persuasive slam poem or jingle in GarageBand. They can use loops and vocal effects to enhance their message about sustainable alternatives. This audio file can then be embedded into a visually compelling PowerPoint slide, creating a powerful, integrated audio-visual advertisement that calls for responsible consumer action."
       },
       {
-        "t": "Adobe Express",
-        "d": "Students will use Adobe Express to create their summative multimodal text. They can design compelling video advertisements or animated explainers that critique consumerism and promote their proposed sustainable alternatives. This tool allows them to effectively synthesise their research on a product's lifecycle and the impact of marketing, presenting their findings in a persuasive, professional format that directly addresses the unit's core themes."
+        "t": "Lego Spike Prime & Microsoft OneNote",
+        "d": "To visualise the complex production cycle from 'The Story of Stuff', students build a functional, multi-stage model of their product's journey using Lego Spike Prime. They can use motors to represent factory processes and sensors to trigger the next stage, from extraction to disposal. Students can then insert videos of their model into OneNote, annotating the consequences at each stage to create a detailed digital learning journal."
       },
       {
         "t": "Canva & Microsoft Teams",
@@ -2460,8 +2460,8 @@
     "lo": "Lines of inquiry to be confirmed once planner is uploaded",
     "s": [
       {
-        "t": "Canva",
-        "d": "Students will use Canva to design and create digital artifacts that demonstrate their understanding of wellbeing. They can produce visually engaging personal profiles to explore their mindset, create infographics to present their research on brain physiology, and design a digital 'artifact space' poster showcasing their personal wellbeing strategies."
+        "t": "Lego Spike Prime & OneNote",
+        "d": "To deepen their understanding of the brain's functions (LOI 1), students can use Lego Spike Prime to build an interactive model. Using sensors as inputs (e.g., sound, touch), they can program the model to activate motors or lights in different 'lobes' of the brain, demonstrating cause-and-effect and how the brain processes stimuli. They can document their build and its programming logic in their OneNote journal."
       },
       {
         "t": "Canva & Book Creator",
@@ -3163,26 +3163,26 @@
     "s": [
       {
         "t": "Book Creator",
-        "d": "To publish their information report on a chosen body system, students can create a multi-page digital book. They can combine text, images, and use the pen tool to create and label their own diagrams directly in the app. Students can also record audio narrations on each page to explain the function of the body system, creating a comprehensive and accessible final product."
+        "d": "To publish the information report on a chosen body system, students can create a multi-page digital book. App smash this by having students first use the iPad app Sketchbook to create detailed, hand-drawn diagrams of their system. They can then export these images and import them into their Book Creator pages to label and explain, directly addressing the planner's task to 'add hand drawn diagrams' and 'bind the reports into a booklet'."
       },
       {
-        "t": "Microsoft Word",
-        "d": "To support the goal-setting activity, students can use a scaffolded Word document template to log their data from the fitness tests. They can enter their scores into a simple table at the start and end of the unit to track progress and use a text box to write a reflection on how their personal choices impacted their fitness results."
+        "t": "Microsoft Excel",
+        "d": "To support the goal-setting activity, use a scaffolded Excel template for students to log their data from the fitness tests. They can enter their scores at the start and end of the unit to track progress. App smash by taking a screenshot of their data table or a simple chart and inserting it into Seesaw, where they can use the record tool to verbally reflect on how their choices impacted their fitness results."
       },
       {
         "t": "Canva",
-        "d": "To synthesize their research on a chosen body system, students can create a visually engaging infographic. They can use templates, icons, and text boxes to present key facts, label parts of the system, and explain how healthy choices (like exercise or good nutrition) impact that system's wellbeing. This serves as a creative alternative to a traditional report."
+        "d": "To synthesize their research on a chosen body system, students can create a visually engaging infographic using Canva. They can use templates, icons, and text boxes to present key facts, label parts of the system, and explain how healthy choices (like exercise or good nutrition) impact that system's wellbeing. This serves as a creative alternative to a traditional report."
       },
       {
         "t": "Micro:bit",
-        "d": "To support the goal-setting and fitness testing activities, students can use the Micro:bit to build their own step-counter following the [Getting Active](https://microbit.org/teach/lessons/getting-active-en/) project. This allows them to collect personal data on their physical activity, directly connecting the choices they make to a measurable impact on their health and wellbeing."
+        "d": "To support the goal-setting and fitness testing activities, students can use the Micro:bit [Getting Active](https://microbit.org/teach/lessons/?selected=getting-active) lesson to build their own step-counter. This allows them to collect personal data on their physical activity, directly connecting the choices they make to a measurable impact on their health and wellbeing."
       },
       {
-        "t": "Book Creator",
-        "d": "Students will author a multi-page digital information report on a chosen human body system. They can integrate text, images, and audio narration to explain the system's function, its organs, and how personal health choices impact its wellbeing, directly addressing the unit's research and reporting goals."
+        "t": "Microsoft OneNote",
+        "d": "As a digital research journal, students can use OneNote to collate their findings for their 'Investigate Body Systems' task. They can create a page for their chosen system to gather text, images, and links from approved sources like Epic or Clickview. This helps them organise their information from multiple sources before beginning their Book Creator report, supporting the research and notetaking skills mentioned in the planner."
       }
     ],
-    "audited": false,
+    "audited": true,
     "plannerText": "This unit explores how personal choices impact health and wellbeing, with a focus on the human body's systems and physical fitness. Students research and produce information reports on a chosen body system, and they also set and track personal fitness goals by comparing test results over time."
   },
   {
@@ -3255,8 +3255,8 @@
     "lo": "Different types of bridges and their design features; How materials and engineering principles contribute to structural strength and stability; Testing and refining designs through experimentation",
     "s": [
       {
-        "t": "Canva",
-        "d": "Students will create a multi-page 'Bridge Engineer's Design Journal.' They can research and collate images and facts about famous beam, truss, and suspension bridges from around the world. They will then document their own design process, including initial sketches, photos of their construction, and a final report on their bridge's performance during weight testing, including an analysis of why it eventually failed."
+        "t": "Google Earth and Microsoft OneNote",
+        "d": "For the 'Find Out' research task, students use Google Earth to take a virtual tour of famous bridges around the world (e.g., Sydney Harbour Bridge, Golden Gate Bridge). They can capture screenshots and insert them into a OneNote Class Notebook page, annotating the images to identify key features, materials, and the type of bridge (beam, truss, suspension), directly addressing the unit's focus on different bridge designs."
       },
       {
         "t": "Tinkercad and Microsoft PowerPoint",
@@ -3271,8 +3271,8 @@
         "d": "Connecting to the 'Tacoma Bridge Collapse' activity, students create a multimedia digital book in Book Creator to explain why some structures fail. They can combine text, images, and diagrams to explain the engineering flaws, embed a video of the collapse from Clickview, and record their own audio narration to present their findings on what makes a bridge unstable."
       },
       {
-        "t": "Tinkercad",
-        "d": "Students can use Tinkercad's 3D design space to digitally construct and prototype their bridge designs. They can apply their research on beam, truss, and suspension structures to create detailed models, testing ideas for stability and strength virtually before building their physical versions."
+        "t": "Minecraft Education",
+        "d": "To apply their learning from the 'Building Bridge Challenge', students can use the 'Bridge Builder' world. This lesson challenges them to construct a bridge that is strong, stable, and fit for purpose, allowing them to test different engineering designs and materials in a physics-enabled digital environment. To find this lesson, search Bridge Builder at education.minecraft.net/en-us/resources/explore-lessons"
       }
     ],
     "audited": true,
@@ -3364,8 +3364,8 @@
         "d": "For their final project showcasing an effective leader, students build an interactive profile using Microsoft Sway. They can collate their research, images, and video links into a dynamic Sway presentation. To make it interactive, they can 'app smash' by creating a short quiz about their leader in Microsoft Forms and embedding it directly into the Sway for their classmates to complete."
       },
       {
-        "t": "Canva",
-        "d": "Students will use Canva to research an inspiring leader from the 'Little People, Big Dreams' series and design a compelling digital presentation or poster that showcases their leadership qualities and positive impact. They can also leverage Canva's video editor to create and produce their personal video pitches for school leadership positions, combining footage, text, and graphics to effectively communicate their suitability for the role."
+        "t": "ScratchJR + OneNote",
+        "d": "To digitise the 'role-play scenarios' assessment, students use ScratchJR to code a short animation depicting a situation that requires leadership. Students will program characters to demonstrate a specific leadership skill (e.g., active listening, encouraging others) to solve a problem, directly illustrating the central idea. They can then screen record their animation and embed it into a OneNote page with a written reflection on the leadership skill they chose to portray."
       }
     ],
     "audited": true,
@@ -3445,8 +3445,8 @@
         "d": "For the 'Changed Over Time' research task, students can create an interactive timeline. They can design custom graphics in PowerPoint showing the evolution of their chosen invention, save them as images, and import these into a Book Creator e-book. Students can then add text and audio narration to explain the societal needs that drove each change, effectively 'app smashing' M365 with a creation tool to produce a rich, multimedia historical analysis."
       },
       {
-        "t": "Canva",
-        "d": "Students will use Canva to document their entire design thinking journey. They can create infographics to present their research on a chosen Sustainable Development Goal, design digital blueprints and mockups of their prototype invention, and produce a professional-quality presentation to pitch their innovative idea at the 'Future Thinkers' Forum'."
+        "t": "Tinkercad & OneNote",
+        "d": "During the 'Prototype' phase of the Design Process, students can design a 3D model of their SDG-focused invention using Tinkercad. This allows them to visualize their concept from all angles. They can then export images or a GIF of their 3D model and embed it directly into their group's collaborative OneNote project page, creating a comprehensive digital design journal that documents their entire process from empathy to final design."
       },
       {
         "t": "Lego Spike Prime & iMovie",
@@ -3472,8 +3472,8 @@
     "lo": "How community values shape the management of the natural environment; The need for conservation and environmental stewardship; Ways in which First Nations land management practices can drive positive environmental change",
     "s": [
       {
-        "t": "Microsoft Teams",
-        "d": "Students will use a dedicated Team as a central hub for the 'Sharing the Planet' unit. Within the integrated Class Notebook, they will collaboratively collate research on world biomes, habitats, and Indigenous land management perspectives. Channels can be created for groups to share findings from their virtual explorations using Google Earth, plan their native garden bed designs, and work together on their final advocacy posters."
+        "t": "Google Earth + Microsoft OneNote",
+        "d": "To support the 'Find Out' and 'Sort Out' phases, students use Google Earth to explore different world biomes and locate examples of Indigenous land management in Australia. They can take screenshots of key locations and import them into a shared OneNote notebook. In OneNote, they can annotate the images to explain the features of each environment and summarise their research on different stewardship perspectives, creating a collaborative digital research journal."
       },
       {
         "t": "Canva",
@@ -3550,8 +3550,8 @@
         "d": "As a digital extension of the 't-shirt about me' Tune In activity, create a class Padlet wall. Students can post text, images, or drawings that represent their personal values and how they connect to the IB Learner Profile. This activity directly supports the unit's focus on identity and making connections between personal beliefs and community values, creating a visual representation of the diverse class community."
       },
       {
-        "t": "Canva",
-        "d": "Students will use Canva's design tools to create their personal 't-shirt about me', visually representing their identity and values as explored in the Grow Your Mind program. They can also design impactful posters or infographics illustrating their 'golden rule' for cybersafety, promoting positive and safe online relationships. These creations can be compiled into a multi-page Canva design, serving as a digital portfolio of their learning."
+        "t": "Stop Motion Studio & Microsoft OneNote",
+        "d": "To demonstrate their understanding of concepts from 'Grow Your Mind' and 'UR Strong', students can work in groups to create a stop-motion animation. They can first use a shared OneNote page to collaboratively storyboard and script a short scene depicting a friendship problem and its resolution. Then, using LEGO or other materials, they can film their animation in Stop Motion Studio, bringing abstract social-emotional strategies to life."
       }
     ],
     "audited": true,
@@ -3732,8 +3732,8 @@
         "d": "To extend the 'Portrait Drawing Task', students can create a digital 'All About Me' book using Book Creator. They can use the iPad's Digital Camera to import their physical drawing and then add multimedia elements on other pages, such as video clips explaining their hobbies, audio recordings reflecting on their strengths, and text detailing how they embody their chosen IB Learner Profiles."
       },
       {
-        "t": "Microsoft Teams",
-        "d": "Microsoft Teams will serve as the central hub for this unit. Students can use the Posts tab for collaborative discussions on resilience and inclusion, sharing their personal artworks based on the ROAR poster and IB Learner Profiles. The integrated Class Notebook provides each student with a private digital journal to document their self-understanding and set personal wellbeing and executive functioning goals, effectively replacing both Padlet and OneNote within a single, secure platform."
+        "t": "Padlet and OneNote",
+        "d": "For the ongoing Cyber Safety lessons, the teacher can set up a Padlet board with different online scenarios. Students can anonymously post safe and respectful strategies for each situation. Afterwards, students can screenshot the collaborative Padlet and insert it into their personal OneNote journal, where they can annotate and write a private reflection on which strategies they feel most confident using."
       },
       {
         "t": "Adobe Express",
