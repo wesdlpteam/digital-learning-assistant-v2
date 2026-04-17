@@ -2467,13 +2467,31 @@ const KNOWN_PLATFORMS = [
 function detectBulkPlatform(){
   const url = document.getElementById('bulk-ai-url')?.value.trim();
   const badge = document.getElementById('bulk-ai-platform-badge');
+  const instructionEl = document.getElementById('bulk-ai-instruction');
   if(!badge) return;
   const known = url ? KNOWN_PLATFORMS.find(p=>p.match.test(url)) : null;
   if(known){
     badge.textContent = '✓ ' + known.name + ' detected';
     badge.style.display = 'flex';
+    // Auto-fill instruction if empty
+    if(instructionEl && !instructionEl.value.trim()){
+      instructionEl.value = `Cross-reference the ${known.name} lesson library against all planners and propose changes where there is a strong, specific connection to a named lesson.`;
+    }
+  } else if(url && url.startsWith('http')) {
+    badge.textContent = '🔗 Unknown site — will use AI knowledge';
+    badge.style.display = 'flex';
+    badge.style.color = 'var(--dim)';
+    badge.style.borderColor = 'var(--border)';
+    badge.style.background = 'var(--card2)';
+    // Auto-fill generic lesson library instruction if empty
+    if(instructionEl && !instructionEl.value.trim()){
+      instructionEl.value = `Cross-reference the lesson library at ${url} against all planners and propose changes where there is a strong, specific connection to a named lesson.`;
+    }
   } else {
     badge.style.display = 'none';
+    badge.style.color = 'var(--lime)';
+    badge.style.borderColor = 'var(--lime)';
+    badge.style.background = '#0a1a0a';
   }
 }
 
@@ -2528,6 +2546,8 @@ LESSON LIBRARY — ${platform.name.toUpperCase()}:
 ${platform.context}
 
 STRICT MATCHING RULE: When a lesson library URL is provided, you MUST only propose changes where a SPECIFIC named lesson from that library clearly and directly connects to the unit's central idea or activities. Do not propose a change just because the tool is generally useful. Each proposal must name the specific lesson and explain the direct connection. If fewer than 10 entries have a genuine specific match, that is fine — quality over quantity.
+
+QUANTITY CAP: Propose a MAXIMUM of 20 changes total. If you find more than 20 genuine matches, select only the 20 strongest connections. It is far better to propose 10 excellent matches than 40 mediocre ones.
 ` : '';
 
   const completeEntries = completeData;
