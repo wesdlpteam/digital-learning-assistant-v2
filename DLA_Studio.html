@@ -1685,6 +1685,10 @@ function showChangesPopup(changes){
   const footer=document.createElement('div');
   footer.style.cssText='display:flex;gap:10px;flex-shrink:0;padding-top:12px;border-top:1px solid var(--border);flex-wrap:wrap';
   footer.innerHTML=`
+    <button onclick="(function(){window._popupStates.forEach((_,i)=>setChangeState(i,'approved'));})()"
+      style="padding:14px 20px;background:transparent;color:var(--lime);border:1.5px solid var(--lime);border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap">
+      ✓ Approve All
+    </button>
     <button id="popup-apply-btn" disabled onclick="applyChangesFromPopup()"
       style="flex:1;min-width:180px;padding:14px;background:var(--lime);color:#111;border:none;border-radius:10px;font-weight:900;font-size:15px;cursor:pointer;opacity:0.4">
       ✓ Apply 0 approved changes
@@ -2376,7 +2380,7 @@ const KNOWN_PLATFORMS = [
   { match: /canva\.com\/edu/i, name: 'Canva for Education',
     context: 'You know the Canva for Education lesson templates and resources.' },
   { match: /microbit\.org/i, name: 'Micro:bit',
-    context: 'You know the micro:bit lesson library at microbit.org/teach/lessons. The lessons for ages 7-11 include: Micro:bit Pets, Plant Communicator, Step Counter, Voting Machine, Reaction Time, Flashing Animations, Compass, Soil Moisture Sensor, Stopwatch, Museum Guide, Tell me a Secret, Music Machine, Party Tricks, Make a Sound Effect, Mood Radio, and Coin Flipper. When cross-referencing, ONLY propose a change if one of these specific 16 lessons clearly connects to the unit. Do not suggest Micro:bit broadly — only when a specific named lesson fits. For every suggestion, include a direct link: [Lesson Title](https://microbit.org/teach/lessons/LESSON-SLUG/).' },
+    context: 'You know the micro:bit lesson library. The lessons for ages 7-11 include: Barefoot Litter Hunt, Barefoot Wildlife Animations, Being Active, Computing Fundamentals, CreateAI Taster Lessons, Cryptography, Cyber Security, Data Handling, Digital Flashcards, Electrical Conductors, Energy Awareness, First Lessons with MakeCode, Getting Active, Health Tech, Healthy Oceans, Helping Plants Grow, Musical Micro:bit, Nature Art, Night Safety, Protecting Animals, Sea Creatures, Sensory Classroom, and Volcano Animations. ONLY propose a change if one of these specific lessons clearly connects to the unit. Do not suggest Micro:bit broadly. For every suggestion, include a direct link: [Lesson Title](https://microbit.org/teach/lessons/?selected=lesson-slug) e.g. [Helping Plants Grow](https://microbit.org/teach/lessons/?selected=helping-plants-grow). Use the exact slug format: lowercase with hyphens.' },
 ];
 
 function detectBulkPlatform(){
