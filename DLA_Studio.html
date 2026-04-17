@@ -467,7 +467,8 @@ const CLIENT_ID = '334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleuser
 const _k=['AIzaSy','C2aK2cd9BBLNgPe','rQTSKxgNVrxXI7iC_M'];
 const BAKED_API_KEY=_k.join(''); 
 const ANALYTICS_SHEET_ID = '1R4P4FJlc8SyRFlVWoM0HpHmfCNMNVOpI8cuEILFxBNY';
-const GEMINI_MODEL = 'gemini-2.5-pro';      
+const GEMINI_MODEL = 'gemini-2.5-pro';
+const GEMINI_FAST_MODEL = 'gemini-2.5-flash'; // for feedback & regen — faster, no quality loss      
 const YR = ["Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"];
 const CAMPUS_COL = { Elsternwick:'#818cf8', 'Glen Waverley':'#34d399', 'St Kilda':'#fb923c', 'St Kilda Road':'#fb923c' };
 
@@ -775,10 +776,11 @@ async function callGemini(contents, systemPrompt, model, _attempt=0){
   const key=getKey();
   if(!key) throw new Error('No API key — click ⚙ key to set it');
   
-  const isChat = false;
+  // Disable thinking for Flash (unnecessary latency) — Pro keeps default thinking
+  const isFlash = (model||GEMINI_MODEL).includes('flash');
   const body={ contents, generationConfig:{
     maxOutputTokens: 8192,
-    ...(isChat ? { thinkingConfig:{ thinkingBudget:0 } } : {})
+    ...(isFlash ? { thinkingConfig:{ thinkingBudget:0 } } : {})
   }};
   if(systemPrompt) body.systemInstruction={ parts:[{text:systemPrompt}] };
   const m = model || GEMINI_MODEL;
@@ -798,6 +800,10 @@ async function callGemini(contents, systemPrompt, model, _attempt=0){
       return callGemini(contents, systemPrompt, model, _attempt+1);
     }
     throw new Error(msg);
+  }
+  if(!d.candidates || !d.candidates[0] || !d.candidates[0].content){
+    console.error('Unexpected Gemini response:', JSON.stringify(d).slice(0,300));
+    throw new Error('Empty or blocked response from Gemini — try rephrasing your instruction');
   }
   return d.candidates[0].content.parts[0].text;
 }
@@ -1077,7 +1083,7 @@ Generate ONE fresh suggestion. Connect specifically to this unit's content — n
 Return ONLY JSON: {"t":"Tool Name","d":"Specific description for this unit."}`;
 
   try{
-    const raw = await callGemini([{role:'user',parts:[{text:prompt}]}], null, GEMINI_MODEL);
+    const raw = await callGemini([{role:'user',parts:[{text:prompt}]}], null, GEMINI_FAST_MODEL);
     const clean = raw.replace(/```json|```/g,'').trim();
     const si = clean.indexOf('{'), ei = clean.lastIndexOf('}');
     if(si===-1||ei===-1) throw new Error('No JSON');
@@ -1167,7 +1173,7 @@ Return ONLY a JSON array of exactly 3 different suggestions applying the instruc
 [{"t":"Tool Name","d":"Specific description."},{"t":"Tool Name","d":"Specific description."},{"t":"Tool Name","d":"Specific description."}]`;
 
   try{
-    const raw = await callGemini([{role:'user',parts:[{text:prompt}]}], null, GEMINI_MODEL);
+    const raw = await callGemini([{role:'user',parts:[{text:prompt}]}], null, GEMINI_FAST_MODEL);
     const clean = raw.replace(/```json|```/g,'').trim();
     const si = clean.indexOf('['), ei = clean.lastIndexOf(']');
     if(si===-1||ei===-1) throw new Error('No suggestions returned');
