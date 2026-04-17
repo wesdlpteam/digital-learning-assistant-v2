@@ -2433,7 +2433,7 @@ APPROVED TOOLS (Wesley College — Microsoft school):
 - Microsoft M365 (Teams for Year 4+ ONLY), Beebots, Sphero, Lego Spike, Micro:bits, CoDrone, Makey Makey
 - 3D Printers, ClassVR, Merge Cubes, Green Screen, Podcast Equipment, iPads
 - Seesaw, Canva, Book Creator, Padlet
-- GarageBand, ScratchJR, Stop Motion Studio, ChatterPix Kids, iMovie, Puppet Pals, Adobe Express
+- GarageBand, ScratchJR, Stop Motion Studio, ChatterPix Kids, iMovie, Puppet Pals, Adobe Express (sub-types: Adobe Express Animate from Audio, Adobe Express Podcasting, Adobe Express Video, Adobe Express Website Designer — always specify the sub-type)
 - Google Maps, Google Earth, Field Guide to Victoria, Sky Map, Geoboard
 - Clickview, Epic, PicCollage, Brushes Redux, Word Clouds ABCya, Sketchbook, Explain Everything, Freeform, Delightex, Kahoot, Tinkercad, Minecraft Education
 ${platformSection}
@@ -2442,7 +2442,7 @@ ${toolIndexStr}
 
 INSTRUCTION FROM COORDINATOR: ${instruction || (platform ? `Cross-reference the ${platform.name} lesson library against all planners and propose changes where there is a strong specific connection.` : '')}
 
-Analyse ALL ${DATA.length} entries and propose ONLY the changes that genuinely fulfil the instruction. Be selective — only propose a change where there is a clear, specific benefit. Do not change entries that are already appropriate.
+Analyse ALL ${DATA.length} entries and propose changes wherever the instruction can be applied. Be thorough — if the instruction is to find opportunities for a tool, scan every entry and propose it wherever there is ANY reasonable connection. Do not skip entries just because they already have suggestions.
 
 For each proposed change, use the exact entryIdx and sugIdx from the TOOL INDEX above.
 
@@ -2494,6 +2494,7 @@ ${fullContext}`;
     } else {
       statusEl.style.color = 'var(--dim)';
       statusEl.textContent = 'No changes proposed — try rephrasing your instruction';
+      console.log('Gemini response (no changes parsed):', response.slice(0,500));
     }
   }catch(e){
     prog.style.display = 'none';
