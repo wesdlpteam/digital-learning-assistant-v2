@@ -1452,7 +1452,7 @@ function renderAuditChart(){
       DATA.forEach((e,idx2) => {
         const hasTool = getSugs(e).some(s => {
           const t = (s && s.t && s.t.trim()) ? s.t.trim() : '';
-          return isWarn ? !t : t === name;
+          return isWarn ? !t : t === name || t.toLowerCase().includes(name.toLowerCase());
         });
         if(!hasTool) return;
         const row = document.createElement('div');
