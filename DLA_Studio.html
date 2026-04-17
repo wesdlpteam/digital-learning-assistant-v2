@@ -2375,6 +2375,8 @@ const KNOWN_PLATFORMS = [
     context: 'You know the Common Sense Education digital citizenship curriculum. Reference specific lessons when proposing changes.' },
   { match: /canva\.com\/edu/i, name: 'Canva for Education',
     context: 'You know the Canva for Education lesson templates and resources.' },
+  { match: /microbit\.org/i, name: 'Micro:bit',
+    context: 'You know the micro:bit lesson library at microbit.org/teach/lessons. The lessons for ages 7-11 include: Micro:bit Pets, Plant Communicator, Step Counter, Voting Machine, Reaction Time, Flashing Animations, Compass, Soil Moisture Sensor, Stopwatch, Museum Guide, Tell me a Secret, Music Machine, Party Tricks, Make a Sound Effect, Mood Radio, and Coin Flipper. When cross-referencing, ONLY propose a change if one of these specific 16 lessons clearly connects to the unit. Do not suggest Micro:bit broadly — only when a specific named lesson fits.' },
 ];
 
 function detectBulkPlatform(){
@@ -2413,6 +2415,7 @@ async function runBulkAIEdit(){
   // Build full context
   const toolIndex = {};
   DATA.forEach((e,i)=>{
+    if(!e.audited || getSugs(e).filter(isRealSug).length < 5) return;
     getSugs(e).forEach((s,si)=>{
       const t = sugTool(s).trim().toLowerCase();
       if(!t) return;
@@ -2425,7 +2428,8 @@ async function runBulkAIEdit(){
     .map(([tool,entries])=>`${tool} (${entries.length}x): `+entries.map(e=>`[${e.entryIdx}]s${e.sugIdx}`).join(', '))
     .join('\n');
 
-  const fullContext = DATA.map((e,i)=>{
+  // Only include fully audited entries with 5 suggestions — skip empty/incomplete ones
+  const fullContext = DATA.filter(e => e.audited && getSugs(e).filter(isRealSug).length >= 5).map((e,i)=>{
     const sugs = getSugs(e);
     const sugStr = sugs.map((s,si)=>`  ${si+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n');
     return `[${i}] ${e.ca} | ${e.yl} | ${e.th}${e.ci?'\n  CI: '+e.ci:''}${sugs.length?'\n  Suggestions:\n'+sugStr:''}`;
@@ -2437,8 +2441,11 @@ async function runBulkAIEdit(){
 
 LESSON LIBRARY — ${platform.name.toUpperCase()}:
 ${platform.context}
-Cross-reference the ${platform.name} lesson library against Wesley's IB PYP units. For each entry where a genuinely strong and specific connection exists between a known ${platform.name} lesson and the unit's content, propose replacing an existing suggestion with a ${platform.name} suggestion that references that specific lesson.
+
+STRICT MATCHING RULE: When a lesson library URL is provided, you MUST only propose changes where a SPECIFIC named lesson from that library clearly and directly connects to the unit's central idea or activities. Do not propose a change just because the tool is generally useful. Each proposal must name the specific lesson and explain the direct connection. If fewer than 10 entries have a genuine specific match, that is fine — quality over quantity.
 ` : '';
+
+  const completeEntries = DATA.filter(e => e.audited && getSugs(e).filter(isRealSug).length >= 5);
 
   const system = `You are a Digital Learning Coach at Wesley College, an IB PYP school.
 
@@ -2455,7 +2462,16 @@ ${toolIndexStr}
 
 INSTRUCTION FROM COORDINATOR: ${instruction || (platform ? `Cross-reference the ${platform.name} lesson library against all planners and propose changes where there is a strong specific connection.` : '')}
 
-Analyse ALL ${DATA.length} entries and propose changes wherever the instruction can be applied. Be thorough — if the instruction is to find opportunities for a tool, scan every entry and propose it wherever there is ANY reasonable connection. Do not skip entries just because they already have suggestions.
+CURRENT TOOL DISTRIBUTION (most used first):
+${toolIndexStr}
+
+REPLACEMENT STRATEGY — when proposing a change, choose which suggestion slot to replace using this priority:
+1. Replace a suggestion that uses the SAME tool as what you're adding (avoid duplicates)
+2. Replace a suggestion that uses one of the TOP 5 most overutilised tools in the library (the ones at the top of the tool index above)
+3. Replace a suggestion where the existing description is vague or generic
+4. As a last resort, replace whichever slot has the weakest connection to the unit
+
+Analyse ALL ${completeEntries.length} complete entries below and propose changes wherever the instruction can be applied. Be thorough — if the instruction is to find opportunities for a tool, scan every entry and propose it wherever there is ANY reasonable connection.
 
 For each proposed change, use the exact entryIdx and sugIdx from the TOOL INDEX above.
 
