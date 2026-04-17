@@ -7,8 +7,8 @@
     "lo": "Imagining stories together; Ways stories are shared; Connecting with stories",
     "s": [
       {
-        "t": "Lego Spike Essential & Seesaw",
-        "d": "Connecting to the daily developmental play story-creation challenge, students can build story settings and characters using Lego Spike Essential. They can take photos of their 'beginning, middle, and end' scenes, upload them to Seesaw, and use the microphone tool to orally retell their narrative, practicing sequencing and oral language skills."
+        "t": "ScratchJR",
+        "d": "Students will collaboratively bring their imaginative stories to life by designing characters and settings, then using coding blocks to animate their narrative. This allows them to sequence events and record their own voices for dialogue, directly supporting the unit's focus on oral retells and imaginative play."
       },
       {
         "t": "PowerPoint & Puppet Pals",
@@ -190,8 +190,8 @@
         "d": "For their information report on a chosen community helper, students create a digital book in Book Creator. They can include simple text, their own drawings, and use the record button to read their report aloud. To 'App Smash', students first design a 'Community Helper Profile' graphic in Canva using simple templates and icons, then import this image into their Book Creator project to visually summarise their research."
       },
       {
-        "t": "LEGO Spike Essential",
-        "d": "Responding to the 'Moving to Mars' provocation, students use LEGO Spike Essential kits to design and build a vehicle for a Martian community service, like a Mars ambulance or a resource-collecting rover. They use the simple icon-based coding to make their vehicle perform a basic function, tangibly exploring how services are designed to meet the needs of a new community."
+        "t": "Minecraft Education",
+        "d": "To support the 'designing a new community for Mars' activity, students will use Minecraft to collaboratively build their community. They will plan and construct the essential services they have researched, such as hospitals, schools, and transport systems, creating a virtual, interactive model that demonstrates their understanding of how services are established to meet a community's needs."
       },
       {
         "t": "iMovie and iPad Camera",
@@ -362,10 +362,16 @@
         "t": "Padlet",
         "d": "For the 'Classroom Needs and Wants Poll' and 'Shipwrecked Provocation', a teacher can set up a two-column Padlet. Students can post their chosen items as text or images into the 'Needs' or 'Wants' columns, creating a dynamic, class-wide visual board to facilitate discussion and compare different perspectives on what is essential."
       },
-      {
-        "t": "Stop Motion Studio and Lego Spike Essential",
-        "d": "To extend the 'Needs and Wants Role-Play' activity, students can use Lego Spike Essential to build models of items for a scenario like a camping trip. They can then use Stop Motion Studio on an iPad to create a short animation showing their characters packing their 'needs' first, visually demonstrating their understanding of prioritisation through storytelling."
-      }
+      [
+        {
+          "t": "Seesaw",
+          "d": "Students will use the drawing, photo, video, and voice recording tools to create a digital journal. This will document each stage of their design thinking process, from identifying a community need and sorting 'needs' vs. 'wants', to capturing images and reflections on their final prototype."
+        },
+        {
+          "t": "Tinkercad",
+          "d": "To address the 'prototype' phase of the design thinking process, students will design a 3D digital model of their product. This allows them to create and refine a solution that responds to the identified community need, moving from a conceptual idea to a visual prototype."
+        }
+      ]
     ],
     "audited": true,
     "plannerText": "The unit begins with provocations like the 'Shipwrecked' activity and classroom polls to differentiate between needs and wants. Students engage in sorting games, create collages, and use role-play to explore these concepts in different contexts, culminating in using the design thinking process to design and prototype a product that responds to a real community need."
@@ -735,8 +741,8 @@
         "d": "Following the lessons on recycling and composting, students create a digital guide called 'Wesley's Waste Systems'. Each page can focus on a different system (landfill, recycling, compost), using drawings, imported photos of school bins, and recorded audio explanations of how each system works and connects to the community."
       },
       {
-        "t": "Lego Spike Essential",
-        "d": "App smash LEGO Spike Essential with iMovie. Students build and code a simple machine representing a system (e.g., a recycling sorter). They then film their creation and produce a short iMovie documentary explaining what system it is, its interconnected parts, its purpose, and what happens if a key part is removed, demonstrating the concept of system failure."
+        "t": "Canva",
+        "d": "Students will use Canva to create detailed infographics and flowcharts that visually map out the various systems they investigate. For example, they can design a diagram of the school's canteen system, showing the flow from ordering to receiving food, or create an animated presentation to explain the interconnected stages of the water cycle or a local food web. This tool empowers students to visually demonstrate their understanding of how the parts of a system are connected."
       }
     ],
     "audited": true,
@@ -1299,8 +1305,8 @@
         "d": "Students create a digital design journal to document the 'Design an object' floater challenge. Each page can feature a photo or video of a stage in their process (drawing, building, testing, improving), with students using the audio record button to explain their material choices and design changes, such as adding foil to make their cardboard boat waterproof."
       },
       {
-        "t": "Lego Spike Essential",
-        "d": "Extending the 'Toy sort' activity, students build simple moving objects with Lego Spike Essential kits. Using the icon-based coding, they program their creations to move, directly connecting the properties of the materials (e.g., wheels) to their function. They can then photograph their models and sort them on a class Padlet board based on movement type."
+        "t": "Seesaw",
+        "d": "Students will use Seesaw to create a digital science journal. They can take photos of materials from the 'Materials Gallery' and use the voice recorder to describe their properties. They will video their 'slide and roll tests' to capture how different objects move, and use the drawing tools to predict and reflect on the results. For the culminating challenge, students will document their 'floater' design process, capturing photos of their initial build, a video of the test, and a voice recording explaining their improvements."
       },
       {
         "t": "Microsoft PowerPoint",
@@ -1701,27 +1707,27 @@
     "s": [
       {
         "t": "Book Creator",
-        "d": "To demonstrate their understanding of the water cycle, students can 'app smash' by first using a drawing app like Brushes Redux to illustrate each stage (evaporation, condensation, precipitation). They can then import these images into Book Creator to create a multimodal narrative titled 'A Day in the Life of a Water Droplet', adding text labels and using the audio record feature to narrate the journey, directly replacing the planned PDF comic strip with a more dynamic creation."
+        "d": "App smash Book Creator with ChatterPix Kids to create a multimodal narrative about the journey of a water droplet. Students can animate a droplet using ChatterPix, save the video, and embed it into their Book Creator e-book. This directly supports the 'Sorting Out' activity where students learn about the water cycle and can be used to retell stories of water scarcity, like 'Cheru - A Wash in Hope', from a first-person perspective."
       },
       {
         "t": "Canva",
-        "d": "In connection with the 'Taking Action' phase, students can create digital water-saving posters. They can use the iPad's camera to take photos of water sources around the school (taps, bubblers) and import them into Canva. Using age-appropriate templates, they can add text and icons to communicate their 'water wise' pledge, creating authentic resources to share with the Junior School community."
+        "d": "To support the 'Taking Action' phase, students can design persuasive 'water wise' posters in Canva. Using age-appropriate templates and drag-and-drop graphics, Year 2 students can create compelling visuals to share with the Junior School community, directly fulfilling the planner's goal of creating posters and pledging for water-wise habits."
       },
       {
-        "t": "Micro:bit",
-        "d": "To explore how water is essential to life, students can use the Micro:bit [Helping Plants Grow](https://microbit.org/teach/lessons/?selected=helping-plants-grow) lesson to build and code a soil moisture sensor. This hands-on project allows them to use technology to monitor a key environmental condition, connecting directly to the central idea of managing a limited resource."
+        "t": "ScratchJR",
+        "d": "Students can create a simple, block-coded animation in ScratchJR to demonstrate their understanding of the water cycle, a key concept from the 'Sorting Out' section. They can program a water droplet character to move from a lake (collection) to the sky (evaporation), form a cloud (condensation), and fall as rain (precipitation), sequencing the steps they learned about."
       },
       {
         "t": "Google Earth",
-        "d": "To support the transdisciplinary link to Geography, teachers can lead a guided virtual tour in Google Earth to show the global distribution of water. Students can explore major rivers, oceans, and deserts to visually grasp the concepts of water scarcity and abundance. They can take screenshots and import them into Seesaw to label key areas and record their observations, making the abstract concept of global water availability tangible."
+        "d": "To investigate the Line of Inquiry on unequal access to water, students can embark on a teacher-guided virtual tour using Google Earth. App smash this by taking screenshots of contrasting environments (e.g., the Yarra River vs. a dry region in the Sahel) and importing them into a Microsoft PowerPoint presentation. Students can then use PowerPoint's audio recording feature on each slide to explain their observations about water availability, connecting to the unit's geography and social studies links."
       },
       {
-        "t": "LEGO Spike Essential",
-        "d": "Addressing the Line of Inquiry on the 'transferral of water', students can work in groups to design and build a simple machine that moves water, such as a water wheel or pump. Using the simple, icon-based coding, they can make their model function. They can then film their creation and import the video into a PowerPoint slide, adding a recorded voiceover to explain how their system helps move water from its source to a point of use."
+        "t": "Lego Spike Essential",
+        "d": "Connecting to the Line of Inquiry about the 'transferral of water', students can use Lego Spike Essential kits to design, build, and code a simple system that moves water. This hands-on STEM task allows them to model solutions like a water pump or irrigation channel, directly responding to the 'Action idea' of designing systems and exploring how communities access and use water."
       }
     ],
     "audited": true,
-    "plannerText": "This unit explores water as a limited and essential resource, investigating the water cycle, unequal access to water globally, and our responsibility to conserve it. Key learning activities include creating mind maps of water use, watching videos about water scarcity in different communities, and creating water-saving posters as a call to action."
+    "plannerText": "This unit explores water as a limited and essential resource through various activities. Students investigate the water cycle and global water inequality by watching clips and reading texts, and take action by creating persuasive posters and game boards to promote water conservation within the school community."
   },
   {
     "ca": "Glen Waverley",
