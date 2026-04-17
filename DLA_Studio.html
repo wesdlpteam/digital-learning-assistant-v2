@@ -1423,7 +1423,7 @@ function renderAuditChart(){
       : '';
     card.innerHTML = '<span class="label">Tool frequency — ' + stats.total + ' total — click a bar to see entries</span>' + warningNote;
 
-    const top = stats.sorted.slice(0,25);
+    const top = stats.sorted.slice(0,50);
     const mx = top[0].count || 1;
 
     top.forEach(({name, count, pct}) => {
