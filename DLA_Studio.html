@@ -2468,16 +2468,38 @@ ${fullContext}`;
     lbl.textContent = 'Parsing proposed changes…';
 
     // Parse APPLY_CHANGES
-    const changeMatch = response.match(/APPLY_CHANGES:\s*([\s\S]*?)(?:\s*$)/s);
+    const changeMatch = response.match(/APPLY_CHANGES:\s*([\s\S]*)/s);
     let changes = null;
     if(changeMatch){
       try{
         const jsonStr = changeMatch[1].trim();
         const arrStart = jsonStr.indexOf('[');
-        const arrEnd = jsonStr.lastIndexOf(']');
-        if(arrStart !== -1 && arrEnd !== -1){
-          const raw = JSON.parse(cleanGeminiJSON(jsonStr.slice(arrStart, arrEnd+1)));
+        if(arrStart === -1) throw new Error('No array');
+        let arrStr = jsonStr.slice(arrStart);
+        const arrEnd = arrStr.lastIndexOf(']');
+
+        // If array is complete, parse normally
+        if(arrEnd !== -1){
+          const raw = JSON.parse(cleanGeminiJSON(arrStr.slice(0, arrEnd+1)));
           changes = normaliseChanges(raw);
+        } else {
+          // Truncated — extract individual valid objects by bracket counting
+          const recovered = [];
+          let depth = 0, objStart = -1;
+          for(let i = 0; i < arrStr.length; i++){
+            if(arrStr[i]==='{'){if(depth===0) objStart=i; depth++;}
+            else if(arrStr[i]==='}'){
+              depth--;
+              if(depth===0 && objStart!==-1){
+                try{
+                  const obj = JSON.parse(cleanGeminiJSON(arrStr.slice(objStart, i+1)));
+                  if(obj.entryIdx!=null) recovered.push(obj);
+                }catch{}
+                objStart=-1;
+              }
+            }
+          }
+          if(recovered.length) changes = normaliseChanges(recovered);
         }
       }catch(err){
         console.error('Bulk AI parse error', err);
