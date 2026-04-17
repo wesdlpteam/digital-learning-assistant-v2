@@ -2413,9 +2413,9 @@ async function runBulkAIEdit(){
   bar.style.width = '20%';
 
   // Build full context
+  const completeData = DATA.map((e,i)=>({e,i})).filter(({e})=>e.audited && getSugs(e).filter(isRealSug).length >= 5);
   const toolIndex = {};
-  DATA.forEach((e,i)=>{
-    if(!e.audited || getSugs(e).filter(isRealSug).length < 5) return;
+  completeData.forEach(({e,i})=>{
     getSugs(e).forEach((s,si)=>{
       const t = sugTool(s).trim().toLowerCase();
       if(!t) return;
@@ -2428,8 +2428,8 @@ async function runBulkAIEdit(){
     .map(([tool,entries])=>`${tool} (${entries.length}x): `+entries.map(e=>`[${e.entryIdx}]s${e.sugIdx}`).join(', '))
     .join('\n');
 
-  // Only include fully audited entries with 5 suggestions — skip empty/incomplete ones
-  const fullContext = DATA.filter(e => e.audited && getSugs(e).filter(isRealSug).length >= 5).map((e,i)=>{
+  // Only include fully audited entries with 5 suggestions — use real DATA index so entryIdx is correct
+  const fullContext = completeData.map(({e,i})=>{
     const sugs = getSugs(e);
     const sugStr = sugs.map((s,si)=>`  ${si+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n');
     return `[${i}] ${e.ca} | ${e.yl} | ${e.th}${e.ci?'\n  CI: '+e.ci:''}${sugs.length?'\n  Suggestions:\n'+sugStr:''}`;
@@ -2445,7 +2445,7 @@ ${platform.context}
 STRICT MATCHING RULE: When a lesson library URL is provided, you MUST only propose changes where a SPECIFIC named lesson from that library clearly and directly connects to the unit's central idea or activities. Do not propose a change just because the tool is generally useful. Each proposal must name the specific lesson and explain the direct connection. If fewer than 10 entries have a genuine specific match, that is fine — quality over quantity.
 ` : '';
 
-  const completeEntries = DATA.filter(e => e.audited && getSugs(e).filter(isRealSug).length >= 5);
+  const completeEntries = completeData;
 
   const system = `You are a Digital Learning Coach at Wesley College, an IB PYP school.
 
