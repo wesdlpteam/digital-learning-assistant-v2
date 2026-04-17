@@ -1930,9 +1930,6 @@ async function addToGASQueue(){
     statusEl.textContent=`✓ "${th}" queued — the auditor will process it within 10 minutes`;
     statusEl.style.color='var(--lime)';
     document.getElementById('q-theme').value='';
-    
-    DATA.push({ca, yl, th, ci:'', lo:'', s:[], audited:false});
-    renderDashboard();
   }catch(e){
     statusEl.textContent='Failed to submit: '+e.message;
     statusEl.style.color='#FF8080';
