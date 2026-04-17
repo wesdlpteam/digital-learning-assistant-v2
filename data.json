@@ -715,28 +715,28 @@
     "lo": "Human systems; The interconnections that exist within and across systems; The influence of systems on communities",
     "s": [
       {
-        "t": "Microsoft PowerPoint",
-        "d": "App smash PowerPoint with Seesaw. For the 'Systems around us' activity, students create a multi-slide 'System Profile' in PowerPoint for a chosen school system (e.g., the canteen). They can use shapes and icons to diagram its parts, purpose, and connections, then export the slides as images to Seesaw and add a voice-over explanation."
+        "t": "Microsoft PowerPoint and Digital Camera",
+        "d": "Following the 'Systems around us' lesson (Session 3), students use an iPad's digital camera to photograph various systems around the school (e.g., canteen ordering, library borrowing). They then 'App Smash' by importing these images into a PowerPoint slide, creating an interactive map of the school's systems. Using shapes, lines, and text boxes, they can illustrate the parts, purpose, and interconnections of each system, moving beyond a simple photo upload."
       },
       {
-        "t": "Stop Motion Studio",
-        "d": "To document the 'Mini Water Cycle in a Bag' experiment, students use Stop Motion Studio on an iPad. They can capture photos over several days to create an animation showing evaporation and condensation, then add text labels and a voice-over to explain the scientific processes observed before sharing the video."
+        "t": "Stop Motion Studio and Seesaw",
+        "d": "To extend the 'Mini Water Cycle' experiment (Session 4), students use physical materials (cotton balls, plasticine) to build a model of the water cycle. They animate the process of evaporation, condensation, and precipitation using Stop Motion Studio on an iPad. The final animation can be uploaded to their Seesaw journal, where they use the voice recording tool to explain the key vocabulary and describe how the parts of the system connect, fulfilling the reflection task in a dynamic way."
       },
       {
-        "t": "Canva",
-        "d": "Students will use Canva to design a series of infographics that visually represent the different systems they are investigating. They can create a flowchart to map the school's library borrowing system, a diagram illustrating the connections in a food web, and a step-by-step visual guide for the composting process. This allows students to demonstrate their understanding of how individual parts work together to form a connected system."
+        "t": "Sphero BOLT and OneNote",
+        "d": "To digitally model 'The Web of Life with String' activity (Session 5), students can create a large floor map of a local ecosystem. They program a Sphero BOLT to represent the flow of energy, moving from one organism to the next. To simulate the 'collapse', they remove an organism and must debug their code to show the broken connections. Students can record videos of their coded pathways and document their thinking and code blocks in a shared Class OneNote."
+      },
+      {
+        "t": "Tinkercad and Canva",
+        "d": "Connecting to the 'Exploring Recycling' lesson, students design a 3D model of a simplified recycling plant in Tinkercad, ensuring they include all the key parts of the system they learned about. They can then take screenshots of their 3D model and import them into Canva to design an infographic. The infographic will label the parts of their recycling system and explain the process from collection to reuse, demonstrating their understanding of how the system functions."
       },
       {
         "t": "Book Creator",
-        "d": "Following the lessons on recycling and composting, students create a digital guide called 'Wesley's Waste Systems'. Each page can focus on a different system (landfill, recycling, compost), using drawings, imported photos of school bins, and recorded audio explanations of how each system works and connects to the community."
-      },
-      {
-        "t": "Canva",
-        "d": "Students will use Canva to create detailed infographics and flowcharts that visually map out the various systems they investigate. For example, they can design a diagram of the school's canteen system, showing the flow from ordering to receiving food, or create an animated presentation to explain the interconnected stages of the water cycle or a local food web. This tool empowers students to visually demonstrate their understanding of how the parts of a system are connected."
+        "d": "As a summative task, students create a multi-page digital book titled 'Systems Connect Us'. Each page can focus on a different system studied in the unit (e.g., school systems, water cycle, ecosystems, recycling). Students can 'App Smash' by embedding content they've created throughout the unit, such as their Stop Motion animations, photos of their hands-on experiments, and infographics, to create a comprehensive portfolio of their learning."
       }
     ],
     "audited": true,
-    "plannerText": "This unit explores the central idea 'Systems connect us' by having students first identify and analyse various systems within their school, such as the library or canteen. Students then investigate natural systems through hands-on activities like creating a mini water cycle in a bag, simulating a food web with string, making recycled paper, and diagramming the composting process to understand how parts of a system are interconnected."
+    "plannerText": "This unit explores how human and natural systems are interconnected through the central idea 'Systems connect us'. Students investigate systems within their own school, such as the library and recycling programs, and conduct hands-on experiments to understand natural systems like the water cycle and local ecosystems' food webs. The inquiry also covers the function and importance of human-made systems like recycling and composting."
   },
   {
     "ca": "Elsternwick",
@@ -1140,8 +1140,8 @@
         "d": "During the 'Go further' action project, students choosing to create an awareness video can use the Green Screen Kit to film themselves in front of relevant environmental backdrops. They can then use Adobe Express on iPads to edit their clips, add titles, a voiceover explaining the need for environmental stewardship, and background music to create a persuasive call to action."
       },
       {
-        "t": "Minecraft Education",
-        "d": "For the 'Go further' action project, students can use Minecraft Education to design and build a model of a sustainable community garden or a rainwater harvesting system for the school. They can use in-game tools like the camera and portfolio to document their design, explaining how it promotes environmental stewardship and positive community interaction with the environment."
+        "t": "Tinkercad",
+        "d": "As part of their student-led action project, students will use Tinkercad to design 3D models of solutions to the environmental challenges they have studied. They can prototype innovations inspired by Gunaikurnai land care practices or design systems to combat urban pollution, shifting from analysis to tangible design to promote environmental stewardship."
       },
       {
         "t": "Padlet",
@@ -1175,8 +1175,8 @@
         "d": "To support the mapping of migration timelines, students can use Google Earth's 'Projects' feature to create an interactive, narrated tour of a family's or a community's migration journey to Australia. They can add placemarks with text, historical images, and audio recordings explaining the push and pull factors at each stage, creating a powerful visual story of how migration has shaped Australia."
       },
       {
-        "t": "Minecraft Education",
-        "d": "To explore the central idea 'Significant events shape a place', students research an event like the Victorian Gold Rush and then build a historically-informed representation of a place from that era (e.g., a goldfield or a street in Ballarat). They can use in-game tools like the camera and Book & Quill to document their build, explaining how the event shaped the location. Students can then export their evidence into a shared Microsoft OneNote page to create a digital portfolio of their learning."
+        "t": "Canva",
+        "d": "Students can use Canva to create compelling visual reports and presentations for their personal inquiry. They can design timelines of major Australian migration waves, create infographics to analyse push and pull factors, and use map templates to visually trace their own family's migration history. For their summative assessment, Canva allows them to synthesise their research into a professional, multi-page digital document or presentation, effectively communicating their understanding of how significant events shape places and cultures."
       }
     ],
     "audited": true,
@@ -1425,8 +1425,8 @@
         "d": "To explore mapping and directions, students design a physical community map on the floor and program a Bee-bot to travel between locations like the school and hospital. App smash by recording a video of their successful program on an iPad and uploading it to Seesaw, using the voice record tool to explain their simple algorithm (e.g., 'forward 3, turn right')."
       },
       {
-        "t": "Minecraft Education",
-        "d": "As a digital alternative to the paper community mural, students work collaboratively in a shared world to build key community buildings and spaces. App smash by taking screenshots of their creations and importing them into a class Microsoft PowerPoint, where they can add audio narration to explain the function of their building and how it helps the community."
+        "t": "Book Creator",
+        "d": "Students will work in pairs to research a community helper and design a page for a collaborative class e-book. They can add drawings, photos, text, and voice recordings to explain the helper's role, tools, and how they contribute to the community. The final book will be a digital representation of their organised community, showcasing the connections between different roles."
       },
       {
         "t": "Canva",
@@ -1820,28 +1820,28 @@
     "lo": "What are digital systems; Ideas and information can be organised and shared in safe online environments; Being a responsible digital citizen",
     "s": [
       {
-        "t": "Book Creator",
-        "d": "To document the 'Digital systems walk' (p.39), students use iPads to photograph digital systems around the school (e.g., printers, smartboards, laptops). They can create a collaborative book, with each page dedicated to a different system, adding text labels to identify hardware/software components and recording audio to explain how that system meets a specific need at school."
+        "t": "Book Creator & Digital Camera",
+        "d": "To explore the components of digital systems, students can go on a 'Digital Systems Walk' around the school as mentioned in the planner. They can use the iPad's Digital Camera to photograph hardware and peripherals (e.g., printers, smartboards, laptops). They can then 'App Smash' by importing these photos into a Book Creator e-book, where they can label each component and use the audio record feature to explain its function, creating a collaborative multimedia glossary of digital systems."
       },
       {
         "t": "Canva",
-        "d": "In response to the 'Making Conclusions' task (p.59), students use Canva's infographic or poster templates to design and publish their individual 'Essential Agreement' for being a responsible digital citizen. They can use icons and graphics to visually represent key concepts like managing their digital footprint, consumption vs. creation, and navigating public vs. private online spaces."
+        "d": "Connecting to the Cyber Safety Project lessons on digital footprints, students can use Canva to create a personal infographic. Using a footprint template, they can search for and add icons representing their online activities (e.g., gaming, research, watching videos). This provides a creative and age-appropriate way for them to visually represent and reflect on their online presence, directly addressing the planner's goal of creating a digital footprint with icons and images."
       },
       {
-        "t": "Minecraft Education",
-        "d": "Connecting to the Cyber Safety Project lessons on online spaces (p.45), students can build a 'Digital Systems School' in a shared world. Different rooms can represent different digital systems they have learned about, using signs and NPCs to explain their function, hardware, software, and peripherals. This provides a creative, hands-on way to demonstrate their understanding of how systems are organised to meet needs."
+        "t": "Sphero Indi",
+        "d": "To create the 'systems map' mentioned in the 'Finding Out' phase, students can design a physical map of their classroom on a large sheet of paper, marking the locations of various digital systems. They can then use the colour tiles to program the Sphero Indi robot to navigate a path between these systems. This activity introduces foundational coding concepts and spatial awareness while making the abstract idea of a 'system' tangible and interactive."
       },
       {
-        "t": "Adobe Express",
-        "d": "To explore their 'Digital Footprint' (p.45), students create a short animated video. They can use the simple animation tools in Adobe Express to show icons representing their online activities (gaming, learning, creating) forming a path. Students can record a voiceover explaining how their online actions create a lasting footprint and the importance of making kind and responsible choices."
+        "t": "Adobe Express & Microsoft PowerPoint",
+        "d": "For the culminating task of publishing their 'Essential Agreement' as a digital citizen, students can 'App Smash' by first designing a slide for each rule in Microsoft PowerPoint, using its text and icon features. After saving each slide as an image, they can import them into Adobe Express to create a short, animated video. In Adobe Express, they can easily add a voice-over explaining each agreement and select background music, turning their static rules into a dynamic presentation."
       },
       {
-        "t": "Sphero BOLT",
-        "d": "Following the 'Look inside a Sphero' activity (p.44), students can use the Sphero Edu app to explore the relationship between input and output. They can write a simple block code (input) and then film the Sphero executing the commands (output). They can then use Seesaw to present the video of their code and the robot's action side-by-side, using labels and voice recording to explain how the digital system works."
+        "t": "Minecraft Education & Microsoft Word",
+        "d": "To address the planner's specific question about identifying public vs. private online spaces (like Roblox/Minecraft), students can explore a custom Minecraft Education world. This world can feature different zones: a public town square, a private house for two players, and a personal chest. Students can use the in-game camera and portfolio to document their findings and then export screenshots into a Microsoft Word document to write a reflection on the differences between each type of space."
       }
     ],
     "audited": true,
-    "plannerText": "The unit focuses on understanding how needs are met with digital systems. Key activities include sorting technology into 'Then & Now', conducting a 'digital systems walk' to identify hardware and peripherals around the school, exploring the concepts of digital footprints and online safety, and creating a personal 'Essential Agreement' for being a responsible digital citizen."
+    "plannerText": "This unit explores how needs are met with digital systems by having students identify and document the hardware and software components of technology around their school. Students also engage with the Cyber Safety Project to investigate digital citizenship, focusing on understanding their digital footprint, differentiating between public and private online spaces, and creating a personal 'Essential Agreement' for responsible technology use."
   },
   {
     "ca": "Glen Waverley",
@@ -1883,27 +1883,27 @@
     "s": [
       {
         "t": "Book Creator",
-        "d": "Following the 'Local Soil Study' and 'Rock and Mineral Hunt', students use the iPad camera to take close-up photos of their collected samples. They then import these images into Book Creator to create a digital field guide, adding text labels for properties (colour, texture, grain) and recording audio observations to document their findings."
+        "d": "To document the 'Local Soil Study' and 'Rock and Mineral Hunt' activities, students use the iPad camera to take close-up photos of the soil and rock samples they collect. They import these into a Book Creator e-book, using the text and drawing tools to label components (pebbles, sand, plant matter) and describe observable properties like colour and texture. Students can also record audio narration to explain their findings, directly addressing the 'Finding Out' phase of the inquiry."
       },
       {
         "t": "Canva",
-        "d": "To connect with the 'Going Further' exploration of First Nations' culture, students use Canva to design an informational poster. They can research and add images of ochre and traditional art, using text boxes to explain how different minerals were used as pigments and their cultural significance, directly supporting the 'Making Conclusions' task."
+        "d": "Connecting to the Visual Art link and the inquiry into First Nations' cultural use of minerals, students use Canva to design an informative digital poster. After researching how ochre is used for ceremony and art, they can source appropriate images and use Canva's design tools to explain the cultural significance of this Earth resource, demonstrating their understanding of how people value and use minerals."
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "For the 'Making Conclusions' task of creating a digital presentation, students can produce a short stop-motion animation. Using clay, drawings, or actual rock samples, they can animate the rock cycle or show how a mineral like graphite is used to make a pencil. They can record a voiceover to explain the process, demonstrating their understanding of how minerals are important for life."
       },
       {
         "t": "Google Earth",
-        "d": "To support the 'Sorting Out' task of comparing Australia with a neighbouring country, students use Google Earth to conduct a virtual fly-over of both locations. App Smashing: They can take screenshots of significant landforms (e.g., volcanoes in Indonesia, deserts in Australia) and import them into a Microsoft PowerPoint to create a comparative slideshow with annotations."
+        "d": "To support the comparison of Australia's natural features with neighbouring countries, students use Google Earth to conduct a virtual exploration. They can 'fly' to significant geological sites in Australia (e.g., Uluru) and a neighbouring country (e.g., volcanoes in Indonesia), using the placemark tool to drop pins, add images, and write brief notes comparing the rock types and landforms they observe."
       },
       {
-        "t": "Microsoft Excel",
-        "d": "Connecting to the 'Local Soil Study', students can use a simple, pre-made template in Microsoft Excel on their iPads to record their scientific observations. They can enter data on soil properties like colour, texture, and moisture level (using a simple 1-5 scale), and then use the chart function to create a simple bar graph comparing the different soil samples, introducing them to digital data representation."
-      },
-      {
-        "t": "Minecraft Education",
-        "d": "Connecting to their research on how rocks are used in everyday life (e.g., buildings), students can work in a Minecraft world to identify different rock and mineral blocks (e.g., granite, iron ore, coal). They can 'mine' these resources and then construct a simple building, documenting with screenshots and signs to explain which real-world materials their blocks represent."
+        "t": "App Smash: Microsoft PowerPoint and ChatterPix Kids",
+        "d": "To create a dynamic report comparing Australia and a neighbouring country, students first use Microsoft PowerPoint to create a comparison slide, placing images of different rocks or landforms side-by-side. They then import one of these images into ChatterPix Kids, making it 'talk' to explain a key similarity or difference. The resulting video can be re-inserted into their PowerPoint, creating an engaging and age-appropriate multimedia presentation."
       }
     ],
     "audited": true,
-    "plannerText": "This unit explores Earth's resources, beginning with students conducting a 'Geology Quest' to find and study local soils and rocks, observing their properties like colour and texture. Students then research the everyday uses of minerals, compare the natural features of Australia with a neighbouring country, and investigate the traditional uses of rocks and minerals by First Nations Australians, culminating in designing a digital presentation."
+    "plannerText": "This unit begins with students investigating the properties of local soils and rocks through hands-on activities like a 'Geology Quest' and 'Rock and Mineral Hunt'. They then broaden their inquiry to research the everyday uses of minerals, compare the natural features of Australia with a neighbouring country, and explore the long-standing knowledge First Nations Australians have of Earth's resources. The unit culminates in students creating a digital presentation to demonstrate their understanding of why soils, rocks, and minerals are important."
   },
   {
     "ca": "Glen Waverley",
@@ -1925,8 +1925,8 @@
         "d": "Connecting to the poetry writing task, students select an animated character representing a landmark or animal from a First Nations perspective. They record themselves reading their sensory poem. These short video files can then be inserted into a collaborative Microsoft PowerPoint presentation."
       },
       {
-        "t": "Minecraft Education",
-        "d": "To explore the Line of Inquiry about First Nations' deep and ongoing connections to Country, students can work in small groups in a shared Minecraft world. After researching a specific local Indigenous place, they can build a representation of its key features and use signs and Book & Quill items to explain its cultural and spiritual significance. This provides a powerful, immersive way for students to demonstrate their understanding of how places are valued."
+        "t": "Book Creator",
+        "d": "Students will use Book Creator to author a digital book about Australia's geography and First Nations connections. They can import maps to label states and capitals, use drawing tools to compare contemporary borders with the boundaries of Aboriginal Countries, and publish their original poetry, adding illustrations and audio recordings to express diverse perspectives on connection to Country."
       },
       {
         "t": "Padlet",
@@ -1991,8 +1991,8 @@
         "d": "For the culminating Year 4 Art Show, students will use Canva to design a professional-looking plaque for their artwork. The plaque will include the title, medium, and a short artist's statement. To make the exhibition interactive, students will create a simple feedback survey in Microsoft Forms and generate a QR code, which they will add to their Canva design. Art show visitors can scan the code to leave comments, providing students with authentic responses to their artistic expression."
       },
       {
-        "t": "Minecraft Education & OneNote",
-        "d": "Inspired by Yayoi Kusama's immersive installations, students work in small groups in Minecraft Education to build a virtual art gallery or a single 'expressive room'. They must use blocks, light, and space to convey a specific message or emotion. To document their process, students will take screenshots of their build and insert them into a shared Microsoft OneNote page, where they will write reflections on their artistic choices and how their creation 'promotes thinking' in the viewer, linking directly to the central idea."
+        "t": "Canva",
+        "d": "Students will use Canva to design the professional descriptive plaques that will accompany their pieces in the Year 4 Art Show. This allows them to combine text and graphics to explain their artistic intent, inspiration, and the techniques used, directly supporting the unit's focus on expression. They can also create digital posters and invitations to promote the event to the school community."
       }
     ],
     "audited": true,
@@ -2080,8 +2080,8 @@
         "d": "To enhance their understanding of Dreamtime stories and connection to Country, students can choose an animal significant to a local First Nations story (e.g., Bunjil the Eagle). They use Adobe Express Animate from Audio to have the animal character narrate a part of its creation story, allowing students to express their learning through oral storytelling."
       },
       {
-        "t": "Minecraft Education and Microsoft OneNote",
-        "d": "As a digital alternative to the diorama task (p39), students can work collaboratively in a shared Minecraft Education world to build a model of a pre-contact First Nations community. Their build must demonstrate their understanding of connection to Country, sustainable living, and community structures. Students can then 'app smash' by documenting their project in a shared OneNote Class Notebook, inserting screenshots and writing reflections that justify their design choices."
+        "t": "Microsoft Teams",
+        "d": "Students will use the Class Notebook feature within Teams as a digital portfolio to collate research on First Nations' connection to Country, document findings from the CERES excursion, and analyse Indigenous art symbols. Collaborative channels will facilitate small group discussions for deconstructing Dreamtime stories before students begin their own creations in Book Creator, establishing a central hub for research and peer feedback."
       },
       {
         "t": "Canva and Microsoft Forms",
@@ -2115,8 +2115,8 @@
         "d": "To model the \"journeys of the Australian coastline,\" students research a section of Captain Cook's voyage. Using a large floor map of Australia, they program a Sphero BOLT to navigate the path, programming it to stop and change colour at significant locations like Botany Bay. They then 'app smash' by recording this coded journey on an iPad and importing the footage into iMovie, where they add voiceover narration to explain the discoveries and consequences at each point."
       },
       {
-        "t": "Minecraft Education and Microsoft OneNote",
-        "d": "To understand the consequences of the First Fleet's arrival, students collaboratively research and build a representation of the early Sydney Cove settlement in Minecraft Education. To document their process, students use the in-game camera and book tools to create a journal explaining their design choices, which they then export and share in a class Microsoft OneNote notebook, creating a gallery of their historical reconstructions."
+        "t": "Adobe Express",
+        "d": "Students can create animated video narratives from the perspective of a First Fleet convict, replacing the immersive storytelling of Minecraft. For their personal research projects, they can design and publish engaging video presentations or simple web pages to showcase their findings on historical exploration. Additionally, students can design digital maps of the campus, incorporating photos and labels to document their local environment."
       }
     ],
     "audited": true,
@@ -2146,8 +2146,8 @@
         "d": "To digitise the 'Finding Out' question wall activity, create a class Padlet with columns for each religion being studied. As students engage with texts and videos, they can post their questions, wonderings, and new learnings to the relevant column. This creates a live, collaborative, and multimedia-rich resource that the whole class can contribute to and draw from throughout the inquiry."
       },
       {
-        "t": "Minecraft Education",
-        "d": "In small groups, students apply their research by building a key place of worship in Minecraft Education, ensuring they accurately include significant symbols and architectural features. App smash this by having them use the in-game camera and portfolio to document their creation, then import these screenshots into a Microsoft PowerPoint presentation to explain the cultural and religious significance of each part of their build."
+        "t": "Canva",
+        "d": "Students will use Canva to design and create a digital cultural poster or presentation. They can integrate researched images, symbols, and text to visually communicate their personal identity, family heritage, and key aspects of a chosen world religion, effectively sharing their understanding of 'Who We Are'."
       }
     ],
     "audited": true,
@@ -2165,8 +2165,8 @@
         "d": "During the 'Finding Out' phase (Weeks 3-4), when students are researching bushfire and flood impacts, they can use Google Earth's historical imagery and measurement tools to analyse affected areas like Lismore. Students can capture annotated screenshots of their findings and embed them into a collaborative Microsoft OneNote notebook, creating a shared research journal where they add text analysis, data from infographics, and audio recordings explaining their discoveries about hazard impacts."
       },
       {
-        "t": "Minecraft Education & Microsoft PowerPoint",
-        "d": "For the 'Prototyping' phase (Weeks 6-7), students can build their designed solutions for disaster-affected communities within Minecraft Education, such as earthquake-resistant buildings or flood-proof shelters. They can use the in-game camera and portfolio tools to document their design process, then export these images into a Microsoft PowerPoint presentation to structure their persuasive pitch, visually explaining their design decisions and how their solution meets the community's needs."
+        "t": "Canva",
+        "d": "Students will leverage Canva's collaborative features to document their entire design thinking process. They will create empathy maps for communities impacted by natural disasters, brainstorm using digital whiteboards, and develop detailed visual prototypes of their solution. To culminate the unit, they will design and deliver a compelling, multimedia persuasive pitch using Canva Presentations to effectively communicate their final design to stakeholders."
       },
       {
         "t": "Tinkercad & 3D Printers",
@@ -2196,8 +2196,8 @@
         "d": "For the Week 4 'Side Hustles' activity, students design a brand logo and promotional flyer in Canva. They then 'app smash' by importing these assets into Adobe Express to create a short, persuasive video advertisement, recording their voice-over pitch directly in the app to promote their business idea."
       },
       {
-        "t": "Minecraft Education and Microsoft OneNote",
-        "d": "To elevate the Week 7 'Ideal Community' project, students work in groups in a shared Minecraft world to build their community, adhering to the $1 million tax budget by assigning costs to structures. They use the in-game camera and book & quill to document their design choices and budget, exporting their work to a collaborative OneNote page for presentation."
+        "t": "Canva",
+        "d": "Students will use Canva's collaborative features to design and present their 'ideal community'. They can create a shared digital blueprint, design buildings, map out services, and embed their budget plans. This tool allows them to visually construct their community, replacing the building aspect of Minecraft, while also serving as a collaborative planning space for their research and ideas, replacing the function of OneNote. Additionally, students can use Canva to create their CVs and design advertisements for their side hustles."
       },
       {
         "t": "Microsoft Forms",
@@ -2276,8 +2276,8 @@
         "d": "When conducting their 'Case Studies and Research' on other Australian resources (Going Further, Lesson 1), students can present their findings as a dynamic digital report using Microsoft Sway. After organising their notes in OneNote, they can build a Sway that incorporates text, images, and embedded Clickview videos. This creates a more engaging and interactive information report than a traditional document, which can be easily shared and presented via Teams."
       },
       {
-        "t": "Minecraft Education",
-        "d": "To visualise the environmental consequences explored in the STEM lessons (Finding Out, Lesson 1), students can build 'before' and 'after' dioramas of a Victorian landscape impacted by the Gold Rush. They will first construct a pre-colonial environment, then show the effects of mining, land clearing, and settlement. Using the in-game camera and Book & Quill tool, they can document these changes, explaining the cause and effect, and export their findings to their OneNote portfolio."
+        "t": "Adobe Express",
+        "d": "Students will use Adobe Express to create a short video documentary or an animated story that explores a key perspective from the Australian Gold Rush. They can choose to narrate the experiences of a gold miner, detail the events of the Eureka Stockade from a rebel's viewpoint, or explain the significant impact of resource discovery on First Nations peoples. This project allows students to synthesize their research and creatively express their understanding of this historical period."
       },
       {
         "t": "Padlet",
@@ -2340,8 +2340,8 @@
         "d": "For the 'Night of the Aussie Notables' research task, students can create a multimodal biography. App smash by first using Microsoft PowerPoint to design custom infographics, timelines, or animated diagrams illustrating their chosen person's impact on Australian systems. Students can then export these assets as images or videos and embed them into a Book Creator e-book, adding their written biography, recorded audio narration, and even video reflections to present their findings in a rich, interactive format."
       },
       {
-        "t": "Minecraft Education",
-        "d": "To explore the 'influence of systems on citizens' (LOI 3), students can work in groups to build a symbolic representation of an Australian system, such as the three levels of government or a historical system like the White Australia Policy. Using the camera, book and quill, and boards, they can document their build, explaining how it functions and its impact on citizens. This build process and the final screenshots can be documented in a shared Microsoft OneNote page as a digital portfolio of their understanding."
+        "t": "Canva",
+        "d": "Students will use Canva to design a detailed biographical infographic or digital magazine page for their summative research project on a notable Australian. They can also create a comparative timeline to visually analyse the societal structures and systems of pre- and post-colonised Australia, synthesising their learning from the 'First Australians' documentary and museum visits."
       },
       {
         "t": "Adobe Express Podcasting",
@@ -2441,8 +2441,8 @@
         "d": "Connecting to the inquiry into migration, students can write and produce a short podcast episode in the style of an oral history. They can script a narrative based on their research of a migrant's journey to Australia, using Adobe Express Podcasting to record their story with background music and sound effects, creating an empathetic and engaging account of how migration has contributed to Australia's development."
       },
       {
-        "t": "Minecraft Education & Seesaw",
-        "d": "To address the 'comparison of pre and post colonised Australia', students can work in groups in Minecraft Education to build two contrasting models: one representing an Indigenous community with its unique systems (e.g., songlines, resource management) and another depicting an early colonial settlement. They can use the camera and portfolio tools to document their builds and then upload screenshots to Seesaw, using the voice recording and annotation tools to explain the key differences and the impact of colonisation."
+        "t": "Adobe Express",
+        "d": "For their summative assessment, students will use Adobe Express to create a digital narrative that synthesises their learning. They can produce a short video documentary detailing a migrant's story including push/pull factors, design an interactive webpage profiling a notable Australian's contribution to the nation, or create an animated explainer on Australian governance. This tool allows students to combine their research, timelines, and persuasive writing into a single, rich media project, serving as a powerful reflection on key unit concepts."
       },
       {
         "t": "Sway & PowerPoint",
@@ -3101,27 +3101,27 @@
     "s": [
       {
         "t": "Canva",
-        "d": "In the 'Go Further' phase, students write a newspaper article about a disaster like Cyclone Tracy. Students can use Canva's newspaper templates to design and publish their articles. They can add headlines, body text, and sourced images to create an authentic-looking front page, demonstrating their understanding of the disaster's impact and the features of a newspaper."
+        "d": "In the 'Go Further' stage, students are tasked with writing a newspaper article about a natural disaster like Cyclone Tracy. Using Canva's accessible newspaper templates, Year 3 students can design and publish their reports, integrating their research text with images and headlines to create a professional-looking final product that directly meets the task requirements."
       },
       {
-        "t": "Book Creator",
-        "d": "To build on the 'Earthquake backpack sorting activity', students can create a 'Digital Survival Guide'. App Smash: Use the iPad camera to photograph essential items for a survival kit, import them into Book Creator, and use the audio record button to explain the function of each item. This allows students to demonstrate their understanding of disaster preparedness in a multimodal way."
+        "t": "Google Earth and Book Creator",
+        "d": "App Smash: To support the 'Find Out' research on tectonic plates and global disasters, students use Google Earth to locate and take screenshots of a specific event's location (e.g., Christchurch). They then import these maps and satellite images into Book Creator, where they can add text, voice recordings, and annotations to create an interactive, multimedia report explaining the disaster's cause and impact."
       },
       {
-        "t": "Google Earth",
-        "d": "During the 'Find Out' stage where students research tectonic events, they can use Google Earth to explore the 'Ring of Fire' and locate the major tectonic plates. They can use the placemark tool to identify locations of famous volcanoes and earthquake zones mentioned in the unit (e.g., Japan, Christchurch) and take screenshots to use as visual evidence in their research."
+        "t": "Stop Motion Studio",
+        "d": "To make the abstract concepts from the 'Find Out' stage tangible, students can use Stop Motion Studio on iPads. Working with plasticine or Lego, they can create a short animation that visually demonstrates how tectonic plates shift to cause an earthquake or how a tsunami is formed, reinforcing their understanding of the scientific causes of natural disasters."
       },
       {
-        "t": "Minecraft Education",
-        "d": "Connecting to the suggestion to 'make a structure that is Earthquake resistant', students can work in small groups in a pre-prepared flat world to design and build earthquake-resistant buildings. They can research Japanese building techniques and apply concepts like cross-bracing and wider bases, then use the in-game camera and book tools to document and explain their resilient designs."
+        "t": "Green Screen Kit and iMovie",
+        "d": "Connecting to the central idea of resilience, students can create an 'on-the-scene' news report. Using a green screen, they can place themselves in front of an image of a disaster's aftermath and record a report explaining not just the event, but how the community came together to respond and rebuild. They can then use iMovie to edit their report and add titles."
       },
       {
-        "t": "Adobe Express",
-        "d": "After watching videos on the causes of natural disasters, students can use Adobe Express's 'Animate from audio' feature to create a short explanatory video. They can choose a character and record their voice explaining a concept, such as how a cyclone forms or what causes a tsunami, to synthesize and share their learning with their peers."
+        "t": "Minecraft Education and Microsoft PowerPoint",
+        "d": "App Smash: Addressing the student agency task of designing for a disaster-prone environment, students work in Minecraft Education to build a structure that can withstand a specific disaster (e.g., a flood-proof house on stilts). They use the in-game camera to capture images of their build, then import these into a PowerPoint presentation to label the key features and explain how their design choices promote safety and resilience."
       }
     ],
     "audited": true,
-    "plannerText": "This unit explores the causes and impacts of natural disasters, with a focus on human resilience. Students research various events like earthquakes, tsunamis, and bushfires through videos and fact files, investigating case studies such as Japan's earthquake preparedness. Key activities include sorting a survival backpack, analysing newspaper features, and a culminating task where students write a newspaper article about a disaster and design a disaster-prone environment."
+    "plannerText": "This unit explores the causes and impacts of different natural disasters, including tectonic events like earthquakes and weather events like cyclones. Students research specific disasters such as the Boxing Day Tsunami and Cyclone Tracy, investigate how communities prepare and respond with resilience, and present their findings by writing newspaper articles and designing disaster-resistant structures."
   },
   {
     "ca": "St Kilda",
@@ -3135,8 +3135,8 @@
         "d": "To support the research of various cities like Mexico City, Paris, New York, and Tokyo, students can use Google Earth for virtual field trips. They can use the Street View feature to explore the architecture and infrastructure, drop placemarks on key amenities, and use the measure tool to understand the scale of the city. App Smash: Students can take screenshots of significant locations and import them into Book Creator, adding text and audio narration to create a comparative digital atlas of world cities."
       },
       {
-        "t": "Minecraft Education",
-        "d": "Directly addressing the '3D building design to withstand Natural disasters' task, students can work in collaborative groups to build a city that incorporates flood and earthquake-resistant features. They can apply knowledge from the guest architect's incursion to design functional infrastructure like hospitals and transport systems. App Smash: Students can use the in-game camera and portfolio tools to document their creations, then export the images to create a guided tour video in Adobe Express, explaining their design choices."
+        "t": "Book Creator",
+        "d": "Students can collaboratively create a multi-modal digital book to showcase their class city. Each page or chapter can detail a different aspect, such as transport systems, community spaces, or infrastructure designed to withstand natural disasters. They can embed their research on global cities like Tokyo and Paris to justify their designs, add photos of their physical 3D models, and incorporate their city soundscapes using audio recordings, effectively building a comprehensive portfolio for their 'Where We Are in Place and Time' inquiry."
       },
       {
         "t": "GarageBand",
@@ -3271,8 +3271,8 @@
         "d": "Connecting to the 'Tacoma Bridge Collapse' activity, students create a multimedia digital book in Book Creator to explain why some structures fail. They can combine text, images, and diagrams to explain the engineering flaws, embed a video of the collapse from Clickview, and record their own audio narration to present their findings on what makes a bridge unstable."
       },
       {
-        "t": "Minecraft Education",
-        "d": "To explore the central idea in a virtual environment, students work in pairs in Minecraft Education to design and build different types of bridges. They can test the properties of various materials (wood, stone, iron) and structural designs. Students can use the in-game camera and portfolio to document their strongest creation and explain the engineering principles that make it 'fit for purpose'."
+        "t": "Tinkercad",
+        "d": "Students will use Tinkercad to create detailed 3D digital models of their bridge designs. This allows them to experiment with structural elements like trusses and arches in a virtual space before constructing their physical models. They can refine their designs based on engineering principles, creating a digital blueprint for their final build and test."
       }
     ],
     "audited": true,
@@ -3298,8 +3298,8 @@
         "d": "Connecting to the assessment of retelling the Bunjil creation story, students can create a multimedia digital book. App Smashing: They first use the Brushes Redux app to create their own digital illustrations of key scenes, incorporating the First Nations symbols they have studied. They then import these artworks into Book Creator, add typed text for the narrative, and record their own voice reading the story, providing a rich demonstration of their understanding."
       },
       {
-        "t": "Minecraft Education and Microsoft OneNote",
-        "d": "To explore the 'Responsibility' concept of caring for Country sustainably, students can work in groups in a custom Minecraft Education world to build a model of a pre-colonial First Nations community. They must research and include sustainable tools and systems for gathering food, such as fish traps or evidence of fire-stick farming. App Smashing: They will document their build by taking screenshots and inserting them into a shared Microsoft OneNote page, annotating their work to explain how their design demonstrates a sustainable connection to Country."
+        "t": "Adobe Express",
+        "d": "Students can create animated videos to retell the creation story of Bunjil, incorporating their own soundscapes of Country. They can also design digital artworks and infographics to map First Nations groups and showcase their understanding of traditional symbols, compiling their research and creations into a single digital portfolio."
       },
       {
         "t": "Adobe Express Animate from Audio",
