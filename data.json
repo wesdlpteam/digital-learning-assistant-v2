@@ -105,16 +105,6 @@
   {
     "ca": "Elsternwick",
     "yl": "Prep",
-    "th": "Where We Are in Place and Time",
-    "ci": "Discovering our past helps us know more about ourselves today.",
-    "lo": "Our personal stories and histories; Reflecting on and recording our past; Our ancestry and families",
-    "s": [],
-    "audited": true,
-    "plannerText": "Not yet documented in PDF."
-  },
-  {
-    "ca": "Elsternwick",
-    "yl": "Prep",
     "th": "Who We Are",
     "ci": "Relationships impact our wellbeing.",
     "lo": "Developing relationships; How those around us impact our behaviours and interactions; Keeping ourselves healthy and safe",
@@ -3759,18 +3749,29 @@
     "th": "Where We Are in Place and Time",
     "ci": "",
     "lo": "",
-    "s": [],
+    "s": [
+      {
+        "t": "ChatterPix Kids",
+        "d": "To support the oral storytelling activity in Week 1, students can take a photo of their baby picture or a drawing of themselves. They can then use ChatterPix Kids to draw a mouth and record themselves telling a short story about 'When I was little...', bringing their past self to life."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Directly connecting to the 'My Life in 3 Parts' sequencing activity in Week 4, students can create a simple 3-page digital book. They can import photos or use the built-in drawing tools for each stage ('baby', 'little', 'now') and use the audio record button to narrate each page, creating a personal multimodal timeline."
+      },
+      {
+        "t": "Seesaw",
+        "d": "For the 'My special object tells a story' lesson in Week 3, students can use the Seesaw app on their iPads. They can take a photo of their special artefact and use the record tool to orally explain its story and why it is important to them, creating a digital class museum."
+      },
+      {
+        "t": "Padlet",
+        "d": "To enhance the Week 2 activity of sorting old vs new objects, create a class Padlet board with two columns labelled with images for 'Old' and 'New'. Students can use iPads to take photos of objects around the school or from a collection in class and upload them to the correct column, creating a collaborative, visual sort."
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "To explore the concept of change over time, students can work in small groups to create a short animation showing a simple sequence, like a person growing from a baby to a child using drawings or play-doh. This reinforces the sequencing skills from Week 4 in a creative, hands-on format. The final video can be shared on Seesaw for peer feedback."
+      }
+    ],
     "audited": true,
-    "plannerText": "Not yet documented in PDF."
-  },
-  {
-    "ca": "Elsternwick",
-    "yl": "Prep",
-    "th": "Where We Are in Place and Time",
-    "ci": "",
-    "lo": "",
-    "s": [],
-    "audited": true,
-    "plannerText": "Not yet documented in PDF."
+    "plannerText": "This unit explores personal history and the concept of past and present through the central idea 'Discovering our past helps us know more about ourselves today'. Students engage in activities such as sharing baby photos and family artefacts, creating simple 'baby to now' timelines, and using oral storytelling to share memories and personal stories. The inquiry focuses on sequencing events and understanding how objects can tell us about the past."
   }
 ]
