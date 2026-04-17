@@ -2448,8 +2448,10 @@ async function fixAllOfType(type){
 }
 
 const KNOWN_PLATFORMS = [
-  { match: /minecraft/i, name: 'Minecraft Education',
-    context: 'You have deep knowledge of the Minecraft Education lesson library. When cross-referencing, draw on your full training knowledge of specific ME lessons — their titles, subject areas, year level suitability, and curriculum connections. For any ME suggestion you propose, include a direct link: [Lesson Title](https://education.minecraft.net/en-us/lessons/LESSON-SLUG).' },
+    { match: /minecraft/i, name: 'Minecraft Education',
+    context: 'You have deep knowledge of the Minecraft Education lesson library. Draw on your training knowledge of specific ME lesson titles, subject areas, and curriculum connections. For any ME suggestion, name the specific lesson in the description. Do NOT generate a URL. End every description with: To find this lesson, search [exact lesson title] at education.minecraft.net/en-us/resources/explore-lessons' },
+
+
   { match: /code\.org/i, name: 'Code.org',
     context: 'You have strong knowledge of Code.org courses and lesson plans. Reference specific lessons, courses and activities from Code.org when proposing changes.' },
   { match: /scratch\.mit|scratchfoundation/i, name: 'Scratch',
