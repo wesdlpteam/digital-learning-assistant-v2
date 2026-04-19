@@ -1882,28 +1882,28 @@
     "lo": "Observable properties of soils, rocks and minerals; Earth's resources are vital and must be used responsibly; First Nations knowledge of soils and rocks",
     "s": [
       {
-        "t": "Book Creator",
-        "d": "To document the 'Local Soil Study' and 'Rock and Mineral Hunt' activities, students use the iPad camera to take close-up photos of the soil and rock samples they collect. They import these into a Book Creator e-book, using the text and drawing tools to label components (pebbles, sand, plant matter) and describe observable properties like colour and texture. Students can also record audio narration to explain their findings, directly addressing the 'Finding Out' phase of the inquiry."
-      },
-      {
         "t": "Canva",
-        "d": "Connecting to the Visual Art link and the inquiry into First Nations' cultural use of minerals, students use Canva to design an informative digital poster. After researching how ochre is used for ceremony and art, they can source appropriate images and use Canva's design tools to explain the cultural significance of this Earth resource, demonstrating their understanding of how people value and use minerals."
+        "d": "Following the 'Local Soil Study' and 'Rock and Mineral Hunt', students can use the iPad's digital camera to take close-up photos of their samples. They can then import these images into Canva to create a 'Geologist's Field Guide' page, labelling the components they observe (e.g., pebbles, sand, plant matter) and adding text to describe properties like colour, texture, and crystal size."
       },
       {
-        "t": "PowerPoint",
-        "d": "As their culminating task, students create a digital presentation in PowerPoint to demonstrate their understanding of why soils, rocks, and minerals are important. Each slide can focus on a specific mineral they researched, featuring a photo, bullet points on its properties, and a description of its everyday uses. They can use the 'Record Audio' feature to narrate their slides, creating a comprehensive digital presentation."
+        "t": "Book Creator",
+        "d": "To address the 'Sorting Out' task of comparing Australia with a neighbouring country, students can 'App Smash' by using Google Earth to explore the landforms and geology of Indonesia or Papua New Guinea. They can take screenshots of significant features and import them into a multi-page Book Creator project, adding text, drawings, and audio narration to explain the similarities and differences in natural resources compared to Australia."
       },
       {
-        "t": "Google Earth",
-        "d": "To support the comparison of Australia's natural features with neighbouring countries, students use Google Earth to conduct a virtual exploration. They can 'fly' to significant geological sites in Australia (e.g., Uluru) and a neighbouring country (e.g., volcanoes in Indonesia), using the placemark tool to drop pins, add images, and write brief notes comparing the rock types and landforms they observe."
+        "t": "Adobe Express",
+        "d": "Connecting to the 'Going Further' exploration of First Nations' knowledge, students can create a short animated video using Adobe Express. They can research and import images of traditional uses of resources like ochre for art or grindstones for food preparation, then use the tool's simple animation features and voice recording to explain the cultural value and significance of these materials."
       },
       {
-        "t": "ChatterPix Kids",
-        "d": "To share their research on the everyday uses of minerals, students take a photo of an object made from a mineral (e.g., a glass window for silica). They use ChatterPix Kids to draw a mouth on the object and record a short audio clip from the object's perspective, explaining what mineral it is made from and why it is important to humans."
+        "t": "Stop Motion Studio",
+        "d": "For the summative 'Making Conclusions' task, students can create a stop motion animation to show their understanding of how a resource is used. For example, they could animate the journey of a rock from being mined to being used in a building, or clay being shaped into a pot. This provides a creative, hands-on digital alternative to a standard poster presentation."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "To structure the 'Tuning In' Geology Quest, students can use a simple Microsoft Form on their iPads as a digital observation checklist. They can answer pre-set questions about the location, colour, and texture of the rocks and soils they find in the school grounds. The automatically generated charts from the results can then be screenshotted and used in other presentation tools to share their findings."
       }
     ],
-    "audited": false,
-    "plannerText": "This unit begins with students investigating the properties of local soils and rocks through hands-on activities like a 'Geology Quest' and 'Rock and Mineral Hunt'. They then broaden their inquiry to research the everyday uses of minerals, compare the natural features of Australia with a neighbouring country, and explore the long-standing knowledge First Nations Australians have of Earth's resources. The unit culminates in students creating a digital presentation to demonstrate their understanding of why soils, rocks, and minerals are important."
+    "audited": true,
+    "plannerText": "This unit explores the properties and uses of Earth's resources through hands-on investigations. Students engage in a 'Geology Quest' to collect and study local soil and rock samples, research the everyday uses of minerals, and investigate the cultural significance of these resources for First Nations Australians. The unit culminates in students designing a digital presentation to share their understanding of how soils, rocks, and minerals are important for life, culture, and the environment."
   },
   {
     "ca": "Glen Waverley",
@@ -2161,28 +2161,28 @@
     "lo": "How design thinking creates in various ways; Design thinking meets community needs; Effective ways to engage an audience",
     "s": [
       {
-        "t": "Canva",
-        "d": "Students will use Canva's collaborative features to support their design thinking process. Groups can create visual assets such as a stakeholder empathy map, 2D blueprints of their proposed solution for a natural disaster scenario, and infographics to present their data. This work culminates in designing a professional and persuasive pitch presentation to communicate their final idea."
-      },
-      {
         "t": "Google Earth",
-        "d": "To investigate the impact of natural disasters, students will use Google Earth to explore affected regions like those prone to bushfires or floods. They can use the measurement tools and historical imagery to analyse the geographical scope of a disaster, gather data on community infrastructure, and identify vulnerable areas to inform their design solution."
+        "d": "In Week 5, when students research their chosen disaster location and create topographical maps, they can use Google Earth. Students can use the 3D terrain view and historical imagery to analyse the geography and potential impacts on their chosen community (e.g., Lismore floods), creating annotated placemarks to identify key areas of concern. This visual research will directly inform their empathy maps and design ideation."
       },
       {
         "t": "Tinkercad",
-        "d": "During the 'Prototyping' phase, students can design a detailed 3D digital model of their solution in Tinkercad. This allows them to create precise models of innovations, such as a portable water filtration device or a communication tool, which can be viewed from all angles and showcased as a digital prototype during their final pitch."
+        "d": "For the 'Prototyping' phase in Weeks 6 and 7, students can design a 3D model of their solution in Tinkercad. This allows them to digitally construct and refine their ideas, such as an earthquake-resistant structure or a flood survival pod. They can then 'App Smash' by exporting images of their 3D model into Microsoft PowerPoint to create an annotated blueprint explaining the design features, which can be used in their final pitch."
+      },
+      {
+        "t": "Canva",
+        "d": "Connecting to the 'Bushfire Infographics' analysis in Week 3 and the goal of creating 'persuasive data displays' in the 'Making Conclusions' phase, students can use Canva. After their research, each group can design a professional-looking infographic that synthesises their findings about their chosen natural disaster, its impact on the community, and the specific children's right they are focusing on, creating a powerful visual aid for their pitch."
+      },
+      {
+        "t": "Book Creator",
+        "d": "To document their entire design thinking journey, students can use Book Creator as a collaborative digital design journal. They can embed research notes, photos of their storyboards (Week 6), videos of their prototype testing, and their final pitch script. For the 'Reflecting' task in Week 8, they can 'App Smash' by creating a peer feedback survey in Microsoft Forms and embedding the link in their book for other teams to complete after the presentations."
       },
       {
         "t": "Adobe Express",
-        "d": "To develop their persuasive pitch, student groups can use the video editor in Adobe Express. They can create a short, compelling video that combines images of their prototype, key data points, and a recorded voice-over explaining how their solution addresses the needs of a community affected by a natural disaster."
-      },
-      {
-        "t": "Microsoft Teams",
-        "d": "To manage their collaborative group work, each team will use a dedicated channel in Microsoft Teams. This will serve as their central hub to share research findings, store files related to the UNICEF brief, communicate progress on their design thinking stages, and coordinate the development of their final pitch."
+        "d": "To prepare for the 'Pitching & Presenting Projects' in Week 8, students can create a short, persuasive video pitch using Adobe Express. They can combine images of their research and prototypes, text overlays, and a voice-over narration following the persuasive pitch structure learned in Week 7. This allows them to create a dynamic and engaging presentation that effectively communicates their design's purpose and engages their audience."
       }
     ],
-    "audited": false,
-    "plannerText": "In this unit, students investigate the impact of natural disasters like bushfires and floods, using mapping tools and data analysis to understand community needs. Working in collaborative groups with a UNICEF brief, they apply the design thinking process to empathise, ideate, and prototype a solution for a chosen stakeholder. The unit culminates in students developing and delivering a persuasive pitch to present their final design and its purpose."
+    "audited": true,
+    "plannerText": "This unit explores the central idea 'People design for purpose' by having students investigate natural disasters and their impact on communities, with a focus on children's rights. Students engage in a full design thinking cycle, from researching hazards like bushfires and floods to empathising with stakeholders, before ideating, prototyping, and refining a solution. The unit culminates in students creating and delivering a persuasive pitch for their final design, justifying their decisions and evaluating their project's effectiveness."
   },
   {
     "ca": "Glen Waverley",
@@ -3163,27 +3163,27 @@
     "s": [
       {
         "t": "Book Creator",
-        "d": "To publish their information report on a chosen body system, students can create a multi-page digital book. They can combine text, images, and use the pen tool to create and label their own diagrams directly in the app. Students can also record audio narrations on each page to explain the function of the body system, creating a comprehensive and accessible final product."
+        "d": "To synthesize their research on a chosen body system, students will create a multimedia e-book. This directly supports the 'Produce an Information Report on a chosen body system' activity. App Smash this by having students first draw and label diagrams in Sketchbook, save them as images, and then import these illustrations into their Book Creator project to be explained using the text and audio recording tools."
       },
       {
-        "t": "Microsoft Word",
-        "d": "To support the goal-setting activity, students can use a scaffolded Word document template to log their data from the fitness tests. They can enter their scores into a simple table at the start and end of the unit to track progress and use a text box to write a reflection on how their personal choices impacted their fitness results."
+        "t": "Stop Motion Studio",
+        "d": "To demonstrate their understanding of how a body system functions, students can use clay or paper cutouts to create a short animation. For example, they could animate food moving through the digestive system. App Smash this by importing the completed video into iMovie, where students can add a voice-over narration explaining each stage of the process, fulfilling the information report requirement in a creative format."
       },
       {
         "t": "Canva",
-        "d": "To synthesize their research on a chosen body system, students can create a visually engaging infographic. They can use templates, icons, and text boxes to present key facts, label parts of the system, and explain how healthy choices (like exercise or good nutrition) impact that system's wellbeing. This serves as a creative alternative to a traditional report."
+        "d": "In connection with the 'What are the components of fitness?' learning experience, students can design a vibrant infographic. They can use Canva's icons, templates, and text tools to visually explain different fitness components (e.g., flexibility, strength, endurance) and suggest simple exercises for each, demonstrating their understanding of healthy choices."
       },
       {
-        "t": "Micro:bit",
-        "d": "To support the goal-setting and fitness testing activities, students can use the Micro:bit to build their own step-counter following the [Getting Active](https://microbit.org/teach/lessons/getting-active-en/) project. This allows them to collect personal data on their physical activity, directly connecting the choices they make to a measurable impact on their health and wellbeing."
+        "t": "Microsoft Forms",
+        "d": "To connect with setting and tracking personal goals, students can create a simple daily or weekly wellness check-in for themselves. They can include questions about sleep, water intake, and physical activity. At the end of the week, they can review the automatically generated charts to reflect on their choices and use this data to inform the 'Compare fitness test results to see if the fitness goals has been achieved' activity."
       },
       {
-        "t": "Adobe Express",
-        "d": "Students can animate a character to present their research on a chosen body system. They can select a character, record their voice explaining the system's function and the impact of healthy choices, and the app will automatically animate the character's mouth and movements, creating a unique and engaging information report."
+        "t": "Merge Cube",
+        "d": "As a research tool for the 'Investigate Body Systems' activity, students can use iPads with the Merge Cube and the Delightex app to explore a 3D, augmented reality model of the human body. They can manipulate different systems in their hands to see how they are connected. App Smash this by using the iPad's screen recording feature to capture a video of themselves exploring and explaining a system, which can then be added to a Seesaw post as a research journal entry."
       }
     ],
-    "audited": false,
-    "plannerText": "This unit explores how personal choices impact health and wellbeing, with a focus on the human body's systems and physical fitness. Students research and produce information reports on a chosen body system, and they also set and track personal fitness goals by comparing test results over time."
+    "audited": true,
+    "plannerText": "This unit explores how personal choices impact health and wellbeing, with a central idea that 'Health and wellbeing are impacted by the choices we make'. Students engage in activities such as investigating and producing detailed information reports on human body systems, exploring the components of fitness, setting personal training goals, and participating in cyber safety and social-emotional learning lessons."
   },
   {
     "ca": "St Kilda",
