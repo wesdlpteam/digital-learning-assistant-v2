@@ -1142,12 +1142,24 @@ Generate ONE fresh suggestion. Connect specifically to this unit's content — n
 Return ONLY JSON: {"t":"Tool Name","d":"Specific description for this unit."}`;
 
   try{
-    const raw = await callGemini([{role:'user',parts:[{text:prompt}]}], null, GEMINI_FAST_MODEL);
-    const clean = raw.replace(/```json|```/g,'').trim();
-    const si = clean.indexOf('{'), ei = clean.lastIndexOf('}');
-    if(si===-1||ei===-1) throw new Error('No JSON');
-    const newSug = JSON.parse(clean.slice(si, ei+1));
-    if(!newSug.t||!newSug.d) throw new Error('Invalid');
+    let newSug = null;
+    let dupedTool = null;
+    for(let attempt=0; attempt<2; attempt++){
+      const retryNote = attempt>0 ? `\n\nRETRY: Your previous response used "${dupedTool}" which is already used in this unit. Pick a DIFFERENT tool that is NOT in the "tools already used" list.` : '';
+      const raw = await callGemini([{role:'user',parts:[{text:prompt+retryNote}]}], null, GEMINI_FAST_MODEL);
+      const clean = raw.replace(/```json|```/g,'').trim();
+      const si = clean.indexOf('{'), ei = clean.lastIndexOf('}');
+      if(si===-1||ei===-1) throw new Error('No JSON');
+      const parsed = JSON.parse(clean.slice(si, ei+1));
+      if(!parsed.t||!parsed.d) throw new Error('Invalid');
+      if(wouldDupeInEntry(entry, parsed.t, sugIdx)){
+        dupedTool = parsed.t;
+        continue;
+      }
+      newSug = parsed;
+      break;
+    }
+    if(!newSug) throw new Error(`Gemini kept proposing "${dupedTool}" which is already in this unit — try again or use 💬 feedback`);
     const sugs = [...getSugs(DATA[entryIdx])];
     recordChange(entryIdx, sugs, [...sugs.slice(0,sugIdx), newSug, ...sugs.slice(sugIdx+1)]);
     DATA[entryIdx].s[sugIdx] = newSug;
@@ -1238,8 +1250,12 @@ Return ONLY a JSON array of exactly 3 different suggestions applying the instruc
     const clean = raw.replace(/```json|```/g,'').trim();
     const si = clean.indexOf('['), ei = clean.lastIndexOf(']');
     if(si===-1||ei===-1) throw new Error('No suggestions returned');
-    const suggestions = JSON.parse(clean.slice(si, ei+1));
-    if(!suggestions.length) throw new Error('Empty response');
+    const rawSugs = JSON.parse(clean.slice(si, ei+1));
+    if(!rawSugs.length) throw new Error('Empty response');
+
+    // Filter out any option that would duplicate another slot in this unit
+    const suggestions = rawSugs.filter(s => s && s.t && !wouldDupeInEntry(entry, s.t, sugIdx));
+    if(!suggestions.length) throw new Error('All options duplicate tools already in this unit \u2014 try rephrasing');
 
     window['_fbsugs_'+uid] = suggestions;
 
@@ -1267,6 +1283,11 @@ function confirmSugFeedback(entryIdx, sugIdx, uid, choiceIdx){
   const suggestions = window['_fbsugs_'+uid];
   if(!suggestions || !suggestions[choiceIdx]) return;
   const newSug = suggestions[choiceIdx];
+  // Safety net: if another slot was changed between showing options and confirming, abort
+  if(wouldDupeInEntry(DATA[entryIdx], newSug.t, sugIdx)){
+    setStatus(`Skipped \u2014 "${newSug.t}" is already used in this unit`, 'error');
+    return;
+  }
   const sugs = [...getSugs(DATA[entryIdx])];
   sugs[sugIdx] = {t: newSug.t, d: newSug.d};
   recordChange(entryIdx, getSugs(DATA[entryIdx]), sugs);
@@ -1304,11 +1325,26 @@ Requirements:
 - Return ONLY a JSON array with no markdown or backticks:
 [{"t":"Tool Name","d":"One specific sentence for this unit."},...]`;
   try{
-    const raw=await callGemini([{role:'user',parts:[{text:prompt}]}]);
-    const clean=raw.replace(/```json|```/g,'').trim();
-    const si=clean.indexOf('['), ei=clean.lastIndexOf(']');
-    if(si===-1||ei===-1) throw new Error('No JSON array in response');
-    const sugs=JSON.parse(clean.slice(si,ei+1));
+    let sugs = null;
+    let dupedTool = null;
+    for(let attempt=0; attempt<2; attempt++){
+      const retryNote = attempt>0 ? `\n\nRETRY: Your previous response used "${dupedTool}" twice. Every one of the 5 suggestions MUST use a DIFFERENT tool \u2014 no repeats whatsoever.` : '';
+      const raw=await callGemini([{role:'user',parts:[{text:prompt+retryNote}]}]);
+      const clean=raw.replace(/```json|```/g,'').trim();
+      const si=clean.indexOf('['), ei=clean.lastIndexOf(']');
+      if(si===-1||ei===-1) throw new Error('No JSON array in response');
+      const parsed=JSON.parse(clean.slice(si,ei+1));
+      const keys=parsed.map(s=>toolKey(sugTool(s))).filter(Boolean);
+      const dup=keys.find((k,i)=>keys.indexOf(k)!==i);
+      if(dup){
+        const dupSug=parsed.find(s=>toolKey(sugTool(s))===dup);
+        dupedTool = dupSug ? sugTool(dupSug) : dup;
+        continue;
+      }
+      sugs = parsed;
+      break;
+    }
+    if(!sugs) throw new Error(`Gemini repeated "${dupedTool}" in the batch \u2014 try again`);
     const pendingId='regenall_'+idx;
     window[pendingId]=sugs;
     res.innerHTML=`
@@ -1423,6 +1459,18 @@ function normaliseToolName(t){
   };
   const key = t.toLowerCase().trim();
   return map[key] || t;
+}
+
+// Canonical key for comparing two tool names (normalises known variants, lowercases, trims)
+function toolKey(t){
+  return normaliseToolName((t||'').toString().trim()).toLowerCase().trim();
+}
+
+// Would placing `toolName` into `entry` (excluding slot `excludeSugIdx`) create a duplicate?
+function wouldDupeInEntry(entry, toolName, excludeSugIdx){
+  const key = toolKey(toolName);
+  if(!key) return false;
+  return getSugs(entry).some((s,i) => i !== excludeSugIdx && toolKey(sugTool(s)) === key);
 }
 
 function computeStats(){
@@ -1814,7 +1862,7 @@ function applyChangesFromPopup(){
   if(!overlay) return;
   const changes=window._popupChanges||[];
   const states=window._popupStates||[];
-  let applied=0;
+  let applied=0, skippedDupes=0;
 
   changes.forEach((c,ci)=>{
     if(states[ci]!=='approved') return;
@@ -1822,6 +1870,11 @@ function applyChangesFromPopup(){
     const sugIdx=c.sugIdx;
     const t=c.t||c.tool||c.technology||c.name||'';
     const d=c.d||c.desc||c.description||c.integration_idea||'';
+    // Safety net: if an earlier approved change already put this tool in a sibling slot, skip
+    if(entryIdx>=0 && entryIdx<DATA.length && wouldDupeInEntry(DATA[entryIdx], t, sugIdx)){
+      skippedDupes++;
+      return;
+    }
     if(entryIdx>=0&&entryIdx<DATA.length){
       const sugs=getSugs(DATA[entryIdx]);
       if(Array.isArray(DATA[entryIdx].s)){
@@ -1848,7 +1901,8 @@ function applyChangesFromPopup(){
   delete window._popupUpdateCounter;
 
   saveToDrive();
-  setStatus(`${applied} suggestion${applied!==1?'s':''} updated and saved`);
+  const dupeNote = skippedDupes ? ` (skipped ${skippedDupes} duplicate${skippedDupes!==1?'s':''})` : '';
+  setStatus(`${applied} suggestion${applied!==1?'s':''} updated and saved${dupeNote}`);
   renderAuditChart();
 }
 
@@ -2017,12 +2071,23 @@ Campus: ${e.ca} | Year Level: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: 
 Requirements: all 5 different tools, at least one ambitious project, every suggestion specific to this unit.
 Return ONLY a JSON array, no markdown: [{"t":"Tool Name","d":"One specific sentence."},...]`;
     try{
-      const raw=await callGemini([{role:'user',parts:[{text:prompt}]}], null, GEMINI_MODEL);
-      const clean=raw.replace(/```json|```/g,'').trim();
-      const si=clean.indexOf('['), ei=clean.lastIndexOf(']');
-      if(si===-1||ei===-1) throw new Error('No JSON array');
-      const sugs=JSON.parse(clean.slice(si,ei+1));
-      if(!sugs.length) throw new Error('Empty array');
+      let sugs = null;
+      let dupedTool = null;
+      for(let attempt=0; attempt<2; attempt++){
+        const retryNote = attempt>0 ? `\n\nRETRY: Your previous response used "${dupedTool}" twice. Every one of the 5 suggestions MUST use a DIFFERENT tool.` : '';
+        const raw=await callGemini([{role:'user',parts:[{text:prompt+retryNote}]}], null, GEMINI_MODEL);
+        const clean=raw.replace(/```json|```/g,'').trim();
+        const si=clean.indexOf('['), ei=clean.lastIndexOf(']');
+        if(si===-1||ei===-1) throw new Error('No JSON array');
+        const parsed=JSON.parse(clean.slice(si,ei+1));
+        if(!parsed.length) throw new Error('Empty array');
+        const keys=parsed.map(s=>toolKey(sugTool(s))).filter(Boolean);
+        const dup=keys.find((k,i)=>keys.indexOf(k)!==i);
+        if(dup){ const dupSug=parsed.find(s=>toolKey(sugTool(s))===dup); dupedTool = dupSug ? sugTool(dupSug) : dup; continue; }
+        sugs = parsed;
+        break;
+      }
+      if(!sugs) throw new Error(`Duplicates in batch after retry`);
       DATA[idx].s=sugs; DATA[idx].audited=true; fixed++;
       saveToDrive();
     }catch(err){
@@ -2563,6 +2628,18 @@ APPROVED TOOLS (Wesley College — Microsoft school):
 - GarageBand, ScratchJR, Stop Motion Studio, ChatterPix Kids, iMovie, Puppet Pals, Adobe Express (sub-types: Adobe Express Animate from Audio, Adobe Express Podcasting, Adobe Express Video, Adobe Express Website Designer — always specify the sub-type)
 - Google Maps, Google Earth, Field Guide to Victoria, Sky Map, Geoboard
 - Clickview, Epic, PicCollage, Brushes Redux, Word Clouds ABCya, Sketchbook, Explain Everything, Freeform, Delightex, Kahoot, Tinkercad, Minecraft Education
+
+TOOL SELECTION POLICY:
+- By default, only use tools from the APPROVED TOOLS list above.
+- COORDINATOR OVERRIDE: If the coordinator's instruction below explicitly names a specific tool, product, platform, or lesson library (even one NOT on the approved list), treat it as approved for this run. The coordinator's explicit request takes precedence over the approved list.
+- Example: if the instruction says "add Quizlet flashcards where they fit", use Quizlet even though it's not on the approved list.
+- If the coordinator's instruction does not name any specific off-list tool, stick strictly to the approved list.
+
+DUPLICATE PREVENTION (HARD RULE):
+- Do NOT propose a change that would use the same tool as another suggestion already in the same entry.
+- Before proposing a change for entry [X] slot [Y], look at the other 4 suggestions in entry [X]. If your proposed tool matches any of them, either (a) propose replacing one of those duplicate slots instead, or (b) pick a different tool.
+- Do NOT propose two different changes for the same entry that would both use the same tool.
+- The TOOL INDEX below shows you exactly which tools are used in which entries. Use it to avoid duplicates.
 ${platformSection}
 TOOL INDEX (exact location of every suggestion):
 ${toolIndexStr}
@@ -2652,13 +2729,33 @@ ${fullContext}`;
     bar.style.width = '100%';
     prog.style.display = 'none';
 
+    let skippedDupes = 0;
+    if(changes && changes.length){
+      const preCount = changes.length;
+      // Pass 1: drop changes that would duplicate a tool already in the entry (other slots unchanged)
+      changes = changes.filter(c => {
+        const entry = DATA[c.entryIdx];
+        if(!entry) return false;
+        return !wouldDupeInEntry(entry, c.t, c.sugIdx);
+      });
+      // Pass 2: within the same entry, dedupe proposed tools across multiple changes (keep first)
+      const seenByEntry = {};
+      changes = changes.filter(c => {
+        const k = `${c.entryIdx}::${toolKey(c.t)}`;
+        if(seenByEntry[k]) return false;
+        seenByEntry[k] = true;
+        return true;
+      });
+      skippedDupes = preCount - changes.length;
+    }
+
     if(changes && changes.length){
       statusEl.style.color = 'var(--lime)';
-      statusEl.textContent = `✓ ${changes.length} change${changes.length!==1?'s':''} proposed — review below`;
+      statusEl.textContent = `\u2713 ${changes.length} change${changes.length!==1?'s':''} proposed${skippedDupes?` (${skippedDupes} duplicate${skippedDupes!==1?'s':''} filtered out)`:''} \u2014 review below`;
       showChangesPopup(changes);
     } else {
       statusEl.style.color = 'var(--dim)';
-      statusEl.textContent = 'No changes proposed — try rephrasing your instruction';
+      statusEl.textContent = skippedDupes ? `All ${skippedDupes} proposal${skippedDupes!==1?'s':''} would have created duplicates \u2014 try rephrasing` : 'No changes proposed \u2014 try rephrasing your instruction';
       console.log('Gemini response (no changes parsed):', response.slice(0,500));
     }
   }catch(e){
@@ -2736,13 +2833,25 @@ async function runBulkRegen(){
     lbl.textContent=`${done}/${targets.length}: ${e.yl} — ${e.th}`;
     const prompt=`Generate exactly 5 digital technology suggestions for this IB PYP unit at Wesley College (Microsoft school).
 Campus: ${e.ca} | Year Level: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: "${e.ci}"`:''}${e.plannerText?`\nPlanner context: ${e.plannerText}`:''}
+All 5 suggestions MUST use DIFFERENT tools \u2014 no duplicates.
 Return ONLY a JSON array: [{"t":"Tool Name","d":"Specific description for this unit."},...]`;
     try{
-      const raw=await callGemini([{role:'user',parts:[{text:prompt}]}],null,GEMINI_MODEL);
-      const clean=raw.replace(/```json|```/g,'').trim();
-      const si=clean.indexOf('['),ei=clean.lastIndexOf(']');
-      if(si===-1||ei===-1) throw new Error('No JSON');
-      const sugs=JSON.parse(clean.slice(si,ei+1));
+      let sugs = null;
+      let dupedTool = null;
+      for(let attempt=0; attempt<2; attempt++){
+        const retryNote = attempt>0 ? `\n\nRETRY: Your previous response used "${dupedTool}" twice. Every one of the 5 suggestions MUST use a DIFFERENT tool.` : '';
+        const raw=await callGemini([{role:'user',parts:[{text:prompt+retryNote}]}],null,GEMINI_MODEL);
+        const clean=raw.replace(/```json|```/g,'').trim();
+        const si=clean.indexOf('['),ei=clean.lastIndexOf(']');
+        if(si===-1||ei===-1) throw new Error('No JSON');
+        const parsed=JSON.parse(clean.slice(si,ei+1));
+        const keys=parsed.map(s=>toolKey(sugTool(s))).filter(Boolean);
+        const dup=keys.find((k,i)=>keys.indexOf(k)!==i);
+        if(dup){ const dupSug=parsed.find(s=>toolKey(sugTool(s))===dup); dupedTool = dupSug ? sugTool(dupSug) : dup; continue; }
+        sugs = parsed;
+        break;
+      }
+      if(!sugs) throw new Error(`Duplicates in batch after retry`);
       recordChange(idx, getSugs(DATA[idx]), sugs);
       DATA[idx].s=sugs; DATA[idx].audited=true; fixed++;
       saveToDrive();
