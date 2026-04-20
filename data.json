@@ -927,8 +927,8 @@
         "d": "To inform their ideation and stakeholder analysis in Week 5, students can create a survey in Microsoft Forms to gather authentic data from the school community about what features are most needed in a disaster response kit or community shelter. The results, automatically collated in Excel, can be turned into charts and graphs to justify their design decisions during their final pitch presentations in Week 7, which they can create using Canva."
       },
       {
-        "t": "Stop Motion Studio",
-        "d": "For the Week 3 activity on earthquakes and tectonic plates, students can use Stop Motion Studio to create an animated video explaining the science behind plate movement. Using plasticine or the provided cut-out models, they can demonstrate concepts like subduction, transform, and divergent boundaries. This provides a creative and visual way for them to communicate their scientific understanding, which can be shared on Seesaw for peer feedback."
+        "t": "Minecraft Education",
+        "d": "Students use Minecraft Education to collaboratively design and build models of structures that address natural hazards (e.g., earthquake-resistant buildings or flood barriers), applying their understanding of design processes to solve real-world challenges."
       }
     ],
     "audited": true,
@@ -1446,9 +1446,30 @@
     "th": "How the World Works",
     "ci": "Movement is dependent on different forces.",
     "lo": "Ways objects move; The influence different materials have on movement; How designs can be adapted and improved",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Stop Motion Studio",
+        "d": "Following the 'Sorting Types of Movement' activity, students can work in pairs to create short stop-motion animations demonstrating different forces. Using classroom objects, they can animate a toy rolling, a magnet pulling a paperclip, or a ball bouncing, making the concepts of push, pull, and gravity visible and tangible."
+      },
+      {
+        "t": "Book Creator",
+        "d": "To document the 'Design a Moving Toy' challenge, students create a digital design journal. They can take photos of their materials and construction process, use the drawing tool to label the forces (push/pull) on their creation, and record audio explaining how their design works and how they improved it to move better."
+      },
+      {
+        "t": "Sphero BOLT",
+        "d": "To elevate the 'Movement ramp testing' activity, students use Sphero BOLTs instead of matchbox cars. They can use the simple draw-and-drive function in the Sphero EDU app to code the robot's path down their ramp. This allows them to collect real-time data on speed and distance, facilitating a more precise comparison of how different surfaces and angles affect movement."
+      },
+      {
+        "t": "Seesaw",
+        "d": "For the 'Movement Video Reflection' task, students use Seesaw to record a video of themselves applying a force in the school environment (e.g., pushing a swing, pulling a door). App Smashing: Students first create a title card in Canva with their name and the force (e.g., 'PUSH'), save it as an image, and upload it to their Seesaw post before adding their video and a voice recording to explain their action."
+      },
+      {
+        "t": "Adobe Express Animate from Audio",
+        "d": "After the 'Movement mystery bag' provocation, students choose an animated character to speak for an object from the bag. They use Adobe Express Animate from Audio to record the character explaining how it moves (e.g., 'I am a ball. I can roll and bounce when you push or drop me!'), providing a simple way to articulate their understanding."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit focuses on how movement depends on different forces, explored through highly interactive and hands-on learning experiences. Students engage in building and testing ramps with toy cars, investigating 'movement stations' to understand push, pull, roll, and spin, and designing their own moving toys from recycled materials. Key activities involve sorting objects by their type of movement and reflecting on how variables like surface and angle impact an object's motion."
   },
   {
     "ca": "Glen Waverley",
@@ -2024,8 +2045,8 @@
         "d": "For the 'Making Conclusions' science experiments (sink/float, friction, etc.), students use iPads to film their tests. They then import these short clips into Adobe Express to create a scientific video report. Students can add text overlays to label materials, record voice-over narrations to explain their predictions and observations, and compile their clips into a single video that summarises their findings on material properties."
       },
       {
-        "t": "Book Creator and Stop Motion Studio",
-        "d": "To enhance the science journals mentioned in the 'Finding Out' section, students can document their experiments using animation. For example, they can use Stop Motion Studio to create a short film showing the process of a material decomposing or an object sinking. This video file can then be directly embedded into their Book Creator digital journal, alongside their written observations and reflections, creating a rich multimedia record of their learning."
+        "t": "Minecraft Education",
+        "d": "Students use Minecraft Education to design and build sustainable products or eco-friendly communities, exploring the impact of product design on the natural world in a virtual environment."
       },
       {
         "t": "Sphero BOLT",
@@ -2220,8 +2241,8 @@
         "d": "During the 'Finding Out' lessons on First Nations communities (Lessons 3-6), students can use Google Earth to explore the traditional lands they are studying, including Wurundjeri Country. They can capture images of the landscape and integrate them into a digital poster created in Canva, combining geographical context with their research on caring for Country to fulfil the poster-making task."
       },
       {
-        "t": "Tinkercad & 3D Printers",
-        "d": "For the 'Taking Action' phase, students designing a school sustainability initiative can design a 3D prototype of their idea in Tinkercad. This could be a custom-designed water-saving nozzle for a tap or a label for a new recycling bin. They can then use the school's 3D printers to create a physical model, turning their idea into a tangible object to support their final pitch."
+        "t": "Minecraft Education",
+        "d": "Students use Minecraft Education to create virtual models of sustainable communities, demonstrating how human actions can positively impact the environment and showcasing conservation strategies."
       },
       {
         "t": "Microsoft Teams",
