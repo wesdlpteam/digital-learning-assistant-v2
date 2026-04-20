@@ -943,27 +943,27 @@
     "s": [
       {
         "t": "Padlet",
-        "d": "Students collaboratively generate and sort inquiry questions about conflict, peace, and resolution, using Padlet as a digital wonder wall to visually organise their thinking and connect ideas from texts, music, and class discussions."
-      },
-      {
-        "t": "Microsoft Teams",
-        "d": "Facilitate structured online debates or role-play scenarios in Teams channels, where students take on perspectives from historical or literary conflicts studied in class, practising respectful digital communication and conflict resolution strategies."
+        "d": "Students collaboratively generate and sort inquiry questions about different types and causes of conflict, as well as peaceful solutions, using Padlet. This supports the lesson sequence where students brainstorm and categorize questions under key concepts, fostering perspective-taking and conceptual understanding."
       },
       {
         "t": "Canva",
-        "d": "Students create visually engaging posters or infographics in Canva to advocate for peaceful solutions to real-world or historical conflicts, synthesising their learning from songs, picture books, and inquiry activities."
+        "d": "Students create a visual Colour-Symbol-Image poster in Canva to represent their understanding of 'conflict' and 'peace' after analysing texts like 'Old Turtle' and songs such as 'Imagine' by John Lennon. This connects directly to the lesson where students express their interpretations of abstract concepts through visual metaphors."
+      },
+      {
+        "t": "Microsoft Teams",
+        "d": "Students use Microsoft Teams to participate in structured online discussions and peer feedback sessions about conflict resolution scenarios drawn from picture books and real-world events. This aligns with lessons where students reflect on perspectives and practice respectful communication."
       },
       {
         "t": "Book Creator",
-        "d": "Students document their learning journey by compiling reflections, double-entry journals, Colour-Symbol-Image routines, and research findings into a multimedia digital portfolio that showcases their evolving understanding of conflict and peace."
+        "d": "Students document their learning journey by compiling reflections, double-entry journals, and responses to literature (e.g., 'Sorry Day', 'From Little Things Big Things Grow') in a digital portfolio using Book Creator. This supports ongoing assessment and synthesis of key ideas about peaceful conflict resolution."
       },
       {
-        "t": "ClickView",
-        "d": "Use ClickView to access and analyse relevant video content (e.g., John Lennon's 'Imagine', 'From Little Things Big Things Grow', or documentaries on reconciliation) as provocations for class discussion and critical thinking about peaceful conflict resolution."
+        "t": "Clickview",
+        "d": "Teachers use Clickview to show curated video clips (e.g., 'ABC Education: Indigenous Australia ? Fighting for Equality') that illustrate real-world examples of conflict and peaceful protest. Students then analyse these videos in class discussions and connect them to the central idea of the unit."
       }
     ],
     "audited": true,
-    "plannerText": "This Year 5 'Sharing the Planet' unit explores types, causes, and impacts of conflict, with a strong focus on peaceful conflict resolution and its significance locally and globally. Students engage with picture books, songs, and real-world stories, use thinking routines like Colour-Symbol-Image, and participate in inquiry-based activities such as double-entry journals, collaborative Padlets, and research tasks to deepen their understanding and advocate for positive change."
+    "plannerText": "The Year 5 'Sharing the Planet' unit at Elsternwick explores types, causes, and impacts of conflict, with a strong focus on peaceful resolution and reconciliation. Students engage with picture books, songs, and real-world case studies, use thinking routines like Colour-Symbol-Image, analyse texts and videos, and generate inquiry questions collaboratively. The unit emphasizes reflection, perspective-taking, and documenting learning through visual and written responses."
   },
   {
     "ca": "Elsternwick",
@@ -1126,9 +1126,30 @@
     "th": "Sharing the Planet",
     "ci": "Communities interact with the environment in different ways.",
     "lo": "How community values shape the management of the natural environment; The need for sustainable practices; Taking action for environmental stewardship",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Microsoft Teams",
+        "d": "Facilitate collaborative group discussions and reflections after Camp Mallana, allowing students to share their environmental stewardship projects, upload photos from their fieldwork, and provide peer feedback on each group's action project."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students create digital journals documenting their learning journey throughout the unit, including reflections from Camp Mallana, case study analyses, Indigenous land management comparisons, and their personal action projects, integrating photos, text, and voice recordings."
+      },
+      {
+        "t": "Canva",
+        "d": "Design visually engaging posters or infographics to promote environmental stewardship, summarizing key findings from their case studies or action projects, and display these digitally or around the school to raise awareness."
+      },
+      {
+        "t": "Padlet",
+        "d": "Use Padlet as a collaborative digital wall for students to post their KWL chart entries, brainstorm ideas for action projects, and share resources or research findings related to community-environment interactions."
+      },
+      {
+        "t": "Digital Cameras",
+        "d": "Students use digital cameras during Camp Mallana and local fieldwork to document human-environment interactions, biodiversity, and evidence of stewardship or impact, then use these images in their Book Creator journals or Canva posters."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The unit 'Sharing the Planet' immerses Year 6 students in exploring how communities interact with the environment, with a strong experiential focus through Camp Mallana. Lessons include provocations using images and videos, reflective journaling on water and biodiversity activities, analysis of environmental case studies, comparison of Indigenous and modern land management, and the creation and presentation of action projects promoting environmental stewardship."
   },
   {
     "ca": "Elsternwick",
@@ -1136,9 +1157,30 @@
     "th": "Where We Are in Place and Time",
     "ci": "Significant events shape a place",
     "lo": "What is a significant event; Why these events occurred; Impact of significant events",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Canva",
+        "d": "Students create a visually engaging timeline in Canva to sequence significant events that have shaped Australia or another place, incorporating images, dates, and brief descriptions sourced from their research. This connects directly to the lesson where students create number lines and timelines of migration and significant events (see page 71)."
+      },
+      {
+        "t": "Microsoft Teams",
+        "d": "Students collaborate in Teams channels to share research findings, discuss the impact of significant events, and provide peer feedback on their personal inquiry projects. This supports the group research, peer assessment, and conferencing elements described throughout the unit (see pages 69, 74)."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students use Padlet to brainstorm and categorize significant events, push/pull migration factors, and the impact on communities, supporting the sorting and class discussion activities (see pages 70-72)."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Each student documents their personal inquiry into a significant event by creating a digital book, combining text, images, and audio reflections. This aligns with the summative assessment where students present their research in multimodal formats (see page 69)."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Teachers create a formative quiz in Forms to check students' understanding of key concepts such as migration, significant events, and the difference between migrants and refugees, directly supporting the vocabulary and concept-building lessons (see page 72)."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The unit engages Year 6 students in exploring how significant events shape a place, beginning with provocations such as mapping family migration stories and analyzing video stimuli. Students investigate the impact of significant events through research, timelines, class discussions, and personal inquiries, culminating in a summative assessment where they present their findings about a chosen significant event using digital tools."
   },
   {
     "ca": "Elsternwick",
@@ -1156,9 +1198,30 @@
     "th": "How We Express Ourselves",
     "ci": "Emotions influence our wellbeing.",
     "lo": "How our feelings and emotions affect us; How feelings and emotions are interpreted; How our emotions and behaviour affect relationships",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Seesaw",
+        "d": "Students use Seesaw to take photos of themselves expressing different emotions as part of the summative assessment. They record their voices explaining what emotion they are showing and why, directly connecting to lesson tasks on recognising and naming feelings."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Children create a digital 'Colour Monster' book, adding their artwork of colour monsters and recording their voices to describe the feelings each monster represents. This supports lessons on naming and understanding emotions using visual and oral expression."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students take photos of their Colour Monster artwork, then use ChatterPix Kids to animate the monsters and record short messages about how each monster feels. This links to lessons on interpreting and expressing emotions in creative ways."
+      },
+      {
+        "t": "PicCollage",
+        "d": "During lessons about interpreting emotions in others, students use PicCollage to create a visual mood board of emojis and photos showing different feelings, then share and discuss how people show emotions differently."
+      },
+      {
+        "t": "ClickView",
+        "d": "Teachers use ClickView to show selected clips from 'Inside Out' and other emotion-themed videos as provocations for class discussions and reflection activities about how emotions influence wellbeing and behaviour."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The unit focuses on helping Prep students recognise, name, and regulate emotions, exploring how feelings affect wellbeing and relationships. Key activities include creating and discussing Colour Monster artwork, using stories and videos to identify emotions, interpreting feelings in themselves and others, and documenting emotional responses through photos and recordings on Seesaw."
   },
   {
     "ca": "Glen Waverley",
@@ -1197,9 +1260,30 @@
     "th": "How the World Works",
     "ci": "The properties of materials influence how objects move and their use.",
     "lo": "Properties of materials; How objects move; How we use materials",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Bee-Bots",
+        "d": "Students can use Bee-Bots to explore how different surfaces (carpet, tile, sandpaper, foil) affect the movement of the robot, directly linking to lessons where children investigate how the properties of materials influence movement (e.g., slide and roll tests, ramps)."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students document their predictions, observations, and results from hands-on experiments (such as the 'Design a Floater' activity) by taking photos and recording voice explanations, supporting visual and oral reflection on material properties and movement."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Children create a digital science journal using photos and drawings to record their experiments with materials (e.g., sorting objects by properties, testing which materials float or sink), supporting the unit?s focus on observation and comparison."
+      },
+      {
+        "t": "ScratchJr",
+        "d": "Students use ScratchJr to create simple animations showing objects made from different materials moving in various ways (rolling, sliding, bouncing), reinforcing understanding of how material properties affect movement."
+      },
+      {
+        "t": "Digital Cameras (iPads)",
+        "d": "During the 'Materials Gallery' and 'Everyday Photos' activities, students use iPads to take close-up photos of objects made from different materials, then sort and discuss these images in class to build vocabulary around properties like hard, soft, smooth, or flexible."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Prep students investigate how the properties of materials influence movement and use through hands-on activities such as mystery bags, materials galleries, slide and roll tests, and designing floaters. They observe, compare, and test different materials, document findings, and reflect on how material choices impact the function and movement of objects."
   },
   {
     "ca": "Glen Waverley",
@@ -1248,9 +1332,30 @@
     "th": "Who We Are",
     "ci": "Schools are organised to help students learn and work together",
     "lo": "The organisation of the Junior School; Routines that allow developing independence; How to make the classroom and playground healthy and safe",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Seesaw",
+        "d": "Students take photos of different areas and people in the Junior School during their campus tour, then record voice explanations about what each space is used for and who works there, supporting the unit's focus on school organisation and roles."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Children create a digital book documenting their daily routines and independent tasks at school, using photos, drawings, and voice recordings to show how routines help them learn and work together."
+      },
+      {
+        "t": "Bee-Bots",
+        "d": "Students use Bee-Bots on a floor map of the classroom or school to practice positional language and navigate to key locations, reinforcing understanding of school spaces and routines."
+      },
+      {
+        "t": "PicCollage",
+        "d": "Students make a visual collage of healthy and safe behaviours at school (e.g., washing hands, walking safely, eating fruit), using photos and stickers to illustrate the classroom essential agreement."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "Children draw or photograph themselves and use ChatterPix Kids to animate their self-portraits, recording a message about their responsibilities or a routine they follow at school, connecting to independence and cooperation."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Prep students inquire into how Wesley College Junior School is organised, exploring key people, spaces, and routines that support learning and independence. They participate in campus tours, establish classroom agreements, and practice routines for safety and wellbeing, using visual and hands-on activities to build understanding of their school community."
   },
   {
     "ca": "Glen Waverley",
