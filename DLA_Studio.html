@@ -2944,8 +2944,9 @@ async function runBulkAIEdit(){
   btn.disabled = true;
   statusEl.textContent = '';
   prog.style.display = 'block';
-  lbl.textContent = 'Sending to GPT-4.1…';
+  lbl.textContent = `Scanning ${completeData.length} entries with GPT-4.1…`;
   bar.style.width = '20%';
+  console.log(`Bulk AI Edit: sending ${completeData.length} entries, system prompt ~${Math.round(system.length/4)} tokens`);
 
   // Build full context
   const completeData = DATA.map((e,i)=>({e,i})).filter(({e})=>e.audited && getSugs(e).filter(isRealSug).length >= 5);
@@ -2999,10 +3000,11 @@ QUANTITY CAP: Propose a MAXIMUM of 20 changes total. If you find more than 20 ge
 OPPORTUNITY SEARCH MODE:
 The coordinator is asking you to scan the entire library for places where a specific tool could be added or used more. Be thorough:
 - Scan every single entry below, not just the obvious candidates
+- SKIP any entry that already has the requested tool in one of its suggestion slots — do not propose it again
 - Propose changes wherever there is a reasonable curriculum connection — not just perfect matches
 - Aim for 8-20 proposals rather than 2-3
 - For each proposal, briefly explain the specific curriculum connection in the description
-- Still respect age-appropriateness and the duplicate prevention rule` : '';
+- Still respect the TOOL AGE GUIDE and duplicate prevention rules` : '';
 
   const completeEntries = completeData;
 
@@ -3022,9 +3024,20 @@ TOOL SELECTION POLICY:
 - Example: if the instruction says "add Quizlet flashcards where they fit", use Quizlet even though it's not on the approved list.
 - If the coordinator's instruction does not name any specific off-list tool, stick strictly to the approved list.
 
+TOOL AGE GUIDE (HARD RULE — match Australian year levels):
+Prep = ages 5-6 | Year 1 = 6-7 | Year 2 = 7-8 | Year 3 = 8-9 | Year 4 = 9-10 | Year 5 = 10-11 | Year 6 = 11-12
+- Prep-Year 2 ONLY: Bee-Bots, ScratchJR, ChatterPix Kids, Puppet Pals, Sphero Indi
+- Year 3+: Sphero BOLT, Lego Spike Essential, Micro:bits, Scratch, Stop Motion Studio, Adobe Express, Canva, Book Creator, Padlet, Kahoot, Tinkercad, Explain Everything
+- Year 4+: Microsoft Teams, Lego Spike Prime, CoDrone EDU, Minecraft Education (with scaffolding for Year 4)
+- Year 5+: 3D Printers, Python-based coding
+- All year levels: Seesaw, Epic, GarageBand, iMovie, PicCollage, Google Maps, Google Earth, Clickview, Green Screen, iPads, Laptops, Digital Cameras, Freeform, Sketchbook, Brushes Redux
+NEVER propose a tool for a year level below its minimum age.
+
 DUPLICATE PREVENTION (HARD RULE):
 - Do NOT propose a change that would use the same tool as another suggestion already in the same entry.
-- Before proposing a change for entry [X] slot [Y], look at the other 4 suggestions in entry [X]. If your proposed tool matches any of them, either (a) propose replacing one of those duplicate slots instead, or (b) pick a different tool.
+- Do NOT propose replacing a suggestion with the same tool that's already in that slot — that is pointless.
+- If an entry already contains the tool you're proposing, SKIP that entry entirely.
+- Before proposing a change for entry [X] slot [Y], look at ALL 5 suggestions in entry [X]. If your proposed tool matches ANY of them (including slot Y itself), do not propose it.
 - Do NOT propose two different changes for the same entry that would both use the same tool.
 - The TOOL INDEX below shows you exactly which tools are used in which entries. Use it to avoid duplicates.
 ${platformSection}${opportunitySection}
@@ -3056,7 +3069,7 @@ ${fullContext}`;
 
   try{
     bar.style.width = '60%';
-    lbl.textContent = 'Analysing all entries…';
+    lbl.textContent = `Analysing ${completeData.length} entries…`;
     animInterval = setInterval(()=>{
       if(animPct < 88){ animPct += 0.5; bar.style.width = animPct + '%'; }
     }, 1000);
@@ -3116,7 +3129,15 @@ ${fullContext}`;
     let skippedDupes = 0;
     if(changes && changes.length){
       const preCount = changes.length;
-      // Pass 1: drop changes that would duplicate a tool already in the entry (other slots unchanged)
+      // Pass 0: drop proposals that replace a slot with the same tool already in it (pointless)
+      changes = changes.filter(c => {
+        const entry = DATA[c.entryIdx];
+        if(!entry) return false;
+        const existingSug = getSugs(entry)[c.sugIdx];
+        if(existingSug && toolKey(sugTool(existingSug)) === toolKey(c.t)) return false;
+        return true;
+      });
+      // Pass 1: drop changes that would duplicate a tool already in the entry (other slots)
       changes = changes.filter(c => {
         const entry = DATA[c.entryIdx];
         if(!entry) return false;
