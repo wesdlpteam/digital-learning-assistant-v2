@@ -815,7 +815,6 @@ function downloadJSON(){
 // OpenAI chat-completions adapter.
 // Accepts Gemini-style message shape — [{role:'user', parts:[{text:'...'}]}] —
 // for minimal diff against call sites, and converts internally to OpenAI format.
-// All prompts in the app request JSON, so we always use response_format: json_object.
 async function callAI(contents, systemPrompt, model, _attempt=0){
   const key=getKey();
   if(!key) throw new Error('No API key — click ⚙ key to set it');
@@ -834,7 +833,6 @@ async function callAI(contents, systemPrompt, model, _attempt=0){
   const body = {
     model: m,
     messages,
-    response_format: {type: 'json_object'},
     temperature: 0.2,
     max_tokens: 16384
   };
@@ -1256,13 +1254,17 @@ Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`\nCentral Idea: "${en
 Current suggestion: ${sugTool(sug)} \u2014 ${sugDesc(sug)}
 Other tools already in this unit (do not repeat): ${others||'none'}
 
-APPROVED TOOLS ONLY (Microsoft Teams for Year 4+ only): Microsoft M365, Beebots, Sphero, Lego Spike, Micro:bits, CoDrone, Makey Makey, 3D Printers, ClassVR, Merge Cubes, Green Screen, Podcast Equipment, iPads, Seesaw, Canva, Book Creator, Padlet, GarageBand, ScratchJR, Stop Motion Studio, ChatterPix Kids, iMovie, Puppet Pals, Adobe Express, Google Maps, Google Earth, Field Guide to Victoria, Sky Map, Geoboard, Clickview, Epic, PicCollage, Brushes Redux, Word Clouds ABCya, Sketchbook, Explain Everything, Freeform, Delightex, Kahoot, Tinkercad, Minecraft Education.
-ONE TOOL PER SUGGESTION — never combine tools in the 't' field.
+APPROVED TOOLS: Microsoft M365, Beebots, Sphero, Lego Spike, Micro:bits, CoDrone, Makey Makey, 3D Printers, ClassVR, Merge Cubes, Green Screen, Podcast Equipment, iPads, Seesaw, Canva, Book Creator, Padlet, GarageBand, ScratchJR, Stop Motion Studio, ChatterPix Kids, iMovie, Puppet Pals, Adobe Express, Google Maps, Google Earth, Field Guide to Victoria, Sky Map, Geoboard, Clickview, Epic, PicCollage, Brushes Redux, Word Clouds ABCya, Sketchbook, Explain Everything, Freeform, Delightex, Kahoot, Tinkercad, Minecraft Education.
+ONE TOOL PER SUGGESTION — never combine tools in the "t" field.
 
-Instruction: ${instruction}
+Teacher's instruction: "${instruction}"
 
-Name ONE tool only in the "t" field — do NOT combine tools (no app smashes like "Book Creator & PowerPoint").
-Return ONLY a JSON array of exactly 3 different suggestions applying the instruction, each using a different tool:
+RESPONSE RULES:
+- If the teacher names a specific tool (e.g. "change to Canva", "use Minecraft"), generate 3 DIFFERENT activity ideas all using that specific tool. Each idea should connect to the unit in a different way.
+- If the teacher gives a general instruction (e.g. "make it more hands-on", "connect to the provocation"), generate 3 options using 3 different tools.
+- Every description must connect specifically to this unit's content — nothing generic.
+
+Return ONLY a JSON array of exactly 3 suggestions:
 [{"t":"Tool Name","d":"Specific description."},{"t":"Tool Name","d":"Specific description."},{"t":"Tool Name","d":"Specific description."}]`;
 
   try{
@@ -1292,7 +1294,11 @@ Return ONLY a JSON array of exactly 3 different suggestions applying the instruc
       `<button onclick="document.getElementById('${uid}-result').innerHTML='';document.getElementById('${uid}-input').value=''" style="padding:6px 12px;background:transparent;border:1px solid var(--border);color:var(--dim);border-radius:8px;font-weight:600;font-size:11px;cursor:pointer;margin-top:4px">Try again</button>`;
 
   }catch(e){
-    resultEl.innerHTML = `<div style="font-size:12px;color:#f87171">\u2717 ${esc(e.message)} \u2014 try rephrasing</div>`;
+    const isParseError = e.message.includes('JSON') || e.message.includes('No suggestions') || e.message.includes('Empty');
+    const hint = isParseError
+      ? 'AI returned an unexpected format. Try being more specific, e.g. "change the tool to Canva" or "make this about the provocation activity".'
+      : esc(e.message);
+    resultEl.innerHTML = `<div style="font-size:12px;color:#f87171;line-height:1.5">\u2717 ${hint}</div>`;
   }
   stopProgress();
   sendBtn.disabled = false;
