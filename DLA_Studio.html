@@ -2889,6 +2889,10 @@ function detectBulkPlatform(){
   const knownFromUrl = url ? KNOWN_PLATFORMS.find(p=>p.match.test(url)) : null;
   const knownFromInstruction = !knownFromUrl && instructionEl ? KNOWN_PLATFORMS.find(p=>p.match.test(instructionEl.value||'')) : null;
   const known = knownFromUrl || knownFromInstruction;
+  const instructionText = instructionEl?.value || '';
+  const opportunityKeywords = /\b(find|look|search|scan|identify|where|opportunit|more uses?|add more|chance|integrate|incorporate|places? to use)\b/i;
+  const isOpportunitySearch = !known && opportunityKeywords.test(instructionText);
+
   if(known){
     badge.textContent = '✓ ' + known.name + (knownFromUrl ? ' detected' : ' (from instruction)');
     badge.style.display = 'flex';
@@ -2899,6 +2903,12 @@ function detectBulkPlatform(){
     if(knownFromUrl && instructionEl && !instructionEl.value.trim()){
       instructionEl.value = `Cross-reference the ${known.name} lesson library against all planners and propose changes where there is a strong, specific connection to a named lesson.`;
     }
+  } else if(isOpportunitySearch){
+    badge.textContent = '🔍 Opportunity search mode';
+    badge.style.display = 'flex';
+    badge.style.color = 'var(--gold)';
+    badge.style.borderColor = 'var(--gold)';
+    badge.style.background = 'rgba(212,160,23,0.08)';
   } else if(url && url.startsWith('http')) {
     badge.textContent = '🔗 Unknown site — will use AI knowledge';
     badge.style.display = 'flex';
@@ -2978,6 +2988,22 @@ MATCHING RULE: Propose changes wherever a specific ${platform.name} lesson genui
 QUANTITY CAP: Propose a MAXIMUM of 20 changes total. If you find more than 20 genuine matches, select only the 20 strongest connections.
 ` : '';
 
+  // Generic "find opportunities" mode — kicks in when the instruction is about finding uses for a tool
+  // (e.g. "look for opportunities to use Sphero Bolts" / "where can we use Canva more")
+  // This applies even when no KNOWN_PLATFORM matches, so Sphero / Beebots / Canva / etc get the same
+  // thorough treatment that Minecraft gets.
+  const opportunityKeywords = /\b(find|look|search|scan|identify|where|opportunit|more uses?|add more|chance|integrate|incorporate|places? to use)\b/i;
+  const isOpportunitySearch = opportunityKeywords.test(instruction || '') && !platform;
+  const opportunitySection = isOpportunitySearch ? `
+
+OPPORTUNITY SEARCH MODE:
+The coordinator is asking you to scan the entire library for places where a specific tool could be added or used more. Be thorough:
+- Scan every single entry below, not just the obvious candidates
+- Propose changes wherever there is a reasonable curriculum connection — not just perfect matches
+- Aim for 8-20 proposals rather than 2-3
+- For each proposal, briefly explain the specific curriculum connection in the description
+- Still respect age-appropriateness and the duplicate prevention rule` : '';
+
   const completeEntries = completeData;
 
   const system = `You are a Digital Learning Coach at Wesley College, an IB PYP school.
@@ -3001,7 +3027,7 @@ DUPLICATE PREVENTION (HARD RULE):
 - Before proposing a change for entry [X] slot [Y], look at the other 4 suggestions in entry [X]. If your proposed tool matches any of them, either (a) propose replacing one of those duplicate slots instead, or (b) pick a different tool.
 - Do NOT propose two different changes for the same entry that would both use the same tool.
 - The TOOL INDEX below shows you exactly which tools are used in which entries. Use it to avoid duplicates.
-${platformSection}
+${platformSection}${opportunitySection}
 TOOL INDEX (exact location of every suggestion — also shows tool distribution, most used first):
 ${toolIndexStr}
 
