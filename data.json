@@ -1477,9 +1477,30 @@
     "th": "Sharing the Planet",
     "ci": "Invertebrates are essential to living things and the environment.",
     "lo": "The characteristics of invertebrates; The interdependence of invertebrates and their environment; Life cycles of invertebrates",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Seesaw",
+        "d": "Students use Seesaw on iPads to document their invertebrate observations from the schoolyard bug hunt. They can take photos, draw labelled diagrams of invertebrates they find, and record voice reflections about where the invertebrates live and what makes them unique, directly linking to the lesson's focus on characteristics and habitats."
+      },
+      {
+        "t": "Book Creator",
+        "d": "After researching a chosen invertebrate using non-fiction texts and Epic, students create a highly visual digital information book in Book Creator. They add photos of their artwork, drawings, and labelled diagrams, and use the audio feature to record facts about their invertebrate?s life cycle and importance to the environment, supporting the research and presentation lessons."
+      },
+      {
+        "t": "PicCollage",
+        "d": "During the invertebrate art lesson, students use PicCollage on iPads to create a visual collage of their natural-material invertebrate sculptures. They can combine photos of their creations, add stickers, and use simple labels to highlight features, then share their collage as part of a class gallery walk."
+      },
+      {
+        "t": "Bee-Bots",
+        "d": "Students use Bee-Bots to reinforce the concept of invertebrate habitats and movement. They design simple maps representing different environments (e.g., garden, pond, log) and program Bee-Bots to 'travel' between habitats, discussing how invertebrates move and what they need to survive, directly connecting to lessons on interdependence and systems."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students take a photo of a drawing or model of their chosen invertebrate, then use ChatterPix Kids to make the invertebrate 'talk.' They record a short message as if they are the invertebrate, sharing facts about its life cycle, habitat, and why it is important, supporting oral language and the sharing of research findings."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit engages Year 1 students in exploring the essential role of invertebrates through hands-on investigations such as bug hunts, invertebrate art, and research projects using non-fiction texts and digital resources. Students participate in an incursion, excursions, and group research tasks, culminating in sharing their findings through visual and oral presentations, labelled diagrams, and digital portfolios."
   },
   {
     "ca": "Glen Waverley",
@@ -1766,9 +1787,30 @@
     "th": "How We Express Ourselves",
     "ci": "Creativity allows people to express their understanding of the world.",
     "lo": "The ways people use technology to express creativity; How texts and images work together; How technology influences our creativity",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Book Creator",
+        "d": "Students create their own graphic novels using Book Creator, applying their understanding of how texts and images work together to communicate a message. This connects directly to the lessons where students plan, draft, and publish graphic novels, exploring features like panels, speech bubbles, and captions."
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "Students use Stop Motion Studio to create short stop motion animation clips, as modelled in class and during the ACMI excursion. This supports lessons where students storyboard, design props, and animate stories to express creative ideas visually."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design digital posters or presentations in Canva to showcase their understanding of creativity and how technology can be used to express ideas. This links to lessons where students reflect on their creative process and present their learning to peers and parents."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students use Padlet as a collaborative digital wall to share their creative projects, such as photos of their 'That's not a box' creations, reflections on Stop Motion animations, and peer feedback on graphic novels. This supports the sharing and feedback elements embedded in the unit."
+      },
+      {
+        "t": "iMovie",
+        "d": "Students import their Book Creator graphic novels or Stop Motion animations into iMovie to add narration, music, or sound effects, enhancing their digital storytelling. This connects to lessons where students learn to combine media elements for richer expression and share their final products with the class or parents."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The unit engages Year 3 students in exploring how creativity allows people to express their understanding of the world, with a strong focus on digital storytelling through graphic novels and stop motion animation. Students participate in hands-on workshops, use Book Creator and Stop Motion Studio, attend an ACMI excursion, and share their work with peers and parents, reflecting on how texts and images work together and how technology influences creativity."
   },
   {
     "ca": "Glen Waverley",
@@ -2024,9 +2066,30 @@
     "th": "Sharing the Planet",
     "ci": "Country, language and community are significant to the lives of First Nations people.",
     "lo": "Diversity of First Nations people; Importance of community, family and traditions; Importance of Country to First Nations people",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Book Creator",
+        "d": "Students draft, edit, and publish their own Dreamtime-inspired stories using Book Creator, integrating text, images, and audio to reflect their understanding of First Nations perspectives and narrative structures. These digital books are then shared with Prep buddies for feedback, supporting the unit's focus on storytelling and cultural connection."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students use Seesaw to complete reflection tasks after key experiences such as the CERES excursion and Dreamtime story sharing. They upload photos, voice recordings, and written reflections to document their learning about Country, community, and traditions, directly linking to lesson activities and formative assessment."
+      },
+      {
+        "t": "Word Clouds ABCya",
+        "d": "During the unpacking of the Central Idea, students use Word Clouds ABCya on iPads to visually represent their associations with key terms like 'Country', 'language', and 'community'. This activity helps surface prior knowledge and supports class discussion about the significance of these concepts to First Nations people."
+      },
+      {
+        "t": "Digital Cameras",
+        "d": "Students use digital cameras or iPad cameras during the CERES excursion and classroom provocations to capture images of Indigenous symbols, artworks, and natural elements. These photos are then incorporated into their diorama projects and digital portfolios, supporting visual documentation of their learning journey."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students collaboratively build a Padlet wall to collect questions, wonderings, and new knowledge about First Nations cultures, languages, and connections to Country. This digital board is updated throughout the unit as students engage with guest speakers, excursions, and classroom activities, fostering ongoing inquiry and synthesis."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores the significance of Country, language, and community to First Nations people through experiences such as Dreamtime story creation, CERES excursion, engagement with Indigenous elders, and hands-on art projects. Students reflect on their learning using digital tools, create narratives inspired by Dreamtime, and build dioramas to represent physical, cultural, and spiritual connections to Country."
   },
   {
     "ca": "Glen Waverley",
