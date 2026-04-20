@@ -2540,7 +2540,64 @@ async function fixAllOfType(type){
 
 const KNOWN_PLATFORMS = [
     { match: /minecraft/i, name: 'Minecraft Education',
-    context: 'You have deep knowledge of the Minecraft Education lesson library. Draw on your training knowledge of specific ME lesson titles, subject areas, and curriculum connections. For any ME suggestion, name the specific lesson in the description. Do NOT generate a URL. End every description with: To find this lesson, search [exact lesson title] at education.minecraft.net/en-us/resources/explore-lessons' },
+    context: `MINECRAFT EDUCATION — VERIFIED LESSON LIBRARY (Prep–Year 6 appropriate):
+IMPORTANT: ONLY propose lessons from the list below. Do NOT invent or guess lesson titles — every title here is real and searchable on education.minecraft.net. If no lesson below connects to a unit, do not force a match.
+
+SCIENCE & ENVIRONMENT:
+- Biodiversity Build Challenge (build an ecosystem, remove a species to show impact; ages 8+)
+- Coral Craft (explore & build coral reef ecosystems; ages 8+)
+- Renewtopia (explore solar, tidal, wind & geothermal energy by building exhibits; ages 8+)
+- Data Explorers (data science + sustainability across 5 ecosystems; ages 8+)
+- Sustainable Forests (explore sustainable forestry concepts; ages 8+)
+- Wastewater Treatment (explore how wastewater is treated for reuse; ages 8+)
+- Ocean Explorer (investigate mangrove forests, coral reefs & kelp forests with scientists; ages 8+)
+- The Scientific Method (teach the scientific method through Minecraft experiments; all ages)
+- Material Reducer (use chemistry tools to explore elements in objects; ages 10+)
+- James Webb Space Telescope Challenge (explore the universe, craft constellations; ages 8+)
+
+MATHEMATICS:
+- Ratio Riddles (ratio, proportion, fractions & scale through 3 games; ages 8+)
+- Dangerous Data Sets (probability & data using mob drop rates; ages 10+)
+- Area and Volume (create & solve area/volume problems; ages 8+)
+- Pixel Art Fractions (design pixel art then break colours into fractions; ages 8+)
+- Fractions Number Line (build a number line showing equivalent fractions; ages 8+)
+- Math Patterns Architecture (explore arithmetic patterns through building; ages 8+)
+- 3D Coordinate System (become familiar with 3D coordinates; ages 10+)
+
+LANGUAGE & LITERACY:
+- Shipwreck Narrative (write a narrative about a mysterious shipwreck; ages 8+)
+- Role of Setting in Narrative Writing (explore how setting shapes stories; ages 8+)
+- Storytelling with Minecraft Tools (use cameras, books & boards to tell stories; ages 5+)
+
+SOCIAL STUDIES & HISTORY:
+- Meet and Greet! (research historical figures, build 3D timeline; ages 8+)
+- Nobel Peace Prize Laureates (follow laureates' stories, mitigate conflict; ages 10+)
+- St Peter's Basilica (journey through 2000 years of architecture; ages 10+)
+- Ancient Ruins of Tulum (explore ruins, use coding to find secret room; ages 10+)
+- First Nations Stories (experience stories, history & culture of First Nations peoples; ages 8+)
+- World War I (5 lessons covering causes, communication, strategy & remembrance; ages 10+)
+
+CODING & COMPUTER SCIENCE:
+- Coding FUNdamentals (block coding journey: Schoolhouse → Solar System → Time Travel; ages 8+)
+- Hour of Code: Escape Estate (escape mysterious mansion with coding; ages 8+)
+- Hour of Code: TimeCraft (travel back in time, solve coding puzzles; ages 8+)
+- Hour of Code: Tale of Two Villages (use code to bring villages together; ages 8+)
+- Build a Coral Reef Using Code (code to construct coral reef; ages 8+)
+- Python 101 (introduction to text-based coding; ages 10+)
+- MakeCode Introduction (block-based coding with the Agent; ages 8+)
+- AI Foundations (build AI literacy, explore real-world scenarios; ages 10+)
+
+SEL & LIFE SKILLS:
+- Good Vibes (emotional well-being and empathy; ages 8+)
+- Wheel of Steve (5 minigames: creativity, collaboration, communication; ages 8+)
+- Digital Citizenship lessons (online safety, responsible digital behaviour; ages 8+)
+
+BUILD CHALLENGES (no specific lesson plan — open-ended creative prompts):
+- Three Little Pigs (explore houses, build a stronger 4th house; ages 5+)
+- Sustainable Cities (design & build a sustainable city; ages 8+)
+- Orangutan Reserve (build a reserve to benefit people & planet; ages 8+)
+
+For every suggestion, end the description with: To find this lesson, search [exact lesson title from above] at education.minecraft.net/en-us/resources/explore-lessons` },
 
 
   { match: /code\.org/i, name: 'Code.org',
