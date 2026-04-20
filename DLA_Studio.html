@@ -834,7 +834,7 @@ async function callAI(contents, systemPrompt, model, _attempt=0){
     model: m,
     messages,
     temperature: 0.2,
-    max_tokens: 16384
+    max_tokens: 4096
   };
 
   const r = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -2625,11 +2625,12 @@ async function runBulkAIEdit(){
     .join('\n');
 
   // Only include fully audited entries with 5 suggestions — use real DATA index so entryIdx is correct
+  // Compact format: unit metadata + tool names per slot (descriptions omitted to save tokens)
   const fullContext = completeData.map(({e,i})=>{
     const sugs = getSugs(e);
-    const sugStr = sugs.map((s,si)=>`  ${si+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n');
-    return `[${i}] ${e.ca} | ${e.yl} | ${e.th}${e.ci?'\n  CI: '+e.ci:''}${sugs.length?'\n  Suggestions:\n'+sugStr:''}`;
-  }).join('\n\n');
+    const toolStr = sugs.map((s,si)=>`s${si}:${sugTool(s)}`).join(' | ');
+    return `[${i}] ${e.ca} | ${e.yl} | "${e.th}"${e.ci?' | CI: '+e.ci:''}${e.plannerText?' | Planner: '+e.plannerText.slice(0,150):''}\n  ${toolStr}`;
+  }).join('\n');
 
   const urlInput = document.getElementById('bulk-ai-url')?.value.trim();
   const platform = urlInput ? KNOWN_PLATFORMS.find(p=>p.match.test(urlInput)) : null;
@@ -2667,13 +2668,10 @@ DUPLICATE PREVENTION (HARD RULE):
 - Do NOT propose two different changes for the same entry that would both use the same tool.
 - The TOOL INDEX below shows you exactly which tools are used in which entries. Use it to avoid duplicates.
 ${platformSection}
-TOOL INDEX (exact location of every suggestion):
+TOOL INDEX (exact location of every suggestion — also shows tool distribution, most used first):
 ${toolIndexStr}
 
 INSTRUCTION FROM COORDINATOR: ${instruction || (platform ? `Cross-reference the ${platform.name} lesson library against all planners and propose changes where there is a strong specific connection.` : '')}
-
-CURRENT TOOL DISTRIBUTION (most used first):
-${toolIndexStr}
 
 REPLACEMENT STRATEGY — when proposing a change, choose which suggestion slot to replace using this priority:
 1. Replace a suggestion that uses the SAME tool as what you're adding (avoid duplicates)
@@ -2690,7 +2688,7 @@ APPLY_CHANGES:[{"entryIdx":3,"sugIdx":1,"t":"Tool Name","d":"Specific descriptio
 
 The JSON must be complete and valid. Include ALL proposed changes in one array. Do not write anything before or after the APPLY_CHANGES line.
 
-FULL ENTRY DATA:
+FULL ENTRY DATA (compact — sN = suggestion slot N, use exact entryIdx and sugIdx when proposing changes):
 ${fullContext}`;
 
   let animPct = 60;
