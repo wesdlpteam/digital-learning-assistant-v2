@@ -433,57 +433,76 @@
     <!-- LIBRARIES -->
     <div id="panel-libraries" class="panel">
       <h1 class="page-title">Lesson Libraries</h1>
-      <p class="page-sub">Curate the lesson libraries that GPT references when proposing changes. Only lessons in these libraries will be suggested — this prevents hallucinations.</p>
+      <p class="page-sub">Curate the lesson libraries that Bulk AI Edit references when proposing changes. Only lessons in these libraries will be suggested — this prevents hallucinations. Click a library header to expand/collapse.</p>
 
-      <div class="card">
-        <span class="label">Minecraft Education</span>
-        <p style="font-size:13px;color:var(--dim);margin-bottom:14px;line-height:1.6">Paste a lesson URL from <a href="https://education.minecraft.net/en-us/resources/explore-lessons" target="_blank" style="color:var(--lime)">education.minecraft.net</a>. The title is auto-detected from the URL — you can edit it before saving. Add the age rating and subject.</p>
-
-        <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:10px">
-          <input id="lib-mc-url" class="inp" placeholder="https://education.minecraft.net/en-us/lessons/ratio-riddles" style="margin-bottom:0;font-size:13px" oninput="libExtractFromUrl()">
-          <button class="btn-sm" onclick="libClearForm()" style="white-space:nowrap">Clear</button>
+      <!-- MINECRAFT EDUCATION LIBRARY -->
+      <div class="card" style="padding:0;overflow:hidden">
+        <div onclick="libToggleSection('mc')" style="display:flex;align-items:center;gap:10px;padding:18px 24px;cursor:pointer;user-select:none;background:var(--card)">
+          <span style="font-size:18px">⛏</span>
+          <span style="font-size:15px;font-weight:800;color:var(--text);flex:1">Minecraft Education</span>
+          <span id="lib-mc-count" style="font-size:11px;color:var(--dim);font-weight:700"></span>
+          <span id="lib-mc-arrow" style="font-size:14px;color:var(--dim);transition:transform .2s">▼</span>
         </div>
+        <div id="lib-mc-body" style="display:none;padding:0 24px 20px;border-top:1px solid var(--border)">
+          <p style="font-size:13px;color:var(--dim);margin:14px 0;line-height:1.6">Paste a lesson URL from <a href="https://education.minecraft.net/en-us/resources/explore-lessons" target="_blank" style="color:var(--lime)">education.minecraft.net</a>. The title is auto-detected from the URL — you can edit it before saving.</p>
 
-        <div style="display:grid;grid-template-columns:2fr 1fr 1.5fr;gap:8px;margin-bottom:10px">
-          <input id="lib-mc-title" class="inp" placeholder="Lesson title (auto-filled from URL)" style="margin-bottom:0;font-size:13px">
-          <select id="lib-mc-ages" class="inp" style="margin-bottom:0;font-size:13px">
-            <option value="">Age rating…</option>
-            <option value="5+">5+ (all year levels)</option>
-            <option value="8+">8+ (Year 3+)</option>
-            <option value="10+">10+ (Year 5+)</option>
-            <option value="11+">11+ (Year 6 only)</option>
-          </select>
-          <select id="lib-mc-subject" class="inp" style="margin-bottom:0;font-size:13px">
-            <option value="">Subject…</option>
-            <option value="MATHEMATICS">Mathematics</option>
-            <option value="SCIENCE">Science</option>
-            <option value="LANGUAGE & LITERACY">Language &amp; Literacy</option>
-            <option value="SOCIAL STUDIES & HISTORY">Social Studies &amp; History</option>
-            <option value="CODING & COMPUTER SCIENCE">Coding &amp; Computer Science</option>
-            <option value="ARTS & DESIGN">Arts &amp; Design</option>
-            <option value="SEL & LIFE SKILLS">SEL &amp; Life Skills</option>
-            <option value="BUILD CHALLENGES">Build Challenges</option>
-          </select>
-        </div>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:10px">
+            <input id="lib-mc-url" class="inp" placeholder="https://education.minecraft.net/en-us/lessons/ratio-riddles" style="margin-bottom:0;font-size:13px" oninput="libExtractFromUrl()">
+            <button class="btn-sm" onclick="libClearForm()" style="white-space:nowrap">Clear</button>
+          </div>
 
-        <input id="lib-mc-desc" class="inp" placeholder="Short description (e.g. 'ratio, proportion, fractions & scale through 3 games')" style="margin-bottom:10px;font-size:13px">
+          <div style="display:grid;grid-template-columns:2fr 1fr 1.5fr;gap:8px;margin-bottom:10px">
+            <input id="lib-mc-title" class="inp" placeholder="Lesson title (auto-filled from URL)" style="margin-bottom:0;font-size:13px">
+            <select id="lib-mc-ages" class="inp" style="margin-bottom:0;font-size:13px">
+              <option value="">Age rating…</option>
+              <option value="5+">5+ (all year levels)</option>
+              <option value="8+">8+ (Year 3+)</option>
+              <option value="10+">10+ (Year 5+)</option>
+              <option value="11+">11+ (Year 6 only)</option>
+            </select>
+            <select id="lib-mc-subject" class="inp" style="margin-bottom:0;font-size:13px">
+              <option value="">Subject…</option>
+              <option value="MATHEMATICS">Mathematics</option>
+              <option value="SCIENCE">Science</option>
+              <option value="LANGUAGE & LITERACY">Language &amp; Literacy</option>
+              <option value="SOCIAL STUDIES & HISTORY">Social Studies &amp; History</option>
+              <option value="CODING & COMPUTER SCIENCE">Coding &amp; Computer Science</option>
+              <option value="ARTS & DESIGN">Arts &amp; Design</option>
+              <option value="SEL & LIFE SKILLS">SEL &amp; Life Skills</option>
+              <option value="BUILD CHALLENGES">Build Challenges</option>
+            </select>
+          </div>
 
-        <div style="display:flex;gap:10px;align-items:center">
-          <button class="btn-pri" onclick="libAddLesson()">+ Add lesson</button>
-          <span id="lib-mc-status" style="font-size:12px;font-weight:600"></span>
+          <input id="lib-mc-desc" class="inp" placeholder="Short description (e.g. 'ratio, proportion, fractions & scale through 3 games')" style="margin-bottom:10px;font-size:13px">
+
+          <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px">
+            <button class="btn-pri" onclick="libAddLesson()">+ Add lesson</button>
+            <span id="lib-mc-status" style="font-size:12px;font-weight:600"></span>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-top:12px;border-top:1px solid var(--border)">
+            <span style="font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;letter-spacing:1.5px">Saved lessons</span>
+            <div style="flex:1"></div>
+            <button class="btn-sm" onclick="libExportLessons()">↓ Export</button>
+            <button class="btn-sm" onclick="libImportTrigger()">↑ Import</button>
+            <input type="file" id="lib-mc-import" accept=".json" style="display:none" onchange="libImportLessons(event)">
+          </div>
+          <div id="lib-mc-list"></div>
         </div>
       </div>
 
-      <div class="card">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-          <span class="label" style="margin-bottom:0">Saved lessons</span>
-          <span id="lib-mc-count" style="font-size:11px;color:var(--dim);font-weight:700"></span>
-          <div style="flex:1"></div>
-          <button class="btn-sm" onclick="libExportLessons()">↓ Export JSON</button>
-          <button class="btn-sm" onclick="libImportTrigger()">↑ Import JSON</button>
-          <input type="file" id="lib-mc-import" accept=".json" style="display:none" onchange="libImportLessons(event)">
+      <!-- MICRO:BIT LIBRARY (placeholder — expand later) -->
+      <div class="card" style="padding:0;overflow:hidden;opacity:0.5">
+        <div style="display:flex;align-items:center;gap:10px;padding:18px 24px;cursor:default;user-select:none">
+          <span style="font-size:18px">🔌</span>
+          <span style="font-size:15px;font-weight:800;color:var(--text);flex:1">Micro:bit</span>
+          <span style="font-size:11px;color:var(--dim);font-weight:700">Hardcoded · 23 lessons</span>
         </div>
-        <div id="lib-mc-list"></div>
+      </div>
+
+      <!-- Add more libraries here in the future -->
+      <div style="text-align:center;padding:20px 0">
+        <span style="font-size:12px;color:var(--dim)">More libraries coming soon — Code.org, Tinkercad, Common Sense Education</span>
       </div>
     </div>
 
@@ -897,26 +916,47 @@ async function callAI(contents, systemPrompt, model, _attempt=0){
     max_tokens: 4096
   };
 
-  const r = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + key
-    },
-    body: JSON.stringify(body)
-  });
+  // 90-second timeout — prevents "stuck" state on large prompts
+  const controller = new AbortController();
+  const timeout = setTimeout(()=>controller.abort(), 90000);
 
-  // Retry on overload / rate limit with exponential backoff
-  if((r.status===429 || r.status===500 || r.status===502 || r.status===503) && _attempt < 3){
-    const delay = [15000, 30000, 60000][_attempt];
-    console.log(`OpenAI busy (${r.status}) — retrying in ${delay/1000}s (attempt ${_attempt+1}/3)`);
-    await new Promise(res=>setTimeout(res, delay));
-    return callAI(contents, systemPrompt, model, _attempt+1);
+  let r;
+  try {
+    r = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + key
+      },
+      body: JSON.stringify(body),
+      signal: controller.signal
+    });
+  } catch(fetchErr) {
+    clearTimeout(timeout);
+    if(fetchErr.name === 'AbortError') throw new Error('Request timed out after 90s — the prompt may be too large. Try reducing the library size or scope.');
+    throw fetchErr;
+  }
+  clearTimeout(timeout);
+
+  // Check for rate limit / overload — but DON'T retry token-limit errors (they'll fail every time)
+  if(r.status === 429 || r.status === 500 || r.status === 502 || r.status === 503){
+    const errBody = await r.json().catch(()=>({}));
+    const errMsg = errBody?.error?.message || '';
+    // Token limit / request-too-large errors should fail fast, not retry
+    if(errMsg.includes('tokens per min') || errMsg.includes('TPM') || errMsg.includes('too large') || errMsg.includes('maximum context')){
+      throw new Error(errMsg);
+    }
+    if(_attempt < 3){
+      const delay = [15000, 30000, 60000][_attempt];
+      console.log(`OpenAI busy (${r.status}) — retrying in ${delay/1000}s (attempt ${_attempt+1}/3)`);
+      await new Promise(res=>setTimeout(res, delay));
+      return callAI(contents, systemPrompt, model, _attempt+1);
+    }
+    throw new Error(errMsg || `OpenAI error ${r.status} after 3 retries`);
   }
 
   const d = await r.json();
   if(d.error){
-    // 401 = bad key, 404 = bad model name, etc.
     throw new Error(d.error.message || `OpenAI error ${r.status}`);
   }
   const text = d?.choices?.[0]?.message?.content;
@@ -2668,6 +2708,15 @@ For every suggestion, end the description with: To find this lesson, search [exa
 
 // ========== LIBRARIES PANEL ==========
 
+function libToggleSection(id){
+  const body = document.getElementById(`lib-${id}-body`);
+  const arrow = document.getElementById(`lib-${id}-arrow`);
+  if(!body) return;
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  if(arrow) arrow.style.transform = open ? '' : 'rotate(180deg)';
+}
+
 // Convert a Minecraft URL slug to a plausible title: /lessons/ratio-riddles -> "Ratio Riddles"
 function libSlugToTitle(slug){
   if(!slug) return '';
@@ -2823,6 +2872,14 @@ function renderLibraries(){
 
   if(countEl) countEl.textContent = `${lessons.length} lesson${lessons.length!==1?'s':''}`;
 
+  // Auto-expand the section when navigating to Libraries tab
+  const body = document.getElementById('lib-mc-body');
+  const arrow = document.getElementById('lib-mc-arrow');
+  if(body && body.style.display === 'none'){
+    body.style.display = 'block';
+    if(arrow) arrow.style.transform = 'rotate(180deg)';
+  }
+
   if(!lessons.length){
     listEl.innerHTML = '<div style="color:var(--dim);font-size:13px;padding:12px 0">No lessons saved yet. Add your first above.</div>';
     return;
@@ -2944,9 +3001,8 @@ async function runBulkAIEdit(){
   btn.disabled = true;
   statusEl.textContent = '';
   prog.style.display = 'block';
-  lbl.textContent = `Scanning ${completeData.length} entries with GPT-4.1…`;
-  bar.style.width = '20%';
-  console.log(`Bulk AI Edit: sending ${completeData.length} entries, system prompt ~${Math.round(system.length/4)} tokens`);
+  lbl.textContent = 'Building context…';
+  bar.style.width = '10%';
 
   // Build full context
   const completeData = DATA.map((e,i)=>({e,i})).filter(({e})=>e.audited && getSugs(e).filter(isRealSug).length >= 5);
@@ -2966,10 +3022,14 @@ async function runBulkAIEdit(){
 
   // Only include fully audited entries with 5 suggestions — use real DATA index so entryIdx is correct
   // Compact format: unit metadata + tool names per slot (descriptions omitted to save tokens)
+  // Smart truncation: if a large library context is included, trim planner text to save room
+  const libraryContextLen = (platformSection + opportunitySection).length;
+  const plannerLimit = libraryContextLen > 3000 ? 100 : (libraryContextLen > 1500 ? 200 : 0); // 0 = no limit
   const fullContext = completeData.map(({e,i})=>{
     const sugs = getSugs(e);
     const toolStr = sugs.map((s,si)=>`s${si}:${sugTool(s)}`).join(' | ');
-    return `[${i}] ${e.ca} | ${e.yl} | "${e.th}"${e.ci?' | CI: '+e.ci:''}${e.plannerText?' | Planner: '+e.plannerText:''}\n  ${toolStr}`;
+    const plannerText = e.plannerText ? (plannerLimit ? e.plannerText.slice(0, plannerLimit) : e.plannerText) : '';
+    return `[${i}] ${e.ca} | ${e.yl} | "${e.th}"${e.ci?' | CI: '+e.ci:''}${plannerText?' | Planner: '+plannerText:''}\n  ${toolStr}`;
   }).join('\n');
 
   const urlInput = document.getElementById('bulk-ai-url')?.value.trim();
@@ -3064,12 +3124,16 @@ The JSON must be complete and valid. Include ALL proposed changes in one array. 
 FULL ENTRY DATA (compact — sN = suggestion slot N, use exact entryIdx and sugIdx when proposing changes):
 ${fullContext}`;
 
+  // Estimate tokens (~4 chars per token) and warn if likely too large
+  const estimatedTokens = Math.round(system.length / 4) + 100; // +100 for the user message
+  console.log(`Bulk AI Edit: ${completeData.length} entries, ~${estimatedTokens.toLocaleString()} tokens`);
+
   let animPct = 60;
   let animInterval = null;
 
   try{
     bar.style.width = '60%';
-    lbl.textContent = `Analysing ${completeData.length} entries…`;
+    lbl.textContent = `Analysing ${completeData.length} entries (~${Math.round(estimatedTokens/1000)}K tokens)…`;
     animInterval = setInterval(()=>{
       if(animPct < 88){ animPct += 0.5; bar.style.width = animPct + '%'; }
     }, 1000);
