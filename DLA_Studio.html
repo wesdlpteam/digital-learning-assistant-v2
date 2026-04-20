@@ -27,6 +27,9 @@
   <div class="nav-item" data-tab="tools" onclick="switchTab('tools',this)">
     <span>⚡</span><span class="nav-label"> Bulk</span>
   </div>
+  <div class="nav-item" data-tab="libraries" onclick="switchTab('libraries',this)">
+    <span>📚</span><span class="nav-label"> Libraries</span>
+  </div>
   <div class="nav-item" data-tab="live" onclick="switchTab('live',this)">
     <span>◉</span><span class="nav-label"> Analytics</span>
   </div>
@@ -424,6 +427,63 @@
           <div id="live-used"></div>
         </div>
 
+      </div>
+    </div>
+
+    <!-- LIBRARIES -->
+    <div id="panel-libraries" class="panel">
+      <h1 class="page-title">Lesson Libraries</h1>
+      <p class="page-sub">Curate the lesson libraries that GPT references when proposing changes. Only lessons in these libraries will be suggested — this prevents hallucinations.</p>
+
+      <div class="card">
+        <span class="label">Minecraft Education</span>
+        <p style="font-size:13px;color:var(--dim);margin-bottom:14px;line-height:1.6">Paste a lesson URL from <a href="https://education.minecraft.net/en-us/resources/explore-lessons" target="_blank" style="color:var(--lime)">education.minecraft.net</a>. The title is auto-detected from the URL — you can edit it before saving. Add the age rating and subject.</p>
+
+        <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:10px">
+          <input id="lib-mc-url" class="inp" placeholder="https://education.minecraft.net/en-us/lessons/ratio-riddles" style="margin-bottom:0;font-size:13px" oninput="libExtractFromUrl()">
+          <button class="btn-sm" onclick="libClearForm()" style="white-space:nowrap">Clear</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:2fr 1fr 1.5fr;gap:8px;margin-bottom:10px">
+          <input id="lib-mc-title" class="inp" placeholder="Lesson title (auto-filled from URL)" style="margin-bottom:0;font-size:13px">
+          <select id="lib-mc-ages" class="inp" style="margin-bottom:0;font-size:13px">
+            <option value="">Age rating…</option>
+            <option value="5+">5+ (all year levels)</option>
+            <option value="8+">8+ (Year 3+)</option>
+            <option value="10+">10+ (Year 5+)</option>
+            <option value="11+">11+ (Year 6 only)</option>
+          </select>
+          <select id="lib-mc-subject" class="inp" style="margin-bottom:0;font-size:13px">
+            <option value="">Subject…</option>
+            <option value="MATHEMATICS">Mathematics</option>
+            <option value="SCIENCE">Science</option>
+            <option value="LANGUAGE & LITERACY">Language &amp; Literacy</option>
+            <option value="SOCIAL STUDIES & HISTORY">Social Studies &amp; History</option>
+            <option value="CODING & COMPUTER SCIENCE">Coding &amp; Computer Science</option>
+            <option value="ARTS & DESIGN">Arts &amp; Design</option>
+            <option value="SEL & LIFE SKILLS">SEL &amp; Life Skills</option>
+            <option value="BUILD CHALLENGES">Build Challenges</option>
+          </select>
+        </div>
+
+        <input id="lib-mc-desc" class="inp" placeholder="Short description (e.g. 'ratio, proportion, fractions & scale through 3 games')" style="margin-bottom:10px;font-size:13px">
+
+        <div style="display:flex;gap:10px;align-items:center">
+          <button class="btn-pri" onclick="libAddLesson()">+ Add lesson</button>
+          <span id="lib-mc-status" style="font-size:12px;font-weight:600"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <span class="label" style="margin-bottom:0">Saved lessons</span>
+          <span id="lib-mc-count" style="font-size:11px;color:var(--dim);font-weight:700"></span>
+          <div style="flex:1"></div>
+          <button class="btn-sm" onclick="libExportLessons()">↓ Export JSON</button>
+          <button class="btn-sm" onclick="libImportTrigger()">↑ Import JSON</button>
+          <input type="file" id="lib-mc-import" accept=".json" style="display:none" onchange="libImportLessons(event)">
+        </div>
+        <div id="lib-mc-list"></div>
       </div>
     </div>
 
@@ -878,6 +938,7 @@ function switchTab(tab,btn){
   if(tab==='audit') renderAudit();
   if(tab==='live') loadLiveAnalytics();
   if(tab==='tools') initBulkTools();
+  if(tab==='libraries') renderLibraries();
 
 }
 
@@ -2538,71 +2599,272 @@ async function fixAllOfType(type){
   setStatus(`Fixed ${fixed} ${type} issue${fixed!==1?'s':''}`);
 }
 
-const KNOWN_PLATFORMS = [
-    { match: /minecraft/i, name: 'Minecraft Education',
-    context: `MINECRAFT EDUCATION — VERIFIED LESSON LIBRARY (Prep–Year 6 appropriate):
-IMPORTANT: ONLY propose lessons from the list below. Do NOT invent or guess lesson titles — every title here is real and searchable on education.minecraft.net. If no lesson below connects to a unit, do not force a match.
+// Minecraft Education lesson library — VERIFIED seed list + user additions from localStorage.
+// Seed lessons shipped with the app (verified by Prof_DLP).
+const MINECRAFT_LESSONS_SEED = [
+  // MATHEMATICS
+  { title: 'Ratio Riddles', desc: 'ratio, proportion, fractions & scale through 3 games', ages: '8+', subject: 'MATHEMATICS' },
+  { title: 'Dangerous Data Sets', desc: 'probability & data using mob drop rates', ages: '11+', subject: 'MATHEMATICS' },
+  { title: 'Area and Volume', desc: 'create & solve area/volume problems', ages: '8+', subject: 'MATHEMATICS' },
+  { title: 'Fractions Pixel Art', desc: 'design pixel art then break colours into fractions', ages: '8+', subject: 'MATHEMATICS' },
+  { title: 'Number Pattern Architecture', desc: 'explore arithmetic patterns through building', ages: '8+', subject: 'MATHEMATICS' },
+
+  // SCIENCE
+  { title: 'The Scientific Method', desc: 'teach the scientific method through Minecraft experiments', ages: '11+', subject: 'SCIENCE' },
+
+  // LANGUAGE & LITERACY
+  { title: 'Shipwreck Narrative', desc: 'write a narrative about a mysterious shipwreck', ages: '8+', subject: 'LANGUAGE & LITERACY' },
+
+  // SOCIAL STUDIES & HISTORY
+  { title: 'Meet and Greet!', desc: 'research historical figures, build 3D timeline', ages: '8+', subject: 'SOCIAL STUDIES & HISTORY' },
+];
+
+// Returns the full lesson list: seed lessons + user additions from localStorage, deduplicated by title,
+// with seed lessons respecting the user's hidden-seeds list.
+function getMinecraftLessons(){
+  let userAdded = [];
+  let hiddenSeeds = [];
+  try {
+    userAdded = JSON.parse(localStorage.getItem('dla_mc_lessons') || '[]');
+    if(!Array.isArray(userAdded)) userAdded = [];
+    hiddenSeeds = JSON.parse(localStorage.getItem('dla_mc_hidden_seeds') || '[]');
+    if(!Array.isArray(hiddenSeeds)) hiddenSeeds = [];
+  } catch { userAdded = []; hiddenSeeds = []; }
+  const hiddenSet = new Set(hiddenSeeds);
+  // Merge — user-added takes priority if title collides (lets you override seed entries)
+  const seen = new Map();
+  userAdded.forEach(l => { if(l && l.title) seen.set(l.title.toLowerCase().trim(), l); });
+  MINECRAFT_LESSONS_SEED.forEach(l => {
+    if(hiddenSet.has(l.title)) return;
+    const k = l.title.toLowerCase().trim();
+    if(!seen.has(k)) seen.set(k, {...l, _seed: true});
+  });
+  return Array.from(seen.values());
+}
+
+function buildMinecraftContext(){
+  const lessons = getMinecraftLessons();
+  const bySubject = {};
+  lessons.forEach(l => {
+    const s = l.subject || 'OTHER';
+    if(!bySubject[s]) bySubject[s] = [];
+    bySubject[s].push(`- ${l.title} (${l.desc}; ages ${l.ages})`);
+  });
+  const sections = Object.entries(bySubject)
+    .map(([s, lines]) => `${s}:\n${lines.join('\n')}`)
+    .join('\n\n');
+  return `MINECRAFT EDUCATION — VERIFIED LESSON LIBRARY (${lessons.length} lessons):
+IMPORTANT: ONLY propose lessons from the list below. Do NOT invent or guess lesson titles — every title here has been verified to exist on education.minecraft.net. If no lesson below connects to a unit, do not force a match — skip that entry.
 
 AGE GATING (HARD RULE): Each lesson has a minimum age. Match against Australian year levels:
   Prep = ages 5-6 | Year 1 = 6-7 | Year 2 = 7-8 | Year 3 = 8-9 | Year 4 = 9-10 | Year 5 = 10-11 | Year 6 = 11-12
   "ages 5+" = all year levels | "ages 8+" = Year 3+ only | "ages 10+" = Year 5+ only | "ages 11+" = Year 6 only
   NEVER propose a lesson for a year level below its minimum age.
 
-SCIENCE & ENVIRONMENT:
-- Biodiversity Build Challenge (build an ecosystem, remove a species to show impact; ages 8+)
-- Coral Craft (explore & build coral reef ecosystems; ages 8+)
-- Renewtopia (explore solar, tidal, wind & geothermal energy by building exhibits; ages 8+)
-- Data Explorers (data science + sustainability across 5 ecosystems; ages 8+)
-- Sustainable Forests (explore sustainable forestry concepts; ages 8+)
-- Wastewater Treatment (explore how wastewater is treated for reuse; ages 8+)
-- Ocean Explorer (investigate mangrove forests, coral reefs & kelp forests with scientists; ages 8+)
-- The Scientific Method (teach the scientific method through Minecraft experiments; ages 11+)
-- Material Reducer (use chemistry tools to explore elements in objects; ages 10+)
-- James Webb Space Telescope Challenge (explore the universe, craft constellations; ages 8+)
+${sections}
 
-MATHEMATICS:
-- Ratio Riddles (ratio, proportion, fractions & scale through 3 games; ages 8+)
-- Dangerous Data Sets (probability & data using mob drop rates; ages 10+)
-- Area and Volume (create & solve area/volume problems; ages 8+)
-- Pixel Art Fractions (design pixel art then break colours into fractions; ages 8+)
-- Fractions Number Line (build a number line showing equivalent fractions; ages 8+)
-- Math Patterns Architecture (explore arithmetic patterns through building; ages 8+)
-- 3D Coordinate System (become familiar with 3D coordinates; ages 10+)
+For every suggestion, end the description with: To find this lesson, search [exact lesson title from above] at education.minecraft.net/en-us/resources/explore-lessons`;
+}
 
-LANGUAGE & LITERACY:
-- Shipwreck Narrative (write a narrative about a mysterious shipwreck; ages 8+)
-- Role of Setting in Narrative Writing (explore how setting shapes stories; ages 8+)
-- Storytelling with Minecraft Tools (use cameras, books & boards to tell stories; ages 5+)
+// ========== LIBRARIES PANEL ==========
 
-SOCIAL STUDIES & HISTORY:
-- Meet and Greet! (research historical figures, build 3D timeline; ages 8+)
-- Nobel Peace Prize Laureates (follow laureates' stories, mitigate conflict; ages 10+)
-- St Peter's Basilica (journey through 2000 years of architecture; ages 10+)
-- Ancient Ruins of Tulum (explore ruins, use coding to find secret room; ages 10+)
-- First Nations Stories (experience stories, history & culture of First Nations peoples; ages 8+)
-- World War I (5 lessons covering causes, communication, strategy & remembrance; ages 10+)
+// Convert a Minecraft URL slug to a plausible title: /lessons/ratio-riddles -> "Ratio Riddles"
+function libSlugToTitle(slug){
+  if(!slug) return '';
+  return slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
 
-CODING & COMPUTER SCIENCE:
-- Coding FUNdamentals (block coding journey: Schoolhouse → Solar System → Time Travel; ages 8+)
-- Hour of Code: Escape Estate (escape mysterious mansion with coding; ages 8+)
-- Hour of Code: TimeCraft (travel back in time, solve coding puzzles; ages 8+)
-- Hour of Code: Tale of Two Villages (use code to bring villages together; ages 8+)
-- Build a Coral Reef Using Code (code to construct coral reef; ages 8+)
-- Python 101 (introduction to text-based coding; ages 10+)
-- MakeCode Introduction (block-based coding with the Agent; ages 8+)
-- AI Foundations (build AI literacy, explore real-world scenarios; ages 10+)
+// Auto-extract title from URL the moment user pastes it
+function libExtractFromUrl(){
+  const urlEl = document.getElementById('lib-mc-url');
+  const titleEl = document.getElementById('lib-mc-title');
+  if(!urlEl || !titleEl) return;
+  const url = urlEl.value.trim();
+  const m = url.match(/lessons?\/([a-z0-9-]+)/i);
+  if(m && !titleEl.value.trim()){
+    titleEl.value = libSlugToTitle(m[1]);
+  }
+}
 
-SEL & LIFE SKILLS:
-- Good Vibes (emotional well-being and empathy; ages 8+)
-- Wheel of Steve (5 minigames: creativity, collaboration, communication; ages 8+)
-- Digital Citizenship lessons (online safety, responsible digital behaviour; ages 8+)
+function libClearForm(){
+  ['lib-mc-url','lib-mc-title','lib-mc-desc'].forEach(id=>{
+    const el = document.getElementById(id); if(el) el.value='';
+  });
+  ['lib-mc-ages','lib-mc-subject'].forEach(id=>{
+    const el = document.getElementById(id); if(el) el.value='';
+  });
+  const s = document.getElementById('lib-mc-status');
+  if(s){ s.textContent=''; }
+}
 
-BUILD CHALLENGES (no specific lesson plan — open-ended creative prompts):
-- Three Little Pigs (explore houses, build a stronger 4th house; ages 5+)
-- Sustainable Cities (design & build a sustainable city; ages 8+)
-- Orangutan Reserve (build a reserve to benefit people & planet; ages 8+)
+function libSaveUserLessons(list){
+  localStorage.setItem('dla_mc_lessons', JSON.stringify(list));
+}
 
-For every suggestion, end the description with: To find this lesson, search [exact lesson title from above] at education.minecraft.net/en-us/resources/explore-lessons` },
+function libGetUserLessons(){
+  try {
+    const arr = JSON.parse(localStorage.getItem('dla_mc_lessons') || '[]');
+    return Array.isArray(arr) ? arr : [];
+  } catch { return []; }
+}
+
+function libAddLesson(){
+  const url = document.getElementById('lib-mc-url')?.value.trim() || '';
+  const title = document.getElementById('lib-mc-title')?.value.trim() || '';
+  const ages = document.getElementById('lib-mc-ages')?.value || '';
+  const subject = document.getElementById('lib-mc-subject')?.value || '';
+  const desc = document.getElementById('lib-mc-desc')?.value.trim() || '';
+  const statusEl = document.getElementById('lib-mc-status');
+
+  if(!title){ if(statusEl){ statusEl.textContent='⚠ Title is required'; statusEl.style.color='#f87171'; } return; }
+  if(!ages){ if(statusEl){ statusEl.textContent='⚠ Select an age rating'; statusEl.style.color='#f87171'; } return; }
+  if(!subject){ if(statusEl){ statusEl.textContent='⚠ Select a subject'; statusEl.style.color='#f87171'; } return; }
+
+  const existing = libGetUserLessons();
+  // Check if title already exists (case-insensitive) — update rather than duplicate
+  const key = title.toLowerCase().trim();
+  const existingIdx = existing.findIndex(l => l.title.toLowerCase().trim() === key);
+  const entry = { title, desc, ages, subject, url: url || undefined, added: Date.now() };
+
+  if(existingIdx >= 0){
+    existing[existingIdx] = entry;
+    libSaveUserLessons(existing);
+    if(statusEl){ statusEl.textContent=`✓ "${title}" updated`; statusEl.style.color='var(--lime)'; }
+  } else {
+    existing.push(entry);
+    libSaveUserLessons(existing);
+    if(statusEl){ statusEl.textContent=`✓ "${title}" added`; statusEl.style.color='var(--lime)'; }
+  }
+  libClearForm();
+  if(statusEl){ statusEl.textContent = existingIdx >= 0 ? `✓ "${title}" updated` : `✓ "${title}" added`; statusEl.style.color='var(--lime)'; }
+  renderLibraries();
+}
+
+function libDeleteLesson(title){
+  const lesson = getMinecraftLessons().find(l => l.title === title);
+  if(lesson && lesson._seed){
+    if(!confirm(`"${title}" is a seed lesson shipped with the app. Deleting it will hide it from this device only — it will come back if you clear local storage. Continue?`)) return;
+    // Add a "hidden" marker by saving a user entry with empty fields? Simpler: add a hide list.
+    const hidden = JSON.parse(localStorage.getItem('dla_mc_hidden_seeds') || '[]');
+    if(!hidden.includes(title)) hidden.push(title);
+    localStorage.setItem('dla_mc_hidden_seeds', JSON.stringify(hidden));
+  } else {
+    if(!confirm(`Delete "${title}" from your library?`)) return;
+    const list = libGetUserLessons().filter(l => l.title !== title);
+    libSaveUserLessons(list);
+  }
+  renderLibraries();
+}
+
+function libEditLesson(title){
+  const lesson = getMinecraftLessons().find(l => l.title === title);
+  if(!lesson) return;
+  document.getElementById('lib-mc-url').value = lesson.url || '';
+  document.getElementById('lib-mc-title').value = lesson.title;
+  document.getElementById('lib-mc-ages').value = lesson.ages;
+  document.getElementById('lib-mc-subject').value = lesson.subject || '';
+  document.getElementById('lib-mc-desc').value = lesson.desc || '';
+  document.getElementById('lib-mc-title').focus();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function libExportLessons(){
+  const all = getMinecraftLessons();
+  const blob = new Blob([JSON.stringify(all, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `minecraft-lessons-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function libImportTrigger(){ document.getElementById('lib-mc-import')?.click(); }
+
+function libImportLessons(event){
+  const file = event.target.files?.[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if(!Array.isArray(imported)) throw new Error('File is not a JSON array');
+      // Validate each entry has required fields
+      const valid = imported.filter(l => l && l.title && l.ages && l.subject);
+      if(!valid.length) throw new Error('No valid lessons in the file');
+
+      const existing = libGetUserLessons();
+      const existingKeys = new Set(existing.map(l => l.title.toLowerCase().trim()));
+      let added = 0, updated = 0;
+      valid.forEach(l => {
+        const k = l.title.toLowerCase().trim();
+        const idx = existing.findIndex(e => e.title.toLowerCase().trim() === k);
+        const entry = { title: l.title, desc: l.desc||'', ages: l.ages, subject: l.subject, url: l.url||undefined, added: Date.now() };
+        if(idx >= 0){ existing[idx] = entry; updated++; }
+        else { existing.push(entry); added++; }
+      });
+      libSaveUserLessons(existing);
+      alert(`Imported: ${added} added, ${updated} updated`);
+      renderLibraries();
+    } catch(err){
+      alert('Import failed: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = ''; // reset so same file can be re-imported
+}
+
+function renderLibraries(){
+  const listEl = document.getElementById('lib-mc-list');
+  const countEl = document.getElementById('lib-mc-count');
+  if(!listEl) return;
+
+  const lessons = getMinecraftLessons();
+
+  if(countEl) countEl.textContent = `${lessons.length} lesson${lessons.length!==1?'s':''}`;
+
+  if(!lessons.length){
+    listEl.innerHTML = '<div style="color:var(--dim);font-size:13px;padding:12px 0">No lessons saved yet. Add your first above.</div>';
+    return;
+  }
+
+  // Group by subject
+  const bySubject = {};
+  lessons.forEach(l => {
+    const s = l.subject || 'OTHER';
+    if(!bySubject[s]) bySubject[s] = [];
+    bySubject[s].push(l);
+  });
+
+  listEl.innerHTML = Object.entries(bySubject).map(([subj, list]) => `
+    <div style="margin-bottom:18px">
+      <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:8px">${esc(subj)} <span style="color:var(--dim);font-weight:600">(${list.length})</span></div>
+      ${list.map(l => `
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:10px">
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+              <span style="font-size:14px;font-weight:700;color:var(--text)">${esc(l.title)}</span>
+              <span style="font-size:10px;padding:2px 7px;border-radius:20px;background:rgba(197,232,74,0.12);color:var(--lime);font-weight:700">ages ${esc(l.ages)}</span>
+              ${l._seed ? '<span style="font-size:10px;padding:2px 7px;border-radius:20px;background:rgba(212,160,23,0.12);color:var(--gold);font-weight:700" title="Shipped with the app">seed</span>' : ''}
+            </div>
+            ${l.desc ? `<div style="font-size:12px;color:var(--dim);line-height:1.5">${esc(l.desc)}</div>` : ''}
+            ${l.url ? `<a href="${esc(l.url)}" target="_blank" style="font-size:11px;color:var(--mint);text-decoration:none;word-break:break-all">${esc(l.url)}</a>` : ''}
+          </div>
+          <div style="display:flex;gap:6px;flex-shrink:0">
+            <button class="btn-sm" onclick="libEditLesson('${esc(l.title).replace(/'/g,"\\'")}')">Edit</button>
+            <button class="btn-sm" onclick="libDeleteLesson('${esc(l.title).replace(/'/g,"\\'")}')" style="color:#FF8080">Delete</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+// ========== END LIBRARIES PANEL ==========
+
+const KNOWN_PLATFORMS = [
+    { match: /minecraft/i, name: 'Minecraft Education',
+    get context(){ return buildMinecraftContext(); } },
 
 
   { match: /code\.org/i, name: 'Code.org',
