@@ -306,7 +306,7 @@
           <input id="bulk-ai-url" class="inp" placeholder="Optional: lesson library URL (e.g. https://education.minecraft.net)" style="flex:1;margin-bottom:0;font-size:13px" oninput="detectBulkPlatform()">
           <div id="bulk-ai-platform-badge" style="display:none;align-self:center;font-size:11px;padding:4px 10px;border-radius:20px;background:#0a1a0a;color:var(--lime);border:1px solid var(--lime);font-weight:700;white-space:nowrap"></div>
         </div>
-        <textarea id="bulk-ai-instruction" class="inp" rows="3" placeholder="e.g. Replace generic Adobe Express suggestions with more specific Animate from Audio or Podcasting versions where they connect to the unit theme" style="margin-bottom:12px;font-size:13px"></textarea>
+        <textarea id="bulk-ai-instruction" class="inp" rows="3" placeholder="e.g. Replace generic Adobe Express suggestions with more specific Animate from Audio or Podcasting versions where they connect to the unit theme" style="margin-bottom:12px;font-size:13px" oninput="detectBulkPlatform()"></textarea>
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
           <button class="btn-pri" id="btn-bulk-ai" onclick="runBulkAIEdit()">Analyse & Propose Changes →</button>
           <span id="bulk-ai-status" style="font-size:13px;font-weight:600"></span>
@@ -2562,12 +2562,17 @@ function detectBulkPlatform(){
   const badge = document.getElementById('bulk-ai-platform-badge');
   const instructionEl = document.getElementById('bulk-ai-instruction');
   if(!badge) return;
-  const known = url ? KNOWN_PLATFORMS.find(p=>p.match.test(url)) : null;
+  const knownFromUrl = url ? KNOWN_PLATFORMS.find(p=>p.match.test(url)) : null;
+  const knownFromInstruction = !knownFromUrl && instructionEl ? KNOWN_PLATFORMS.find(p=>p.match.test(instructionEl.value||'')) : null;
+  const known = knownFromUrl || knownFromInstruction;
   if(known){
-    badge.textContent = '✓ ' + known.name + ' detected';
+    badge.textContent = '✓ ' + known.name + (knownFromUrl ? ' detected' : ' (from instruction)');
     badge.style.display = 'flex';
-    // Auto-fill instruction if empty
-    if(instructionEl && !instructionEl.value.trim()){
+    badge.style.color = 'var(--lime)';
+    badge.style.borderColor = 'var(--lime)';
+    badge.style.background = '#0a1a0a';
+    // Auto-fill instruction if empty and detected from URL
+    if(knownFromUrl && instructionEl && !instructionEl.value.trim()){
       instructionEl.value = `Cross-reference the ${known.name} lesson library against all planners and propose changes where there is a strong, specific connection to a named lesson.`;
     }
   } else if(url && url.startsWith('http')) {
@@ -2629,19 +2634,24 @@ async function runBulkAIEdit(){
   const fullContext = completeData.map(({e,i})=>{
     const sugs = getSugs(e);
     const toolStr = sugs.map((s,si)=>`s${si}:${sugTool(s)}`).join(' | ');
-    return `[${i}] ${e.ca} | ${e.yl} | "${e.th}"${e.ci?' | CI: '+e.ci:''}${e.plannerText?' | Planner: '+e.plannerText.slice(0,150):''}\n  ${toolStr}`;
+    return `[${i}] ${e.ca} | ${e.yl} | "${e.th}"${e.ci?' | CI: '+e.ci:''}${e.plannerText?' | Planner: '+e.plannerText:''}\n  ${toolStr}`;
   }).join('\n');
 
   const urlInput = document.getElementById('bulk-ai-url')?.value.trim();
-  const platform = urlInput ? KNOWN_PLATFORMS.find(p=>p.match.test(urlInput)) : null;
+  // Try URL first, then fall back to detecting platform names in the instruction text
+  const platform = (urlInput ? KNOWN_PLATFORMS.find(p=>p.match.test(urlInput)) : null)
+    || KNOWN_PLATFORMS.find(p=>p.match.test(instruction||''))
+    || null;
+  const hasUrl = urlInput && platform && KNOWN_PLATFORMS.some(p=>p.match.test(urlInput));
   const platformSection = platform ? `
 
 LESSON LIBRARY — ${platform.name.toUpperCase()}:
 ${platform.context}
+${hasUrl ? `
+STRICT MATCHING RULE: When a lesson library URL is provided, you MUST only propose changes where a SPECIFIC named lesson from that library clearly and directly connects to the unit's central idea or activities. Do not propose a change just because the tool is generally useful. Each proposal must name the specific lesson and explain the direct connection. If fewer than 10 entries have a genuine specific match, that is fine — quality over quantity.` : `
+MATCHING RULE: Propose changes wherever a specific ${platform.name} lesson genuinely connects to the unit's activities or central idea. Be thorough — scan every entry and propose ${platform.name} wherever there is a reasonable curriculum connection. Name the specific lesson in every proposal.`}
 
-STRICT MATCHING RULE: When a lesson library URL is provided, you MUST only propose changes where a SPECIFIC named lesson from that library clearly and directly connects to the unit's central idea or activities. Do not propose a change just because the tool is generally useful. Each proposal must name the specific lesson and explain the direct connection. If fewer than 10 entries have a genuine specific match, that is fine — quality over quantity.
-
-QUANTITY CAP: Propose a MAXIMUM of 20 changes total. If you find more than 20 genuine matches, select only the 20 strongest connections. It is far better to propose 10 excellent matches than 40 mediocre ones.
+QUANTITY CAP: Propose a MAXIMUM of 20 changes total. If you find more than 20 genuine matches, select only the 20 strongest connections.
 ` : '';
 
   const completeEntries = completeData;
