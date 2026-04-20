@@ -79,13 +79,13 @@
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#00e676" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
           DLA Studio: Welcome &amp; Setup
         </div>
-        <div class="setup-card-sub">Enter your Gemini API key to access the lesson database.</div>
+        <div class="setup-card-sub">Enter your OpenAI API key to access the lesson database.</div>
 
         <div class="setup-field-label">
-          Gemini API Key
+          OpenAI API Key
           <span class="field-badge" id="key-badge">required</span>
         </div>
-        <input type="password" id="api-key-input" class="setup-inp" placeholder="AIzaSy..." oninput="checkKeyInput()">
+        <input type="password" id="api-key-input" class="setup-inp" placeholder="sk-..." oninput="checkKeyInput()">
 
         <button class="setup-confirm" onclick="saveApiKey()">confirm →</button>
         <div class="setup-alt">
@@ -94,7 +94,7 @@
           <input type="file" id="file-input" accept=".json" style="display:none" onchange="loadFromFile(event)">
         </div>
         <p style="font-size:10px;color:var(--dim);margin-top:14px;text-align:center;line-height:1.6;font-family:monospace">
-          Get your key at <a href="https://aistudio.google.com" target="_blank" style="color:var(--mint)">aistudio.google.com</a>
+          Get your key at <a href="https://platform.openai.com/api-keys" target="_blank" style="color:var(--mint)">platform.openai.com/api-keys</a>
         </p>
       </div>
     </div>
@@ -107,7 +107,7 @@
       <div class="status-cards">
         <div class="status-card">
           <span class="status-key">AI Engine</span>
-          <span class="status-val">Gemini 2.5 Flash</span>
+          <span class="status-val">GPT-4.1</span>
           <span><span class="status-dot"></span></span>
         </div>
         <div class="status-card">
@@ -227,7 +227,7 @@
     <!-- AUDIT -->
     <div id="panel-audit" class="panel">
       <div class="page-title">Audit</div>
-      <div class="page-sub">Analyse tool usage and chat with Gemini to make bulk changes across the library.</div>
+      <div class="page-sub">Analyse tool usage and chat with AI to make bulk changes across the library.</div>
       <div id="audit-campus-debug" style="font-size:11px;color:var(--dim);margin-bottom:12px;padding:8px 12px;background:var(--card2);border-radius:6px;border:1px solid var(--border)"></div>
       <div class="view-tabs">
         <button class="view-tab active" data-view="analytics" onclick="setAuditView(this)">Analytics</button>
@@ -301,7 +301,7 @@
             <!-- Bulk AI Edit -->
       <div class="card" style="margin-bottom:14px">
         <span class="label">Bulk AI Edit</span>
-        <p style="font-size:13px;color:var(--dim);margin-bottom:14px;line-height:1.6">Describe a change in plain English — or paste a lesson library URL to cross-reference it against all your planners. Gemini 2.5 Pro will propose specific changes for you to approve or decline.</p>
+        <p style="font-size:13px;color:var(--dim);margin-bottom:14px;line-height:1.6">Describe a change in plain English — or paste a lesson library URL to cross-reference it against all your planners. GPT-4.1 will propose specific changes for you to approve or decline.</p>
         <div style="display:flex;gap:8px;margin-bottom:10px">
           <input id="bulk-ai-url" class="inp" placeholder="Optional: lesson library URL (e.g. https://education.minecraft.net)" style="flex:1;margin-bottom:0;font-size:13px" oninput="detectBulkPlatform()">
           <div id="bulk-ai-platform-badge" style="display:none;align-self:center;font-size:11px;padding:4px 10px;border-radius:20px;background:#0a1a0a;color:var(--lime);border:1px solid var(--lime);font-weight:700;white-space:nowrap"></div>
@@ -433,14 +433,14 @@
       <div id="entry-header" class="card" style="margin-bottom:16px"></div>
       <div id="entry-sugs"></div>
       <div class="card">
-        <span class="label">Regenerate all 5 with Gemini</span>
+        <span class="label">Regenerate all 5 with AI</span>
         <button class="btn-pri" id="btn-regen-all" onclick="regenAll()">Generate 5 new suggestions</button>
         <div id="regen-all-result" style="margin-top:12px"></div>
       </div>
       <div class="card">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
           <span class="label" style="margin-bottom:0">Quality score</span>
-          <button class="btn-sm" id="btn-score-quality" onclick="scoreEntryQuality()">Score with Gemini</button>
+          <button class="btn-sm" id="btn-score-quality" onclick="scoreEntryQuality()">Score with AI</button>
         </div>
         <p style="font-size:12px;color:var(--dim);margin-bottom:10px">Rates each suggestion as Generic / Good / Excellent based on how specifically it connects to this unit's content.</p>
         <div id="quality-score-result"></div>
@@ -466,16 +466,14 @@ const LOCKS = {};
 const MAX_HISTORY = 20;
 
 const CLIENT_ID = '334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleusercontent.com';
-const _k=['AIzaSy','C2aK2cd9BBLNgPe','rQTSKxgNVrxXI7iC_M'];
-const BAKED_API_KEY=_k.join(''); 
 const ANALYTICS_SHEET_ID = '1R4P4FJlc8SyRFlVWoM0HpHmfCNMNVOpI8cuEILFxBNY';
-const GEMINI_MODEL = 'gemini-2.5-pro';
-const GEMINI_FAST_MODEL = 'gemini-2.5-flash'; // for feedback & regen — faster, no quality loss      
+const OPENAI_MODEL = 'gpt-4.1';            // main model (Bulk AI Edit, Fix All, regenerate, scoring)
+const OPENAI_FAST_MODEL = 'gpt-4.1-mini';  // feedback & single-suggestion regen — faster & cheaper
 const YR = ["Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"];
 const CAMPUS_COL = { Elsternwick:'#818cf8', 'Glen Waverley':'#34d399', 'St Kilda':'#fb923c', 'St Kilda Road':'#fb923c' };
 
-function getKey(){ return localStorage.getItem('dla_api_key')||BAKED_API_KEY; }
-function cleanGeminiJSON(s){
+function getKey(){ return localStorage.getItem('dla_api_key')||''; }
+function cleanJSON(s){
   return s.replace(/```json|```/g,'').replace(/"([^"]*)"/g,(_,inner)=>'"'+inner.replace(/\n/g,' ').replace(/\r/g,'')+'"').replace(/,\s*([\]}])/g,'$1').trim();
 }
 
@@ -559,7 +557,8 @@ function showApiKeyScreen(){
 
 function saveApiKey(){
   const k=document.getElementById('api-key-input').value.trim();
-  if(!k){ alert('Please enter your Gemini API key'); return; }
+  if(!k){ alert('Please enter your OpenAI API key'); return; }
+  if(!k.startsWith('sk-')){ alert('That doesn\'t look like an OpenAI API key — they start with "sk-"'); return; }
   localStorage.setItem('dla_api_key',k);
   showScreen('load');
 }
@@ -813,40 +812,61 @@ function downloadJSON(){
   if(DRIVE_FILE_ID) saveToDrive();
 }
 
-async function callGemini(contents, systemPrompt, model, _attempt=0){
+// OpenAI chat-completions adapter.
+// Accepts Gemini-style message shape — [{role:'user', parts:[{text:'...'}]}] —
+// for minimal diff against call sites, and converts internally to OpenAI format.
+// All prompts in the app request JSON, so we always use response_format: json_object.
+async function callAI(contents, systemPrompt, model, _attempt=0){
   const key=getKey();
   if(!key) throw new Error('No API key — click ⚙ key to set it');
-  
-  // Disable thinking for Flash (unnecessary latency) — Pro keeps default thinking
-  const isFlash = (model||GEMINI_MODEL).includes('flash');
-  const body={ contents, generationConfig:{
-    maxOutputTokens: 16384,
-    ...(isFlash ? { thinkingConfig:{ thinkingBudget:0 } } : {})
-  }};
-  if(systemPrompt) body.systemInstruction={ parts:[{text:systemPrompt}] };
-  const m = model || GEMINI_MODEL;
-  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key}`,{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(body)
+  if(!key.startsWith('sk-')) throw new Error('Invalid OpenAI key — must start with "sk-"');
+
+  // Convert Gemini-style contents to OpenAI messages
+  const messages = [];
+  if(systemPrompt) messages.push({role:'system', content: systemPrompt});
+  for(const turn of (contents||[])){
+    const role = turn.role==='model' ? 'assistant' : turn.role;
+    const text = (turn.parts||[]).map(p=>p.text||'').join('\n');
+    messages.push({role, content: text});
+  }
+
+  const m = model || OPENAI_MODEL;
+  const body = {
+    model: m,
+    messages,
+    response_format: {type: 'json_object'},
+    temperature: 0.2,
+    max_tokens: 16384
+  };
+
+  const r = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + key
+    },
+    body: JSON.stringify(body)
   });
-  const d=await r.json();
+
+  // Retry on overload / rate limit with exponential backoff
+  if((r.status===429 || r.status===500 || r.status===502 || r.status===503) && _attempt < 3){
+    const delay = [15000, 30000, 60000][_attempt];
+    console.log(`OpenAI busy (${r.status}) — retrying in ${delay/1000}s (attempt ${_attempt+1}/3)`);
+    await new Promise(res=>setTimeout(res, delay));
+    return callAI(contents, systemPrompt, model, _attempt+1);
+  }
+
+  const d = await r.json();
   if(d.error){
-    const msg = d.error.message || '';
-    const retryable = r.status===429 || r.status===503 || msg.includes('high demand') || msg.includes('overloaded') || msg.includes('RESOURCE_EXHAUSTED');
-    if(retryable && _attempt < 3){
-      const delay = [15000, 30000, 60000][_attempt];
-      console.log(`Gemini busy — retrying in ${delay/1000}s (attempt ${_attempt+1}/3)`);
-      await new Promise(res=>setTimeout(res, delay));
-      return callGemini(contents, systemPrompt, model, _attempt+1);
-    }
-    throw new Error(msg);
+    // 401 = bad key, 404 = bad model name, etc.
+    throw new Error(d.error.message || `OpenAI error ${r.status}`);
   }
-  if(!d.candidates || !d.candidates[0] || !d.candidates[0].content){
-    console.error('Unexpected Gemini response:', JSON.stringify(d).slice(0,300));
-    throw new Error('Empty or blocked response from Gemini — try rephrasing your instruction');
+  const text = d?.choices?.[0]?.message?.content;
+  if(!text){
+    console.error('Unexpected OpenAI response:', JSON.stringify(d).slice(0,300));
+    throw new Error('Empty response from OpenAI — try rephrasing your instruction');
   }
-  return d.candidates[0].content.parts[0].text;
+  return text;
 }
 
 function switchTab(tab,btn){
@@ -1146,7 +1166,7 @@ Return ONLY JSON: {"t":"Tool Name","d":"Specific description for this unit."}`;
     let dupedTool = null;
     for(let attempt=0; attempt<2; attempt++){
       const retryNote = attempt>0 ? `\n\nRETRY: Your previous response used "${dupedTool}" which is already used in this unit. Pick a DIFFERENT tool that is NOT in the "tools already used" list.` : '';
-      const raw = await callGemini([{role:'user',parts:[{text:prompt+retryNote}]}], null, GEMINI_FAST_MODEL);
+      const raw = await callAI([{role:'user',parts:[{text:prompt+retryNote}]}], null, OPENAI_FAST_MODEL);
       const clean = raw.replace(/```json|```/g,'').trim();
       const si = clean.indexOf('{'), ei = clean.lastIndexOf('}');
       if(si===-1||ei===-1) throw new Error('No JSON');
@@ -1159,7 +1179,7 @@ Return ONLY JSON: {"t":"Tool Name","d":"Specific description for this unit."}`;
       newSug = parsed;
       break;
     }
-    if(!newSug) throw new Error(`Gemini kept proposing "${dupedTool}" which is already in this unit — try again or use 💬 feedback`);
+    if(!newSug) throw new Error(`AI kept proposing "${dupedTool}" which is already in this unit — try again or use 💬 feedback`);
     const sugs = [...getSugs(DATA[entryIdx])];
     recordChange(entryIdx, sugs, [...sugs.slice(0,sugIdx), newSug, ...sugs.slice(sugIdx+1)]);
     DATA[entryIdx].s[sugIdx] = newSug;
@@ -1202,7 +1222,7 @@ function openFeedbackChat(uid, entryIdx, sugIdx){
       <button onclick="document.getElementById('${uid}-chat').remove()" style="background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:16px;padding:0">✕</button>
     </div>
     <div style="padding:12px 16px;border-top:1px solid var(--border);background:var(--card2)">
-      <div style="font-size:11px;color:var(--dim);margin-bottom:8px;line-height:1.5">Describe what you want changed — Gemini 2.5 Pro will apply it instantly.</div>
+      <div style="font-size:11px;color:var(--dim);margin-bottom:8px;line-height:1.5">Describe what you want changed — GPT-4.1 Mini will apply it instantly.</div>
       <div style="display:flex;gap:8px">
         <input id="${uid}-input" class="inp" placeholder="e.g. make it more hands-on, use a different tool, connect to the provocation..." style="flex:1;margin-bottom:0;font-size:13px" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();applySugFeedbackDirect('${uid}',${entryIdx},${sugIdx})}">
         <button class="btn-pri" id="${uid}-send" onclick="applySugFeedbackDirect('${uid}',${entryIdx},${sugIdx})" style="padding:10px 16px;font-size:13px;white-space:nowrap">Apply →</button>
@@ -1246,7 +1266,7 @@ Return ONLY a JSON array of exactly 3 different suggestions applying the instruc
 [{"t":"Tool Name","d":"Specific description."},{"t":"Tool Name","d":"Specific description."},{"t":"Tool Name","d":"Specific description."}]`;
 
   try{
-    const raw = await callGemini([{role:'user',parts:[{text:prompt}]}], null, GEMINI_FAST_MODEL);
+    const raw = await callAI([{role:'user',parts:[{text:prompt}]}], null, OPENAI_FAST_MODEL);
     const clean = raw.replace(/```json|```/g,'').trim();
     const si = clean.indexOf('['), ei = clean.lastIndexOf(']');
     if(si===-1||ei===-1) throw new Error('No suggestions returned');
@@ -1329,7 +1349,7 @@ Requirements:
     let dupedTool = null;
     for(let attempt=0; attempt<2; attempt++){
       const retryNote = attempt>0 ? `\n\nRETRY: Your previous response used "${dupedTool}" twice. Every one of the 5 suggestions MUST use a DIFFERENT tool \u2014 no repeats whatsoever.` : '';
-      const raw=await callGemini([{role:'user',parts:[{text:prompt+retryNote}]}]);
+      const raw=await callAI([{role:'user',parts:[{text:prompt+retryNote}]}]);
       const clean=raw.replace(/```json|```/g,'').trim();
       const si=clean.indexOf('['), ei=clean.lastIndexOf(']');
       if(si===-1||ei===-1) throw new Error('No JSON array in response');
@@ -1344,7 +1364,7 @@ Requirements:
       sugs = parsed;
       break;
     }
-    if(!sugs) throw new Error(`Gemini repeated "${dupedTool}" in the batch \u2014 try again`);
+    if(!sugs) throw new Error(`AI repeated "${dupedTool}" in the batch \u2014 try again`);
     const pendingId='regenall_'+idx;
     window[pendingId]=sugs;
     res.innerHTML=`
@@ -2021,7 +2041,7 @@ Return ONLY a JSON array with no markdown:
 [{"idx":0,"rating":"EXCELLENT","reason":"One sentence why."},...]`;
 
   try{
-    const raw=await callGemini([{role:'user',parts:[{text:prompt}]}],null,GEMINI_MODEL);
+    const raw=await callAI([{role:'user',parts:[{text:prompt}]}],null,OPENAI_MODEL);
     const clean=raw.replace(/```json|```/g,'').trim();
     const si=clean.indexOf('['), ei=clean.lastIndexOf(']');
     if(si===-1||ei===-1) throw new Error('No JSON');
@@ -2049,7 +2069,7 @@ Return ONLY a JSON array with no markdown:
     res.innerHTML=`<div style="font-size:12px;color:#FF8080">${esc(e.message)}</div>`;
   }
   stopProgress();
-  btn.disabled=false; btn.textContent='Score with Gemini';
+  btn.disabled=false; btn.textContent='Score with AI';
 }
 
 async function fixAllIncomplete(){
@@ -2075,7 +2095,7 @@ Return ONLY a JSON array, no markdown: [{"t":"Tool Name","d":"One specific sente
       let dupedTool = null;
       for(let attempt=0; attempt<2; attempt++){
         const retryNote = attempt>0 ? `\n\nRETRY: Your previous response used "${dupedTool}" twice. Every one of the 5 suggestions MUST use a DIFFERENT tool.` : '';
-        const raw=await callGemini([{role:'user',parts:[{text:prompt+retryNote}]}], null, GEMINI_MODEL);
+        const raw=await callAI([{role:'user',parts:[{text:prompt+retryNote}]}], null, OPENAI_MODEL);
         const clean=raw.replace(/```json|```/g,'').trim();
         const si=clean.indexOf('['), ei=clean.lastIndexOf(']');
         if(si===-1||ei===-1) throw new Error('No JSON array');
@@ -2479,7 +2499,7 @@ async function fixAllOfType(type){
         prompt=`${GAS_RULES}\n\nFix duplicate tools in this unit — each suggestion must use a DIFFERENT tool.\nUnit: ${e.ca} | ${e.yl} | "${e.th}"${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nCurrent suggestions (fix any duplicates, keep unique ones):\n${currentSugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}\nReturn ONLY JSON array of exactly 5 with NO repeated tools: [{"t":"Tool Name","d":"Specific description."},...]`;
       }
 
-      const raw=await callGemini([{role:'user',parts:[{text:prompt}]}],null,GEMINI_MODEL);
+      const raw=await callAI([{role:'user',parts:[{text:prompt}]}],null,OPENAI_MODEL);
       const clean=raw.replace(/```json|```/g,'').trim();
       const si=clean.indexOf('['),ei=clean.lastIndexOf(']');
       if(si===-1||ei===-1) throw new Error('No JSON array in response');
@@ -2489,7 +2509,7 @@ async function fixAllOfType(type){
       // Validate no duplicates in the returned suggestions
       const toolNames = sugs.map(s=>(s.t||'').toLowerCase().trim());
       const uniqueTools = new Set(toolNames);
-      if(uniqueTools.size < toolNames.length) throw new Error('Gemini returned duplicates again — will retry on next run');
+      if(uniqueTools.size < toolNames.length) throw new Error('AI returned duplicates again — will retry on next run');
 
       recordChange(idx,getSugs(DATA[idx]),sugs);
       DATA[idx].s=sugs;
@@ -2579,7 +2599,7 @@ async function runBulkAIEdit(){
   btn.disabled = true;
   statusEl.textContent = '';
   prog.style.display = 'block';
-  lbl.textContent = 'Sending to Gemini 3.1 Pro…';
+  lbl.textContent = 'Sending to GPT-4.1…';
   bar.style.width = '20%';
 
   // Build full context
@@ -2677,10 +2697,10 @@ ${fullContext}`;
       if(animPct < 88){ animPct += 0.5; bar.style.width = animPct + '%'; }
     }, 1000);
 
-    const response = await callGemini(
+    const response = await callAI(
       [{role:'user', parts:[{text:'Please carry out the instruction and propose changes.'}]}],
       system,
-      'gemini-2.5-pro'
+      OPENAI_MODEL
     );
 
     clearInterval(animInterval);
@@ -2700,7 +2720,7 @@ ${fullContext}`;
 
         // If array is complete, parse normally
         if(arrEnd !== -1){
-          const raw = JSON.parse(cleanGeminiJSON(arrStr.slice(0, arrEnd+1)));
+          const raw = JSON.parse(cleanJSON(arrStr.slice(0, arrEnd+1)));
           changes = normaliseChanges(raw);
         } else {
           // Truncated — extract individual valid objects by bracket counting
@@ -2712,7 +2732,7 @@ ${fullContext}`;
               depth--;
               if(depth===0 && objStart!==-1){
                 try{
-                  const obj = JSON.parse(cleanGeminiJSON(arrStr.slice(objStart, i+1)));
+                  const obj = JSON.parse(cleanJSON(arrStr.slice(objStart, i+1)));
                   if(obj.entryIdx!=null) recovered.push(obj);
                 }catch{}
                 objStart=-1;
@@ -2756,7 +2776,7 @@ ${fullContext}`;
     } else {
       statusEl.style.color = 'var(--dim)';
       statusEl.textContent = skippedDupes ? `All ${skippedDupes} proposal${skippedDupes!==1?'s':''} would have created duplicates \u2014 try rephrasing` : 'No changes proposed \u2014 try rephrasing your instruction';
-      console.log('Gemini response (no changes parsed):', response.slice(0,500));
+      console.log('AI response (no changes parsed):', response.slice(0,500));
     }
   }catch(e){
     clearInterval(animInterval);
@@ -2816,7 +2836,7 @@ async function runBulkRegen(){
   });
   if(!targets.length){ setStatus('No entries match the selected filters','error'); return; }
 
-  const confirmed=confirm(`Regenerate ${targets.length} entr${targets.length!==1?'ies':'y'}${ca?' for '+ca:''}${yr?' '+yr:''}?\n\nThis will replace their current suggestions using Gemini Pro. The change history will let you undo if needed.`);
+  const confirmed=confirm(`Regenerate ${targets.length} entr${targets.length!==1?'ies':'y'}${ca?' for '+ca:''}${yr?' '+yr:''}?\n\nThis will replace their current suggestions using GPT-4.1. The change history will let you undo if needed.`);
   if(!confirmed) return;
 
   const btn=document.getElementById('btn-bulk-regen');
@@ -2840,7 +2860,7 @@ Return ONLY a JSON array: [{"t":"Tool Name","d":"Specific description for this u
       let dupedTool = null;
       for(let attempt=0; attempt<2; attempt++){
         const retryNote = attempt>0 ? `\n\nRETRY: Your previous response used "${dupedTool}" twice. Every one of the 5 suggestions MUST use a DIFFERENT tool.` : '';
-        const raw=await callGemini([{role:'user',parts:[{text:prompt+retryNote}]}],null,GEMINI_MODEL);
+        const raw=await callAI([{role:'user',parts:[{text:prompt+retryNote}]}],null,OPENAI_MODEL);
         const clean=raw.replace(/```json|```/g,'').trim();
         const si=clean.indexOf('['),ei=clean.lastIndexOf(']');
         if(si===-1||ei===-1) throw new Error('No JSON');
@@ -3252,8 +3272,7 @@ setInterval(async()=>{
   document.getElementById('app-content').style.display='none';
   initNetworkCanvas();
   const key=getKey();
-  if(!key&&!BAKED_API_KEY){ showScreen('setup'); return; }
-  if(!key) localStorage.setItem('dla_api_key', BAKED_API_KEY); 
+  if(!key){ showScreen('setup'); return; }
 
   
   try{
