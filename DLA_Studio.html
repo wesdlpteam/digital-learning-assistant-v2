@@ -717,6 +717,7 @@ async function loadFromDrive(){
     DRIVE_FILE_ID=d.files[0].id;
     const r2=await fetch(`https://www.googleapis.com/drive/v3/files/${DRIVE_FILE_ID}?alt=media`,{headers:{'Authorization':'Bearer '+tok}});
     ingest(await r2.json());
+    loadLibraries(); // Load lesson libraries after Drive auth
   }catch(e){
     err.textContent=e.message; err.style.display='block';
     btn.disabled=false; btn.textContent='↑ Load from Google Drive';
@@ -2639,56 +2640,88 @@ async function fixAllOfType(type){
   setStatus(`Fixed ${fixed} ${type} issue${fixed!==1?'s':''}`);
 }
 
-// Minecraft Education lesson library — VERIFIED seed list + user additions from localStorage.
-// Seed lessons shipped with the app (verified by Prof_DLP).
-const MINECRAFT_LESSONS_SEED = [
-  // MATHEMATICS
-  { title: 'Ratio Riddles', desc: 'ratio, proportion, fractions & scale through 3 games', ages: '8+', subject: 'MATHEMATICS' },
-  { title: 'Dangerous Data Sets', desc: 'probability & data using mob drop rates', ages: '11+', subject: 'MATHEMATICS' },
-  { title: 'Area and Volume', desc: 'create & solve area/volume problems', ages: '8+', subject: 'MATHEMATICS' },
-  { title: 'Fractions Pixel Art', desc: 'design pixel art then break colours into fractions', ages: '8+', subject: 'MATHEMATICS' },
-  { title: 'Number Pattern Architecture', desc: 'explore arithmetic patterns through building', ages: '8+', subject: 'MATHEMATICS' },
+// ========== LIBRARIES — stored in libraries.json on Drive/GitHub ==========
 
-  // SCIENCE
-  { title: 'The Scientific Method', desc: 'teach the scientific method through Minecraft experiments', ages: '11+', subject: 'SCIENCE' },
+const LIBRARIES_GITHUB_URL = 'https://wesdlpteam.github.io/digital-learning-assistant-v2/libraries.json';
+let LIBRARIES = { minecraft: [], microbit: [] };
+let LIBRARIES_FILE_ID = null;
 
-  // LANGUAGE & LITERACY
-  { title: 'Shipwreck Narrative', desc: 'write a narrative about a mysterious shipwreck', ages: '8+', subject: 'LANGUAGE & LITERACY' },
-
-  // SOCIAL STUDIES & HISTORY
-  { title: 'Meet and Greet!', desc: 'research historical figures, build 3D timeline', ages: '8+', subject: 'SOCIAL STUDIES & HISTORY' },
-];
-
-// Returns the full lesson list: seed lessons + user additions from localStorage, deduplicated by title,
-// with seed lessons respecting the user's hidden-seeds list.
-function getMinecraftLessons(){
-  let userAdded = [];
-  let hiddenSeeds = [];
+// Load libraries.json — tries Drive (if authed), falls back to GitHub Pages, falls back to empty
+async function loadLibraries(){
+  // Try Drive first (shared, editable)
+  if(DRIVE_TOKEN){
+    try {
+      const r = await fetch("https://www.googleapis.com/drive/v3/files?q=name='libraries.json' and trashed=false&fields=files(id)&pageSize=5",{
+        headers:{'Authorization':'Bearer '+DRIVE_TOKEN}
+      });
+      const d = await r.json();
+      if(d.files && d.files.length){
+        LIBRARIES_FILE_ID = d.files[0].id;
+        const r2 = await fetch(`https://www.googleapis.com/drive/v3/files/${LIBRARIES_FILE_ID}?alt=media`,{
+          headers:{'Authorization':'Bearer '+DRIVE_TOKEN}
+        });
+        const data = await r2.json();
+        if(data && typeof data === 'object'){
+          LIBRARIES = data;
+          console.log(`Libraries loaded from Drive — ${(LIBRARIES.minecraft||[]).length} Minecraft, ${(LIBRARIES.microbit||[]).length} Micro:bit`);
+          return;
+        }
+      }
+    } catch(e){ console.log('Libraries Drive load failed, trying GitHub:', e.message); }
+  }
+  // Fallback: GitHub Pages (public, read-only)
   try {
-    userAdded = JSON.parse(localStorage.getItem('dla_mc_lessons') || '[]');
-    if(!Array.isArray(userAdded)) userAdded = [];
-    hiddenSeeds = JSON.parse(localStorage.getItem('dla_mc_hidden_seeds') || '[]');
-    if(!Array.isArray(hiddenSeeds)) hiddenSeeds = [];
-  } catch { userAdded = []; hiddenSeeds = []; }
-  const hiddenSet = new Set(hiddenSeeds);
-  // Merge — user-added takes priority if title collides (lets you override seed entries)
-  const seen = new Map();
-  userAdded.forEach(l => { if(l && l.title) seen.set(l.title.toLowerCase().trim(), l); });
-  MINECRAFT_LESSONS_SEED.forEach(l => {
-    if(hiddenSet.has(l.title)) return;
-    const k = l.title.toLowerCase().trim();
-    if(!seen.has(k)) seen.set(k, {...l, _seed: true});
-  });
-  return Array.from(seen.values());
+    const r = await fetch(LIBRARIES_GITHUB_URL + '?t=' + Date.now()); // cache-bust
+    if(r.ok){
+      const data = await r.json();
+      if(data && typeof data === 'object'){
+        LIBRARIES = data;
+        console.log(`Libraries loaded from GitHub — ${(LIBRARIES.minecraft||[]).length} Minecraft, ${(LIBRARIES.microbit||[]).length} Micro:bit`);
+        return;
+      }
+    }
+  } catch(e){ console.log('Libraries GitHub load failed:', e.message); }
+  console.log('Libraries: using empty defaults');
+}
+
+// Save libraries.json to Drive
+async function saveLibraries(){
+  if(!DRIVE_TOKEN){ setStatus('Not connected to Drive — libraries not saved','error'); return; }
+  try {
+    // If we don't have a file ID yet, create the file on Drive
+    if(!LIBRARIES_FILE_ID){
+      const createR = await fetch('https://www.googleapis.com/drive/v3/files',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+DRIVE_TOKEN},
+        body:JSON.stringify({name:'libraries.json', mimeType:'application/json'})
+      });
+      const created = await createR.json();
+      LIBRARIES_FILE_ID = created.id;
+      console.log('Created libraries.json on Drive:', LIBRARIES_FILE_ID);
+    }
+    await fetch(`https://www.googleapis.com/upload/drive/v3/files/${LIBRARIES_FILE_ID}?uploadType=media`,{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+DRIVE_TOKEN},
+      body:JSON.stringify(LIBRARIES, null, 2)
+    });
+    setStatus('Libraries saved to Drive');
+  } catch(e){
+    setStatus('Libraries save failed: '+e.message, 'error');
+  }
+}
+
+function getMinecraftLessons(){
+  return LIBRARIES.minecraft || [];
 }
 
 function buildMinecraftContext(){
   const lessons = getMinecraftLessons();
+  if(!lessons.length) return 'No Minecraft Education lessons have been curated in the Libraries panel yet.';
   const bySubject = {};
   lessons.forEach(l => {
     const s = l.subject || 'OTHER';
     if(!bySubject[s]) bySubject[s] = [];
-    bySubject[s].push(`- ${l.title} (${l.desc}; ages ${l.ages})`);
+    bySubject[s].push(`- ${l.title} (${l.desc || 'no description'}; ages ${l.ages})`);
   });
   const sections = Object.entries(bySubject)
     .map(([s, lines]) => `${s}:\n${lines.join('\n')}`)
@@ -2717,13 +2750,11 @@ function libToggleSection(id){
   if(arrow) arrow.style.transform = open ? '' : 'rotate(180deg)';
 }
 
-// Convert a Minecraft URL slug to a plausible title: /lessons/ratio-riddles -> "Ratio Riddles"
 function libSlugToTitle(slug){
   if(!slug) return '';
   return slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 }
 
-// Auto-extract title from URL the moment user pastes it
 function libExtractFromUrl(){
   const urlEl = document.getElementById('lib-mc-url');
   const titleEl = document.getElementById('lib-mc-title');
@@ -2746,17 +2777,6 @@ function libClearForm(){
   if(s){ s.textContent=''; }
 }
 
-function libSaveUserLessons(list){
-  localStorage.setItem('dla_mc_lessons', JSON.stringify(list));
-}
-
-function libGetUserLessons(){
-  try {
-    const arr = JSON.parse(localStorage.getItem('dla_mc_lessons') || '[]');
-    return Array.isArray(arr) ? arr : [];
-  } catch { return []; }
-}
-
 function libAddLesson(){
   const url = document.getElementById('lib-mc-url')?.value.trim() || '';
   const title = document.getElementById('lib-mc-title')?.value.trim() || '';
@@ -2769,39 +2789,33 @@ function libAddLesson(){
   if(!ages){ if(statusEl){ statusEl.textContent='⚠ Select an age rating'; statusEl.style.color='#f87171'; } return; }
   if(!subject){ if(statusEl){ statusEl.textContent='⚠ Select a subject'; statusEl.style.color='#f87171'; } return; }
 
-  const existing = libGetUserLessons();
-  // Check if title already exists (case-insensitive) — update rather than duplicate
+  if(!LIBRARIES.minecraft) LIBRARIES.minecraft = [];
+  const lessons = LIBRARIES.minecraft;
   const key = title.toLowerCase().trim();
-  const existingIdx = existing.findIndex(l => l.title.toLowerCase().trim() === key);
-  const entry = { title, desc, ages, subject, url: url || undefined, added: Date.now() };
+  const existingIdx = lessons.findIndex(l => l.title.toLowerCase().trim() === key);
+  const entry = { title, desc, ages, subject };
+  if(url) entry.url = url;
 
+  let msg;
   if(existingIdx >= 0){
-    existing[existingIdx] = entry;
-    libSaveUserLessons(existing);
-    if(statusEl){ statusEl.textContent=`✓ "${title}" updated`; statusEl.style.color='var(--lime)'; }
+    lessons[existingIdx] = entry;
+    msg = `✓ "${title}" updated`;
   } else {
-    existing.push(entry);
-    libSaveUserLessons(existing);
-    if(statusEl){ statusEl.textContent=`✓ "${title}" added`; statusEl.style.color='var(--lime)'; }
+    lessons.push(entry);
+    msg = `✓ "${title}" added`;
   }
+
   libClearForm();
-  if(statusEl){ statusEl.textContent = existingIdx >= 0 ? `✓ "${title}" updated` : `✓ "${title}" added`; statusEl.style.color='var(--lime)'; }
+  if(statusEl){ statusEl.textContent = msg; statusEl.style.color='var(--lime)'; }
+  saveLibraries();
   renderLibraries();
 }
 
 function libDeleteLesson(title){
-  const lesson = getMinecraftLessons().find(l => l.title === title);
-  if(lesson && lesson._seed){
-    if(!confirm(`"${title}" is a seed lesson shipped with the app. Deleting it will hide it from this device only — it will come back if you clear local storage. Continue?`)) return;
-    // Add a "hidden" marker by saving a user entry with empty fields? Simpler: add a hide list.
-    const hidden = JSON.parse(localStorage.getItem('dla_mc_hidden_seeds') || '[]');
-    if(!hidden.includes(title)) hidden.push(title);
-    localStorage.setItem('dla_mc_hidden_seeds', JSON.stringify(hidden));
-  } else {
-    if(!confirm(`Delete "${title}" from your library?`)) return;
-    const list = libGetUserLessons().filter(l => l.title !== title);
-    libSaveUserLessons(list);
-  }
+  if(!confirm(`Delete "${title}" from the Minecraft library?`)) return;
+  if(!LIBRARIES.minecraft) return;
+  LIBRARIES.minecraft = LIBRARIES.minecraft.filter(l => l.title !== title);
+  saveLibraries();
   renderLibraries();
 }
 
@@ -2818,12 +2832,11 @@ function libEditLesson(title){
 }
 
 function libExportLessons(){
-  const all = getMinecraftLessons();
-  const blob = new Blob([JSON.stringify(all, null, 2)], {type:'application/json'});
+  const blob = new Blob([JSON.stringify(LIBRARIES, null, 2)], {type:'application/json'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `minecraft-lessons-${new Date().toISOString().slice(0,10)}.json`;
+  a.download = `libraries-${new Date().toISOString().slice(0,10)}.json`;
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -2837,22 +2850,22 @@ function libImportLessons(event){
   reader.onload = e => {
     try {
       const imported = JSON.parse(e.target.result);
-      if(!Array.isArray(imported)) throw new Error('File is not a JSON array');
-      // Validate each entry has required fields
-      const valid = imported.filter(l => l && l.title && l.ages && l.subject);
-      if(!valid.length) throw new Error('No valid lessons in the file');
+      // Support both full libraries.json format and plain arrays
+      const mcLessons = Array.isArray(imported) ? imported : (imported.minecraft || []);
+      const valid = mcLessons.filter(l => l && l.title && l.ages && l.subject);
+      if(!valid.length) throw new Error('No valid Minecraft lessons found in file');
 
-      const existing = libGetUserLessons();
-      const existingKeys = new Set(existing.map(l => l.title.toLowerCase().trim()));
+      if(!LIBRARIES.minecraft) LIBRARIES.minecraft = [];
       let added = 0, updated = 0;
       valid.forEach(l => {
         const k = l.title.toLowerCase().trim();
-        const idx = existing.findIndex(e => e.title.toLowerCase().trim() === k);
-        const entry = { title: l.title, desc: l.desc||'', ages: l.ages, subject: l.subject, url: l.url||undefined, added: Date.now() };
-        if(idx >= 0){ existing[idx] = entry; updated++; }
-        else { existing.push(entry); added++; }
+        const idx = LIBRARIES.minecraft.findIndex(e => e.title.toLowerCase().trim() === k);
+        const entry = { title: l.title, desc: l.desc||'', ages: l.ages, subject: l.subject };
+        if(l.url) entry.url = l.url;
+        if(idx >= 0){ LIBRARIES.minecraft[idx] = entry; updated++; }
+        else { LIBRARIES.minecraft.push(entry); added++; }
       });
-      libSaveUserLessons(existing);
+      saveLibraries();
       alert(`Imported: ${added} added, ${updated} updated`);
       renderLibraries();
     } catch(err){
@@ -2860,7 +2873,7 @@ function libImportLessons(event){
     }
   };
   reader.readAsText(file);
-  event.target.value = ''; // reset so same file can be re-imported
+  event.target.value = '';
 }
 
 function renderLibraries(){
@@ -2872,7 +2885,7 @@ function renderLibraries(){
 
   if(countEl) countEl.textContent = `${lessons.length} lesson${lessons.length!==1?'s':''}`;
 
-  // Auto-expand the section when navigating to Libraries tab
+  // Auto-expand on first render
   const body = document.getElementById('lib-mc-body');
   const arrow = document.getElementById('lib-mc-arrow');
   if(body && body.style.display === 'none'){
@@ -2881,11 +2894,10 @@ function renderLibraries(){
   }
 
   if(!lessons.length){
-    listEl.innerHTML = '<div style="color:var(--dim);font-size:13px;padding:12px 0">No lessons saved yet. Add your first above.</div>';
+    listEl.innerHTML = '<div style="color:var(--dim);font-size:13px;padding:12px 0">No lessons saved yet. Add your first above, or import a libraries.json file.</div>';
     return;
   }
 
-  // Group by subject
   const bySubject = {};
   lessons.forEach(l => {
     const s = l.subject || 'OTHER';
@@ -2902,7 +2914,6 @@ function renderLibraries(){
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
               <span style="font-size:14px;font-weight:700;color:var(--text)">${esc(l.title)}</span>
               <span style="font-size:10px;padding:2px 7px;border-radius:20px;background:rgba(197,232,74,0.12);color:var(--lime);font-weight:700">ages ${esc(l.ages)}</span>
-              ${l._seed ? '<span style="font-size:10px;padding:2px 7px;border-radius:20px;background:rgba(212,160,23,0.12);color:var(--gold);font-weight:700" title="Shipped with the app">seed</span>' : ''}
             </div>
             ${l.desc ? `<div style="font-size:12px;color:var(--dim);line-height:1.5">${esc(l.desc)}</div>` : ''}
             ${l.url ? `<a href="${esc(l.url)}" target="_blank" style="font-size:11px;color:var(--mint);text-decoration:none;word-break:break-all">${esc(l.url)}</a>` : ''}
@@ -3020,18 +3031,6 @@ async function runBulkAIEdit(){
     .map(([tool,entries])=>`${tool} (${entries.length}x): `+entries.map(e=>`[${e.entryIdx}]s${e.sugIdx}`).join(', '))
     .join('\n');
 
-  // Only include fully audited entries with 5 suggestions — use real DATA index so entryIdx is correct
-  // Compact format: unit metadata + tool names per slot (descriptions omitted to save tokens)
-  // Smart truncation: if a large library context is included, trim planner text to save room
-  const libraryContextLen = (platformSection + opportunitySection).length;
-  const plannerLimit = libraryContextLen > 3000 ? 100 : (libraryContextLen > 1500 ? 200 : 0); // 0 = no limit
-  const fullContext = completeData.map(({e,i})=>{
-    const sugs = getSugs(e);
-    const toolStr = sugs.map((s,si)=>`s${si}:${sugTool(s)}`).join(' | ');
-    const plannerText = e.plannerText ? (plannerLimit ? e.plannerText.slice(0, plannerLimit) : e.plannerText) : '';
-    return `[${i}] ${e.ca} | ${e.yl} | "${e.th}"${e.ci?' | CI: '+e.ci:''}${plannerText?' | Planner: '+plannerText:''}\n  ${toolStr}`;
-  }).join('\n');
-
   const urlInput = document.getElementById('bulk-ai-url')?.value.trim();
   // Try URL first, then fall back to detecting platform names in the instruction text
   const platform = (urlInput ? KNOWN_PLATFORMS.find(p=>p.match.test(urlInput)) : null)
@@ -3065,6 +3064,16 @@ The coordinator is asking you to scan the entire library for places where a spec
 - Aim for 8-20 proposals rather than 2-3
 - For each proposal, briefly explain the specific curriculum connection in the description
 - Still respect the TOOL AGE GUIDE and duplicate prevention rules` : '';
+
+  // Build compact entry context — positioned here because it uses platformSection + opportunitySection for smart truncation
+  const libraryContextLen = (platformSection + opportunitySection).length;
+  const plannerLimit = libraryContextLen > 3000 ? 100 : (libraryContextLen > 1500 ? 200 : 0); // 0 = no limit
+  const fullContext = completeData.map(({e,i})=>{
+    const sugs = getSugs(e);
+    const toolStr = sugs.map((s,si)=>`s${si}:${sugTool(s)}`).join(' | ');
+    const plannerText = e.plannerText ? (plannerLimit ? e.plannerText.slice(0, plannerLimit) : e.plannerText) : '';
+    return `[${i}] ${e.ca} | ${e.yl} | "${e.th}"${e.ci?' | CI: '+e.ci:''}${plannerText?' | Planner: '+plannerText:''}\n  ${toolStr}`;
+  }).join('\n');
 
   const completeEntries = completeData;
 
@@ -3740,6 +3749,7 @@ setInterval(async()=>{
         new Promise(waitForGSI).then(()=>getDriveToken()).then(tok=>{
           DRIVE_TOKEN=tok;
           getDriveFileModified().then(meta=>{ if(meta) LAST_KNOWN_MODIFIED=meta.modifiedTime; });
+          loadLibraries();
           startConflictPolling();
           setStatus('Session restored — connected to Drive');
         }).catch(()=>{ setStatus('Session restored — <span onclick="reconnectDrive()" style="text-decoration:underline;cursor:pointer;font-weight:700">click here to reconnect Drive</span> to save changes','error',true); });
