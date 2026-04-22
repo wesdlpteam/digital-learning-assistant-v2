@@ -1586,7 +1586,13 @@ function normaliseToolName(t){
     'puppet pals':'Puppet Pals','padlet':'Padlet','seesaw':'Seesaw','canva':'Canva',
   };
   const key = t.toLowerCase().trim();
-  return map[key] || t;
+  if(map[key]) return map[key];
+  // Pattern-based: collapse lesson-specific variants to the base tool name
+  // e.g. "Minecraft Education (Moon Base One)" → "Minecraft Education"
+  // e.g. "Micro:bit — Helping Plants Grow" → "Micro:bit"
+  if(key.startsWith('minecraft education')) return 'Minecraft Education';
+  if(key.startsWith('micro:bit') || key.startsWith('microbit')) return 'Micro:bit';
+  return t;
 }
 
 // Canonical key for comparing two tool names (normalises known variants, lowercases, trims)
