@@ -2687,12 +2687,37 @@ async function loadLibraries(){
       }
     }
   } catch(e){ console.log('Libraries GitHub load failed:', e.message); }
+  // Fallback: localStorage backup (from previous saves that didn't reach Drive)
+  try {
+    const backup = localStorage.getItem('dla_libraries_backup');
+    if(backup){
+      const data = JSON.parse(backup);
+      if(data && typeof data === 'object' && (data.minecraft?.length || data.microbit?.length)){
+        LIBRARIES = data;
+        console.log(`Libraries restored from local backup — ${(LIBRARIES.minecraft||[]).length} Minecraft, ${(LIBRARIES.microbit||[]).length} Micro:bit`);
+        setStatus('Libraries loaded from local backup — reconnect Drive to sync','error');
+        return;
+      }
+    }
+  } catch(e){ console.log('Libraries backup load failed:', e.message); }
   console.log('Libraries: using empty defaults');
 }
 
 // Save libraries.json to Drive
 async function saveLibraries(){
-  if(!DRIVE_TOKEN){ setStatus('Not connected to Drive — libraries not saved','error'); return; }
+  // Always save to localStorage as safety net — survives token expiry and page refresh
+  try { localStorage.setItem('dla_libraries_backup', JSON.stringify(LIBRARIES)); } catch{}
+
+  if(!DRIVE_TOKEN){
+    // Try to re-auth silently
+    try {
+      DRIVE_TOKEN = await getDriveToken();
+    } catch{
+      alert('⚠ Libraries NOT saved — Drive is disconnected.\n\nYour changes are backed up locally and will sync when Drive reconnects.\n\nClick "reconnect Drive" in the status bar or refresh the page.');
+      setStatus('Libraries backed up locally — reconnect Drive to save','error');
+      return;
+    }
+  }
   try {
     // If we don't have a file ID yet, create the file on Drive
     if(!LIBRARIES_FILE_ID){
@@ -2701,18 +2726,27 @@ async function saveLibraries(){
         headers:{'Content-Type':'application/json','Authorization':'Bearer '+DRIVE_TOKEN},
         body:JSON.stringify({name:'libraries.json', mimeType:'application/json'})
       });
+      if(createR.status === 401) throw new Error('Drive token expired');
       const created = await createR.json();
+      if(!created.id) throw new Error('Drive file creation failed');
       LIBRARIES_FILE_ID = created.id;
       console.log('Created libraries.json on Drive:', LIBRARIES_FILE_ID);
     }
-    await fetch(`https://www.googleapis.com/upload/drive/v3/files/${LIBRARIES_FILE_ID}?uploadType=media`,{
+    const saveR = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${LIBRARIES_FILE_ID}?uploadType=media`,{
       method:'PATCH',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+DRIVE_TOKEN},
       body:JSON.stringify(LIBRARIES, null, 2)
     });
-    setStatus('Libraries saved to Drive');
+    if(saveR.status === 401) throw new Error('Drive token expired');
+    if(!saveR.ok) throw new Error(`Drive responded ${saveR.status}`);
+    setStatus('Libraries saved to Drive ✓');
   } catch(e){
-    setStatus('Libraries save failed: '+e.message, 'error');
+    // Token probably expired — clear it so next save tries to re-auth
+    if(e.message.includes('expired') || e.message.includes('401')){
+      DRIVE_TOKEN = null;
+    }
+    alert(`⚠ Libraries save failed: ${e.message}\n\nYour changes are backed up locally. Refresh the page to reconnect Drive.`);
+    setStatus('Libraries save failed — backed up locally', 'error');
   }
 }
 
