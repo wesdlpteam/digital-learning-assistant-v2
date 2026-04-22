@@ -6,7 +6,7 @@
 <title>DLA Studio — Wesley College</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d0d0d'/%3E%3Crect width='32' height='32' rx='8' fill='none' stroke='%23D4A017' stroke-width='1.5' opacity='0.4'/%3E%3Ctext x='16' y='23' font-family='system-ui,sans-serif' font-size='18' font-weight='900' fill='%23D4A017' text-anchor='middle' letter-spacing='-1'%3EW%3C/text%3E%3Ccircle cx='25' cy='7' r='4' fill='%23C5E84A'/%3E%3C/svg%3E">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');:root{--bg:#0d0d0d;--card:#1a1a1a;--card2:#222222;--border:#2e2e2e;--text:#ffffff;--dim:#888888;--gold:#D4A017;--lime:#C5E84A;--purple:#9B8BFF;--blue:#60B8F0;--orange:#F5A623;--salmon:#FF8080;--green:#52B95C;--olive:#2a3010;--mint:#C5E84A;--vivid:#C5E84A;--forest:#0d0d0d;--cream:#ffffff;--yellow:#D4A017;}*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;font-size:15px;line-height:1.6;zoom:0.9}#bg-canvas{display:none}#sidebar{width:240px;background:#111;border-right:1px solid var(--border);position:fixed;top:0;left:0;height:100vh;display:none;flex-direction:column;padding:28px 20px;z-index:50}body.app-mode #sidebar{display:flex}body.app-mode #main{margin-left:240px}#logo{font-size:12px;font-weight:900;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:40px}.nav-item{padding:11px 14px;border-radius:10px;color:var(--dim);cursor:pointer;margin-bottom:4px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;transition:all 0.12s}.nav-item:hover{color:var(--text);background:var(--card2)}.nav-item.active{background:var(--gold);color:#111}#sidebar-footer{margin-top:auto;padding-top:24px;border-top:1px solid var(--border)}#main{min-height:100vh;background:var(--bg)}.screen{display:none;min-height:100vh;align-items:center;justify-content:center;padding:40px 20px}.screen.active{display:flex;flex-direction:column}.screen-inner{width:100%;max-width:460px}#app-content{display:none;padding:44px}body.app-mode #app-content{display:block}#status-bar{font-size:12px;color:var(--dim);text-align:right;min-height:18px;margin-bottom:16px;font-weight:500;letter-spacing:.3px}#global-progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:9999;background:transparent;pointer-events:none}#global-progress-bar{height:100%;width:0%;background:var(--lime);transition:width .3s ease;border-radius:0 2px 2px 0}.panel{display:none;max-width:1200px}.panel.active{display:block}.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:14px}.card2{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:10px}.page-title{font-size:34px;font-weight:900;color:var(--text);margin-bottom:6px;letter-spacing:-0.5px}.page-sub{font-size:15px;color:var(--dim);margin-bottom:28px;line-height:1.6;font-weight:500}.label{font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;letter-spacing:1.5px;margin-bottom:12px;display:block}.inp{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:13px 16px;width:100%;outline:none;font-size:15px;font-family:inherit;font-weight:500;transition:border-color .15s}.inp:focus{border-color:var(--gold)}textarea.inp{resize:vertical;line-height:1.6}select.inp{cursor:pointer}.btn{padding:10px 18px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:13px;font-family:inherit;font-weight:600;transition:all 0.12s}.btn:hover{color:var(--text);border-color:var(--dim)}.btn-pri{background:var(--gold);color:#111;border:none;padding:13px 24px;border-radius:12px;font-weight:800;cursor:pointer;font-size:14px;font-family:inherit;transition:all 0.12s}.btn-pri:hover{background:#c49010}.btn-pri.full{width:100%}.btn-sm{padding:6px 13px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:12px;font-family:inherit;font-weight:600}.btn-sm:hover{border-color:var(--dim);color:var(--text)}button:disabled{opacity:.4;cursor:not-allowed}.stat-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:28px}.stat-card{border:1px solid var(--border);border-radius:14px;padding:22px}.stat-num{font-size:40px;font-weight:900;letter-spacing:-1.5px;line-height:1}.stat-lbl{font-size:12px;margin-top:6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;opacity:.7}.row{display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:all 0.1s}.row:hover{background:var(--card2);border-color:#444}.sug{border-radius:14px;margin-bottom:12px;overflow:hidden;border:1px solid var(--border)}.sug-main{padding:20px 22px;background:var(--card)}.sug-tool{font-size:18px;font-weight:800;color:var(--text);margin-bottom:6px;letter-spacing:-.3px}.sug-desc{font-size:14px;color:#aaa;line-height:1.65}.sug-fb{padding:16px 22px;background:var(--card2);border-top:1px solid var(--border)}.bar-row{margin-bottom:13px;cursor:pointer}.bar-row:hover .bar-label span:first-child{color:var(--lime)}.bar-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;font-weight:600}.bar-label span:first-child{color:var(--text)}.bar-label span:last-child{color:var(--dim)}.bar-track{height:6px;background:var(--card2);border-radius:3px}.bar-fill{height:100%;border-radius:3px;background:var(--lime);transition:width 0.4s}#chat-messages{background:var(--card);border:1px solid var(--border);border-radius:14px 14px 0 0;height:420px;overflow-y:auto;padding:14px 16px;transition:height .15s}.chat-msg{margin-bottom:10px}.chat-msg.user{text-align:right}.chat-bubble{display:inline-block;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.5;max-width:82%;text-align:left;font-weight:500}.chat-msg.user .chat-bubble{background:var(--gold);color:#111;font-weight:700}.chat-msg.model .chat-bubble{background:var(--card2);border:1px solid var(--border);color:var(--text);white-space:pre-wrap}.chat-input-row{display:flex;gap:10px;padding:14px;background:var(--card2);border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px}.view-tabs{display:flex;gap:8px;margin-bottom:22px}.view-tab{padding:8px 18px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:13px;font-family:inherit;font-weight:600;transition:all 0.12s}.view-tab.active{background:var(--text);color:var(--bg);border-color:var(--text)}.kb-focus{outline:2px solid var(--gold)!important;}.back-btn{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:10px 18px;border-radius:10px;cursor:pointer;font-size:13px;font-family:inherit;font-weight:700;margin-bottom:24px;transition:all .12s}.back-btn:hover{background:var(--card)}.preview-ok{padding:16px;background:var(--olive);border:1px solid var(--lime);border-radius:10px;margin-bottom:10px}.preview-tool{font-size:15px;font-weight:800;color:var(--lime);margin-bottom:4px}.preview-desc{font-size:13px;color:#aaa;line-height:1.55}#screen-setup{flex-direction:row!important;align-items:stretch!important;justify-content:flex-start!important;padding:0!important;min-height:100vh}.setup-sidebar{width:200px;flex-shrink:0;background:#111;border-right:1px solid var(--border);display:flex;flex-direction:column;padding:32px 20px}.dla-wordmark{font-size:28px;font-weight:900;color:var(--gold);letter-spacing:1px;margin-bottom:48px}.setup-nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--dim);font-size:13px;font-weight:600;margin-bottom:5px;cursor:pointer}.setup-nav-item.active{color:var(--gold);background:rgba(212,160,23,0.1)}.setup-version{font-size:11px;color:#444;font-weight:700;margin-top:auto;margin-bottom:14px;letter-spacing:.5px}.wesley-brand{display:flex;align-items:center;gap:10px}.wesley-w{font-size:22px;font-weight:900;color:var(--gold)}.wesley-text{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;line-height:1.4}.setup-center{flex:0 0 480px;display:flex;align-items:center;justify-content:center;padding:40px 36px;background:var(--card);border-right:1px solid var(--border)}.setup-card{width:100%}.setup-card-title{font-size:22px;font-weight:900;color:var(--text);margin-bottom:6px;letter-spacing:-.3px;display:flex;align-items:center;gap:12px}.setup-card-sub{font-size:14px;color:var(--dim);margin-bottom:32px;line-height:1.6}.setup-field-label{font-size:10px;color:var(--dim);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.field-badge{font-size:10px;padding:3px 10px;border-radius:20px;background:rgba(212,160,23,0.15);color:var(--gold);font-weight:700;border:1px solid rgba(212,160,23,0.3)}.setup-inp{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:13px 16px;width:100%;outline:none;font-size:15px;font-family:'Inter',sans-serif;transition:border-color .15s;margin-bottom:20px;font-weight:500}.setup-inp:focus{border-color:var(--gold)}.setup-confirm{background:var(--gold);color:#111;border:none;padding:15px;border-radius:12px;font-weight:900;width:100%;cursor:pointer;font-size:14px;font-family:'Inter',sans-serif;letter-spacing:.5px;text-transform:uppercase;transition:background .12s}.setup-confirm:hover{background:#c49010}.setup-alt{display:flex;gap:8px;justify-content:center;margin-top:12px}.setup-right{flex:1;display:flex;flex-direction:column;justify-content:center;padding:60px 52px;background:var(--bg)}.setup-welcome-label{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:18px}.setup-headline{font-size:42px;font-weight:900;color:var(--text);line-height:1.1;margin-bottom:18px;letter-spacing:-1px}.setup-headline span{color:var(--lime)}.setup-tagline{font-size:15px;color:var(--dim);line-height:1.7;margin-bottom:40px;max-width:400px;font-weight:500}.status-cards{display:flex;flex-direction:column;gap:10px}.status-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600}.status-key{color:var(--dim);font-weight:500}.status-val{color:var(--text);font-weight:800}.status-dot{width:8px;height:8px;border-radius:50%;background:var(--lime);display:inline-block;margin-right:8px}@media (max-width:380px){.nav-label{display:none;}.nav-item{min-width:48px;}}</style>
+<style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');:root{--bg:#0d0d0d;--card:#1a1a1a;--card2:#222222;--border:#2e2e2e;--text:#ffffff;--dim:#888888;--gold:#D4A017;--lime:#C5E84A;--purple:#9B8BFF;--blue:#60B8F0;--orange:#F5A623;--salmon:#FF8080;--green:#52B95C;--olive:#2a3010;--mint:#C5E84A;--vivid:#C5E84A;--forest:#0d0d0d;--cream:#ffffff;--yellow:#D4A017;}*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;font-size:15px;line-height:1.6;zoom:0.9}#bg-canvas{display:none}#sidebar{width:240px;background:#111;border-right:1px solid var(--border);position:fixed;top:0;left:0;height:100vh;display:none;flex-direction:column;padding:28px 20px;z-index:50}body.app-mode #sidebar{display:flex}body.app-mode #main{margin-left:240px}#logo{font-size:12px;font-weight:900;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:40px}.nav-item{padding:11px 14px;border-radius:10px;color:var(--dim);cursor:pointer;margin-bottom:4px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;transition:all 0.12s}.nav-item:hover{color:var(--text);background:var(--card2)}.nav-item.active{background:var(--gold);color:#111}#sidebar-footer{margin-top:auto;padding-top:24px;border-top:1px solid var(--border)}#main{min-height:100vh;background:var(--bg)}.screen{display:none;min-height:100vh;align-items:center;justify-content:center;padding:40px 20px}.screen.active{display:flex;flex-direction:column}.screen-inner{width:100%;max-width:460px}#app-content{display:none;padding:44px}body.app-mode #app-content{display:block}#status-bar{font-size:12px;color:var(--dim);text-align:right;min-height:18px;margin-bottom:16px;font-weight:500;letter-spacing:.3px}#global-progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:9999;background:transparent;pointer-events:none}#global-progress-bar{height:100%;width:0%;background:var(--lime);transition:width .3s ease;border-radius:0 2px 2px 0}.panel{display:none;max-width:1200px}.panel.active{display:block}.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:14px}.card2{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:10px}.page-title{font-size:34px;font-weight:900;color:var(--text);margin-bottom:6px;letter-spacing:-0.5px}.page-sub{font-size:15px;color:var(--dim);margin-bottom:28px;line-height:1.6;font-weight:500}.label{font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;letter-spacing:1.5px;margin-bottom:12px;display:block}.inp{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:13px 16px;width:100%;outline:none;font-size:15px;font-family:inherit;font-weight:500;transition:border-color .15s}.inp:focus{border-color:var(--gold)}textarea.inp{resize:vertical;line-height:1.6}select.inp{cursor:pointer}.btn{padding:10px 18px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:13px;font-family:inherit;font-weight:600;transition:all 0.12s}.btn:hover{color:var(--text);border-color:var(--dim)}.btn-pri{background:var(--gold);color:#111;border:none;padding:13px 24px;border-radius:12px;font-weight:800;cursor:pointer;font-size:14px;font-family:inherit;transition:all 0.12s}.btn-pri:hover{background:#c49010}.btn-pri.full{width:100%}.btn-sm{padding:6px 13px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:12px;font-family:inherit;font-weight:600}.btn-sm:hover{border-color:var(--dim);color:var(--text)}button:disabled{opacity:.4;cursor:not-allowed}.stat-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:28px}.stat-card{border:1px solid var(--border);border-radius:14px;padding:22px}.stat-num{font-size:40px;font-weight:900;letter-spacing:-1.5px;line-height:1}.stat-lbl{font-size:12px;margin-top:6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;opacity:.7}.row{display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:all 0.1s}.row:hover{background:var(--card2);border-color:#444}.sug{border-radius:14px;margin-bottom:12px;overflow:hidden;border:1px solid var(--border)}.sug-main{padding:20px 22px;background:var(--card)}.sug-tool{font-size:18px;font-weight:800;color:var(--text);margin-bottom:6px;letter-spacing:-.3px}.sug-desc{font-size:14px;color:#aaa;line-height:1.65}.sug-fb{padding:16px 22px;background:var(--card2);border-top:1px solid var(--border)}.bar-row{margin-bottom:13px;cursor:pointer}.bar-row:hover .bar-label span:first-child{color:var(--lime)}.bar-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;font-weight:600}.bar-label span:first-child{color:var(--text)}.bar-label span:last-child{color:var(--dim)}.bar-track{height:6px;background:var(--card2);border-radius:3px}.bar-fill{height:100%;border-radius:3px;background:var(--lime);transition:width 0.4s}#chat-messages{background:var(--card);border:1px solid var(--border);border-radius:14px 14px 0 0;height:420px;overflow-y:auto;padding:14px 16px;transition:height .15s}.chat-msg{margin-bottom:10px}.chat-msg.user{text-align:right}.chat-bubble{display:inline-block;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.5;max-width:82%;text-align:left;font-weight:500}.chat-msg.user .chat-bubble{background:var(--gold);color:#111;font-weight:700}.chat-msg.model .chat-bubble{background:var(--card2);border:1px solid var(--border);color:var(--text);white-space:pre-wrap}.chat-input-row{display:flex;gap:10px;padding:14px;background:var(--card2);border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px}#bulk-chat-messages .chat-bubble strong{color:var(--lime)}#bulk-chat-messages .chat-msg.model .chat-bubble{white-space:pre-wrap}.view-tabs{display:flex;gap:8px;margin-bottom:22px}.view-tab{padding:8px 18px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:13px;font-family:inherit;font-weight:600;transition:all 0.12s}.view-tab.active{background:var(--text);color:var(--bg);border-color:var(--text)}.kb-focus{outline:2px solid var(--gold)!important;}.back-btn{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:10px 18px;border-radius:10px;cursor:pointer;font-size:13px;font-family:inherit;font-weight:700;margin-bottom:24px;transition:all .12s}.back-btn:hover{background:var(--card)}.preview-ok{padding:16px;background:var(--olive);border:1px solid var(--lime);border-radius:10px;margin-bottom:10px}.preview-tool{font-size:15px;font-weight:800;color:var(--lime);margin-bottom:4px}.preview-desc{font-size:13px;color:#aaa;line-height:1.55}#screen-setup{flex-direction:row!important;align-items:stretch!important;justify-content:flex-start!important;padding:0!important;min-height:100vh}.setup-sidebar{width:200px;flex-shrink:0;background:#111;border-right:1px solid var(--border);display:flex;flex-direction:column;padding:32px 20px}.dla-wordmark{font-size:28px;font-weight:900;color:var(--gold);letter-spacing:1px;margin-bottom:48px}.setup-nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--dim);font-size:13px;font-weight:600;margin-bottom:5px;cursor:pointer}.setup-nav-item.active{color:var(--gold);background:rgba(212,160,23,0.1)}.setup-version{font-size:11px;color:#444;font-weight:700;margin-top:auto;margin-bottom:14px;letter-spacing:.5px}.wesley-brand{display:flex;align-items:center;gap:10px}.wesley-w{font-size:22px;font-weight:900;color:var(--gold)}.wesley-text{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;line-height:1.4}.setup-center{flex:0 0 480px;display:flex;align-items:center;justify-content:center;padding:40px 36px;background:var(--card);border-right:1px solid var(--border)}.setup-card{width:100%}.setup-card-title{font-size:22px;font-weight:900;color:var(--text);margin-bottom:6px;letter-spacing:-.3px;display:flex;align-items:center;gap:12px}.setup-card-sub{font-size:14px;color:var(--dim);margin-bottom:32px;line-height:1.6}.setup-field-label{font-size:10px;color:var(--dim);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.field-badge{font-size:10px;padding:3px 10px;border-radius:20px;background:rgba(212,160,23,0.15);color:var(--gold);font-weight:700;border:1px solid rgba(212,160,23,0.3)}.setup-inp{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:13px 16px;width:100%;outline:none;font-size:15px;font-family:'Inter',sans-serif;transition:border-color .15s;margin-bottom:20px;font-weight:500}.setup-inp:focus{border-color:var(--gold)}.setup-confirm{background:var(--gold);color:#111;border:none;padding:15px;border-radius:12px;font-weight:900;width:100%;cursor:pointer;font-size:14px;font-family:'Inter',sans-serif;letter-spacing:.5px;text-transform:uppercase;transition:background .12s}.setup-confirm:hover{background:#c49010}.setup-alt{display:flex;gap:8px;justify-content:center;margin-top:12px}.setup-right{flex:1;display:flex;flex-direction:column;justify-content:center;padding:60px 52px;background:var(--bg)}.setup-welcome-label{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:18px}.setup-headline{font-size:42px;font-weight:900;color:var(--text);line-height:1.1;margin-bottom:18px;letter-spacing:-1px}.setup-headline span{color:var(--lime)}.setup-tagline{font-size:15px;color:var(--dim);line-height:1.7;margin-bottom:40px;max-width:400px;font-weight:500}.status-cards{display:flex;flex-direction:column;gap:10px}.status-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600}.status-key{color:var(--dim);font-weight:500}.status-val{color:var(--text);font-weight:800}.status-dot{width:8px;height:8px;border-radius:50%;background:var(--lime);display:inline-block;margin-right:8px}@media (max-width:380px){.nav-label{display:none;}.nav-item{min-width:48px;}}</style>
 </head>
 <body>
 <canvas id="bg-canvas"></canvas>
@@ -40,7 +40,7 @@
     </div>
     <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text)">Wesley College</div>
     <div style="font-size:9px;color:var(--dim);margin-bottom:6px">Melbourne</div>
-    <div style="font-size:9px;color:var(--mint)">● DLA Studio v4</div>
+    <div style="font-size:9px;color:var(--mint)">● DLA Studio v5</div>
     <div id="sidebar-user-email" style="font-size:10px;color:var(--dim);margin-top:4px;word-break:break-all"></div>
     <div style="margin-top:12px;display:flex;gap:8px">
       <button class="btn-sm" onclick="downloadJSON()">↓ JSON</button>
@@ -68,7 +68,7 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
         Dashboard
       </div>
-      <div class="setup-version">v4.0</div>
+      <div class="setup-version">v5.0</div>
       <div class="wesley-brand">
         <div class="wesley-w">W</div>
         <div class="wesley-text">Wesley<br>College</div>
@@ -301,20 +301,29 @@
         <div id="comparison-grid"></div>
       </div>
 
-            <!-- Bulk AI Edit -->
-      <div class="card" style="margin-bottom:14px">
-        <span class="label">Bulk AI Edit</span>
-        <p style="font-size:13px;color:var(--dim);margin-bottom:14px;line-height:1.6">Describe a change in plain English — or paste a lesson library URL to cross-reference it against all your planners. GPT-4.1 will propose specific changes for you to approve or decline.</p>
-        <div style="display:flex;gap:8px;margin-bottom:10px">
-          <input id="bulk-ai-url" class="inp" placeholder="Optional: lesson library URL (e.g. https://education.minecraft.net)" style="flex:1;margin-bottom:0;font-size:13px" oninput="detectBulkPlatform()">
-          <div id="bulk-ai-platform-badge" style="display:none;align-self:center;font-size:11px;padding:4px 10px;border-radius:20px;background:#0a1a0a;color:var(--lime);border:1px solid var(--lime);font-weight:700;white-space:nowrap"></div>
+            <!-- Bulk AI Edit — Chatbot Interface -->
+      <div class="card" style="margin-bottom:14px;padding:0;overflow:hidden">
+        <div style="padding:20px 24px 12px">
+          <span class="label">Bulk AI Edit</span>
+          <p style="font-size:13px;color:var(--dim);margin-bottom:0;line-height:1.6">Chat with GPT-4.1 to make bulk changes. Describe what you want — the AI will ask clarifying questions before proposing changes.</p>
         </div>
-        <textarea id="bulk-ai-instruction" class="inp" rows="3" placeholder="e.g. Replace generic Adobe Express suggestions with more specific Animate from Audio or Podcasting versions where they connect to the unit theme" style="margin-bottom:12px;font-size:13px" oninput="detectBulkPlatform()"></textarea>
-        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-          <button class="btn-pri" id="btn-bulk-ai" onclick="runBulkAIEdit()">Analyse & Propose Changes →</button>
-          <span id="bulk-ai-status" style="font-size:13px;font-weight:600"></span>
+        <div id="bulk-chat-messages" style="height:380px;overflow-y:auto;padding:14px 20px;background:var(--bg);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+          <div class="chat-msg model">
+            <div class="chat-bubble">👋 Hi! I'm your Bulk AI Edit assistant. Tell me what changes you'd like to make across the library — for example:
+
+• "Find opportunities to use Minecraft Education"
+• "Replace generic Canva suggestions with more specific activities"
+• "Cross-reference the Micro:bit lesson library"
+• "Add Sphero BOLT wherever there's a science investigation"
+
+You can also paste a lesson library URL. I'll ask a few questions to make sure I understand exactly what you want before analysing all entries.</div>
+          </div>
         </div>
-        <div id="bulk-ai-progress" style="display:none;margin-top:14px;padding:12px 16px;background:var(--card2);border-radius:10px;border:1px solid var(--border)">
+        <div style="display:flex;gap:10px;padding:14px 20px;background:var(--card)">
+          <input id="bulk-chat-input" class="inp" placeholder="Describe the change you want to make…" style="flex:1;margin-bottom:0;font-size:13px" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();bulkChatSend()}">
+          <button class="btn-pri" onclick="bulkChatSend()" id="btn-bulk-chat-send" style="padding:12px 20px;white-space:nowrap">Send →</button>
+        </div>
+        <div id="bulk-ai-progress" style="display:none;padding:12px 20px;background:var(--card2);border-top:1px solid var(--border)">
           <div style="font-size:13px;color:var(--lime);font-weight:600;margin-bottom:8px" id="bulk-ai-label">Analysing entries…</div>
           <div style="height:5px;background:var(--card);border-radius:3px"><div id="bulk-ai-bar" style="height:100%;border-radius:3px;background:var(--lime);width:0%;transition:width .4s"></div></div>
         </div>
@@ -433,77 +442,16 @@
     <!-- LIBRARIES -->
     <div id="panel-libraries" class="panel">
       <h1 class="page-title">Lesson Libraries</h1>
-      <p class="page-sub">Curate the lesson libraries that Bulk AI Edit references when proposing changes. Only lessons in these libraries will be suggested — this prevents hallucinations. Click a library header to expand/collapse.</p>
+      <p class="page-sub">Curate the lesson libraries that Bulk AI Edit references when proposing changes. Only lessons in these libraries will be suggested — this prevents hallucinations.</p>
 
-      <!-- MINECRAFT EDUCATION LIBRARY -->
-      <div class="card" style="padding:0;overflow:hidden">
-        <div onclick="libToggleSection('mc')" style="display:flex;align-items:center;gap:10px;padding:18px 24px;cursor:pointer;user-select:none;background:var(--card)">
-          <span style="font-size:18px">⛏</span>
-          <span style="font-size:15px;font-weight:800;color:var(--text);flex:1">Minecraft Education</span>
-          <span id="lib-mc-count" style="font-size:11px;color:var(--dim);font-weight:700"></span>
-          <span id="lib-mc-arrow" style="font-size:14px;color:var(--dim);transition:transform .2s">▼</span>
-        </div>
-        <div id="lib-mc-body" style="display:none;padding:0 24px 20px;border-top:1px solid var(--border)">
-          <p style="font-size:13px;color:var(--dim);margin:14px 0;line-height:1.6">Paste a lesson URL from <a href="https://education.minecraft.net/en-us/resources/explore-lessons" target="_blank" style="color:var(--lime)">education.minecraft.net</a>. The title is auto-detected from the URL — you can edit it before saving.</p>
-
-          <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:10px">
-            <input id="lib-mc-url" class="inp" placeholder="https://education.minecraft.net/en-us/lessons/ratio-riddles" style="margin-bottom:0;font-size:13px" oninput="libExtractFromUrl()">
-            <button class="btn-sm" onclick="libClearForm()" style="white-space:nowrap">Clear</button>
-          </div>
-
-          <div style="display:grid;grid-template-columns:2fr 1fr 1.5fr;gap:8px;margin-bottom:10px">
-            <input id="lib-mc-title" class="inp" placeholder="Lesson title (auto-filled from URL)" style="margin-bottom:0;font-size:13px">
-            <select id="lib-mc-ages" class="inp" style="margin-bottom:0;font-size:13px">
-              <option value="">Age rating…</option>
-              <option value="5+">5+ (all year levels)</option>
-              <option value="8+">8+ (Year 3+)</option>
-              <option value="10+">10+ (Year 5+)</option>
-              <option value="11+">11+ (Year 6 only)</option>
-            </select>
-            <select id="lib-mc-subject" class="inp" style="margin-bottom:0;font-size:13px">
-              <option value="">Subject…</option>
-              <option value="MATHEMATICS">Mathematics</option>
-              <option value="SCIENCE">Science</option>
-              <option value="LANGUAGE & LITERACY">Language &amp; Literacy</option>
-              <option value="SOCIAL STUDIES & HISTORY">Social Studies &amp; History</option>
-              <option value="CODING & COMPUTER SCIENCE">Coding &amp; Computer Science</option>
-              <option value="ARTS & DESIGN">Arts &amp; Design</option>
-              <option value="SEL & LIFE SKILLS">SEL &amp; Life Skills</option>
-              <option value="BUILD CHALLENGES">Build Challenges</option>
-            </select>
-          </div>
-
-          <input id="lib-mc-desc" class="inp" placeholder="Short description (e.g. 'ratio, proportion, fractions & scale through 3 games')" style="margin-bottom:10px;font-size:13px">
-
-          <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px">
-            <button class="btn-pri" onclick="libAddLesson()">+ Add lesson</button>
-            <span id="lib-mc-status" style="font-size:12px;font-weight:600"></span>
-          </div>
-
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-top:12px;border-top:1px solid var(--border)">
-            <span style="font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;letter-spacing:1.5px">Saved lessons</span>
-            <div style="flex:1"></div>
-            <button class="btn-sm" onclick="libExportLessons()">↓ Export</button>
-            <button class="btn-sm" onclick="libImportTrigger()">↑ Import</button>
-            <input type="file" id="lib-mc-import" accept=".json" style="display:none" onchange="libImportLessons(event)">
-          </div>
-          <div id="lib-mc-list"></div>
-        </div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+        <button class="btn-pri" onclick="showAddLibraryDialog()" style="font-size:13px;padding:10px 18px">+ Add Library</button>
+        <button class="btn-sm" onclick="libExportAll()">↓ Export All</button>
+        <button class="btn-sm" onclick="libImportAllTrigger()">↑ Import</button>
+        <input type="file" id="lib-import-all" accept=".json" style="display:none" onchange="libImportAll(event)">
       </div>
 
-      <!-- MICRO:BIT LIBRARY (placeholder — expand later) -->
-      <div class="card" style="padding:0;overflow:hidden;opacity:0.5">
-        <div style="display:flex;align-items:center;gap:10px;padding:18px 24px;cursor:default;user-select:none">
-          <span style="font-size:18px">🔌</span>
-          <span style="font-size:15px;font-weight:800;color:var(--text);flex:1">Micro:bit</span>
-          <span style="font-size:11px;color:var(--dim);font-weight:700">Hardcoded · 23 lessons</span>
-        </div>
-      </div>
-
-      <!-- Add more libraries here in the future -->
-      <div style="text-align:center;padding:20px 0">
-        <span style="font-size:12px;color:var(--dim)">More libraries coming soon — Code.org, Tinkercad, Common Sense Education</span>
-      </div>
+      <div id="lib-sections"></div>
     </div>
 
     <!-- ENTRY DETAIL -->
@@ -2664,11 +2612,66 @@ async function fixAllOfType(type){
 
 const LIBRARIES_GITHUB_URL = 'https://wesdlpteam.github.io/digital-learning-assistant-v2/libraries.json';
 let LIBRARIES = { minecraft: [], microbit: [] };
+let LIBRARIES_META = {};
 let LIBRARIES_FILE_ID = null;
+
+// Default metadata for known libraries — used when meta isn't in libraries.json
+const LIBRARY_DEFAULTS = {
+  minecraft: {
+    name: 'Minecraft Education', icon: '⛏',
+    urlPattern: 'education.minecraft.net',
+    urlPrefix: 'https://education.minecraft.net/en-us/lessons/',
+    urlHint: 'Paste a lesson URL from education.minecraft.net',
+    subjects: ['MATHEMATICS','SCIENCE','LANGUAGE & LITERACY','SOCIAL STUDIES & HISTORY','CODING & COMPUTER SCIENCE','ARTS & DESIGN','SEL & LIFE SKILLS','BUILD CHALLENGES']
+  },
+  microbit: {
+    name: 'Micro:bit', icon: '🔌',
+    urlPattern: 'microbit.org',
+    urlPrefix: 'https://microbit.org/teach/lessons/?selected=',
+    urlHint: 'Paste a lesson URL from microbit.org',
+    subjects: ['MATHEMATICS','SCIENCE','CODING & COMPUTER SCIENCE','SEL & LIFE SKILLS','ARTS & DESIGN']
+  }
+};
+
+// Common subject list for custom libraries
+const COMMON_SUBJECTS = ['MATHEMATICS','SCIENCE','LANGUAGE & LITERACY','SOCIAL STUDIES & HISTORY','CODING & COMPUTER SCIENCE','ARTS & DESIGN','SEL & LIFE SKILLS','BUILD CHALLENGES','DIGITAL CITIZENSHIP','OTHER'];
+
+function getLibraryMeta(key){
+  return LIBRARIES_META[key] || LIBRARY_DEFAULTS[key] || { name: key, icon: '📚', urlPattern: '', urlPrefix: '', urlHint: 'Paste a lesson URL', subjects: COMMON_SUBJECTS };
+}
+
+function getLibraryKeys(){
+  // Return all library keys (excluding _meta), with known ones first
+  const known = ['minecraft','microbit'];
+  const all = Object.keys(LIBRARIES).filter(k => k !== '_meta' && Array.isArray(LIBRARIES[k]));
+  const ordered = known.filter(k => all.includes(k));
+  all.forEach(k => { if(!ordered.includes(k)) ordered.push(k); });
+  return ordered;
+}
 
 // Load libraries.json — tries Drive (if authed), falls back to GitHub Pages, falls back to empty
 async function loadLibraries(){
-  // Try Drive first (shared, editable)
+  function processLoaded(data){
+    if(!data || typeof data !== 'object') return false;
+    // Extract meta if present
+    if(data._meta && typeof data._meta === 'object'){
+      LIBRARIES_META = data._meta;
+    }
+    // Copy lesson arrays
+    const cleaned = {};
+    Object.keys(data).forEach(k => {
+      if(k === '_meta') return;
+      if(Array.isArray(data[k])) cleaned[k] = data[k];
+    });
+    if(Object.keys(cleaned).length === 0) return false;
+    LIBRARIES = cleaned;
+    // Ensure known keys exist
+    if(!LIBRARIES.minecraft) LIBRARIES.minecraft = [];
+    if(!LIBRARIES.microbit) LIBRARIES.microbit = [];
+    return true;
+  }
+
+  // Try Drive first
   if(DRIVE_TOKEN){
     try {
       const r = await fetch("https://www.googleapis.com/drive/v3/files?q=name='libraries.json' and trashed=false&fields=files(id)&pageSize=5",{
@@ -2681,34 +2684,34 @@ async function loadLibraries(){
           headers:{'Authorization':'Bearer '+DRIVE_TOKEN}
         });
         const data = await r2.json();
-        if(data && typeof data === 'object'){
-          LIBRARIES = data;
-          console.log(`Libraries loaded from Drive — ${(LIBRARIES.minecraft||[]).length} Minecraft, ${(LIBRARIES.microbit||[]).length} Micro:bit`);
+        if(processLoaded(data)){
+          const counts = getLibraryKeys().map(k => `${(LIBRARIES[k]||[]).length} ${getLibraryMeta(k).name}`).join(', ');
+          console.log(`Libraries loaded from Drive — ${counts}`);
           return;
         }
       }
     } catch(e){ console.log('Libraries Drive load failed, trying GitHub:', e.message); }
   }
-  // Fallback: GitHub Pages (public, read-only)
+  // Fallback: GitHub Pages
   try {
-    const r = await fetch(LIBRARIES_GITHUB_URL + '?t=' + Date.now()); // cache-bust
+    const r = await fetch(LIBRARIES_GITHUB_URL + '?t=' + Date.now());
     if(r.ok){
       const data = await r.json();
-      if(data && typeof data === 'object'){
-        LIBRARIES = data;
-        console.log(`Libraries loaded from GitHub — ${(LIBRARIES.minecraft||[]).length} Minecraft, ${(LIBRARIES.microbit||[]).length} Micro:bit`);
+      if(processLoaded(data)){
+        const counts = getLibraryKeys().map(k => `${(LIBRARIES[k]||[]).length} ${getLibraryMeta(k).name}`).join(', ');
+        console.log(`Libraries loaded from GitHub — ${counts}`);
         return;
       }
     }
   } catch(e){ console.log('Libraries GitHub load failed:', e.message); }
-  // Fallback: localStorage backup (from previous saves that didn't reach Drive)
+  // Fallback: localStorage
   try {
     const backup = localStorage.getItem('dla_libraries_backup');
     if(backup){
       const data = JSON.parse(backup);
-      if(data && typeof data === 'object' && (data.minecraft?.length || data.microbit?.length)){
-        LIBRARIES = data;
-        console.log(`Libraries restored from local backup — ${(LIBRARIES.minecraft||[]).length} Minecraft, ${(LIBRARIES.microbit||[]).length} Micro:bit`);
+      if(processLoaded(data)){
+        const counts = getLibraryKeys().map(k => `${(LIBRARIES[k]||[]).length} ${getLibraryMeta(k).name}`).join(', ');
+        console.log(`Libraries restored from local backup — ${counts}`);
         setStatus('Libraries loaded from local backup — reconnect Drive to sync','error');
         return;
       }
@@ -2717,23 +2720,21 @@ async function loadLibraries(){
   console.log('Libraries: using empty defaults');
 }
 
-// Save libraries.json to Drive
+// Save libraries.json to Drive (includes _meta)
 async function saveLibraries(){
-  // Always save to localStorage as safety net — survives token expiry and page refresh
-  try { localStorage.setItem('dla_libraries_backup', JSON.stringify(LIBRARIES)); } catch{}
+  const saveObj = { _meta: LIBRARIES_META };
+  getLibraryKeys().forEach(k => { saveObj[k] = LIBRARIES[k] || []; });
+
+  try { localStorage.setItem('dla_libraries_backup', JSON.stringify(saveObj)); } catch{}
 
   if(!DRIVE_TOKEN){
-    // Try to re-auth silently
-    try {
-      DRIVE_TOKEN = await getDriveToken();
-    } catch{
+    try { DRIVE_TOKEN = await getDriveToken(); } catch{
       alert('⚠ Libraries NOT saved — Drive is disconnected.\n\nYour changes are backed up locally and will sync when Drive reconnects.\n\nClick "reconnect Drive" in the status bar or refresh the page.');
       setStatus('Libraries backed up locally — reconnect Drive to save','error');
       return;
     }
   }
   try {
-    // If we don't have a file ID yet, create the file on Drive
     if(!LIBRARIES_FILE_ID){
       const createR = await fetch('https://www.googleapis.com/drive/v3/files',{
         method:'POST',
@@ -2744,33 +2745,31 @@ async function saveLibraries(){
       const created = await createR.json();
       if(!created.id) throw new Error('Drive file creation failed');
       LIBRARIES_FILE_ID = created.id;
-      console.log('Created libraries.json on Drive:', LIBRARIES_FILE_ID);
     }
     const saveR = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${LIBRARIES_FILE_ID}?uploadType=media`,{
       method:'PATCH',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+DRIVE_TOKEN},
-      body:JSON.stringify(LIBRARIES, null, 2)
+      body:JSON.stringify(saveObj, null, 2)
     });
     if(saveR.status === 401) throw new Error('Drive token expired');
     if(!saveR.ok) throw new Error(`Drive responded ${saveR.status}`);
     setStatus('Libraries saved to Drive ✓');
   } catch(e){
-    // Token probably expired — clear it so next save tries to re-auth
-    if(e.message.includes('expired') || e.message.includes('401')){
-      DRIVE_TOKEN = null;
-    }
+    if(e.message.includes('expired') || e.message.includes('401')) DRIVE_TOKEN = null;
     alert(`⚠ Libraries save failed: ${e.message}\n\nYour changes are backed up locally. Refresh the page to reconnect Drive.`);
     setStatus('Libraries save failed — backed up locally', 'error');
   }
 }
 
-function getMinecraftLessons(){
-  return LIBRARIES.minecraft || [];
-}
+function getLibraryLessons(key){ return LIBRARIES[key] || []; }
+// Backward-compatible alias
+function getMinecraftLessons(){ return getLibraryLessons('minecraft'); }
 
-function buildMinecraftContext(){
-  const lessons = getMinecraftLessons();
-  if(!lessons.length) return 'No Minecraft Education lessons have been curated in the Libraries panel yet.';
+function buildLibraryContext(key){
+  const lessons = getLibraryLessons(key);
+  const meta = getLibraryMeta(key);
+  if(!lessons.length) return `No ${meta.name} lessons have been curated in the Libraries panel yet.`;
+
   const bySubject = {};
   lessons.forEach(l => {
     const s = l.subject || 'OTHER';
@@ -2780,8 +2779,9 @@ function buildMinecraftContext(){
   const sections = Object.entries(bySubject)
     .map(([s, lines]) => `${s}:\n${lines.join('\n')}`)
     .join('\n\n');
-  return `MINECRAFT EDUCATION — VERIFIED LESSON LIBRARY (${lessons.length} lessons):
-IMPORTANT: ONLY propose lessons from the list below. Do NOT invent or guess lesson titles — every title here has been verified to exist on education.minecraft.net. If no lesson below connects to a unit, do not force a match — skip that entry.
+
+  return `${meta.name.toUpperCase()} — VERIFIED LESSON LIBRARY (${lessons.length} lessons):
+IMPORTANT: ONLY propose lessons from the list below. Do NOT invent or guess lesson titles — every title here has been verified. If no lesson below connects to a unit, do not force a match — skip that entry.
 
 AGE GATING (HARD RULE): Each lesson has a minimum age. Match against Australian year levels:
   Prep = ages 5-6 | Year 1 = 6-7 | Year 2 = 7-8 | Year 3 = 8-9 | Year 4 = 9-10 | Year 5 = 10-11 | Year 6 = 11-12
@@ -2790,14 +2790,91 @@ AGE GATING (HARD RULE): Each lesson has a minimum age. Match against Australian 
 
 ${sections}
 
-When suggesting Minecraft Education, use tool name "Minecraft Education" and include the lesson's URL from the list above directly in the description. Do NOT tell teachers to search the website — give them the direct link.`;
+When suggesting ${meta.name}, use tool name "${meta.name}" and include the lesson's URL from the list above directly in the description. Do NOT tell teachers to search the website — give them the direct link.`;
 }
 
-// ========== LIBRARIES PANEL ==========
+// Backward-compatible alias
+function buildMinecraftContext(){ return buildLibraryContext('minecraft'); }
 
-function libToggleSection(id){
-  const body = document.getElementById(`lib-${id}-body`);
-  const arrow = document.getElementById(`lib-${id}-arrow`);
+// ========== ADD LIBRARY DIALOG ==========
+
+function showAddLibraryDialog(){
+  const existing = document.getElementById('add-lib-overlay');
+  if(existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'add-lib-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px';
+
+  overlay.innerHTML = `
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:480px;width:100%">
+      <h3 style="font-size:18px;font-weight:900;margin-bottom:6px">Add New Library</h3>
+      <p style="font-size:13px;color:var(--dim);margin-bottom:20px;line-height:1.6">Create a new lesson library section. You can add lessons to it afterward.</p>
+
+      <div style="font-size:11px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Library Name <span style="color:#f87171">*</span></div>
+      <input id="add-lib-name" class="inp" placeholder="e.g. Code.org, Tinkercad, Common Sense Education" style="margin-bottom:14px;font-size:13px">
+
+      <div style="font-size:11px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Icon (emoji)</div>
+      <input id="add-lib-icon" class="inp" placeholder="e.g. 🧩 💻 🎨" style="margin-bottom:14px;font-size:13px;width:80px" maxlength="4">
+
+      <div style="font-size:11px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">URL Pattern (for auto-detection)</div>
+      <input id="add-lib-urlpattern" class="inp" placeholder="e.g. code.org or tinkercad.com" style="margin-bottom:14px;font-size:13px">
+
+      <div style="font-size:11px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Lesson URL Prefix (for auto-extracting titles)</div>
+      <input id="add-lib-urlprefix" class="inp" placeholder="e.g. https://code.org/curriculum/lesson/" style="margin-bottom:20px;font-size:13px">
+
+      <div style="display:flex;gap:10px">
+        <button class="btn-pri" onclick="createNewLibrary()" style="flex:1">Create Library</button>
+        <button class="btn" onclick="document.getElementById('add-lib-overlay').remove()" style="padding:12px 20px">Cancel</button>
+      </div>
+      <div id="add-lib-status" style="font-size:12px;font-weight:600;margin-top:10px"></div>
+    </div>`;
+
+  document.body.appendChild(overlay);
+  document.getElementById('add-lib-name').focus();
+}
+
+function createNewLibrary(){
+  const name = document.getElementById('add-lib-name')?.value.trim();
+  const icon = document.getElementById('add-lib-icon')?.value.trim() || '📚';
+  const urlPattern = document.getElementById('add-lib-urlpattern')?.value.trim();
+  const urlPrefix = document.getElementById('add-lib-urlprefix')?.value.trim();
+  const statusEl = document.getElementById('add-lib-status');
+
+  if(!name){ statusEl.textContent = '⚠ Name is required'; statusEl.style.color = '#f87171'; return; }
+
+  // Generate key from name
+  const key = name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+  if(!key){ statusEl.textContent = '⚠ Invalid name'; statusEl.style.color = '#f87171'; return; }
+  if(LIBRARIES[key]){ statusEl.textContent = '⚠ A library with this name already exists'; statusEl.style.color = '#f87171'; return; }
+
+  // Create the library
+  LIBRARIES[key] = [];
+  LIBRARIES_META[key] = { name, icon, urlPattern, urlPrefix, urlHint: urlPattern ? `Paste a lesson URL from ${urlPattern}` : 'Paste a lesson URL', subjects: [...COMMON_SUBJECTS] };
+
+  saveLibraries();
+  renderLibraries();
+  document.getElementById('add-lib-overlay').remove();
+  setStatus(`Library "${name}" created ✓`);
+}
+
+// ========== DELETE LIBRARY ==========
+function deleteLibrary(key){
+  const meta = getLibraryMeta(key);
+  const count = (LIBRARIES[key]||[]).length;
+  if(!confirm(`Delete the "${meta.name}" library${count ? ` and its ${count} lesson${count!==1?'s':''}` : ''}?\n\nThis cannot be undone.`)) return;
+  delete LIBRARIES[key];
+  delete LIBRARIES_META[key];
+  saveLibraries();
+  renderLibraries();
+  setStatus(`Library "${meta.name}" deleted`);
+}
+
+// ========== GENERIC LIBRARY FUNCTIONS ==========
+
+function libToggleSection(key){
+  const body = document.getElementById(`lib-${key}-body`);
+  const arrow = document.getElementById(`lib-${key}-arrow`);
   if(!body) return;
   const open = body.style.display !== 'none';
   body.style.display = open ? 'none' : 'block';
@@ -2809,9 +2886,9 @@ function libSlugToTitle(slug){
   return slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 }
 
-function libExtractFromUrl(){
-  const urlEl = document.getElementById('lib-mc-url');
-  const titleEl = document.getElementById('lib-mc-title');
+function libExtractFromUrl(key){
+  const urlEl = document.getElementById(`lib-${key}-url`);
+  const titleEl = document.getElementById(`lib-${key}-title`);
   if(!urlEl || !titleEl) return;
   const url = urlEl.value.trim();
   const m = url.match(/lessons?\/([a-z0-9-]+)/i);
@@ -2820,33 +2897,33 @@ function libExtractFromUrl(){
   }
 }
 
-function libClearForm(){
-  ['lib-mc-url','lib-mc-title','lib-mc-desc'].forEach(id=>{
+function libClearForm(key){
+  [`lib-${key}-url`,`lib-${key}-title`,`lib-${key}-desc`].forEach(id=>{
     const el = document.getElementById(id); if(el) el.value='';
   });
-  ['lib-mc-ages','lib-mc-subject'].forEach(id=>{
+  [`lib-${key}-ages`,`lib-${key}-subject`].forEach(id=>{
     const el = document.getElementById(id); if(el) el.value='';
   });
-  const s = document.getElementById('lib-mc-status');
-  if(s){ s.textContent=''; }
+  const s = document.getElementById(`lib-${key}-status`);
+  if(s) s.textContent = '';
 }
 
-function libAddLesson(){
-  const url = document.getElementById('lib-mc-url')?.value.trim() || '';
-  const title = document.getElementById('lib-mc-title')?.value.trim() || '';
-  const ages = document.getElementById('lib-mc-ages')?.value || '';
-  const subject = document.getElementById('lib-mc-subject')?.value || '';
-  const desc = document.getElementById('lib-mc-desc')?.value.trim() || '';
-  const statusEl = document.getElementById('lib-mc-status');
+function libAddLesson(key){
+  const url = document.getElementById(`lib-${key}-url`)?.value.trim() || '';
+  const title = document.getElementById(`lib-${key}-title`)?.value.trim() || '';
+  const ages = document.getElementById(`lib-${key}-ages`)?.value || '';
+  const subject = document.getElementById(`lib-${key}-subject`)?.value || '';
+  const desc = document.getElementById(`lib-${key}-desc`)?.value.trim() || '';
+  const statusEl = document.getElementById(`lib-${key}-status`);
 
   if(!title){ if(statusEl){ statusEl.textContent='⚠ Title is required'; statusEl.style.color='#f87171'; } return; }
   if(!ages){ if(statusEl){ statusEl.textContent='⚠ Select an age rating'; statusEl.style.color='#f87171'; } return; }
   if(!subject){ if(statusEl){ statusEl.textContent='⚠ Select a subject'; statusEl.style.color='#f87171'; } return; }
 
-  if(!LIBRARIES.minecraft) LIBRARIES.minecraft = [];
-  const lessons = LIBRARIES.minecraft;
-  const key = title.toLowerCase().trim();
-  const existingIdx = lessons.findIndex(l => l.title.toLowerCase().trim() === key);
+  if(!LIBRARIES[key]) LIBRARIES[key] = [];
+  const lessons = LIBRARIES[key];
+  const k = title.toLowerCase().trim();
+  const existingIdx = lessons.findIndex(l => l.title.toLowerCase().trim() === k);
   const entry = { title, desc, ages, subject };
   if(url) entry.url = url;
 
@@ -2859,34 +2936,43 @@ function libAddLesson(){
     msg = `✓ "${title}" added`;
   }
 
-  libClearForm();
+  libClearForm(key);
   if(statusEl){ statusEl.textContent = msg; statusEl.style.color='var(--lime)'; }
   saveLibraries();
   renderLibraries();
 }
 
-function libDeleteLesson(title){
-  if(!confirm(`Delete "${title}" from the Minecraft library?`)) return;
-  if(!LIBRARIES.minecraft) return;
-  LIBRARIES.minecraft = LIBRARIES.minecraft.filter(l => l.title !== title);
+function libDeleteLesson(key, title){
+  const meta = getLibraryMeta(key);
+  if(!confirm(`Delete "${title}" from the ${meta.name} library?`)) return;
+  if(!LIBRARIES[key]) return;
+  LIBRARIES[key] = LIBRARIES[key].filter(l => l.title !== title);
   saveLibraries();
   renderLibraries();
 }
 
-function libEditLesson(title){
-  const lesson = getMinecraftLessons().find(l => l.title === title);
+function libEditLesson(key, title){
+  const lessons = getLibraryLessons(key);
+  const lesson = lessons.find(l => l.title === title);
   if(!lesson) return;
-  document.getElementById('lib-mc-url').value = lesson.url || '';
-  document.getElementById('lib-mc-title').value = lesson.title;
-  document.getElementById('lib-mc-ages').value = lesson.ages;
-  document.getElementById('lib-mc-subject').value = lesson.subject || '';
-  document.getElementById('lib-mc-desc').value = lesson.desc || '';
-  document.getElementById('lib-mc-title').focus();
+  document.getElementById(`lib-${key}-url`).value = lesson.url || '';
+  document.getElementById(`lib-${key}-title`).value = lesson.title;
+  document.getElementById(`lib-${key}-ages`).value = lesson.ages;
+  document.getElementById(`lib-${key}-subject`).value = lesson.subject || '';
+  document.getElementById(`lib-${key}-desc`).value = lesson.desc || '';
+  // Expand section if collapsed
+  const body = document.getElementById(`lib-${key}-body`);
+  const arrow = document.getElementById(`lib-${key}-arrow`);
+  if(body) body.style.display = 'block';
+  if(arrow) arrow.style.transform = 'rotate(180deg)';
+  document.getElementById(`lib-${key}-title`).focus();
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
-function libExportLessons(){
-  const blob = new Blob([JSON.stringify(LIBRARIES, null, 2)], {type:'application/json'});
+function libExportAll(){
+  const saveObj = { _meta: LIBRARIES_META };
+  getLibraryKeys().forEach(k => { saveObj[k] = LIBRARIES[k] || []; });
+  const blob = new Blob([JSON.stringify(saveObj, null, 2)], {type:'application/json'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -2895,32 +2981,65 @@ function libExportLessons(){
   URL.revokeObjectURL(url);
 }
 
-function libImportTrigger(){ document.getElementById('lib-mc-import')?.click(); }
+// Keep old name working for backward compat
+function libExportLessons(){ libExportAll(); }
 
-function libImportLessons(event){
+function libImportAllTrigger(){ document.getElementById('lib-import-all')?.click(); }
+function libImportTrigger(){ libImportAllTrigger(); } // backward compat
+
+function libImportAll(event){
   const file = event.target.files?.[0];
   if(!file) return;
   const reader = new FileReader();
   reader.onload = e => {
     try {
       const imported = JSON.parse(e.target.result);
-      // Support both full libraries.json format and plain arrays
-      const mcLessons = Array.isArray(imported) ? imported : (imported.minecraft || []);
-      const valid = mcLessons.filter(l => l && l.title && l.ages && l.subject);
-      if(!valid.length) throw new Error('No valid Minecraft lessons found in file');
+      let totalAdded = 0, totalUpdated = 0;
 
-      if(!LIBRARIES.minecraft) LIBRARIES.minecraft = [];
-      let added = 0, updated = 0;
-      valid.forEach(l => {
-        const k = l.title.toLowerCase().trim();
-        const idx = LIBRARIES.minecraft.findIndex(e => e.title.toLowerCase().trim() === k);
-        const entry = { title: l.title, desc: l.desc||'', ages: l.ages, subject: l.subject };
-        if(l.url) entry.url = l.url;
-        if(idx >= 0){ LIBRARIES.minecraft[idx] = entry; updated++; }
-        else { LIBRARIES.minecraft.push(entry); added++; }
+      // Handle _meta
+      if(imported._meta && typeof imported._meta === 'object'){
+        Object.assign(LIBRARIES_META, imported._meta);
+      }
+
+      // Process each library key
+      Object.keys(imported).forEach(key => {
+        if(key === '_meta') return;
+        const mcLessons = Array.isArray(imported[key]) ? imported[key] : [];
+        const valid = mcLessons.filter(l => l && l.title && l.ages && l.subject);
+        if(!valid.length) return;
+
+        if(!LIBRARIES[key]) LIBRARIES[key] = [];
+        let added = 0, updated = 0;
+        valid.forEach(l => {
+          const k = l.title.toLowerCase().trim();
+          const idx = LIBRARIES[key].findIndex(e => e.title.toLowerCase().trim() === k);
+          const entry = { title: l.title, desc: l.desc||'', ages: l.ages, subject: l.subject };
+          if(l.url) entry.url = l.url;
+          if(idx >= 0){ LIBRARIES[key][idx] = entry; updated++; }
+          else { LIBRARIES[key].push(entry); added++; }
+        });
+        totalAdded += added;
+        totalUpdated += updated;
       });
+
+      // Also support plain array import (old format — assumes minecraft)
+      if(Array.isArray(imported)){
+        const valid = imported.filter(l => l && l.title && l.ages && l.subject);
+        if(valid.length){
+          if(!LIBRARIES.minecraft) LIBRARIES.minecraft = [];
+          valid.forEach(l => {
+            const k = l.title.toLowerCase().trim();
+            const idx = LIBRARIES.minecraft.findIndex(e => e.title.toLowerCase().trim() === k);
+            const entry = { title: l.title, desc: l.desc||'', ages: l.ages, subject: l.subject };
+            if(l.url) entry.url = l.url;
+            if(idx >= 0){ LIBRARIES.minecraft[idx] = entry; totalUpdated++; }
+            else { LIBRARIES.minecraft.push(entry); totalAdded++; }
+          });
+        }
+      }
+
       saveLibraries();
-      alert(`Imported: ${added} added, ${updated} updated`);
+      alert(`Imported: ${totalAdded} added, ${totalUpdated} updated`);
       renderLibraries();
     } catch(err){
       alert('Import failed: ' + err.message);
@@ -2930,146 +3049,401 @@ function libImportLessons(event){
   event.target.value = '';
 }
 
+// Keep old name working
+function libImportLessons(event){ libImportAll(event); }
+
+// ========== LIBRARIES PANEL RENDERER ==========
+
 function renderLibraries(){
-  const listEl = document.getElementById('lib-mc-list');
-  const countEl = document.getElementById('lib-mc-count');
-  if(!listEl) return;
+  const container = document.getElementById('lib-sections');
+  if(!container) return;
 
-  const lessons = getMinecraftLessons();
+  const keys = getLibraryKeys();
+  const ageOptions = `<option value="">Age rating…</option>
+    <option value="5+">5+ (all year levels)</option>
+    <option value="8+">8+ (Year 3+)</option>
+    <option value="10+">10+ (Year 5+)</option>
+    <option value="11+">11+ (Year 6 only)</option>`;
 
-  if(countEl) countEl.textContent = `${lessons.length} lesson${lessons.length!==1?'s':''}`;
+  container.innerHTML = keys.map(key => {
+    const meta = getLibraryMeta(key);
+    const lessons = getLibraryLessons(key);
+    const isBuiltIn = key === 'minecraft' || key === 'microbit';
+    const subjects = meta.subjects || COMMON_SUBJECTS;
+    const subjectOptions = subjects.map(s => `<option value="${esc(s)}">${esc(s.split('&').map(p=>p.trim().charAt(0).toUpperCase()+p.trim().slice(1).toLowerCase()).join(' & '))}</option>`).join('');
 
-  // Auto-expand on first render
-  const body = document.getElementById('lib-mc-body');
-  const arrow = document.getElementById('lib-mc-arrow');
-  if(body && body.style.display === 'none'){
-    body.style.display = 'block';
-    if(arrow) arrow.style.transform = 'rotate(180deg)';
-  }
+    // Group lessons by subject
+    const bySubject = {};
+    lessons.forEach(l => {
+      const s = l.subject || 'OTHER';
+      if(!bySubject[s]) bySubject[s] = [];
+      bySubject[s].push(l);
+    });
 
-  if(!lessons.length){
-    listEl.innerHTML = '<div style="color:var(--dim);font-size:13px;padding:12px 0">No lessons saved yet. Add your first above, or import a libraries.json file.</div>';
-    return;
-  }
-
-  const bySubject = {};
-  lessons.forEach(l => {
-    const s = l.subject || 'OTHER';
-    if(!bySubject[s]) bySubject[s] = [];
-    bySubject[s].push(l);
-  });
-
-  listEl.innerHTML = Object.entries(bySubject).map(([subj, list]) => `
-    <div style="margin-bottom:18px">
-      <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:8px">${esc(subj)} <span style="color:var(--dim);font-weight:600">(${list.length})</span></div>
-      ${list.map(l => `
-        <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:10px">
-          <div style="flex:1;min-width:0">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
-              <span style="font-size:14px;font-weight:700;color:var(--text)">${esc(l.title)}</span>
-              <span style="font-size:10px;padding:2px 7px;border-radius:20px;background:rgba(197,232,74,0.12);color:var(--lime);font-weight:700">ages ${esc(l.ages)}</span>
+    const lessonsHtml = !lessons.length
+      ? '<div style="color:var(--dim);font-size:13px;padding:12px 0">No lessons saved yet. Add your first above, or import a libraries.json file.</div>'
+      : Object.entries(bySubject).map(([subj, list]) => `
+        <div style="margin-bottom:18px">
+          <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:8px">${esc(subj)} <span style="color:var(--dim);font-weight:600">(${list.length})</span></div>
+          ${list.map(l => `
+            <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:10px">
+              <div style="flex:1;min-width:0">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+                  <span style="font-size:14px;font-weight:700;color:var(--text)">${esc(l.title)}</span>
+                  <span style="font-size:10px;padding:2px 7px;border-radius:20px;background:rgba(197,232,74,0.12);color:var(--lime);font-weight:700">ages ${esc(l.ages)}</span>
+                </div>
+                ${l.desc ? `<div style="font-size:12px;color:var(--dim);line-height:1.5">${esc(l.desc)}</div>` : ''}
+                ${l.url ? `<a href="${esc(l.url)}" target="_blank" style="font-size:11px;color:var(--mint);text-decoration:none;word-break:break-all">${esc(l.url)}</a>` : ''}
+              </div>
+              <div style="display:flex;gap:6px;flex-shrink:0">
+                <button class="btn-sm" onclick="libEditLesson('${esc(key)}','${esc(l.title).replace(/'/g,"\\'")}')">Edit</button>
+                <button class="btn-sm" onclick="libDeleteLesson('${esc(key)}','${esc(l.title).replace(/'/g,"\\'")}')}" style="color:#FF8080">Delete</button>
+              </div>
             </div>
-            ${l.desc ? `<div style="font-size:12px;color:var(--dim);line-height:1.5">${esc(l.desc)}</div>` : ''}
-            ${l.url ? `<a href="${esc(l.url)}" target="_blank" style="font-size:11px;color:var(--mint);text-decoration:none;word-break:break-all">${esc(l.url)}</a>` : ''}
-          </div>
-          <div style="display:flex;gap:6px;flex-shrink:0">
-            <button class="btn-sm" onclick="libEditLesson('${esc(l.title).replace(/'/g,"\\'")}')">Edit</button>
-            <button class="btn-sm" onclick="libDeleteLesson('${esc(l.title).replace(/'/g,"\\'")}')" style="color:#FF8080">Delete</button>
-          </div>
+          `).join('')}
         </div>
-      `).join('')}
-    </div>
-  `).join('');
+      `).join('');
+
+    return `
+    <div class="card" style="padding:0;overflow:hidden;margin-bottom:14px">
+      <div onclick="libToggleSection('${esc(key)}')" style="display:flex;align-items:center;gap:10px;padding:18px 24px;cursor:pointer;user-select:none;background:var(--card)">
+        <span style="font-size:18px">${meta.icon}</span>
+        <span style="font-size:15px;font-weight:800;color:var(--text);flex:1">${esc(meta.name)}</span>
+        <span style="font-size:11px;color:var(--dim);font-weight:700">${lessons.length} lesson${lessons.length!==1?'s':''}</span>
+        ${!isBuiltIn ? `<button class="btn-sm" onclick="event.stopPropagation();deleteLibrary('${esc(key)}')" style="color:#FF8080;font-size:11px;padding:3px 10px">Delete Library</button>` : ''}
+        <span id="lib-${esc(key)}-arrow" style="font-size:14px;color:var(--dim);transition:transform .2s">▼</span>
+      </div>
+      <div id="lib-${esc(key)}-body" style="display:none;padding:0 24px 20px;border-top:1px solid var(--border)">
+        <p style="font-size:13px;color:var(--dim);margin:14px 0;line-height:1.6">${esc(meta.urlHint || 'Add lessons to this library.')}${meta.urlPattern ? ` (<a href="https://${esc(meta.urlPattern)}" target="_blank" style="color:var(--lime)">${esc(meta.urlPattern)}</a>)` : ''}</p>
+
+        <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:10px">
+          <input id="lib-${esc(key)}-url" class="inp" placeholder="Lesson URL (optional)" style="margin-bottom:0;font-size:13px" oninput="libExtractFromUrl('${esc(key)}')">
+          <button class="btn-sm" onclick="libClearForm('${esc(key)}')" style="white-space:nowrap">Clear</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:2fr 1fr 1.5fr;gap:8px;margin-bottom:10px">
+          <input id="lib-${esc(key)}-title" class="inp" placeholder="Lesson title" style="margin-bottom:0;font-size:13px">
+          <select id="lib-${esc(key)}-ages" class="inp" style="margin-bottom:0;font-size:13px">
+            ${ageOptions}
+          </select>
+          <select id="lib-${esc(key)}-subject" class="inp" style="margin-bottom:0;font-size:13px">
+            <option value="">Subject…</option>
+            ${subjectOptions}
+          </select>
+        </div>
+
+        <input id="lib-${esc(key)}-desc" class="inp" placeholder="Short description" style="margin-bottom:10px;font-size:13px">
+
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px">
+          <button class="btn-pri" onclick="libAddLesson('${esc(key)}')" style="font-size:13px;padding:10px 16px">+ Add lesson</button>
+          <span id="lib-${esc(key)}-status" style="font-size:12px;font-weight:600"></span>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-top:12px;border-top:1px solid var(--border)">
+          <span style="font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;letter-spacing:1.5px">Saved lessons · ${lessons.length}</span>
+          <div style="flex:1"></div>
+        </div>
+        ${lessonsHtml}
+      </div>
+    </div>`;
+  }).join('');
 }
 
 // ========== END LIBRARIES PANEL ==========
 
-const KNOWN_PLATFORMS = [
+// Build KNOWN_PLATFORMS dynamically — includes all user-created libraries with lessons
+function buildKnownPlatforms(){
+  const platforms = [
     { match: /minecraft/i, name: 'Minecraft Education',
-    get context(){ return buildMinecraftContext(); } },
+      get context(){ return buildLibraryContext('minecraft'); } },
+    { match: /microbit\.org|micro.?bit/i, name: 'Micro:bit',
+      get context(){ return buildLibraryContext('microbit'); } },
+    { match: /code\.org/i, name: 'Code.org',
+      context: 'You have strong knowledge of Code.org courses and lesson plans. Reference specific lessons, courses and activities from Code.org when proposing changes.' },
+    { match: /scratch\.mit|scratchfoundation/i, name: 'Scratch',
+      context: 'You know the Scratch educator resources and lesson library. Reference specific Scratch projects and activities when proposing changes.' },
+    { match: /tinkercad/i, name: 'Tinkercad',
+      context: 'You know the Tinkercad lesson library for 3D design and circuits. Reference specific Tinkercad lessons when proposing changes.' },
+    { match: /commonsense/i, name: 'Common Sense Education',
+      context: 'You know the Common Sense Education digital citizenship curriculum. Reference specific lessons when proposing changes.' },
+    { match: /canva\.com\/edu/i, name: 'Canva for Education',
+      context: 'You know the Canva for Education lesson templates and resources.' },
+  ];
 
+  // Add user-created libraries that have a URL pattern and lessons
+  getLibraryKeys().forEach(key => {
+    if(key === 'minecraft' || key === 'microbit') return; // already included
+    const meta = getLibraryMeta(key);
+    const lessons = getLibraryLessons(key);
+    if(!meta.urlPattern || !lessons.length) return;
+    // Check if already covered by a built-in pattern
+    const alreadyCovered = platforms.some(p => p.match.test(meta.urlPattern));
+    if(alreadyCovered) return;
+    const pattern = meta.urlPattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    platforms.push({
+      match: new RegExp(pattern, 'i'),
+      name: meta.name,
+      get context(){ return buildLibraryContext(key); }
+    });
+  });
 
-  { match: /code\.org/i, name: 'Code.org',
-    context: 'You have strong knowledge of Code.org courses and lesson plans. Reference specific lessons, courses and activities from Code.org when proposing changes.' },
-  { match: /scratch\.mit|scratchfoundation/i, name: 'Scratch',
-    context: 'You know the Scratch educator resources and lesson library. Reference specific Scratch projects and activities when proposing changes.' },
-  { match: /tinkercad/i, name: 'Tinkercad',
-    context: 'You know the Tinkercad lesson library for 3D design and circuits. Reference specific Tinkercad lessons when proposing changes.' },
-  { match: /commonsense/i, name: 'Common Sense Education',
-    context: 'You know the Common Sense Education digital citizenship curriculum. Reference specific lessons when proposing changes.' },
-  { match: /canva\.com\/edu/i, name: 'Canva for Education',
-    context: 'You know the Canva for Education lesson templates and resources.' },
-  { match: /microbit\.org/i, name: 'Micro:bit',
-    context: 'You know the micro:bit lesson library. The lessons for ages 7-11 include: Barefoot Litter Hunt, Barefoot Wildlife Animations, Being Active, Computing Fundamentals, CreateAI Taster Lessons, Cryptography, Cyber Security, Data Handling, Digital Flashcards, Electrical Conductors, Energy Awareness, First Lessons with MakeCode, Getting Active, Health Tech, Healthy Oceans, Helping Plants Grow, Musical Micro:bit, Nature Art, Night Safety, Protecting Animals, Sea Creatures, Sensory Classroom, and Volcano Animations. ONLY propose a change if one of these specific lessons clearly connects to the unit. Do not suggest Micro:bit broadly. For every suggestion, include a direct link: [Lesson Title](https://microbit.org/teach/lessons/?selected=lesson-slug) e.g. [Helping Plants Grow](https://microbit.org/teach/lessons/?selected=helping-plants-grow). Use the exact slug format: lowercase with hyphens.' },
-];
+  return platforms;
+}
 
-function detectBulkPlatform(){
-  const url = document.getElementById('bulk-ai-url')?.value.trim();
-  const badge = document.getElementById('bulk-ai-platform-badge');
-  const instructionEl = document.getElementById('bulk-ai-instruction');
-  if(!badge) return;
-  const knownFromUrl = url ? KNOWN_PLATFORMS.find(p=>p.match.test(url)) : null;
-  const knownFromInstruction = !knownFromUrl && instructionEl ? KNOWN_PLATFORMS.find(p=>p.match.test(instructionEl.value||'')) : null;
-  const known = knownFromUrl || knownFromInstruction;
-  const instructionText = instructionEl?.value || '';
-  const opportunityKeywords = /\b(find|look|search|scan|identify|where|opportunit|more uses?|add more|chance|integrate|incorporate|places? to use)\b/i;
-  const isOpportunitySearch = !known && opportunityKeywords.test(instructionText);
+// Use a getter so it always reflects current library state
+const KNOWN_PLATFORMS_STATIC = []; // placeholder for direct array references
+Object.defineProperty(window, 'KNOWN_PLATFORMS', {
+  get(){ return buildKnownPlatforms(); },
+  configurable: true
+});
 
-  if(known){
-    badge.textContent = '✓ ' + known.name + (knownFromUrl ? ' detected' : ' (from instruction)');
-    badge.style.display = 'flex';
-    badge.style.color = 'var(--lime)';
-    badge.style.borderColor = 'var(--lime)';
-    badge.style.background = '#0a1a0a';
-    // Auto-fill instruction if empty and detected from URL
-    if(knownFromUrl && instructionEl && !instructionEl.value.trim()){
-      instructionEl.value = `Cross-reference the ${known.name} lesson library against all planners and propose changes where there is a strong, specific connection to a named lesson.`;
+// ========== BULK AI EDIT — CHATBOT INTERFACE ==========
+
+let bulkChatHistory = []; // [{role:'user'|'assistant', content:'...', options?:[{label,value}], selected?:string}]
+let bulkChatState = 'idle'; // idle | clarifying | analysing | done
+let bulkChatContext = {}; // stores resolved instruction, platform, etc.
+
+function bulkChatAddMessage(role, content, options){
+  const msg = { role, content };
+  if(options) msg.options = options;
+  bulkChatHistory.push(msg);
+  renderBulkChat();
+}
+
+function renderBulkChat(){
+  const container = document.getElementById('bulk-chat-messages');
+  if(!container) return;
+
+  // Keep the welcome message + render history
+  let html = '';
+  bulkChatHistory.forEach((msg, idx) => {
+    if(msg.role === 'user'){
+      html += `<div class="chat-msg user"><div class="chat-bubble">${esc(msg.content)}</div></div>`;
+    } else {
+      html += `<div class="chat-msg model"><div class="chat-bubble">${msg.content}</div>`;
+      // Render option buttons if present and not yet selected
+      if(msg.options && !msg.selected){
+        html += `<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">`;
+        msg.options.forEach((opt, oi) => {
+          html += `<button class="btn" onclick="bulkChatSelectOption(${idx},${oi})" style="font-size:13px;padding:8px 16px;border-color:var(--lime);color:var(--lime)">${esc(opt.label)}</button>`;
+        });
+        html += `</div>`;
+      } else if(msg.options && msg.selected){
+        html += `<div style="margin-top:8px;font-size:12px;color:var(--lime);font-weight:700">✓ ${esc(msg.selected)}</div>`;
+      }
+      html += `</div>`;
     }
-  } else if(isOpportunitySearch){
-    badge.textContent = '🔍 Opportunity search mode';
-    badge.style.display = 'flex';
-    badge.style.color = 'var(--gold)';
-    badge.style.borderColor = 'var(--gold)';
-    badge.style.background = 'rgba(212,160,23,0.08)';
-  } else if(url && url.startsWith('http')) {
-    badge.textContent = '🔗 Unknown site — will use AI knowledge';
-    badge.style.display = 'flex';
-    badge.style.color = 'var(--dim)';
-    badge.style.borderColor = 'var(--border)';
-    badge.style.background = 'var(--card2)';
-    // Auto-fill generic lesson library instruction if empty
-    if(instructionEl && !instructionEl.value.trim()){
-      instructionEl.value = `Cross-reference the lesson library at ${url} against all planners and propose changes where there is a strong, specific connection to a named lesson.`;
+  });
+
+  // Keep the initial welcome, then append history
+  const welcomeMsg = container.querySelector('.chat-msg.model');
+  const welcomeHtml = welcomeMsg ? welcomeMsg.outerHTML : '';
+  container.innerHTML = welcomeHtml + html;
+
+  // Scroll to bottom
+  container.scrollTop = container.scrollHeight;
+}
+
+function bulkChatSelectOption(msgIdx, optionIdx){
+  const msg = bulkChatHistory[msgIdx];
+  if(!msg || !msg.options) return;
+  const selected = msg.options[optionIdx];
+  msg.selected = selected.label;
+
+  // Add user reply
+  bulkChatAddMessage('user', selected.label);
+
+  // Process the selection based on current state
+  if(bulkChatState === 'clarifying'){
+    bulkChatContext.clarifications = bulkChatContext.clarifications || [];
+    bulkChatContext.clarifications.push({ question: msg.content, answer: selected.value || selected.label });
+
+    // Check if we have enough clarification (max 3 rounds)
+    if(bulkChatContext.clarifyRound >= 2 || selected.value === '__proceed__'){
+      startBulkAnalysis();
+    } else {
+      bulkChatContext.clarifyRound++;
+      askNextClarification();
     }
-  } else {
-    badge.style.display = 'none';
-    badge.style.color = 'var(--lime)';
-    badge.style.borderColor = 'var(--lime)';
-    badge.style.background = '#0a1a0a';
   }
 }
 
-async function runBulkAIEdit(){
-  const instruction = document.getElementById('bulk-ai-instruction')?.value.trim();
-  const urlVal = document.getElementById('bulk-ai-url')?.value.trim();
-  if(!instruction && !urlVal){ 
-    const s = document.getElementById('bulk-ai-status');
-    s.textContent='⚠ Enter an instruction or paste a lesson library URL'; s.style.color='#f87171'; return;
+async function bulkChatSend(){
+  const input = document.getElementById('bulk-chat-input');
+  if(!input) return;
+  const text = input.value.trim();
+  if(!text) return;
+  input.value = '';
+
+  if(bulkChatState === 'analysing'){
+    bulkChatAddMessage('assistant', '⏳ Still analysing entries — please wait for the current analysis to complete.');
+    return;
   }
 
-  const btn = document.getElementById('btn-bulk-ai');
-  const statusEl = document.getElementById('bulk-ai-status');
+  // If we're in the middle of clarification and user types freely, treat as additional context
+  if(bulkChatState === 'clarifying'){
+    bulkChatAddMessage('user', text);
+    bulkChatContext.clarifications = bulkChatContext.clarifications || [];
+    bulkChatContext.clarifications.push({ question: 'Additional context from user', answer: text });
+    startBulkAnalysis();
+    return;
+  }
+
+  // New conversation — reset state
+  bulkChatHistory = [];
+  bulkChatContext = {};
+  bulkChatState = 'idle';
+
+  bulkChatAddMessage('user', text);
+
+  // Detect platform from input
+  const platforms = buildKnownPlatforms();
+  const platform = platforms.find(p => p.match.test(text));
+
+  bulkChatContext.rawInstruction = text;
+  bulkChatContext.platform = platform || null;
+  bulkChatContext.clarifyRound = 0;
+
+  // Ask clarifying questions via AI
+  bulkChatState = 'clarifying';
+  bulkChatAddMessage('assistant', '🤔 Let me think about this...');
+
+  try {
+    const clarifyPrompt = buildClarifyPrompt(text, platform);
+    const response = await callAI(
+      [{role:'user', parts:[{text: clarifyPrompt}]}],
+      null, OPENAI_FAST_MODEL
+    );
+
+    // Remove "thinking" message
+    bulkChatHistory.pop();
+
+    // Parse the AI's clarifying questions
+    const parsed = parseClarifyResponse(response);
+
+    if(parsed.readyToGo){
+      // AI thinks the instruction is clear enough — proceed directly
+      bulkChatAddMessage('assistant', `${parsed.summary || "Got it!"}\n\nI understand what you want — let me analyse all entries now.`);
+      startBulkAnalysis();
+    } else {
+      // Show the first clarifying question
+      bulkChatContext.pendingQuestions = parsed.questions || [];
+      showNextQuestion(parsed);
+    }
+  } catch(e){
+    bulkChatHistory.pop();
+    bulkChatState = 'idle';
+    bulkChatAddMessage('assistant', `❌ Error: ${e.message}\n\nPlease try again.`);
+  }
+}
+
+function buildClarifyPrompt(instruction, platform){
+  const entryCount = DATA.filter(e => e.audited && getSugs(e).filter(isRealSug).length >= 5).length;
+  const allTools = {};
+  DATA.forEach(e => {
+    getSugs(e).forEach(s => {
+      const t = sugTool(s).trim();
+      if(t) allTools[t] = (allTools[t]||0) + 1;
+    });
+  });
+  const topTools = Object.entries(allTools).sort((a,b)=>b[1]-a[1]).slice(0,15).map(([t,c])=>`${t} (${c}x)`).join(', ');
+
+  return `You are a Digital Learning Coach assistant helping a coordinator make bulk changes to a library of ${entryCount} IB PYP unit planners at Wesley College.
+
+The coordinator said: "${instruction}"
+${platform ? `\nDetected platform: ${platform.name}` : ''}
+
+Current tool distribution (top 15): ${topTools}
+
+Your task: Decide whether you need clarification before proceeding, or if the instruction is clear enough.
+
+RESPOND IN THIS EXACT JSON FORMAT (no markdown fences, no preamble):
+{
+  "readyToGo": true/false,
+  "summary": "Brief 1-sentence restatement of what you understood",
+  "questions": [
+    {
+      "text": "Your clarifying question",
+      "options": [
+        {"label": "Short option text", "value": "value_to_use"},
+        {"label": "Another option", "value": "value_to_use"}
+      ]
+    }
+  ]
+}
+
+RULES:
+- If the instruction is specific enough (names a tool, a clear action, and/or a lesson library), set readyToGo: true
+- If unclear, ask 1-2 questions MAX (never more than 2). Each question should have 2-4 concise options.
+- Always include a "Go ahead with my instruction as-is" option as the last option in the first question
+- Questions should be SHORT and practical, not philosophical
+- Focus on: scope (which year levels/campuses), replacement strategy, or which specific tools/lessons to target
+- Keep option labels under 8 words`;
+}
+
+function parseClarifyResponse(response){
+  try {
+    const clean = response.replace(/```json|```/g,'').trim();
+    const start = clean.indexOf('{');
+    const end = clean.lastIndexOf('}');
+    if(start === -1 || end === -1) return { readyToGo: true, summary: '' };
+    return JSON.parse(clean.slice(start, end+1));
+  } catch(e){
+    console.log('Clarify parse error:', e.message, response.slice(0,300));
+    return { readyToGo: true, summary: '' };
+  }
+}
+
+function showNextQuestion(parsed){
+  if(!parsed.questions || !parsed.questions.length){
+    bulkChatAddMessage('assistant', `${parsed.summary || "Got it!"}\n\nLet me analyse all entries now.`);
+    startBulkAnalysis();
+    return;
+  }
+
+  const q = parsed.questions[0];
+  bulkChatContext.pendingQuestions = parsed.questions.slice(1);
+
+  // Add a "proceed as-is" option if not already present
+  const hasProceeed = q.options.some(o => o.value === '__proceed__');
+  if(!hasProceeed){
+    q.options.push({ label: 'Just go ahead as-is', value: '__proceed__' });
+  }
+
+  const summary = parsed.summary ? `${parsed.summary}\n\n` : '';
+  bulkChatAddMessage('assistant', `${summary}${q.text}`, q.options);
+}
+
+function askNextClarification(){
+  const remaining = bulkChatContext.pendingQuestions || [];
+  if(!remaining.length){
+    startBulkAnalysis();
+    return;
+  }
+  const q = remaining.shift();
+  if(!q.options.some(o => o.value === '__proceed__')){
+    q.options.push({ label: 'Just go ahead', value: '__proceed__' });
+  }
+  bulkChatAddMessage('assistant', q.text, q.options);
+}
+
+async function startBulkAnalysis(){
+  bulkChatState = 'analysing';
+
+  const instruction = bulkChatContext.rawInstruction;
+  const clarifications = bulkChatContext.clarifications || [];
+  const enrichedInstruction = clarifications.length
+    ? `${instruction}\n\nAdditional context from conversation:\n${clarifications.map(c => `Q: ${c.question}\nA: ${c.answer}`).join('\n')}`
+    : instruction;
+
+  bulkChatAddMessage('assistant', '🔍 Analysing all entries now — this may take a minute...');
+
   const prog = document.getElementById('bulk-ai-progress');
   const lbl = document.getElementById('bulk-ai-label');
   const bar = document.getElementById('bulk-ai-bar');
+  if(prog) prog.style.display = 'block';
 
-  btn.disabled = true;
-  statusEl.textContent = '';
-  prog.style.display = 'block';
-  lbl.textContent = 'Building context…';
-  bar.style.width = '10%';
-
-  // Build full context
+  // ===== Build the same system prompt as the old runBulkAIEdit =====
   const completeData = DATA.map((e,i)=>({e,i})).filter(({e})=>e.audited && getSugs(e).filter(isRealSug).length >= 5);
   const toolIndex = {};
   completeData.forEach(({e,i})=>{
@@ -3085,29 +3459,23 @@ async function runBulkAIEdit(){
     .map(([tool,entries])=>`${tool} (${entries.length}x): `+entries.map(e=>`[${e.entryIdx}]s${e.sugIdx}`).join(', '))
     .join('\n');
 
-  const urlInput = document.getElementById('bulk-ai-url')?.value.trim();
-  // Try URL first, then fall back to detecting platform names in the instruction text
-  const platform = (urlInput ? KNOWN_PLATFORMS.find(p=>p.match.test(urlInput)) : null)
-    || KNOWN_PLATFORMS.find(p=>p.match.test(instruction||''))
+  const platforms = buildKnownPlatforms();
+  const platform = bulkChatContext.platform
+    || platforms.find(p=>p.match.test(enrichedInstruction))
     || null;
-  const hasUrl = urlInput && platform && KNOWN_PLATFORMS.some(p=>p.match.test(urlInput));
+
+  const hasUrl = false; // chatbot mode doesn't use the URL field
   const platformSection = platform ? `
 
 LESSON LIBRARY — ${platform.name.toUpperCase()}:
-${platform.context}
-${hasUrl ? `
-STRICT MATCHING RULE: When a lesson library URL is provided, you MUST only propose changes where a SPECIFIC named lesson from that library clearly and directly connects to the unit's central idea or activities. Do not propose a change just because the tool is generally useful. Each proposal must name the specific lesson and explain the direct connection. If fewer than 10 entries have a genuine specific match, that is fine — quality over quantity.` : `
-MATCHING RULE: Propose changes wherever a specific ${platform.name} lesson genuinely connects to the unit's activities or central idea. Be thorough — scan every entry and propose ${platform.name} wherever there is a reasonable curriculum connection. Name the specific lesson in every proposal.`}
+${typeof platform.context === 'string' ? platform.context : platform.context}
+MATCHING RULE: Propose changes wherever a specific ${platform.name} lesson genuinely connects to the unit's activities or central idea. Be thorough — scan every entry and propose ${platform.name} wherever there is a reasonable curriculum connection. Name the specific lesson in every proposal.
 
 QUANTITY CAP: Propose a MAXIMUM of 20 changes total. If you find more than 20 genuine matches, select only the 20 strongest connections.
 ` : '';
 
-  // Generic "find opportunities" mode — kicks in when the instruction is about finding uses for a tool
-  // (e.g. "look for opportunities to use Sphero Bolts" / "where can we use Canva more")
-  // This applies even when no KNOWN_PLATFORM matches, so Sphero / Beebots / Canva / etc get the same
-  // thorough treatment that Minecraft gets.
   const opportunityKeywords = /\b(find|look|search|scan|identify|where|opportunit|more uses?|add more|chance|integrate|incorporate|places? to use)\b/i;
-  const isOpportunitySearch = opportunityKeywords.test(instruction || '') && !platform;
+  const isOpportunitySearch = opportunityKeywords.test(enrichedInstruction || '') && !platform;
   const opportunitySection = isOpportunitySearch ? `
 
 OPPORTUNITY SEARCH MODE:
@@ -3119,17 +3487,14 @@ The coordinator is asking you to scan the entire library for places where a spec
 - For each proposal, briefly explain the specific curriculum connection in the description
 - Still respect the TOOL AGE GUIDE and duplicate prevention rules` : '';
 
-  // Build compact entry context — positioned here because it uses platformSection + opportunitySection for smart truncation
   const libraryContextLen = (platformSection + opportunitySection).length;
-  const plannerLimit = libraryContextLen > 3000 ? 250 : (libraryContextLen > 1500 ? 400 : 0); // 0 = no limit
+  const plannerLimit = libraryContextLen > 3000 ? 250 : (libraryContextLen > 1500 ? 400 : 0);
   const fullContext = completeData.map(({e,i})=>{
     const sugs = getSugs(e);
     const toolStr = sugs.map((s,si)=>`s${si}:${sugTool(s)}`).join(' | ');
     const plannerText = e.plannerText ? (plannerLimit ? e.plannerText.slice(0, plannerLimit) : e.plannerText) : '';
     return `[${i}] ${e.ca} | ${e.yl} | "${e.th}"${e.ci?' | CI: '+e.ci:''}${plannerText?' | Planner: '+plannerText:''}\n  ${toolStr}`;
   }).join('\n');
-
-  const completeEntries = completeData;
 
   const system = `You are a Digital Learning Coach at Wesley College, an IB PYP school.
 
@@ -3143,9 +3508,7 @@ APPROVED TOOLS (Wesley College — Microsoft school):
 
 TOOL SELECTION POLICY:
 - By default, only use tools from the APPROVED TOOLS list above.
-- COORDINATOR OVERRIDE: If the coordinator's instruction below explicitly names a specific tool, product, platform, or lesson library (even one NOT on the approved list), treat it as approved for this run. The coordinator's explicit request takes precedence over the approved list.
-- Example: if the instruction says "add Quizlet flashcards where they fit", use Quizlet even though it's not on the approved list.
-- If the coordinator's instruction does not name any specific off-list tool, stick strictly to the approved list.
+- COORDINATOR OVERRIDE: If the coordinator's instruction below explicitly names a specific tool, product, platform, or lesson library (even one NOT on the approved list), treat it as approved for this run.
 
 TOOL AGE GUIDE (HARD RULE — match Australian year levels):
 Prep = ages 5-6 | Year 1 = 6-7 | Year 2 = 7-8 | Year 3 = 8-9 | Year 4 = 9-10 | Year 5 = 10-11 | Year 6 = 11-12
@@ -3158,48 +3521,42 @@ NEVER propose a tool for a year level below its minimum age.
 
 DUPLICATE PREVENTION (HARD RULE):
 - Do NOT propose a change that would use the same tool as another suggestion already in the same entry.
-- Do NOT propose replacing a suggestion with the same tool that's already in that slot — that is pointless.
 - If an entry already contains the tool you're proposing, SKIP that entry entirely.
-- Before proposing a change for entry [X] slot [Y], look at ALL 5 suggestions in entry [X]. If your proposed tool matches ANY of them (including slot Y itself), do not propose it.
 - Do NOT propose two different changes for the same entry that would both use the same tool.
-- The TOOL INDEX below shows you exactly which tools are used in which entries. Use it to avoid duplicates.
 ${platformSection}${opportunitySection}
-TOOL INDEX (exact location of every suggestion — also shows tool distribution, most used first):
+TOOL INDEX:
 ${toolIndexStr}
 
-INSTRUCTION FROM COORDINATOR: ${instruction || (platform ? `Cross-reference the ${platform.name} lesson library against all planners and propose changes where there is a strong specific connection.` : '')}
+INSTRUCTION FROM COORDINATOR: ${enrichedInstruction}
 
 REPLACEMENT STRATEGY — when proposing a change, choose which suggestion slot to replace using this priority:
-1. Replace a suggestion that uses the SAME tool as what you're adding (avoid duplicates)
-2. Replace a suggestion that uses one of the TOP 5 most overutilised tools in the library (the ones at the top of the tool index above)
-3. Replace a suggestion where the existing description is vague or generic
-4. As a last resort, replace whichever slot has the weakest connection to the unit
+1. Replace a suggestion that uses the SAME tool as what you're adding
+2. Replace one of the TOP 5 most overutilised tools
+3. Replace a vague or generic description
+4. Replace whichever slot has the weakest connection
 
-Analyse ALL ${completeEntries.length} complete entries below and propose changes wherever the instruction can be applied. Be thorough — if the instruction is to find opportunities for a tool, scan every entry and propose it wherever there is ANY reasonable connection.
+Analyse ALL ${completeData.length} complete entries and propose changes wherever the instruction applies.
 
-For each proposed change, use the exact entryIdx and sugIdx from the TOOL INDEX above.
-
-Output ONLY the APPLY_CHANGES block — no preamble, no reasoning, no explanation. Go straight to the JSON:
-APPLY_CHANGES:[{"entryIdx":3,"sugIdx":1,"t":"Tool Name","d":"2-3 vivid sentences that paint a picture of the classroom activity, connecting specifically to the unit content. Start with an action verb."},{"entryIdx":7,"sugIdx":2,"t":"Tool Name","d":"Another vivid description."}]
+Output ONLY the APPLY_CHANGES block — no preamble:
+APPLY_CHANGES:[{"entryIdx":3,"sugIdx":1,"t":"Tool Name","d":"2-3 vivid sentences..."},...]
 
 ${SUGGESTION_STYLE}
-The JSON must be complete and valid. Include ALL proposed changes in one array. Do not write anything before or after the APPLY_CHANGES line.
+The JSON must be complete and valid. Include ALL proposed changes in one array.
 
-FULL ENTRY DATA (compact — sN = suggestion slot N, use exact entryIdx and sugIdx when proposing changes):
+FULL ENTRY DATA:
 ${fullContext}`;
 
-  // Estimate tokens (~4 chars per token) and warn if likely too large
-  const estimatedTokens = Math.round(system.length / 4) + 100; // +100 for the user message
-  console.log(`Bulk AI Edit: ${completeData.length} entries, ~${estimatedTokens.toLocaleString()} tokens`);
+  const estimatedTokens = Math.round(system.length / 4) + 100;
+  console.log(`Bulk AI Chat: ${completeData.length} entries, ~${estimatedTokens.toLocaleString()} tokens`);
 
-  let animPct = 60;
+  let animPct = 30;
   let animInterval = null;
 
-  try{
-    bar.style.width = '60%';
-    lbl.textContent = `Analysing ${completeData.length} entries (~${Math.round(estimatedTokens/1000)}K tokens)…`;
+  try {
+    if(bar) bar.style.width = '30%';
+    if(lbl) lbl.textContent = `Analysing ${completeData.length} entries (~${Math.round(estimatedTokens/1000)}K tokens)…`;
     animInterval = setInterval(()=>{
-      if(animPct < 88){ animPct += 0.5; bar.style.width = animPct + '%'; }
+      if(animPct < 88){ animPct += 0.5; if(bar) bar.style.width = animPct + '%'; }
     }, 1000);
 
     const response = await callAI(
@@ -3209,8 +3566,8 @@ ${fullContext}`;
     );
 
     clearInterval(animInterval);
-    bar.style.width = '90%';
-    lbl.textContent = 'Parsing proposed changes…';
+    if(bar) bar.style.width = '90%';
+    if(lbl) lbl.textContent = 'Parsing proposed changes…';
 
     // Parse APPLY_CHANGES
     const changeMatch = response.match(/APPLY_CHANGES:\s*([\s\S]*)/s);
@@ -3222,13 +3579,10 @@ ${fullContext}`;
         if(arrStart === -1) throw new Error('No array');
         let arrStr = jsonStr.slice(arrStart);
         const arrEnd = arrStr.lastIndexOf(']');
-
-        // If array is complete, parse normally
         if(arrEnd !== -1){
           const raw = JSON.parse(cleanJSON(arrStr.slice(0, arrEnd+1)));
           changes = normaliseChanges(raw);
         } else {
-          // Truncated — extract individual valid objects by bracket counting
           const recovered = [];
           let depth = 0, objStart = -1;
           for(let i = 0; i < arrStr.length; i++){
@@ -3246,18 +3600,20 @@ ${fullContext}`;
           }
           if(recovered.length) changes = normaliseChanges(recovered);
         }
-      }catch(err){
-        console.error('Bulk AI parse error', err);
-      }
+      }catch(err){ console.error('Bulk AI parse error', err); }
     }
 
-    bar.style.width = '100%';
-    prog.style.display = 'none';
+    if(bar) bar.style.width = '100%';
+    if(prog) prog.style.display = 'none';
+
+    // Remove "analysing" message
+    if(bulkChatHistory.length && bulkChatHistory[bulkChatHistory.length-1].content.includes('Analysing all entries')){
+      bulkChatHistory.pop();
+    }
 
     let skippedDupes = 0;
     if(changes && changes.length){
       const preCount = changes.length;
-      // Pass 0: drop proposals that replace a slot with the same tool already in it (pointless)
       changes = changes.filter(c => {
         const entry = DATA[c.entryIdx];
         if(!entry) return false;
@@ -3265,13 +3621,11 @@ ${fullContext}`;
         if(existingSug && toolKey(sugTool(existingSug)) === toolKey(c.t)) return false;
         return true;
       });
-      // Pass 1: drop changes that would duplicate a tool already in the entry (other slots)
       changes = changes.filter(c => {
         const entry = DATA[c.entryIdx];
         if(!entry) return false;
         return !wouldDupeInEntry(entry, c.t, c.sugIdx);
       });
-      // Pass 2: within the same entry, dedupe proposed tools across multiple changes (keep first)
       const seenByEntry = {};
       changes = changes.filter(c => {
         const k = `${c.entryIdx}::${toolKey(c.t)}`;
@@ -3283,23 +3637,31 @@ ${fullContext}`;
     }
 
     if(changes && changes.length){
-      statusEl.style.color = 'var(--lime)';
-      statusEl.textContent = `\u2713 ${changes.length} change${changes.length!==1?'s':''} proposed${skippedDupes?` (${skippedDupes} duplicate${skippedDupes!==1?'s':''} filtered out)`:''} \u2014 review below`;
+      const dupeNote = skippedDupes ? ` (${skippedDupes} duplicate${skippedDupes!==1?'s':''} filtered out)` : '';
+      bulkChatAddMessage('assistant', `✅ Found <strong>${changes.length} proposed change${changes.length!==1?'s':''}</strong>${dupeNote}.\n\nOpening the review popup now — approve or decline each change individually.`);
       showChangesPopup(changes);
+      bulkChatState = 'done';
     } else {
-      statusEl.style.color = 'var(--dim)';
-      statusEl.textContent = skippedDupes ? `All ${skippedDupes} proposal${skippedDupes!==1?'s':''} would have created duplicates \u2014 try rephrasing` : 'No changes proposed \u2014 try rephrasing your instruction';
-      console.log('AI response (no changes parsed):', response.slice(0,500));
+      const msg = skippedDupes
+        ? `All ${skippedDupes} proposal${skippedDupes!==1?'s':''} would have created duplicates. Try a different instruction.`
+        : 'No changes proposed for this instruction. Try rephrasing — for example, name a specific tool or lesson library.';
+      bulkChatAddMessage('assistant', `⚠️ ${msg}`);
+      bulkChatState = 'idle';
     }
-  }catch(e){
+  } catch(e){
     clearInterval(animInterval);
-    prog.style.display = 'none';
-    statusEl.style.color = '#f87171';
-    statusEl.textContent = '✗ ' + e.message;
+    if(prog) prog.style.display = 'none';
+    if(bulkChatHistory.length && bulkChatHistory[bulkChatHistory.length-1].content.includes('Analysing all entries')){
+      bulkChatHistory.pop();
+    }
+    bulkChatAddMessage('assistant', `❌ Error: ${e.message}\n\nPlease try again.`);
+    bulkChatState = 'idle';
   }
   stopProgress();
-  btn.disabled = false;
 }
+
+// Backward compatibility — detectBulkPlatform no longer needed but keep as no-op
+function detectBulkPlatform(){}
 
 async function runSurgeon(){
   const bannedEl = document.getElementById('surgeon-banned');
@@ -3599,7 +3961,7 @@ function exportHTML(){
 
   let html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
   <title>${title}</title>
-  <style>body{font-family:system-ui,sans-serif;max-width:900px;margin:0 auto;padding:40px 20px;color:#1a1a1a;line-height:1.6}h1{font-size:28px;font-weight:900;margin-bottom:4px}.meta{font-size:14px;color:#666;margin-bottom:40px}.entry{margin-bottom:32px;page-break-inside:avoid}.entry-header{padding:14px 18px;border-radius:8px;margin-bottom:12px}.entry-title{font-size:18px;font-weight:800;margin-bottom:2px}.entry-meta{font-size:12px;opacity:.7}.sug{padding:10px 14px;background:#f8f8f8;border-radius:6px;margin-bottom:8px;border-left:3px solid #ddd}.sug-tool{font-size:14px;font-weight:700;margin-bottom:2px}.sug-desc{font-size:13px;color:#555}@media print{.entry{page-break-inside:avoid}}@media (max-width:768px){#sidebar{width:100% !important;height:auto !important;top:auto !important;bottom:0 !important;left:0 !important;right:0 !important;flex-direction:row !important;padding:0 !important;border-right:none !important;border-top:1px solid var(--border) !important;z-index:200 !important;overflow-x:auto;overflow-y:hidden;}body.app-mode #main{margin-left:0 !important;margin-bottom:64px;}body.app-mode #sidebar{display:flex !important;}#logo{display:none !important;}#sidebar-footer{display:none !important;}.nav-item{flex-direction:column !important;gap:2px !important;padding:8px 12px !important;font-size:10px !important;border-radius:0 !important;margin-bottom:0 !important;min-width:60px;text-align:center;white-space:nowrap;flex:1;justify-content:center;}.nav-item span{font-size:18px;}.nav-item.active{background:rgba(212,160,23,0.15) !important;border-bottom:2px solid var(--gold) !important;}#app-content{padding:16px !important;}.page-title{font-size:24px !important;}.page-sub{font-size:13px !important;}.stat-grid{grid-template-columns:repeat(2,1fr) !important;}.card{padding:16px !important;border-radius:12px !important;}.sug-tool{font-size:15px !important;}.sug-desc{font-size:13px !important;}#panel-browse>div:first-child{flex-direction:column !important;}#f-campus,#f-year,#f-tool,#f-search{width:100% !important;min-width:unset !important;}.row{padding:12px 14px !important;flex-wrap:wrap;}#chat-messages{height:260px !important;}.chat-bubble{font-size:12px !important;max-width:92% !important;}#comparison-grid>div{grid-template-columns:1fr !important;}#coverage-heatmap,#live-heatmap{overflow-x:auto;}#live-overview-grid{grid-template-columns:repeat(2,1fr) !important;}div[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr !important;}#changes-popup-overlay>div{max-width:100% !important;max-height:90vh !important;border-radius:16px 16px 0 0 !important;position:fixed !important;bottom:0 !important;left:0 !important;right:0 !important;}#history-overlay{left:0 !important;right:0 !important;bottom:70px !important;width:auto !important;}#screen-setup{flex-direction:column !important;}.setup-sidebar{width:100% !important;flex-direction:row !important;align-items:center;padding:12px 20px !important;height:56px;}.dla-wordmark{font-size:20px !important;margin-bottom:0 !important;margin-right:auto;}.setup-nav-item{display:none !important;}.setup-center{flex:none !important;width:100% !important;padding:24px 20px !important;}.setup-right{display:none !important;}#undo-bar{bottom:74px !important;left:8px !important;right:8px !important;flex-wrap:wrap;}#bulk-regen-campus,#bulk-regen-year,#compare-year,#compare-theme,#export-campus,#export-year{width:100% !important;}.back-btn{margin-bottom:14px !important;}#conflict-bar{font-size:12px !important;padding:8px 14px !important;}#status-bar{font-size:11px !important;}.sug-chat-window{border-radius:0 0 10px 10px;}#changes-popup-overlay{align-items:flex-end !important;padding:0 !important;}}@media (max-width:480px){.stat-grid{grid-template-columns:repeat(2,1fr) !important;}.stat-num{font-size:28px !important;}.page-title{font-size:22px !important;}#app-content{padding:12px !important;}}</style></head><body>
+  <style>body{font-family:system-ui,sans-serif;max-width:900px;margin:0 auto;padding:40px 20px;color:#1a1a1a;line-height:1.6}h1{font-size:28px;font-weight:900;margin-bottom:4px}.meta{font-size:14px;color:#666;margin-bottom:40px}.entry{margin-bottom:32px;page-break-inside:avoid}.entry-header{padding:14px 18px;border-radius:8px;margin-bottom:12px}.entry-title{font-size:18px;font-weight:800;margin-bottom:2px}.entry-meta{font-size:12px;opacity:.7}.sug{padding:10px 14px;background:#f8f8f8;border-radius:6px;margin-bottom:8px;border-left:3px solid #ddd}.sug-tool{font-size:14px;font-weight:700;margin-bottom:2px}.sug-desc{font-size:13px;color:#555}@media print{.entry{page-break-inside:avoid}}@media (max-width:768px){#sidebar{width:100% !important;height:auto !important;top:auto !important;bottom:0 !important;left:0 !important;right:0 !important;flex-direction:row !important;padding:0 !important;border-right:none !important;border-top:1px solid var(--border) !important;z-index:200 !important;overflow-x:auto;overflow-y:hidden;}body.app-mode #main{margin-left:0 !important;margin-bottom:64px;}body.app-mode #sidebar{display:flex !important;}#logo{display:none !important;}#sidebar-footer{display:none !important;}.nav-item{flex-direction:column !important;gap:2px !important;padding:8px 12px !important;font-size:10px !important;border-radius:0 !important;margin-bottom:0 !important;min-width:60px;text-align:center;white-space:nowrap;flex:1;justify-content:center;}.nav-item span{font-size:18px;}.nav-item.active{background:rgba(212,160,23,0.15) !important;border-bottom:2px solid var(--gold) !important;}#app-content{padding:16px !important;}.page-title{font-size:24px !important;}.page-sub{font-size:13px !important;}.stat-grid{grid-template-columns:repeat(2,1fr) !important;}.card{padding:16px !important;border-radius:12px !important;}.sug-tool{font-size:15px !important;}.sug-desc{font-size:13px !important;}#panel-browse>div:first-child{flex-direction:column !important;}#f-campus,#f-year,#f-tool,#f-search{width:100% !important;min-width:unset !important;}.row{padding:12px 14px !important;flex-wrap:wrap;}#chat-messages{height:260px !important;}#bulk-chat-messages{height:260px !important;}.chat-bubble{font-size:12px !important;max-width:92% !important;}#comparison-grid>div{grid-template-columns:1fr !important;}#coverage-heatmap,#live-heatmap{overflow-x:auto;}#live-overview-grid{grid-template-columns:repeat(2,1fr) !important;}div[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr !important;}#changes-popup-overlay>div{max-width:100% !important;max-height:90vh !important;border-radius:16px 16px 0 0 !important;position:fixed !important;bottom:0 !important;left:0 !important;right:0 !important;}#history-overlay{left:0 !important;right:0 !important;bottom:70px !important;width:auto !important;}#screen-setup{flex-direction:column !important;}.setup-sidebar{width:100% !important;flex-direction:row !important;align-items:center;padding:12px 20px !important;height:56px;}.dla-wordmark{font-size:20px !important;margin-bottom:0 !important;margin-right:auto;}.setup-nav-item{display:none !important;}.setup-center{flex:none !important;width:100% !important;padding:24px 20px !important;}.setup-right{display:none !important;}#undo-bar{bottom:74px !important;left:8px !important;right:8px !important;flex-wrap:wrap;}#bulk-regen-campus,#bulk-regen-year,#compare-year,#compare-theme,#export-campus,#export-year{width:100% !important;}.back-btn{margin-bottom:14px !important;}#conflict-bar{font-size:12px !important;padding:8px 14px !important;}#status-bar{font-size:11px !important;}.sug-chat-window{border-radius:0 0 10px 10px;}#changes-popup-overlay{align-items:flex-end !important;padding:0 !important;}}@media (max-width:480px){.stat-grid{grid-template-columns:repeat(2,1fr) !important;}.stat-num{font-size:28px !important;}.page-title{font-size:22px !important;}#app-content{padding:12px !important;}}</style></head><body>
   <h1>${title}</h1>
   <div class="meta">Generated ${new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'})} · ${entries.length} entries</div>`;
 
