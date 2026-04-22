@@ -1258,9 +1258,9 @@ APPROVED TOOLS ONLY (Microsoft Teams for Year 4+ only): ${allApproved.join(', ')
 
 PRIORITY: These tools are currently underutilised across the library — strongly prefer one of these if it genuinely connects to the unit: ${underutilised}.
 
-Generate ONE fresh suggestion. Connect specifically to this unit's content — no generic descriptions.
-Return ONLY JSON: {"t":"Tool Name","d":"Specific description for this unit."}`;
-
+Generate ONE fresh suggestion.
+${SUGGESTION_STYLE}
+Return ONLY JSON: {"t":"Tool Name","d":"2-3 vivid sentences connecting to this unit."}`;
   try{
     let newSug = null;
     let dupedTool = null;
@@ -1365,9 +1365,10 @@ RESPONSE RULES:
 - If the teacher names a specific tool (e.g. "change to Canva", "use Minecraft"), generate 3 DIFFERENT activity ideas all using that specific tool. Each idea should connect to the unit in a different way.
 - If the teacher gives a general instruction (e.g. "make it more hands-on", "connect to the provocation"), generate 3 options using 3 different tools.
 - Every description must connect specifically to this unit's content — nothing generic.
+${SUGGESTION_STYLE}
 
 Return ONLY a JSON array of exactly 3 suggestions:
-[{"t":"Tool Name","d":"Specific description."},{"t":"Tool Name","d":"Specific description."},{"t":"Tool Name","d":"Specific description."}]`;
+[{"t":"Tool Name","d":"2-3 vivid sentences."},{"t":"Tool Name","d":"2-3 vivid sentences."},{"t":"Tool Name","d":"2-3 vivid sentences."}]`;
 
   try{
     const raw = await callAI([{role:'user',parts:[{text:prompt}]}], null, OPENAI_FAST_MODEL);
@@ -1445,13 +1446,12 @@ async function regenAll(){
   startProgress();
   res.innerHTML='<div style="font-size:12px;color:#fbbf24">Generating 5 suggestions…</div>';
   const prompt=`Generate exactly 5 digital technology suggestions for this IB PYP unit.
-Campus: ${entry.ca} | Year Level: ${entry.yl} | Theme: "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${entry.lo?`\nLines of Inquiry: "${entry.lo}"`:''}
+Campus: ${entry.ca} | Year Level: ${entry.yl} | Theme: "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${entry.lo?`\nLines of Inquiry: "${entry.lo}"`:''}${entry.plannerText?`\nPlanner: ${entry.plannerText}`:''}
 Requirements:
 - All 5 suggestions use different tools (no repeats)
-- At least one should be an ambitious, innovative project idea
-- Every suggestion connects specifically to this unit's content — nothing generic
+${SUGGESTION_STYLE}
 - Return ONLY a JSON array with no markdown or backticks:
-[{"t":"Tool Name","d":"One specific sentence for this unit."},...]`;
+[{"t":"Tool Name","d":"2-3 vivid sentences for this unit."},...]`;
   try{
     let sugs = null;
     let dupedTool = null;
@@ -2201,9 +2201,10 @@ async function fixAllIncomplete(){
     if(lbl) lbl.textContent=`${done}/${incomplete.length}: ${e.yl} — ${e.th}`;
     if(bar) bar.style.width=`${Math.round((done/incomplete.length)*100)}%`;
     const prompt=`Generate exactly 5 digital technology suggestions for this IB PYP unit.
-Campus: ${e.ca} | Year Level: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: "${e.ci}"`:''}${e.lo?`\nLines of Inquiry: "${e.lo}"`:''}
-Requirements: all 5 different tools, at least one ambitious project, every suggestion specific to this unit.
-Return ONLY a JSON array, no markdown: [{"t":"Tool Name","d":"One specific sentence."},...]`;
+Campus: ${e.ca} | Year Level: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: "${e.ci}"`:''}${e.lo?`\nLines of Inquiry: "${e.lo}"`:''}${e.plannerText?`\nPlanner: ${e.plannerText}`:''}
+Requirements: all 5 different tools.
+${SUGGESTION_STYLE}
+Return ONLY a JSON array, no markdown: [{"t":"Tool Name","d":"2-3 vivid sentences."},...]`;
     try{
       let sugs = null;
       let dupedTool = null;
@@ -2560,6 +2561,19 @@ function updateBulkRegenCount(){
   if(el) el.textContent=`${targets.length} entries selected`;
 }
 
+// Shared description quality + ordering instructions — referenced by all suggestion-generating prompts
+const SUGGESTION_STYLE = `DESCRIPTION STYLE:
+- Write 2-3 vivid sentences that paint a picture of what the classroom activity looks like
+- Start with an action verb — "Students design…", "Learners investigate…", "Teams collaborate to…"
+- Name specific unit content — reference the central idea, key concepts, or actual activities from the planner
+- Convey excitement — these descriptions are read by teachers deciding whether to use the tool
+- BAD: "Use Canva to create a poster about the unit theme."
+- GOOD: "Students design an infographic campaign exploring how local government decisions affect their neighbourhood, using Canva's collaboration features to peer-review and refine each other's visual arguments."
+
+ORDERING: Put the most innovative, exciting, or unexpected suggestion FIRST (slot 0). Teachers see the top suggestion first — lead with something that makes them think 'I want to try that!' Save the more familiar tools (Seesaw, Canva, Book Creator) for later slots.
+
+MINECRAFT EDUCATION URLS: When suggesting Minecraft Education, use the tool name "Minecraft Education" (not the lesson name). Include the direct lesson URL in the description — e.g. "Students explore coral reef ecosystems… (https://education.minecraft.net/en-us/lessons/ocean-heroes)". Do NOT tell teachers to search the website.`;
+
 const GAS_RULES = `You are an Expert Digital Learning Coach at Wesley College (MICROSOFT school).
 APPROVED TOOLS ONLY:
 - Microsoft M365: Teams, Word, PowerPoint, OneNote, etc.
@@ -2572,8 +2586,8 @@ APPROVED TOOLS ONLY:
 PROHIBITED: Google Suite (Docs/Slides/Sheets), any tool NOT on the above list, WeVideo.
 YEAR-LEVEL RULES: Microsoft Teams ONLY for Year 4, 5, 6 — NEVER suggest Teams for Prep, Year 1, Year 2, or Year 3. Early years (Prep-Yr2): prefer Seesaw/Canva/Book Creator. Mid (Yr3): Canva, Book Creator, Adobe Express preferred.
 ONE TOOL PER SUGGESTION — never combine tools (e.g. never write 'Book Creator & PowerPoint'). The tool name must be a single tool only.
-Each suggestion must connect specifically to the unit content — no generic descriptions. Name ONE tool only — do NOT combine tools (no app smashes like "Book Creator & PowerPoint").
-For Minecraft Education suggestions, include a direct link to the specific lesson: [Lesson Title](https://education.minecraft.net/en-us/lessons/LESSON-SLUG).`;
+${SUGGESTION_STYLE}`;
+
 
 async function fixAllOfType(type){
   const {incomplete,banned,duplicates,offWhitelist}=getIssues();
@@ -2761,7 +2775,7 @@ function buildMinecraftContext(){
   lessons.forEach(l => {
     const s = l.subject || 'OTHER';
     if(!bySubject[s]) bySubject[s] = [];
-    bySubject[s].push(`- ${l.title} (${l.desc || 'no description'}; ages ${l.ages})`);
+    bySubject[s].push(`- ${l.title} (${l.desc || 'no description'}; ages ${l.ages})${l.url ? ' URL: '+l.url : ''}`);
   });
   const sections = Object.entries(bySubject)
     .map(([s, lines]) => `${s}:\n${lines.join('\n')}`)
@@ -2776,7 +2790,7 @@ AGE GATING (HARD RULE): Each lesson has a minimum age. Match against Australian 
 
 ${sections}
 
-For every suggestion, end the description with: To find this lesson, search [exact lesson title from above] at education.minecraft.net/en-us/resources/explore-lessons`;
+When suggesting Minecraft Education, use tool name "Minecraft Education" and include the lesson's URL from the list above directly in the description. Do NOT tell teachers to search the website — give them the direct link.`;
 }
 
 // ========== LIBRARIES PANEL ==========
@@ -3107,7 +3121,7 @@ The coordinator is asking you to scan the entire library for places where a spec
 
   // Build compact entry context — positioned here because it uses platformSection + opportunitySection for smart truncation
   const libraryContextLen = (platformSection + opportunitySection).length;
-  const plannerLimit = libraryContextLen > 3000 ? 100 : (libraryContextLen > 1500 ? 200 : 0); // 0 = no limit
+  const plannerLimit = libraryContextLen > 3000 ? 250 : (libraryContextLen > 1500 ? 400 : 0); // 0 = no limit
   const fullContext = completeData.map(({e,i})=>{
     const sugs = getSugs(e);
     const toolStr = sugs.map((s,si)=>`s${si}:${sugTool(s)}`).join(' | ');
@@ -3166,8 +3180,9 @@ Analyse ALL ${completeEntries.length} complete entries below and propose changes
 For each proposed change, use the exact entryIdx and sugIdx from the TOOL INDEX above.
 
 Output ONLY the APPLY_CHANGES block — no preamble, no reasoning, no explanation. Go straight to the JSON:
-APPLY_CHANGES:[{"entryIdx":3,"sugIdx":1,"t":"Tool Name","d":"Specific description connected to the unit."},{"entryIdx":7,"sugIdx":2,"t":"Tool Name","d":"Description."}]
+APPLY_CHANGES:[{"entryIdx":3,"sugIdx":1,"t":"Tool Name","d":"2-3 vivid sentences that paint a picture of the classroom activity, connecting specifically to the unit content. Start with an action verb."},{"entryIdx":7,"sugIdx":2,"t":"Tool Name","d":"Another vivid description."}]
 
+${SUGGESTION_STYLE}
 The JSON must be complete and valid. Include ALL proposed changes in one array. Do not write anything before or after the APPLY_CHANGES line.
 
 FULL ENTRY DATA (compact — sN = suggestion slot N, use exact entryIdx and sugIdx when proposing changes):
@@ -3352,7 +3367,8 @@ async function runBulkRegen(){
     const prompt=`Generate exactly 5 digital technology suggestions for this IB PYP unit at Wesley College (Microsoft school).
 Campus: ${e.ca} | Year Level: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: "${e.ci}"`:''}${e.plannerText?`\nPlanner context: ${e.plannerText}`:''}
 All 5 suggestions MUST use DIFFERENT tools \u2014 no duplicates.
-Return ONLY a JSON array: [{"t":"Tool Name","d":"Specific description for this unit."},...]`;
+${SUGGESTION_STYLE}
+Return ONLY a JSON array: [{"t":"Tool Name","d":"2-3 vivid sentences for this unit."},...]`;
     try{
       let sugs = null;
       let dupedTool = null;
