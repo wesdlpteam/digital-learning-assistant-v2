@@ -928,8 +928,8 @@
     "ci": "Human migration is a response to challenges and opportunities",
     "lo": "The reasons people migrate; Migration throughout history; Effects of migration on communities, cultures and individuals",
     "s": [],
-    "audited": false,
-    "plannerText": ""
+    "audited": true,
+    "plannerText": "Not yet documented in PDF."
   },
   {
     "ca": "Elsternwick",
@@ -937,9 +937,34 @@
     "th": "Who We Are",
     "ci": "Leaders shape communities.",
     "lo": "Roles and responsibilities of effective leadership; The purpose of leadership in communities; Qualities of influential leaders",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "ClassVR + Merge Cubes",
+        "d": "Create an immersive 'Leadership Through Time' experience where students use ClassVR headsets and Merge Cubes to explore interactive 3D models of famous leaders, community meeting spaces, and decision-making scenarios. Students can virtually 'step into the shoes' of different leaders, reflect on their responsibilities, and record their insights as digital journal entries, directly connecting to the central idea that leaders shape communities."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design and publish digital 'Leadership Qualities' infographics or posters, highlighting the strengths, responsibilities, and impacts of leaders they research in the unit. These can be shared with the school community to inspire others and reinforce the unit's focus on leadership roles and community impact."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Facilitate a digital leadership reflection journal on Seesaw, where students regularly post voice recordings, videos, or annotated images about their own leadership actions and observations in the school. This ongoing portfolio supports self-management and connects directly to the unit's emphasis on personal growth and responsibility as a leader."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Guide students to collaboratively author a digital book titled 'Leaders in Our Community', combining research, interviews, and creative writing. Each student contributes a chapter profiling a leader (local, national, or global), explicitly linking their findings to the roles, responsibilities, and qualities explored in the unit."
+      },
+      {
+        "t": "Padlet",
+        "d": "Launch a 'Leadership Wall' Padlet where students post examples of leadership they observe in daily life, both inside and outside school. Encourage multimedia posts (photos, videos, quotes) and peer feedback, fostering a dynamic, collaborative exploration of how leaders shape communities in real time."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "STEM Design Cycle Project: Challenge students to design and prototype a 'Community Helper Robot' using Lego Spike Prime. Students follow the Design Cycle to empathise with community needs, define a leadership problem (e.g., improving communication or safety), ideate solutions, build and program their robot, and present how their creation demonstrates leadership qualities and supports a positive community."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores the central idea 'Leaders shape communities' through inquiries into the roles and responsibilities of effective leadership, the purpose of leadership, and the strengths and qualities of a leader. Students engage in research, reflection, and creative activities to understand how leadership impacts communities, culminating in personal leadership applications and collaborative projects."
   },
   {
     "ca": "Elsternwick",
@@ -947,9 +972,35 @@
     "th": "How We Express Ourselves",
     "ci": "People can create or manipulate messages to target specific audiences.",
     "lo": "The devices used to target audiences; Critical evaluation of messages; How we know we have been influenced",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "ClassVR & Merge Cubes",
+        "d": "Launch students into a fully immersive, interactive 'media manipulation detective' experience. Using ClassVR headsets and Merge Cubes, students can explore virtual environments where they must identify, deconstruct, and reconstruct persuasive messages and advertisements targeted at different audiences. They can then create their own AR 'ad cubes' to demonstrate how subtle changes in imagery, sound, or language shift audience perception."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design a series of digital posters or social media campaigns for a real-world cause, using Canva's advanced features (including the 'Remove Background' tool) to experiment with visual emphasis, colour psychology, and layout. They must justify their design choices based on the intended audience and reflect on how their message could be interpreted or manipulated."
+      },
+      {
+        "t": "Podcast Equipment & GarageBand",
+        "d": "Students create a podcast series where they interview community members or experts about how media messages have influenced their beliefs or actions. Using GarageBand, they edit and layer in sound effects or music to intentionally shape the listener's emotional response, then reflect on the ethics of audio manipulation."
+      },
+      {
+        "t": "Padlet & Seesaw App Smash",
+        "d": "Students curate a collaborative Padlet gallery of advertisements, song lyrics, and political speeches, then use Seesaw to record video reflections or critiques. They annotate examples with digital ink, highlighting persuasive devices and discussing how each message could be interpreted differently by various audiences."
+      },
+      {
+        "t": "Minecraft: The Investigators",
+        "d": "Students become digital reporters in 'Minecraft: The Investigators' (https://education.minecraft.net/en-us/lessons/the-investigators), where they must evaluate sources, decode clues, and uncover the truth behind three unique stories. This hands-on world challenges students to critically analyse bias, media manipulation, and the reliability of information in a gamified context.",
+        "url": "https://education.minecraft.net/en-us/lessons/the-investigators"
+      },
+      {
+        "t": "Makey Makey Design Cycle Project",
+        "d": "Using the Design Cycle, students prototype an interactive 'persuasion machine' with Makey Makey and everyday materials. For example, they could create a physical board where pressing different objects triggers audio, video, or light effects designed to persuade or inform a specific audience. Students iterate on their design based on peer feedback, documenting how their choices impact audience engagement and message clarity."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how people create or manipulate messages to target specific audiences, focusing on critical evaluation of media, persuasive devices, and the impact of communication choices. Students analyse mentor texts, advertisements, and campaigns, create their own persuasive media, and reflect on how messages influence beliefs and behaviours."
   },
   {
     "ca": "Elsternwick",
@@ -957,9 +1008,35 @@
     "th": "How We Organise Ourselves",
     "ci": "Entrepreneurs have a responsibility to develop, market and sell sustainable products and services.",
     "lo": "The power of giving back; How our environment is impacted by the products we create; Sustainable business practices",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "ClassVR & Merge Cubes",
+        "d": "Students design and pitch a sustainable product or service, then create an immersive 360? virtual reality experience that allows others to 'walk through' their entrepreneurial concept, exploring its environmental impact and business model from the inside out. Use Merge Cubes to showcase interactive 3D prototypes of their products, simulating real-world use and sustainability features."
+      },
+      {
+        "t": "Canva",
+        "d": "Create a digital marketing campaign for their sustainable product, including social media posts, infographics, and animated advertisements. Students use Canva's 'Remove Background' feature to create professional product images and app smash with iPad Camera for original photography."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Develop and distribute a market research survey to the school community to gather data on consumer preferences and sustainability awareness. Analyse the results in Excel to inform product design and marketing strategies."
+      },
+      {
+        "t": "Padlet",
+        "d": "Collaboratively build a digital 'Entrepreneurial Journey Wall' where students document each stage of their business development process, share reflections, and receive peer feedback. Include embedded videos, sketches, and pitch rehearsals."
+      },
+      {
+        "t": "Minecraft: The Hall of Inventions",
+        "d": "Students explore the museum of key innovations, then design and build their own sustainable invention in Minecraft Education, justifying how it addresses real-world environmental or social needs. URL: https://education.minecraft.net/en-us/challenges/the-hall-of-inventions",
+        "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Using the Design Cycle, students prototype a sustainable product or service with Lego Spike Prime, such as an automated recycling sorter or energy-efficient delivery robot. They document each phase?empathise, define, ideate, prototype, test?through video journals and present their working model at the school market."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this unit, Year 5 students inquire into the responsibilities of entrepreneurs to develop, market, and sell sustainable products and services. They engage in market research, apply the design thinking process, prototype and test their ideas, and culminate in a market stall event where they pitch and sell their creations, reflecting on the impact of consumer choices and business practices on the environment."
   },
   {
     "ca": "Elsternwick",
@@ -967,9 +1044,34 @@
     "th": "How the World Works",
     "ci": "Design processes enable people to respond creatively to challenges in the natural world.",
     "lo": "The nature and impact of natural hazards (Causation); How design processes are used to generate and test solutions (Function); The ethical and practical considerations in human responses to natural challenges (Responsibility)",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "ClassVR & Merge Cubes",
+        "d": "Students design and experience immersive simulations of natural hazards (like bushfires, floods, or earthquakes) using ClassVR headsets and Merge Cubes. They can create their own 3D models of disaster scenarios, then 'step inside' to test and refine their design solutions, gaining empathy for affected communities and iterating their ideas in a virtual environment."
+      },
+      {
+        "t": "Padlet + Canva App Smash",
+        "d": "Kick off the unit with a digital Wonder Wall using Padlet, where students post questions, ideas, and research about natural hazards and design solutions. Later, students synthesize their findings and design process into visually striking infographics or persuasive pitch posters using Canva, ready for the school showcase or community advocacy."
+      },
+      {
+        "t": "Minecraft: Moon Base One",
+        "d": "Students collaborate in Minecraft: Moon Base One (https://education.minecraft.net/en-us/lessons/moon-base-one) to design and build a sustainable lunar base that responds to natural challenges like meteor impacts, extreme temperatures, and resource scarcity. This hands-on digital build links directly to the unit's focus on creative design processes and systems thinking."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Throughout the inquiry, students document their design thinking journey in a multimedia Book Creator journal. They combine photos of prototypes, audio reflections, diagrams, and data visualizations to capture each stage of their process, culminating in a digital portfolio to share with peers and the wider community."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Students use Microsoft Forms to gather authentic data from the school community about experiences with natural hazards, preparedness, and design preferences. They analyze the results in Excel, using the insights to inform their design criteria and justify their solutions during the pitch phase."
+      },
+      {
+        "t": "Lego Spike Prime STEM Challenge",
+        "d": "Applying the full Design Cycle, students work in teams to prototype and test earthquake-resistant structures using Lego Spike Prime. They iterate their designs based on real-world constraints (height, weight, stability), collect and graph data on performance, and present their engineering process and results to an authentic audience."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit immerses Year 5 students in the design thinking process as they investigate natural hazards and human responses. Through provocations, data analysis, mapping, and hands-on prototyping, students develop and test creative solutions to real-world challenges, culminating in persuasive pitches and a community showcase."
   },
   {
     "ca": "Elsternwick",
