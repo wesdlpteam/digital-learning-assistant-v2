@@ -2531,12 +2531,13 @@
         "d": "Students prototype and test their natural hazard solutions using Micro:bit sensors to collect real-time data on environmental conditions. The 'Energy Awareness' lesson (https://microbit.org/lessons/energy-awareness/) empowers learners to monitor and optimise their designs, making the design thinking process more authentic and evidence-based."
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "For the STEM Design Cycle project, students use Lego Spike Prime to engineer and prototype a disaster-resilient structure or emergency response robot. They apply the full design thinking cycle: empathising with stakeholders, ideating, prototyping, testing for stability or function (e.g., earthquake shake table or flood simulation), and refining based on feedback. This hands-on challenge directly links to the unit's focus on purposeful design for community needs."
+        "t": "Natural Hazard Emergency Shelter Challenge",
+        "d": "Students work in teams to design and build a physical prototype of an emergency shelter that could protect a community from a specific natural hazard (e.g., flood, earthquake, bushfire). Using materials like cardboard, popsticks, fabric scraps, string, recycled bottles, and clay, students follow the Design Cycle: empathize with affected communities, define the problem, ideate solutions, create detailed plans, and construct their shelter models. They test their prototypes against simulated hazards (e.g., water spray for floods, shaking table for earthquakes, heat lamp for bushfires), collect data on performance, iterate improvements, and finally present their shelters and design thinking process to an authentic audience, emphasizing empathy, creativity, and persuasive communication."
       }
     ],
     "audited": true,
-    "plannerText": "In this unit, students explore how people design for purpose through the lens of natural hazards and community needs. They engage in the design thinking process, research real-world problems, collaborate in teams, prototype innovative solutions, and pitch their ideas to an authentic audience, integrating empathy, data analysis, and persuasive communication throughout."
+    "plannerText": "In this unit, students explore how people design for purpose through the lens of natural hazards and community needs. They engage in the design thinking process, research real-world problems, collaborate in teams, prototype innovative solutions, and pitch their ideas to an authentic audience, integrating empathy, data analysis, and persuasive communication throughout.",
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -2567,12 +2568,13 @@
         "d": "Students use Excel to model personal or community budgets, experimenting with different income sources, expenses, and savings strategies. They create interactive spreadsheets that visually demonstrate the consequences of financial decisions, supporting critical thinking about economic responsibility and resource allocation."
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "Design Cycle STEM Project: Students use the Design Cycle to prototype a 'Smart Marketplace' using Lego Spike Prime. They design and code automated systems (e.g., a robotic cashier, inventory tracker, or sustainable delivery vehicle) that address real-world economic challenges such as fair trade, accessibility, or environmental impact. Teams document their process and pitch their solution to the class, integrating technology, economics, and design thinking."
+        "t": "Eco-Enterprise Pop-Up Market",
+        "d": "Students work in teams to design and construct a miniature pop-up market stall using recycled cardboard, fabric scraps, bottle caps, string, and other Makerspace materials. Each team invents a unique product or service (e.g., handmade bookmarks, clay charms, or mini-games) that addresses a community need or value beyond money (such as sustainability, wellbeing, or creativity). They follow the Design Cycle: empathise with community needs, define their market concept, ideate and sketch stall layouts, prototype with physical materials, test by role-playing as buyers and sellers, and refine their designs. The project culminates in a class 'market day' where students set up their stalls, trade using a class currency, and reflect on economic concepts like value, trade, and resource management through their hands-on creations."
       }
     ],
     "audited": true,
-    "plannerText": "Students inquire into economic systems by exploring wealth beyond money, responsibilities in managing income, and diverse ways income is earned and managed. They engage in provocations, debates, budgeting simulations, job applications, and collaborative projects to design ideal communities, culminating in creative presentations and hands-on design challenges that connect economic concepts to real-world contexts."
+    "plannerText": "Students inquire into economic systems by exploring wealth beyond money, responsibilities in managing income, and diverse ways income is earned and managed. They engage in provocations, debates, budgeting simulations, job applications, and collaborative projects to design ideal communities, culminating in creative presentations and hands-on design challenges that connect economic concepts to real-world contexts.",
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -2603,12 +2605,13 @@
         "d": "Students use Micro:bit to simulate and monitor the effects of natural disasters, collecting and analysing data to inform their disaster response solutions. The 'Volcano Animations' lesson (https://microbit.org/lessons/volcano-animations/) brings the science of bushfires, earthquakes, and floods to life, making risk analysis and STEM problem-solving hands-on and engaging."
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "Using the Design Cycle, students work in teams to prototype and test earthquake-resistant buildings with Lego Spike Prime. They iterate on their designs based on data from simulated 'shake table' tests, documenting their process and results in a digital engineering journal."
+        "t": "Disaster-Proof Miniature Community Challenge",
+        "d": "Students work in teams to design and build a scaled-down model of a community using recycled cardboard, popsticks, bottle caps, string, clay, and hot glue guns. Applying the Design Cycle, each group researches bushfires, floods, or earthquakes, then prototypes and constructs innovative protective features (e.g., flood barriers, earthquake-resistant buildings, bushfire buffers) for their community. Teams test their models using simulated disasters: water spray bottles for floods, shaking platforms for earthquakes, and gentle heat lamps (supervised) for bushfire scenarios. Students iterate on their designs based on test results and present their solutions, explaining how their prototypes protect both infrastructure and children's rights in real-world contexts."
       }
     ],
     "audited": true,
-    "plannerText": "This unit immerses Year 5 students in the science of natural disasters, focusing on bushfires, earthquakes, and floods. Through collaborative inquiry, students research hazards, analyse data, map risks, and use the design thinking process to prototype and pitch solutions that protect communities and uphold children's rights. The unit integrates maths, science, geography, and digital technologies, culminating in student-led presentations and reflections."
+    "plannerText": "This unit immerses Year 5 students in the science of natural disasters, focusing on bushfires, earthquakes, and floods. Through collaborative inquiry, students research hazards, analyse data, map risks, and use the design thinking process to prototype and pitch solutions that protect communities and uphold children's rights. The unit integrates maths, science, geography, and digital technologies, culminating in student-led presentations and reflections.",
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -2639,12 +2642,13 @@
         "d": "Learners use Micro:bit to monitor local environmental data as they investigate community interactions with the environment, collecting information on temperature, light, or soil moisture. The 'Healthy Oceans' lesson (https://microbit.org/lessons/healthy-oceans/) inspires students to design digital solutions for conservation and stewardship, connecting action projects to real-world data and advocacy."
       },
       {
-        "t": "Lego Spike Prime Design Cycle: Eco-Innovation Challenge",
-        "d": "Using the Design Cycle, students identify a local environmental issue (e.g., waste, water use, habitat loss), brainstorm solutions, and prototype an eco-innovation using Lego Spike Prime. They test, refine, and present their models, justifying design choices based on community values and conservation needs."
+        "t": "Eco-Action Board Game Challenge",
+        "d": "Students use the Design Cycle to invent and build a physical board game that teaches players about local environmental issues, conservation, and stewardship. Working in teams, they brainstorm environmental scenarios (e.g., invasive species, water conservation, community clean-ups), then design game mechanics that encourage sustainable choices. Using cardboard, recycled containers, bottle caps, popsticks, markers, clay, and hot glue, students craft game boards, tokens, and event cards. They test and refine their games with classmates, incorporating feedback to improve both playability and educational impact. The final games are showcased and played by the school community, sparking discussion and action around sustainability."
       }
     ],
     "audited": true,
-    "plannerText": "Students inquire into how communities interact with the environment, focusing on conservation, stewardship, and the influence of community values on environmental management. Key activities include exploring First Nations perspectives, researching local flora and fauna, investigating council initiatives, and pitching persuasive sustainability actions for the school community."
+    "plannerText": "Students inquire into how communities interact with the environment, focusing on conservation, stewardship, and the influence of community values on environmental management. Key activities include exploring First Nations perspectives, researching local flora and fauna, investigating council initiatives, and pitching persuasive sustainability actions for the school community.",
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
