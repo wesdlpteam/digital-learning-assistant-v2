@@ -946,16 +946,37 @@ async function deleteEntry(idx){
 }
 
 async function openEntry(idx){
-  const allowed = await acquireLock(idx);
-  if(!allowed) return;
+  // Check for existing lock (instant — local data only)
+  const existing = isLocked(idx) && !isLockedByMe(idx) ? isLocked(idx) : null;
+  if(existing){
+    if(!confirm(`⚠ ${existing.user} is currently editing "${DATA[idx]?.th}"\n\nOpen it anyway? Their unsaved changes may be overwritten.`)) return;
+  }
+
+  // Render immediately — don't wait for Drive
   CURRENT_ENTRY_IDX=idx;
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('panel-entry').classList.add('active');
   renderEntry(idx);
+
+  // Save lock in background (non-blocking)
+  if(!isLockedByMe(idx)){
+    if(!DATA._locks) DATA._locks = {};
+    DATA._locks[String(idx)] = { user: MY_USER, ts: Date.now() };
+    MY_LOCK_IDX = idx;
+    startLockHeartbeat(idx);
+    saveLocks(); // fire-and-forget — no await
+  }
 }
 
 function closeEntry(){
-  if(CURRENT_ENTRY_IDX !== null) releaseLock(CURRENT_ENTRY_IDX);
+  if(CURRENT_ENTRY_IDX !== null){
+    // Release lock in background
+    if(DATA._locks) delete DATA._locks[String(CURRENT_ENTRY_IDX)];
+    MY_LOCK_IDX = null;
+    stopLockHeartbeat();
+    saveLocks(); // fire-and-forget
+    renderLockIndicators();
+  }
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   const panel=document.getElementById('panel-'+PREV_TAB);
   if(panel) panel.classList.add('active');
