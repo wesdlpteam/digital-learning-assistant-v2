@@ -1266,9 +1266,35 @@
     "th": "Sharing the Planet",
     "ci": "Communities interact with the environment in different ways.",
     "lo": "How community values shape the management of the natural environment; The need for sustainable practices; Taking action for environmental stewardship",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "ClassVR & Merge Cubes",
+        "d": "Students create immersive 360-degree virtual field trips that showcase how different communities around the world interact with their local environments. Using Merge Cubes, students can design interactive AR models of local flora, fauna, or Indigenous land management practices, then narrate their significance, connecting directly to the unit's focus on environmental stewardship and diverse perspectives."
+      },
+      {
+        "t": "Padlet + Canva App Smash",
+        "d": "Students collaboratively document and compare environmental stewardship actions from Camp Mallana and their own communities on a shared Padlet. They then use Canva to design digital posters or infographics advocating for a specific conservation action, integrating real reflections and data from their experiences."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students author digital books that tell the story of a local ecosystem, incorporating photos from the iPad Camera app, interviews with Indigenous experts (if available), and their own reflections on conservation. These books can be shared with younger grades to promote environmental awareness and action."
+      },
+      {
+        "t": "Minecraft: Watr Meet The Rangers",
+        "d": "Students explore the role of wildlife rangers in conservation, then design their own ranger programs in Minecraft Education, simulating real-world environmental stewardship and decision-making. This lesson directly links to the unit's focus on advocacy and the responsibilities communities have in managing natural environments.",
+        "url": "https://education.minecraft.net/en-us/lessons/watr-meet-the-rangers"
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students document their learning journey through multimedia journals, capturing reflections from Camp Mallana, case study analyses, and their personal action projects. They can include voice recordings, photos, and digital drawings to demonstrate their evolving understanding of how communities interact with the environment."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Design Cycle STEM Project: Students use the Design Cycle to prototype and build a model of an innovative conservation device (e.g., a water filtration system, animal crossing, or pollution sensor) inspired by issues observed at Camp Mallana or in local case studies. They document their process and test their models, reflecting on how technology can support environmental stewardship."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit immerses students in environmental stewardship through Camp Mallana experiences, Indigenous land management case studies, and action projects focused on conservation. Students explore how community values shape environmental management, the need for conservation, and ways stewardship can drive change, culminating in advocacy and creative action."
   },
   {
     "ca": "Elsternwick",
@@ -1276,9 +1302,35 @@
     "th": "Where We Are in Place and Time",
     "ci": "Significant events shape a place",
     "lo": "What is a significant event; Why these events occurred; Impact of significant events",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "ClassVR & Merge Cubes",
+        "d": "Students create immersive, interactive 3D timelines of significant events that have shaped Australia or the world. Using ClassVR headsets and Merge Cubes, students can 'step into' key moments, view primary source images, and even record short audio reflections as historical witnesses. This transforms the classroom into a living museum, making history tangible and memorable."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design visually compelling infographics or digital posters that illustrate the impact of a significant event on a place, using real migration data, timelines, and personal stories. They can app smash by embedding QR codes linking to student-recorded oral histories or video summaries."
+      },
+      {
+        "t": "Padlet",
+        "d": "Create a collaborative digital migration map where students pin their family's migration stories or research global migration events. Each pin can include images, short videos, or audio interviews, building a living, interactive class archive of significant events and their impacts."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students author and publish interactive eBooks documenting the story of a significant event, combining text, images, audio interviews, and video clips. These digital books can be shared with the school community or used as resources for younger students."
+      },
+      {
+        "t": "Minecraft: The Hall of Inventions",
+        "d": "Students explore the 'The Hall of Inventions' world and select a significant invention or event that shaped a place. They research its context and impact, then build their own exhibit in Minecraft, explaining how this event or invention changed the course of history. https://education.minecraft.net/en-us/challenges/the-hall-of-inventions",
+        "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
+      },
+      {
+        "t": "3D Printers",
+        "d": "Using the Design Cycle, students select a significant event and design a physical artifact or monument that symbolises its impact on a place (e.g., a model of the Channel Tunnel, a memorial for a migration wave, or a symbolic object from the Black Death). They prototype in Tinkercad, print their models, and present their design thinking process, connecting physical making with historical inquiry."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this unit, students investigate how significant events?such as migrations, discoveries, or historical milestones?shape places and societies. They explore personal and global histories, analyse the causes and impacts of these events, and conduct personal inquiries into events of interest, culminating in informative reports and creative presentations that demonstrate their understanding of the interconnectedness of individuals, groups, and significant events."
   },
   {
     "ca": "Elsternwick",
@@ -1286,9 +1338,34 @@
     "th": "Who We Are",
     "ci": "Personal changes and influences contribute to our evolving sense of self.",
     "lo": "Physical, social, emotional and intellectual changes that occur throughout life; Influences that shape our identity; Developing a sense of self",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "ClassVR",
+        "d": "Launch an immersive 'Journey Through Influences' experience where students use ClassVR headsets to virtually step into scenarios representing different physical, social, emotional, and intellectual changes throughout life. Students can record their reflections as avatars, then export their experiences to share with the class, directly connecting to how influences shape our evolving sense of self."
+      },
+      {
+        "t": "Canva",
+        "d": "Students create dynamic digital identity collages in Canva, visually mapping out the personal, social, and cultural influences that have shaped their sense of self. They can app smash by embedding short video reflections or voiceovers, making their collages interactive and deeply personal."
+      },
+      {
+        "t": "Padlet",
+        "d": "Facilitate a collaborative 'Influence Wall' on Padlet where students anonymously post stories, images, or questions about changes and influences in their lives. This digital wall becomes a living resource for exploring how perceptions are shaped by both internal and external factors."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Guide students to author a digital 'Evolving Me' book in Book Creator, documenting key moments of change, influential people, and shifting perceptions. Include multimedia elements such as audio interviews with family or friends, scanned artwork, and personal reflections."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Run a 'Perception Challenge' where students use Seesaw to capture and share photos or short videos representing how their perceptions have changed over time. Peers can comment and ask questions, fostering dialogue about the diversity of influences in the cohort."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "STEM Design Cycle Project: Students use Lego Spike Prime to prototype a 'Change Machine'?a physical model that metaphorically represents how different influences (represented by sensors, motors, and coded sequences) interact to shape personal identity. Students document their design process, test iterations, and present how their machine symbolises the evolving sense of self."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The unit 'Who We Are' explores how personal changes and external influences contribute to students' evolving sense of self. Key activities include digital identity mapping, collaborative reflection on influences, creative storytelling, and inquiry into how perceptions are shaped over time. The unit is highly transdisciplinary, connecting personal, social, and emotional learning with digital creation and peer feedback."
   },
   {
     "ca": "Glen Waverley",
@@ -1296,9 +1373,34 @@
     "th": "How We Express Ourselves",
     "ci": "Emotions influence our wellbeing.",
     "lo": "How our feelings and emotions affect us; How feelings and emotions are interpreted; How our emotions and behaviour affect relationships",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Delightex",
+        "d": "Create an interactive 'Emotion Journey' using Delightex, where students visually map out their feelings throughout the school day by dragging and dropping emoji faces onto different parts of a virtual classroom or playground. This helps students reflect on how their emotions change in different settings and fosters discussion about emotional wellbeing."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students take photos of their Colour Monster artwork and use ChatterPix Kids to record their voices describing the emotion their monster represents, sharing a time they felt that way. This empowers students to express feelings in their own words and supports oral language development."
+      },
+      {
+        "t": "Seesaw",
+        "d": "App smash Seesaw with the iPad camera: students photograph themselves showing different emotions, then use Seesaw's drawing tools to add emoji, color, or doodles that represent how they feel. They record a short voice note explaining their emotion and what helps them feel better."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Collaboratively build a digital class book in Book Creator titled 'Our Feelings, Our Stories.' Each student contributes a page with a drawing or photo of themselves, an emoji, and a simple sentence or audio clip about a time they felt a particular emotion and what helped them."
+      },
+      {
+        "t": "Canva",
+        "d": "Use Canva's visual templates to design a 'Feelings Poster' for the classroom. Students select colors, shapes, and icons to represent different emotions, then print and display their posters to help classmates identify and talk about feelings throughout the year."
+      },
+      {
+        "t": "Bee-Bots",
+        "d": "STEM Design Cycle Project: Students design and create a 'Feelings Maze' on a large mat, with each section representing a different emotion (happy, sad, angry, calm). Using the Design Cycle, they plan, build, and test routes for Bee-Bots to travel to different emotions, discussing scenarios that might lead to each feeling and how to navigate back to 'calm'."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This Prep HWEO unit explores how emotions influence wellbeing, with students learning to identify, interpret, and manage their feelings through activities like Colour Monster art, emotion discussions, and reflection on how behaviour affects relationships. The unit integrates visual arts, literature, and music to help students express and understand emotions, culminating in creative and collaborative tasks that support emotional intelligence and positive classroom culture."
   },
   {
     "ca": "Glen Waverley",
