@@ -264,9 +264,14 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 
 .stem-card{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);border:2px solid #4361ee;border-radius:20px;overflow:hidden;margin:24px 0 14px;position:relative}
 .stem-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:5px 14px;border-radius:99px;background:#4361ee;color:#FFF;letter-spacing:.5px;text-transform:uppercase}
-.stem-head{padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #2a3a5e}
+.stem-head{padding:16px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;transition:background .15s}
+.stem-head:hover{background:rgba(67,97,238,.1)}
 .stem-icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#4361ee,#7209b7);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.stem-body{padding:16px 20px 20px}
+.stem-body{overflow:hidden;max-height:0;transition:max-height .3s ease-out;border-top:0 solid #2a3a5e}
+.stem-body.open{max-height:600px;border-top-width:1px;transition:max-height .4s ease-in}
+.stem-body-inner{padding:16px 20px 20px}
+.stem-chevron{width:16px;height:16px;color:#4361ee;transition:transform .2s;flex-shrink:0}
+.stem-card.open .stem-chevron{transform:rotate(180deg)}
 .stem-label{font-size:13px;font-weight:700;color:#4361ee;margin-bottom:10px;display:flex;align-items:center;gap:6px}
 
 .tech-cur-toggle{display:flex;align-items:center;gap:8px;padding:14px 20px;background:var(--sf);border:2px solid var(--bd);border-radius:16px;cursor:pointer;margin:20px 0 14px;transition:all .15s;user-select:none}
@@ -1005,6 +1010,28 @@ var curList=u.s;
 var mainSugs=curList.slice(0,5);
 var stemSug=curList.length>=6?curList[5]:null;
 window._sid=0;window._aid=0;window._wid=0;
+
+// STEM Design Cycle Card — shown prominently before the regular suggestions
+if(stemSug && stemSug.t && stemSug.t.indexOf("Planner Needed")===-1){
+  var stemTool=stemSug.t;var stemDesc=stemSug.d;
+  var stemUrl=TU[stemTool.split(' + ')[0].trim()]||'';
+  var stemToolLabel=stemUrl?'<a href="'+stemUrl+'" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline;text-decoration-color:#4361ee55;text-underline-offset:3px">'+stemTool+'</a>':stemTool;
+  
+  if(!window._fbData)window._fbData=[];var _stemFbi=window._fbData.length;window._fbData.push({campus:CN[ca],year:yl,theme:u.th,tool:stemTool,phase:'STEM Design Cycle'});
+  if(!window._usedData)window._usedData=[];var _stemUsi=window._usedData.length;window._usedData.push({campus:CN[ca],year:yl,theme:u.th,tool:stemTool,phase:'STEM Design Cycle'});
+  
+  h+='<div class="stem-card" id="stemCard"><div class="stem-head" onclick="tgStem()"><div class="stem-icon">🔬</div><div style="flex:1"><div class="stem-badge">STEM Design Cycle</div><div class="sg-tool" style="margin-top:4px;color:#FFF">'+stemToolLabel+'</div></div><svg class="stem-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 8 10 12 14 8"/></svg></div>';
+  h+='<div class="stem-body" id="stemBody"><div class="stem-body-inner">';
+  h+='<div class="stem-label">🔄 Empathise → Define → Ideate → Prototype → Test → Empathise</div>';
+  h+='<div class="sg-desc" style="color:#DDD">'+linkifyDesc(stemDesc)+'</div>';
+  
+  var stemVa=gA(stemTool,stemDesc);
+  h+='<div class="sg-section" style="margin-top:14px"><div class="sg-label">'+I.s+' Value Add</div><div class="vb" style="border-left-color:#4361ee">'+stemVa+'</div></div>';
+  
+  h+='<div class="sg-fb" style="border-top-color:#2a3a5e"><button class="sg-used" onclick="markUsed('+_stemUsi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+_stemFbi+')" class="sg-fb-btn">💬 Feedback</button><button class="sg-react-btn sg-react-up" onclick="reactFB('+_stemFbi+',\'up\',this)">👍</button><button class="sg-react-btn" onclick="reactFB('+_stemFbi+',\'down\',this)">👎</button></div></div>';
+  h+='</div></div></div>';
+}
+
 mainSugs.forEach((s,si)=>{
 if(s.t.indexOf("Planner Needed")!==-1){var tmsg=encodeURIComponent("Hi Nathan, I have the UOI planner for "+yl+" "+u.th+" ("+CN[ca]+"). How should I send it to you?");h+='<div class="sg-pending"><div class="sg-pending-icon">📋</div><div class="sg-pending-title">Planner Not Yet Uploaded</div><div class="sg-pending-msg">Specific technology suggestions will be generated once the UOI planner for this unit is provided.</div><a href="https://teams.microsoft.com/l/chat/0/0?users=nathan.benn@wesleycollege.edu.au&message='+tmsg+'" target="_blank" rel="noopener noreferrer" class="sg-pending-cta">💬 Message Nathan Benn from DLP on Teams</a></div>';return;}
 const j=gS(s.t,s.d),va=gA(s.t,s.d);
@@ -1047,29 +1074,6 @@ if(!window._fbData)window._fbData=[];var _fbi=window._fbData.length;window._fbDa
 if(!window._usedData)window._usedData=[];var _usi=window._usedData.length;window._usedData.push({campus:CN[ca],year:yl,theme:u.th,tool:s.t,phase:phaseLabel});
 h+='<div class="sg-fb"><button class="sg-used" onclick="markUsed('+_usi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+_fbi+')" class="sg-fb-btn">💬 Feedback</button><button class="sg-react-btn sg-react-up" onclick="reactFB('+_fbi+',\'up\',this)">👍</button><button class="sg-react-btn" onclick="reactFB('+_fbi+',\'down\',this)">👎</button></div></div>';
 h+='</div></div>';});
-
-// STEM Design Cycle Card (6th suggestion)
-if(stemSug && stemSug.t && stemSug.t.indexOf("Planner Needed")===-1){
-  var stemTool=stemSug.t;var stemDesc=stemSug.d;
-  var stemUrl=TU[stemTool.split(' + ')[0].trim()]||'';
-  var stemToolLabel=stemUrl?'<a href="'+stemUrl+'" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline;text-decoration-color:#4361ee55;text-underline-offset:3px">'+stemTool+'</a>':stemTool;
-  
-  if(!window._fbData)window._fbData=[];var _stemFbi=window._fbData.length;window._fbData.push({campus:CN[ca],year:yl,theme:u.th,tool:stemTool,phase:'STEM Design Cycle'});
-  if(!window._usedData)window._usedData=[];var _stemUsi=window._usedData.length;window._usedData.push({campus:CN[ca],year:yl,theme:u.th,tool:stemTool,phase:'STEM Design Cycle'});
-  
-  h+='<div class="stem-card"><div class="stem-head"><div class="stem-icon">🔬</div><div style="flex:1"><div class="stem-badge">STEM Design Cycle</div><div class="sg-tool" style="margin-top:4px;color:#FFF">'+stemToolLabel+'</div></div></div>';
-  h+='<div class="stem-body">';
-  h+='<div class="stem-label">🔄 Empathise → Define → Ideate → Prototype → Test → Empathise</div>';
-  h+='<div class="sg-desc" style="color:#DDD">'+linkifyDesc(stemDesc)+'</div>';
-  
-  // Value add
-  var stemVa=gA(stemTool,stemDesc);
-  h+='<div class="sg-section" style="margin-top:14px"><div class="sg-label">'+I.s+' Value Add</div><div class="vb" style="border-left-color:#4361ee">'+stemVa+'</div></div>';
-  
-  // Feedback
-  h+='<div class="sg-fb" style="border-top-color:#2a3a5e"><button class="sg-used" onclick="markUsed('+_stemUsi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+_stemFbi+')" class="sg-fb-btn">💬 Feedback</button><button class="sg-react-btn sg-react-up" onclick="reactFB('+_stemFbi+',\'up\',this)">👍</button><button class="sg-react-btn" onclick="reactFB('+_stemFbi+',\'down\',this)">👎</button></div></div>';
-  h+='</div></div>';
-}
 
 // Technologies Curriculum toggle
 h+='<div class="tech-cur-toggle" id="techCurToggle" onclick="tgTechCur()"><span style="font-size:16px">📋</span><span style="flex:1;font-size:14px;font-weight:700;color:#38BDF8">Technologies Curriculum — '+yl+'</span><span style="font-size:12px;color:#888">ACARA v9.0</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 8 10 12 14 8"/></svg></div>';
@@ -1283,6 +1287,7 @@ document.getElementById("plannerOverlay").classList.add("open");
 function closePlanner(){document.getElementById("plannerOverlay").classList.remove("open");}
 
 function tgSec(id){var el=document.getElementById('sc_'+id);var btn=document.getElementById('sb_'+id);if(el.classList.contains('open')){el.classList.remove('open');btn.classList.remove('open');}else{el.classList.add('open');btn.classList.add('open');}}
+function tgStem(){var card=document.getElementById('stemCard');var body=document.getElementById('stemBody');if(!card||!body)return;if(body.classList.contains('open')){body.classList.remove('open');card.classList.remove('open');}else{body.classList.add('open');card.classList.add('open');}}
 function tgATL(el,id){var d=document.getElementById("ad_"+id);var p=document.getElementById("ap_"+id);if(d.classList.contains("open")){d.classList.remove("open");p.classList.remove("open")}else{d.classList.add("open");p.classList.add("open")}}
 function tgCur(el,id){var d=document.getElementById("d_"+id);var p=document.getElementById("p_"+id);if(d.classList.contains("open")){d.classList.remove("open");p.classList.remove("open")}else{d.classList.add("open");p.classList.add("open")}}
 var _fbCurrent='';
