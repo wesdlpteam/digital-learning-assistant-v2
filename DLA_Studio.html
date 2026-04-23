@@ -1455,51 +1455,95 @@ async function regenSingleSug(entryIdx, sugIdx){
 
   const entry = DATA[entryIdx];
   const others = getSugs(entry).filter((_,i)=>i!==sugIdx).map(s=>sugTool(s)).join(', ');
+  const isStem = sugIdx === 5;
 
-  // Use existing audit stats to find underutilised tools — no rescan needed
-  const stats = computeStats();
-  const usedTools = new Set(stats.sorted.map(s => s.name.toLowerCase()));
-  const allApproved = ['Microsoft M365','Beebots','Sphero','Lego Spike','Micro:bits','CoDrone','Makey Makey','3D Printers','ClassVR','Merge Cubes','Green Screen','Podcast Equipment','iPads','Seesaw','Canva','Book Creator','Padlet','GarageBand','ScratchJR','Stop Motion Studio','ChatterPix Kids','iMovie','Puppet Pals','Adobe Express','Google Maps','Google Earth','Field Guide to Victoria','Sky Map','Geoboard','Clickview','Epic','PicCollage','Brushes Redux','Word Clouds ABCya','Sketchbook','Explain Everything','Freeform','Delightex','Kahoot','Tinkercad','Minecraft Education'];
-  const othersLower = (others||'').toLowerCase();
-  // Tools not yet used at all come first, then lowest usage from stats
-  const statsMap = Object.fromEntries(stats.sorted.map(s => [s.name.toLowerCase(), s.count]));
-  const underutilised = allApproved
-    .filter(t => !othersLower.includes(t.toLowerCase()))
-    .sort((a,b) => (statsMap[a.toLowerCase()]||0) - (statsMap[b.toLowerCase()]||0))
+  // Age-appropriate tools for this unit's year level
+  const ageAppropriate = getAgeAppropriateTools(entry.yl);
+  const constraintBlock = buildToolConstraints(entry.yl);
+
+  // Find overused tools (>13 uses) and underused tools (≤2 uses)
+  const freq = {};
+  DATA.forEach(e => {
+    getSugs(e).forEach(s => {
+      const t = normaliseToolName((s && s.t ? s.t.trim() : ''));
+      if(t) freq[t] = (freq[t] || 0) + 1;
+    });
+  });
+  const overused = Object.entries(freq).filter(([t,c]) => c > 13).map(([t])=>t);
+  // Underused AND age-appropriate (so we don't suggest them if they're wrong for the year)
+  const ageAppropriateLower = ageAppropriate.map(t=>t.toLowerCase());
+  const underused = Object.entries(freq)
+    .filter(([t,c]) => c <= 2 && ageAppropriateLower.includes(t.toLowerCase()))
+    .sort((a,b)=>a[1]-b[1])
     .slice(0, 8)
-    .join(', ');
+    .map(([t,c])=>`${t} (${c}x)`);
+
+  // Also add any age-appropriate tools that are NEVER used
+  const neverUsed = ageAppropriate.filter(t => !freq[t]).slice(0, 6);
+
+  const othersLower = (others || '').toLowerCase();
+  const stemInstruction = isStem ? `
+THIS IS SUGGESTION #6 — IT MUST BE A STEM DESIGN CYCLE ACTIVITY using the cycle: Empathise → Define → Ideate → Prototype → Test. Use a hands-on maker/robotics tool that is age-appropriate.` : '';
 
   const prompt = `You are a Digital Learning Coach at Wesley College generating a fresh technology suggestion for an IB PYP unit.
 
-Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${entry.plannerText?`\nPlanner: ${entry.plannerText}`:''}
+Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${entry.plannerText?`\nPlanner: ${entry.plannerText.slice(0, 400)}`:''}
 Tools already used in this unit (do not repeat): ${others||'none'}
 
-APPROVED TOOLS ONLY (Microsoft Teams for Year 4+ only): ${allApproved.join(', ')}.
+${constraintBlock}
+${stemInstruction}
 
-PRIORITY: These tools are currently underutilised across the library — strongly prefer one of these if it genuinely connects to the unit: ${underutilised}.
+OVERUSED TOOLS (avoid unless perfect fit — already appears 14+ times across library): ${overused.length ? overused.join(', ') : '(none)'}
+UNDERUSED TOOLS for this year level (PREFER one of these if it fits): ${underused.length ? underused.join(', ') : '(none below threshold)'}
+NEVER-USED age-appropriate tools (fresh ideas): ${neverUsed.length ? neverUsed.join(', ') : '(all in use)'}
 
-Generate ONE fresh suggestion.
+Generate ONE fresh suggestion that is genuinely age-appropriate for ${entry.yl} and connects to this unit's theme.
 ${SUGGESTION_STYLE}
+
 Return ONLY JSON: {"t":"Tool Name","d":"2-3 vivid sentences connecting to this unit."}`;
+
   try{
     let newSug = null;
-    let dupedTool = null;
-    for(let attempt=0; attempt<2; attempt++){
-      const retryNote = attempt>0 ? `\n\nRETRY: Your previous response used "${dupedTool}" which is already used in this unit. Pick a DIFFERENT tool that is NOT in the "tools already used" list.` : '';
+    let lastIssue = null;
+    for(let attempt=0; attempt<3; attempt++){
+      let retryNote = '';
+      if(lastIssue === 'dupe') retryNote = `\n\nRETRY: Previous response used a tool already in this unit. Pick DIFFERENT tool NOT in: ${others}.`;
+      else if(lastIssue === 'age') retryNote = `\n\nRETRY: Previous response proposed a tool NOT age-appropriate for ${entry.yl}. You MUST pick from: ${ageAppropriate.join(', ')}.`;
+      else if(lastIssue === 'unavailable') retryNote = `\n\nRETRY: Previous response proposed a tool Wesley does NOT have. Pick a different tool.`;
+
       const raw = await callAI([{role:'user',parts:[{text:prompt+retryNote}]}], null, OPENAI_FAST_MODEL);
       const clean = raw.replace(/```json|```/g,'').trim();
       const si = clean.indexOf('{'), ei = clean.lastIndexOf('}');
       if(si===-1||ei===-1) throw new Error('No JSON');
       const parsed = JSON.parse(clean.slice(si, ei+1));
       if(!parsed.t||!parsed.d) throw new Error('Invalid');
+
+      // Check duplicate
       if(wouldDupeInEntry(entry, parsed.t, sugIdx)){
-        dupedTool = parsed.t;
+        lastIssue = 'dupe';
+        continue;
+      }
+      // Check availability (Wesley-specific)
+      const toolLower = normaliseToolName(parsed.t).toLowerCase();
+      if(NOT_AVAILABLE_AT_WESLEY.some(na => na.toLowerCase() === toolLower)){
+        lastIssue = 'unavailable';
+        continue;
+      }
+      // Check age-appropriateness
+      if(!isToolAgeAppropriate(parsed.t, entry.yl)){
+        lastIssue = 'age';
         continue;
       }
       newSug = parsed;
       break;
     }
-    if(!newSug) throw new Error(`AI kept proposing "${dupedTool}" which is already in this unit — try again or use 💬 feedback`);
+    if(!newSug){
+      const problem = lastIssue === 'age' ? 'AI kept proposing tools not age-appropriate' :
+                      lastIssue === 'dupe' ? 'AI kept proposing tools already in this unit' :
+                      lastIssue === 'unavailable' ? 'AI kept proposing tools Wesley does not have' :
+                      'AI failed after 3 attempts';
+      throw new Error(`${problem} — try 💬 feedback with a specific tool name`);
+    }
     const sugs = [...getSugs(DATA[entryIdx])];
     recordChange(entryIdx, sugs, [...sugs.slice(0,sugIdx), newSug, ...sugs.slice(sugIdx+1)]);
     DATA[entryIdx].s[sugIdx] = newSug;
@@ -1564,26 +1608,62 @@ async function applySugFeedbackDirect(uid, entryIdx, sugIdx){
   const entry = DATA[entryIdx];
   const sug = getSugs(entry)[sugIdx];
   const others = getSugs(entry).filter((_,i)=>i!==sugIdx).map(s=>sugTool(s)).join(', ');
+  const isStem = sugIdx === 5;
 
   sendBtn.disabled = true;
   sendBtn.textContent = 'Thinking\u2026';
   startProgress();
   resultEl.innerHTML = '';
 
+  // Age & availability constraints
+  const ageAppropriate = getAgeAppropriateTools(entry.yl);
+  const constraintBlock = buildToolConstraints(entry.yl);
+
+  // Platform detection from the instruction
+  const { platform, contextBlock: platformContext } = detectPlatformContext(instruction, entry.yl);
+
+  // Overused / underused awareness
+  const freq = {};
+  DATA.forEach(e => {
+    getSugs(e).forEach(s => {
+      const t = normaliseToolName((s && s.t ? s.t.trim() : ''));
+      if(t) freq[t] = (freq[t] || 0) + 1;
+    });
+  });
+  const overused = Object.entries(freq).filter(([t,c]) => c > 13).map(([t])=>t);
+  const ageAppropriateLower = ageAppropriate.map(t=>t.toLowerCase());
+  const underused = Object.entries(freq)
+    .filter(([t,c]) => c <= 2 && ageAppropriateLower.includes(t.toLowerCase()))
+    .sort((a,b)=>a[1]-b[1])
+    .slice(0, 8)
+    .map(([t,c])=>`${t} (${c}x)`);
+
+  const stemInstruction = isStem ? `
+NOTE: This is suggestion #6 — the STEM Design Cycle slot. Every proposal must frame a hands-on Empathise → Define → Ideate → Prototype → Test activity using an age-appropriate maker/robotics tool.` : '';
+
   const prompt = `You are a Digital Learning Coach at Wesley College improving a technology suggestion for an IB PYP unit.
 
-Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${entry.plannerText?`\nPlanner: ${entry.plannerText}`:''}
+Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${entry.plannerText?`\nPlanner: ${entry.plannerText.slice(0, 400)}`:''}
 Current suggestion: ${sugTool(sug)} \u2014 ${sugDesc(sug)}
 Other tools already in this unit (do not repeat): ${others||'none'}
+${stemInstruction}
 
-APPROVED TOOLS: Microsoft M365, Beebots, Sphero, Lego Spike, Micro:bits, CoDrone, Makey Makey, 3D Printers, ClassVR, Merge Cubes, Green Screen, Podcast Equipment, iPads, Seesaw, Canva, Book Creator, Padlet, GarageBand, ScratchJR, Stop Motion Studio, ChatterPix Kids, iMovie, Puppet Pals, Adobe Express, Google Maps, Google Earth, Field Guide to Victoria, Sky Map, Geoboard, Clickview, Epic, PicCollage, Brushes Redux, Word Clouds ABCya, Sketchbook, Explain Everything, Freeform, Delightex, Kahoot, Tinkercad, Minecraft Education.
+${constraintBlock}
+${platformContext}
+
+OVERUSED TOOLS across library (avoid unless teacher specifically names them): ${overused.length ? overused.join(', ') : '(none)'}
+UNDERUSED age-appropriate tools (prefer these when suitable): ${underused.length ? underused.join(', ') : '(none)'}
+
 ONE TOOL PER SUGGESTION — never combine tools in the "t" field.
 
 Teacher's instruction: "${instruction}"
 
 RESPONSE RULES:
-- If the teacher names a specific tool (e.g. "change to Canva", "use Minecraft"), generate 3 DIFFERENT activity ideas all using that specific tool. Each idea should connect to the unit in a different way.
-- If the teacher gives a general instruction (e.g. "make it more hands-on", "connect to the provocation"), generate 3 options using 3 different tools.
+- If the teacher names a specific tool (e.g. "change to Canva", "use Minecraft"):
+  → FIRST check if that tool is age-appropriate for ${entry.yl}. If it is NOT, your 3 options must all propose age-appropriate alternatives and politely explain why the requested tool doesn't fit this year level.
+  → If the tool IS age-appropriate, generate 3 DIFFERENT activity ideas all using that specific tool.
+- If the teacher gives a general instruction (e.g. "make it more hands-on", "connect to the provocation"), generate 3 options using 3 DIFFERENT tools, each one age-appropriate for ${entry.yl}.
+- Every tool must be in the age-appropriate list above.
 - Every description must connect specifically to this unit's content — nothing generic.
 ${SUGGESTION_STYLE}
 
@@ -1598,13 +1678,39 @@ Return ONLY a JSON array of exactly 3 suggestions:
     const rawSugs = JSON.parse(clean.slice(si, ei+1));
     if(!rawSugs.length) throw new Error('Empty response');
 
-    // Filter out any option that would duplicate another slot in this unit
-    const suggestions = rawSugs.filter(s => s && s.t && !wouldDupeInEntry(entry, s.t, sugIdx));
-    if(!suggestions.length) throw new Error('All options duplicate tools already in this unit \u2014 try rephrasing');
+    // Filter out: duplicates, unavailable tools, age-inappropriate tools
+    const filtered = [];
+    const rejected = [];
+    rawSugs.forEach(s => {
+      if(!s || !s.t) return;
+      if(wouldDupeInEntry(entry, s.t, sugIdx)){ rejected.push({t:s.t, reason:'already in this unit'}); return; }
+      const toolLower = normaliseToolName(s.t).toLowerCase();
+      if(NOT_AVAILABLE_AT_WESLEY.some(na => na.toLowerCase() === toolLower)){
+        rejected.push({t:s.t, reason:'not available at Wesley'}); return;
+      }
+      if(!isToolAgeAppropriate(s.t, entry.yl)){
+        rejected.push({t:s.t, reason:`not age-appropriate for ${entry.yl}`}); return;
+      }
+      filtered.push(s);
+    });
 
-    window['_fbsugs_'+uid] = suggestions;
+    if(!filtered.length){
+      const rejectedNote = rejected.length
+        ? `All ${rejected.length} options were rejected:\n${rejected.map(r=>`• ${r.t} (${r.reason})`).join('\n')}`
+        : 'All options duplicate tools already in this unit';
+      throw new Error(rejectedNote + '\n\nTry rephrasing — e.g. name a different tool or ask for "any age-appropriate alternative".');
+    }
 
-    resultEl.innerHTML = suggestions.map((s,i) => `
+    window['_fbsugs_'+uid] = filtered;
+
+    let rejectedBanner = '';
+    if(rejected.length){
+      rejectedBanner = `<div style="padding:8px 12px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:8px;margin-bottom:8px;font-size:11px;color:var(--gold);line-height:1.5">
+        <strong>⚠ Filtered ${rejected.length} option${rejected.length!==1?'s':''}:</strong> ${rejected.map(r => `${esc(r.t)} (${r.reason})`).join(' · ')}
+      </div>`;
+    }
+
+    resultEl.innerHTML = rejectedBanner + filtered.map((s,i) => `
       <div style="padding:10px 14px;background:#0a1a0a;border:1px solid #1e3a1e;border-radius:8px;margin-bottom:8px">
         <div style="display:flex;align-items:flex-start;gap:8px">
           <div style="flex:1">
@@ -1618,10 +1724,10 @@ Return ONLY a JSON array of exactly 3 suggestions:
 
   }catch(e){
     const isParseError = e.message.includes('JSON') || e.message.includes('No suggestions') || e.message.includes('Empty');
-    const hint = isParseError
+    const msg = isParseError
       ? 'AI returned an unexpected format. Try being more specific, e.g. "change the tool to Canva" or "make this about the provocation activity".'
-      : esc(e.message);
-    resultEl.innerHTML = `<div style="font-size:12px;color:#f87171;line-height:1.5">\u2717 ${hint}</div>`;
+      : e.message.replace(/\n/g, '<br>');
+    resultEl.innerHTML = `<div style="font-size:12px;color:#f87171;line-height:1.5">\u2717 ${msg}</div>`;
   }
   stopProgress();
   sendBtn.disabled = false;
@@ -3069,6 +3175,128 @@ ORDERING: Put the most innovative, exciting, or unexpected suggestion FIRST (slo
 MINECRAFT EDUCATION URLS: When suggesting Minecraft Education, use the tool name "Minecraft Education" (not the lesson name). Include the direct lesson URL in the description — e.g. "Students explore coral reef ecosystems… (https://education.minecraft.net/en-us/lessons/ocean-heroes)". Do NOT tell teachers to search the website.
 
 PODCASTING RULE: Whenever a suggestion involves podcasting, audio recording, audio storytelling, or audio interviews, ALWAYS use the tool name "Adobe Express Podcasting" — not GarageBand, not "Podcast Equipment", not generic "Adobe Express". Adobe Express Podcasting is the school's preferred podcasting platform. Always include the URL https://podcast.adobe.com in the description.`;
+
+// ========== CENTRALISED TOOL CONSTRAINTS — used by every AI suggestion path ==========
+
+// Tools that exist in the approved list but Wesley does NOT have physical/software access to.
+// AI must never suggest these. Edit this list when hardware/software inventory changes.
+const NOT_AVAILABLE_AT_WESLEY = [];
+
+const TOOL_AGE_GUIDE = `TOOL AGE GUIDE (HARD RULE — match Australian year levels):
+Prep = ages 5-6 | Year 1 = 6-7 | Year 2 = 7-8 | Year 3 = 8-9 | Year 4 = 9-10 | Year 5 = 10-11 | Year 6 = 11-12
+- Prep-Year 2 ONLY: Bee-Bots, ScratchJR, ChatterPix Kids, Puppet Pals, Sphero Indi
+- Year 3+: Sphero BOLT, Lego Spike Essential, Micro:bits, Scratch, Stop Motion Studio, Adobe Express, Canva, Book Creator, Padlet, Kahoot, Tinkercad, Explain Everything
+- Year 4+: Microsoft Teams, Lego Spike Prime, CoDrone EDU, Minecraft Education (with scaffolding for Year 4)
+- Year 5+: 3D Printers, Python-based coding
+- All year levels: Seesaw, Epic, GarageBand, iMovie, PicCollage, Google Maps, Google Earth, Clickview, Green Screen, iPads, Laptops, Digital Cameras, Freeform, Sketchbook, Brushes Redux
+NEVER propose a tool for a year level below its minimum age.`;
+
+// Map year level string → numeric year for age filtering
+function getYearNumber(yearLevel){
+  const s = String(yearLevel || '').toLowerCase().trim();
+  if(s.includes('prep') || s === 'p' || s === 'f' || s.includes('foundation')) return 0;
+  const m = s.match(/\d+/);
+  return m ? parseInt(m[0], 10) : 0;
+}
+
+// Returns the approved tools that are age-appropriate AND available at Wesley,
+// filtered by the unit's year level. Used to give the AI a constrained shortlist.
+function getAgeAppropriateTools(yearLevel){
+  const yr = getYearNumber(yearLevel);
+  // Build from the master list, annotated with min-year
+  // minYr = 0 means Prep & up
+  const ALL = [
+    // All ages
+    {n:'Seesaw',      min:0}, {n:'Epic',         min:0}, {n:'GarageBand',   min:0},
+    {n:'iMovie',      min:0}, {n:'PicCollage',   min:0}, {n:'Google Maps',  min:0},
+    {n:'Google Earth',min:0}, {n:'Clickview',    min:0}, {n:'Green Screen', min:0},
+    {n:'iPads',       min:0}, {n:'Freeform',     min:0}, {n:'Sketchbook',   min:0},
+    {n:'Brushes Redux',min:0},{n:'Delightex',    min:0}, {n:'Merge Cubes',  min:0},
+    {n:'Makey Makey', min:0}, {n:'Word Clouds ABCya', min:0},
+    {n:'Field Guide to Victoria', min:0}, {n:'Sky Map', min:0},
+    {n:'Geoboard',    min:0}, {n:'Adobe Express Podcasting', min:0},
+    // Prep-Yr2 ONLY (max:2)
+    {n:'Bee-Bots',      min:0, max:2},
+    {n:'ScratchJR',     min:0, max:2},
+    {n:'ChatterPix Kids',min:0, max:2},
+    {n:'Puppet Pals',   min:0, max:2},
+    {n:'Sphero Indi',   min:0, max:2},
+    // Year 3+
+    {n:'Sphero BOLT',      min:3},
+    {n:'Lego Spike Essential', min:3},
+    {n:'Micro:bit',        min:3},
+    {n:'Scratch',          min:3},
+    {n:'Stop Motion Studio', min:3},
+    {n:'Adobe Express',    min:3},
+    {n:'Canva',            min:3},
+    {n:'Book Creator',     min:3},
+    {n:'Padlet',           min:3},
+    {n:'Kahoot',           min:3},
+    {n:'Tinkercad',        min:3},
+    {n:'Explain Everything', min:3},
+    // Year 4+
+    {n:'Microsoft Teams',   min:4},
+    {n:'Microsoft Word',    min:4},
+    {n:'Microsoft PowerPoint', min:4},
+    {n:'Microsoft OneNote', min:4},
+    {n:'Lego Spike Prime',  min:4},
+    {n:'CoDrone EDU',       min:4},
+    {n:'Minecraft Education',min:4},
+    // Year 5+
+    {n:'3D Printers', min:5},
+  ];
+  return ALL
+    .filter(t => yr >= t.min && (t.max === undefined || yr <= t.max))
+    .filter(t => !NOT_AVAILABLE_AT_WESLEY.some(na => na.toLowerCase() === t.n.toLowerCase()))
+    .map(t => t.n);
+}
+
+// Check if a single tool is age-appropriate for a given year level
+function isToolAgeAppropriate(toolName, yearLevel){
+  const appropriate = getAgeAppropriateTools(yearLevel).map(t => t.toLowerCase());
+  const normalised = normaliseToolName(toolName).toLowerCase();
+  if(appropriate.includes(normalised)) return true;
+  // Also accept partial matches for compound names
+  return appropriate.some(a => normalised.includes(a) || a.includes(normalised));
+}
+
+// Build a constraint block to inject into every regen/feedback prompt
+function buildToolConstraints(yearLevel){
+  const appropriate = getAgeAppropriateTools(yearLevel);
+  const yr = getYearNumber(yearLevel);
+  const yrLabel = yr === 0 ? 'Prep' : `Year ${yr}`;
+  const unavailable = NOT_AVAILABLE_AT_WESLEY.length
+    ? `\n\nTOOLS NOT AVAILABLE AT WESLEY (never suggest these): ${NOT_AVAILABLE_AT_WESLEY.join(', ')}`
+    : '';
+  return `${TOOL_AGE_GUIDE}
+
+THIS UNIT IS ${yrLabel.toUpperCase()} — you may ONLY choose from these age-appropriate tools:
+${appropriate.join(', ')}${unavailable}
+
+CRITICAL: If you propose a tool NOT in the list above for this year level, your answer is rejected. Check your chosen tool against the list before responding.`;
+}
+
+// Detect if an instruction references a specific platform/library (Minecraft, Micro:bit, etc)
+// and return its injected context. Shared between regen, feedback, and bulk AI.
+function detectPlatformContext(text, yearLevel){
+  if(!text) return { platform: null, contextBlock: '' };
+  const platforms = (typeof buildKnownPlatforms === 'function') ? buildKnownPlatforms() : [];
+  const platform = platforms.find(p => p.match.test(text));
+  if(!platform) return { platform: null, contextBlock: '' };
+  // Age-gate the platform itself
+  const ageOK = isToolAgeAppropriate(platform.name, yearLevel);
+  if(!ageOK){
+    return {
+      platform,
+      contextBlock: `\n\nAGE CHECK: The teacher mentioned ${platform.name}, but this tool is NOT age-appropriate for ${yearLevel}. You MUST politely decline to use ${platform.name} and propose age-appropriate alternatives instead.`
+    };
+  }
+  const ctx = typeof platform.context === 'string' ? platform.context : platform.context;
+  return {
+    platform,
+    contextBlock: `\n\nDETECTED PLATFORM: ${platform.name}\n${ctx}\nWhen suggesting ${platform.name}, name the specific lesson from the library above in every proposal. Only propose lessons whose minimum age allows this year level.`
+  };
+}
 
 const GAS_RULES = `You are an Expert Digital Learning Coach at Wesley College (MICROSOFT school).
 APPROVED TOOLS ONLY:
