@@ -27,8 +27,8 @@
         "d": "Students use PicCollage on iPads to visually sequence the beginning, middle, and end of a familiar or original story using photos of their play, drawings, or props. This supports understanding of story structure and provides a visual, tactile way to share stories with peers."
       },
       {
-        "t": "Story Path Adventure Maps",
-        "d": "Students design and build 3D story maps using cardboard, recycled materials, fabric, and clay to represent the settings and events of a familiar or original story. They then plan a simple journey for a Bee-Bot or Sphero Indi robot to travel through the story, physically moving from scene to scene. Students decorate each stop with hand-crafted props, characters, and scenery, and record their own voices retelling each part of the story using iPads. As the robot reaches each location, students play the corresponding audio clip, blending physical making, robotics, and digital storytelling to bring their narrative to life."
+        "t": "Story Adventure Maps with Bee-Bots",
+        "d": "Students work in teams to retell a familiar story or create their own by designing and building a large, interactive adventure map using recycled cardboard, fabric scraps, popsticks, and clay for key story locations and characters. They then program a Bee-Bot to travel through the map, stopping at each crafted scene to act out or verbally narrate that part of the story. The project follows the Design Cycle: students imagine their story, plan their map and Bee-Bot path, create their physical scenes, test and iterate their Bee-Bot programming, and finally share their interactive storytelling journey with peers."
       }
     ],
     "audited": true,
@@ -63,8 +63,8 @@
         "d": "Guide students to create vibrant visual collages in PicCollage representing the different roles and connections in their school community, using photos, stickers, and drawings. These can be printed or shared digitally to celebrate community diversity."
       },
       {
-        "t": "Community Helpers Interactive Puppets",
-        "d": "Students select a community role found within their school (e.g., teacher, gardener, nurse, principal) and use recycled materials, fabric scraps, cardboard tubes, and craft supplies to design and build hand or stick puppets representing these roles. Next, using simple motors (e.g., battery-powered wiggle motors or Sphero Indi as a puppet mover), students integrate basic movement into their puppets or puppet stages. Working in small groups, students collaboratively script and perform short puppet shows that demonstrate how each role helps the school community. The design cycle is followed: students empathize by interviewing staff, define their puppet's features, ideate with sketches, prototype with materials, test movement, and present their shows to peers and staff, reflecting on feedback and the importance of each role."
+        "t": "Community Helper Wearable Tech Badges",
+        "d": "Students choose a role from the school community (e.g., teacher, gardener, nurse, principal) and design a wearable 'badge' representing that role using recycled cardboard, felt, and craft materials. Using simple LED sticker circuits (like Chibitronics) or Makey Makey, students integrate basic lights or interactive elements into their badges (e.g., a nurse badge that lights up when pressed). Students follow the Design Cycle: empathise by interviewing staff about their roles, define key symbols or tools, ideate badge designs, prototype with craft and tech, test the badges with peers, and reflect on how their wearable celebrates that community member. The project blends creative crafting, basic circuitry, and digital thinking, culminating in a 'Community Parade' where students wear and explain their interactive badges."
       }
     ],
     "audited": true,
@@ -99,8 +99,8 @@
         "d": "Have students use ScratchJr to visually sequence the steps of a science experiment (e.g., the process of melting ice or rolling objects down ramps). They can animate simple characters to model 'predict, test, observe, record,' reinforcing the scientific process through coding and storytelling."
       },
       {
-        "t": "Weather Wonder Machines",
-        "d": "Prep students work in teams to design and build imaginative 'weather machines' using recycled materials (cardboard, plastic bottles, fabric scraps, popsticks, etc.) that visually demonstrate a chosen weather phenomenon (rain, wind, snow, or sun). They integrate a simple programmable device, such as a Sphero Indi or Bee-Bot, to trigger a movement or effect (e.g., rolling 'rain clouds', spinning 'windmills', or popping 'sun rays'). Students use the Design Cycle: they investigate how weather works, plan their machine, build and test prototypes, program the device to activate their weather effect, and share their findings and process with the class. This project encourages scientific inquiry, creative engineering, and hands-on problem solving while connecting digital and physical making."
+        "t": "Weather Machine Invention Lab",
+        "d": "Prep students work in teams to invent and build their own 'weather machines' that demonstrate a weather phenomenon (like rain, wind, or snow) using recycled materials, cardboard, popsticks, fabric, and clay. For example, they might create a rain simulator with sponges and water droppers, or a wind machine with pinwheels and fans. Students use iPads with the Tayasui Sketches app to digitally design their machine first, then physically construct it. After building, they record short videos explaining how their machine works and what weather it represents, highlighting their predictions and observations. The project follows the Design Cycle: students ask questions about weather, imagine and plan their invention, create prototypes, test and observe the results, and share their conclusions with the class."
       }
     ],
     "audited": true,
@@ -145,8 +145,8 @@
         "d": "Guide students to code simple animations in ScratchJr that show two characters navigating a playground scenario?such as sharing, resolving a conflict, or inviting someone to play?demonstrating how positive relationships impact wellbeing. Students can narrate their stories and share them with peers."
       },
       {
-        "t": "Friendship Feelings Garden",
-        "d": "Students collaboratively design and build a large 3D 'Feelings Garden' using recycled cardboard, coloured paper, fabric, and clay to create flowers, trees, and pathways, each representing different emotions and positive relationship actions (e.g., kindness, sharing, listening). Using Sphero Indi cars, students program simple routes that travel through the garden, stopping at flowers or trees to trigger pre-recorded messages (using iPads and QR codes) about friendship scenarios or wellbeing tips. The project follows the Design Cycle: students empathise by discussing emotions, define which feelings or actions to represent, ideate garden layouts, prototype with physical materials, test their Sphero Indi journeys, and reflect on how the garden helps them understand and celebrate healthy relationships."
+        "t": "Emotion Garden: Interactive Wellbeing Flowers",
+        "d": "Students will design and build large, 3D 'wellbeing flowers' using cardboard, recycled materials, and craft supplies. Each petal represents a different positive friendship behaviour or feeling (e.g., kindness, sharing, listening). Students embed simple tech, such as Makey Makey or a talking button, into the center of each flower. When a petal is touched or pressed, it triggers a pre-recorded message or sound (recorded by students) describing that behaviour or sharing a friendship tip. The class collaborates to arrange their flowers into an interactive 'Emotion Garden', which can be explored by classmates and visitors. This project guides Preps through the Design Cycle: empathising about friendship needs, ideating petal messages, prototyping with materials, integrating tech, and sharing their garden to foster conversation about positive relationships and wellbeing."
       }
     ],
     "audited": true,
