@@ -645,9 +645,35 @@
     "th": "How the World Works",
     "ci": "Humans use their understanding of scientific principles to take action.",
     "lo": "The work of scientists; The process of learning; How science brings about new understandings and changes",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "ClassVR & Merge Cubes",
+        "d": "Launch students into an immersive 'Scientist's Lab' experience using ClassVR headsets and Merge Cubes. Students can virtually manipulate molecules, observe states of matter, and simulate energy transfer, then record their discoveries as short video reflections using the iPad camera. This app smash brings abstract scientific principles to life and lets students 'take action' by sharing their findings with the community."
+      },
+      {
+        "t": "Canva",
+        "d": "Students create dynamic infographics or animated posters in Canva to showcase the biography and scientific achievements of a chosen scientist, highlighting how their understanding of scientific principles led to real-world action. These can be displayed digitally or printed for a science fair, directly connecting to the unit's focus on scientists' impact."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Have students document their own science experiments and investigations by creating interactive digital science journals in Book Creator. They can include photos, diagrams, voice recordings, and reflections on how they used scientific principles to solve problems or take action, mirroring the scientific method explored in the unit."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Use Seesaw for students to capture and share their science fair project process: from initial questions, hypothesis, experiment setup, to results and reflections. Teachers and peers can provide feedback, fostering a collaborative inquiry community and reinforcing the action-oriented nature of scientific learning."
+      },
+      {
+        "t": "Minecraft: Area and Volume",
+        "d": "Students apply their understanding of scientific measurement by designing and solving real-world area and volume challenges in Minecraft Education. This lesson (https://education.minecraft.net/en-us/lessons/area-and-volume-2) lets students experiment with scale and space, linking directly to the unit's focus on scientific principles and their applications.",
+        "url": "https://education.minecraft.net/en-us/lessons/area-and-volume-2"
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "For the Design Cycle STEM project, students use Lego Spike Prime to design and prototype a device that demonstrates a scientific principle (e.g., a heat transfer model, a simple machine, or a fair test experiment). They follow the full design process: investigate, plan, create, test, and improve, then present their working model and learning journey to the class, embodying the unit's central idea of using scientific understanding to take action."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit engages Year 3 students in exploring how humans use scientific principles to take action, focusing on the work of scientists, the process of scientific learning, and how science brings about new understandings. Students conduct hands-on experiments, research scientists, create science fair projects, and connect their learning to real-world issues and the UN Sustainable Development Goals."
   },
   {
     "ca": "Elsternwick",
@@ -655,9 +681,34 @@
     "th": "Sharing the Planet",
     "ci": "Adaptation and sustainability ensure the survival of living things in changing environments.",
     "lo": "Adaptations and structural features of living things; Roles of living things in an ecosystem; Actions that benefit or harm ecosystems",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "ClassVR & Merge Cubes",
+        "d": "Students create and narrate immersive 360-degree virtual field trips exploring endangered ecosystems, using ClassVR headsets and Merge Cubes to interact with 3D models of animals and their adaptations. They can record voiceovers explaining how specific adaptations help survival, directly linking to the unit's focus on adaptation and sustainability."
+      },
+      {
+        "t": "Canva",
+        "d": "Students collaboratively design digital infographics or animated posters about animal adaptations and ecosystem threats, using Canva's 'Remove Background' feature to create visually striking, information-rich presentations for their documentaries and assembly presentations."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Learners produce interactive digital books documenting their research on animal adaptations, food webs, and human impacts on ecosystems. These books can include embedded videos, audio reflections, and student-drawn diagrams, supporting multimodal learning and sharing with the school community."
+      },
+      {
+        "t": "iMovie (iPad)",
+        "d": "In teams, students script, storyboard, and film mini-documentaries about a chosen ecosystem and its endangered species, integrating interviews, voiceovers, and original footage. They use iMovie to edit and publish their work, culminating in a documentary showcase for parents and peers."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students build a collaborative digital wall to crowdsource and map global conservation actions, sharing real-world examples of sustainability efforts (aligned with UN Goals 14 & 15). They can post photos, videos, and reflections from their own 'action projects' or research findings."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Design Cycle STEM Project: Students use the Design Cycle to prototype and program a robotic animal with Lego Spike Prime, engineering both physical and behavioral adaptations (e.g., camouflage, movement, defense mechanisms). They test their models in simulated habitats, iterating based on peer feedback and reflecting on how design choices support survival in changing environments."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this unit, students investigate how adaptation and sustainability ensure the survival of living things in changing environments. They explore animal adaptations, roles in ecosystems, and human impacts, culminating in team-based documentary projects, digital presentations, and action-oriented reflections aligned with UN sustainability goals."
   },
   {
     "ca": "Elsternwick",
@@ -665,9 +716,35 @@
     "th": "Where We Are in Place and Time",
     "ci": "Exploration leads to new discoveries that can shape and change society.",
     "lo": "The factors that motivate exploration (Causation); How people reflect on discoveries from the past to inform change (Change); How exploration brings about change and new understandings for people, places and society (Change)",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "ClassVR & Merge Cubes",
+        "d": "Launch an immersive 'Explorer's Museum' where students use ClassVR headsets and Merge Cubes to interact with 3D models of ships, artifacts, and maps from the First Fleet and other global explorations. Students can virtually 'handle' historical objects, triggering audio stories and facts, then record their own discoveries as digital museum guides."
+      },
+      {
+        "t": "Seesaw + Canva App Smash",
+        "d": "Students research a famous explorer or First Fleet figure, then create a dynamic infographic in Canva highlighting their motivations, discoveries, and impact. They upload their infographic to Seesaw and record an audio reflection in character, explaining how exploration shaped society from their perspective."
+      },
+      {
+        "t": "Minecraft: Historical Homes",
+        "d": "Students explore and build historically accurate homes from different eras and cultures, including those of First Nations Australians and early settlers. They reflect on how exploration and migration influenced architecture and daily life, then present their builds to the class.",
+        "url": "https://education.minecraft.net/en-us/challenges/historical-homes"
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students create interactive digital journals from the perspective of a First Fleet convict, Indigenous Australian, or explorer. They include diary entries, maps, drawings, and voice recordings to document the journey, discoveries, and societal changes brought by exploration."
+      },
+      {
+        "t": "Google Maps + Padlet",
+        "d": "Using Google Maps, students plot the routes of famous explorers and the First Fleet, pinning key events and discoveries along the way. They then collaborate on a Padlet timeline, adding images, facts, and reflections about how each journey changed society."
+      },
+      {
+        "t": "Lego Spike Prime Design Cycle Challenge",
+        "d": "In teams, students use the Design Cycle to prototype a 'Mars Exploration Rover' with Lego Spike Prime. They research the challenges of Mars exploration, design and build their rover, program it to complete a simulated mission, and present their process and discoveries, linking back to how exploration leads to new societal possibilities."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit engages students in exploring how exploration leads to new discoveries that can shape and change society, with a focus on the First Fleet, motivations for exploration, and the impact on Indigenous Australians and broader society. Students investigate historical and contemporary explorations, reflect on multiple perspectives, and create projects that connect past discoveries to future possibilities."
   },
   {
     "ca": "Elsternwick",
@@ -675,9 +752,34 @@
     "th": "Who We Are",
     "ci": "An inquiry into the nature of the self; beliefs and values; personal, physical, mental, social and spiritual health; human relationships.",
     "lo": "Lines of inquiry to be confirmed once planner is uploaded",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "ClassVR + Merge Cubes",
+        "d": "Launch students into a fully immersive empathy-building experience by having them create and narrate their own 'Resilience Journey' VR scenes. Using ClassVR headsets and Merge Cubes, students can design 3D story environments that represent personal challenges, strategies for overcoming setbacks, and moments of growth. Their peers can then 'walk through' each other's journeys, fostering deep understanding of diverse perspectives and resilience strategies."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design interactive digital posters or infographics that showcase their personal strategies for managing change, respecting others, and keeping themselves safe both online and face-to-face. These can be shared with the class and parents, and include embedded videos or voiceovers reflecting on their learning."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Have students collaboratively author a digital 'Friendology Handbook' using Book Creator, where each page features a scenario about friendship fires, growth mindset, or online safety. Students can app smash by importing illustrations from Brushes Redux or photos from the iPad Camera app."
+      },
+      {
+        "t": "Kahoot",
+        "d": "Empower students to create their own resilience and safety-themed Kahoot quizzes based on the resilience strategies, growth mindset scenarios, and Friendology rules explored in the unit. Students can host these quizzes for peers and even families, reinforcing learning through playful competition."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Facilitate ongoing reflection and peer feedback by having students document their personal growth journeys in Seesaw journals. They can upload videos, audio reflections, and digital artifacts from throughout the unit, tagging specific strategies they've used to overcome challenges or support friends."
+      },
+      {
+        "t": "Makey Makey",
+        "d": "STEM Design Cycle Project: Challenge students to prototype a 'Feelings Alert System' using Makey Makey and everyday materials. Students design and build a simple device that can signal when someone is feeling uncomfortable or needs support (e.g., a touchpad that plays a supportive message or lights up). They follow the Design Cycle: empathize (identify needs), ideate, prototype, test, and reflect, directly linking to personal safety and emotional awareness."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how individuals respond to challenges and setbacks, develop resilience, and manage change, with a strong focus on personal safety (both online and face-to-face), friendship skills, and growth mindset. Students engage in reflective journals, scenario-based activities, collaborative projects, and specialist links (e.g., music, PE, art, drama) to build strategies for wellbeing and respectful relationships."
   },
   {
     "ca": "Elsternwick",
@@ -685,9 +787,34 @@
     "th": "How We Express Ourselves",
     "ci": "Technology transforms how we create and share ideas.",
     "lo": "How technology expands creative possibilities; The evolution of communication tools; The impact of technology on expression",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "ClassVR + Merge Cubes",
+        "d": "Transform the classroom into an immersive digital art gallery by having students design 3D models or digital artworks that represent their personal or cultural stories using Tinkercad or Canva, then upload these creations to Merge Cubes and explore them in ClassVR. Students can record audio narrations explaining their creative process and the meaning behind their work, blending storytelling, technology, and spatial computing in a way that redefines how ideas are shared and experienced."
+      },
+      {
+        "t": "Canva",
+        "d": "Students create interactive digital posters or infographics that compare the evolution of communication tools (e.g., cave paintings, telegrams, social media), embedding short video interviews with family members about how technology has changed the way they express themselves. Posters can be shared with the school community to spark intergenerational conversations about digital expression."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Learners author a collaborative digital anthology titled 'Voices of Change,' where each student contributes a multimedia page (text, images, audio, and video) exploring how technology has enabled them to express their identity, passions, or opinions. The anthology can be published and shared with younger students as a model of positive digital citizenship and creative expression."
+      },
+      {
+        "t": "Seesaw + iPad Camera",
+        "d": "App smash Seesaw with the iPad Camera to create a 'Day in the Life of a Digital Communicator' video journal. Students document and reflect on all the ways they use technology to communicate throughout a single day, then annotate their videos with voiceovers and digital drawings in Seesaw to highlight ethical choices and cybersafety moments."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Students design and conduct a whole-school survey using Microsoft Forms to investigate how different year levels use technology to express themselves. They analyse the data in Excel, create visual representations, and present their findings to the school, sparking a discussion on ethical and creative technology use across age groups."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Design Cycle STEM Project: Students use the Design Cycle to prototype and code a 'Creative Expression Bot' with Lego Spike Prime. The bot could draw, write, or display digital messages, and students must iterate their designs to solve real-world communication challenges (e.g., how to share ideas with someone who speaks a different language or has a disability). They document their process and present their final bots in a digital showcase, reflecting on how technology transforms creative possibilities."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this unit, Year 4 students explore the central idea that technology transforms how we create and share ideas. They investigate the evolution of communication tools, ethical considerations in digital expression, and cybersafety. The unit culminates in students planning and leading technology workshops for younger students, focusing on creative, safe, and responsible use of digital platforms."
   },
   {
     "ca": "Elsternwick",
