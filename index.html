@@ -1006,11 +1006,6 @@ const us=gu(ca,yl),u=us[ui];if(!u){S.v='units';S.ui=null;R();return;}const tc=TC
 
 h+='<div class="dh" style="background:'+tc+';color:'+(TTX[u.th]||"#FFF")+'">'+'<div class="dh-wm">'+em+'</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;position:relative;z-index:1"><span class="tag-t">'+yl+'</span><span class="tag-t">'+CN[ca]+'</span></div><h2 class="dh-title" style="position:relative;z-index:1">'+u.th+'</h2><div class="dh-ci" style="position:relative;z-index:1">“'+u.ci+'”</div></div>';
 
-h+='<div class="loi-box"><div class="loi-label">Lines of Inquiry</div>';
-var lois=u.lo.split(/[;•]/).filter(l=>l.trim());
-lois.forEach((l,i)=>{l=l.trim();if(l)h+='<div class="loi-item"><span class="loi-num" style="color:'+tc+'">0'+(i+1)+'</span>'+l+'</div>';});
-h+='</div>';
-
 var curList=u.s;
 var mainSugs=curList.slice(0,5);
 var stemSug=curList.length>=6?curList[5]:null;
@@ -1042,6 +1037,11 @@ if(stemSug && stemSug.t && stemSug.t.indexOf("Planner Needed")===-1){
   h+='<div class="sg-fb" style="margin-top:16px;padding-top:16px;border-top:1px solid #333"><button class="sg-used" onclick="markUsed('+_stemUsi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+_stemFbi+')" class="sg-fb-btn">💬 Feedback</button><button class="sg-react-btn sg-react-up" onclick="reactFB('+_stemFbi+',\'up\',this)">👍</button><button class="sg-react-btn" onclick="reactFB('+_stemFbi+',\'down\',this)">👎</button></div></div>';
   h+='</div></div></div>';
 }
+
+h+='<div class="loi-box"><div class="loi-label">Lines of Inquiry</div>';
+var lois=u.lo.split(/[;•]/).filter(l=>l.trim());
+lois.forEach((l,i)=>{l=l.trim();if(l)h+='<div class="loi-item"><span class="loi-num" style="color:'+tc+'">0'+(i+1)+'</span>'+l+'</div>';});
+h+='</div>';
 
 mainSugs.forEach((s,si)=>{
 if(s.t.indexOf("Planner Needed")!==-1){var tmsg=encodeURIComponent("Hi Nathan, I have the UOI planner for "+yl+" "+u.th+" ("+CN[ca]+"). How should I send it to you?");h+='<div class="sg-pending"><div class="sg-pending-icon">📋</div><div class="sg-pending-title">Planner Not Yet Uploaded</div><div class="sg-pending-msg">Specific technology suggestions will be generated once the UOI planner for this unit is provided.</div><a href="https://teams.microsoft.com/l/chat/0/0?users=nathan.benn@wesleycollege.edu.au&message='+tmsg+'" target="_blank" rel="noopener noreferrer" class="sg-pending-cta">💬 Message Nathan Benn from DLP on Teams</a></div>';return;}
