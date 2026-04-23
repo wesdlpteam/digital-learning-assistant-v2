@@ -6,7 +6,7 @@
 <title>DLA Studio — Wesley College</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d0d0d'/%3E%3Crect width='32' height='32' rx='8' fill='none' stroke='%23D4A017' stroke-width='1.5' opacity='0.4'/%3E%3Ctext x='16' y='23' font-family='system-ui,sans-serif' font-size='18' font-weight='900' fill='%23D4A017' text-anchor='middle' letter-spacing='-1'%3EW%3C/text%3E%3Ccircle cx='25' cy='7' r='4' fill='%23C5E84A'/%3E%3C/svg%3E">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');:root{--bg:#0d0d0d;--card:#1a1a1a;--card2:#222222;--border:#2e2e2e;--text:#ffffff;--dim:#888888;--gold:#D4A017;--lime:#C5E84A;--purple:#9B8BFF;--blue:#60B8F0;--orange:#F5A623;--salmon:#FF8080;--green:#52B95C;--olive:#2a3010;--mint:#C5E84A;--vivid:#C5E84A;--forest:#0d0d0d;--cream:#ffffff;--yellow:#D4A017;}*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;font-size:15px;line-height:1.6;zoom:0.9}#bg-canvas{display:none}#sidebar{width:240px;background:#111;border-right:1px solid var(--border);position:fixed;top:0;left:0;height:100vh;display:none;flex-direction:column;padding:28px 20px;z-index:50}body.app-mode #sidebar{display:flex}body.app-mode #main{margin-left:240px}#logo{font-size:12px;font-weight:900;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:40px}.nav-item{padding:11px 14px;border-radius:10px;color:var(--dim);cursor:pointer;margin-bottom:4px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;transition:all 0.12s}.nav-item:hover{color:var(--text);background:var(--card2)}.nav-item.active{background:var(--gold);color:#111}#sidebar-footer{margin-top:auto;padding-top:24px;border-top:1px solid var(--border)}#main{min-height:100vh;background:var(--bg)}.screen{display:none;min-height:100vh;align-items:center;justify-content:center;padding:40px 20px}.screen.active{display:flex;flex-direction:column}.screen-inner{width:100%;max-width:460px}#app-content{display:none;padding:44px}body.app-mode #app-content{display:block}#status-bar{font-size:12px;color:var(--dim);text-align:right;min-height:18px;margin-bottom:16px;font-weight:500;letter-spacing:.3px}#global-progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:9999;background:transparent;pointer-events:none}#global-progress-bar{height:100%;width:0%;background:var(--lime);transition:width .3s ease;border-radius:0 2px 2px 0}.panel{display:none;max-width:1200px}.panel.active{display:block}.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:14px}.card2{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:10px}.page-title{font-size:34px;font-weight:900;color:var(--text);margin-bottom:6px;letter-spacing:-0.5px}.page-sub{font-size:15px;color:var(--dim);margin-bottom:28px;line-height:1.6;font-weight:500}.label{font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;letter-spacing:1.5px;margin-bottom:12px;display:block}.inp{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:13px 16px;width:100%;outline:none;font-size:15px;font-family:inherit;font-weight:500;transition:border-color .15s}.inp:focus{border-color:var(--gold)}textarea.inp{resize:vertical;line-height:1.6}select.inp{cursor:pointer}.btn{padding:10px 18px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:13px;font-family:inherit;font-weight:600;transition:all 0.12s}.btn:hover{color:var(--text);border-color:var(--dim)}.btn-pri{background:var(--gold);color:#111;border:none;padding:13px 24px;border-radius:12px;font-weight:800;cursor:pointer;font-size:14px;font-family:inherit;transition:all 0.12s}.btn-pri:hover{background:#c49010}.btn-pri.full{width:100%}.btn-sm{padding:6px 13px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:12px;font-family:inherit;font-weight:600}.btn-sm:hover{border-color:var(--dim);color:var(--text)}button:disabled{opacity:.4;cursor:not-allowed}.stat-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:28px}.stat-card{border:1px solid var(--border);border-radius:14px;padding:22px}.stat-num{font-size:40px;font-weight:900;letter-spacing:-1.5px;line-height:1}.stat-lbl{font-size:12px;margin-top:6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;opacity:.7}.row{display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:all 0.1s}.row:hover{background:var(--card2);border-color:#444}.sug{border-radius:14px;margin-bottom:12px;overflow:hidden;border:1px solid var(--border)}.sug-main{padding:20px 22px;background:var(--card)}.sug-tool{font-size:18px;font-weight:800;color:var(--text);margin-bottom:6px;letter-spacing:-.3px}.sug-desc{font-size:14px;color:#aaa;line-height:1.65}.sug-fb{padding:16px 22px;background:var(--card2);border-top:1px solid var(--border)}.bar-row{margin-bottom:13px;cursor:pointer}.bar-row:hover .bar-label span:first-child{color:var(--lime)}.bar-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;font-weight:600}.bar-label span:first-child{color:var(--text)}.bar-label span:last-child{color:var(--dim)}.bar-track{height:6px;background:var(--card2);border-radius:3px}.bar-fill{height:100%;border-radius:3px;background:var(--lime);transition:width 0.4s}#chat-messages{background:var(--card);border:1px solid var(--border);border-radius:14px 14px 0 0;height:420px;overflow-y:auto;padding:14px 16px;transition:height .15s}.chat-msg{margin-bottom:10px}.chat-msg.user{text-align:right}.chat-bubble{display:inline-block;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.5;max-width:82%;text-align:left;font-weight:500}.chat-msg.user .chat-bubble{background:var(--gold);color:#111;font-weight:700}.chat-msg.model .chat-bubble{background:var(--card2);border:1px solid var(--border);color:var(--text);white-space:pre-wrap}.chat-input-row{display:flex;gap:10px;padding:14px;background:var(--card2);border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px}#bulk-chat-messages .chat-bubble strong{color:var(--lime)}#bulk-chat-messages .chat-msg.model .chat-bubble{white-space:pre-wrap}.view-tabs{display:flex;gap:8px;margin-bottom:22px}.view-tab{padding:8px 18px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:13px;font-family:inherit;font-weight:600;transition:all 0.12s}.view-tab.active{background:var(--text);color:var(--bg);border-color:var(--text)}.kb-focus{outline:2px solid var(--gold)!important;}.back-btn{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:10px 18px;border-radius:10px;cursor:pointer;font-size:13px;font-family:inherit;font-weight:700;margin-bottom:24px;transition:all .12s}.back-btn:hover{background:var(--card)}.preview-ok{padding:16px;background:var(--olive);border:1px solid var(--lime);border-radius:10px;margin-bottom:10px}.preview-tool{font-size:15px;font-weight:800;color:var(--lime);margin-bottom:4px}.preview-desc{font-size:13px;color:#aaa;line-height:1.55}#screen-setup{flex-direction:row!important;align-items:stretch!important;justify-content:flex-start!important;padding:0!important;min-height:100vh}.setup-sidebar{width:200px;flex-shrink:0;background:#111;border-right:1px solid var(--border);display:flex;flex-direction:column;padding:32px 20px}.dla-wordmark{font-size:28px;font-weight:900;color:var(--gold);letter-spacing:1px;margin-bottom:48px}.setup-nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--dim);font-size:13px;font-weight:600;margin-bottom:5px;cursor:pointer}.setup-nav-item.active{color:var(--gold);background:rgba(212,160,23,0.1)}.setup-version{font-size:11px;color:#444;font-weight:700;margin-top:auto;margin-bottom:14px;letter-spacing:.5px}.wesley-brand{display:flex;align-items:center;gap:10px}.wesley-w{font-size:22px;font-weight:900;color:var(--gold)}.wesley-text{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;line-height:1.4}.setup-center{flex:0 0 480px;display:flex;align-items:center;justify-content:center;padding:40px 36px;background:var(--card);border-right:1px solid var(--border)}.setup-card{width:100%}.setup-card-title{font-size:22px;font-weight:900;color:var(--text);margin-bottom:6px;letter-spacing:-.3px;display:flex;align-items:center;gap:12px}.setup-card-sub{font-size:14px;color:var(--dim);margin-bottom:32px;line-height:1.6}.setup-field-label{font-size:10px;color:var(--dim);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.field-badge{font-size:10px;padding:3px 10px;border-radius:20px;background:rgba(212,160,23,0.15);color:var(--gold);font-weight:700;border:1px solid rgba(212,160,23,0.3)}.setup-inp{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:13px 16px;width:100%;outline:none;font-size:15px;font-family:'Inter',sans-serif;transition:border-color .15s;margin-bottom:20px;font-weight:500}.setup-inp:focus{border-color:var(--gold)}.setup-confirm{background:var(--gold);color:#111;border:none;padding:15px;border-radius:12px;font-weight:900;width:100%;cursor:pointer;font-size:14px;font-family:'Inter',sans-serif;letter-spacing:.5px;text-transform:uppercase;transition:background .12s}.setup-confirm:hover{background:#c49010}.setup-alt{display:flex;gap:8px;justify-content:center;margin-top:12px}.setup-right{flex:1;display:flex;flex-direction:column;justify-content:center;padding:60px 52px;background:var(--bg)}.setup-welcome-label{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:18px}.setup-headline{font-size:42px;font-weight:900;color:var(--text);line-height:1.1;margin-bottom:18px;letter-spacing:-1px}.setup-headline span{color:var(--lime)}.setup-tagline{font-size:15px;color:var(--dim);line-height:1.7;margin-bottom:40px;max-width:400px;font-weight:500}.status-cards{display:flex;flex-direction:column;gap:10px}.status-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600}.status-key{color:var(--dim);font-weight:500}.status-val{color:var(--text);font-weight:800}.status-dot{width:8px;height:8px;border-radius:50%;background:var(--lime);display:inline-block;margin-right:8px}@media (max-width:380px){.nav-label{display:none;}.nav-item{min-width:48px;}}</style>
+<style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');:root{--bg:#0d0d0d;--card:#1a1a1a;--card2:#222222;--border:#2e2e2e;--text:#ffffff;--dim:#888888;--gold:#D4A017;--lime:#C5E84A;--purple:#9B8BFF;--blue:#60B8F0;--orange:#F5A623;--salmon:#FF8080;--green:#52B95C;--olive:#2a3010;--mint:#C5E84A;--vivid:#C5E84A;--forest:#0d0d0d;--cream:#ffffff;--yellow:#D4A017;}*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;font-size:15px;line-height:1.6;zoom:0.9}#bg-canvas{display:none}#sidebar{width:240px;background:#111;border-right:1px solid var(--border);position:fixed;top:0;left:0;height:100vh;display:none;flex-direction:column;padding:28px 20px;z-index:50}body.app-mode #sidebar{display:flex}body.app-mode #main{margin-left:240px}#logo{font-size:12px;font-weight:900;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:40px}.nav-item{padding:11px 14px;border-radius:10px;color:var(--dim);cursor:pointer;margin-bottom:4px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;transition:all 0.12s}.nav-item:hover{color:var(--text);background:var(--card2)}.nav-item.active{background:var(--gold);color:#111}#sidebar-footer{margin-top:auto;padding-top:24px;border-top:1px solid var(--border)}#main{min-height:100vh;background:var(--bg)}.screen{display:none;min-height:100vh;align-items:center;justify-content:center;padding:40px 20px}.screen.active{display:flex;flex-direction:column}.screen-inner{width:100%;max-width:460px}#app-content{display:none;padding:44px}body.app-mode #app-content{display:block}#status-bar{font-size:12px;color:var(--dim);text-align:right;min-height:18px;margin-bottom:16px;font-weight:500;letter-spacing:.3px}#global-progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:9999;background:transparent;pointer-events:none}#global-progress-bar{height:100%;width:0%;background:var(--lime);transition:width .3s ease;border-radius:0 2px 2px 0}.panel{display:none;max-width:1200px}.panel.active{display:block}.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:14px}.card2{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:10px}.page-title{font-size:34px;font-weight:900;color:var(--text);margin-bottom:6px;letter-spacing:-0.5px}.page-sub{font-size:15px;color:var(--dim);margin-bottom:28px;line-height:1.6;font-weight:500}.label{font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;letter-spacing:1.5px;margin-bottom:12px;display:block}.inp{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:13px 16px;width:100%;outline:none;font-size:15px;font-family:inherit;font-weight:500;transition:border-color .15s}.inp:focus{border-color:var(--gold)}textarea.inp{resize:vertical;line-height:1.6}select.inp{cursor:pointer}.btn{padding:10px 18px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:13px;font-family:inherit;font-weight:600;transition:all 0.12s}.btn:hover{color:var(--text);border-color:var(--dim)}.btn-pri{background:var(--gold);color:#111;border:none;padding:13px 24px;border-radius:12px;font-weight:800;cursor:pointer;font-size:14px;font-family:inherit;transition:all 0.12s}.btn-pri:hover{background:#c49010}.btn-pri.full{width:100%}.btn-sm{padding:6px 13px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:12px;font-family:inherit;font-weight:600}.btn-sm:hover{border-color:var(--dim);color:var(--text)}button:disabled{opacity:.4;cursor:not-allowed}.stat-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:28px}.stat-card{border:1px solid var(--border);border-radius:14px;padding:22px}.stat-num{font-size:40px;font-weight:900;letter-spacing:-1.5px;line-height:1}.stat-lbl{font-size:12px;margin-top:6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;opacity:.7}.row{display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:all 0.1s}.row:hover{background:var(--card2);border-color:#444}.sug{border-radius:14px;margin-bottom:12px;overflow:hidden;border:1px solid var(--border)}.sug-main{padding:20px 22px;background:var(--card)}.sug-tool{font-size:18px;font-weight:800;color:var(--text);margin-bottom:6px;letter-spacing:-.3px}.sug-desc{font-size:14px;color:#aaa;line-height:1.65}.sug-fb{padding:16px 22px;background:var(--card2);border-top:1px solid var(--border)}.bar-row{margin-bottom:13px;cursor:pointer}.bar-row:hover .bar-label span:first-child{color:var(--lime)}.bar-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;font-weight:600}.bar-label span:first-child{color:var(--text)}.bar-label span:last-child{color:var(--dim)}.bar-track{height:6px;background:var(--card2);border-radius:3px}.bar-fill{height:100%;border-radius:3px;background:var(--lime);transition:width 0.4s}#chat-messages{background:var(--card);border:1px solid var(--border);border-radius:14px 14px 0 0;height:420px;overflow-y:auto;padding:14px 16px;transition:height .15s}.chat-msg{margin-bottom:10px}.chat-msg.user{text-align:right}.chat-bubble{display:inline-block;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.5;max-width:82%;text-align:left;font-weight:500}.chat-msg.user .chat-bubble{background:var(--gold);color:#111;font-weight:700}.chat-msg.model .chat-bubble{background:var(--card2);border:1px solid var(--border);color:var(--text);white-space:pre-wrap}.chat-input-row{display:flex;gap:10px;padding:14px;background:var(--card2);border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px}#bulk-chat-messages .chat-bubble strong{color:var(--lime)}#bulk-chat-messages .chat-msg.model .chat-bubble{white-space:pre-wrap}.view-tabs{display:flex;gap:8px;margin-bottom:22px}.view-tab{padding:8px 18px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:13px;font-family:inherit;font-weight:600;transition:all 0.12s}.view-tab.active{background:var(--text);color:var(--bg);border-color:var(--text)}.kb-focus{outline:2px solid var(--gold)!important;}.back-btn{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:10px 18px;border-radius:10px;cursor:pointer;font-size:13px;font-family:inherit;font-weight:700;margin-bottom:24px;transition:all .12s}.back-btn:hover{background:var(--card)}.preview-ok{padding:16px;background:var(--olive);border:1px solid var(--lime);border-radius:10px;margin-bottom:10px}.preview-tool{font-size:15px;font-weight:800;color:var(--lime);margin-bottom:4px}.preview-desc{font-size:13px;color:#aaa;line-height:1.55}#screen-setup{flex-direction:row!important;align-items:stretch!important;justify-content:flex-start!important;padding:0!important;min-height:100vh}.setup-sidebar{width:200px;flex-shrink:0;background:#111;border-right:1px solid var(--border);display:flex;flex-direction:column;padding:32px 20px}.dla-wordmark{font-size:28px;font-weight:900;color:var(--gold);letter-spacing:1px;margin-bottom:48px}.setup-nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--dim);font-size:13px;font-weight:600;margin-bottom:5px;cursor:pointer}.setup-nav-item.active{color:var(--gold);background:rgba(212,160,23,0.1)}.setup-version{font-size:11px;color:#444;font-weight:700;margin-top:auto;margin-bottom:14px;letter-spacing:.5px}.wesley-brand{display:flex;align-items:center;gap:10px}.wesley-w{font-size:22px;font-weight:900;color:var(--gold)}.wesley-text{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;line-height:1.4}.setup-center{flex:0 0 480px;display:flex;align-items:center;justify-content:center;padding:40px 36px;background:var(--card);border-right:1px solid var(--border)}.setup-card{width:100%}.setup-card-title{font-size:22px;font-weight:900;color:var(--text);margin-bottom:6px;letter-spacing:-.3px;display:flex;align-items:center;gap:12px}.setup-card-sub{font-size:14px;color:var(--dim);margin-bottom:32px;line-height:1.6}.setup-field-label{font-size:10px;color:var(--dim);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.field-badge{font-size:10px;padding:3px 10px;border-radius:20px;background:rgba(212,160,23,0.15);color:var(--gold);font-weight:700;border:1px solid rgba(212,160,23,0.3)}.setup-inp{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:13px 16px;width:100%;outline:none;font-size:15px;font-family:'Inter',sans-serif;transition:border-color .15s;margin-bottom:20px;font-weight:500}.setup-inp:focus{border-color:var(--gold)}.setup-confirm{background:var(--gold);color:#111;border:none;padding:15px;border-radius:12px;font-weight:900;width:100%;cursor:pointer;font-size:14px;font-family:'Inter',sans-serif;letter-spacing:.5px;text-transform:uppercase;transition:background .12s}.setup-confirm:hover{background:#c49010}.setup-alt{display:flex;gap:8px;justify-content:center;margin-top:12px}.setup-right{flex:1;display:flex;flex-direction:column;justify-content:center;padding:60px 52px;background:var(--bg)}.setup-welcome-label{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:18px}.setup-headline{font-size:42px;font-weight:900;color:var(--text);line-height:1.1;margin-bottom:18px;letter-spacing:-1px}.setup-headline span{color:var(--lime)}.setup-tagline{font-size:15px;color:var(--dim);line-height:1.7;margin-bottom:40px;max-width:400px;font-weight:500}.status-cards{display:flex;flex-direction:column;gap:10px}.status-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600}.status-key{color:var(--dim);font-weight:500}.status-val{color:var(--text);font-weight:800}.status-dot{width:8px;height:8px;border-radius:50%;background:var(--lime);display:inline-block;margin-right:8px}@media (max-width:380px){.nav-label{display:none;}.nav-item{min-width:48px;}}.ranking-scope{font-size:10px !important;padding:4px 10px !important;background:transparent;color:var(--dim);border:1px solid var(--border);border-radius:99px;cursor:pointer;font-weight:700;font-family:inherit}.ranking-scope:hover{border-color:var(--lime);color:var(--lime)}.ranking-scope.active{background:var(--lime);color:#111;border-color:var(--lime)}.rank-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}.rank-row:last-child{border-bottom:0}.rank-num{font-size:11px;font-weight:800;color:var(--dim);width:22px;font-family:monospace;flex-shrink:0}.rank-num.gold{color:#F5A623}.rank-num.silver{color:#9CA3AF}.rank-num.bronze{color:#D97706}.rank-body{flex:1;min-width:0}.rank-tool{font-weight:600;color:var(--text);font-size:13px}.rank-count{font-size:11px;color:var(--lime);font-weight:700;flex-shrink:0}.rank-bar{height:3px;background:var(--card2);border-radius:2px;margin-top:4px;overflow:hidden}.rank-bar-fill{height:100%;background:var(--lime);border-radius:2px;transition:width .4s}.dead-row{padding:8px 10px;background:var(--card2);border-radius:8px;margin-bottom:6px;font-size:12px;border-left:2px solid #FF8080}.dead-row .dead-tool{font-weight:700;color:var(--text);margin-bottom:2px}.dead-row .dead-sub{color:var(--dim);font-size:11px}.insight-card{background:linear-gradient(135deg,rgba(167,139,250,.08) 0%,rgba(99,102,241,.08) 100%);border:1px solid rgba(167,139,250,.25);border-radius:12px;padding:14px 16px;margin-bottom:10px}.insight-icon{font-size:18px}.insight-title{font-size:13px;font-weight:800;color:#A78BFA;margin-bottom:4px}.insight-body{font-size:13px;color:var(--text);line-height:1.55}.insight-action{display:inline-block;margin-top:8px;padding:5px 12px;background:rgba(167,139,250,.2);color:#A78BFA;border:1px solid rgba(167,139,250,.4);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;text-decoration:none}.insight-action:hover{background:rgba(167,139,250,.35)}.reasoning-step{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--card2);border-radius:8px;margin-bottom:5px;font-size:12px;color:var(--dim);animation:fadeInUp .3s ease}.reasoning-step.active{color:var(--lime);background:rgba(197,232,74,.05);border:1px solid rgba(197,232,74,.2)}.reasoning-step.done{color:var(--dim);opacity:.6}@keyframes fadeInUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}</style>
 </head>
 <body>
 <canvas id="bg-canvas"></canvas>
@@ -308,18 +308,13 @@
           <p style="font-size:13px;color:var(--dim);margin-bottom:0;line-height:1.6">Chat with GPT-4.1 to make bulk changes. Describe what you want — the AI will ask clarifying questions before proposing changes.</p>
         </div>
         <div id="bulk-chat-messages" style="height:380px;overflow-y:auto;padding:14px 20px;background:var(--bg);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
-          <div class="chat-msg model">
-            <div class="chat-bubble">👋 Hi! I'm your Bulk AI Edit assistant. Tell me what changes you'd like to make across the library — for example:
-
-• "Find opportunities to use Minecraft Education"
-• "Replace generic Canva suggestions with more specific activities"
-• "Cross-reference the Micro:bit lesson library"
-• "Add Sphero BOLT wherever there's a science investigation"
-
-You can also paste a lesson library URL. I'll ask a few questions to make sure I understand exactly what you want before analysing all entries.</div>
+          <div id="bulk-chat-welcome" class="chat-msg model">
+            <div class="chat-bubble">👋 Hi! Analysing your library…</div>
           </div>
         </div>
-        <div style="display:flex;gap:10px;padding:14px 20px;background:var(--card)">
+        <div id="bulk-reasoning" style="display:none;padding:10px 20px;background:var(--card2);border-top:1px solid var(--border);max-height:180px;overflow-y:auto"></div>
+        <div style="display:flex;gap:10px;padding:14px 20px;background:var(--card);align-items:center">
+          <button class="btn-sm" id="btn-bulk-reset" onclick="bulkChatReset()" style="padding:8px 10px;flex-shrink:0" title="Start new conversation">↻</button>
           <input id="bulk-chat-input" class="inp" placeholder="Describe the change you want to make…" style="flex:1;margin-bottom:0;font-size:13px" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();bulkChatSend()}">
           <button class="btn-pri" onclick="bulkChatSend()" id="btn-bulk-chat-send" style="padding:12px 20px;white-space:nowrap">Send →</button>
         </div>
@@ -427,6 +422,31 @@ You can also paste a lesson library URL. I'll ask a few questions to make sure I
           <div class="card">
             <span class="label">teacher feedback</span>
             <div id="live-feedback" style="max-height:400px;overflow-y:auto"></div>
+          </div>
+        </div>
+
+        <!-- Tool Rankings -->
+        <div class="card" style="margin-bottom:14px">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
+            <span class="label" style="margin:0">🏆 tool usage rankings</span>
+            <div style="flex:1"></div>
+            <div style="display:flex;gap:6px" id="ranking-filters">
+              <button class="btn-sm ranking-scope active" data-scope="all" onclick="setRankingScope('all')">All</button>
+              <button class="btn-sm ranking-scope" data-scope="Elsternwick" onclick="setRankingScope('Elsternwick')">EL</button>
+              <button class="btn-sm ranking-scope" data-scope="Glen Waverley" onclick="setRankingScope('Glen Waverley')">GW</button>
+              <button class="btn-sm ranking-scope" data-scope="St Kilda Rd" onclick="setRankingScope('St Kilda Rd')">STK</button>
+            </div>
+          </div>
+          <p style="font-size:12px;color:var(--dim);margin-bottom:14px">Based on teachers clicking "✓ I Used This" on the DLA. Combines the full "Used!" sheet history.</p>
+          <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px">
+            <div>
+              <div style="font-size:10px;color:var(--dim);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Most used tools</div>
+              <div id="rankings-most-used"></div>
+            </div>
+            <div>
+              <div style="font-size:10px;color:var(--dim);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Dead suggestions</div>
+              <div id="rankings-dead" style="font-size:12px;color:var(--dim);line-height:1.6">Tools suggested often but never clicked as used.</div>
+            </div>
           </div>
         </div>
 
@@ -953,7 +973,7 @@ function switchTab(tab,btn){
   if(tab==='browse') renderBrowse();
   if(tab==='audit') renderAudit();
   if(tab==='live') loadLiveAnalytics();
-  if(tab==='tools') initBulkTools();
+  if(tab==='tools'){ initBulkTools(); renderBulkWelcome(); }
   if(tab==='libraries') renderLibraries();
 
 }
@@ -2380,6 +2400,8 @@ async function loadLiveAnalytics(){
     renderLiveTopPages(dashRows);
     renderLiveFeedback(feedbackRows);
     renderLiveUsed(usedRows);
+    window._usedRowsCache = usedRows; // cached for ranking scope switches
+    renderToolRankings('all');
 
     if(loading) loading.style.display = 'none';
     if(contentEl) contentEl.style.display = 'block';
@@ -2609,6 +2631,111 @@ function renderLiveUsed(rows){
         <span style="color:var(--dim);flex-shrink:0">${date}</span>
       </div>`;
     }).join('') + '</div>';
+}
+
+// ========== TOOL USAGE RANKINGS ==========
+let CURRENT_RANKING_SCOPE = 'all';
+
+function setRankingScope(scope){
+  CURRENT_RANKING_SCOPE = scope;
+  document.querySelectorAll('.ranking-scope').forEach(b => {
+    b.classList.toggle('active', b.dataset.scope === scope);
+  });
+  renderToolRankings(scope);
+}
+
+function renderToolRankings(scope){
+  const mostEl = document.getElementById('rankings-most-used');
+  const deadEl = document.getElementById('rankings-dead');
+  if(!mostEl || !deadEl) return;
+
+  const rows = window._usedRowsCache || [];
+  // Skip header row, filter for rows with a tool column
+  const usedEvents = rows.slice(1).filter(r => r && r[5]);
+
+  // Filter by campus if scope is set
+  let filtered = usedEvents;
+  if(scope !== 'all'){
+    filtered = usedEvents.filter(r => {
+      const campus = String(r[2]||'').trim();
+      if(scope === 'St Kilda Rd' && (campus === 'St Kilda' || campus === 'St Kilda Rd')) return true;
+      return campus === scope;
+    });
+  }
+
+  // ========== Most Used: count usage events per normalised tool name ==========
+  const usageCount = {};
+  filtered.forEach(r => {
+    const tool = normaliseToolName(String(r[5]||'').trim());
+    if(!tool) return;
+    usageCount[tool] = (usageCount[tool] || 0) + 1;
+  });
+
+  const mostUsed = Object.entries(usageCount)
+    .sort((a,b) => b[1] - a[1])
+    .slice(0, 15);
+
+  if(!mostUsed.length){
+    mostEl.innerHTML = '<div style="color:var(--dim);font-size:13px;padding:12px 0">No usage data yet for this scope. Teachers need to click "✓ I Used This" on the DLA to populate this.</div>';
+  } else {
+    const maxCount = mostUsed[0][1];
+    mostEl.innerHTML = mostUsed.map((item, i) => {
+      const [tool, count] = item;
+      const pct = Math.round((count / maxCount) * 100);
+      const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+      const rankLabel = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`;
+      return `<div class="rank-row">
+        <span class="rank-num ${rankClass}">${rankLabel}</span>
+        <div class="rank-body">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px">
+            <span class="rank-tool">${esc(tool)}</span>
+            <span class="rank-count">${count}×</span>
+          </div>
+          <div class="rank-bar"><div class="rank-bar-fill" style="width:${pct}%"></div></div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // ========== Dead suggestions: tools suggested a lot in data.json but never (or rarely) used ==========
+  // Count how many times each tool is suggested across the library
+  const suggestedCount = {};
+  DATA.forEach(e => {
+    if(!e.audited) return;
+    // Filter by scope if set
+    if(scope !== 'all'){
+      const campus = String(e.ca||'').trim();
+      const match = scope === 'St Kilda Rd' ? (campus === 'St Kilda' || campus === 'St Kilda Rd') : campus === scope;
+      if(!match) return;
+    }
+    getSugs(e).forEach(s => {
+      const tool = normaliseToolName((s && s.t ? s.t.trim() : ''));
+      if(!tool) return;
+      suggestedCount[tool] = (suggestedCount[tool] || 0) + 1;
+    });
+  });
+
+  // Dead = suggested 3+ times but used 0 times (or suggestion:use ratio worse than 10:1)
+  const dead = Object.entries(suggestedCount)
+    .filter(([tool, sCount]) => {
+      if(sCount < 3) return false;
+      const used = usageCount[tool] || 0;
+      return used === 0 || (sCount / used >= 10);
+    })
+    .sort((a,b) => b[1] - a[1])
+    .slice(0, 8);
+
+  if(!dead.length){
+    deadEl.innerHTML = '<div style="color:var(--dim);font-size:12px;padding:10px 0">No dead tools detected. Every suggested tool is being used.</div>';
+  } else {
+    deadEl.innerHTML = dead.map(([tool, sCount]) => {
+      const used = usageCount[tool] || 0;
+      return `<div class="dead-row">
+        <div class="dead-tool">${esc(tool)}</div>
+        <div class="dead-sub">Suggested ${sCount}× · Used ${used}×</div>
+      </div>`;
+    }).join('');
+  }
 }
 
 
@@ -3352,6 +3479,172 @@ Object.defineProperty(window, 'KNOWN_PLATFORMS', {
 let bulkChatHistory = []; // [{role:'user'|'assistant', content:'...', options?:[{label,value}], selected?:string}]
 let bulkChatState = 'idle'; // idle | clarifying | analysing | done
 let bulkChatContext = {}; // stores resolved instruction, platform, etc.
+let bulkChatMemory = []; // full multi-turn memory for GPT: [{role, content}]
+let bulkInsightsComputed = false;
+
+// Compute proactive insights about the library state
+function computeBulkInsights(){
+  const complete = DATA.filter(e => e.audited && getSugs(e).filter(isRealSug).length >= 6);
+  if(!complete.length) return [];
+
+  // Tool frequency across library (normalised)
+  const freq = {};
+  complete.forEach(e => {
+    getSugs(e).forEach(s => {
+      const t = normaliseToolName((s && s.t ? s.t.trim() : ''));
+      if(!t) return;
+      freq[t] = (freq[t] || 0) + 1;
+    });
+  });
+  const sorted = Object.entries(freq).sort((a,b) => b[1] - a[1]);
+  const totalSlots = complete.length * 6;
+
+  const insights = [];
+
+  // 1. Overused tool
+  if(sorted.length && sorted[0][1] > 13){
+    const [tool, count] = sorted[0];
+    const pct = Math.round((count / totalSlots) * 100);
+    insights.push({
+      icon: '⚠️',
+      title: `${tool} is overused`,
+      body: `Appears in <strong>${count} suggestion slots</strong> (${pct}% of the library). Would you like me to find places to diversify?`,
+      action: `Diversify ${tool} suggestions across the library`
+    });
+  }
+
+  // 2. Minecraft underuse if library has entries
+  if(typeof LIBRARIES !== 'undefined' && LIBRARIES.minecraft && LIBRARIES.minecraft.length > 20){
+    const mcCount = freq['Minecraft Education'] || 0;
+    if(mcCount < 8){
+      insights.push({
+        icon: '⛏️',
+        title: `Minecraft Education underused`,
+        body: `You've curated <strong>${LIBRARIES.minecraft.length} lessons</strong> in your Minecraft library but it only appears in <strong>${mcCount} slots</strong>. There may be unused matches.`,
+        action: 'Find opportunities to use Minecraft Education'
+      });
+    }
+  }
+
+  // 3. Micro:bit underuse if library has entries
+  if(typeof LIBRARIES !== 'undefined' && LIBRARIES.microbit && LIBRARIES.microbit.length > 10){
+    const mbCount = freq['Micro:bit'] || 0;
+    if(mbCount < 5){
+      insights.push({
+        icon: '🔌',
+        title: `Micro:bit underused`,
+        body: `You have <strong>${LIBRARIES.microbit.length} Micro:bit lessons</strong> curated but only <strong>${mbCount} slots</strong> use them. Let me scan for matches.`,
+        action: 'Find opportunities to use Micro:bit'
+      });
+    }
+  }
+
+  // 4. Usage vs suggestion mismatch (requires live analytics)
+  if(window._usedRowsCache){
+    const usedRows = window._usedRowsCache.slice(1).filter(r => r && r[5]);
+    const usedFreq = {};
+    usedRows.forEach(r => {
+      const t = normaliseToolName(String(r[5]||'').trim());
+      if(t) usedFreq[t] = (usedFreq[t]||0) + 1;
+    });
+    // Find "dead" tools: suggested 5+ times, used 0 times
+    const dead = Object.entries(freq).filter(([t, c]) => c >= 5 && !(usedFreq[t])).sort((a,b)=>b[1]-a[1]);
+    if(dead.length){
+      const [tool, count] = dead[0];
+      insights.push({
+        icon: '💤',
+        title: `${tool} suggestions are ignored`,
+        body: `Suggested <strong>${count}×</strong> but teachers have <strong>never</strong> clicked "I Used This" for it. Consider replacing or improving these.`,
+        action: `Replace ${tool} suggestions with more appealing alternatives`
+      });
+    }
+  }
+
+  return insights.slice(0, 3); // cap at 3 to keep it scannable
+}
+
+function renderBulkWelcome(){
+  const container = document.getElementById('bulk-chat-messages');
+  if(!container) return;
+  const welcome = document.getElementById('bulk-chat-welcome');
+  if(!welcome) return;
+
+  const insights = computeBulkInsights();
+  const totalEntries = DATA.filter(e => e.audited).length;
+  const completeEntries = DATA.filter(e => e.audited && getSugs(e).filter(isRealSug).length >= 6).length;
+
+  let html = `<div class="chat-bubble">👋 Hi! I've scanned your library — <strong>${completeEntries} of ${totalEntries}</strong> entries are complete.`;
+
+  if(insights.length){
+    html += `\n\nHere's what I noticed:</div>`;
+    html += `<div style="margin-top:10px">`;
+    insights.forEach(ins => {
+      html += `<div class="insight-card"><div style="display:flex;align-items:flex-start;gap:10px"><span class="insight-icon">${ins.icon}</span><div style="flex:1"><div class="insight-title">${ins.title}</div><div class="insight-body">${ins.body}</div><span class="insight-action" onclick="bulkChatQuickStart('${ins.action.replace(/'/g,"\\'")}')">→ ${esc(ins.action)}</span></div></div></div>`;
+    });
+    html += `</div>`;
+    html += `<div class="chat-bubble" style="margin-top:10px">Or ask me anything — "Find X opportunities", "Replace Y with Z", "Scan for weak suggestions", etc.</div>`;
+  } else {
+    html += `\n\nYour library looks well-balanced! Ask me to make any bulk changes.</div>`;
+  }
+
+  welcome.innerHTML = html;
+  bulkInsightsComputed = true;
+}
+
+function bulkChatQuickStart(text){
+  const input = document.getElementById('bulk-chat-input');
+  if(input){ input.value = text; input.focus(); }
+  // Auto-send after a brief pause so user sees what was filled
+  setTimeout(() => bulkChatSend(), 300);
+}
+
+function bulkChatReset(){
+  if(bulkChatState === 'analysing'){
+    if(!confirm('Analysis in progress. Reset anyway?')) return;
+  }
+  bulkChatHistory = [];
+  bulkChatContext = {};
+  bulkChatMemory = [];
+  bulkChatState = 'idle';
+  hideReasoningSteps();
+  renderBulkWelcome();
+  renderBulkChat();
+}
+
+// ========== REASONING STREAM — shows AI thinking stages ==========
+function showReasoningSteps(steps){
+  const container = document.getElementById('bulk-reasoning');
+  if(!container) return;
+  container.style.display = 'block';
+  container.innerHTML = steps.map((step, i) => {
+    const status = step.status || 'pending';
+    const icon = status === 'active' ? '⏳' : status === 'done' ? '✓' : status === 'error' ? '✗' : '○';
+    return `<div class="reasoning-step ${status}" id="rstep-${i}">
+      <span style="font-size:14px">${icon}</span>
+      <span>${esc(step.text)}</span>
+    </div>`;
+  }).join('');
+  container.scrollTop = container.scrollHeight;
+}
+
+function updateReasoningStep(index, status, newText){
+  const el = document.getElementById(`rstep-${index}`);
+  if(!el) return;
+  el.className = `reasoning-step ${status}`;
+  const icon = status === 'active' ? '⏳' : status === 'done' ? '✓' : status === 'error' ? '✗' : '○';
+  const textEl = el.querySelector('span:last-child');
+  const iconEl = el.querySelector('span:first-child');
+  if(iconEl) iconEl.textContent = icon;
+  if(newText && textEl) textEl.textContent = newText;
+}
+
+function hideReasoningSteps(){
+  const container = document.getElementById('bulk-reasoning');
+  if(container){
+    container.style.display = 'none';
+    container.innerHTML = '';
+  }
+}
 
 function bulkChatAddMessage(role, content, options){
   const msg = { role, content };
@@ -3386,7 +3679,7 @@ function renderBulkChat(){
   });
 
   // Keep the initial welcome, then append history
-  const welcomeMsg = container.querySelector('.chat-msg.model');
+  const welcomeMsg = container.querySelector('#bulk-chat-welcome');
   const welcomeHtml = welcomeMsg ? welcomeMsg.outerHTML : '';
   container.innerHTML = welcomeHtml + html;
 
@@ -3439,34 +3732,56 @@ async function bulkChatSend(){
     return;
   }
 
-  // New conversation — reset state
-  bulkChatHistory = [];
-  bulkChatContext = {};
-  bulkChatState = 'idle';
+  // Multi-turn: if a previous analysis completed and user types a new message,
+  // treat it as a refinement of the previous run rather than reset.
+  const isFollowUp = bulkChatMemory.length > 0 && bulkChatState === 'done';
+
+  if(!isFollowUp){
+    // New conversation
+    bulkChatHistory = [];
+    bulkChatContext = {};
+    bulkChatMemory = [];
+    bulkChatState = 'idle';
+  }
 
   bulkChatAddMessage('user', text);
+  bulkChatMemory.push({ role: 'user', content: text });
 
-  // Detect platform from input
+  // Detect platform from input (scan full memory)
   const platforms = buildKnownPlatforms();
-  const platform = platforms.find(p => p.match.test(text));
+  const platform = platforms.find(p => p.match.test(text)) || bulkChatContext.platform || null;
 
   bulkChatContext.rawInstruction = text;
-  bulkChatContext.platform = platform || null;
+  bulkChatContext.platform = platform;
   bulkChatContext.clarifyRound = 0;
+  bulkChatContext.isFollowUp = isFollowUp;
+
+  // Show reasoning stream
+  showReasoningSteps([
+    { text: 'Reading your request', status: 'active' },
+    { text: isFollowUp ? 'Recalling previous context' : 'Scanning tool distribution', status: 'pending' },
+    { text: 'Deciding if clarification needed', status: 'pending' }
+  ]);
 
   // Ask clarifying questions via AI
   bulkChatState = 'clarifying';
-  bulkChatAddMessage('assistant', '🤔 Let me think about this...');
 
   try {
+    updateReasoningStep(0, 'done');
+    updateReasoningStep(1, 'active');
+    
     const clarifyPrompt = buildClarifyPrompt(text, platform);
+    
+    setTimeout(() => updateReasoningStep(1, 'done'), 400);
+    setTimeout(() => updateReasoningStep(2, 'active'), 500);
+    
     const response = await callAI(
       [{role:'user', parts:[{text: clarifyPrompt}]}],
       null, OPENAI_FAST_MODEL
     );
-
-    // Remove "thinking" message
-    bulkChatHistory.pop();
+    
+    updateReasoningStep(2, 'done');
+    setTimeout(hideReasoningSteps, 600);
 
     // Parse the AI's clarifying questions
     const parsed = parseClarifyResponse(response);
@@ -3474,6 +3789,7 @@ async function bulkChatSend(){
     if(parsed.readyToGo){
       // AI thinks the instruction is clear enough — proceed directly
       bulkChatAddMessage('assistant', `${parsed.summary || "Got it!"}\n\nI understand what you want — let me analyse all entries now.`);
+      bulkChatMemory.push({ role: 'assistant', content: parsed.summary || 'Understood — analysing.' });
       startBulkAnalysis();
     } else {
       // Show the first clarifying question
@@ -3481,7 +3797,7 @@ async function bulkChatSend(){
       showNextQuestion(parsed);
     }
   } catch(e){
-    bulkChatHistory.pop();
+    hideReasoningSteps();
     bulkChatState = 'idle';
     bulkChatAddMessage('assistant', `❌ Error: ${e.message}\n\nPlease try again.`);
   }
@@ -3498,14 +3814,22 @@ function buildClarifyPrompt(instruction, platform){
   });
   const topTools = Object.entries(allTools).sort((a,b)=>b[1]-a[1]).slice(0,15).map(([t,c])=>`${t} (${c}x)`).join(', ');
 
-  return `You are a Digital Learning Coach assistant helping a coordinator make bulk changes to a library of ${entryCount} IB PYP unit planners at Wesley College.
+  // Include conversation memory for multi-turn context
+  const memoryContext = bulkChatMemory.length > 2 ? `
+PRIOR CONVERSATION (for context — the latest message is the current request):
+${bulkChatMemory.slice(0, -1).map(m => `${m.role === 'user' ? 'Coordinator' : 'You'}: ${m.content}`).join('\n')}
+` : '';
 
-The coordinator said: "${instruction}"
+  return `You are a Digital Learning Coach assistant helping a coordinator make bulk changes to a library of ${entryCount} IB PYP unit planners at Wesley College.
+${memoryContext}
+The coordinator just said: "${instruction}"
 ${platform ? `\nDetected platform: ${platform.name}` : ''}
 
 Current tool distribution (top 15): ${topTools}
 
 Your task: Decide whether you need clarification before proceeding, or if the instruction is clear enough.
+
+IMPORTANT: If the coordinator is refining a previous request (e.g. "now do that for Year 3 only", "remove the Minecraft ones", "also try Sphero"), treat the full conversation context as one continuous instruction and set readyToGo:true if the combined meaning is clear.
 
 RESPOND IN THIS EXACT JSON FORMAT (no markdown fences, no preamble):
 {
@@ -3588,6 +3912,16 @@ async function startBulkAnalysis(){
 
   bulkChatAddMessage('assistant', '🔍 Analysing all entries now — this may take a minute...');
 
+  // Visible reasoning stream
+  showReasoningSteps([
+    { text: 'Scanning all library entries', status: 'active' },
+    { text: 'Building tool frequency index', status: 'pending' },
+    { text: 'Computing overused & underused tools', status: 'pending' },
+    { text: 'Age-gating by year level', status: 'pending' },
+    { text: 'Generating proposals with GPT-4.1', status: 'pending' },
+    { text: 'Filtering duplicate proposals', status: 'pending' }
+  ]);
+
   const prog = document.getElementById('bulk-ai-progress');
   const lbl = document.getElementById('bulk-ai-label');
   const bar = document.getElementById('bulk-ai-bar');
@@ -3595,6 +3929,10 @@ async function startBulkAnalysis(){
 
   // ===== Build the same system prompt as the old runBulkAIEdit =====
   const completeData = DATA.map((e,i)=>({e,i})).filter(({e})=>e.audited && getSugs(e).filter(isRealSug).length >= 6);
+  
+  setTimeout(() => updateReasoningStep(0, 'done'), 400);
+  setTimeout(() => updateReasoningStep(1, 'active'), 450);
+  
   const toolIndex = {};
   completeData.forEach(({e,i})=>{
     getSugs(e).forEach((s,si)=>{
@@ -3608,6 +3946,21 @@ async function startBulkAnalysis(){
     .sort((a,b)=>b[1].length-a[1].length)
     .map(([tool,entries])=>`${tool} (${entries.length}x): `+entries.map(e=>`[${e.entryIdx}]s${e.sugIdx}`).join(', '))
     .join('\n');
+
+  // Compute overused tools — anything appearing more than 13 times
+  // These are tools GPT should AVOID suggesting as replacements
+  const toolFrequency = Object.entries(toolIndex)
+    .map(([tool, entries]) => ({tool, count: entries.length}))
+    .sort((a,b) => b.count - a.count);
+  const overusedTools = toolFrequency
+    .filter(t => t.count > 13)
+    .map(t => `"${t.tool}" (${t.count}x)`)
+    .join(', ');
+  const underusedTools = toolFrequency
+    .filter(t => t.count <= 2)
+    .slice(0, 15)
+    .map(t => `"${t.tool}" (${t.count}x)`)
+    .join(', ');
 
   const platforms = buildKnownPlatforms();
   const platform = bulkChatContext.platform
@@ -3685,6 +4038,14 @@ REPLACEMENT STRATEGY — when proposing a change, choose which suggestion slot t
 3. Replace a vague or generic description
 4. Replace whichever slot has the weakest connection
 
+TOOL DIVERSITY RULE (HARD RULE — applies when the coordinator's instruction doesn't name a specific tool):
+When choosing WHICH tool to use as a replacement:
+- OVERUSED TOOLS (avoid unless absolutely necessary): ${overusedTools || '(none yet)'}
+- UNDERUSED TOOLS (prefer these when they fit the unit): ${underusedTools || '(none yet)'}
+- Never propose an overused tool UNLESS (a) the coordinator explicitly named it, OR (b) it's a clear perfect fit that no other tool could serve.
+- When suggesting a replacement for an overused tool, always pick from the underused list or introduce variety — do NOT swap one overused tool for another.
+- Aim to broaden tool variety across the library with every change.
+
 Analyse ALL ${completeData.length} complete entries and propose changes wherever the instruction applies.
 
 Output ONLY the APPLY_CHANGES block — no preamble:
@@ -3703,6 +4064,11 @@ ${fullContext}`;
   let animInterval = null;
 
   try {
+    updateReasoningStep(1, 'done');
+    updateReasoningStep(2, 'done'); // overused/underused
+    updateReasoningStep(3, 'done'); // age-gating
+    updateReasoningStep(4, 'active', `Generating proposals with GPT-4.1 (~${Math.round(estimatedTokens/1000)}K tokens)`);
+    
     if(bar) bar.style.width = '30%';
     if(lbl) lbl.textContent = `Analysing ${completeData.length} entries (~${Math.round(estimatedTokens/1000)}K tokens)…`;
     animInterval = setInterval(()=>{
@@ -3716,6 +4082,8 @@ ${fullContext}`;
     );
 
     clearInterval(animInterval);
+    updateReasoningStep(4, 'done');
+    updateReasoningStep(5, 'active');
     if(bar) bar.style.width = '90%';
     if(lbl) lbl.textContent = 'Parsing proposed changes…';
 
@@ -3787,20 +4155,29 @@ ${fullContext}`;
     }
 
     if(changes && changes.length){
+      updateReasoningStep(5, 'done');
+      setTimeout(hideReasoningSteps, 1200);
       const dupeNote = skippedDupes ? ` (${skippedDupes} duplicate${skippedDupes!==1?'s':''} filtered out)` : '';
-      bulkChatAddMessage('assistant', `✅ Found <strong>${changes.length} proposed change${changes.length!==1?'s':''}</strong>${dupeNote}.\n\nOpening the review popup now — approve or decline each change individually.`);
+      const resultMsg = `✅ Found <strong>${changes.length} proposed change${changes.length!==1?'s':''}</strong>${dupeNote}.\n\nOpening the review popup now — approve or decline each change individually.\n\n💡 <em>Tip: After reviewing, you can type a refinement like "do the same for Year 3 only" or "replace the Minecraft ones with Micro:bit" and I'll remember the context.</em>`;
+      bulkChatAddMessage('assistant', resultMsg);
+      bulkChatMemory.push({ role: 'assistant', content: `Proposed ${changes.length} changes${dupeNote}.` });
       showChangesPopup(changes);
       bulkChatState = 'done';
     } else {
+      updateReasoningStep(5, 'done');
+      setTimeout(hideReasoningSteps, 800);
       const msg = skippedDupes
         ? `All ${skippedDupes} proposal${skippedDupes!==1?'s':''} would have created duplicates. Try a different instruction.`
         : 'No changes proposed for this instruction. Try rephrasing — for example, name a specific tool or lesson library.';
       bulkChatAddMessage('assistant', `⚠️ ${msg}`);
+      bulkChatMemory.push({ role: 'assistant', content: `No changes found. ${msg}` });
       bulkChatState = 'idle';
     }
   } catch(e){
     clearInterval(animInterval);
     if(prog) prog.style.display = 'none';
+    updateReasoningStep(4, 'error');
+    setTimeout(hideReasoningSteps, 2000);
     if(bulkChatHistory.length && bulkChatHistory[bulkChatHistory.length-1].content.includes('Analysing all entries')){
       bulkChatHistory.pop();
     }
