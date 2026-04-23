@@ -3945,9 +3945,35 @@
     "th": "How the World Works",
     "ci": "Inventions and initiatives are a response to the changing needs of society",
     "lo": "How inventions have changed over time to meet the demands of society; The UN Sustainable Development Goals and the global problems they address; Using the design thinking process to create innovations that respond to real-world needs",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes + Canva AI",
+        "d": "Students design a 3D interactive prototype of their invention using Merge Cubes, then use Canva's AI image generation to create futuristic visual overlays and AR labels. This app-smash allows students to bring their SDG-inspired inventions to life, letting peers and families explore their models in augmented reality at the Future Thinkers' Forum."
+      },
+      {
+        "t": "Padlet",
+        "d": "Create a collaborative digital 'Invention Timeline' Padlet where students post images and short videos of inventions they've researched, annotated with how each responded to changing societal needs. Students can comment on each other's posts, sparking discussion about innovation and transformation."
+      },
+      {
+        "t": "Minecraft: The Hall of Inventions",
+        "d": "Students explore the virtual museum of key innovations, then design and build their own SDG-inspired invention in Minecraft, justifying how it addresses a current global need. This links directly to the unit's focus on inventions as responses to societal change.",
+        "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students document their design process in a multimedia digital journal using Book Creator, combining photos of prototypes, voice recordings explaining their thinking, and reflections on how their invention addresses their chosen SDG."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Students use Forms to gather feedback from peers, teachers, and families on their invention prototypes, analysing the data to refine their designs and better meet the needs of their target audience."
+      },
+      {
+        "t": "3D Printers",
+        "d": "Using the Design Cycle, students physically prototype their SDG-inspired invention with 3D printers. They iterate based on feedback, present their models at the Future Thinkers' Forum, and reflect on how their design process mirrors real-world innovation responding to societal needs."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students investigate how inventions and initiatives are responses to changing societal needs, exploring past and present innovations, analysing how inventions evolve, and using the design process to create their own SDG-inspired prototypes. Activities include research, science lab experiments, collaborative design thinking, and presenting inventions at the Future Thinkers' Forum."
   },
   {
     "ca": "St Kilda",
@@ -3955,9 +3981,35 @@
     "th": "Sharing the Planet",
     "ci": "Communities interact with the environment in different ways",
     "lo": "How community values shape the management of the natural environment; The need for conservation and environmental stewardship; Ways in which First Nations land management practices can drive positive environmental change",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes + iPad App Smashing",
+        "d": "Students create interactive 3D models of local environments or endangered habitats using Merge Cubes and the iPad camera. They record short video explanations of stewardship actions, then use Canva's 'Remove Background' feature to overlay themselves as digital guides within their virtual environments. This immersive, hands-on workflow brings conservation and land management to life, allowing students to 'step into' their own digital habitats."
+      },
+      {
+        "t": "Padlet",
+        "d": "Set up a collaborative digital wall where students post photos, videos, and reflections from their exploration of local environments, native gardens, and stewardship activities. They can map connections between Indigenous and non-Indigenous perspectives, and crowdsource ideas for conservation action."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students author digital books documenting their journey through the unit, integrating research on habitats, stewardship, and Indigenous land management. They can embed audio interviews, photos from excursions, and their own conservation pledges."
+      },
+      {
+        "t": "Minecraft: Watr Meet The Rangers",
+        "d": "Students virtually step into the shoes of wildlife rangers, exploring how science and community action protect habitats and species. They learn about conservation roles and design digital solutions for real-world environmental challenges.",
+        "url": "https://education.minecraft.net/en-us/lessons/watr-meet-the-rangers"
+      },
+      {
+        "t": "Canva",
+        "d": "Students design visually impactful conservation campaign posters or infographics, using Canva's templates and 'Remove Background' tool to highlight local stewardship efforts and Indigenous perspectives. These can be shared digitally or displayed around the school to inspire action."
+      },
+      {
+        "t": "3D Printers",
+        "d": "Using the Design Cycle, students prototype and 3D print models of sustainable garden beds or habitat features for the school grounds. They research native species, design for biodiversity, and present their prototypes as part of a stewardship action plan, connecting digital design with real-world environmental impact."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit immerses students in the concept of stewardship, exploring both Indigenous and non-Indigenous connections to land, conservation, and environmental responsibility. Activities include mapping world biomes, writing emails to local trees, investigating land management practices, and hands-on stewardship projects in the school garden, all with a strong focus on action and student agency."
   },
   {
     "ca": "St Kilda",
@@ -3965,9 +4017,35 @@
     "th": "Where We Are in Place and Time",
     "ci": "Colonisation has had a lasting impact on different countries and their people",
     "lo": "The reasons, methods and impact of colonisation; How colonisation transformed society and culture; The responsibility of colonisers and the perspectives of those colonised",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes + Book Creator",
+        "d": "Students create interactive 3D Merge Cube experiences that allow users to explore different perspectives of colonisation?such as the viewpoint of Indigenous peoples, colonisers, and contemporary Australians. Students then app smash by embedding their Merge Cube AR videos and reflections into a multimedia Book Creator eBook, presenting a layered, immersive narrative of colonisation's impact."
+      },
+      {
+        "t": "Padlet",
+        "d": "Launch a collaborative digital timeline where students post research, images, and primary sources about colonisation in Australia and other countries. Each post can include student voice recordings, artwork, or short video reflections, allowing for a rich, multi-modal exploration of the central idea."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design persuasive infographics or digital posters that highlight the lasting impacts of colonisation on different countries and their people. Canva's 'Remove Background' feature can be used to create striking visuals that juxtapose pre- and post-colonisation imagery."
+      },
+      {
+        "t": "ClickView",
+        "d": "Curate a playlist of documentary clips and historical re-enactments about colonisation. Students use ClickView's interactive video features to annotate, ask questions, and respond to key moments, deepening their understanding of causation and change."
+      },
+      {
+        "t": "Minecraft: The Hall of Inventions",
+        "d": "Students explore the museum of key innovations from history, then research and build their own 'inventions' that either resulted from or responded to colonisation. This activity encourages students to consider how technological and cultural changes were shaped by, and in turn shaped, colonisation.",
+        "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
+      },
+      {
+        "t": "3D Printers + Design Cycle",
+        "d": "Using the Design Cycle, students design and 3D print artefacts that represent both Indigenous cultures and colonising societies. They prototype, test, and refine objects such as tools, symbols, or monuments, then present their creations alongside a reflection on how these objects tell the story of colonisation's impact."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students explore the reasons, methods, and impacts of colonisation through activities such as perspective-taking with 'The Rabbits', research projects on British and global colonisation, and oral presentations. The unit emphasises empathy, critical thinking, and student agency as learners investigate historical and contemporary effects of colonisation on societies and cultures."
   },
   {
     "ca": "St Kilda",
@@ -3975,9 +4053,34 @@
     "th": "Who We Are",
     "ci": "Values, beliefs and actions contribute to a diverse society",
     "lo": "How our values and beliefs shape our identity and interactions; Our responsibility to manage emotions and be safe online and in person; The importance of resilience, respect and positive relationships in a diverse community",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes + Canva App Smash",
+        "d": "Students design a 3D interactive 'Values & Beliefs Cube' using Canva to create each face, representing different values, beliefs, and actions from their own lives and diverse cultures. These are then uploaded to Merge EDU, allowing students to explore each other's cubes in augmented reality, sparking discussion about diversity and empathy in a hands-on, immersive way."
+      },
+      {
+        "t": "Padlet",
+        "d": "Create a collaborative digital 'Beliefs Wall' where students post multimedia reflections (videos, images, audio, text) about their own values and beliefs, and respond to classmates' posts to explore the diversity within their classroom community."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students author digital autobiographies focusing on their values, beliefs, and actions, integrating photos, voice recordings, and drawings to express their unique identities and how these contribute to a diverse society."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Facilitate a 'Global Voices' project where students interview family or community members about their beliefs and values, then upload audio or video reflections to Seesaw, creating a class archive of diverse perspectives."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "Students design visually striking digital posters or infographics that showcase the importance of respect, inclusion, and understanding in a diverse society, using Adobe Express's templates and 'Remove Background' feature for creative self-portraits."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Using the Design Cycle, students work in teams to prototype a 'Respect Robot' with Lego Spike Prime. The robot must perform a task that symbolically represents inclusion or empathy (e.g., delivering messages of kindness or bridging two groups), requiring students to ideate, build, test, and refine their solution while reflecting on how technology can promote positive actions in a diverse community."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The unit 'Who We Are' explores how values, beliefs, and actions contribute to a diverse society. Students engage in lessons on empathy, respect, cyber safety, and self-management, using collaborative activities, digital reflections, and real-world scenarios to deepen their understanding of identity, relationships, and responsible citizenship."
   },
   {
     "ca": "St Kilda",
@@ -3985,9 +4088,34 @@
     "th": "How We Express Ourselves",
     "ci": "Understanding global issues and using effective communication empowers us to raise awareness and inspire action.",
     "lo": "Global issues are caused by interconnected factors that require collective solutions (Causation) ??? Presentations in the media can reflect the perspective of the author rather than the truth (Perspective) ??? We must make responsible choices when responding to and creating media (Responsibility) ??? Messages can be expressed through a range of mediums and elements can be adjusted to enhance effectiveness (Communication) ??? Design choices contribute to the effectiveness of a message (Influence)",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cube + CoSpaces",
+        "d": "Students create an interactive augmented reality (AR) experience using Merge Cube and CoSpaces to bring their global issue campaigns to life. Each group designs a 3D scene or simulation that communicates their chosen issue, allowing viewers to explore facts, stories, and calls to action by physically rotating the Merge Cube. This immersive storytelling approach empowers students to blend digital creativity with hands-on engagement, making their advocacy unforgettable."
+      },
+      {
+        "t": "Podcast Equipment",
+        "d": "Students script, record, and edit a professional-quality podcast series that raises awareness about their chosen global issue. They can interview experts, include soundscapes, and use persuasive audio techniques to inspire action, publishing episodes to a class channel for authentic audience impact."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design visually compelling digital media campaigns?such as infographics, social media posts, and posters?using Canva. They leverage Canva's 'Remove Background' feature to create striking visuals and combine text, imagery, and data to communicate their message effectively."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students collaboratively author interactive digital books that document their inquiry journey, research findings, and action plans. These multimedia books can include embedded videos, audio reflections, and clickable links, serving as both a portfolio and a tool for advocacy."
+      },
+      {
+        "t": "Minecraft: Peter Is Here Ai For Cultural Heritage",
+        "d": "Students explore how technology can be used to protect and celebrate cultural heritage sites, drawing parallels to their own campaigns for global issues. They reflect on the importance of collaboration and digital storytelling in raising awareness and inspiring action. https://education.minecraft.net/en-us/lessons/peter-is-here-ai-for-cultural-heritage"
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Using the Design Cycle, students prototype a kinetic installation or interactive model that visually represents their global issue and proposed solutions. For example, they might build a moving sculpture that demonstrates the impact of pollution or a robotic display that responds to audience input, combining engineering, coding, and persuasive design to inspire action."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The Year 6 'How We Express Ourselves' unit at St Kilda focuses on empowering students to understand global issues and use effective communication to raise awareness and inspire action. Students engage in inquiry cycles, develop vision statements, create media campaigns, design logos, and present live performances, all while leveraging digital tools and collaborative research to drive meaningful advocacy."
   },
   {
     "ca": "St Kilda",
