@@ -2406,9 +2406,34 @@
     "th": "Who We Are",
     "ci": "People's beliefs contribute to the diversity of human life.",
     "lo": "Spiritual or religious beliefs; Similarities and differences of spiritual beliefs; Contributions of different religions to human diversity",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes + Book Creator",
+        "d": "Students create interactive 3D Merge Cube experiences representing different places of worship or symbols from world religions. They then app smash by embedding videos, audio reflections, and AR screenshots into a digital Book Creator 'Belief Museum', allowing students to virtually 'hold' and explore diverse beliefs in their hands."
+      },
+      {
+        "t": "Padlet",
+        "d": "Launch a global 'Belief Wall' where students post digital postcards about their own beliefs, family traditions, or research on world religions. Encourage multimedia posts (audio, video, images) and invite respectful questions and comments to foster intercultural dialogue and empathy."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design visually stunning infographics comparing the core beliefs, symbols, and practices of major world religions. Use Canva's 'Remove Background' feature to create digital collages of places of worship, and present findings in a class 'Belief Gallery Walk'."
+      },
+      {
+        "t": "Clickview",
+        "d": "Curate a playlist of short documentaries and virtual tours of places of worship from Clickview. Students use the platform's interactive video features to annotate, ask questions, and reflect on similarities and differences between spiritual practices."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students record video interviews with family members or community leaders about their beliefs and traditions using the iPad camera. They upload and annotate these interviews in Seesaw, tagging key vocabulary and reflecting on how beliefs shape identity."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Design Cycle STEM Challenge: Students use the Design Cycle to prototype a 'Celebration Machine' with Lego Spike Prime, programmed to perform a unique movement or display for a chosen religious or cultural festival. They document their process and iterations in a digital journal, reflecting on how technology can celebrate and respect diversity."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how people's beliefs contribute to the diversity of human life, focusing on spiritual and religious beliefs, similarities and differences among religions, and the impact of these beliefs on human diversity. Students engage in gallery walks, virtual tours, research, and creative projects to deepen understanding and foster respect for different worldviews."
   },
   {
     "ca": "Glen Waverley",
@@ -2416,9 +2441,34 @@
     "th": "How We Express Ourselves",
     "ci": "People design for purpose.",
     "lo": "How design thinking creates in various ways; Design thinking meets community needs; Effective ways to engage an audience",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes + iPad App Smashing",
+        "d": "Students design and prototype interactive 3D models of disaster-resistant shelters or emergency tools using Tinkercad, then bring their creations to life with Merge Cubes and the Merge Explorer app. They can record AR video walkthroughs using the iPad camera, narrating their design thinking and how their solution meets a specific community need. This immersive, hands-on workflow makes abstract design concepts tangible and engaging."
+      },
+      {
+        "t": "Canva",
+        "d": "Students create persuasive digital pitch decks for their UNICEF-inspired design solutions, using Canva's 'Remove Background' feature to showcase their prototypes and integrate infographics, maps, and empathy maps. This supports the pitch-writing and presentation phase, allowing students to visually communicate their process and impact."
+      },
+      {
+        "t": "Padlet",
+        "d": "Throughout the inquiry, students collaboratively document their ideation, research, and empathy mapping on a shared Padlet board. They can upload photos of their prototypes, maps, and annotated infographics, creating a living portfolio that tracks their design journey and peer feedback."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Teams publish interactive digital journals in Book Creator, combining photos, videos, voice recordings, and diagrams to document each stage of the design thinking process. This supports reflection, self-assessment, and sharing with the wider school community."
+      },
+      {
+        "t": "ClickView",
+        "d": "Leverage ClickView's curated video resources on natural disasters, design thinking, and child rights to spark discussion and deepen understanding during the 'Finding Out' and 'Tuning In' phases. Students can annotate videos with their own questions and insights, connecting multimedia learning to their project work."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "For the STEM Design Cycle project, students use Lego Spike Prime to engineer and prototype a disaster-resilient structure or emergency response robot. They apply the full design thinking cycle: empathising with stakeholders, ideating, prototyping, testing for stability or function (e.g., earthquake shake table or flood simulation), and refining based on feedback. This hands-on challenge directly links to the unit's focus on purposeful design for community needs."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this unit, students explore how people design for purpose through the lens of natural hazards and community needs. They engage in the design thinking process, research real-world problems, collaborate in teams, prototype innovative solutions, and pitch their ideas to an authentic audience, integrating empathy, data analysis, and persuasive communication throughout."
   },
   {
     "ca": "Glen Waverley",
@@ -2426,9 +2476,35 @@
     "th": "How We Organise Ourselves",
     "ci": "Economic systems are an integral part of human society.",
     "lo": "Wealth is more than money; Responsibilities when managing income; Income is earned and managed in many ways",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes + iPad App Smashing",
+        "d": "Students design and build interactive 3D models of their 'ideal community' or economic system using Merge Cubes and the Merge Explorer app. They then use the iPad camera to record a virtual guided tour, narrating how wealth, resources, and responsibilities are distributed in their imagined society. This merges tactile, spatial, and digital storytelling for a futuristic approach to economic systems."
+      },
+      {
+        "t": "Padlet + Seesaw",
+        "d": "Launch a collaborative 'Wealth is More Than Money' digital wall where students post multimedia reflections (audio, drawings, photos of their Pop Art, or short videos) exploring non-monetary forms of wealth in their lives and communities. Students then use Seesaw to create digital portfolios tracking their evolving understanding of economic systems and personal values."
+      },
+      {
+        "t": "Canva",
+        "d": "Students create persuasive infographics or digital posters in Canva to advocate for responsible government spending in their 'ideal community' projects. They use real data from their class budget simulation, integrating charts, icons, and visual storytelling to communicate complex economic ideas to a wider audience."
+      },
+      {
+        "t": "Minecraft: The Hall of Inventions",
+        "d": "Students explore the evolution of economic systems by visiting the virtual museum in Minecraft: The Hall of Inventions. They research a key economic innovation (e.g., currency, banking, trade networks), then build their own invention in the museum, explaining its impact on society and connecting it to their classroom inquiry. This fosters historical perspective and creative application.",
+        "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
+      },
+      {
+        "t": "Excel",
+        "d": "Students use Excel to model personal or community budgets, experimenting with different income sources, expenses, and savings strategies. They create interactive spreadsheets that visually demonstrate the consequences of financial decisions, supporting critical thinking about economic responsibility and resource allocation."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Design Cycle STEM Project: Students use the Design Cycle to prototype a 'Smart Marketplace' using Lego Spike Prime. They design and code automated systems (e.g., a robotic cashier, inventory tracker, or sustainable delivery vehicle) that address real-world economic challenges such as fair trade, accessibility, or environmental impact. Teams document their process and pitch their solution to the class, integrating technology, economics, and design thinking."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students inquire into economic systems by exploring wealth beyond money, responsibilities in managing income, and diverse ways income is earned and managed. They engage in provocations, debates, budgeting simulations, job applications, and collaborative projects to design ideal communities, culminating in creative presentations and hands-on design challenges that connect economic concepts to real-world contexts."
   },
   {
     "ca": "Glen Waverley",
@@ -2436,9 +2512,35 @@
     "th": "How the World Works",
     "ci": "The interactions between living things, materials, and light enable us to make decisions about the world",
     "lo": "How structural features and adaptations help living things survive; How weathering and erosion cause change to Earth's surface; How light is used in science and technology",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes + iPad App Smashing",
+        "d": "Students create interactive 3D models of natural disasters (e.g., bushfires, earthquakes, floods) using Merge Cubes and the Merge Explorer app, then record AR video explanations using the iPad camera. They can app smash with Canva's 'Remove Background' feature to place themselves inside their AR scenes, narrating the science and human impact for a truly immersive digital artifact."
+      },
+      {
+        "t": "Minecraft: Invisible Forces At Work",
+        "d": "Students use Minecraft Education's 'Invisible Forces At Work' lesson to explore magnetism and gravity, then design a magnetic structure that could protect the International Space Station or assist astronauts. This directly connects to the unit's focus on the interactions between materials and forces in the real world.",
+        "url": "https://education.minecraft.net/en-us/lessons/invisible-forces-at-work"
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students document their design thinking journey by creating multimedia digital books that combine photos of prototypes, data graphs, scientific explanations, and personal reflections on how their solutions address real-world problems caused by natural disasters."
+      },
+      {
+        "t": "Padlet + Clickview",
+        "d": "Students collaboratively build a digital 'Wonder Wall' on Padlet, posting questions, research findings, and video clips from Clickview about natural hazards, then use Padlet's mapping feature to visually track disaster locations and impacts across Australia."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design persuasive infographics and pitch decks in Canva to communicate their disaster solutions, using real data from their research and prototypes. Canva's 'Remove Background' tool allows them to visually integrate themselves into their digital presentations."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Using the Design Cycle, students work in teams to prototype and test earthquake-resistant buildings with Lego Spike Prime. They iterate on their designs based on data from simulated 'shake table' tests, documenting their process and results in a digital engineering journal."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit immerses Year 5 students in the science of natural disasters, focusing on bushfires, earthquakes, and floods. Through collaborative inquiry, students research hazards, analyse data, map risks, and use the design thinking process to prototype and pitch solutions that protect communities and uphold children's rights. The unit integrates maths, science, geography, and digital technologies, culminating in student-led presentations and reflections."
   },
   {
     "ca": "Glen Waverley",
@@ -2446,9 +2548,35 @@
     "th": "Sharing the Planet",
     "ci": "Communities interact with the environment in different ways.",
     "lo": "The need for conservation; Community values inform management of the natural environment; Ways environmental stewardship can drive change",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cube + iPad App Smashing",
+        "d": "Students create interactive 3D models of local flora and fauna using the Merge Cube and iPads, then use the Merge Explorer app to overlay digital information about conservation needs and stewardship actions. They can record video tours of their models using the iPad camera, narrating how their community can interact with and protect these species."
+      },
+      {
+        "t": "Padlet + Canva Workflow",
+        "d": "Students collaboratively research and document local council sustainability initiatives on Padlet, then design persuasive digital posters in Canva to promote their chosen initiative to the school community, integrating real data and student-generated visuals."
+      },
+      {
+        "t": "Book Creator Digital Field Guide",
+        "d": "After a nature walk around the school, students use Book Creator to compile a multimedia field guide of native plants and animals, including photos, audio reflections, and conservation tips tailored to their local environment."
+      },
+      {
+        "t": "Minecraft: Build With Bees Habitat",
+        "d": "Students explore how bees interact with their environment by applying their knowledge of stewardship and conservation to design and build digital 'beetopias' in Minecraft, supporting thriving bee colonies and reflecting on the importance of biodiversity.",
+        "url": "https://education.minecraft.net/en-us/lessons/build-with-bees-habitat"
+      },
+      {
+        "t": "Seesaw Action Reflection Journals",
+        "d": "Students document their personal stewardship actions and reflections in Seesaw, using a mix of photos, voice recordings, and drawings to track their impact on the local environment and share with peers for feedback."
+      },
+      {
+        "t": "Lego Spike Prime Design Cycle: Eco-Innovation Challenge",
+        "d": "Using the Design Cycle, students identify a local environmental issue (e.g., waste, water use, habitat loss), brainstorm solutions, and prototype an eco-innovation using Lego Spike Prime. They test, refine, and present their models, justifying design choices based on community values and conservation needs."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students inquire into how communities interact with the environment, focusing on conservation, stewardship, and the influence of community values on environmental management. Key activities include exploring First Nations perspectives, researching local flora and fauna, investigating council initiatives, and pitching persuasive sustainability actions for the school community."
   },
   {
     "ca": "Glen Waverley",
