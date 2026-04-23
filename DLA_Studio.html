@@ -1192,17 +1192,30 @@ function buildSugRow(sug, entryIdx, sugIdx){
   const tool = sugTool(sug);
   const desc = sugDesc(sug);
   const url = sug.url || null;
+  const isStem = sugIdx === 5;
   const linkHtml = url
     ? `<a href="${esc(url)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--lime);text-decoration:none;font-weight:700;margin-top:6px;padding:3px 8px;border:1px solid var(--lime);border-radius:6px">↗ View lesson</a>`
     : '';
-  return `<div class="sug" id="${uid}">
+  const stemBadge = isStem
+    ? `<span style="font-size:9px;font-weight:800;padding:3px 10px;border-radius:99px;background:#4361ee;color:#fff;letter-spacing:.8px;text-transform:uppercase;flex-shrink:0">🔬 STEM Design Cycle</span>`
+    : '';
+  const stemBorder = isStem ? 'border-color:#4361ee' : '';
+  const stemCycleLabel = isStem
+    ? `<div style="font-size:12px;font-weight:700;color:#4361ee;margin-bottom:8px">🔄 Empathise → Define → Ideate → Prototype → Test → Empathise</div>`
+    : '';
+  const stemSeparator = isStem
+    ? `<div style="display:flex;align-items:center;gap:10px;margin:18px 0 10px"><div style="flex:1;height:1px;background:var(--border)"></div><span style="font-size:10px;font-weight:700;color:#4361ee;letter-spacing:1px;text-transform:uppercase;white-space:nowrap">STEM Idea</span><div style="flex:1;height:1px;background:var(--border)"></div></div>`
+    : '';
+  return `${stemSeparator}<div class="sug" id="${uid}" style="${stemBorder}">
     <div class="sug-main">
       <div style="display:flex;align-items:center;gap:8px">
         <div class="sug-tool">${esc(tool)}</div>
+        ${stemBadge}
         <div style="flex:1"></div>
         <button class="btn-sm" id="${uid}-regen" onclick="regenSingleSug(${entryIdx},${sugIdx})" title="Regenerate this suggestion">↻</button>
         <button class="btn-sm" onclick="openFeedbackChat('${uid}',${entryIdx},${sugIdx})">💬 feedback</button>
       </div>
+      ${stemCycleLabel}
       <div class="sug-desc">${linkify(desc)}</div>
       ${linkHtml}
     </div>
