@@ -315,6 +315,7 @@
         <div id="bulk-reasoning" style="display:none;padding:10px 20px;background:var(--card2);border-top:1px solid var(--border);max-height:180px;overflow-y:auto"></div>
         <div style="display:flex;gap:10px;padding:14px 20px;background:var(--card);align-items:center">
           <button class="btn-sm" id="btn-bulk-reset" onclick="bulkChatReset()" style="padding:8px 10px;flex-shrink:0" title="Start new conversation">↻</button>
+          <button class="btn-sm" id="btn-bulk-voice" onclick="toggleBulkVoice()" style="padding:8px 10px;flex-shrink:0" title="Speak your request (uses browser speech recognition)">🎤</button>
           <input id="bulk-chat-input" class="inp" placeholder="Describe the change you want to make…" style="flex:1;margin-bottom:0;font-size:13px" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();bulkChatSend()}">
           <button class="btn-pri" onclick="bulkChatSend()" id="btn-bulk-chat-send" style="padding:12px 20px;white-space:nowrap">Send →</button>
         </div>
@@ -322,6 +323,28 @@
           <div style="font-size:13px;color:var(--lime);font-weight:600;margin-bottom:8px" id="bulk-ai-label">Analysing entries…</div>
           <div style="height:5px;background:var(--card);border-radius:3px"><div id="bulk-ai-bar" style="height:100%;border-radius:3px;background:var(--lime);width:0%;transition:width .4s"></div></div>
         </div>
+      </div>
+
+      <!-- Snapshots & Safety -->
+      <div class="card" style="margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+          <span class="label" style="margin:0">📸 snapshots & undo</span>
+          <div style="flex:1"></div>
+          <button class="btn-sm" onclick="createManualSnapshot()" style="color:var(--lime);border-color:var(--lime)">+ Save snapshot now</button>
+        </div>
+        <p style="font-size:12px;color:var(--dim);margin-bottom:14px">Every Bulk AI Edit creates a snapshot automatically. Restore any snapshot to roll back. Stored locally in your browser (max 20).</p>
+        <div id="snapshots-list"></div>
+      </div>
+
+      <!-- Playbooks -->
+      <div class="card" style="margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+          <span class="label" style="margin:0">📖 playbooks</span>
+          <div style="flex:1"></div>
+          <button class="btn-sm" onclick="savePlaybookFromChat()" style="color:var(--gold);border-color:var(--gold)">+ Save current as playbook</button>
+        </div>
+        <p style="font-size:12px;color:var(--dim);margin-bottom:14px">Common requests saved for re-use. Click a playbook to auto-fill the chatbot and run it.</p>
+        <div id="playbooks-list"></div>
       </div>
 
       <!-- Run Surgeon -->
@@ -539,6 +562,163 @@ function recordChange(idx, oldSugs, newSugs){
   CHANGE_HISTORY.unshift({ idx, oldSugs, newSugs, ts: Date.now() });
   if(CHANGE_HISTORY.length > MAX_HISTORY) CHANGE_HISTORY.pop();
 }
+
+// ========== SNAPSHOT / UNDO SYSTEM ==========
+let SNAPSHOTS = [];
+const MAX_SNAPSHOTS = 20;
+const SNAPSHOT_KEY = 'dla_snapshots_v1';
+
+function loadSnapshots(){
+  try {
+    const raw = localStorage.getItem(SNAPSHOT_KEY);
+    if(raw) SNAPSHOTS = JSON.parse(raw) || [];
+  } catch(e){ SNAPSHOTS = []; }
+}
+function saveSnapshotsToStorage(){
+  try {
+    if(SNAPSHOTS.length > MAX_SNAPSHOTS) SNAPSHOTS = SNAPSHOTS.slice(0, MAX_SNAPSHOTS);
+    localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(SNAPSHOTS));
+  } catch(e){ console.warn('Snapshot save failed:', e.message); }
+}
+function createSnapshot(name){
+  const snap = {
+    id: 's_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
+    name: name || ('Snapshot ' + new Date().toLocaleString('en-AU')),
+    ts: Date.now(),
+    data: JSON.parse(JSON.stringify(DATA))
+  };
+  SNAPSHOTS.unshift(snap);
+  saveSnapshotsToStorage();
+  return snap;
+}
+function restoreSnapshot(id){
+  const snap = SNAPSHOTS.find(s => s.id === id);
+  if(!snap){ alert('Snapshot not found'); return; }
+  if(!confirm(`Restore "${snap.name}"?\n\nThis will replace the entire current library with the snapshot from ${new Date(snap.ts).toLocaleString('en-AU')}.\n\nA new snapshot of the CURRENT state will be saved first so you can re-undo.`)) return;
+  createSnapshot('Before restoring: ' + snap.name);
+  DATA.length = 0;
+  snap.data.forEach(e => DATA.push(JSON.parse(JSON.stringify(e))));
+  saveToDrive();
+  setStatus(`Restored snapshot: ${snap.name}`);
+  if(typeof renderBrowse === 'function') renderBrowse();
+  if(typeof renderAuditChart === 'function') renderAuditChart();
+  if(typeof renderBulkWelcome === 'function') renderBulkWelcome();
+  if(typeof renderSnapshotsList === 'function') renderSnapshotsList();
+}
+function deleteSnapshot(id){
+  const snap = SNAPSHOTS.find(s => s.id === id);
+  if(!snap) return;
+  if(!confirm(`Delete snapshot "${snap.name}"?\n\nThis cannot be undone.`)) return;
+  SNAPSHOTS = SNAPSHOTS.filter(s => s.id !== id);
+  saveSnapshotsToStorage();
+  renderSnapshotsList();
+}
+function createManualSnapshot(){
+  const name = prompt('Name this snapshot:', 'Manual snapshot ' + new Date().toLocaleString('en-AU'));
+  if(!name) return;
+  createSnapshot(name);
+  renderSnapshotsList();
+  setStatus('Snapshot saved ✓');
+}
+function renderSnapshotsList(){
+  const container = document.getElementById('snapshots-list');
+  if(!container) return;
+  if(!SNAPSHOTS.length){
+    container.innerHTML = '<div style="color:var(--dim);font-size:13px;padding:10px 0">No snapshots yet. A snapshot is created automatically before every Bulk AI Edit.</div>';
+    return;
+  }
+  container.innerHTML = SNAPSHOTS.map(snap => {
+    const age = Math.round((Date.now() - snap.ts) / 60000);
+    const ageStr = age < 1 ? 'just now' : age < 60 ? age + 'm ago' : age < 1440 ? Math.round(age/60) + 'h ago' : Math.round(age/1440) + 'd ago';
+    const entryCount = (snap.data || []).length;
+    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card2);border:1px solid var(--border);border-radius:10px;margin-bottom:6px">
+      <span style="font-size:16px">📸</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;color:var(--text)">${esc(snap.name)}</div>
+        <div style="font-size:11px;color:var(--dim)">${ageStr} · ${entryCount} entries</div>
+      </div>
+      <button class="btn-sm" onclick="restoreSnapshot('${snap.id}')" style="color:var(--lime);border-color:var(--lime)">↺ Restore</button>
+      <button class="btn-sm" onclick="deleteSnapshot('${snap.id}')" style="color:#FF8080">✕</button>
+    </div>`;
+  }).join('');
+}
+
+// ========== PLAYBOOKS SYSTEM ==========
+let PLAYBOOKS = [];
+const PLAYBOOK_KEY = 'dla_playbooks_v1';
+const SEED_PLAYBOOKS = [
+  { name: 'Diversify most overused tool', prompt: 'Find the most overused tool in the library and propose replacements for the worst offenders using underused alternatives.' },
+  { name: 'Scan for Minecraft opportunities', prompt: 'Find opportunities to use Minecraft Education wherever a curated lesson genuinely connects to the unit.' },
+  { name: 'Scan for Micro:bit opportunities', prompt: 'Find opportunities to use Micro:bit wherever a curated lesson genuinely connects to the unit.' },
+  { name: 'Find weak/generic suggestions', prompt: 'Scan the entire library for vague, generic, or weakly-connected suggestions and propose stronger replacements.' },
+  { name: 'Boost hands-on STEM (Year 4+)', prompt: 'Find Year 4, 5 and 6 entries where a hands-on STEM tool (Sphero BOLT, Lego Spike Prime, Micro:bit, CoDrone, 3D Printers) could genuinely connect but is missing.' }
+];
+
+function loadPlaybooks(){
+  try {
+    const raw = localStorage.getItem(PLAYBOOK_KEY);
+    if(raw){
+      PLAYBOOKS = JSON.parse(raw) || [];
+    } else {
+      PLAYBOOKS = SEED_PLAYBOOKS.map((p,i) => ({ ...p, id:'pb_seed_'+i, seed:true }));
+      savePlaybooks();
+    }
+  } catch(e){ PLAYBOOKS = SEED_PLAYBOOKS.map((p,i) => ({ ...p, id:'pb_seed_'+i, seed:true })); }
+}
+function savePlaybooks(){
+  try { localStorage.setItem(PLAYBOOK_KEY, JSON.stringify(PLAYBOOKS)); }
+  catch(e){ console.warn('Playbook save failed:', e.message); }
+}
+function savePlaybookFromChat(){
+  const lastUser = [...(typeof bulkChatMemory !== 'undefined' ? bulkChatMemory : [])].reverse().find(m => m.role === 'user');
+  const input = document.getElementById('bulk-chat-input');
+  const fromInput = input?.value?.trim() || '';
+  const prompt_ = fromInput || (lastUser?.content || '');
+  if(!prompt_){ alert('Type a request in the chat first, or send one, then save it as a playbook.'); return; }
+  const name = prompt('Name this playbook:', prompt_.slice(0, 40));
+  if(!name) return;
+  PLAYBOOKS.unshift({ id: 'pb_' + Date.now() + '_' + Math.random().toString(36).slice(2,6), name, prompt: prompt_ });
+  savePlaybooks();
+  renderPlaybooksList();
+  setStatus('Playbook saved ✓');
+}
+function runPlaybook(id){
+  const pb = PLAYBOOKS.find(p => p.id === id);
+  if(!pb) return;
+  if(typeof bulkChatQuickStart === 'function') bulkChatQuickStart(pb.prompt);
+}
+function deletePlaybook(id){
+  const pb = PLAYBOOKS.find(p => p.id === id);
+  if(!pb) return;
+  if(!confirm(`Delete playbook "${pb.name}"?`)) return;
+  PLAYBOOKS = PLAYBOOKS.filter(p => p.id !== id);
+  savePlaybooks();
+  renderPlaybooksList();
+}
+function renderPlaybooksList(){
+  const container = document.getElementById('playbooks-list');
+  if(!container) return;
+  if(!PLAYBOOKS.length){
+    container.innerHTML = '<div style="color:var(--dim);font-size:13px;padding:10px 0">No playbooks yet.</div>';
+    return;
+  }
+  container.innerHTML = PLAYBOOKS.map(pb => {
+    const seed = pb.seed ? ' <span style="font-size:9px;padding:2px 6px;border-radius:20px;background:rgba(212,160,23,0.15);color:var(--gold);font-weight:700;letter-spacing:.5px">TEMPLATE</span>' : '';
+    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card2);border:1px solid var(--border);border-radius:10px;margin-bottom:6px">
+      <span style="font-size:16px">${pb.seed ? '📘' : '📖'}</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;color:var(--text)">${esc(pb.name)}${seed}</div>
+        <div style="font-size:11px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(pb.prompt)}</div>
+      </div>
+      <button class="btn-sm" onclick="runPlaybook('${pb.id}')" style="color:var(--gold);border-color:var(--gold)">▶ Run</button>
+      ${pb.seed ? '' : `<button class="btn-sm" onclick="deletePlaybook('${pb.id}')" style="color:#FF8080">✕</button>`}
+    </div>`;
+  }).join('');
+}
+
+loadSnapshots();
+loadPlaybooks();
+
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function fixDashCorruption(s){
   // Fix corrupted em-dashes: '?' between non-whitespace chars should be ' — '
@@ -973,7 +1153,7 @@ function switchTab(tab,btn){
   if(tab==='browse') renderBrowse();
   if(tab==='audit') renderAudit();
   if(tab==='live') loadLiveAnalytics();
-  if(tab==='tools'){ initBulkTools(); renderBulkWelcome(); }
+  if(tab==='tools'){ initBulkTools(); renderBulkWelcome(); renderSnapshotsList(); renderPlaybooksList(); }
   if(tab==='libraries') renderLibraries();
 
 }
@@ -2066,6 +2246,10 @@ function showChangesPopup(changes){
       style="padding:14px 20px;background:transparent;color:var(--lime);border:1.5px solid var(--lime);border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap">
       ✓ Approve All
     </button>
+    <button onclick="showBeforeAfterPreview()"
+      style="padding:14px 18px;background:transparent;color:var(--purple);border:1.5px solid var(--purple);border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap" title="See how tool frequency would change">
+      👁 Preview
+    </button>
     <button id="popup-apply-btn" disabled onclick="applyChangesFromPopup()"
       style="flex:1;min-width:180px;padding:14px;background:var(--lime);color:#111;border:none;border-radius:10px;font-weight:900;font-size:15px;cursor:pointer;opacity:0.4">
       ✓ Apply 0 approved changes
@@ -2112,6 +2296,14 @@ function applyChangesFromPopup(){
   const changes=window._popupChanges||[];
   const states=window._popupStates||[];
   let applied=0, skippedDupes=0;
+  
+  // Auto-create a snapshot before applying bulk changes
+  const approvedCount = states.filter(s => s === 'approved').length;
+  if(approvedCount > 0){
+    const snapName = window._snapshotReason || `Before applying ${approvedCount} bulk change${approvedCount!==1?'s':''}`;
+    createSnapshot(snapName);
+    delete window._snapshotReason;
+  }
 
   changes.forEach((c,ci)=>{
     if(states[ci]!=='approved') return;
@@ -2153,6 +2345,85 @@ function applyChangesFromPopup(){
   const dupeNote = skippedDupes ? ` (skipped ${skippedDupes} duplicate${skippedDupes!==1?'s':''})` : '';
   setStatus(`${applied} suggestion${applied!==1?'s':''} updated and saved${dupeNote}`);
   renderAuditChart();
+}
+
+// ========== BEFORE/AFTER PREVIEW ==========
+function showBeforeAfterPreview(){
+  const changes = window._popupChanges || [];
+  const states = window._popupStates || [];
+  const approvedChanges = changes.filter((c, i) => states[i] === 'approved');
+  if(!approvedChanges.length){
+    alert('No changes are currently approved. Approve some first, then preview.');
+    return;
+  }
+
+  const beforeFreq = {};
+  const afterFreq = {};
+  DATA.forEach((e, ei) => {
+    getSugs(e).forEach((s, si) => {
+      const t = normaliseToolName((s && s.t ? s.t.trim() : ''));
+      if(!t) return;
+      beforeFreq[t] = (beforeFreq[t] || 0) + 1;
+      const change = approvedChanges.find(c => c.entryIdx === ei && c.sugIdx === si);
+      if(change){
+        const newTool = normaliseToolName((change.t || '').trim());
+        if(newTool) afterFreq[newTool] = (afterFreq[newTool] || 0) + 1;
+      } else {
+        afterFreq[t] = (afterFreq[t] || 0) + 1;
+      }
+    });
+  });
+
+  const allTools = new Set([...Object.keys(beforeFreq), ...Object.keys(afterFreq)]);
+  const diff = [];
+  allTools.forEach(t => {
+    const b = beforeFreq[t] || 0;
+    const a = afterFreq[t] || 0;
+    if(b !== a) diff.push({ tool: t, before: b, after: a, delta: a - b });
+  });
+  diff.sort((x, y) => Math.abs(y.delta) - Math.abs(x.delta));
+
+  const maxCount = Math.max(...Object.values(beforeFreq), ...Object.values(afterFreq), 1);
+
+  const overlay = document.createElement('div');
+  overlay.id = 'preview-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100001;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto';
+
+  overlay.innerHTML = `<div style="background:var(--card);border:2px solid var(--purple);border-radius:16px;padding:28px;max-width:720px;width:100%;max-height:90vh;overflow-y:auto">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <h3 style="font-size:18px;font-weight:900;color:var(--text);margin:0">👁 Before / After Impact</h3>
+      <button onclick="document.getElementById('preview-overlay').remove()" style="background:var(--card2);border:1px solid var(--border);color:var(--text);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;font-family:inherit">✕</button>
+    </div>
+    <p style="font-size:13px;color:var(--dim);margin-bottom:20px;line-height:1.6">Applying the ${approvedChanges.length} approved change${approvedChanges.length!==1?'s':''} will shift the tool distribution as shown below. Green = gaining usage, red = losing usage.</p>
+    <div style="font-size:11px;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">${diff.length} tool${diff.length!==1?'s':''} affected</div>
+    ${diff.length ? diff.map(d => {
+      const bPct = Math.round((d.before / maxCount) * 100);
+      const aPct = Math.round((d.after / maxCount) * 100);
+      const deltaColor = d.delta > 0 ? 'var(--lime)' : '#FF8080';
+      const deltaSign = d.delta > 0 ? '+' : '';
+      return `<div style="padding:12px 0;border-bottom:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+          <span style="flex:1;font-size:14px;font-weight:700;color:var(--text)">${esc(d.tool)}</span>
+          <span style="font-size:12px;color:${deltaColor};font-weight:800">${deltaSign}${d.delta}</span>
+          <span style="font-size:11px;color:var(--dim);min-width:60px;text-align:right">${d.before} → ${d.after}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:40px 1fr;gap:8px;align-items:center;margin-bottom:3px">
+          <span style="font-size:10px;color:var(--dim);font-weight:700">Before</span>
+          <div style="height:5px;background:var(--card2);border-radius:2px"><div style="height:100%;width:${bPct}%;background:#666;border-radius:2px"></div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:40px 1fr;gap:8px;align-items:center">
+          <span style="font-size:10px;color:${deltaColor};font-weight:700">After</span>
+          <div style="height:5px;background:var(--card2);border-radius:2px"><div style="height:100%;width:${aPct}%;background:${deltaColor};border-radius:2px"></div></div>
+        </div>
+      </div>`;
+    }).join('') : '<div style="color:var(--dim);padding:20px 0">No tool frequency change (changes might be descriptions only).</div>'}
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+      <button class="btn" onclick="document.getElementById('preview-overlay').remove()" style="padding:10px 20px">Keep reviewing</button>
+      <button class="btn-pri" onclick="document.getElementById('preview-overlay').remove();applyChangesFromPopup()" style="padding:10px 22px">Apply these ${approvedChanges.length} change${approvedChanges.length!==1?'s':''}</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+  overlay.onclick = (e) => { if(e.target === overlay) overlay.remove(); };
 }
 
 function checkKeyInput(){
@@ -3560,7 +3831,32 @@ function computeBulkInsights(){
     }
   }
 
-  return insights.slice(0, 3); // cap at 3 to keep it scannable
+  // 5. Weak/generic suggestions scan
+  let weakCount = 0;
+  const weakPatterns = [
+    /research online/i, /look up/i, /google (this|it)/i,
+    /type (your|the)/i, /write (about|up)/i,
+    /use (the|a) (app|tool|program)/i,
+    /simply|basic[ae]lly|just to/i
+  ];
+  DATA.forEach(e => {
+    if(!e.audited) return;
+    getSugs(e).forEach(s => {
+      const d = (s && s.d ? s.d : '').toLowerCase();
+      if(d.length < 60) { weakCount++; return; }
+      if(weakPatterns.some(p => p.test(d))) weakCount++;
+    });
+  });
+  if(weakCount >= 5){
+    insights.push({
+      icon: '🔎',
+      title: `${weakCount} weak suggestions detected`,
+      body: `Descriptions that are very short (<60 chars), generic ("research online", "just use the app"), or vague. These rarely get used by teachers.`,
+      action: 'Scan the library for weak or generic suggestions and propose stronger replacements'
+    });
+  }
+
+  return insights.slice(0, 4);
 }
 
 function renderBulkWelcome(){
@@ -3584,7 +3880,8 @@ function renderBulkWelcome(){
     html += `</div>`;
     html += `<div class="chat-bubble" style="margin-top:10px">Or ask me anything — "Find X opportunities", "Replace Y with Z", "Scan for weak suggestions", etc.</div>`;
   } else {
-    html += `\n\nYour library looks well-balanced! Ask me to make any bulk changes.</div>`;
+    html += `\n\nYour library looks well-balanced! Try:</div>`;
+    html += `<div style="margin-top:10px"><div class="insight-card"><div style="display:flex;align-items:flex-start;gap:10px"><span class="insight-icon">💭</span><div style="flex:1"><div class="insight-title">Explore with "what if"</div><div class="insight-body">Ask hypothetical questions like <em>"What if I banned Book Creator?"</em> — I'll simulate the impact without changing anything.</div></div></div></div>`;
   }
 
   welcome.innerHTML = html;
@@ -3609,6 +3906,122 @@ function bulkChatReset(){
   hideReasoningSteps();
   renderBulkWelcome();
   renderBulkChat();
+}
+
+// ========== WHAT IF SIMULATIONS ==========
+async function runWhatIfSimulation(text){
+  const quickMatch = text.match(/what\s*if\s+(.+)/i);
+  const scenario = quickMatch ? quickMatch[1].trim() : text;
+
+  bulkChatAddMessage('assistant', `🔮 Simulating: "${esc(scenario)}"`);
+  showReasoningSteps([
+    { text: 'Reading your hypothesis', status: 'active' },
+    { text: 'Scanning library for affected entries', status: 'pending' },
+    { text: 'Computing ripple effects', status: 'pending' }
+  ]);
+
+  try {
+    updateReasoningStep(0, 'done');
+    updateReasoningStep(1, 'active');
+
+    const freq = {};
+    DATA.forEach(e => {
+      getSugs(e).forEach(s => {
+        const t = normaliseToolName((s && s.t ? s.t.trim() : ''));
+        if(t) freq[t] = (freq[t] || 0) + 1;
+      });
+    });
+    const topTools = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,20).map(([t,c])=>`${t}(${c}x)`).join(', ');
+
+    updateReasoningStep(1, 'done');
+    updateReasoningStep(2, 'active');
+
+    const prompt = `You are a digital-learning data analyst. A coordinator is asking a hypothetical "what if" question about their library of ${DATA.length} IB PYP unit planners.
+
+Current tool distribution: ${topTools}
+
+Scenario: "${scenario}"
+
+Respond with a concise, well-formatted analysis answering the hypothetical. Include:
+1. A one-sentence direct answer
+2. Specific numbers: how many entries / slots would be affected
+3. 2-3 concrete consequences (e.g. which tools would absorb the displaced slots, coverage gaps, age-level impacts)
+4. A practical recommendation
+
+Be concrete. Use <strong> tags for emphasis, <br> for line breaks. Keep under 250 words. Do NOT produce any APPLY_CHANGES block — this is analysis-only.`;
+
+    const response = await callAI(
+      [{role:'user', parts:[{text: prompt}]}],
+      null, OPENAI_FAST_MODEL
+    );
+
+    updateReasoningStep(2, 'done');
+    setTimeout(hideReasoningSteps, 800);
+
+    const clean = response.replace(/```[a-z]*\n?/gi, '').replace(/```/g, '').trim();
+    bulkChatAddMessage('assistant', `<div style="padding:4px 0"><div style="font-size:10px;color:var(--purple);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">🔮 Hypothetical analysis</div>${clean}<br><br><em style="font-size:12px;color:var(--dim)">Nothing was changed. Type a non-"what if" request to actually make changes.</em></div>`);
+    bulkChatMemory.push({ role: 'user', content: 'WHAT IF: ' + scenario });
+    bulkChatMemory.push({ role: 'assistant', content: 'Hypothetical analysis: ' + clean.replace(/<[^>]+>/g, '').slice(0, 500) });
+  } catch(e){
+    hideReasoningSteps();
+    bulkChatAddMessage('assistant', `❌ Simulation error: ${e.message}`);
+  }
+}
+
+// ========== VOICE INPUT ==========
+let _voiceRec = null;
+let _voiceActive = false;
+
+function toggleBulkVoice(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){
+    alert('Voice input is not supported in this browser. Try Chrome or Edge.');
+    return;
+  }
+  const btn = document.getElementById('btn-bulk-voice');
+  const input = document.getElementById('bulk-chat-input');
+
+  if(_voiceActive){
+    try { _voiceRec && _voiceRec.stop(); } catch{}
+    _voiceActive = false;
+    if(btn){ btn.textContent = '🎤'; btn.style.background = ''; btn.style.color = ''; btn.style.borderColor = ''; }
+    return;
+  }
+
+  _voiceRec = new SR();
+  _voiceRec.lang = 'en-AU';
+  _voiceRec.interimResults = true;
+  _voiceRec.continuous = false;
+
+  let finalText = '';
+  _voiceRec.onstart = () => {
+    _voiceActive = true;
+    if(btn){ btn.textContent = '🛑'; btn.style.background = '#FF6B6B'; btn.style.color = '#FFF'; btn.style.borderColor = '#FF6B6B'; }
+    if(input) input.placeholder = 'Listening…';
+  };
+  _voiceRec.onresult = (e) => {
+    let interim = '';
+    for(let i = e.resultIndex; i < e.results.length; i++){
+      const transcript = e.results[i][0].transcript;
+      if(e.results[i].isFinal) finalText += transcript + ' ';
+      else interim += transcript;
+    }
+    if(input) input.value = (finalText + interim).trim();
+  };
+  _voiceRec.onerror = (e) => {
+    console.warn('Voice error:', e.error);
+    _voiceActive = false;
+    if(btn){ btn.textContent = '🎤'; btn.style.background = ''; btn.style.color = ''; btn.style.borderColor = ''; }
+    if(input) input.placeholder = 'Describe the change you want to make…';
+    if(e.error === 'not-allowed') alert('Microphone access denied. Check browser permissions.');
+  };
+  _voiceRec.onend = () => {
+    _voiceActive = false;
+    if(btn){ btn.textContent = '🎤'; btn.style.background = ''; btn.style.color = ''; btn.style.borderColor = ''; }
+    if(input) input.placeholder = 'Describe the change you want to make…';
+    if(finalText && input){ input.value = finalText.trim(); input.focus(); }
+  };
+  try { _voiceRec.start(); } catch(e){ console.warn(e); }
 }
 
 // ========== REASONING STREAM — shows AI thinking stages ==========
@@ -3729,6 +4142,14 @@ async function bulkChatSend(){
     bulkChatContext.clarifications = bulkChatContext.clarifications || [];
     bulkChatContext.clarifications.push({ question: 'Additional context from user', answer: text });
     startBulkAnalysis();
+    return;
+  }
+
+  // Detect "what if" simulation requests — runs without applying
+  const isWhatIf = /^\s*what\s*if\b/i.test(text);
+  if(isWhatIf){
+    bulkChatAddMessage('user', text);
+    runWhatIfSimulation(text);
     return;
   }
 
@@ -4158,9 +4579,21 @@ ${fullContext}`;
       updateReasoningStep(5, 'done');
       setTimeout(hideReasoningSteps, 1200);
       const dupeNote = skippedDupes ? ` (${skippedDupes} duplicate${skippedDupes!==1?'s':''} filtered out)` : '';
-      const resultMsg = `✅ Found <strong>${changes.length} proposed change${changes.length!==1?'s':''}</strong>${dupeNote}.\n\nOpening the review popup now — approve or decline each change individually.\n\n💡 <em>Tip: After reviewing, you can type a refinement like "do the same for Year 3 only" or "replace the Minecraft ones with Micro:bit" and I'll remember the context.</em>`;
+
+      const byTool = {};
+      changes.forEach(c => {
+        const t = c.t || 'Unknown';
+        byTool[t] = (byTool[t]||0) + 1;
+      });
+      const toolBreakdown = Object.entries(byTool).sort((a,b)=>b[1]-a[1]).slice(0, 5)
+        .map(([t,n]) => `• <strong>${n}×</strong> ${esc(t)}`).join('<br>');
+      const moreCount = Object.keys(byTool).length - 5;
+      const moreStr = moreCount > 0 ? `<br>• <em>+ ${moreCount} more tools</em>` : '';
+
+      const resultMsg = `✅ <strong>${changes.length} proposed change${changes.length!==1?'s':''}</strong>${dupeNote}<br><br><div style="font-size:12px;color:var(--lime)">Breakdown:</div>${toolBreakdown}${moreStr}<br><br>💡 <em>I'll remember this — after reviewing, just type a refinement like "do the same for Year 3 only" or "replace the Minecraft ones with something else".</em>`;
       bulkChatAddMessage('assistant', resultMsg);
-      bulkChatMemory.push({ role: 'assistant', content: `Proposed ${changes.length} changes${dupeNote}.` });
+      bulkChatMemory.push({ role: 'assistant', content: `Proposed ${changes.length} changes${dupeNote}. Breakdown: ${Object.entries(byTool).map(([t,n])=>`${n}x ${t}`).join(', ')}` });
+      window._snapshotReason = `Before: ${bulkChatContext.rawInstruction ? bulkChatContext.rawInstruction.slice(0, 60) : 'bulk edit'}`;
       showChangesPopup(changes);
       bulkChatState = 'done';
     } else {
