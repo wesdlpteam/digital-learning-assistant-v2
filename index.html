@@ -261,8 +261,41 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 .point-popup-emoji{font-size:48px;margin-bottom:8px}
 .point-popup-text{font-size:24px;font-weight:800;color:#CDEB45;font-family:"Space Grotesk",sans-serif}
 .point-popup-sub{font-size:13px;color:#888;margin-top:4px}
+
+.stem-card{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);border:2px solid #4361ee;border-radius:20px;overflow:hidden;margin:24px 0 14px;position:relative}
+.stem-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:5px 14px;border-radius:99px;background:#4361ee;color:#FFF;letter-spacing:.5px;text-transform:uppercase}
+.stem-head{padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #2a3a5e}
+.stem-icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#4361ee,#7209b7);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.stem-body{padding:16px 20px 20px}
+.stem-label{font-size:13px;font-weight:700;color:#4361ee;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+
+.tech-cur-toggle{display:flex;align-items:center;gap:8px;padding:14px 20px;background:var(--sf);border:2px solid var(--bd);border-radius:16px;cursor:pointer;margin:20px 0 14px;transition:all .15s;user-select:none}
+.tech-cur-toggle:hover{border-color:#38BDF8;background:rgba(56,189,248,.05)}
+.tech-cur-toggle.open{border-color:#38BDF8;background:rgba(56,189,248,.08);border-radius:16px 16px 0 0;margin-bottom:0}
+.tech-cur-toggle svg{width:14px;height:14px;color:#38BDF8;transition:transform .2s;flex-shrink:0}
+.tech-cur-toggle.open svg{transform:rotate(180deg)}
+.tech-cur-body{display:none;background:var(--sf);border:2px solid #38BDF8;border-top:none;border-radius:0 0 16px 16px;padding:20px;margin-bottom:14px}
+.tech-cur-body.open{display:block}
+.tech-cur-subj{margin-bottom:20px}
+.tech-cur-subj:last-child{margin-bottom:0}
+.tech-cur-subj-title{font-size:14px;font-weight:700;color:#38BDF8;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.tech-cur-item{padding:10px 14px;background:rgba(56,189,248,.05);border-left:3px solid #38BDF8;border-radius:0 10px 10px 0;margin-bottom:8px;font-size:13px;color:#EEE;line-height:1.6}
+.tech-cur-item .tc-code{font-size:10px;color:#38BDF8;font-weight:700;font-family:monospace;margin-left:6px}
+.tech-cur-elab-btn{font-size:11px;font-weight:600;color:#888;cursor:pointer;background:none;border:none;font-family:inherit;padding:4px 0;margin-top:6px;display:inline-flex;align-items:center;gap:4px;transition:color .15s}
+.tech-cur-elab-btn:hover{color:#38BDF8}
+.tech-cur-elab{display:none;margin-top:8px;padding:8px 12px;background:rgba(56,189,248,.04);border-radius:8px;font-size:12px;color:#AAA;line-height:1.6}
+.tech-cur-elab.open{display:block}
+.tech-cur-elab li{margin-bottom:4px}
+.tech-cur-strand{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#666;margin:12px 0 8px;padding-top:10px;border-top:1px solid #333}
+.tech-cur-strand:first-child{border-top:none;padding-top:0;margin-top:0}
+
 </style></head><body><div id="app"></div>
 <script>
+
+function linkifyDesc(text){
+  if(!text) return '';
+  return text.replace(/(https?:\/\/[^\s)]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:var(--ac);text-decoration:underline;text-decoration-color:#555;text-underline-offset:3px;word-break:break-all">$1</a>');
+}
 
 const HT={
 "Google Earth":"<ol><li>Open <b>earth.google.com</b> in Chrome.</li><li>Click <b>Projects → New Project</b>.</li><li>Search for locations and click <b>Add to project</b> to pin them.</li><li>For each pin, add a <b>title, description and images</b>.</li><li>Click the <b>microphone icon</b> to record voice narration at each stop.</li><li>Click <b>Present</b> to fly between locations with narration playing automatically.</li></ol><div class=\"sg-howto-tip\">Tip: Students can collaborate on a shared project by clicking the share icon.</div>",
@@ -335,6 +368,192 @@ const TU={
 "Indi Robot":"https://sphero.com/products/indi-learning-robot",
 "Adobe Express Character Animator":"https://www.adobe.com/express/"
 };
+
+
+// ========== TECHNOLOGIES CURRICULUM (ACARA v9.0) ==========
+const TECH_CUR = {
+  "DT": {
+    "label": "Design and Technologies",
+    "F": [
+      {c:"AC9TDEFK01",s:"K",d:"explore how familiar products, services and environments are designed by people",e:["Identifying how First Nations Australians have long designed and produced domestic items including clothing, tools and shelter", "Exploring how local delivery services meet different needs of people", "Describing how gift packages can be sent to and from people who live in different locations and how online shopping items arrive at a  person\u2019s home", "Exploring how an environment such as a local playground may have shade structures to protect users and be designed to allow access for all", "Describing how community gardens, public swimming pools and parks are designed to help people stay healthy"]},
+      {c:"AC9TDEFP01",s:"P",d:"generate, communicate and evaluate design ideas, and use materials, equipment and steps to safely make a solution for a purpose",e:["Identifying a purpose for designing and", "Making a solution", "Taking food scraps or people with disability need to know where they can park at school", "Exploring ideas by", "Drawing or modelling and"]},
+    ],
+    "1-2": [
+      {c:"AC9TDE2K01",s:"K",d:"identify how familiar products, services and environments are designed and produced by people to meet personal or local community needs and sustainability",e:["Exploring how First Nations Australians have long understood their dependence on living systems to meet their local and community needs", "Exploring the material culture of the Ngarrindjeri Peoples who sustainably make woven items from a grass-like sedge", "Exploring how particular services meet different needs of people in the community", "Describing why doctors provide medical care to people in many ways including by phone, video conference, plane, car or outdoor\u00a0clinic", "Asking questions about the design of a range of shelters provided for the public and how they meet the needs of\u00a0people in the community"]},
+      {c:"AC9TDE2K02",s:"K",d:"explore how technologies including materials affect movement in products",e:["Investigating First Nations Australians\u2019 instructive toys and how such toys are designed and made to produce movement", "Selecting materials to show how material properties are appropriate for particular designed solutions", "Exploring how to manipulate materials", "Using a range of tools, equipment and techniques to create movement", "Exploring a system such as a marionette or Indonesian wayang kulit shadow puppet to see that by combining materials with forces movement can be created"]},
+      {c:"AC9TDE2K03",s:"K",d:"explore how plants and animals are grown for food, clothing and shelter",e:["Exploring how First Nations Australians grow plants and animals for food", "Identifying which plants and animals can provide food or materials for clothing and shelter", "Looking at a range of items and sorting them according to plant or animal source", "Exploring where plants and animals are grown for food, clothing and shelter in Australia", "Identifying products that can be designed and produced from plants and animals"]},
+      {c:"AC9TDE2K04",s:"K",d:"explore how food can be selected and prepared for healthy eating",e:["Identifying a wide range of foods, categorising them into food groups according to the Australian Guide to Healthy Eating or the Aboriginal and Torres Strait Islander Guide to Healthy Eating and", "Discussing ways to eat a variety of food groups, including cooking methods, tools and equipment needed to prepare them for healthy eating", "Exploring how people including peoples from the countries of Asia design and produce food for healthy eating based on the available plants and animals in their region, the influence of cultural practices, and locally available tools and equipment", "Exploring the Australian Guide to Healthy Eating and the Aboriginal and Torres Strait Islander Guide to Healthy Eating and", "Identifying foods in each of the 5 food groups which contribute to health and wellbeing"]},
+      {c:"AC9TDE2P01",s:"P",d:"generate and communicate design ideas through describing, drawing or modelling, including using digital tools",e:["Comparing and contrasting features of existing products to develop new ideas", "Making a puppet with a movable part after", "Experimenting with other toys with several movable parts", "Communicating design ideas by modelling or", "Producing and labelling 2-dimensional drawings"]},
+      {c:"AC9TDE2P02",s:"P",d:"use materials, components, tools, equipment and techniques to safely make designed solutions",e:["Exploring how available materials can be used or re-used in construction play", "Using used wrapping paper and gift cards to design and make decorations or signage for the classroom or a school event to minimise\u00a0waste", "Practising a range of technical skills", "Using tools and equipment safely", "Making products, watering and mulching gardens, preparing a recipe"]},
+      {c:"AC9TDE2P03",s:"P",d:"evaluate the success of design ideas and solutions based on personal preferences and including sustainability",e:["Reflecting on and", "Recording a judgement about design ideas", "Describing how design ideas meet the needs of those who will use the solution", "Recording or video-", "Recording software"]},
+      {c:"AC9TDE2P04",s:"P",d:"sequence steps for making designed solutions cooperatively",e:["Using lists or storyboarding when", "Creating an electronic planting calendar", "Recording the procedure for", "Making a product", "Making a salad, instructions for"]},
+    ],
+    "3-4": [
+      {c:"AC9TDE4K01",s:"K",d:"examine design and technologies occupations and factors including sustainability that impact on the design of products, services and environments to meet community needs",e:["Exploring how many First Nations Australians were and continue to be recognised for their specialist skills in designing and", "Producing products made from local materials and providing related services,", "Using sustainable practices to ensure future access to meet community needs", "Exploring how design and technologies occupations in the local area (urban, suburban, regional or rural) meet community needs", "Examining the suitability of a service or system and proposing improvements"]},
+      {c:"AC9TDE4K02",s:"K",d:"describe how forces and the properties of materials affect function in a product or system",e:["Researching how First Nations Australians consider buoyant forces as they select materials for watercraft", "Making bark or dugout canoes", "Looking at models to identify how materials are used and movement is created", "Exploring through play how movement can be started by combining materials and", "Deconstructing a product or system to identify how motion and forces affect performance"]},
+      {c:"AC9TDE4K03",s:"K",d:"describe the ways of producing food and fibre",e:["Researching food and fibre production techniques and technologies developed by First Nations Australians, such as burning, tilling, planting, transplanting, watering, irrigating, weeding, thinning, cropping, storing and trading\u00a0food", "Describing tools, equipment and procedures to improve plant and animal production", "Producing environments such as a glasshouse (protected cropping) or animal housing including safe chicken shelters", "Comparing farming methods for food in Australia and a country in Asia", "Researching how animal fibres (for example wool, alpaca) and plant fibres (for example timber, cotton, bamboo) are produced in Australia"]},
+      {c:"AC9TDE4K04",s:"K",d:"describe the ways food can be selected and prepared for healthy eating",e:["Exploring how First Nations Australians consider the nutrient content of seasonal foods as a means of maintaining a balanced diet", "Recognising the benefits food technologies provide for health and food safety and to ensure that a wide variety of food is available and can be prepared for healthy eating", "Exploring the differences between fresh food and processed food by", "Researching nutrient content of fresh food", "Using a nutrition calculator app and"]},
+      {c:"AC9TDE4P01",s:"P",d:"explore needs or opportunities for designing, and test materials, components, tools, equipment and processes needed to create designed solutions",e:["Exploring the designs and performance of models of First Nations Australians\u2019 watercraft, and the opportunities for their designs to inform the design of a floating toy", "Examining the production of local products, services and environments to enhance their own design ideas", "Discussing the processes and systems that might be used to distribute hot food to a large number of people at a community event", "Making judgements about appropriate joining techniques for materials to produce designs, prototypes, structures or working models", "Testing a range of materials under different conditions for suitability including sustainability considerations"]},
+      {c:"AC9TDE4P02",s:"P",d:"generate and communicate design ideas and decisions using appropriate attributions, technical terms and graphical representation techniques, including using digital tools",e:["Visualising innovative design ideas by", "Producing thumbnail sketches, models and labelled drawings to explain features and modifications", "Drawing one or more designs for a machine to collect waste, and including labels and descriptions to explain materials used, their properties and the intended function of components or the whole system", "Sharing and documenting creative designs, ideas and processes", "Using digital tools and appropriate terms and privacy considerations"]},
+      {c:"AC9TDE4P03",s:"P",d:"select and use materials, components, tools, equipment and techniques to safely make designed solutions",e:["Exploring ways of joining, connecting and", "Assembling components that ensure success including the impact digital tools have on these processes", "Using virtual reality or simulations to experience", "Assembling materials or", "Using tools and equipment accurately when measuring, marking and cutting"]},
+      {c:"AC9TDE4P04",s:"P",d:"use given or co-developed design criteria including sustainability to evaluate design ideas and solutions",e:["Developing design criteria with others including", "Considering universal design principles to address social sustainability", "Using design criteria to evaluate, revise and select design ideas", "Comparing the amount of waste that would be produced from different design ideas and the potential for recycling waste", "Exploring the choice of materials to construct a toy and whether these materials are repairable or able to be recycled once the toy breaks or is no longer wanted"]},
+      {c:"AC9TDE4P05",s:"P",d:"sequence steps to individually and collaboratively make designed solutions",e:["Planning processes as a class", "Recording when parts of a project need to be completed on a timeline, in a spreadsheet, calendar or list", "Discussing the importance of managing time and resource allocation throughout production", "Discussing the roles different people might take in a team and", "Identifying the tasks they will complete and the resources they will each need"]},
+    ],
+    "5-6": [
+      {c:"AC9TDE6K01",s:"K",d:"explain how people in design and technologies occupations consider competing factors including sustainability in the design of products, services and environments",e:["Investigating how First Nations Australians have long considered competing factors especially those related to sustainability in the design of fish harvesting technologies", "Describing the impact and sustainability implications of designed products, services or environments on local, regional and global communities", "Explaining the importance of aesthetics, function and sustainability in product design", "Identifying the components of a service that contribute to its success and assessing potential risk or failure", "Considering how engineers resolve competing factors to produce innovative solutions"]},
+      {c:"AC9TDE6K02",s:"K",d:"explain how electrical energy can be transformed into movement, sound or light in a product or system",e:["Investigating how automated, labour-saving photovoltaic systems are expected to provide opportunities for First Nations Australians to expand their aquaculture industries in coastal regions of northern Australia", "Explaining how sun tracking of solar panels assists renewable energy production in communities classified as\u00a0remote", "Describing the process needed to carefully plan and select components for a system to perform a specific task", "Planning the arrangement of switches, light globes and a power source in a lighting design", "Producing models"]},
+      {c:"AC9TDE6K03",s:"K",d:"explain how and why food and fibre are produced in managed environments",e:["Exploring how before colonisation, First Nations Australians lived in discrete communities that cared for, protected and sustainably harvested food and fibre resources, some of which are now cultivated to meet domestic and international demand", "Investigating and", "Experimenting with different tools, equipment and methods of preparing soil and the effect on soil quality and sustainability including conserving and recycling nutrients", "Describing the relationship between plant types and animal breeds and their environmental suitability when", "Selecting suitable plants or animals for an environment"]},
+      {c:"AC9TDE6K04",s:"K",d:"explain how the characteristics of foods influence selection and preparation for healthy eating",e:["Investigating how First Nations Australians have long selected and prepared foods for healthy eating", "Using the Australian Dietary Guidelines to determine the recommended number of serves for an individual", "Planning a healthy meal or lunchbox for a particular individual with recommended serving sizes to inform choices and then", "Explaining the characteristics of the selected foods", "Experimenting with tools, equipment, ingredients and techniques to design and make food products or meals for selected groups for healthy eating"]},
+      {c:"AC9TDE6K05",s:"K",d:"explain how characteristics and properties of materials, systems, components, tools and equipment affect their use when producing designed solutions",e:["Investigating how First Nations Australians have long used material science knowledge to identify materials and preparation techniques to meet performance needs", "Describing the properties of materials for the design and construction of a household product or system to improve household sustainability", "Describing the materials and systems used in public places and facilities that benefit the way people live", "Describing the tools, equipment and techniques used to manufacture products in factories with those used by local and regional enterprises including cost and impacts", "Comparing the design and production of products, services or environments in Australia and a country in Asia"]},
+      {c:"AC9TDE6P01",s:"P",d:"investigate needs or opportunities for designing, and the materials, components, tools, equipment and processes needed to create designed solutions",e:["Investigating First Nations Australians\u2019 traditional fibre sources as potential commercial solutions for biodegradable string or rope, and", "Researching the materials, systems, components, tools and equipment needed", "Surveying people in the school community about their needs in order to design an appropriate product, service or environment that addresses the need", "Planning the requirements for a community meal,", "Creating more shade in the school by"]},
+      {c:"AC9TDE6P02",s:"P",d:"generate, iterate and communicate design ideas, decisions and processes using technical terms and graphical representation techniques, including using digital tools",e:["Generating a range of design ideas for products, services or environments", "Using prior knowledge, skills and research", "Analysing, modifying and", "Developing design ideas to enhance and improve the sustainability of the product, service, environment or system", "Analysing eco-friendly alternatives to non-recyclable decorations for a community event or replacing paper-based newsletters with online formats"]},
+      {c:"AC9TDE6P03",s:"P",d:"select and use suitable materials, components, tools, equipment and techniques to safely make designed solutions",e:["Matching material and joining techniques to the design intention", "Using appropriate personal protective equipment (PPE) required for the use of some tools and equipment", "Making a water-resistant, floating craft", "Choosing appropriate materials, tools, equipment and techniques for a specific purpose", "Identifying work practices that show an understanding of nutrition, environmental considerations, hygiene and food safety when designing and"]},
+      {c:"AC9TDE6P04",s:"P",d:"negotiate design criteria including sustainability to evaluate design ideas, processes and solutions",e:["Deciding on design criteria collaboratively for a designed solution", "Developing design criteria with others to evaluate the suitability of materials, tools and equipment for specific purposes", "Considering the most suitable fabric, tools and equipment needed to make beeswax wraps iterating and modifying design ideas based on evaluation to improve solutions", "Evaluating their designed solutions including", "Considering the benefits and costs of production processes and the environmental impact"]},
+      {c:"AC9TDE6P05",s:"P",d:"develop project plans that include consideration of resources to individually and collaboratively make designed solutions",e:["Setting milestones for production processes and allocating roles to team members", "Using a cloud-based or server-based document or spreadsheet to list tasks, deadlines and roles for team members working on a project collaboratively, including", "Setting document", "Sharing permissions with selected people", "Identifying the human resources, materials, tools and equipment that will be needed to make the designed solution as part of the project plan and specifying when these will be needed"]},
+    ],
+  },
+  "DigiT": {
+    "label": "Digital Technologies",
+    "F": [
+      {c:"AC9TDIFK01",s:"K",d:"recognise and explore digital systems (hardware and software) for a purpose",e:["Recognising digital systems that they interact with at home and school", "Playing with (with guidance) and", "Using different digital systems to explore what they do for a purpose", "Recording, with permission, audio or video of local community members\u2019 stories to share in class", "Sharing cultural stories of First Nations Australians"]},
+      {c:"AC9TDIFK02",s:"K",d:"represent data as objects, pictures and symbols",e:["Drawing a picture", "Representing each of their family members and their interests", "Drawing one family member with a surfboard and another with a skateboard", "Using coloured blocks to represent an attribute of people", "Representing students and their sports houses with different coloured blocks"]},
+      {c:"AC9TDIFP01",s:"P",d:"identify some data that is personal and owned by them",e:["Listing things that contain personal and public data", "Identifying apps and websites they use where their personal data could be made visible"]},
+    ],
+    "1-2": [
+      {c:"AC9TDI2K01",s:"K",d:"identify and explore digital systems and their components for a purpose",e:["Exploring digital systems to better understand how they are used to provide communities with essential services", "Looking at the systems and components that allow First Nations Australians in communities classified as remote to watch their favourite television shows", "Using digital systems that they interact with at home and school", "Using a touchpad to move the cursor on a laptop, or the keyboard to type a simple message on a tablet", "Using different digital systems to explore what they do and how to use them"]},
+      {c:"AC9TDI2K02",s:"K",d:"represent data as pictures, symbols, numbers and words",e:["Recognising that letter combinations represent different phonemes and that words are spelled the same way regardless of the accent of the speaker", "Recognising the equivalence of different representations of numbers, including words, digits and tally marks", "Recognising that pictures in First Nations Australians\u2019 seasonal calendars are used to represent and communicate data, such as how the appearance of a flower can signify a connected event or a resource availability"]},
+      {c:"AC9TDI2P01",s:"P",d:"investigate simple problems for known users that can be solved with digital systems",e:["Investigating internet-based translation tools and how similar digital tools could promote the use of First Nations Australians\u2019 languages or assist communications", "Investigating familiar and easily understood problems with few complications or steps needed to solve them", "Deciding what to wear by", "Checking the forecast on a weather app", "Identifying how digital systems are used to solve problems at school"]},
+      {c:"AC9TDI2P02",s:"P",d:"follow and describe algorithms involving a sequence of steps, branching (decisions) and iteration (repetition)",e:["Following a short, ordered sequence of steps and", "Making decisions to solve a simple problem", "Describing the steps and decisions (in the correct order) needed to solve a simple problem", "Writing, saying,", "Drawing or photographing the steps needed to make a sandwich rearranging into the correct order a series of mixed-up pictures that describe a story"]},
+      {c:"AC9TDI2P03",s:"P",d:"discuss how existing digital systems satisfy identified needs for known users",e:["Describing how familiar digital systems meet the needs of individuals", "Discussing how we use digital systems to store and access information, and how that information helps us learn about our environment, interactions and leisure activities", "Sharing ideas about how digital systems are used at school for learning", "Sharing a student\u2019s work with the class on an interactive display screen to provide class feedback on their", "Describing ways that common digital systems can be used to meet communication needs"]},
+      {c:"AC9TDI2P04",s:"P",d:"use the basic features of common digital tools to create, locate and communicate content",e:["Using familiar digital systems to create content with others", "Using presentation software to retell a\u00a0story", "Taking, storing safely and presenting photos of class work", "Locating photos they took of their work to show to parents or carers or for the teacher to upload to the class shared folder", "Finding images of (local) Australian flora and fauna or places for use in a story and including First Nations Australians\u2019 names for the items"]},
+      {c:"AC9TDI2P05",s:"P",d:"use the basic features of common digital tools to share content and collaborate demonstrating agreed behaviours, guided by trusted adults",e:["Sharing photos of class work with parents or carers", "Using classroom messaging software with teacher\u00a0guidance", "Applying agreed standards of behaviour when", "Sharing content with classmates", "Using language that is considered by all students and the teacher to be appropriate when they are"]},
+      {c:"AC9TDI2P06",s:"P",d:"access their school account with a recorded username and password",e:["Using username and password recorded in a private place to access a digital system", "Using details given on a card by the teacher"]},
+      {c:"AC9TDI2P07",s:"P",d:"discuss that some websites and apps store their personal data online",e:["Sharing examples of the data collected by apps and websites they commonly use", "Discussing the importance of", "Asking permission from a parent or carer before entering personal details online such as address, phone number and date of birth"]},
+    ],
+    "3-4": [
+      {c:"AC9TDI4K01",s:"K",d:"explore and describe a range of digital systems and their peripherals for a variety of purposes",e:["Experimenting with a range of peripherals to perform input, output and storage", "Adding peripherals to a digital system to expand its functionality", "Exploring how they can use digital systems differently depending on the task,", "Recognising that many digital systems can perform multiple tasks"]},
+      {c:"AC9TDI4K02",s:"K",d:"explore transmitting different types of data between digital systems",e:["Exploring examples of different types of data that can be transferred between digital systems", "Making a video call to a friend", "Using a smartphone", "Exploring how data (video call) can be transmitted from a remote community to a city location", "Looking at how many First Nations Australian communities in areas classified as remote rely on 3G network coverage, limiting the use of video calls"]},
+      {c:"AC9TDI4K03",s:"K",d:"recognise different types of data and explore how the same data can be represented differently depending on the purpose",e:["Describing different types of data and how they can be used", "Explaining how the same data can be represented in different ways and why some representations are better than others in certain contexts", "Explaining that the same information can be represented differently", "Identifying rock paintings and other cultural expressions to understand that images are used to encode and represent ethnobotanical knowledge"]},
+      {c:"AC9TDI4P01",s:"P",d:"define problems with given design criteria and by co-creating user stories",e:["Recognising a range of familiar problems and", "Defining achievable solutions", "Using given design criteria", "Using responses to guiding questions to write a user story", "Creating a user story"]},
+      {c:"AC9TDI4P02",s:"P",d:"follow and describe algorithms involving sequencing, comparison operators (branching) and iteration",e:["Following the steps and decisions of algorithms and knowing what step they are up to", "Following rules to form the past tense of regular verbs such as \u2018create\u2019 to \u2018created\u2019, \u2018try\u2019 to \u2018tried\u2019 and \u2018cook\u2019 to \u2018cooked\u2019 and", "Checking off items on a list as they are completed", "Describing algorithms", "Using representations such as a list of steps or a diagram"]},
+      {c:"AC9TDI4P03",s:"P",d:"generate, communicate and compare designs",e:["Brainstorming possible design ideas and", "Discussing these with their peers", "Discussing whether the needs identified from the user story are met by generated design ideas", "Comparing design ideas in pairs for encouraging people to recycle", "Ideating multiple design ideas and"]},
+      {c:"AC9TDI4P04",s:"P",d:"implement simple algorithms as visual programs involving control structures and input",e:["Writing and editing programs to solve simple problems", "Using branching and simple iteration in a visual", "Programming environment", "Writing programs that take input from the user or environment", "Asking the user for their name and displaying it or sensing the temperature from the environment to make a decision"]},
+      {c:"AC9TDI4P05",s:"P",d:"discuss how existing and student solutions satisfy the design criteria and user stories",e:["Describing the way familiar digital systems allow the user to perform tasks", "Discussing how a family member could place an order online for something they cannot buy locally", "Discussing how a digital solution meets the different needs of users", "Making judgements on their digital solutions against the design criteria and user stories", "Reflecting on how the systems in the school help it run"]},
+      {c:"AC9TDI4P06",s:"P",d:"use the core features of common digital tools to create, locate and communicate content, following agreed conventions",e:["Creating as a class a set of steps they need to follow to safely find information online", "Using an online search engine to find suitable sources to create and communicate information,", "Following agreed steps", "Creating a presentation on life cycles grouping,", "Naming and itemising objects"]},
+      {c:"AC9TDI4P07",s:"P",d:"use the core features of common digital tools to share content, plan tasks, and collaborate, following agreed behaviours, supported by trusted adults",e:["Using an agreed folder to make it easy for students to collaborate on shared content in a group project", "Demonstrating safe", "Sharing of content with a select audience", "Sharing a holiday adventure without revealing exact dates, specific names or other personal information listening to others when participating in online environments to share content", "Taking turns to suggest and add words or images to a factual slide deck to share with the teacher interacting cooperatively in a group in an online environment to plan and complete a task"]},
+      {c:"AC9TDI4P08",s:"P",d:"access their school account using a memorised password and explain why it should be easy to remember, but hard for others to guess",e:["Recalling their school username and password from memory to login to a school laptop or desktop", "Explaining how keeping a password secret prevents others from accessing their data", "Using their secret password", "Exploring techniques to create an easy to remember and hard to guess password", "Creating a password"]},
+      {c:"AC9TDI4P09",s:"P",d:"identify what personal data is stored and shared in their online accounts and discuss any associated risks",e:["Identifying the personal data stored in accounts they use at school and at home and who has access to it", "Discussing how personal data stored in online accounts forms a person\u2019s digital identity and can reveal detailed information about people", "Looking at photographs of themselves, friends or fictional characters that reveal details about a person\u2019s location, habits or home"]},
+    ],
+    "5-6": [
+      {c:"AC9TDI6K01",s:"K",d:"investigate the main internal components of common digital systems and their function",e:["Explaining how digital systems are made up of parts that perform specific functions", "Exploring how the central processing unit (CPU), memory and input/output components work together to perform a simple calculation", "Investigating the main components in a video conferencing system and their functions"]},
+      {c:"AC9TDI6K02",s:"K",d:"examine how digital systems form networks to transmit data",e:["Explaining how separate systems can be connected in different ways to exchange data", "Describing the way data is structured and transmitted through a network", "Investigating the use of satellite phones where mobile phone networks are not available, inaccessible or unreliable"]},
+      {c:"AC9TDI6K03",s:"K",d:"explain how digital systems represent all data using numbers",e:["Representing data", "Using whole numbers and", "Recognising this is how digital systems represent data", "Using their position in the alphabet", "Explaining how the data type used to represent data changes the operations that can be performed on it"]},
+      {c:"AC9TDI6K04",s:"K",d:"explore how data can be represented by off and on states (zeros and ones in binary)",e:["Making collaboratively a long thread with beads", "Representing binary for the letters that spell the Country/Place name in the local First Nations Australian language and English, and could be displayed as a \u2018binary banner\u2019 as an Acknowledgement of Country that we are on the Traditional Lands of the <insert name> Peoples", "Demonstrating that an on/off state in a circuit can represent the digits one and zero, and this is how digital systems represent data", "Recognising how the answer to a yes/no question can be represented", "Using on/off states"]},
+      {c:"AC9TDI6P01",s:"P",d:"define problems with given or codeveloped design criteria and by creating user stories",e:["Using provided stimulus to identify an issue and", "Writing a user story in groups", "Using a newspaper article to develop a user story, such as: a family in a bushfire or flood-prone environment needs a way to ensure they are prepared in case of an emergency", "Discussing possible design criteria based on a stimulus", "Investigating the impact that feral animals have on native flora and fauna and how this problem has led to economic development opportunities for groups such as the Arnhem Land Progress Aboriginal Corporation"]},
+      {c:"AC9TDI6P02",s:"P",d:"design algorithms involving multiple alternatives (branching) and iteration",e:["Designing an algorithm or understanding and modifying an existing algorithm to fix an error or change functionality", "Exploring issues in drought-prone areas to decide when to water a garden,", "Taking into account humidity as well as soil moisture level", "Creating the steps, decisions and loops in algorithms and knowing what step they are up to", "Adding and when to stop constructing more than one sequence of steps that solve the same problem and"]},
+      {c:"AC9TDI6P03",s:"P",d:"design a user interface for a digital system",e:["Designing a user interface on paper or", "Using digital tools", "Drawing the designed layout of the landing page of an app to order lunches from the school canteen designing a user interface to address an identified need", "Using consistent symbols to represent common actions such as copy, paste and save"]},
+      {c:"AC9TDI6P04",s:"P",d:"generate, modify, communicate and evaluate designs",e:["Ideating a range of possible design ideas,", "Discussing them and", "Judging them against the design criteria and user stories", "Using the design criteria to put design ideas in order of preference in a group discussion", "Suggesting modifications to the preferred design idea if it does not satisfy all design criteria and user stories"]},
+      {c:"AC9TDI6P05",s:"P",d:"implement algorithms as visual programs involving control structures, variables and input",e:["Writing and editing programs to solve problems", "Using branching, iteration and variables in a visual", "Programming environment", "Writing a program to draw a rotated shape a given number of times", "Using Turtle\u00a0Graphics"]},
+      {c:"AC9TDI6P06",s:"P",d:"evaluate existing and student solutions against the design criteria and user stories and their broader community impact",e:["Evaluating the effectiveness of their own solutions to address the identified problem from the user stories", "Checking if the information created for the local interactive history walk is relevant and meets the council\u2019s needs", "Evaluating how an existing solution provides users with safety tools and features such as those described in the Safety by Design Vision for Young People", "Reflecting on the many systems that are used in the wider community to address a range of problems", "Verifying the correctness of AI-generated content against information known to be factually accurate; for example,"]},
+      {c:"AC9TDI6P07",s:"P",d:"select and use appropriate digital tools effectively to create, locate and communicate content, applying common conventions",e:["Creating achievable steps and timeframes and", "Identifying digital tools needed to produce a solution to a given problem", "Planning what they need to do to create a report on the effectiveness of the school\u2019s recycling initiatives", "Locating content through search engines and in documents by revising queries and", "Using required search terms"]},
+      {c:"AC9TDI6P08",s:"P",d:"select and use appropriate digital tools effectively to share content online, plan tasks and collaborate on projects, demonstrating agreed behaviours",e:["Following a previously created plan to report back to the class on a given problem,", "Using digital tools", "Defining and acting collectively", "Using online community standards and valuing the work of others", "Naming, organising and storing files in a way that allows for easy retrieval of shared content"]},
+      {c:"AC9TDI6P09",s:"P",d:"access multiple personal accounts using unique passphrases and explain the risks of password re-use",e:["Using multiple accounts, each with different passphrases, to access each website or app used for school and\u00a0home", "Explaining why re-", "Using a password is risky when one of them is found out"]},
+      {c:"AC9TDI6P10",s:"P",d:"explain the creation and permanence of their digital footprint and consider privacy when collecting user data",e:["Describing scenarios where data, images or both that have been posted online can lead to information being resurfaced at a later date", "Explaining why collecting the smallest amount of data needed for a purpose is important to protect someone\u2019s privacy", "Choosing not to collect information about someone\u2019s birthdate when it is not necessary ensures that private data cannot be stolen in a cyber attack"]},
+    ],
+  },
+};
+
+function getTechCurBand(yl) {
+  if(yl==='Prep') return 'F';
+  var n=parseInt(yl.replace('Year ',''));
+  if(n<=2) return '1-2';
+  if(n<=4) return '3-4';
+  return '5-6';
+}
+
+function renderTechCurriculum(yl) {
+  var band = getTechCurBand(yl);
+  var bandLabel = band==='F'?'Foundation':'Years '+band;
+  var h='';
+  
+  ['DT','DigiT'].forEach(function(key){
+    var subj = TECH_CUR[key];
+    var items = subj[band];
+    if(!items || !items.length) return;
+    
+    h+='<div class="tech-cur-subj">';
+    h+='<div class="tech-cur-subj-title">'+(key==='DT'?'🔧':'💻')+' '+subj.label+' ('+bandLabel+')</div>';
+    
+    // Group by strand
+    var kItems = items.filter(function(i){return i.s==='K';});
+    var pItems = items.filter(function(i){return i.s==='P';});
+    
+    if(kItems.length) {
+      h+='<div class="tech-cur-strand">Knowledge &amp; Understanding</div>';
+      kItems.forEach(function(item,idx){
+        var eid = key+'_'+band.replace('-','')+'_'+idx;
+        h+='<div class="tech-cur-item">';
+        h+=item.d.charAt(0).toUpperCase()+item.d.slice(1);
+        h+=' <span class="tc-code">'+item.c+'</span>';
+        if(item.e && item.e.length) {
+          h+='<div><button class="tech-cur-elab-btn" onclick="tgTCE(\''+eid+'\',this)">▸ Reveal elaborations ('+item.e.length+')</button></div>';
+          h+='<div class="tech-cur-elab" id="tce_'+eid+'"><ul style="margin:0;padding:0 0 0 16px;list-style:disc">';
+          item.e.forEach(function(e){h+='<li>'+e+'</li>';});
+          h+='</ul></div>';
+        }
+        h+='</div>';
+      });
+    }
+    
+    if(pItems.length) {
+      h+='<div class="tech-cur-strand">Processes &amp; Production Skills</div>';
+      pItems.forEach(function(item,idx){
+        var eid = key+'_'+band.replace('-','')+'_p'+idx;
+        h+='<div class="tech-cur-item">';
+        h+=item.d.charAt(0).toUpperCase()+item.d.slice(1);
+        h+=' <span class="tc-code">'+item.c+'</span>';
+        if(item.e && item.e.length) {
+          h+='<div><button class="tech-cur-elab-btn" onclick="tgTCE(\''+eid+'\',this)">▸ Reveal elaborations ('+item.e.length+')</button></div>';
+          h+='<div class="tech-cur-elab" id="tce_'+eid+'"><ul style="margin:0;padding:0 0 0 16px;list-style:disc">';
+          item.e.forEach(function(e){h+='<li>'+e+'</li>';});
+          h+='</ul></div>';
+        }
+        h+='</div>';
+      });
+    }
+    
+    h+='</div>';
+  });
+  
+  return h;
+}
+
+function tgTCE(id,btn){
+  var el=document.getElementById('tce_'+id);
+  if(!el) return;
+  if(el.classList.contains('open')){
+    el.classList.remove('open');
+    btn.textContent='▸ Reveal elaborations ('+el.querySelectorAll('li').length+')';
+  } else {
+    el.classList.add('open');
+    btn.textContent='▾ Hide elaborations';
+  }
+}
+
+function tgTechCur(){
+  var toggle=document.getElementById('techCurToggle');
+  var body=document.getElementById('techCurBody');
+  if(!toggle||!body) return;
+  if(body.classList.contains('open')){
+    body.classList.remove('open');
+    toggle.classList.remove('open');
+  } else {
+    body.classList.add('open');
+    toggle.classList.add('open');
+  }
+}
+
+// ========== END TECHNOLOGIES CURRICULUM ==========
 
 const CM={"Glen Waverley":"GW","Elsternwick":"EL","St Kilda":"SKR"},CN={"GW":"Glen Waverley","EL":"Elsternwick","SKR":"St Kilda Rd"};
 const CC={"GW":"#F5A623","EL":"#CDEB45","SKR":"#7ED957"};
@@ -782,16 +1001,18 @@ lois.forEach((l,i)=>{l=l.trim();if(l)h+='<div class="loi-item"><span class="loi-
 h+='</div>';
 
 var curList=u.s;
+var mainSugs=curList.slice(0,5);
+var stemSug=curList.length>=6?curList[5]:null;
 window._sid=0;window._aid=0;window._wid=0;
-curList.forEach((s,si)=>{
+mainSugs.forEach((s,si)=>{
 if(s.t.indexOf("Planner Needed")!==-1){var tmsg=encodeURIComponent("Hi Nathan, I have the UOI planner for "+yl+" "+u.th+" ("+CN[ca]+"). How should I send it to you?");h+='<div class="sg-pending"><div class="sg-pending-icon">📋</div><div class="sg-pending-title">Planner Not Yet Uploaded</div><div class="sg-pending-msg">Specific technology suggestions will be generated once the UOI planner for this unit is provided.</div><a href="https://teams.microsoft.com/l/chat/0/0?users=nathan.benn@wesleycollege.edu.au&message='+tmsg+'" target="_blank" rel="noopener noreferrer" class="sg-pending-cta">💬 Message Nathan Benn from DLP on Teams</a></div>';return;}
 const j=gS(s.t,s.d),va=gA(s.t,s.d);
 const tl=s.t.split(/[,&+]| and /).map(t=>t.trim()).filter(Boolean);
 var primaryTool=s.t.split(' + ')[0].trim();var turl=TU[primaryTool]||'';
 var toolLabel=turl?'<a href="'+turl+'" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline;text-decoration-color:#555;text-underline-offset:3px">'+s.t+'</a>':s.t;
 var phaseLabel="Suggestion";
-h+='<div class="sg"><div class="sg-head"><div class="sg-icon" style="background:'+tc+'">'+em+'</div><div class="sg-meta"><div class="sg-type">'+'Idea #'+(si+1)+' of '+curList.length+'</div><div class="sg-tool">'+toolLabel+'</div></div></div><div class="sg-body">';
-h+='<div class="sg-desc">'+s.d+'</div>';
+h+='<div class="sg"><div class="sg-head"><div class="sg-icon" style="background:'+tc+'">'+em+'</div><div class="sg-meta"><div class="sg-type">'+'Idea #'+(si+1)+' of '+mainSugs.length+'</div><div class="sg-tool">'+toolLabel+'</div></div></div><div class="sg-body">';
+h+='<div class="sg-desc">'+linkifyDesc(s.d)+'</div>';
 h+='';
 if(s.ref||s.docKey){var _rl='<div class="sg-section sg-refs"><div class="sg-label"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h8M4 8h8M4 12h5"/><rect x="2" y="2" width="12" height="12" rx="2"/></svg> Resources</div>';if(s.docKey&&window.DOCS&&DOCS[s.docKey]){var _doc=DOCS[s.docKey];_rl+='<a class="sg-ref-link sg-ref-doc" href="'+_doc.url+'" download="'+_doc.n+'" target="_blank">&#11015;&#65039; '+_doc.n+'</a>';}if(s.ref){s.ref.forEach(function(r){_rl+='<a class="sg-ref-link" href="'+r.url+'" target="_blank" rel="noopener">&#128279; '+r.label+'</a>';});}h+=_rl+'</div>';}
 h+='<div class="sg-section"><div class="sg-label">'+I.s+' Value Add</div><div class="vb" style="border-left-color:'+tc+'">'+va+'</div></div>';
@@ -825,6 +1046,33 @@ if(!window._fbData)window._fbData=[];var _fbi=window._fbData.length;window._fbDa
 if(!window._usedData)window._usedData=[];var _usi=window._usedData.length;window._usedData.push({campus:CN[ca],year:yl,theme:u.th,tool:s.t,phase:phaseLabel});
 h+='<div class="sg-fb"><button class="sg-used" onclick="markUsed('+_usi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+_fbi+')" class="sg-fb-btn">💬 Feedback</button><button class="sg-react-btn sg-react-up" onclick="reactFB('+_fbi+',\'up\',this)">👍</button><button class="sg-react-btn" onclick="reactFB('+_fbi+',\'down\',this)">👎</button></div></div>';
 h+='</div></div>';});
+
+// STEM Design Cycle Card (6th suggestion)
+if(stemSug && stemSug.t && stemSug.t.indexOf("Planner Needed")===-1){
+  var stemTool=stemSug.t;var stemDesc=stemSug.d;
+  var stemUrl=TU[stemTool.split(' + ')[0].trim()]||'';
+  var stemToolLabel=stemUrl?'<a href="'+stemUrl+'" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline;text-decoration-color:#4361ee55;text-underline-offset:3px">'+stemTool+'</a>':stemTool;
+  
+  if(!window._fbData)window._fbData=[];var _stemFbi=window._fbData.length;window._fbData.push({campus:CN[ca],year:yl,theme:u.th,tool:stemTool,phase:'STEM Design Cycle'});
+  if(!window._usedData)window._usedData=[];var _stemUsi=window._usedData.length;window._usedData.push({campus:CN[ca],year:yl,theme:u.th,tool:stemTool,phase:'STEM Design Cycle'});
+  
+  h+='<div class="stem-card"><div class="stem-head"><div class="stem-icon">🔬</div><div style="flex:1"><div class="stem-badge">STEM Design Cycle</div><div class="sg-tool" style="margin-top:4px;color:#FFF">'+stemToolLabel+'</div></div></div>';
+  h+='<div class="stem-body">';
+  h+='<div class="stem-label">🔄 Investigate → Design → Make → Evaluate</div>';
+  h+='<div class="sg-desc" style="color:#DDD">'+linkifyDesc(stemDesc)+'</div>';
+  
+  // Value add
+  var stemVa=gA(stemTool,stemDesc);
+  h+='<div class="sg-section" style="margin-top:14px"><div class="sg-label">'+I.s+' Value Add</div><div class="vb" style="border-left-color:#4361ee">'+stemVa+'</div></div>';
+  
+  // Feedback
+  h+='<div class="sg-fb" style="border-top-color:#2a3a5e"><button class="sg-used" onclick="markUsed('+_stemUsi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+_stemFbi+')" class="sg-fb-btn">💬 Feedback</button><button class="sg-react-btn sg-react-up" onclick="reactFB('+_stemFbi+',\'up\',this)">👍</button><button class="sg-react-btn" onclick="reactFB('+_stemFbi+',\'down\',this)">👎</button></div></div>';
+  h+='</div></div>';
+}
+
+// Technologies Curriculum toggle
+h+='<div class="tech-cur-toggle" id="techCurToggle" onclick="tgTechCur()"><span style="font-size:16px">📋</span><span style="flex:1;font-size:14px;font-weight:700;color:#38BDF8">Technologies Curriculum — '+yl+'</span><span style="font-size:12px;color:#888">ACARA v9.0</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 8 10 12 14 8"/></svg></div>';
+h+='<div class="tech-cur-body" id="techCurBody">'+renderTechCurriculum(yl)+'</div>';
 
 h+='<a href="'+BK+'" target="_blank" rel="noopener noreferrer" class="bb">📅 Book a Digital Learning Coach<span class="bb-sub">Schedule a session with the DLP team</span></a>';}
 
@@ -1021,7 +1269,7 @@ function readHash(){try{
 function nv(t,v){
 if(t==="ca")trackPage(CN[v]+" campus",CN[v],"");
 else if(t==="yl")trackPage(v,CN[S.ca]||"",v);
-else if(t==="ui"){var u=D.filter(function(r){return r.ca===(Object.keys(CM).find(function(k){return CM[k]===S.ca}))&&r.yl===S.yl})[v];if(u&&u.s.some(function(s){return s.t.indexOf("Planner Needed")!==-1})){openPlanner(CN[S.ca]||"",S.yl,u.th);return;}trackPage(u?u.th:"Unit",CN[S.ca]||"",S.yl);}if(t==="ca"){S.ca=v;S.v="campus"}else if(t==="yl"){S.yl=v;S.v="units"}else if(t==="ui"){S.ui=v;S.v="detail"}pushHash();R()}
+else if(t==="ui"){var u=D.filter(function(r){return r.ca===(Object.keys(CM).find(function(k){return CM[k]===S.ca}))&&r.yl===S.yl})[v];if(u&&(!u.s||!u.s.length||u.s.every(function(s){return !s.t||s.t.indexOf("Planner Needed")!==-1||s.t==="(empty)"}))){openPlanner(CN[S.ca]||"",S.yl,u.th);return;}trackPage(u?u.th:"Unit",CN[S.ca]||"",S.yl);}if(t==="ca"){S.ca=v;S.v="campus"}else if(t==="yl"){S.yl=v;S.v="units"}else if(t==="ui"){S.ui=v;S.v="detail"}pushHash();R()}
 function bk(){if(S.v==="detail"){S.ui=null;S.v="units"}else if(S.v==="units"){S.yl=null;S.v="campus"}else if(S.v==="campus"){S.ca=null;S.v="home";loadLeaderboard()}else{S.v="home";loadLeaderboard();}pushHash();R()}
 
 
