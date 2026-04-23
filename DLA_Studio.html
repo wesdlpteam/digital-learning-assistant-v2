@@ -1006,6 +1006,11 @@ const us=gu(ca,yl),u=us[ui];if(!u){S.v='units';S.ui=null;R();return;}const tc=TC
 
 h+='<div class="dh" style="background:'+tc+';color:'+(TTX[u.th]||"#FFF")+'">'+'<div class="dh-wm">'+em+'</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;position:relative;z-index:1"><span class="tag-t">'+yl+'</span><span class="tag-t">'+CN[ca]+'</span></div><h2 class="dh-title" style="position:relative;z-index:1">'+u.th+'</h2><div class="dh-ci" style="position:relative;z-index:1">“'+u.ci+'”</div></div>';
 
+h+='<div class="loi-box"><div class="loi-label">Lines of Inquiry</div>';
+var lois=u.lo.split(/[;•]/).filter(l=>l.trim());
+lois.forEach((l,i)=>{l=l.trim();if(l)h+='<div class="loi-item"><span class="loi-num" style="color:'+tc+'">0'+(i+1)+'</span>'+l+'</div>';});
+h+='</div>';
+
 var curList=u.s;
 var mainSugs=curList.slice(0,5);
 var stemSug=curList.length>=6?curList[5]:null;
@@ -1022,26 +1027,12 @@ if(stemSug && stemSug.t && stemSug.t.indexOf("Planner Needed")===-1){
   
   var stemVa=gA(stemTool,stemDesc);
   
-  // Inline teaser
-  h+='<div class="stem-prompt" onclick="openStem()"><div class="stem-prompt-icon">🔬</div><div class="stem-prompt-text"><div class="stem-prompt-title">Hands-on STEM activity available</div><div class="stem-prompt-sub">Tap to reveal → '+stemTool+'</div></div><div class="stem-prompt-arrow">→</div></div>';
+  // Store STEM data for modal that gets appended to body on click
+  window._stemData = {tool:stemTool, toolLabel:stemToolLabel, desc:stemDesc, va:stemVa, fbi:_stemFbi, usi:_stemUsi, valueLabel:I.s};
   
-  // Modal (rendered once, toggled by openStem/closeStem)
-  h+='<div class="stem-overlay" id="stemOverlay" onclick="if(event.target===this)closeStem()">';
-  h+='<div class="stem-modal">';
-  h+='<div class="stem-modal-close" onclick="closeStem()">✕</div>';
-  h+='<div class="stem-modal-header"><div class="stem-modal-icon">🔬</div><div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ac);margin-bottom:4px">STEM Design Cycle</div><div style="font-size:20px;font-weight:700;color:#FFF">'+stemToolLabel+'</div></div></div>';
-  h+='<div class="stem-modal-body">';
-  h+='<div class="stem-label">🔄 Empathise → Define → Ideate → Prototype → Test → Empathise</div>';
-  h+='<div class="sg-desc">'+linkifyDesc(stemDesc)+'</div>';
-  h+='<div class="sg-section" style="margin-top:16px"><div class="sg-label">'+I.s+' Value Add</div><div class="vb">'+stemVa+'</div></div>';
-  h+='<div class="sg-fb" style="margin-top:16px;padding-top:16px;border-top:1px solid #333"><button class="sg-used" onclick="markUsed('+_stemUsi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+_stemFbi+')" class="sg-fb-btn">💬 Feedback</button><button class="sg-react-btn sg-react-up" onclick="reactFB('+_stemFbi+',\'up\',this)">👍</button><button class="sg-react-btn" onclick="reactFB('+_stemFbi+',\'down\',this)">👎</button></div></div>';
-  h+='</div></div></div>';
+  // Inline teaser only - modal is created on demand, attached to body
+  h+='<div class="stem-prompt" onclick="openStem()"><div class="stem-prompt-icon">🔬</div><div class="stem-prompt-text"><div class="stem-prompt-title">Hands-on STEM activity available</div><div class="stem-prompt-sub">Tap to reveal → '+stemTool+'</div></div><div class="stem-prompt-arrow">→</div></div>';
 }
-
-h+='<div class="loi-box"><div class="loi-label">Lines of Inquiry</div>';
-var lois=u.lo.split(/[;•]/).filter(l=>l.trim());
-lois.forEach((l,i)=>{l=l.trim();if(l)h+='<div class="loi-item"><span class="loi-num" style="color:'+tc+'">0'+(i+1)+'</span>'+l+'</div>';});
-h+='</div>';
 
 mainSugs.forEach((s,si)=>{
 if(s.t.indexOf("Planner Needed")!==-1){var tmsg=encodeURIComponent("Hi Nathan, I have the UOI planner for "+yl+" "+u.th+" ("+CN[ca]+"). How should I send it to you?");h+='<div class="sg-pending"><div class="sg-pending-icon">📋</div><div class="sg-pending-title">Planner Not Yet Uploaded</div><div class="sg-pending-msg">Specific technology suggestions will be generated once the UOI planner for this unit is provided.</div><a href="https://teams.microsoft.com/l/chat/0/0?users=nathan.benn@wesleycollege.edu.au&message='+tmsg+'" target="_blank" rel="noopener noreferrer" class="sg-pending-cta">💬 Message Nathan Benn from DLP on Teams</a></div>';return;}
@@ -1298,8 +1289,24 @@ document.getElementById("plannerOverlay").classList.add("open");
 function closePlanner(){document.getElementById("plannerOverlay").classList.remove("open");}
 
 function tgSec(id){var el=document.getElementById('sc_'+id);var btn=document.getElementById('sb_'+id);if(el.classList.contains('open')){el.classList.remove('open');btn.classList.remove('open');}else{el.classList.add('open');btn.classList.add('open');}}
-function openStem(){var el=document.getElementById('stemOverlay');if(el){el.scrollTop=0;el.classList.add('open');}}
-function closeStem(){var el=document.getElementById('stemOverlay');if(el)el.classList.remove('open');}
+function openStem(){
+  var d=window._stemData;if(!d)return;
+  var old=document.getElementById('stemOverlay');if(old)old.remove();
+  var html='<div class="stem-modal"><div class="stem-modal-close" onclick="closeStem()">✕</div><div class="stem-modal-header"><div class="stem-modal-icon">🔬</div><div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ac);margin-bottom:4px">STEM Design Cycle</div><div style="font-size:20px;font-weight:700;color:#FFF">'+d.toolLabel+'</div></div></div><div class="stem-modal-body"><div class="stem-label">🔄 Empathise → Define → Ideate → Prototype → Test → Empathise</div><div class="sg-desc">'+linkifyDesc(d.desc)+'</div><div class="sg-section" style="margin-top:16px"><div class="sg-label">'+d.valueLabel+' Value Add</div><div class="vb">'+d.va+'</div></div><div class="sg-fb" style="margin-top:16px;padding-top:16px;border-top:1px solid #333"><button class="sg-used" onclick="markUsed('+d.usi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+d.fbi+')" class="sg-fb-btn">💬 Feedback</button><button class="sg-react-btn sg-react-up" onclick="reactFB('+d.fbi+',\'up\',this)">👍</button><button class="sg-react-btn" onclick="reactFB('+d.fbi+',\'down\',this)">👎</button></div></div></div></div>';
+  var overlay=document.createElement('div');
+  overlay.id='stemOverlay';
+  overlay.className='stem-overlay';
+  overlay.innerHTML=html;
+  overlay.onclick=function(e){if(e.target===overlay)closeStem();};
+  document.body.appendChild(overlay);
+  document.body.style.overflow='hidden';
+  requestAnimationFrame(function(){overlay.classList.add('open');});
+}
+function closeStem(){
+  var el=document.getElementById('stemOverlay');
+  if(el){el.classList.remove('open');setTimeout(function(){if(el.parentNode)el.remove();},200);}
+  document.body.style.overflow='';
+}
 function tgATL(el,id){var d=document.getElementById("ad_"+id);var p=document.getElementById("ap_"+id);if(d.classList.contains("open")){d.classList.remove("open");p.classList.remove("open")}else{d.classList.add("open");p.classList.add("open")}}
 function tgCur(el,id){var d=document.getElementById("d_"+id);var p=document.getElementById("p_"+id);if(d.classList.contains("open")){d.classList.remove("open");p.classList.remove("open")}else{d.classList.add("open");p.classList.add("open")}}
 var _fbCurrent='';
