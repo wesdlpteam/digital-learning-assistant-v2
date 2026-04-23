@@ -2584,9 +2584,35 @@
     "th": "Where We Are in Place and Time",
     "ci": "The discovery of resources has impacted the growth and development of nations.",
     "lo": "Significance of resource discovery in development of societies; Impact of migration on cultural, social and economic growth; Exploration and settlement effects on Indigenous and colonial populations",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cube + Book Creator",
+        "d": "Students create interactive 3D artefacts representing key resources discovered in Australia (e.g., gold, wheat, wool) using Merge Cube. They then app smash by embedding their 3D models and explanatory videos into a digital Book Creator journal, allowing for immersive storytelling about how each resource shaped the nation's growth."
+      },
+      {
+        "t": "Padlet",
+        "d": "Launch a collaborative migration map: students research and post digital 'story cards' on a Padlet world map, each card representing a migrant group or individual who contributed to Australia's development, including their reasons for migration and the impact on society."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design visually compelling infographics that compare the economic, social, and environmental impacts of different resource discoveries (e.g., gold rush vs. wheat boom) on Australia's development, using Canva's data visualization tools."
+      },
+      {
+        "t": "Minecraft: The Hall of Inventions",
+        "d": "Students explore the Minecraft: The Hall of Inventions world, then select a historical Australian invention or resource. They research its significance and build a new exhibit in Minecraft, presenting how this resource or invention contributed to national growth.",
+        "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students take on the role of a historical figure (e.g., a gold miner, First Nations Australian, or migrant) and record a series of reflective video journal entries in Seesaw, documenting their experiences and perspectives during key events like the Gold Rush or migration waves."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Using the Design Cycle, students prototype a 'Resource Extraction Machine' with Lego Spike Prime, simulating how technology changed resource discovery and extraction in Australia. They iterate designs to maximize efficiency and minimize environmental impact, documenting their process in a digital engineering journal."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how the discovery of resources has impacted the growth and development of nations, focusing on Australia's Gold Rush, migration, and the effects on Indigenous and colonial populations. Students investigate historical events, analyze cause and effect, research case studies, and create timelines, infographics, and perspective-based narratives to deepen their understanding of economic, social, and environmental change."
   },
   {
     "ca": "Glen Waverley",
@@ -2594,9 +2620,34 @@
     "th": "Who We Are",
     "ci": "Managing change requires acceptance, knowledge and strategies.",
     "lo": "Establishing, managing and maintaining relationships; Managing behaviours in digital situations; Managing changes associated with puberty",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes + iPads (Augmented Reality Self-Portrait Gallery)",
+        "d": "Students create digital self-portraits using iPads, then use Merge Cubes to transform their artwork into interactive 3D AR experiences. Each cube face can represent a different aspect of their identity or a strategy for managing change, allowing peers to explore and 'unlock' stories about acceptance, growth, and resilience in an immersive gallery walk."
+      },
+      {
+        "t": "Seesaw App Smash (Digital Wellbeing Journals + ChatterPix Kids)",
+        "d": "Students maintain a digital wellbeing journal in Seesaw, reflecting on strategies for managing change and emotional responses. For key moments, they use ChatterPix Kids to animate a self-portrait or symbol, recording their voice to share personal insights or advice about navigating change, then embed these videos in their Seesaw journal."
+      },
+      {
+        "t": "Canva (Empathy Map Posters)",
+        "d": "Students collaboratively design empathy map posters in Canva, visually representing the feelings, needs, and strategies of someone experiencing change (e.g., starting at a new school, going through puberty, or facing online challenges). These can be shared digitally or printed for classroom discussion."
+      },
+      {
+        "t": "Padlet (Interactive Change Strategy Wall)",
+        "d": "Students contribute to a shared Padlet wall, posting digital sticky notes with strategies, resources, or stories about managing change. They can comment on and 'like' each other's posts, creating a dynamic, student-driven resource bank that grows throughout the unit."
+      },
+      {
+        "t": "Book Creator (Digital 'Guide to Change')",
+        "d": "Each student authors a multimedia eBook in Book Creator, combining text, images, audio reflections, and video clips to document their learning about managing change, acceptance, and growth. The final product serves as a personal guide and can be shared with younger students or families."
+      },
+      {
+        "t": "Lego Spike Prime (Design Cycle Project: 'Change Navigator' Robot)",
+        "d": "Using the Design Cycle, students work in teams to prototype a 'Change Navigator' robot with Lego Spike Prime. The robot could be programmed to deliver supportive messages, suggest strategies, or even respond to different scenarios about change (e.g., using sensors to trigger advice for feeling nervous or excited). Teams document their process and present their robots, reflecting on how technology can support wellbeing and transitions."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how managing change requires acceptance, knowledge, and strategies, with a focus on relationships, digital behaviours, and personal growth. Students engage in reflective journaling, digital art, empathy mapping, and collaborative discussions, culminating in creative projects that support wellbeing and positive transitions."
   },
   {
     "ca": "Glen Waverley",
@@ -2604,9 +2655,35 @@
     "th": "How We Express Ourselves",
     "ci": "The media engages its audience and invites a response",
     "lo": "How media targets audiences; Techniques used to engage and persuade; Critical evaluation of media messages",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Delightex",
+        "d": "Students design and build immersive 3D virtual 'advertising worlds' where visitors interact with persuasive media, ethical dilemmas, and alternative consumer models. Each group creates a virtual experience that challenges peers to think critically about advertising influence and sustainability, directly linking to the unit's focus on media engagement and audience response."
+      },
+      {
+        "t": "Padlet + Microsoft Forms",
+        "d": "App smash: Students use Padlet to collaboratively brainstorm and map out the influences on their chosen product, then design and distribute a Microsoft Forms survey to gather real data on peer influences and advertising effectiveness. This workflow mirrors the unit's research and analysis tasks, making student inquiry visible and actionable."
+      },
+      {
+        "t": "GarageBand",
+        "d": "Students compose and produce original persuasive jingles, slam poems, or rap songs that critique or promote ethical consumer choices. These audio creations are shared as part of their multimodal presentations, directly supporting the unit's emphasis on media, persuasion, and creative response."
+      },
+      {
+        "t": "Canva",
+        "d": "Students create dynamic, data-driven infographics and digital posters that visually communicate the impact of advertising strategies, peer influence, and environmental consequences of consumer choices. Canva's 'Remove Background' feature can be used to remix product images, replacing the banned green screen kits."
+      },
+      {
+        "t": "Minecraft: The Investigators",
+        "d": "Students become school reporters in Minecraft, investigating media sources, evaluating bias, and uncovering the truth behind advertising claims. This lesson directly supports critical thinking about media engagement and audience response, as outlined in the unit's central idea.",
+        "url": "https://education.minecraft.net/en-us/lessons/the-investigators"
+      },
+      {
+        "t": "Makey Makey",
+        "d": "Design Cycle STEM Project: Students prototype and build interactive 'ethical consumerism' arcade games using Makey Makey and everyday materials. Players must make choices about products, advertising, and sustainability, receiving real-time feedback on the consequences of their decisions. This hands-on project brings the unit's inquiry into media influence and responsible action to life through physical design and iteration."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students collaboratively investigate how media and advertising influence consumer choices, conduct surveys and interviews to analyse peer and social influences, and research the ethical and environmental impacts of products. They present findings through multimodal texts (including songs, advertisements, and slam poems) and take action by creating persuasive media or advocating for more ethical consumer practices."
   },
   {
     "ca": "Glen Waverley",
@@ -2614,9 +2691,34 @@
     "th": "How We Organise Ourselves",
     "ci": "An inquiry into the interconnectedness of human-made systems and communities; the structure and function of organisations.",
     "lo": "Lines of inquiry to be confirmed once planner is uploaded",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Delightex",
+        "d": "Students design and build immersive 3D virtual 'ethical consumerism expos' where each group creates interactive booths showcasing their chosen product's advertising, influence, and environmental impact. Visitors can explore, interact, and leave digital feedback, simulating a real-world expo experience that highlights the interconnectedness of human-made systems and communities."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Groups create and distribute digital surveys to the school community to gather authentic data on peer influences, advertising effectiveness, and ethical considerations in consumer choices. Students then analyse the results in Excel to identify trends and present their findings as part of their inquiry into how organisations shape consumer behaviour."
+      },
+      {
+        "t": "Canva",
+        "d": "Students collaboratively produce persuasive multimodal advertisements or slam poems for alternative, sustainable products using Canva's video and design tools. They leverage the 'Remove Background' feature for dynamic visuals and integrate real data to manipulate audience perception, directly linking to the unit's focus on advertising and influence."
+      },
+      {
+        "t": "Padlet",
+        "d": "Classes use Padlet to crowdsource and visually map the production, marketing, and disposal journeys of selected products. Each group posts images, research, and ethical/environmental findings, allowing for a collaborative, interactive exploration of the structure and function of organisations within global systems."
+      },
+      {
+        "t": "GarageBand",
+        "d": "Students compose and record original audio advertisements, raps, or slam poems critiquing consumerism and proposing sustainable alternatives. They incorporate sound effects and persuasive language, then share their creations with the school community to spark discussion about responsible action and interconnected systems."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Using the Design Cycle, students prototype and program a 'sustainable supply chain robot' with Lego Spike Prime. The robot simulates moving products through different stages (production, marketing, disposal), and students iterate their designs to minimise environmental impact, reflecting on how human-made systems can be reimagined for a fairer future."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit engages Year 6 students in an inquiry into the interconnectedness of human-made systems and communities, focusing on how advertising, peer influence, and ethical considerations shape consumer choices. Students collaboratively research, analyse, and present findings on selected products, create persuasive multimodal texts, and explore alternative models of consumerism that honour fairness and sustainability."
   },
   {
     "ca": "Glen Waverley",
@@ -2624,9 +2726,35 @@
     "th": "How the World Works",
     "ci": "Scientists undertake experimentation to confirm, contest and create new theories.",
     "lo": "The scientific method; How experiments lead to new understandings; The relationship between planets and the Sun; Energy transfer and transformation in circuits",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Delightex",
+        "d": "Students use Delightex to collaboratively design and simulate 3D models of scientific experiments related to energy transfer, chemical changes, or planetary movement. They can virtually test hypotheses, manipulate variables, and visualize outcomes, then export their 3D worlds to share findings with peers, making the scientific method immersive and interactive."
+      },
+      {
+        "t": "Merge Cubes",
+        "d": "Students create augmented reality models of electrical circuits, reversible/irreversible changes, or planetary systems using Merge Cubes and the Merge Explorer app. They can record short video explanations overlaying their AR models, demonstrating their understanding of scientific concepts and inquiry methods."
+      },
+      {
+        "t": "Canva",
+        "d": "Groups design visually compelling infographics or animated presentations in Canva to communicate the results of their science fair investigations, focusing on how experimentation confirms, contests, or creates new theories. They can use Canva's 'Remove Background' feature for images of their experiments and embed data visualizations."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Students design and distribute digital surveys using Microsoft Forms to collect data on classmates' hypotheses, experiment results, or scientific misconceptions. They analyze the data in Excel, drawing evidence-based conclusions and reflecting on the importance of data in scientific inquiry."
+      },
+      {
+        "t": "Minecraft: The Scientific Method",
+        "d": "Students engage with the 'Minecraft: The Scientific Method' lesson (https://education.minecraft.net/en-us/lessons/the-scientific-method), where they plan and conduct experiments in a virtual world, practicing variables, fair testing, and data collection, directly linking to the unit's focus on how scientists experiment to build knowledge.",
+        "url": "https://education.minecraft.net/en-us/lessons/the-scientific-method"
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "For the Design Cycle STEM project, students use Lego Spike Prime to design, build, and iterate a working model that demonstrates energy transfer (e.g., a solar-powered vehicle or a Rube Goldberg machine). They follow the full design process: identifying a scientific question, planning, prototyping, testing, and refining their model, then presenting their findings and reflecting on how their experimentation mirrors real scientific inquiry."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit immerses students in scientific inquiry through hands-on experiments in physical science, chemistry, and earth/space science. Students follow the scientific method to investigate energy transfer, chemical changes, and planetary movement, culminating in a science fair where they present their own experiments and reflect on how scientists confirm, contest, and create new theories."
   },
   {
     "ca": "Glen Waverley",
