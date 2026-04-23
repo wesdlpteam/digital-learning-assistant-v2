@@ -2050,9 +2050,35 @@
     "th": "How We Organise Ourselves",
     "ci": "Needs can be met with digital systems.",
     "lo": "What are digital systems; Ideas and information can be organised and shared in safe online environments; Being a responsible digital citizen",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cube + Book Creator",
+        "d": "Students design interactive 3D models of digital systems (like computers, tablets, or networks) using Merge Cube, then create an augmented reality 'Digital Systems Museum.' They document each system's function and responsible use in Book Creator, allowing peers to explore and learn from each other's virtual exhibits."
+      },
+      {
+        "t": "Padlet App Smash (Padlet + Canva)",
+        "d": "Students collaboratively build a 'Digital Footprint Wall' on Padlet, uploading icons, drawings, and screenshots of their digital activities. They use Canva to design infographics about safe online environments and digital citizenship, then embed these visuals into the Padlet for a dynamic, interactive class resource."
+      },
+      {
+        "t": "Seesaw Digital Log & Reflection",
+        "d": "Students maintain a digital log of their technology use (types of devices, time spent, and activities) in Seesaw, using photos, voice notes, and drawings. They reflect on their digital habits and set personal goals for responsible and balanced technology use, sharing progress with peers for feedback."
+      },
+      {
+        "t": "Minecraft: The Investigators",
+        "d": "Students become digital detectives in 'Minecraft: The Investigators' (https://education.minecraft.net/en-us/lessons/the-investigators), exploring how information is shared and evaluating the reliability and safety of digital sources. They practice responsible decision-making in simulated online environments, directly linking to digital citizenship and safe information sharing.",
+        "url": "https://education.minecraft.net/en-us/lessons/the-investigators"
+      },
+      {
+        "t": "Adobe Express Essential Agreement Posters",
+        "d": "Students use Adobe Express to create visually engaging posters that communicate their personal 'Essential Agreement' for digital citizenship. These posters highlight key concepts such as online etiquette, digital footprint, and the difference between public, private, and personal online spaces, then are shared digitally with the class."
+      },
+      {
+        "t": "Sphero BOLT Digital Systems Challenge",
+        "d": "Using the Design Cycle, students prototype a 'Smart Classroom System' with Sphero BOLT robots. They design, test, and iterate a system where Sphero BOLTs represent different digital devices communicating to solve a classroom problem (e.g., managing digital logins or sharing information safely). Students document their process and present their working system to the class."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this unit, students explore what digital systems are, how ideas and information can be organised and shared in safe online environments, and what it means to be a responsible digital citizen. Activities include technology timelines, digital logs, cyber safety projects, digital footprint art, and the creation of individual Essential Agreements for digital citizenship."
   },
   {
     "ca": "Glen Waverley",
@@ -2060,9 +2086,35 @@
     "th": "How the World Works",
     "ci": "Observing how materials change helps us make sense of the physical world.",
     "lo": "Observable properties of solids and liquids; How heating and cooling change state; Scientific thinking helps solve everyday problems",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cube + iPad App Smashing",
+        "d": "Students use Merge Cubes with the iPad Merge Explorer app to create interactive, augmented reality models showing how different materials change state (e.g., melting, freezing, dissolving). They record short video explanations using the iPad camera, then app smash into Book Creator to build a digital 'States of Matter Museum' with AR experiences and student voiceovers."
+      },
+      {
+        "t": "Padlet",
+        "d": "Launch a collaborative Padlet where students upload photos and videos of real-life examples of materials changing state at home or school (e.g., melting ice, butter, chocolate). They annotate their posts with scientific vocabulary and explanations, building a living wall of evidence for class discussion."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design visually engaging infographics in Canva to explain the process of heating and cooling materials, using diagrams, icons, and step-by-step visuals. They can include QR codes linking to their own video demonstrations or experiments."
+      },
+      {
+        "t": "Minecraft: Filtering Water On The Iss",
+        "d": "Students explore how water is filtered on the International Space Station by experimenting with creating a water filtering system in Minecraft Education. This directly links to understanding how materials can change state and be separated or purified through physical processes.",
+        "url": "https://education.minecraft.net/en-us/lessons/filtering-water-on-the-iss"
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students document their hands-on experiments (e.g., melting chocolate, freezing water) by capturing photos and videos in Seesaw. They use the drawing and voiceover tools to annotate their observations, make predictions, and reflect on how scientific thinking helps solve everyday problems."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Design Cycle STEM Project: Students use the Design Cycle to prototype and code a Lego Spike Prime 'Material Changer Machine'?a device that can move, heat, or cool small objects (like ice cubes or chocolate) to demonstrate changes of state. They iterate on their designs, collect data, and present their findings in a digital portfolio."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit immerses students in hands-on investigations of solids and liquids, exploring how heating and cooling cause changes of state. Students classify materials, conduct experiments (e.g., melting chocolate, freezing water), and use scientific thinking to solve real-life problems, documenting their learning through collaborative digital platforms and reflective activities."
   },
   {
     "ca": "Glen Waverley",
@@ -2070,9 +2122,34 @@
     "th": "Sharing the Planet",
     "ci": "The diversity of soils, rocks, and minerals shapes the way people value and use Earth's resources.",
     "lo": "Observable properties of soils, rocks and minerals; Earth's resources are vital and must be used responsibly; First Nations knowledge of soils and rocks",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes + iPad App Smashing",
+        "d": "Students create interactive 3D models of different soil, rock, and mineral types using Merge Cubes and the Merge Explorer app. They record short video explanations using the iPad camera, then use Canva's 'Remove Background' feature to overlay themselves as 'virtual geologists' presenting their findings. This immersive, hands-on approach brings earth science to life and allows students to 'hold' and explore their digital creations in augmented reality."
+      },
+      {
+        "t": "Padlet",
+        "d": "Launch a collaborative global 'Soil, Rock, and Mineral Museum' on Padlet, where students upload photos and research about samples collected from their homes or school grounds. They can compare findings, comment on each other's posts, and map out where each sample was found, fostering a sense of global connection and resource diversity."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students author digital field journals in Book Creator, documenting their soil and rock investigations with photos, diagrams, and voice recordings. They can include interviews with family members about traditional uses of earth materials, integrating First Nations perspectives and personal stories."
+      },
+      {
+        "t": "Canva",
+        "d": "Design visually striking infographics in Canva that explain the journey of a resource (e.g., from mineral to everyday object), highlighting responsible use and sustainability. Students can use Canva's 'Remove Background' tool to create layered scenes showing the impact of resource extraction and conservation."
+      },
+      {
+        "t": "Minecraft: Radical Recycling",
+        "d": "Students explore the Minecraft: Radical Recycling lesson (https://education.minecraft.net/en-us/lessons/radical-recycling) to understand recycling processes and the importance of using Earth's resources wisely. They participate in in-game challenges that reinforce the value of sustainable practices and resource management."
+      },
+      {
+        "t": "3D Printers (Design Cycle STEM Project)",
+        "d": "Using the Design Cycle, students investigate the properties of various rocks and minerals, then design and 3D print a prototype tool or artifact inspired by First Nations uses of natural materials. They test their prototypes for strength or utility, reflect on their process, and present their findings, connecting science, culture, and engineering."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how the diversity of soils, rocks, and minerals shapes the way people value and use Earth's resources. Students investigate observable properties, responsible use, and cultural perspectives?including First Nations knowledge?through hands-on science, comparative research, and creative digital projects."
   },
   {
     "ca": "Glen Waverley",
@@ -2080,9 +2157,34 @@
     "th": "Where We Are in Place and Time",
     "ci": "Land and place are represented and valued in different ways.",
     "lo": "How Australia and neighbouring regions define places; Australia's states/territories have unique identities; First Nations connections to Country",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes + Book Creator",
+        "d": "Students create interactive 3D 'place cubes' using Merge Cubes to represent different Australian states, First Nations Countries, or neighbouring regions. Each face of the cube features student-created digital artefacts (photos, drawings, audio reflections) about how land and place are valued. Students then app smash by embedding their Merge Cube experiences into a Book Creator digital journal, adding reflections and poetry inspired by their explorations."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design visually rich digital posters or infographics in Canva that compare how land and place are represented in First Nations Australian perspectives versus contemporary state/territory boundaries. They can use Canva's 'Remove Background' feature to layer images, maps, and student artwork, making cultural and historical perspectives visible."
+      },
+      {
+        "t": "Padlet",
+        "d": "Launch a collaborative Padlet where students post digital postcards from different Australian states, territories, or neighbouring countries. Each postcard includes a short audio or video message about what makes that place unique, how it is valued, and connections to First Nations perspectives."
+      },
+      {
+        "t": "Minecraft: The Hall of Inventions",
+        "d": "Using 'Minecraft: The Hall of Inventions' (https://education.minecraft.net/en-us/challenges/the-hall-of-inventions), students research and build digital representations of important inventions or cultural artefacts from different Australian regions or neighbouring countries. They reflect on how these innovations connect to place, identity, and value."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "Students create short, dynamic video stories in Adobe Express, weaving together poetry, images, and narration to express their personal or cultural connection to a chosen place. They can highlight how perspectives on land and place differ across Australia and its neighbours."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Design Cycle STEM Project: Students use the Design Cycle to prototype a 'moving map' or interactive diorama with Lego Spike Prime. The model physically demonstrates how boundaries, landmarks, or cultural sites can be represented and valued differently (e.g., programmable markers that light up or move to show First Nations Countries vs. state borders). Students document their process and learning in a digital journal."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how land and place are represented and valued in different ways, focusing on Australia's states, territories, First Nations Countries, and neighbouring regions. Students investigate cultural, historical, and geographical perspectives through mapping, poetry, research, and creative digital projects, with a strong emphasis on First Nations connections to Country and diverse ways of understanding place."
   },
   {
     "ca": "Glen Waverley",
@@ -2090,9 +2192,34 @@
     "th": "Who We Are",
     "ci": "The choices and actions we make contribute to our health and wellbeing.",
     "lo": "What it means to be healthy; Choices and their impact on health; Actions to maintain a healthy mind and body",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Delightex + Canva (App Smash)",
+        "d": "Students create an interactive 'Choose Your Own Adventure' scenario about daily health choices using Delightex, then use Canva to visually enhance each decision point with infographics and illustrations. This empowers students to explore the real-life consequences of their choices on health and wellbeing in a dynamic, gamified way."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students document their personal health journeys by creating digital journals in Book Creator, combining photos, voice recordings, and reflections on their food, exercise, sleep, and mindfulness routines. This allows for multimodal self-assessment and sharing with families via Seesaw."
+      },
+      {
+        "t": "Padlet",
+        "d": "Launch a collaborative Padlet where students post daily or weekly 'Wellbeing Wins'?small actions they've taken to improve their health (e.g., trying a new fruit, practicing a breathing exercise). Peers can comment, celebrate, and offer encouragement, building a positive digital community around healthy habits."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Students design and distribute a wellbeing survey to classmates and families, collecting data on sleep, nutrition, and activity habits. They then analyse the results in class, using the findings to spark discussions about trends, challenges, and opportunities for healthier choices."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "Students create vibrant digital posters or short video PSAs in Adobe Express, advocating for a specific healthy habit (e.g., 'Drink More Water!' or 'Screen-Free Bedtime'). These can be shared on Seesaw or displayed around the school to inspire action."
+      },
+      {
+        "t": "Sphero BOLT (Design Cycle STEM Project)",
+        "d": "Using the Design Cycle, students prototype and code a 'Wellbeing Maze' with Sphero BOLT robots. Each section of the maze represents a health choice (e.g., nutritious snack vs. junk food, active play vs. screen time), and students must program the Sphero to navigate the healthiest path, reflecting on the impact of each decision."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how the choices and actions students make contribute to their health and wellbeing. Activities include investigating nutrition, exercise, sleep, and mindfulness, engaging with guest speakers, analysing data, and creating personal health action plans. Students reflect on their learning and take action to improve their own wellbeing."
   },
   {
     "ca": "Glen Waverley",
