@@ -470,9 +470,34 @@
     "th": "Sharing the Planet",
     "ci": "Taking care of our Earth starts with the choices we make.",
     "lo": "Earth's resources; How our actions affect the environment; Ways we can care for our planet",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "ClassVR + Merge Cubes",
+        "d": "Launch an immersive 'Earth Guardians' VR experience where students use ClassVR headsets and Merge Cubes to virtually explore Earth's resources, pollution hotspots, and endangered habitats. Students can manipulate 3D models of ecosystems, observe the impact of human choices in real time, and record their reflections as short Seesaw videos, making abstract environmental concepts tangible and memorable."
+      },
+      {
+        "t": "ChatterPix Kids + PicCollage",
+        "d": "App smash ChatterPix Kids and PicCollage: Students photograph items from their lunchboxes or classroom, use ChatterPix to make the items 'speak' about their environmental impact, and then create a visual collage advocating for better choices. This empowers students to become persuasive advocates for Earth-friendly habits in a playful, creative way."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students create interactive digital books documenting their week-long 'Waste Detective' investigation, including photos of lunchbox waste, graphs of recyclable vs. landfill items, and voice recordings reflecting on how their choices affect the environment. These books can be shared with families to inspire action beyond the classroom."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Facilitate a 'Global Earth Care Challenge' where students document daily actions that help the planet (e.g., turning off lights, composting, picking up litter) with photos and short audio reflections in Seesaw. Connect with a partner class at another Wesley campus to compare and celebrate sustainable choices."
+      },
+      {
+        "t": "Minecraft: Ocean Heroes",
+        "d": "Students embark on the 'Ocean Heroes' Minecraft Education adventure (https://education.minecraft.net/en-us/lessons/ocean-heroes), rescuing coral reefs and learning real-world conservation skills. This hands-on digital journey directly links to the central idea by showing how individual and collective choices protect Earth's resources."
+      },
+      {
+        "t": "Bee-Bots",
+        "d": "Design Cycle STEM Project: Students use the Design Cycle to prototype and code a 'Clean-Up Crew' Bee-Bot challenge. They design obstacle courses representing polluted environments and program Bee-Bots to collect 'rubbish' (tokens), iterating their designs for maximum efficiency. This tactile, collaborative project reinforces environmental stewardship and computational thinking."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The Year 2 'Sharing the Planet' unit centers on the idea that caring for Earth begins with our choices. Students investigate Earth's resources, analyze how their actions impact the environment, and explore practical ways to care for the planet through hands-on inquiry, waste audits, persuasive projects, and community action."
   },
   {
     "ca": "Elsternwick",
@@ -480,9 +505,34 @@
     "th": "Where We Are in Place and Time",
     "ci": "Landmarks and places of significance tell stories about our history.",
     "lo": "The significance of places to different people and cultures; The connection between landmarks and identity; How landmarks and symbols represent our history",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "ClassVR & Merge Cubes",
+        "d": "Students embark on a virtual time-travel adventure using ClassVR headsets and Merge Cubes to explore iconic Australian and global landmarks in 3D. They can 'hold' and rotate digital models of Uluru, the Sydney Opera House, or the Great Wall of China, then record short ChatterPix Kids voiceovers as if they are the landmark telling its own story, blending immersive tech with creative storytelling."
+      },
+      {
+        "t": "Seesaw + iPad Camera",
+        "d": "Learners go on a campus or local walking tour to photograph significant places and symbols using the iPad Camera app. They then upload their images to Seesaw, adding voice recordings or simple labels to explain the significance of each place, fostering connections between personal, local, and cultural landmarks."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students create a collaborative digital class book in Book Creator, with each child designing a page about a landmark or place of significance (local or global). Pages can include photos, drawings, voice recordings, and simple maps, allowing for multimodal expression and easy sharing with families."
+      },
+      {
+        "t": "Bee-Bots",
+        "d": "Using Bee-Bots and custom-made floor maps, students program their robots to 'visit' different landmarks placed on a classroom map of Australia or the world. Each stop includes a quick fact or story, reinforcing mapping skills, sequencing, and the connection between place and story."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design vibrant digital posters in Canva, showcasing a chosen landmark's story, cultural significance, and a key symbol. They use Canva's 'Remove Background' feature to add themselves into the scene, making the learning personal and visually engaging."
+      },
+      {
+        "t": "Sphero Indi Design Cycle Challenge",
+        "d": "In a hands-on STEM project, students use the Design Cycle to create a 'Landmark Adventure Track' for Sphero Indi cars. They design and build a course representing a journey between significant places (e.g., from their school to a local monument), using colored tiles to code Indi's path. Students iterate on their designs, reflect on challenges, and present their tracks, connecting physical space, storytelling, and computational thinking."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit immerses Year 2 students in exploring how landmarks and places of significance tell stories about our history. Through mapping, storytelling, Indigenous perspectives, and hands-on inquiry, learners connect with local and national sites, investigate the meaning behind symbols and monuments, and create multimodal representations to deepen their understanding of place, culture, and memory."
   },
   {
     "ca": "Elsternwick",
@@ -490,9 +540,34 @@
     "th": "Who We Are",
     "ci": "Our relationships with others impact our lives.",
     "lo": "Importance of relationships; Developing and maintaining healthy relationships; The impact of relationships on wellbeing",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Delightex + Seesaw",
+        "d": "Launch a 'Relationship Simulator' using Delightex where students visually map out different types of relationships (friends, family, classmates) and use branching scenarios to explore how choices and actions impact feelings and outcomes. Students then reflect by recording voice notes or drawing their own relationship stories in Seesaw, app-smashing both platforms for a dynamic, interactive empathy-building experience."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students take photos of themselves or classroom objects and use ChatterPix Kids to animate them, giving voice to different perspectives in a friendship scenario. For example, they can make a lunchbox 'talk' about how it feels when shared or not shared, directly linking to the central idea of relationships impacting lives."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Create a collaborative digital class book in Book Creator where each student adds a page about a time when a relationship (friend, family, teacher, pet) made a difference in their life. Students can use photos, drawings, and voice recordings to make it highly visual and personal."
+      },
+      {
+        "t": "Puppet Pals",
+        "d": "Students design and act out short digital puppet shows in Puppet Pals, dramatizing real-life playground or classroom scenarios that require empathy, problem-solving, or conflict resolution. This helps them practice and reflect on healthy relationship skills in a creative, low-pressure way."
+      },
+      {
+        "t": "PicCollage",
+        "d": "Have students create a visual 'Friendship Recipe' in PicCollage, combining photos, stickers, and drawings to represent the ingredients of a healthy relationship (e.g., kindness, listening, sharing). They can share their recipes with the class and discuss how each 'ingredient' impacts their daily interactions."
+      },
+      {
+        "t": "Bee-Bots",
+        "d": "STEM Design Cycle Project: Students work in teams to design and map out a 'Friendship Maze' for Bee-Bots. Each section of the maze represents a different relationship challenge (e.g., sharing, apologizing, including others). Students use the Design Cycle to plan, build, test, and improve their maze, then program the Bee-Bot to navigate it, reflecting on how positive actions help overcome obstacles in relationships."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This year-long Year 2 unit explores how our relationships with others impact our lives, focusing on the importance of relationships, developing and maintaining healthy connections, and understanding the changeable nature of relationships. Students engage in activities that build social-emotional intelligence, empathy, and cooperative skills, supported by explicit teaching of self-regulation, friendship strategies, and reflective practices."
   },
   {
     "ca": "Elsternwick",
@@ -500,9 +575,34 @@
     "th": "How We Express Ourselves",
     "ci": "Celebrations and traditions shape the culture of a community.",
     "lo": "The ways personal and cultural events are celebrated; Our appreciation of the diversity of cultures; How celebrations shape community identity",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "ClassVR & Merge Cubes",
+        "d": "Immerse students in a global celebration scavenger hunt using ClassVR headsets and Merge Cubes. Students can virtually explore and interact with 3D models of traditional artifacts, foods, and festival scenes from around the world, then record their reflections as digital postcards to share on Seesaw."
+      },
+      {
+        "t": "Canva",
+        "d": "Students create interactive digital infographics or posters in Canva that showcase the unique traditions, foods, music, and symbols of their own or a peer's cultural background, integrating images, voice recordings, and embedded videos to bring their research to life."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Facilitate a collaborative digital book in Book Creator where each student authors a page about a celebration or tradition from their family or heritage, including photos, drawings, and audio explanations. The final book can be shared with the school community or families."
+      },
+      {
+        "t": "Seesaw (App Smash with iPad Camera)",
+        "d": "Guide students to document their family traditions by interviewing family members using the iPad Camera app, then upload and annotate their videos, photos, and voice notes in Seesaw. Encourage students to comment on each other's posts to foster intercultural understanding."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "Challenge students to design a short, animated video or digital story in Adobe Express that explains the significance of a celebration or tradition, using music, narration, and visual effects to engage their audience."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "STEM Design Cycle Project: Students use the Design Cycle to prototype and code a moving parade float or festival scene with Lego Spike Prime, representing a celebration from their own or another culture. They document their design process and present their working models, explaining how their creation expresses cultural identity and community values."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this unit, students explore how celebrations and traditions shape the culture of a community by investigating personal and global cultural events, appreciating diversity, and reflecting on what it means to be a global citizen. Activities include mind mapping traditions, researching and presenting cultural identities, creating digital presentations, and collaborating on creative projects that highlight the richness of multicultural Australia."
   },
   {
     "ca": "Elsternwick",
@@ -510,9 +610,34 @@
     "th": "How We Organise Ourselves",
     "ci": "The rights and responsibilities of citizens are determined by the rules and laws of a community.",
     "lo": "The differences between rules and laws; People responsible for enforcing rules and laws; Rights and responsibilities of citizens; The consequences when rules, laws and rights are not met",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "ClassVR & Merge Cubes",
+        "d": "Launch a 'Virtual Parliament' experience where students use ClassVR headsets and Merge Cubes to explore 3D models of government buildings, courtrooms, and community spaces. Students can interact with virtual scenarios to make decisions as citizens, judges, or lawmakers, experiencing firsthand how rules and laws are created and enforced."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design persuasive digital posters or infographics advocating for a new school rule or community law, using Canva's templates and visual tools to communicate the importance of rights and responsibilities. These can be shared in a virtual gallery for peer voting and feedback."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Create interactive digital storybooks in Book Creator where students write and illustrate stories about characters navigating rules, laws, and consequences in different communities. Incorporate voice recordings and clickable elements for an engaging, multimodal experience."
+      },
+      {
+        "t": "Padlet",
+        "d": "Facilitate a collaborative 'Global Laws Wall' on Padlet where students research and post about unusual or interesting laws from around the world, then comment on how these laws reflect different community values and rights. Encourage students to draw comparisons and discuss fairness and responsibility."
+      },
+      {
+        "t": "Minecraft: Active Citizen",
+        "d": "Students explore the 'Active Citizen' Minecraft Education world to learn about Nobel Peace Laureates and how laws and rights shape communities. They can build their own community spaces and propose laws, reflecting on the impact of their decisions. https://education.minecraft.net/en-us/lessons/active-citizen"
+      },
+      {
+        "t": "Makey Makey",
+        "d": "Design Cycle STEM Project: Students use the Design Cycle to invent and prototype an interactive 'Citizenship Game Show' using Makey Makey and laptops. They design physical buzzers and code quiz questions about rules, rights, and responsibilities, then host a live game show for peers to reinforce learning through play."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit engages students in exploring the differences between rules and laws, the people responsible for enforcing them, and the rights and responsibilities of citizens. Activities include creating persuasive texts, researching global laws, and reflecting on the consequences when rules and rights are not met. Students connect learning to local and global contexts, culminating in collaborative and creative projects that deepen their understanding of citizenship."
   },
   {
     "ca": "Elsternwick",
