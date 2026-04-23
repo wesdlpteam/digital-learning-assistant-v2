@@ -3238,9 +3238,34 @@
     "th": "How We Express Ourselves",
     "ci": "Artefacts provide a window into the beliefs and values of cultures.",
     "lo": "Beliefs and values contribute to a culture; The importance of rituals and traditions; How artefacts capture history and cultural expression",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Delightex + iPad Camera",
+        "d": "Students create an interactive, virtual 'museum' of family artefacts and traditions using Delightex. They photograph their own artefacts or celebration items with the iPad Camera, then app smash into Delightex to design immersive, clickable exhibits that include audio explanations and digital drawings, allowing classmates to 'visit' and learn about each other's cultures in a playful, game-like environment."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students photograph a personal or cultural artefact, then use ChatterPix Kids to animate the artefact so it 'talks' and shares its story, beliefs, or cultural significance in the student's own voice. This brings artefacts to life and builds oral language skills while celebrating cultural diversity."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Each student creates a digital book documenting their family's traditions, celebrations, and artefacts. They combine photos, voice recordings, and drawings to express how these elements reflect their beliefs and values, then share their books with peers for a virtual cultural showcase."
+      },
+      {
+        "t": "Seesaw + Canva",
+        "d": "Students design vibrant digital posters in Canva about a chosen cultural celebration or tradition, using the 'Remove Background' feature to layer themselves into scenes. They then upload and narrate their posters in Seesaw, explaining the meaning behind the celebration and its artefacts."
+      },
+      {
+        "t": "Puppet Pals",
+        "d": "Students create short animated skits in Puppet Pals, using characters and backgrounds inspired by their own or classmates' cultural stories and rituals. They script and record voiceovers to dramatize how artefacts are used in celebrations, fostering empathy and understanding of diverse perspectives."
+      },
+      {
+        "t": "Bee-Bots",
+        "d": "Design Cycle STEM Project: Students design and build a large floor map representing a multicultural festival, with stations for different cultural artefacts and traditions. Using the Design Cycle, they plan, test, and refine Bee-Bot routes to 'visit' each station, programming the Bee-Bots to stop and play a short audio fact or sound related to each artefact, integrating robotics, mapping, and cultural inquiry."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how artefacts provide a window into the beliefs and values of cultures. Students investigate their own and others' traditions, celebrations, and cultural expressions through artefacts, music, dance, and storytelling, culminating in creative projects that celebrate diversity and foster intercultural understanding."
   },
   {
     "ca": "St Kilda",
@@ -3248,9 +3273,35 @@
     "th": "How We Organise Ourselves",
     "ci": "Technology can influence the way ecosystems can survive.",
     "lo": "An ecosystem has animals, plants and microorganisms; Technology can cause ecosystems to adapt and evolve; Technology can help or hinder ecosystems",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes + iPad App Smashing",
+        "d": "Students create interactive 3D models of different ecosystems using Merge Cubes and the Merge Explorer app on iPads. They record short ChatterPix Kids voiceovers as 'ecosystem reporters' explaining how technology (like satellites or robots) is helping or harming their chosen ecosystem, then overlay these on their Merge Cube models for an immersive, hands-on AR experience."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students document the evolution of technology in ecosystems by capturing photos or videos of their class 'robot habitats' and narrating their observations. They can use Seesaw's drawing and annotation tools to highlight how technology changes the balance or function of their mini-ecosystems."
+      },
+      {
+        "t": "ScratchJr",
+        "d": "Students code simple stories showing how a robot or piece of technology interacts with an ecosystem. For example, they might animate a bee-bot pollinating flowers or a robot cleaning up pollution, helping them visualise cause and effect in a playful, accessible way."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students collaboratively build a digital book documenting their learning journey about technology and ecosystems. Each page can feature photos, voice recordings, and drawings showing before-and-after scenarios of ecosystems influenced by technology."
+      },
+      {
+        "t": "Minecraft: Its Good To Be Green",
+        "d": "Students explore a sustainable building in Minecraft Education, learning how technology can support ecosystem health. They reflect on how design choices impact the environment, connecting directly to the unit's focus on technology's influence on survival. (https://education.minecraft.net/en-us/lessons/its-good-to-be-green)",
+        "url": "https://education.minecraft.net/en-us/lessons/its-good-to-be-green"
+      },
+      {
+        "t": "Bee-Bots Design Cycle Project",
+        "d": "Using the Design Cycle, students design and build a model ecosystem (e.g., a garden or forest) and program Bee-Bots to act as 'helpers'?such as pollinators or waste collectors. They iterate on their designs to see how different Bee-Bot actions can support or disrupt the balance of their ecosystem, fostering hands-on STEM learning."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how technology can influence the survival and adaptation of ecosystems. Students investigate the roles of robotics and digital tools in society, engage in coding and persuasive writing about robots, and reflect on ethical and functional impacts of technology on natural systems through hands-on and inquiry-based activities."
   },
   {
     "ca": "St Kilda",
@@ -3258,9 +3309,34 @@
     "th": "How the World Works",
     "ci": "People and the planet are reliant on different energy sources.",
     "lo": "Energy types (electricity, fossil fuels, solar); Energy helps us in daily life; Energy transformation; Responsibility to conserve energy and find sustainable sources",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "App Smash: ChatterPix Kids + Seesaw",
+        "d": "Students create talking energy source characters using ChatterPix Kids, giving each energy type (solar, fossil fuel, wind, etc.) a voice to explain how it works and its impact on the planet. These animated characters are then uploaded to Seesaw for a class-wide interactive energy debate, allowing students to respond to each other's posts with their own energy character's perspective."
+      },
+      {
+        "t": "ScratchJr",
+        "d": "Students design and code simple animations showing the journey of energy from source to use (e.g., sun to solar panel to light bulb), visually demonstrating energy transformation and sustainability concepts in a hands-on, creative way."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Learners collaboratively build a digital class book where each page explores a different energy source. Pages can include student-drawn diagrams, voice recordings explaining energy types, and photos of classroom experiments, making the learning highly visual and multimodal."
+      },
+      {
+        "t": "PicCollage",
+        "d": "Students use the iPad camera to capture images of energy use around the school (e.g., lights, computers, playground equipment) and assemble them in PicCollage, labeling each with icons to show whether the energy is renewable or non-renewable, sparking discussion about sustainability in their immediate environment."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design vibrant, poster-style infographics in Canva to advocate for sustainable energy choices, using the 'Remove Background' feature to insert themselves into their designs as 'Energy Heroes' promoting positive change."
+      },
+      {
+        "t": "Bee-Bots",
+        "d": "Using the Design Cycle, students prototype and test an 'Energy Journey Map' on the classroom floor. They program Bee-Bots to travel from one energy source to various destinations (e.g., home, school, park), encountering obstacles representing environmental impacts. Students iterate on their map designs and Bee-Bot code to optimize for the most sustainable energy journey."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit immerses Year 2 students in exploring different energy sources?such as solar, fossil fuels, and electricity?through hands-on experiments, digital circuit building, and collaborative inquiry. Students investigate energy transformation, sustainability, and the impact of energy choices on people and the planet, culminating in reflective activities and student-driven advocacy for cleaner energy."
   },
   {
     "ca": "St Kilda",
@@ -3268,9 +3344,34 @@
     "th": "Sharing the Planet",
     "ci": "To sustain life, people and environments depend on one another.",
     "lo": "Interdependence of people and environments; How people's wants and needs affect the land; Responsibility to use sustainable resources; Connection between fossil fuels and environmental impact",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Delightex + Seesaw App Smash",
+        "d": "Students collaboratively create an interactive 'Resource Detective' digital board in Delightex, where they upload photos (taken with iPads) of everyday objects and environments, then use Seesaw to record audio reflections about whether each item uses finite or infinite resources, and how it connects to sustaining life. This app smash encourages visual thinking, voice, and agency while making abstract sustainability concepts tangible."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students take photos of objects or drawings representing sustainable and non-sustainable resources, then use ChatterPix Kids to animate them with voices explaining their role in sustaining life and the importance of sharing resources. This brings student learning to life in a playful, memorable way."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students create a collaborative digital book documenting their 'Tug of War' debates about fossil fuels, including photos, drawings, and short audio clips summarizing their opinions and new understandings about sharing the planet's resources."
+      },
+      {
+        "t": "PicCollage",
+        "d": "Learners design vibrant visual collages comparing seasonal patterns and resource use in the Northern and Southern Hemispheres, using stickers, text labels, and their own photos to illustrate how people adapt to and depend on their environments."
+      },
+      {
+        "t": "Minecraft: Sustainable Food Production",
+        "d": "Students explore the Minecraft: Sustainable Food Production world (https://education.minecraft.net/en-us/lessons/sustainable-food-production) to investigate how food is grown, waste is managed, and resources are recycled. They reflect on how these systems support life and what choices help sustain the planet."
+      },
+      {
+        "t": "Bee-Bots Design Cycle Challenge",
+        "d": "Using the Design Cycle, students prototype and test a 'Resource Rescue Mission' mat for Bee-Bots. They design a course representing different environments (e.g., forest, ocean, city), program Bee-Bots to deliver sustainable resources to each area, and iterate their designs based on peer feedback, connecting robotics to real-world sustainability challenges."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit engages Year 2 students in exploring finite and infinite resources, the impact of fossil fuels, and the importance of sustainable practices for sharing the planet. Activities include debates, visual comparisons of seasons, and investigations into how people and environments depend on one another to sustain life."
   },
   {
     "ca": "St Kilda",
@@ -3278,9 +3379,34 @@
     "th": "Where We Are in Place and Time",
     "ci": "Journeys can lead to challenges and new understandings.",
     "lo": "Types of journeys (physical, learning, cultural); Challenges encountered on journeys; New understandings gained through journeys",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Delightex + Seesaw App Smash",
+        "d": "Students create an interactive digital 'Journey Map' using Delightex, visually mapping out a family or fictional journey with images, icons, and voice recordings. They then upload their map to Seesaw, narrating the challenges and opportunities faced along the way, allowing for peer feedback and reflection on how journeys lead to growth."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students take photos of themselves or family members and use ChatterPix Kids to animate the images, giving voice to a character who shares a story about a significant journey, highlighting challenges and new understandings gained."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Learners build a multimedia digital book documenting a real or imagined journey, incorporating photos, drawings, audio reflections, and simple text to illustrate the opportunities and challenges encountered."
+      },
+      {
+        "t": "PicCollage",
+        "d": "Children create a visual collage representing the stages of a journey (physical, learning, or cultural), using photos, stickers, and drawings to show how each stage brought new challenges and understandings."
+      },
+      {
+        "t": "Minecraft: Shipwreck Narrative",
+        "d": "Students explore the 'Shipwreck Narrative' lesson in Minecraft Education, where they write and build a story about a mysterious journey, encountering obstacles and reflecting on how these experiences lead to new perspectives. https://education.minecraft.net/en-us/lessons/shipwreck-narrative"
+      },
+      {
+        "t": "Bee-Bots Design Cycle Challenge",
+        "d": "Using the Design Cycle, students design and build a 'Journey Maze' for Bee-Bots. They physically construct a map representing a journey with various obstacles and opportunities, then program the Bee-Bot to navigate it, reflecting on how each challenge leads to new learning."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores the concept of journeys, focusing on how they present challenges and opportunities for growth. Students investigate different types of journeys through storybooks, interviews, and personal reflections, culminating in creative tasks that highlight the changes and understandings gained from these experiences."
   },
   {
     "ca": "St Kilda",
