@@ -3768,9 +3768,34 @@
     "th": "Sharing the Planet",
     "ci": "First Nations people have a deep connection to Country, language and culture",
     "lo": "The diversity of language and culture across First Nations communities in Australia; The significance of connection to Country as custodial responsibility; Listening to and learning from Indigenous perspectives",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cube + iPad App Smashing",
+        "d": "Students create interactive 3D artefacts using Merge Cubes and the iPad camera, overlaying their own First Nations-inspired symbols and stories. They record oral storytelling in their own voices, then use the Merge Explorer app to bring their artefacts to life, allowing peers to 'hold' and explore each other's stories in augmented reality."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design digital posters or infographics that compare and contrast different First Nations countries, languages, and cultural practices across Australia, using Canva's 'Remove Background' feature to integrate their own artwork or photos of their paintings."
+      },
+      {
+        "t": "iMovie",
+        "d": "Students produce short documentaries or creative retellings of Dreamtime stories, combining footage from their Melbourne Museum excursion, voiceovers, and digital artwork to reflect on the importance of Country and cultural diversity."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students collaboratively author a digital book that weaves together personal reflections, research, and original artwork about First Nations perspectives on Country, language, and sustainability, embedding audio explanations and music soundscapes they have created."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students build a collaborative digital map on Padlet, pinning locations of different First Nations countries, adding student-created videos, soundscapes, and artwork to each region to showcase the diversity and connection to Country."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Using the Design Cycle, students prototype and build a 'sustainable gathering tool' inspired by First Nations ingenuity, then document their process and test their designs for environmental impact and efficiency, reflecting on how traditional knowledge can inform modern STEM solutions."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores First Nations Australians' deep connection to Country, language, and culture. Students engage in activities such as creating soundscapes, researching cultural diversity, visiting the Melbourne Museum, and producing artworks and digital reflections that highlight Indigenous perspectives, environmental responsibility, and the importance of tradition and identity."
   },
   {
     "ca": "St Kilda",
@@ -3778,9 +3803,35 @@
     "th": "Where We Are in Place and Time",
     "ci": "Exploration and discovery have led to changes that shape the world we live in",
     "lo": "The age of exploration and the reasons explorers set out on their journeys; How Australia changed through European arrival; Different perspectives on the consequences of exploration",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes + iPad App Smashing",
+        "d": "Students create interactive 3D explorer journals using Merge Cubes and the iPad camera. They film themselves as 'time-traveling explorers', overlaying their video narrations onto 3D models of ships, maps, or artifacts they design in Tinkercad, then use the Merge Cube to present their discoveries in augmented reality to the class."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students document their explorer research by creating multimedia portfolios, combining voice recordings, annotated maps, and digital drawings to show the journeys, discoveries, and impacts of different explorers on Australia and the world."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design visually engaging digital timelines or infographics that compare pre- and post-European arrival in Australia, highlighting key explorers, their routes, and the resulting changes in landscape, demographics, and identity."
+      },
+      {
+        "t": "Minecraft: The Hall of Inventions",
+        "d": "Students explore the museum of key innovations from history, then build their own 'explorer-inspired' inventions or landmarks in Minecraft, reflecting on how exploration and discovery have shaped the modern world.",
+        "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
+      },
+      {
+        "t": "Adobe Express",
+        "d": "Students create short documentary-style videos or animated explainers about a chosen explorer, using Adobe Express to combine historical images, maps, and their own voiceovers to communicate the positive and negative consequences of exploration."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Using the Design Cycle, students prototype and test a 'navigation robot' inspired by historical exploration tools. They design, build, and program a Lego Spike Prime robot to follow a mapped route representing an explorer's journey, iterating on their design to overcome obstacles and simulate real-world exploration challenges."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students investigate the concept of exploration and discovery, focusing on the Age of Exploration and Australian history. They research explorers, map their journeys, present findings, and reflect on the impact of European arrival from multiple perspectives, using a range of inquiry-based and creative activities."
   },
   {
     "ca": "St Kilda",
@@ -3788,9 +3839,34 @@
     "th": "Who We Are",
     "ci": "Leaders can help a group to function effectively",
     "lo": "Roles and responsibilities of effective leadership; Purpose of leadership; The strengths and qualities of a leader",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes + iMovie App Smash",
+        "d": "Students create an interactive 3D 'Leadership Qualities Cube' using Merge Cubes, where each face represents a leadership attribute brainstormed in class. They then script and film short iMovie scenes demonstrating each quality in action, overlaying their videos onto the Merge Cube faces for a truly immersive, augmented reality leadership showcase."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design digital 'Little People, Big Dreams' leadership posters in Canva, highlighting the attributes of effective leaders they researched. These can be displayed digitally or printed for a leadership gallery walk, directly linking to the unit's focus on leadership qualities and role models."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students use Seesaw to document their leadership journey: uploading video pitches for leadership roles, reflecting on their actions, and receiving peer feedback via comments. This creates a digital portfolio of their growth and understanding of leadership throughout the unit."
+      },
+      {
+        "t": "Padlet",
+        "d": "Create a collaborative Padlet wall where students post examples of leadership from their own lives, school, or community. They can add photos, videos, or text, and comment on each other's posts to discuss the impact of different leadership styles and actions."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students select a historical or contemporary leader, create a talking portrait using ChatterPix Kids, and record a short message as that leader explaining what makes them effective. This brings leadership attributes to life in a fun, creative way."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Design Cycle STEM Project: Students work in teams to design, build, and program a 'Leadership Robot' using Lego Spike Prime. Each robot must demonstrate a leadership quality (e.g., guiding others, making decisions, solving problems) through its programmed actions. Teams document their process and reflect on how collaboration and leadership were essential to their success."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores the qualities and responsibilities of effective leaders, with students brainstorming attributes, researching role models, and reflecting on their own leadership potential. Activities include collaborative discussions, creative presentations, and opportunities for students to apply and demonstrate leadership skills in real-world and classroom contexts."
   },
   {
     "ca": "St Kilda",
@@ -3798,9 +3874,34 @@
     "th": "How We Express Ourselves",
     "ci": "Social norms and stereotypes can influence the way people express themselves",
     "lo": "How stereotypes and social norms form and persist in society; The impact of discrimination, prejudice and assumptions on individuals and communities; How people overcome stereotypes to express themselves and inspire change",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Delightex + Padlet",
+        "d": "Launch a collaborative digital 'Stereotype Buster' simulation using Delightex to create branching scenarios where students must make choices that challenge or reinforce social norms and stereotypes. Students then reflect and share their decision paths and outcomes on a Padlet wall, sparking debate and critical thinking about real-world impacts."
+      },
+      {
+        "t": "ChatterPix Kids (App Smash with Canva)",
+        "d": "Students select a famous figure who overcame stereotypes, create a talking portrait using ChatterPix Kids, and then use Canva to design a digital poster that combines their animated message with key facts and visuals about the person's achievements."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students collaboratively author a digital book that explores different forms of self-expression and the influence of social norms, including personal stories, artwork, and research on stereotypes. Each student contributes a page, using multimedia elements to enhance engagement."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Facilitate a 'See, Think, Wonder' digital gallery walk where students upload images or short videos representing various forms of expression, annotate them with reflections on how stereotypes or norms are present, and respond to peers' posts to build a shared understanding."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "Guide students to create dynamic infographics or short video stories that visually unpack a stereotype or social norm, using Adobe Express's animation and design features to communicate powerful messages about overcoming prejudice."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "STEM Design Cycle Challenge: Students use the Design Cycle to prototype a robotic 'Expression Machine' with Lego Spike Prime that visually represents breaking free from a chosen stereotype (e.g., a robot that changes its appearance or movement to symbolize self-expression beyond social norms). They document their process and present their design thinking journey to the class."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit engages Year 5 students in understanding how social norms and stereotypes influence self-expression. Through activities such as gallery walks, scenario analysis, research on famous figures, and multimedia presentations, students critically examine and creatively respond to issues of prejudice and identity, culminating in both digital and physical expressions of learning."
   },
   {
     "ca": "St Kilda",
@@ -3808,9 +3909,35 @@
     "th": "How We Organise Ourselves",
     "ci": "Goods and services are exchanged within a marketplace",
     "lo": "The production of goods from raw materials through manufacturing to consumer; The exchange of currency for goods and services in a functioning economy; Ethics and responsible decision-making in the marketplace",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes",
+        "d": "Transform your classroom into a virtual marketplace using Merge Cubes and iPads. Students design 3D models of their own products or services, then use Merge Explorer to create interactive, augmented reality 'stalls' where peers can explore, compare, and 'purchase' goods/services in a simulated digital market. This brings the concept of exchange and value to life in a futuristic, hands-on way."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Students create and distribute digital market surveys using Microsoft Forms to collect real-time data on classmates' consumer preferences, then analyse the results to inform their business decisions and pricing strategies in the class marketplace simulation."
+      },
+      {
+        "t": "Padlet",
+        "d": "Launch a collaborative digital 'marketplace wall' on Padlet where students post advertisements for their businesses, respond to customer feedback, and negotiate trades or deals, mirroring real-world online trading platforms."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design visually engaging digital posters and infographics in Canva to promote their goods or services, focusing on persuasive marketing techniques and ethical advertising within the classroom economy."
+      },
+      {
+        "t": "Minecraft: The Hall of Inventions",
+        "d": "Students explore 'The Hall of Inventions' in Minecraft Education, then design and build their own innovative marketplace inventions in the virtual world, reflecting on how goods and services have evolved and are exchanged over time.",
+        "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
+      },
+      {
+        "t": "Makey Makey",
+        "d": "Using the Design Cycle, students prototype and build interactive, physical 'point of sale' systems for their classroom businesses with Makey Makey and everyday materials. They design, test, and refine their devices to simulate real-world transactions, integrating digital and physical elements for a STEM-rich marketplace experience."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students investigate how goods and services are exchanged within a marketplace by simulating a class economy, creating their own businesses, applying for jobs, managing budgets with spreadsheets, and engaging in trading sessions. They explore concepts such as supply and demand, ethics, and consumer rights through collaborative projects, role play, and digital tools, culminating in a hands-on, student-driven marketplace experience."
   },
   {
     "ca": "St Kilda",
