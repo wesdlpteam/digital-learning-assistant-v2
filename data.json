@@ -260,9 +260,34 @@
     "th": "Sharing the Planet",
     "ci": "Plants are a life sustaining resource.",
     "lo": "Products derived from plants; Plants all around us; The interconnectedness of plants",
-    "s": [],
+    "s": [
+      {
+        "t": "Delightex + iPad Camera",
+        "d": "Launch a 'Plant Detective AR Adventure' where students use the iPad camera to capture real plants around the school, then import their photos into Delightex to create interactive, augmented reality scenes. Students can add digital labels, voice recordings, and animations to explain how plants sustain life, turning the school grounds into a living, student-created AR plant encyclopedia."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students photograph different plants and use ChatterPix Kids to animate the plants, giving them a 'voice' to explain their role in sustaining life. This empowers students to creatively demonstrate their understanding of plant functions and importance in an engaging, age-appropriate way."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Facilitate a collaborative digital 'Plant Life Cycle Storybook' using Book Creator. Each student contributes a page with drawings, photos, and voice narration about a stage in a plant's life cycle, resulting in a multimedia class book that documents their inquiry journey."
+      },
+      {
+        "t": "Seesaw (App Smash with PicCollage)",
+        "d": "Guide students to collect leaves, petals, or seeds, photograph them with the iPad, and create digital plant collages in PicCollage. They then upload their creations to Seesaw, adding voice reflections about how each part helps plants sustain life, fostering both creativity and scientific thinking."
+      },
+      {
+        "t": "ScratchJr",
+        "d": "Students design simple animations showing the journey of a seed growing into a plant, including the resources it needs (sun, water, soil). This visual coding activity helps solidify understanding of plant life cycles and the concept of plants as life-sustaining resources."
+      },
+      {
+        "t": "Bee-Bots",
+        "d": "STEM Design Cycle Project: Students design and build a large floor map representing a garden ecosystem. Using the Design Cycle, they plan, create, and test routes for Bee-Bots to 'pollinate' flowers and 'deliver' water to plants, simulating the interconnected roles of plants, pollinators, and resources in sustaining life. This hands-on project integrates robotics, spatial reasoning, and environmental science in a playful, collaborative way."
+      }
+    ],
     "audited": true,
-    "plannerText": "Not yet documented in PDF."
+    "plannerText": "This unit immerses Year 1 students in exploring how plants are a life-sustaining resource. Through hands-on investigations, digital research, and creative projects, students observe plant life cycles, document changes, and communicate their understanding using visual and tactile digital tools. The learning is grounded in real-world observations and student agency, with strong links to science, literacy, and transdisciplinary inquiry."
   },
   {
     "ca": "Elsternwick",
@@ -273,31 +298,31 @@
     "s": [
       {
         "t": "Delightex + iPad Camera",
-        "d": "Launch an immersive 'Global Homes Virtual Gallery' by having students photograph their own homes or unique architectural features using the iPad Camera, then upload and transform these into interactive, 3D story scenes in Delightex. Students can app-smash by recording short voice narrations about how their home reflects their culture or environment, creating a virtual exhibition for families and peers to explore."
+        "d": "Launch an immersive 'Virtual Home Gallery' where students use the iPad Camera to photograph their own homes or favourite spaces, then upload and transform these images into interactive, explorable 3D scenes using Delightex. Students can add voice notes describing cultural or environmental features, allowing peers to virtually 'visit' and learn about diverse homes from around the world."
       },
       {
         "t": "ChatterPix Kids",
-        "d": "Students select or draw a picture of a unique home from around the world, then use ChatterPix Kids to animate the home, giving it a voice to share facts about its cultural and environmental significance. This brings global perspectives to life in a playful, memorable way."
+        "d": "Students select or draw a type of home from another culture, then use ChatterPix Kids to animate the home itself, giving it a 'voice' to share facts about its materials, location, and cultural significance. This brings global perspectives to life in a playful, memorable way."
       },
       {
         "t": "Book Creator",
-        "d": "Create a collaborative digital class book where each student authors a page about a different type of home, using photos, drawings, and voice recordings. The book can include Venn diagrams comparing homes, and be shared with the school community."
+        "d": "Create a collaborative digital class book where each student authors a page about a unique home type, combining photos, drawings, and audio reflections. The final product is a multimedia showcase of global homes, accessible for family sharing and classroom discussion."
       },
       {
-        "t": "Seesaw",
-        "d": "Students document their learning journey by uploading photos, audio reflections, and mini-presentations about different homes. Teachers can prompt students to compare their own home to those studied, fostering reflection and peer feedback in a visual portfolio."
+        "t": "Seesaw App Smash",
+        "d": "App smash Seesaw with PicCollage: Students research a home from another country, create a visual collage of its features in PicCollage, then upload to Seesaw and record an audio explanation comparing it to their own home. This workflow builds visual literacy and oral communication skills."
       },
       {
-        "t": "PicCollage",
-        "d": "Invite students to design vibrant collages that showcase the materials, shapes, and settings of homes from various cultures. They can combine cut-out images, stickers, and their own drawings to visually compare and contrast homes, then present their collages in a class gallery walk."
+        "t": "Epic + Padlet",
+        "d": "Students use Epic to explore non-fiction texts about homes around the world, then post their favourite discoveries to a shared Padlet wall. Each post includes a drawing or photo and a voice recording, building a living, collaborative resource on global housing diversity."
       },
       {
-        "t": "Sphero Indi",
-        "d": "STEM Design Cycle Challenge: Students use the Sphero Indi and tactile coding cards to design and build a model 'sustainable home' maze. They must plan, test, and iterate their design so Indi can navigate through different 'rooms' representing features adapted to various environments (e.g., insulation for cold, shade for heat). This hands-on project encourages creative problem-solving and links directly to the unit's focus on how homes reflect culture and environment."
+        "t": "Bee-Bots Design Cycle Challenge",
+        "d": "Using the Design Cycle, students design and build a model of a sustainable home using recycled materials. They then create a simple floor plan and program a Bee-Bot to 'tour' the home, explaining features related to culture and environment at each stop. This hands-on project integrates STEM, spatial reasoning, and sustainability concepts."
       }
     ],
     "audited": true,
-    "plannerText": "In this unit, Year 1 students explore how homes reflect culture and environment by investigating diverse types of homes from around the world, comparing their features, and considering sustainability. Activities include researching, building mini homes, reading information texts, and reflecting on personal and global perspectives about what makes a home."
+    "plannerText": "In this unit, Year 1 students explore how homes reflect culture and environment by investigating different types of homes around the world, comparing their features, and building mini home models. Activities include read-alouds, research using Epic, creative arts, and a hands-on design challenge, culminating in a showcase of student learning."
   },
   {
     "ca": "Elsternwick",
@@ -307,32 +332,32 @@
     "lo": "Safe environments; How our actions affect ourselves and others; Keeping our body and mind healthy",
     "s": [
       {
-        "t": "Delightex + Seesaw App Smash",
-        "d": "Students collaboratively design interactive 'Choose Your Own Adventure' digital stories in Delightex, where each choice leads to different safety and wellbeing scenarios. They then record themselves acting out their chosen paths using the iPad camera and upload these videos to Seesaw for peer feedback, blending creative digital storytelling with real-life decision making."
-      },
-      {
-        "t": "ChatterPix Kids",
-        "d": "Students take photos of healthy foods, safety equipment, or body parts, then use ChatterPix Kids to animate them with their own voices, sharing tips for staying safe and healthy. This makes abstract wellbeing concepts concrete and memorable for young learners."
+        "t": "ChatterPix Kids + Seesaw",
+        "d": "Students create a 'Healthy Habits Hero' by drawing themselves making a safe or healthy choice (e.g., wearing a helmet, washing hands). They use ChatterPix Kids to animate their drawing, recording their voice to explain how their action keeps them safe or well. The videos are then uploaded to Seesaw for a digital class gallery, sparking peer discussion and reflection on safety and wellbeing."
       },
       {
         "t": "Book Creator",
-        "d": "Each student creates a highly visual digital book documenting their daily healthy habits, safe choices, and reflections on wellbeing. They can include photos, drawings, and voice recordings, making the book accessible and engaging for Year 1."
+        "d": "Students collaboratively build a digital 'Safety & Wellbeing Storybook' in Book Creator, each contributing a page about a healthy habit, body part, or safe action. They use photos, drawings, and voice recordings to make the book highly visual and accessible, reinforcing the central idea through storytelling."
       },
       {
         "t": "PicCollage",
-        "d": "Students create vibrant collages showing 'A Day of Safe and Healthy Choices' by combining photos from the iPad camera, stickers, and drawings. These collages can be printed for classroom displays or shared digitally with families."
+        "d": "Learners go on a 'Wellbeing Scavenger Hunt' around the school, using iPads to photograph examples of safe environments, healthy foods, or positive actions. They assemble their findings into a vibrant PicCollage poster, labeling each image with simple icons or emojis to represent safety and wellbeing."
       },
       {
         "t": "ScratchJr",
-        "d": "Learners program simple animations where characters make safe or unsafe choices (e.g., crossing the road, washing hands). Students discuss the outcomes, reinforcing the link between actions and wellbeing through coding and storytelling."
+        "d": "Students design simple interactive stories in ScratchJr where characters make choices that affect their safety or wellbeing (e.g., choosing to cross at the crosswalk, eating healthy snacks). The stories visually demonstrate consequences and reinforce decision-making skills in a playful, age-appropriate way."
       },
       {
-        "t": "Bee-Bots Design Cycle Challenge",
-        "d": "Using the Design Cycle, students work in teams to design and build a 'Safe Journey Map' for Bee-Bots. They prototype pathways that include safe and unsafe zones (e.g., zebra crossings, obstacles), then program Bee-Bots to navigate the safest route, reflecting on how planning and choices impact wellbeing."
+        "t": "Delightex",
+        "d": "Using Delightex, students create interactive visual mind maps about 'How Our Actions Affect Our Wellbeing.' They add images, stickers, and voice notes to show connections between daily choices (like sleep, exercise, and kindness) and how they feel, encouraging metacognition and self-awareness."
+      },
+      {
+        "t": "Bee-Bots",
+        "d": "Design Cycle STEM Project: Students work in groups to design and build a 'Safe Pathway' floor map for Bee-Bots, representing a journey through different environments (home, school, park). They use the Design Cycle to plan, create, test, and improve their map, programming Bee-Bots to navigate safely while avoiding hazards and reaching healthy destinations. This hands-on project reinforces spatial reasoning, teamwork, and the central idea that our actions influence safety and wellbeing."
       }
     ],
     "audited": true,
-    "plannerText": "This unit explores how the actions we take influence our safety and wellbeing, with students engaging in hands-on activities such as creating informative books about the body, participating in healthy habits inquiry stations, building life-size body models, and reflecting on their choices through presentations and collaborative projects."
+    "plannerText": "This unit explores how the actions we take influence our safety and wellbeing, with students engaging in activities such as daily read-alouds about the human body, building informative books, participating in healthy habits inquiry stations, creating life-size body models, and reflecting on routines that support health. The learning is highly visual, hands-on, and incorporates opportunities for student voice, choice, and sharing with the community."
   },
   {
     "ca": "Elsternwick",
@@ -343,31 +368,31 @@
     "s": [
       {
         "t": "ClassVR & Merge Cubes",
-        "d": "Launch an immersive 'Art Gallery of the Imagination' experience where students use ClassVR headsets and Merge Cubes to explore virtual 3D artworks from around the world, then create their own digital sculptures or paintings using the Merge Cube as a canvas. Students can record a short audio artist statement to be played as others view their work in VR, blending tactile, visual, and auditory expression in a truly out-of-the-box way."
+        "d": "Launch an immersive 'Art Gallery of the Imagination' experience where students use ClassVR headsets and Merge Cubes to explore and interact with famous artworks and 3D models of student-created art. Students can virtually 'walk through' their own digital gallery, view classmates' creations in 3D, and record audio reflections about what inspires their imagination and creativity."
       },
       {
         "t": "ChatterPix Kids + Book Creator (App Smash)",
-        "d": "Have students create a piece of visual art or a sculpture, then use the iPad camera to photograph it. Using ChatterPix Kids, students animate their artwork to 'speak' about its inspiration and meaning. Combine these talking artworks in Book Creator to make a digital class exhibition book, celebrating diverse voices and creative processes."
+        "d": "Have students create talking artwork by photographing their own visual art pieces with the iPad camera, then using ChatterPix Kids to animate their art and record a voice explaining their creative choices. Combine these talking artworks in Book Creator to produce a digital class anthology of 'Voices of Imagination'."
       },
       {
         "t": "Seesaw",
-        "d": "Facilitate a 'Creativity Diary' where students document their artistic process by uploading photos, voice recordings, and short videos of their work in progress. Encourage them to reflect on how their feelings and imagination change as they create, fostering metacognition and appreciation for their own and others' creative journeys."
+        "d": "Facilitate a 'Creative Process Portfolio' where students document each stage of their artistic projects with photos, voice memos, and short videos. Encourage them to reflect on how their ideas changed, what inspired them, and how they appreciate others' creativity, all in a highly visual, interactive format."
       },
       {
         "t": "Canva",
-        "d": "Guide students to design vibrant digital posters or collages that represent different emotions or ideas using Canva's drag-and-drop interface. They can use the 'Remove Background' feature to insert themselves into famous artworks or imaginative scenes, then share their creations in a virtual gallery walk."
+        "d": "Guide students to design vibrant, visual posters celebrating different forms of artistic expression (e.g., music, dance, visual art, poetry). Use Canva's drag-and-drop interface and 'Remove Background' feature to collage their own photos into creative scenes, then print or share digitally with the school community."
       },
       {
         "t": "Puppet Pals",
-        "d": "Invite students to retell a favourite fairy tale or invent their own imaginative story using Puppet Pals. They can create custom characters and backgrounds, record their voices, and animate expressive performances, exploring narrative, perspective, and artistic expression in a playful digital format."
+        "d": "Invite students to create imaginative puppet shows where they express emotions, tell original stories, or interpret famous artworks. Students can select backgrounds, characters, and record their voices, then share their digital performances with peers to foster appreciation of diverse creative perspectives."
       },
       {
-        "t": "Bee-Bots (Design Cycle STEM Project)",
-        "d": "Challenge students to design and decorate a Bee-Bot mat that represents a journey through different forms of artistic expression (e.g., music, dance, painting, poetry). Using the Design Cycle, students plan, create, test, and refine their mat, then program Bee-Bots to travel through each 'art zone', sharing what each zone represents and how it inspires creativity."
+        "t": "Bee-Bots",
+        "d": "STEM Design Cycle Project: Challenge students to design and build a 'Gallery Maze' for Bee-Bots, representing different forms of artistic expression in each section. Students plan, prototype, test, and iterate their maze layouts, then program Bee-Bots to 'tour' the gallery, narrating the journey and explaining the creative inspiration behind each stop."
       }
     ],
     "audited": true,
-    "plannerText": "This unit explores how artistic appreciation and expressions inspire imagination and creativity. Students engage with diverse forms of expression including art, poetry, and music, participate in activities like pet portraits, digital poetry, and choice boards, and reflect on their creative processes through hands-on and digital experiences."
+    "plannerText": "This unit explores how artistic appreciation and expressions inspire imagination and creativity. Students engage in activities such as poetry writing, art creation, music exploration, and reflecting on different forms of expression, while also learning to appreciate others' creativity and document their own creative processes."
   },
   {
     "ca": "Elsternwick",
@@ -377,32 +402,32 @@
     "lo": "Needs and wants; The changing needs of communities; The design process",
     "s": [
       {
-        "t": "Delightex + Seesaw App Smash",
-        "d": "Launch a 'Virtual Marketplaces' simulation where students collaboratively design and populate a digital marketplace using Delightex's 3D scene builder. Students create stalls representing needs and wants, then use the iPad camera to capture their own products or drawings, uploading them to Seesaw for peer feedback and reflection. This immersive, visual workflow brings the concept of community needs and wants to life in a playful, interactive way."
-      },
-      {
-        "t": "ChatterPix Kids",
-        "d": "Students photograph items from home or the classroom that represent needs and wants, then use ChatterPix Kids to animate the items, giving them voices to explain why they are a need or a want in the community. This makes abstract economic concepts tangible and memorable for young learners."
+        "t": "ClassVR & Seesaw App Smash",
+        "d": "Immerse students in a virtual marketplace experience using ClassVR headsets, allowing them to 'walk through' different global marketplaces and observe how needs and wants are met in diverse communities. Students then capture their reflections and comparisons by recording short video responses on Seesaw, using the iPad camera to visually annotate what they noticed about systems, products, and community interactions."
       },
       {
         "t": "Book Creator",
-        "d": "Facilitate a collaborative digital book where each student authors a page about a product or service that meets a community need or want. They can use photos, drawings, and voice recordings to explain their choices, culminating in a class eBook that showcases the diversity of marketplace items."
+        "d": "Students create interactive digital books documenting their own 'needs vs wants' journeys at home and in the classroom. They use the iPad camera to add photos, voice recordings, and drawings, making their understanding of community needs and marketplace items highly visual and personal."
       },
       {
         "t": "PicCollage",
-        "d": "Guide students to create vibrant collages that visually sort and compare needs versus wants using magazine cutouts, drawings, and photos. These collages can be shared digitally and discussed as a class, reinforcing the central idea through hands-on, visual categorization."
+        "d": "Learners visit a local market (or use photos from home), then use PicCollage on iPads to sort and label images of items into 'needs' and 'wants', visually mapping out how marketplaces reflect community priorities. They can share their collages with the class for discussion."
       },
       {
         "t": "Padlet",
-        "d": "Set up a Padlet board as a 'Community Marketplace Wall' where students post images and short audio clips of items they believe are essential or desirable for their community. This collaborative digital space encourages discussion about changing needs and wants, and how marketplaces adapt over time."
+        "d": "Facilitate a collaborative, visual Padlet wall where students post images, drawings, or voice notes about products they think are essential or desirable in their community. This digital brainstorming board helps the class collectively identify patterns in needs and wants, and sparks discussion about how these influence marketplace design."
       },
       {
-        "t": "Bee-Bots",
-        "d": "STEM Design Cycle Project: Challenge students to design and build a model marketplace map on the floor, then program Bee-Bots to 'shop' for needs and wants by navigating to different stalls. Students iterate on their map layouts and Bee-Bot routes, reflecting on how the organization of a marketplace affects access to goods and services, and documenting their process with photos and voice notes on Seesaw."
+        "t": "Minecraft: Sustainable Food Production",
+        "d": "Students explore the journey of food from farm to market in the 'Sustainable Food Production' Minecraft Education lesson (https://education.minecraft.net/en-us/lessons/sustainable-food-production). They learn about sustainable farming, packaging, and recycling, then reflect on how these systems meet community needs and wants, connecting directly to the unit's focus on marketplaces and design thinking."
+      },
+      {
+        "t": "Bee-Bots Design Cycle Challenge",
+        "d": "Using the Design Cycle, students work in teams to design and prototype a 'marketplace delivery system' on a classroom map. They program Bee-Bots to deliver 'goods' (tokens or cards) to different stalls representing community needs and wants, iterating their routes and solutions based on feedback and observation. This hands-on STEM project brings the design process and systems thinking to life in a playful, age-appropriate way."
       }
     ],
     "audited": true,
-    "plannerText": "This unit explores how marketplaces reflect the needs and wants of communities, with a strong focus on distinguishing between needs and wants, understanding the changing needs of communities, and using the design thinking process to create products that meet local needs. Students engage in hands-on activities such as sorting games, role-plays, community connections, and a culminating design project to address real-world challenges."
+    "plannerText": "This unit engages Year 2 students in exploring how marketplaces reflect the needs and wants of communities, with a strong focus on distinguishing between needs and wants, understanding changing community priorities, and using the design thinking process to create solutions. Activities include sorting games, real-life role plays, vocabulary building, prototyping, and a culminating project where students design products that respond to community needs, often connecting with local organisations and showcasing their innovations."
   },
   {
     "ca": "Elsternwick",
@@ -410,34 +435,9 @@
     "th": "How the World Works",
     "ci": "Forces and motion are all around us.",
     "lo": "Forces around us; Scientific laws of motion; Innovations in technology",
-    "s": [
-      {
-        "t": "ClassVR + iPad Camera App",
-        "d": "Take students on an immersive virtual reality journey through a playground or science lab, where they can 'see' invisible forces like gravity, friction, and magnetism in action. Students use the iPad Camera app to record their own slow-motion videos of playground experiments, then upload these to ClassVR for a class-wide, interactive VR gallery of forces and motion in real life."
-      },
-      {
-        "t": "ChatterPix Kids + Seesaw",
-        "d": "Students photograph objects from around the school that demonstrate push, pull, or other forces, then use ChatterPix Kids to animate the objects and have them 'explain' the force at work. These short, creative clips are shared on Seesaw for peer feedback and reflection, making scientific concepts accessible and engaging."
-      },
-      {
-        "t": "ScratchJr",
-        "d": "Learners create simple, interactive animations showing how different forces (push, pull, gravity) affect objects. For example, they can program a ball to roll down a ramp or a magnet to attract objects, visually demonstrating their understanding of motion and cause-and-effect relationships."
-      },
-      {
-        "t": "Book Creator",
-        "d": "Students document their hands-on science experiments (e.g., ramps, magnets, friction tests) by taking photos, recording voice explanations, and drawing diagrams in a digital science journal. The final Book Creator project becomes a multimedia portfolio of their learning about forces and motion."
-      },
-      {
-        "t": "Bee-Bots",
-        "d": "Students design obstacle courses and program Bee-Bots to navigate them, predicting and testing how different forces (push, pull, friction) affect the Bee-Bot's movement. They reflect on how changing the surface or adding ramps alters the outcome, connecting robotics to real-world physics."
-      },
-      {
-        "t": "Sphero Indi Design Cycle Challenge",
-        "d": "Using the Design Cycle, students work in teams to prototype and test a Sphero Indi-powered 'Force and Motion Playground.' They design ramps, tunnels, and surfaces, iteratively testing how the Indi responds to different forces and materials. Students document their process with photos and voice notes, presenting their final playground design and explaining the science behind each feature."
-      }
-    ],
-    "audited": true,
-    "plannerText": "This unit immerses Year 2 students in hands-on investigations of forces and motion, including experiments with ramps, magnets, friction, and simple machines. Learners explore scientific concepts through playground observations, slow-motion video analysis, and the construction of Rube Goldberg machines, culminating in collaborative projects that demonstrate their understanding of how forces shape the world around us."
+    "s": [],
+    "audited": false,
+    "plannerText": ""
   },
   {
     "ca": "Elsternwick",
@@ -445,34 +445,9 @@
     "th": "Sharing the Planet",
     "ci": "Taking care of our Earth starts with the choices we make.",
     "lo": "Earth's resources; How our actions affect the environment; Ways we can care for our planet",
-    "s": [
-      {
-        "t": "ClassVR + Merge Cubes App Smash",
-        "d": "Launch an immersive 'Earth's Resources Explorer' experience by combining ClassVR headsets with Merge Cubes. Students can virtually manipulate 3D models of Earth's resources (like water, trees, and minerals), then use the Merge Cube to simulate the impact of different choices on the environment?such as overusing water or recycling materials. This hands-on, mixed-reality approach makes abstract sustainability concepts tangible and memorable for Year 2 learners."
-      },
-      {
-        "t": "Seesaw + iPad Camera: Waste Audit Documentary",
-        "d": "Students conduct a real-life lunchbox waste audit using the iPad camera to capture before-and-after photos of their lunch waste. They then use Seesaw to create a visual diary, annotating their photos with voice recordings explaining how their choices impact the Earth and brainstorming ways to reduce waste."
-      },
-      {
-        "t": "Book Creator: Persuasive Environmental Campaigns",
-        "d": "Learners design digital persuasive books in Book Creator, using photos, drawings, and voice narration to advocate for a specific action (e.g., 'Say No to Single-Use Plastics!'). These can be shared with the school community to inspire real change."
-      },
-      {
-        "t": "ChatterPix Kids: Talking Rubbish Bin Mascots",
-        "d": "Students design and photograph their own 'rubbish bin mascots' using classroom materials, then bring them to life in ChatterPix Kids by recording short, funny messages about making good choices for the Earth (e.g., 'Feed me recyclables!'). These can be displayed around the school as digital posters."
-      },
-      {
-        "t": "PicCollage: 8Rs of Sustainability Visual Posters",
-        "d": "In small groups, students create vibrant digital posters in PicCollage illustrating the 8Rs (Reduce, Reuse, Recycle, Rot, Refuse, Repair, Rethink, Repurpose) using their own photos, stickers, and drawings. These can be printed or shared digitally to promote sustainable habits school-wide."
-      },
-      {
-        "t": "Bee-Bots: 'Eco-Rescue Mission' Design Cycle Challenge",
-        "d": "Using the Design Cycle, students work in teams to design and build obstacle courses that represent environmental challenges (e.g., litter, polluted water, endangered habitats). They then program Bee-Bots to navigate the course, 'rescuing' resources and demonstrating how thoughtful choices can help care for the Earth. Teams iterate on their designs to improve efficiency and impact."
-      }
-    ],
-    "audited": true,
-    "plannerText": "The unit 'Sharing the Planet' in Year 2 focuses on the central idea that taking care of our Earth starts with the choices we make. Students explore Earth's resources, how their actions affect the environment, and practical ways to care for the planet through hands-on investigations, waste audits, persuasive projects, and action-oriented learning experiences."
+    "s": [],
+    "audited": false,
+    "plannerText": ""
   },
   {
     "ca": "Elsternwick",
@@ -480,34 +455,9 @@
     "th": "Where We Are in Place and Time",
     "ci": "Landmarks and places of significance tell stories about our history.",
     "lo": "The significance of places to different people and cultures; The connection between landmarks and identity; How landmarks and symbols represent our history",
-    "s": [
-      {
-        "t": "ClassVR + Merge Cubes",
-        "d": "Take students on a virtual reality journey to explore famous Australian and global landmarks, then use Merge Cubes to create interactive, holographic models of these sites. Students can 'hold' Uluru, the Sydney Opera House, or the Great Barrier Reef in their hands, triggering audio stories or fun facts about each landmark's history and cultural significance. This immersive, hands-on experience brings the unit's focus on place, story, and symbolism to life in a way that is both magical and memorable."
-      },
-      {
-        "t": "Seesaw + iPad Camera",
-        "d": "Students embark on a 'Landmarks Detective' photo hunt around the school and local community using the iPad Camera. They upload their photos to Seesaw, then record voiceovers explaining the significance of each place and how it connects to their own stories or cultural backgrounds. This app-smash workflow encourages visual storytelling and oral language development, perfectly aligning with the unit's emphasis on communication and connection."
-      },
-      {
-        "t": "ChatterPix Kids",
-        "d": "Learners select a landmark or artefact and use ChatterPix Kids to animate it, giving the landmark a 'voice' to tell its own story. For example, the Shrine of Remembrance might explain why it is important, or a local playground might share memories of community events. This playful approach helps students internalize the idea that places hold stories and significance for different people."
-      },
-      {
-        "t": "Bee-Bots",
-        "d": "Students design and build a large floor map of Australia (or their local area) and program Bee-Bots to travel between significant landmarks. Along the way, they must give and follow directions, use map symbols, and explain the importance of each stop. This activity integrates spatial reasoning, coding, and geography, reinforcing the unit's mapping and symbolism outcomes."
-      },
-      {
-        "t": "Book Creator",
-        "d": "Each student creates a digital 'Landmarks & Stories' book in Book Creator, combining photos, drawings, voice recordings, and simple text. They document a journey through significant places, weaving in Indigenous stories, personal family landmarks, and local community sites. The final books can be shared with families and the school community, celebrating diverse histories and connections to place."
-      },
-      {
-        "t": "Sphero Indi Design Cycle Challenge",
-        "d": "Using the Design Cycle, students work in teams to design and build a model of a significant local landmark or a new monument that tells a story important to their community. They use Sphero Indi cars to navigate a course around their model, programming the route to stop at key features and trigger audio explanations. This hands-on STEM project integrates prototyping, coding, and storytelling, while fostering teamwork and creativity."
-      }
-    ],
-    "audited": true,
-    "plannerText": "This unit immerses Year 2 students in exploring how landmarks and places of significance tell stories about our history. Through mapping, storytelling, Indigenous perspectives, and hands-on inquiry, students investigate the meaning of place, symbolism, and the ways we preserve and remember historical sites. Activities include excursions, mapping with Bee-Bots, Dreaming stories, and designing monuments or memorials."
+    "s": [],
+    "audited": false,
+    "plannerText": ""
   },
   {
     "ca": "Elsternwick",
@@ -515,34 +465,9 @@
     "th": "Who We Are",
     "ci": "Our relationships with others impact our lives.",
     "lo": "Importance of relationships; Developing and maintaining healthy relationships; The impact of relationships on wellbeing",
-    "s": [
-      {
-        "t": "Delightex + Puppet Pals App Smash",
-        "d": "Students collaboratively create interactive digital 'relationship maps' using Delightex, visually representing the web of connections in their classroom and community. They then use Puppet Pals to animate scenarios showing how positive actions ripple through relationships, bringing the abstract concept of influence to life in a playful, visual way."
-      },
-      {
-        "t": "Seesaw",
-        "d": "Learners document acts of kindness and moments of teamwork by capturing photos or short videos on iPads, then use Seesaw's drawing and voice tools to reflect on how these moments impacted themselves and others, building a digital portfolio of relationship growth."
-      },
-      {
-        "t": "Book Creator",
-        "d": "Students co-author digital friendship storybooks, illustrating and narrating real or imagined stories about resolving conflicts, celebrating diversity, or supporting friends, then share these with peers and families to spark discussion about healthy relationships."
-      },
-      {
-        "t": "ChatterPix Kids",
-        "d": "Children take photos of classroom objects or self-portraits, then use ChatterPix Kids to animate them with voices that share advice or stories about making friends, apologizing, or showing empathy, reinforcing social-emotional learning in a fun, accessible format."
-      },
-      {
-        "t": "PicCollage",
-        "d": "Students create vibrant digital collages using photos from class activities, family, and community events, visually mapping out the many groups they belong to and reflecting on how each group shapes their identity and wellbeing."
-      },
-      {
-        "t": "Bee-Bots",
-        "d": "Design Cycle STEM Project: In small teams, students use the Design Cycle to prototype and test a 'Friendship Maze' for Bee-Bots. They design pathways that represent different social scenarios (e.g., helping a friend, solving a disagreement), program the Bee-Bot to navigate these, and iterate on their designs based on peer feedback, connecting robotics with real-world relationship skills."
-      }
-    ],
-    "audited": true,
-    "plannerText": "This year-long unit explores how relationships with others impact our lives, focusing on developing and maintaining healthy relationships, understanding the changeable nature of connections, and fostering empathy and responsibility. Students engage in social-emotional learning, reflective activities, and collaborative experiences to build interpersonal skills and a strong sense of belonging."
+    "s": [],
+    "audited": false,
+    "plannerText": ""
   },
   {
     "ca": "Elsternwick",
@@ -550,34 +475,9 @@
     "th": "How We Express Ourselves",
     "ci": "Celebrations and traditions shape the culture of a community.",
     "lo": "The ways personal and cultural events are celebrated; Our appreciation of the diversity of cultures; How celebrations shape community identity",
-    "s": [
-      {
-        "t": "ClassVR & Merge Cubes",
-        "d": "Launch an immersive 'Global Celebrations Gallery' where students use ClassVR headsets and Merge Cubes to virtually experience and interact with 3D models of traditional artifacts, foods, and festival scenes from around the world. Students can record short reflections in Seesaw after each virtual visit, comparing how different cultures express their values through celebrations."
-      },
-      {
-        "t": "Canva",
-        "d": "Students create vibrant, interactive infographics or digital posters in Canva to showcase the unique traditions, foods, music, and symbols of their family's cultural background. These can be combined into a collaborative digital quilt representing the diversity of the class, and displayed during assembly or shared with the school community."
-      },
-      {
-        "t": "Book Creator",
-        "d": "Facilitate a class eBook project in Book Creator where each student authors a page about a celebration or tradition from their culture, including photos, voice recordings, and illustrations. The final eBook can be published and shared with families, fostering appreciation for the diversity within the classroom."
-      },
-      {
-        "t": "Padlet",
-        "d": "Set up a collaborative Padlet wall where students post photos, videos, or audio clips of their family's celebrations and traditions, and comment on each other's posts to identify similarities and differences. This ongoing digital exchange encourages dialogue about global citizenship and cultural appreciation."
-      },
-      {
-        "t": "Adobe Express",
-        "d": "Guide students to design and narrate short video stories in Adobe Express, highlighting a tradition or celebration that is meaningful to their family. Students can use the 'Remove Background' feature to creatively layer themselves into scenes or symbols from their chosen tradition, making their storytelling visually engaging."
-      },
-      {
-        "t": "Lego Spike Prime",
-        "d": "STEM Design Cycle Project: Challenge students to design and build a kinetic model (e.g., a moving parade float, a traditional dance figure, or a festival scene) using Lego Spike Prime. Students follow the Design Cycle: investigate a celebration, plan their model, build and program it, test and refine, then present their creation?explaining how it represents the values and creativity of a chosen culture."
-      }
-    ],
-    "audited": true,
-    "plannerText": "This unit explores how celebrations and traditions shape the culture of a community. Students investigate personal and cultural events, appreciate diversity, and reflect on what it means to be a global citizen through research, creative projects, and sharing their own family traditions."
+    "s": [],
+    "audited": false,
+    "plannerText": ""
   },
   {
     "ca": "Elsternwick",
