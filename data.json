@@ -1230,9 +1230,35 @@
     "th": "How the World Works",
     "ci": "Energy may be converted, transformed, and used to support human progress.",
     "lo": "Different forms of energy and how they are used; The impact of different energy sources on the planet; Sustainable energy practices",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "ClassVR & Merge Cubes",
+        "d": "Launch an immersive 'Energy Transformations Lab' where students use ClassVR headsets and Merge Cubes to interact with 3D models of energy systems (e.g., wind turbines, solar panels, hydroelectric dams). Students can manipulate variables in virtual simulations to see how energy is converted and transformed, then record their observations in a collaborative Padlet for peer analysis."
+      },
+      {
+        "t": "Canva",
+        "d": "Students create animated infographics or explainer videos in Canva to illustrate the journey of energy from source to end use, comparing renewable and non-renewable pathways. They can app smash by exporting their Canva animations and embedding them in a class Padlet for peer feedback and discussion."
+      },
+      {
+        "t": "Minecraft: Alternative Energy",
+        "d": "Students explore the 'Minecraft: Alternative Energy' lesson to investigate hydropower, wind power, and waste-to-energy systems. They learn how mechanical and electrical energy play a part in alternative energy, then design and build their own sustainable energy solutions in Minecraft, reflecting on the impact of their choices. ",
+        "url": "https://education.minecraft.net/en-us/lessons/alternative-energy"
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students document their energy investigations by creating interactive digital books in Book Creator. Each student or group can include photos of their experiments (using the iPad camera), diagrams, voice recordings explaining energy conversions, and reflections on sustainable practices, resulting in a multimedia portfolio."
+      },
+      {
+        "t": "Micro:bit: Energy Awareness",
+        "d": "Using the 'Micro:bit: Energy Awareness' lesson, students design and code simple devices to monitor classroom energy use or model energy-saving solutions. They can collect and graph real data, then present their findings to the class, fostering a data-driven approach to sustainability."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "For a Design Cycle STEM project, students use Lego Spike Prime kits to prototype and iterate on their own renewable energy machines (e.g., wind turbines, solar-powered vehicles, or water wheels). They follow the full design process: empathize, define, ideate, prototype, test, and reflect, presenting their working models and design journey in a class showcase."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit immerses Year 6 students in hands-on and inquiry-driven experiences exploring how energy is converted, transformed, and used to support human progress. Activities include investigating diverse energy sources, analysing their impacts, constructing circuits, building Solar Buddy lights, and reflecting on sustainable practices through collaborative projects and real-world applications."
   },
   {
     "ca": "Elsternwick",
