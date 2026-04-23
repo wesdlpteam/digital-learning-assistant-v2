@@ -27,8 +27,8 @@
         "d": "Students use PicCollage on iPads to visually sequence the beginning, middle, and end of a familiar or original story using photos of their play, drawings, or props. This supports understanding of story structure and provides a visual, tactile way to share stories with peers."
       },
       {
-        "t": "Story Journey Maps with Bee-Bots",
-        "d": "Students work in small groups to choose a familiar story or create their own. Using the Design Cycle, they brainstorm and plan key story events, then physically build a 3D 'story map' on large cardboard sheets using recycled materials, clay, popsticks, and craft supplies to represent settings and characters. Next, students program Bee-Bots to travel along the map, stopping at each story event. At each stop, students use props or puppets to act out, retell, or invent dialogue for that part of the story, integrating both digital coding and hands-on storytelling in a creative, multimodal experience."
+        "t": "Story Path Adventure Maps",
+        "d": "Students work in groups to design and build a large 3D map or scene from a familiar or original story using recycled cardboard, fabric scraps, popsticks, clay, and craft materials. They create physical story settings (forests, castles, rivers) and key story elements (characters, obstacles) as movable pieces. Using Bee-Bots, students program simple story journeys?navigating the Bee-Bot as a main character through the map to retell or invent story events. Along the way, students pause the Bee-Bot at key locations to act out scenes, use props, or record short story narrations with iPads. This project follows the Design Cycle: empathize (choose a story), define (plan the map), ideate (brainstorm features), prototype (build and test), and reflect (share and improve the adventure map and story journey)."
       }
     ],
     "audited": true,
@@ -63,8 +63,8 @@
         "d": "Guide students to create vibrant visual collages in PicCollage representing the different roles and connections in their school community, using photos, stickers, and drawings. These can be printed or shared digitally to celebrate community diversity."
       },
       {
-        "t": "Community Helpers Interactive Puppets",
-        "d": "Students will use the Design Cycle to create interactive puppets representing different school community roles (e.g., teacher, gardener, principal, nurse). First, they will research and interview staff to understand each role. Then, using recycled materials, fabric scraps, cardboard tubes, and craft supplies, students will physically build their puppets. Next, they will integrate simple tech by embedding a Makey Makey or micro:bit (pre-set by the teacher for safety) into their puppet, allowing it to trigger a pre-recorded voice message or sound effect (e.g., 'I help you learn!' or a bell sound) when touched or moved. Students will present their puppets in a 'community puppet show,' demonstrating understanding of each role and how everyone helps the school community."
+        "t": "Community Helper Robots",
+        "d": "Students work in teams to design and build a model of a community space (e.g., school, park, library) using recycled materials, cardboard, and craft supplies. Each group chooses a 'community helper' role (e.g., teacher, gardener, crossing guard) and invents a simple robot or moving mechanism (using Sphero Indi or simple motor kits) that performs a helpful task in their space. For example, a Sphero Indi decorated as a gardener that 'waters' paper plants, or a cardboard crossing guard with a moving arm powered by a small motor. Students follow the Design Cycle: empathize (interview staff about their roles), define (identify problems helpers solve), ideate (sketch solutions), prototype (build models and robots), test (demonstrate how their robot helps), and share (present to the class). This project blends digital robotics with hands-on making, deepening understanding of roles in the community."
       }
     ],
     "audited": true,
@@ -100,7 +100,7 @@
       },
       {
         "t": "Weather Wonder Machines",
-        "d": "Prep students work in groups to design and build their own 'Weather Wonder Machine'?a creative contraption that demonstrates a weather phenomenon (like rain, wind, or snow) using recycled materials, cardboard, fabric scraps, and craft supplies. After brainstorming and sketching ideas, students physically construct their machines (e.g., a rainmaker with falling beads, a wind spinner with moving parts). They then use Sphero Indi robots or simple motor kits to add movement, such as making clouds 'move' across the sky or windmills spin. Finally, students record a short video on iPads explaining how their machine works, what weather it represents, and what they discovered through testing and improving their designs, emphasizing observation, prediction, and conclusion skills from the scientific method."
+        "d": "Students use recycled materials, cardboard, popsticks, and craft supplies to design and build their own 'Weather Wonder Machine'?a physical contraption that demonstrates a weather phenomenon (like rain, wind, or snow). For example, students might create a rainmaker with moving parts or a wind spinner. They then integrate Sphero Indi or Bee-Bot by programming it to travel between different weather stations they have built, triggering simple actions (like knocking over a 'cloud' to release 'rain' beads). The project follows the Design Cycle: students imagine a weather machine, plan and sketch, build prototypes, test how their machine works with the robot interaction, and refine based on what they observe. This merges hands-on making, digital robotics, and scientific inquiry about weather in a playful, creative way."
       }
     ],
     "audited": true,
@@ -145,8 +145,8 @@
         "d": "Guide students to code simple animations in ScratchJr that show two characters navigating a playground scenario?such as sharing, resolving a conflict, or inviting someone to play?demonstrating how positive relationships impact wellbeing. Students can narrate their stories and share them with peers."
       },
       {
-        "t": "Friendship Feelings Garden",
-        "d": "Students collaboratively design and build a large 3D 'Feelings Garden' using recycled materials, cardboard, fabric, and craft supplies. Each child creates a unique flower or plant that represents a feeling or quality important in friendships (e.g., kindness, sharing, listening). They embed a Sphero Indi or Bee-Bot path through the garden, physically constructing bridges, tunnels, and interactive zones. Using iPads, students record short audio clips expressing how their chosen feeling supports wellbeing and positive relationships. These audio clips are attached to the flowers with QR codes or NFC tags, so classmates can scan and listen while navigating the garden with the robot. The project follows the Design Cycle: empathise (discuss feelings and friendship qualities), define (choose a feeling to represent), ideate (sketch their plant and the garden layout), prototype (build and decorate), test (navigate the robot and scan audio), and reflect (share and discuss what they learned about relationships and wellbeing through their creations)."
+        "t": "Friendship Feelings Playground",
+        "d": "Students work in small groups to design and build a miniature playground using recycled materials, cardboard, popsticks, and clay. Each playground feature (e.g., swings, slides, bridges) represents a different friendship quality or feeling (like sharing, kindness, or teamwork). Children use Sphero Indi cars with custom-coded colour tiles to 'visit' each playground zone, triggering pre-recorded messages or sounds (recorded on iPads) that share stories or examples of positive relationship behaviours. This project guides students through the Design Cycle: empathising with friends' needs, ideating inclusive play spaces, prototyping structures, testing Sphero Indi navigation, and reflecting on how each zone supports wellbeing and positive interactions."
       }
     ],
     "audited": true,
