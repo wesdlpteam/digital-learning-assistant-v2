@@ -520,6 +520,8 @@ function recordChange(idx, oldSugs, newSugs){
   if(CHANGE_HISTORY.length > MAX_HISTORY) CHANGE_HISTORY.pop();
 }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function linkify(s){ return esc(s).replace(/(https?:\/\/[^\s)&<]+)/g, '<a href="$1" target="_blank" style="color:var(--mint);text-decoration:none;word-break:break-all">$1</a>'); }
+function linkifyLight(s){ return esc(s).replace(/(https?:\/\/[^\s)&<]+)/g, '<a href="$1" target="_blank" style="color:#2563eb;text-decoration:none;word-break:break-all">$1</a>'); }
 function caCol(ca){ return CAMPUS_COL[normCa(ca)]||CAMPUS_COL[ca]||'#818cf8'; }
 
 function showScreen(id){
@@ -1169,7 +1171,7 @@ function buildSugRow(sug, entryIdx, sugIdx){
         <button class="btn-sm" id="${uid}-regen" onclick="regenSingleSug(${entryIdx},${sugIdx})" title="Regenerate this suggestion">↻</button>
         <button class="btn-sm" onclick="openFeedbackChat('${uid}',${entryIdx},${sugIdx})">💬 feedback</button>
       </div>
-      <div class="sug-desc">${esc(desc)}</div>
+      <div class="sug-desc">${linkify(desc)}</div>
       ${linkHtml}
     </div>
   </div>`;
@@ -1866,12 +1868,12 @@ function showChangesPopup(changes){
       <div style="padding:8px 10px;background:#1a0808;border:1px solid #3a1818;border-radius:8px">
         <div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:700">Replacing</div>
         <div style="font-size:13px;font-weight:800;color:#ff9999;margin-bottom:3px">${esc(oldTool)}</div>
-        <div style="font-size:11px;color:#777;line-height:1.5">${esc((oldDesc||'No description').slice(0,220))}</div>
+        <div style="font-size:11px;color:#777;line-height:1.5">${linkify((oldDesc||'No description').slice(0,220))}</div>
       </div>
       <div style="padding:8px 10px;background:#081808;border:1px solid #183818;border-radius:8px">
         <div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:700">New suggestion</div>
         <div style="font-size:13px;font-weight:800;color:var(--lime);margin-bottom:3px">${esc(newTool)}</div>
-        <div style="font-size:11px;color:#aaa;line-height:1.5">${esc(newDesc.slice(0,220))}</div>
+        <div style="font-size:11px;color:#aaa;line-height:1.5">${linkify(newDesc.slice(0,220))}</div>
       </div>
     </div>
     <div style="display:flex;gap:8px">
@@ -3977,7 +3979,7 @@ function exportHTML(){
       sugs.forEach((s,i)=>{
         html+=`<div class="sug" style="border-left-color:${col}">
           <div class="sug-tool">${i+1}. ${esc(sugTool(s))}</div>
-          <div class="sug-desc">${esc(sugDesc(s))}</div>
+          <div class="sug-desc">${linkifyLight(sugDesc(s))}</div>
         </div>`;
       });
     } else {
