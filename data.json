@@ -1408,9 +1408,34 @@
     "th": "How We Organise Ourselves",
     "ci": "The products people use go through a process of change.",
     "lo": "Where food comes from; How food can be changed for different purposes; An appreciation of food",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "App Smash: ChatterPix Kids + Seesaw",
+        "d": "Students photograph a food item (e.g., fruit, bread, cheese) and use ChatterPix Kids to animate it, giving the product a 'voice' to explain its journey from origin to final form. These talking products are then uploaded to Seesaw, where students can sequence the stories and reflect on how products change, making the process visible and interactive for families."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Children collaboratively create a digital class book documenting the transformation of different foods, using photos, drawings, and voice recordings to capture each step in the process (e.g., from seed to sandwich). This supports multimodal storytelling and reinforces the concept of change in products."
+      },
+      {
+        "t": "PicCollage",
+        "d": "Students make visual flowcharts showing the stages of a food product's journey (e.g., milk to cheese), using the iPad camera to capture real-life examples and arranging them in PicCollage. They can add stickers and simple labels to highlight key changes."
+      },
+      {
+        "t": "Delightex",
+        "d": "Using Delightex, students create interactive storyboards or concept maps that visually represent how food changes from its source to the table. They can drag and drop images, connect ideas, and record their voices to explain each step, supporting early systems thinking."
+      },
+      {
+        "t": "ScratchJr",
+        "d": "Students code simple animations showing the transformation of a food product (e.g., a seed growing into a plant, harvested, and turned into bread). This introduces basic sequencing and computational thinking while reinforcing the unit's central idea."
+      },
+      {
+        "t": "Bee-Bots",
+        "d": "Design Cycle STEM Project: Students design and build a 'food journey' mat, mapping out the stages a product goes through (e.g., farm, factory, shop, home). Using Bee-Bots, they program routes to simulate the journey of a product, iterating on their mat design and routes as they test and refine their ideas."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Prep students investigate where food comes from, how it changes for different purposes, and develop an appreciation for food. Activities include planting seeds, tracing food origins, creating flowcharts, visiting a farm, and exploring food waste and composting, all to understand the process of change in the products people use."
   },
   {
     "ca": "Glen Waverley",
@@ -1418,9 +1443,34 @@
     "th": "How the World Works",
     "ci": "The properties of materials influence how objects move and their use.",
     "lo": "Properties of materials; How objects move; How we use materials",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "App Smash: ChatterPix Kids + Seesaw",
+        "d": "Students select an object made from a specific material (e.g., a rubber ball, metal spoon, or wooden block), use the iPad camera to take a photo, and then animate the object in ChatterPix Kids to 'talk' about how its material affects how it moves and what it is used for. Their talking objects are then uploaded to Seesaw for a class gallery, sparking discussion and peer feedback."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Children collaboratively create a digital class book documenting their experiments with different materials and movement. Each page features photos, voice recordings, and simple drawings showing how objects made from different materials move in unique ways, making the learning highly visual and accessible for Prep students."
+      },
+      {
+        "t": "Sphero Indi",
+        "d": "Set up a hands-on investigation where students use Sphero Indi cars and different surface materials (e.g., felt, sandpaper, cardboard, foil) to explore how material properties affect movement. Students predict, test, and record which surfaces make Indi go faster, slower, or stop, then share their findings with the class."
+      },
+      {
+        "t": "PicCollage",
+        "d": "Students go on a 'material hunt' around the classroom or playground, taking photos of objects made from various materials. They use PicCollage to sort and label their findings by material type and movement (e.g., things that roll, slide, bounce), creating vibrant visual posters to display and discuss."
+      },
+      {
+        "t": "ScratchJr",
+        "d": "Prep students use ScratchJr to create simple animations showing how different objects move (e.g., rolling, sliding, bouncing) based on their material. They select backgrounds and characters, then program short sequences to visually represent their understanding of movement and material properties."
+      },
+      {
+        "t": "Bee-Bots",
+        "d": "Using the Design Cycle, students design and build obstacle courses from a variety of classroom materials (e.g., cardboard, plastic cups, fabric) and test how Bee-Bots move through them. They iterate on their designs to see which materials help or hinder the Bee-Bot's movement, documenting their process with photos and voice notes on Seesaw."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Prep students explore how the properties of materials influence movement and use through hands-on investigations, sensory experiences, and creative design challenges. Activities include experimenting with different materials, predicting and testing movement, sorting and classifying objects, and designing solutions to real-world problems using accessible, age-appropriate tools."
   },
   {
     "ca": "Glen Waverley",
@@ -1429,8 +1479,8 @@
     "ci": "An inquiry into rights and responsibilities in the struggle to share finite resources with other people and with other living things.",
     "lo": "Lines of inquiry to be confirmed once planner is uploaded",
     "s": [],
-    "audited": false,
-    "plannerText": ""
+    "audited": true,
+    "plannerText": "Not yet documented in PDF."
   },
   {
     "ca": "Glen Waverley",
@@ -1438,9 +1488,34 @@
     "th": "Where We Are in Place and Time",
     "ci": "Family histories shape who we are and what we value",
     "lo": "What makes a family; The people in your family; Your family history; What is important to your family",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Delightex + Seesaw",
+        "d": "Create an interactive, digital 'Family Museum' using Delightex where each student builds a virtual room representing their family's history, traditions, and special objects. Students then record audio tours of their rooms using Seesaw, allowing classmates to virtually 'visit' and learn about each other's backgrounds in a highly visual, hands-on way."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students take photos of family artefacts or family tree drawings with the iPad camera, then use ChatterPix Kids to animate these objects or family members, recording short stories or facts about their family history and values."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Each student creates a digital family history book in Book Creator, combining photos, drawings, voice recordings, and simple maps to visually document their family's origins, journeys, and important celebrations."
+      },
+      {
+        "t": "PicCollage",
+        "d": "Students design a vibrant family collage using PicCollage, layering family photos, cultural symbols, and images of special celebrations. They can add stickers and drawings to highlight what is important to their family."
+      },
+      {
+        "t": "ScratchJr",
+        "d": "Students use ScratchJr to create simple animated stories about a family tradition or journey, sequencing events and adding voiceovers to explain how their family's history shapes who they are."
+      },
+      {
+        "t": "Bee-Bots",
+        "d": "Using the Design Cycle, students design and build a large floor map of the world or Australia, then program Bee-Bots to 'travel' from Wesley College to the countries or places their families come from. They decorate the map with family photos and cultural icons, iterating their map and Bee-Bot journeys based on feedback from peers."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Prep students explore how family histories shape identity and values through activities like creating family trees, mapping family origins, sharing cultural celebrations, and connecting personal stories to broader concepts of place and time. The unit emphasizes visual, hands-on, and collaborative learning experiences, with strong links to art, music, and literacy."
   },
   {
     "ca": "Glen Waverley",
@@ -1448,9 +1523,34 @@
     "th": "Who We Are",
     "ci": "Schools are organised to help students learn and work together",
     "lo": "The organisation of the Junior School; Routines that allow developing independence; How to make the classroom and playground healthy and safe",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Delightex",
+        "d": "Create an interactive 3D virtual tour of the Wesley College Junior School using Delightex. Students can add voice recordings and photos taken with iPads to introduce key spaces, routines, and staff, making a digital 'welcome' for new Preps. This empowers students to demonstrate their understanding of school organisation in a highly visual, immersive way."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students use Seesaw to document and reflect on daily routines by taking photos of themselves completing classroom and playground routines. They can annotate images with drawings or voice recordings, showcasing their independence and understanding of healthy, safe practices."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Collaboratively build a digital class book in Book Creator where each student adds a page about their favourite school space or routine. Pages can include photos, drawings, and audio explanations, supporting communication skills and celebrating the diversity of experiences in the school community."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students take photos of classroom helpers, teachers, or important school objects (like the library or playground) and use ChatterPix Kids to animate them with their own voices, explaining their roles or how to use the space safely. This makes learning about school organisation fun and memorable."
+      },
+      {
+        "t": "PicCollage",
+        "d": "Use PicCollage on iPads for students to visually map out the people who help them at school. They can combine photos, stickers, and drawings to create a vibrant collage showing the network of support in the Junior School, reinforcing the central idea of working together."
+      },
+      {
+        "t": "Bee-Bots",
+        "d": "Design Cycle STEM Project: Students use Bee-Bots to create a floor map of the school. Working in teams, they design and build simple models of key school locations (classroom, library, playground) and program Bee-Bots to navigate between them, reinforcing spatial awareness, routines, and collaborative problem-solving."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit introduces Prep students to the organisation of Wesley College Junior School, focusing on routines that develop independence and ways to keep the classroom and playground healthy and safe. Students explore school spaces, roles, and responsibilities through tours, discussions, and hands-on activities, using visual and oral reflections to demonstrate their understanding."
   },
   {
     "ca": "Glen Waverley",
