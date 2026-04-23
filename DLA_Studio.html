@@ -602,29 +602,43 @@ async function getDriveToken(){
       callback:async (resp)=>{
         if(resp.error){ reject(new Error(resp.error)); return; }
         
+        // STRICT EMAIL ALLOWLIST — only these 5 accounts can access DLA Studio.
+        // Case-insensitive match. Any failure (network, missing email, etc.) denies access.
+        const ALLOWED_EMAILS = [
+          'david.howard@wesleycollege.edu.au',
+          'andrew.delmastro@wesleycollege.edu.au',
+          'nathan.benn@wesleycollege.edu.au',
+          'kathryn.white@wesleycollege.edu.au',
+          'laura.sicklemore@wesleycollege.edu.au'
+        ];
+        
+        let email = '';
         try{
           const info=await fetch('https://www.googleapis.com/oauth2/v2/userinfo',{
             headers:{'Authorization':'Bearer '+resp.access_token}
           });
+          if(!info.ok) throw new Error('userinfo fetch failed');
           const user=await info.json();
-          const email=user.email||'';
-          const domain=email.split('@')[1]||'';
-          const allowed=['wesleycollege.edu.au','wesley.edu.au'];
-          if(!allowed.some(d=>domain.endsWith(d))){
-            
-            showAccessDenied(email);
-            reject(new Error('Access restricted to Wesley College staff'));
-            return;
-          }
-          
-          DRIVE_TOKEN=resp.access_token;
-          CURRENT_USER_EMAIL=email;
-          localStorage.setItem('dla_user_email', email);
-          resolve(resp.access_token);
+          email=(user.email||'').toLowerCase().trim();
         }catch(e){
-          DRIVE_TOKEN=resp.access_token;
-          resolve(resp.access_token);
+          // Silent fallback REMOVED — deny access if we can't verify the email
+          showAccessDenied('(could not verify identity)');
+          reject(new Error('Identity verification failed'));
+          return;
         }
+        
+        if(!email || !ALLOWED_EMAILS.includes(email)){
+          // Clear any stored hint so retrying shows the full account picker
+          localStorage.removeItem('dla_user_email');
+          showAccessDenied(email || '(no email)');
+          reject(new Error('Access restricted to approved Wesley College DLP staff'));
+          return;
+        }
+        
+        DRIVE_TOKEN=resp.access_token;
+        CURRENT_USER_EMAIL=email;
+        localStorage.setItem('dla_user_email', email);
+        resolve(resp.access_token);
       }
     });
     
@@ -646,9 +660,10 @@ function showAccessDenied(email){
     el.style.cssText='min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center';
     el.innerHTML=`<div style="font-size:48px;margin-bottom:20px">🔒</div>
       <h2 style="font-size:24px;font-weight:900;color:var(--text);margin-bottom:10px">Access Restricted</h2>
-      <p style="font-size:15px;color:var(--dim);margin-bottom:6px">DLA Studio is only available to Wesley College staff.</p>
+      <p style="font-size:15px;color:var(--dim);margin-bottom:6px">DLA Studio is restricted to approved Wesley College DLP staff.</p>
+      <p style="font-size:13px;color:var(--dim);margin-bottom:6px">If you need access, contact Nathan Benn.</p>
       <p style="font-size:13px;color:#FF8080;margin-bottom:30px">Signed in as: ${esc(email)}</p>
-      <button class="btn-pri" onclick="showScreen('load')" style="padding:12px 28px">Try a different account</button>`;
+      <button class="btn-pri" onclick="location.reload()" style="padding:12px 28px">Try a different account</button>`;
     document.getElementById('main').appendChild(el);
   }
   el.style.display='flex';
