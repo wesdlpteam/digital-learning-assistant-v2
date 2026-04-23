@@ -260,7 +260,7 @@
       <!-- Bulk Regenerate -->
       <div class="card" style="margin-bottom:14px">
         <span class="label">Bulk regenerate by campus / year level</span>
-        <p style="font-size:13px;color:var(--dim);margin-bottom:14px;line-height:1.6">Regenerate all entries for a specific campus, year level, or both. Only regenerates entries that currently have 5 valid suggestions — incomplete entries should be fixed first.</p>
+        <p style="font-size:13px;color:var(--dim);margin-bottom:14px;line-height:1.6">Regenerate all entries for a specific campus, year level, or both. Only regenerates entries that currently have 6 valid suggestions — incomplete entries should be fixed first.</p>
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
           <div>
             <div style="font-size:11px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Campus</div>
@@ -1001,7 +1001,7 @@ function getIssues(){
   DATA.forEach((e,idx)=>{
     const sugs=getSugs(e);
     const realSugs=sugs.filter(isRealSug);
-    if(realSugs.length<5) incomplete.push({e,idx,type:'incomplete',detail:`${realSugs.length}/5 suggestions`});
+    if(realSugs.length<6) incomplete.push({e,idx,type:'incomplete',detail:`${realSugs.length}/6 suggestions`});
 
     if(sugs.some(s=>sugTool(s).toLowerCase().includes('wevideo')))
       banned.push({e,idx,type:'banned',detail:'WeVideo found'});
@@ -1121,7 +1121,7 @@ function renderBrowse(){
       <span style="font-size:13px;color:#9ab89a;width:110px;flex-shrink:0">${esc(e.ca)}</span>
       <span style="font-size:13px;color:var(--gold);font-weight:700;width:70px;flex-shrink:0">${esc(e.yl)}</span>
       <span style="flex:1;font-size:14px;font-weight:600;color:var(--text)">${esc(e.th)}</span>
-      <span style="font-size:13px;color:#9ab89a">${getSugs(e).length}/5 ›</span>
+      <span style="font-size:13px;color:#9ab89a">${getSugs(e).length}/6 ›</span>
     </div>`).join('');
 }
 
@@ -1395,7 +1395,8 @@ async function regenAll(){
   btn.disabled=true; btn.textContent='Generating…';
   startProgress();
   res.innerHTML='<div style="font-size:12px;color:#fbbf24">Generating 5 suggestions…</div>';
-  const prompt=`Generate exactly 5 digital technology suggestions for this IB PYP unit.
+  const prompt=`Generate exactly 6 digital technology suggestions for this IB PYP unit.
+Suggestion #6 MUST be a STEM Design Cycle activity (Investigate-Design-Make-Evaluate).
 Campus: ${entry.ca} | Year Level: ${entry.yl} | Theme: "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${entry.lo?`\nLines of Inquiry: "${entry.lo}"`:''}${entry.plannerText?`\nPlanner: ${entry.plannerText}`:''}
 Requirements:
 - All 5 suggestions use different tools (no repeats)
@@ -1542,6 +1543,36 @@ function normaliseToolName(t){
   // e.g. "Micro:bit — Helping Plants Grow" → "Micro:bit"
   if(key.startsWith('minecraft education')) return 'Minecraft Education';
   if(key.startsWith('micro:bit') || key.startsWith('microbit')) return 'Micro:bit';
+  // Handle "Tool Name Activity/Lesson" patterns: extract just the tool
+  if(key.startsWith('bee-bot') || key.startsWith('beebot')) return 'Beebots';
+  if(key.startsWith('sphero indi') || key === 'indi') return 'Sphero Indi';
+  if(key.startsWith('sphero bolt') || key.startsWith('sphero b.o.l.t')) return 'Sphero BOLT';
+  if(key.startsWith('sphero')) return 'Sphero';
+  if(key.startsWith('lego spike essential')) return 'Lego Spike Essential';
+  if(key.startsWith('lego spike prime')) return 'Lego Spike Prime';
+  if(key.startsWith('lego spike') || key.startsWith('lego')) return 'Lego Spike';
+  if(key.startsWith('codrone')) return 'CoDrone EDU';
+  if(key.startsWith('chatterpix')) return 'ChatterPix Kids';
+  if(key.startsWith('scratchjr') || key.startsWith('scratch jr') || key.startsWith('scratch junior')) return 'ScratchJR';
+  if(key.startsWith('scratch')) return 'Scratch';
+  if(key.startsWith('adobe express')) return 'Adobe Express';
+  if(key.startsWith('stop motion')) return 'Stop Motion Studio';
+  if(key.startsWith('puppet pals')) return 'Puppet Pals';
+  if(key.startsWith('green screen')) return 'Green Screen';
+  if(key.startsWith('merge cube')) return 'Merge Cubes';
+  if(key.startsWith('classvr')) return 'ClassVR';
+  if(key.startsWith('delightex') || key.startsWith('cospaces')) return 'Delightex';
+  if(key.startsWith('google earth')) return 'Google Earth';
+  if(key.startsWith('google maps')) return 'Google Maps';
+  if(key.startsWith('makey makey') || key.startsWith('makeymakey')) return 'Makey Makey';
+  if(key.startsWith('3d print')) return '3D Printers';
+  if(key.startsWith('field guide')) return 'Field Guide to Victoria';
+  if(key.startsWith('word cloud') || key.startsWith('abcya')) return 'Word Clouds ABCya';
+  if(key.startsWith('explain everything')) return 'Explain Everything';
+  if(key.startsWith('microsoft ')) return t; // keep specific MS tool
+  // Remove parenthetical suffixes for any remaining: "Tool (stuff)" → "Tool"
+  const parenMatch = t.match(/^([A-Z][A-Za-z\s:'-]+?)\s*\(/);
+  if(parenMatch) return parenMatch[1].trim();
   return t;
 }
 
@@ -1565,8 +1596,21 @@ function computeStats(){
     getSugs(e).forEach(s=>{
       const raw=(s&&s.t&&s.t.trim()&&s.t.trim()!=='TBA')?s.t.trim():null;
       if(!raw) return;
-      // Split combined tool names (e.g. "Minecraft & OneNote") into individual tools for counting
-      const parts = raw.split(/\s*(?:\band\b|[&+])\s*/i).map(t=>t.trim()).filter(Boolean);
+      // Split combined tool names and app smashes into individual tools for counting
+      // e.g. "Minecraft & OneNote" → ["Minecraft", "OneNote"]
+      // e.g. "Seesaw (App Smash with PicCollage)" → ["Seesaw", "PicCollage"]
+      // e.g. "Delightex + Puppet Pals App Smash" → ["Delightex", "Puppet Pals"]
+      let parts = [];
+      // Check for "App Smash" pattern: "Tool (App Smash with OtherTool)"
+      const appSmashParen = raw.match(/^(.+?)\s*\(\s*App\s*Smash\s+with\s+(.+?)\s*\)/i);
+      const appSmashPlus = raw.match(/^(.+?)\s*[+]\s*(.+?)\s+App\s*Smash/i);
+      if(appSmashParen){
+        parts = [appSmashParen[1].trim(), appSmashParen[2].trim()];
+      } else if(appSmashPlus){
+        parts = [appSmashPlus[1].trim(), appSmashPlus[2].trim()];
+      } else {
+        parts = raw.split(/\s*(?:\band\b|[&+])\s*/i).map(t=>t.trim()).filter(Boolean);
+      }
       const nca=normCa(e.ca);
       parts.forEach(rawT=>{
         // Normalise variants: remove hyphens, fix capitalisation for known tools
@@ -1581,7 +1625,7 @@ function computeStats(){
     });
   });
   
-  const incompleteEntries = DATA.filter(e => e.audited === false || getSugs(e).length < 5 || getSugs(e).some(s=>!s||!s.t||!s.t.trim()||s.t.trim()==='TBA'));
+  const incompleteEntries = DATA.filter(e => e.audited === false || getSugs(e).length < 6 || getSugs(e).some(s=>!s||!s.t||!s.t.trim()||s.t.trim()==='TBA'));
   const sorted=Object.entries(toolCounts).sort((a,b)=>b[1]-a[1]).map(([name,count])=>({name,count,pct:total?Math.round(count/total*100):0}));
   return {sorted,campusTools,yearTools,total,incompleteCount:incompleteEntries.length};
 }
@@ -2150,7 +2194,8 @@ async function fixAllIncomplete(){
     done++;
     if(lbl) lbl.textContent=`${done}/${incomplete.length}: ${e.yl} — ${e.th}`;
     if(bar) bar.style.width=`${Math.round((done/incomplete.length)*100)}%`;
-    const prompt=`Generate exactly 5 digital technology suggestions for this IB PYP unit.
+    const prompt=`Generate exactly 6 digital technology suggestions for this IB PYP unit.
+Suggestion #6 MUST be a STEM Design Cycle activity (Investigate-Design-Make-Evaluate).
 Campus: ${e.ca} | Year Level: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: "${e.ci}"`:''}${e.lo?`\nLines of Inquiry: "${e.lo}"`:''}${e.plannerText?`\nPlanner: ${e.plannerText}`:''}
 Requirements: all 5 different tools.
 ${SUGGESTION_STYLE}
@@ -2159,7 +2204,7 @@ Return ONLY a JSON array, no markdown: [{"t":"Tool Name","d":"2-3 vivid sentence
       let sugs = null;
       let dupedTool = null;
       for(let attempt=0; attempt<2; attempt++){
-        const retryNote = attempt>0 ? `\n\nRETRY: Your previous response used "${dupedTool}" twice. Every one of the 5 suggestions MUST use a DIFFERENT tool.` : '';
+        const retryNote = attempt>0 ? `\n\nRETRY: Your previous response used "${dupedTool}" twice. Every one of the 6 suggestions MUST use a DIFFERENT tool. #6 must be a STEM Design Cycle activity.` : '';
         const raw=await callAI([{role:'user',parts:[{text:prompt+retryNote}]}], null, OPENAI_MODEL);
         const clean=raw.replace(/```json|```/g,'').trim();
         const si=clean.indexOf('['), ei=clean.lastIndexOf(']');
@@ -2505,7 +2550,7 @@ function updateBulkRegenCount(){
   const targets=DATA.filter(e=>{
     if(ca&&e.ca!==ca) return false;
     if(yr&&e.yl!==yr) return false;
-    return getSugs(e).filter(isRealSug).length===5;
+    return getSugs(e).filter(isRealSug).length>=6;
   });
   const el=document.getElementById('bulk-regen-count');
   if(el) el.textContent=`${targets.length} entries selected`;
@@ -2571,10 +2616,10 @@ async function fixAllOfType(type){
         prompt=`${GAS_RULES}\n\nGenerate exactly 5 digital technology suggestions for this IB PYP unit.\nCampus: ${e.ca} | Year: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: "${e.ci}"`:''}${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nReturn ONLY JSON array: [{"t":"Tool Name","d":"Specific description for this unit."},...]`;
 
       } else if(type==='banned'||type==='offwhitelist'){
-        prompt=`${GAS_RULES}\n\nReplace these non-approved suggestions for this unit. Return 5 total suggestions.\nUnit: ${e.ca} | ${e.yl} | "${e.th}"${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nCurrent suggestions (keep ones that are approved, replace the rest):\n${currentSugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}\nReturn ONLY JSON array of exactly 5: [{"t":"Tool Name","d":"Specific description."},...]`;
+        prompt=`${GAS_RULES}\n\nReplace these non-approved suggestions for this unit. Return 6 total suggestions (the 6th must be a STEM Design Cycle activity).\nUnit: ${e.ca} | ${e.yl} | "${e.th}"${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nCurrent suggestions (keep ones that are approved, replace the rest):\n${currentSugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}\nReturn ONLY JSON array of exactly 6 (the 6th must be a STEM Design Cycle activity): [{"t":"Tool Name","d":"Specific description."},...]`;
 
       } else if(type==='duplicate'){
-        prompt=`${GAS_RULES}\n\nFix duplicate tools in this unit — each suggestion must use a DIFFERENT tool.\nUnit: ${e.ca} | ${e.yl} | "${e.th}"${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nCurrent suggestions (fix any duplicates, keep unique ones):\n${currentSugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}\nReturn ONLY JSON array of exactly 5 with NO repeated tools: [{"t":"Tool Name","d":"Specific description."},...]`;
+        prompt=`${GAS_RULES}\n\nFix duplicate tools in this unit — each suggestion must use a DIFFERENT tool.\nUnit: ${e.ca} | ${e.yl} | "${e.th}"${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nCurrent suggestions (fix any duplicates, keep unique ones):\n${currentSugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}\nReturn ONLY JSON array of exactly 6 (the 6th must be a STEM Design Cycle activity) with NO repeated tools: [{"t":"Tool Name","d":"Specific description."},...]`;
       }
 
       const raw=await callAI([{role:'user',parts:[{text:prompt}]}],null,OPENAI_MODEL);
@@ -3340,7 +3385,7 @@ async function bulkChatSend(){
 }
 
 function buildClarifyPrompt(instruction, platform){
-  const entryCount = DATA.filter(e => e.audited && getSugs(e).filter(isRealSug).length >= 5).length;
+  const entryCount = DATA.filter(e => e.audited && getSugs(e).filter(isRealSug).length >= 6).length;
   const allTools = {};
   DATA.forEach(e => {
     getSugs(e).forEach(s => {
@@ -3446,7 +3491,7 @@ async function startBulkAnalysis(){
   if(prog) prog.style.display = 'block';
 
   // ===== Build the same system prompt as the old runBulkAIEdit =====
-  const completeData = DATA.map((e,i)=>({e,i})).filter(({e})=>e.audited && getSugs(e).filter(isRealSug).length >= 5);
+  const completeData = DATA.map((e,i)=>({e,i})).filter(({e})=>e.audited && getSugs(e).filter(isRealSug).length >= 6);
   const toolIndex = {};
   completeData.forEach(({e,i})=>{
     getSugs(e).forEach((s,si)=>{
@@ -3709,7 +3754,7 @@ async function runBulkRegen(){
   const targets=DATA.map((e,idx)=>({e,idx})).filter(({e})=>{
     if(ca&&e.ca!==ca) return false;
     if(yr&&e.yl!==yr) return false;
-    return getSugs(e).filter(isRealSug).length===5;
+    return getSugs(e).filter(isRealSug).length>=6;
   });
   if(!targets.length){ setStatus('No entries match the selected filters','error'); return; }
 
@@ -3728,16 +3773,17 @@ async function runBulkRegen(){
     done++;
     bar.style.width=`${Math.round((done/targets.length)*100)}%`;
     lbl.textContent=`${done}/${targets.length}: ${e.yl} — ${e.th}`;
-    const prompt=`Generate exactly 5 digital technology suggestions for this IB PYP unit at Wesley College (Microsoft school).
+    const prompt=`Generate exactly 6 digital technology suggestions for this IB PYP unit at Wesley College (Microsoft school).
 Campus: ${e.ca} | Year Level: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: "${e.ci}"`:''}${e.plannerText?`\nPlanner context: ${e.plannerText}`:''}
-All 5 suggestions MUST use DIFFERENT tools \u2014 no duplicates.
+All 6 suggestions MUST use DIFFERENT tools
+Suggestion #6 MUST be a STEM Design Cycle activity (Investigate → Design → Make → Evaluate) that connects specifically to the unit theme \u2014 no duplicates.
 ${SUGGESTION_STYLE}
 Return ONLY a JSON array: [{"t":"Tool Name","d":"2-3 vivid sentences for this unit."},...]`;
     try{
       let sugs = null;
       let dupedTool = null;
       for(let attempt=0; attempt<2; attempt++){
-        const retryNote = attempt>0 ? `\n\nRETRY: Your previous response used "${dupedTool}" twice. Every one of the 5 suggestions MUST use a DIFFERENT tool.` : '';
+        const retryNote = attempt>0 ? `\n\nRETRY: Your previous response used "${dupedTool}" twice. Every one of the 6 suggestions MUST use a DIFFERENT tool. #6 must be a STEM Design Cycle activity.` : '';
         const raw=await callAI([{role:'user',parts:[{text:prompt+retryNote}]}],null,OPENAI_MODEL);
         const clean=raw.replace(/```json|```/g,'').trim();
         const si=clean.indexOf('['),ei=clean.lastIndexOf(']');
@@ -3925,7 +3971,7 @@ function renderCoverageHeatmap(){
         html+=`<td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border);color:var(--dim)">—</td>`;
         return;
       }
-      const complete=entries.filter(e=>getSugs(e).filter(isRealSug).length>=5).length;
+      const complete=entries.filter(e=>getSugs(e).filter(isRealSug).length>=6).length;
       const total=entries.length;
       const pct=Math.round((complete/total)*100);
       const bg=pct===100?'rgba(197,232,74,0.2)':pct>=50?'rgba(245,166,35,0.2)':'rgba(255,128,128,0.2)';
