@@ -228,31 +228,31 @@
     "s": [
       {
         "t": "Delightex + iPad Camera",
-        "d": "Launch a 'Pattern Detectives' AR adventure: students use iPads to photograph patterns in nature around the school, then upload their images into Delightex to create interactive, explorable AR pattern galleries. This app-smashing workflow lets students 'step inside' their own discoveries, making patterns come alive in 3D and AR."
+        "d": "Launch an interactive 'Pattern Detectives' AR scavenger hunt using Delightex: students use iPads to photograph patterns and cycles they find in the school environment (e.g., leaf veins, brickwork, classroom routines), then upload and annotate their discoveries in Delightex. This app-smash creates a collaborative, visual map of real-world patterns, sparking curiosity and hands-on exploration."
       },
       {
         "t": "ChatterPix Kids",
-        "d": "Students photograph a pattern (e.g., butterfly wings, leaves, brick walls) and use ChatterPix Kids to animate the pattern, giving it a voice to explain its own repeating sequence or cycle. This brings patterns to life and helps students articulate their understanding in a playful, visual way."
+        "d": "Students create talking pattern creatures by drawing or photographing patterns (e.g., butterfly wings, water cycle stages), then use ChatterPix Kids to animate them with their own voices explaining the pattern or cycle. This brings abstract concepts to life in a playful, memorable way."
       },
       {
         "t": "Seesaw",
-        "d": "Create a collaborative digital 'Pattern Hunt' journal: students upload photos, drawings, or short videos of patterns and cycles they find at home or school, then annotate with voice recordings describing what they notice and wonder about each pattern. Teachers can prompt with questions about life cycles, seasons, or water cycles."
+        "d": "Facilitate a digital pattern journal in Seesaw where students document daily or weekly observations of patterns and cycles (e.g., weather, classroom routines, plant growth), using photos, voice recordings, and drawings to reflect on how these patterns help us interpret the world."
       },
       {
         "t": "Book Creator",
-        "d": "Students build a class digital book titled 'Patterns All Around Us', combining photos, drawings, and audio explanations of patterns and cycles in living things, seasons, and the water cycle. Each student creates a page, focusing on a different type of pattern, and the book is shared with families."
+        "d": "Guide students to collaboratively build a digital class book in Book Creator, with each child contributing a page about a different pattern or cycle (e.g., life cycle of a butterfly, days of the week, repeating shapes in art). Pages can include photos, drawings, and audio explanations, making learning multimodal and accessible."
       },
       {
         "t": "ScratchJr",
-        "d": "Students use ScratchJr to create simple animations showing a life cycle (e.g., butterfly, frog, plant) or a repeating seasonal pattern. They program characters to move through the stages, reinforcing the concept of cycles and change through visual storytelling."
+        "d": "Students design simple animations in ScratchJr to model and extend repeating patterns or cycles (e.g., day-night, seasons, animal life cycles). They can program characters to move, change, or transform in a sequence, visually demonstrating their understanding of how patterns repeat and change."
       },
       {
         "t": "Bee-Bots",
-        "d": "Design Cycle STEM Project: Students use Bee-Bots and tactile pattern mats to design and test routes that follow repeating patterns (e.g., color sequences, life cycle stages, or weather cycles). They plan, build, test, and refine their pattern mats, documenting their process with photos and voice reflections in Seesaw."
+        "d": "STEM Design Cycle Project: Challenge students to design and build a 'Pattern Pathway' mat for Bee-Bots, using colored tiles or shapes to represent different cycles (e.g., butterfly life cycle, water cycle). Students plan, test, and refine their mat, then program Bee-Bots to travel through the sequence, reinforcing both computational thinking and pattern recognition."
       }
     ],
     "audited": true,
-    "plannerText": "This Year 1 unit explores the central idea that patterns help us interpret the world, focusing on patterns and cycles in our lives, living things, seasons, and the water cycle. Students investigate patterns through hands-on provocations like observing butterfly chrysalises, researching life cycles, and exploring patterns in the local environment using digital tools and creative activities."
+    "plannerText": "This unit immerses Year 1 students in exploring patterns and cycles in the natural world and daily life, including life cycles, seasons, and the water cycle. Students engage in hands-on investigations, digital research, and creative activities to observe, document, and interpret patterns, building critical thinking and research skills while making connections across science, art, and literacy."
   },
   {
     "ca": "Elsternwick",
@@ -260,9 +260,34 @@
     "th": "Sharing the Planet",
     "ci": "Plants are a life sustaining resource.",
     "lo": "Products derived from plants; Plants all around us; The interconnectedness of plants",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "App Smash: ChatterPix Kids + Book Creator",
+        "d": "Students photograph different plants in the school garden using iPads, then use ChatterPix Kids to animate the plants and have them 'talk' about their life cycle and why plants are important. These talking plant videos are then combined into a collaborative digital class book in Book Creator, showcasing a variety of plant perspectives and life cycles."
+      },
+      {
+        "t": "Seesaw Digital Plant Growth Journals",
+        "d": "Students document the growth of a class plant over several weeks by taking photos with the iPad camera and uploading them to Seesaw. They add voice recordings describing observations, changes, and predictions, creating a rich, multimodal digital plant diary."
+      },
+      {
+        "t": "Delightex Interactive Plant Life Cycle Story",
+        "d": "Using Delightex, students create interactive, visual stories that map out the journey of a seed to a mature plant. They can drag and drop images, record their voices, and sequence the stages, reinforcing understanding of plant cycles in a hands-on way."
+      },
+      {
+        "t": "PicCollage Plant Parts Hunt",
+        "d": "Students go on a 'plant parts hunt' around the school, taking photos of roots, stems, leaves, flowers, and seeds using the iPad camera. They use PicCollage to visually label and arrange their findings, then share their collages with the class to compare and discuss plant diversity."
+      },
+      {
+        "t": "ScratchJr Animated Plant Stories",
+        "d": "Students use ScratchJr to create simple animations showing the life cycle of a plant, from seed to sprout to flower. They can program characters to act out the stages and add voiceovers explaining what is happening at each step, supporting computational thinking and science communication."
+      },
+      {
+        "t": "Bee-Bots Design Cycle Project: Pollination Maze",
+        "d": "Students use the Design Cycle to plan, build, and test a large floor maze representing a garden. They program Bee-Bots to travel from flower to flower, simulating the journey of a pollinator. Students iterate on their maze designs to ensure the Bee-Bot can successfully 'pollinate' all flowers, connecting robotics to plant reproduction and sustainability."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students explore plant life cycles and their importance through hands-on investigations, digital research, and creative projects. Activities include observing real-life changes (e.g., butterfly chrysalises), researching with iPads, and documenting learning in digital portfolios, with a strong focus on cycles in nature and student agency."
   },
   {
     "ca": "Elsternwick",
@@ -272,32 +297,32 @@
     "lo": "Different types of homes; Characteristics of a home; The importance of sustainable living spaces",
     "s": [
       {
-        "t": "Delightex + Seesaw App Smash",
-        "d": "Students use Delightex to visually design their own imaginative home from a different culture or environment, then record an audio tour of their creation in Seesaw, explaining the unique features and how they reflect culture and sustainability. This workflow empowers students to combine visual storytelling with oral language, making their learning highly interactive and personal."
+        "t": "Delightex + iPad Camera",
+        "d": "Launch a 'Global Homes Virtual Gallery' by having students photograph their own homes or favourite spaces using the iPad Camera, then app smash into Delightex to create interactive, 360-degree virtual tours. Students can add voice notes describing how their home reflects their culture and environment, and compare with homes from around the world."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students create a digital portfolio entry where they record themselves explaining the unique features of their home or a home from another culture, using drawings, photos, and voice narration to make their thinking visible and accessible."
       },
       {
         "t": "Book Creator",
-        "d": "Learners create a digital class book showcasing different types of homes around the world. Each student adds a page with photos, drawings, and voice recordings describing a home type, its materials, and how it suits its environment. The book can be shared with families and other classes to celebrate cultural diversity."
+        "d": "Facilitate a collaborative class eBook where each student contributes a page about a different type of home (e.g., yurts, houseboats, apartments), including illustrations, photos, and audio clips describing how these homes are adapted to their environments."
       },
       {
         "t": "ChatterPix Kids",
-        "d": "Students select or draw a picture of a unique home (e.g., yurt, igloo, houseboat), then use ChatterPix Kids to animate the home and give it a 'voice'?sharing facts about its culture, environment, and sustainability in a fun, memorable way."
+        "d": "Students select or draw a picture of a unique home from around the world, then use ChatterPix Kids to animate the home and record a short message from the home's 'perspective' about its cultural and environmental significance."
       },
       {
         "t": "PicCollage",
-        "d": "Children create a visual collage comparing their own home to a home from another country, using the iPad camera to capture features of their house and combining these with images from research. They label similarities and differences using simple icons and stickers, supporting visual comparison and discussion."
+        "d": "Guide students in creating vibrant visual collages comparing homes from different cultures, using images, stickers, and labels to highlight materials, shapes, and sustainability features. These can be shared digitally or printed for a classroom display."
       },
       {
-        "t": "Epic + Seesaw",
-        "d": "Students use Epic to research a chosen type of home, then document their findings in Seesaw by drawing, labeling, and recording a short explanation. This encourages independent inquiry and multimodal expression, while keeping the workflow age-appropriate and engaging."
-      },
-      {
-        "t": "Sphero Indi Design Cycle Challenge",
-        "d": "Using the Design Cycle, students work in teams to prototype a 'mini home' for Indi robots, considering environmental factors (e.g., shade, rain, wind) and cultural needs. They test how Indi navigates to and from the home, iterating their designs for accessibility and sustainability, then reflect on their process with photos and voice notes in Seesaw."
+        "t": "Bee-Bots",
+        "d": "STEM Design Cycle Project: Challenge students to design and build a model village using recycled materials, representing diverse global homes. Students then program Bee-Bots to navigate between the homes, explaining how each structure reflects its culture and environment. This hands-on project integrates design thinking, spatial reasoning, and storytelling."
       }
     ],
     "audited": true,
-    "plannerText": "In this unit, Year 1 students explore how homes reflect culture and environment by investigating different types of homes globally, comparing features, and considering sustainability. Activities include researching, building mini homes, sharing personal experiences, and reflecting on how homes connect to culture and place."
+    "plannerText": "In this unit, Year 1 students explore how homes reflect culture and environment by investigating different types of homes from around the world, comparing their features, and considering sustainability. Activities include read-alouds, research using Epic, Venn diagrams, building mini homes, and a learning showcase where students present their creations and cultural connections."
   },
   {
     "ca": "Elsternwick",
@@ -308,31 +333,31 @@
     "s": [
       {
         "t": "Delightex + iPad Camera",
-        "d": "Create an interactive 'Choose Your Own Adventure' digital story where students make choices about daily actions (e.g., healthy eating, safety routines, emotional regulation) and see the outcomes for their wellbeing. Students use the iPad Camera to capture photos of themselves acting out scenarios, then upload these into Delightex to build branching story paths. This empowers agency and visual storytelling while reinforcing the central idea that our actions influence safety and wellbeing."
+        "d": "Launch a 'Healthy Habits Virtual Reality Gallery' where students use the iPad Camera to capture photos of themselves demonstrating safe and healthy actions (e.g., handwashing, wearing a hat, using a crossing). Upload these to Delightex to create an immersive, interactive VR gallery that classmates and families can explore, making wellbeing visible and memorable in a playful, tech-forward way."
       },
       {
         "t": "ChatterPix Kids",
-        "d": "Students take photos of their healthy habits or safe choices (e.g., wearing a helmet, washing hands) and use ChatterPix Kids to animate the objects or themselves, giving them a 'voice' to explain why these actions are important for wellbeing. This makes abstract concepts concrete and memorable for young learners."
-      },
-      {
-        "t": "Seesaw App Smash (Drawing + Voice)",
-        "d": "Students draw a picture of a safe or healthy action on Seesaw, then record their voice explaining how this action helps their body or mind. Teachers can create a class digital gallery of 'Healthy Choices' for reflection and peer feedback, supporting both visual and oral communication."
+        "d": "Students draw or photograph a body part or safety object (like a helmet), then use ChatterPix Kids to animate it with their own voice, sharing a tip about how it keeps us safe or healthy. This makes learning about wellbeing fun, personal, and highly engaging for Year 1 learners."
       },
       {
         "t": "Book Creator",
-        "d": "Collaboratively build a digital class book titled 'Our Wellbeing Choices', where each student contributes a page with a photo, drawing, and audio narration about a personal action they take to stay safe or healthy. The final book can be shared with families or other classes to promote community wellbeing."
+        "d": "Create a collaborative digital 'Healthy Me' book where each student adds a page with photos, drawings, and voice recordings about a healthy choice or safety action they practice. The final book can be shared with families and used for reflection during Student-Led Conferences."
       },
       {
-        "t": "PicCollage",
-        "d": "Students create a visual collage of 'A Day of Wellbeing' by arranging photos and stickers representing healthy meals, exercise, rest, and safe behaviours. They can use the iPad Camera to document real-life actions and combine them with digital stickers, reinforcing the connection between daily routines and wellbeing."
+        "t": "Seesaw (App Smash with PicCollage)",
+        "d": "Students use PicCollage to visually document a sequence of healthy routines (like morning prep or safe play), then upload their collage to Seesaw and record an audio reflection explaining their choices. This workflow builds digital storytelling skills and reinforces healthy habits."
       },
       {
-        "t": "Bee-Bots Design Cycle Project",
-        "d": "Using the Design Cycle, students design and build a 'Safe Journey Map' on the classroom floor, representing safe routes (e.g., to the playground, bathroom, or library). They program Bee-Bots to navigate these routes, discussing and iterating on obstacles or hazards. This hands-on STEM project links physical movement, spatial reasoning, and safety decision-making in a playful, age-appropriate way."
+        "t": "ScratchJr",
+        "d": "Students design simple animations showing a character making safe and healthy choices (e.g., crossing the street, eating fruit, washing hands). They can program the sequence and narrate the story, connecting computational thinking with real-life wellbeing scenarios."
+      },
+      {
+        "t": "Bee-Bots",
+        "d": "STEM Design Cycle Project: Students design and build a 'Safe School Map' on a large mat, then use Bee-Bots to navigate to different zones (e.g., handwashing station, playground, crossing). They iterate their map and Bee-Bot routes to solve challenges, such as 'How can we get from the classroom to the playground safely?' This hands-on project develops spatial reasoning, teamwork, and reinforces the central idea that our actions influence safety and wellbeing."
       }
     ],
     "audited": true,
-    "plannerText": "This unit explores how the actions students take influence their safety and wellbeing, with a focus on healthy habits, emotional regulation, and making informed choices. Key activities include daily read-alouds about the human body, hands-on inquiry stations for healthy habits, building life-size body models, and student-led presentations on wellbeing routines."
+    "plannerText": "This unit explores how the actions we take influence our safety and wellbeing, with students engaging in activities such as daily read-alouds about the human body, hands-on inquiry stations about healthy habits, building life-size body models, and reflecting on routines that support wellbeing. The learning is highly visual, collaborative, and connected to real-life experiences like the swimming program and healthy habits, culminating in creative presentations and a Healthy Bodies Museum."
   },
   {
     "ca": "Elsternwick",
@@ -340,9 +365,34 @@
     "th": "How We Express Ourselves",
     "ci": "Artistic appreciation and expressions inspire our imagination and creativity.",
     "lo": "Forms of expression; Expressing thoughts and ideas; Understanding and appreciating art",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "ClassVR & Merge Cubes",
+        "d": "Immerse students in a multi-sensory 'Art Gallery of the Imagination' by combining ClassVR headsets with Merge Cubes. Students can create their own 3D digital sculptures or paintings using iPads, then upload and experience them in virtual reality, walking through a gallery of their own and their peers' artistic expressions. This brings their imagination to life and allows them to appreciate diverse forms of creativity from a first-person perspective."
+      },
+      {
+        "t": "ChatterPix Kids & Seesaw (App Smash)",
+        "d": "Students photograph their own artwork or a favourite classroom art piece, then use ChatterPix Kids to animate the artwork and give it a voice. They record a short message as if the artwork is 'speaking' about its inspiration or creative process, then upload the video to Seesaw for a digital art exhibition, fostering both artistic appreciation and expressive communication."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Each student creates a digital 'Imagination Journal' in Book Creator, combining photos of their art, voice recordings explaining their creative choices, and digital drawings. The journals can be shared with families or other classes, celebrating the diversity of artistic expression and building confidence in sharing ideas."
+      },
+      {
+        "t": "Canva",
+        "d": "Students collaboratively design a digital poster series in Canva to celebrate different forms of artistic expression (e.g., painting, music, dance, sculpture). They use Canva's visual tools to combine photos, stickers, and the 'Remove Background' feature to create vibrant, gallery-worthy displays for the classroom or school website."
+      },
+      {
+        "t": "ScratchJr",
+        "d": "Students use ScratchJr to create short animated stories that show how imagination and creativity can solve problems or express emotions. They design characters and settings, then program simple sequences to bring their stories to life, reinforcing the connection between artistic expression and creative thinking."
+      },
+      {
+        "t": "Bee-Bots Design Cycle Project",
+        "d": "Using the Design Cycle, students design and build a 'Pathway of Expression'?a large, colourful floor map representing different emotions or artistic styles. They program Bee-Bots to travel along specific routes that tell a story or express a feeling, iterating on their designs to improve clarity and creativity. This hands-on STEM project links movement, coding, and visual art in a playful, collaborative way."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how artistic appreciation and expressions inspire imagination and creativity. Students engage in activities such as poetry writing, art creation, music exploration, and collaborative projects, with a focus on understanding and expressing thoughts, feelings, and ideas through diverse artistic forms."
   },
   {
     "ca": "Elsternwick",
