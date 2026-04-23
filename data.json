@@ -27,12 +27,13 @@
         "d": "Students use PicCollage on iPads to visually sequence the beginning, middle, and end of a familiar or original story using photos of their play, drawings, or props. This supports understanding of story structure and provides a visual, tactile way to share stories with peers."
       },
       {
-        "t": "Bee-Bots Story Maps",
-        "d": "Using the Design Cycle, students collaboratively design and build a large story map on the floor (using paper, blocks, or felt) representing the setting and events of a class-created story. They then program Bee-Bots to 'travel' through the story in sequence, retelling the narrative as the Bee-Bot moves from scene to scene. This hands-on STEM project combines storytelling, sequencing, and basic coding in a playful, age-appropriate way."
+        "t": "Story Journey Maps with Bee-Bots",
+        "d": "Students collaboratively retell a familiar story by designing and building a large, tactile story map using recycled cardboard, fabric scraps, natural materials, and craft supplies. Each key event or setting in the story is represented by a 3D diorama segment on the map. After constructing the map, students program Bee-Bots to travel through the story in sequence, stopping at each scene to act out or narrate what happens using props or puppets they create. This project integrates storytelling, physical making, and early coding, allowing students to express stories through both hands-on building and digital navigation."
       }
     ],
     "audited": true,
-    "plannerText": "Prep students explore the central idea 'Stories are shared in different ways' through imaginative play, daily storytelling, retelling familiar stories, and hands-on activities using props, costumes, puppets, and digital tools. The unit emphasizes student agency, creativity, and multimodal expression, including a Mystery Storyteller program, narrative writing, and an Indigenous storytelling excursion."
+    "plannerText": "Prep students explore the central idea 'Stories are shared in different ways' through imaginative play, daily storytelling, retelling familiar stories, and hands-on activities using props, costumes, puppets, and digital tools. The unit emphasizes student agency, creativity, and multimodal expression, including a Mystery Storyteller program, narrative writing, and an Indigenous storytelling excursion.",
+    "stemRebooted": true
   },
   {
     "ca": "Elsternwick",
@@ -62,12 +63,13 @@
         "d": "Guide students to create vibrant visual collages in PicCollage representing the different roles and connections in their school community, using photos, stickers, and drawings. These can be printed or shared digitally to celebrate community diversity."
       },
       {
-        "t": "Sphero Indi",
-        "d": "STEM Design Cycle Project: Students use Sphero Indi cars and colored tiles to design and test a 'Community Helpers Pathway'?a collaborative, hands-on challenge where they build routes representing how different roles work together to solve a school problem (e.g., getting a lost item back to the office), iterating their designs to improve efficiency and teamwork."
+        "t": "Community Helpers Interactive Puppets",
+        "d": "Students use recycled materials, fabric scraps, and craft supplies to design and build hand or stick puppets representing different roles in the school community (e.g., teacher, nurse, gardener). They then use a simple digital recording tool (e.g., iPad camera or a green screen app) to film puppet interviews or role-plays, acting out how each helper contributes to the school. The process follows the Design Cycle: students inquire about community roles, plan their puppet designs, create and decorate their puppets, test them by performing, and reflect by sharing their videos with the class. This hybrid project combines hands-on making with digital storytelling, allowing students to embody and celebrate the diversity of roles in their community."
       }
     ],
     "audited": true,
-    "plannerText": "Prep students explore the central idea 'Everyone has a role to play in the community' by investigating roles within their school, creating wonderings, interviewing staff, and sharing their learning through videos and presentations. Activities include guided walks, role-play, collaborative projects, and reflecting on how individuals contribute to the community."
+    "plannerText": "Prep students explore the central idea 'Everyone has a role to play in the community' by investigating roles within their school, creating wonderings, interviewing staff, and sharing their learning through videos and presentations. Activities include guided walks, role-play, collaborative projects, and reflecting on how individuals contribute to the community.",
+    "stemRebooted": true
   },
   {
     "ca": "Elsternwick",
@@ -77,8 +79,8 @@
     "lo": "The scientific process; Observing my world; Drawing conclusions",
     "s": [
       {
-        "t": "Micro:bits",
-        "d": "Students program Micro:bits to become mini weather stations that collect and display real-time temperature or light data during their nature detective walks. By coding simple sensors, learners actively apply the scientific method?observing, recording, and testing hypotheses about environmental changes?while engaging in hands-on technology integration that brings their weather observations to life."
+        "t": "Green Screen",
+        "d": "Students become young scientists who record their own weather reports and nature detective discoveries using the Green Screen app, transporting themselves to different outdoor environments right from the classroom. They explain their observations, predictions, and conclusions as if they are broadcasting live from a rainforest, icy tundra, or sunny beach, bringing the scientific method to life with imaginative backgrounds that deepen their understanding of how scientists explore the world."
       },
       {
         "t": "Seesaw + iPad Camera",
@@ -97,12 +99,13 @@
         "d": "Have students use ScratchJr to visually sequence the steps of a science experiment (e.g., the process of melting ice or rolling objects down ramps). They can animate simple characters to model 'predict, test, observe, record,' reinforcing the scientific process through coding and storytelling."
       },
       {
-        "t": "Bee-Bots",
-        "d": "STEM Design Cycle Project: Challenge students to design and build a 'Science Lab Map' on the floor, then use Bee-Bots to navigate between different experiment stations (nature, weather, materials). Students plan, test, and iterate their Bee-Bot routes, reflecting on how scientists organize and follow steps in their investigations."
+        "t": "Weather Wonder Machines",
+        "d": "Students work in teams to invent and build simple 'weather machines' that demonstrate a weather concept (like wind, rain, or sun). Using recycled materials, cardboard, craft sticks, and connectors, they physically construct interactive models?such as a wind spinner, a rainmaker, or a sun-powered shadow box. Each model must include a moving part powered by a small motor or a simple circuit (using age-appropriate tools like littleBits or similar snap-together electronics). Students use iPads to record their design process (photos, videos, voice notes) and to create prediction charts before testing how their machines mimic real weather. The project follows the Design Cycle: students imagine, plan, build, test (e.g., Does the wind spinner turn? Does the rainmaker sound like rain?), and improve their inventions, then share their findings with the class."
       }
     ],
     "audited": true,
-    "plannerText": "Prep students explore the scientific method through hands-on experiences such as nature detective walks, weather observations, ice melting challenges, ramp investigations, and mystery material explorations. The unit emphasizes observing, recording, predicting, testing, and drawing conclusions, fostering inquiry and scientific thinking in authentic, age-appropriate contexts."
+    "plannerText": "Prep students explore the scientific method through hands-on experiences such as nature detective walks, weather observations, ice melting challenges, ramp investigations, and mystery material explorations. The unit emphasizes observing, recording, predicting, testing, and drawing conclusions, fostering inquiry and scientific thinking in authentic, age-appropriate contexts.",
+    "stemRebooted": true
   },
   {
     "ca": "Elsternwick",
@@ -142,12 +145,13 @@
         "d": "Guide students to code simple animations in ScratchJr that show two characters navigating a playground scenario?such as sharing, resolving a conflict, or inviting someone to play?demonstrating how positive relationships impact wellbeing. Students can narrate their stories and share them with peers."
       },
       {
-        "t": "Bee-Bots",
-        "d": "STEM Design Cycle Project: Challenge students to design and build a 'Friendship Maze' using classroom materials. Students program Bee-Bots to travel through the maze, stopping at stations representing acts of kindness or friendship (e.g., 'Say something kind,' 'Help a friend'). Students iterate on their maze design and reflect on how each stop represents ways relationships support wellbeing."
+        "t": "Friendship Feelings Garden",
+        "d": "Students collaboratively design and build a large 3D 'garden' using recycled cardboard, fabric, pipe cleaners, and clay to represent different emotions and aspects of friendship (e.g., kindness flower, empathy tree, sharing bush). Each child crafts a unique plant or creature that symbolises a positive relationship trait or feeling. Using Sphero Indi cars, students program simple routes to 'visit' each garden feature, triggering pre-recorded messages or sounds (recorded on iPads) about how that trait supports wellbeing and friendship. The project follows the Design Cycle: empathise (discuss feelings and positive actions), define (choose a trait to represent), ideate (sketch and plan their plant/creature), prototype (build with materials), test (navigate with Indi and share messages), and reflect (discuss what they learned about relationships and wellbeing)."
       }
     ],
     "audited": true,
-    "plannerText": "The Prep 'Who We Are' unit explores how relationships impact wellbeing, focusing on developing friendships, understanding how those around us influence our behaviours, and recognising balance in our interactions. Key activities include read-alouds, oral discussions, drawing emotions, role-play, and creating an essential agreement to foster positive classroom relationships."
+    "plannerText": "The Prep 'Who We Are' unit explores how relationships impact wellbeing, focusing on developing friendships, understanding how those around us influence our behaviours, and recognising balance in our interactions. Key activities include read-alouds, oral discussions, drawing emotions, role-play, and creating an essential agreement to foster positive classroom relationships.",
+    "stemRebooted": true
   },
   {
     "ca": "Elsternwick",
