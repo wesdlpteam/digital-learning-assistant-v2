@@ -4231,9 +4231,34 @@
     "th": "Where We Are in Place and Time",
     "ci": "Human migration is a response to challenges, risks and opportunities.",
     "lo": "The causes for and consequences of migration (Causation) ??? The changes in societies as a result of migration (Change) ??? The impact of migration on the individual, both positive and negative (Impact) ??? Migration results in a more diverse society (Diversity)",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes + Book Creator",
+        "d": "Students create interactive 3D migration stories using Merge Cubes, where each face of the cube represents a different stage or perspective of a migration journey. These are then app smashed with Book Creator to embed videos, audio interviews, and digital artifacts, allowing students to 'hold' and explore migration narratives in their hands?making the abstract concept of migration tangible and immersive."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students conduct and record interviews with family or community members who have experienced migration, then use Seesaw to create digital portfolios that combine audio, images, and written reflections, directly connecting personal migration stories to the unit's central idea."
+      },
+      {
+        "t": "Canva",
+        "d": "Using Canva, students design visually compelling infographics or digital posters that illustrate the push and pull factors of migration, integrating real-world data and personal stories to highlight the diversity and impact of migration on Australian society."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students collaboratively build a global migration timeline on Padlet, pinning historical events, personal stories, and key migration waves. Each post can include multimedia elements such as maps, videos, and primary source documents, fostering a shared digital inquiry space."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "Students create short documentary-style videos in Adobe Express, weaving together interviews, archival footage, and their own narration to explore the causes and effects of migration, culminating in a class film festival that celebrates diverse migration journeys."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Design Cycle STEM Project: Students use the Design Cycle to prototype a 'Migration Journey Simulator' with Lego Spike Prime. They design and code a robotic model that simulates the obstacles, decisions, and opportunities faced during migration (e.g., crossing borders, adapting to new environments), then present their process and learning in a digital journal."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students explore the causes, impacts, and personal stories of migration through interviews, storyboarding, and digital presentations. They investigate historical and contemporary migration events, conduct oral histories, and present their findings using multimedia tools, with a strong focus on empathy, diversity, and the lived experiences of migrants."
   },
   {
     "ca": "St Kilda",
@@ -4241,9 +4266,34 @@
     "th": "Who We Are",
     "ci": "Understanding ourselves, our relationships and our wellbeing empowers us to thrive.",
     "lo": "The recognisable features of safe and healthy interactions (Form) ??? The connections between emotions, behaviour, learning, interactions and goals (Connection) ??? The tools and skills to stay safe online and in person (Safety) ??? The active role we play in achieving and maintaining our wellbeing (Wellbeing) ??? The strategies to achieve and maintain positive relationships (Relationships)",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes + iPad App Smashing",
+        "d": "Students create interactive 3D wellbeing journals using Merge Cubes and the iPad camera. They record short video reflections on strategies for managing emotions, safe online interactions, and growth mindset, then overlay these onto their own Merge Cube AR models. The result is a tactile, immersive 'cube of self' that can be explored in AR, making wellbeing and identity visible and interactive."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design digital infographics or posters that visually map out their personal wellbeing strategies, safe online habits, and positive relationship tips. They use Canva's 'Remove Background' feature to create dynamic, inclusive visuals, and can collaborate in real time to produce a class-wide digital wellbeing gallery."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Each student authors a multimedia digital book documenting their journey through the unit. They combine photos, audio reflections, and drawings to narrate scenarios about managing friendships, responding to challenges, and celebrating their strengths, resulting in a personalised 'Who We Are' digital portfolio."
+      },
+      {
+        "t": "Padlet",
+        "d": "Launch a collaborative Padlet wall where students anonymously post real-life dilemmas or questions about relationships, safety, and wellbeing. Peers respond with advice, strategies, or supportive messages, building a digital community of care and shared wisdom."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students document their learning and self-reflections through voice notes, photos, and video journals on Seesaw. They set personal wellbeing goals, track their progress, and share strategies for inclusion and belonging, inviting feedback from teachers and classmates."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Design Cycle STEM Project: Students use the Design Cycle to prototype a 'Wellbeing Bot' with Lego Spike Prime. The bot could demonstrate calming breathing patterns with lights and movement, or act out positive social interactions. Students iterate their designs based on peer feedback, linking robotics to emotional regulation and healthy relationships."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit focuses on understanding safe and healthy interactions both online and in real life, strategies for managing friendships and emotions, and the importance of wellbeing and growth mindset. Students engage in activities such as cyber safety lessons, wellbeing poster creation, learner profile self-portraits, goal setting, and reflective Seesaw tasks to build self-awareness and positive relationships."
   },
   {
     "ca": "Elsternwick",
@@ -4251,8 +4301,33 @@
     "th": "Where We Are in Place and Time",
     "ci": "",
     "lo": "",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Delightex + iPad Camera",
+        "d": "Create a collaborative, interactive digital 'class museum' where students and families upload photos of personal artefacts, baby photos, and special objects. Use the iPad Camera to capture images, then app smash with Delightex to build a virtual timeline and story wall, allowing students to drag, sequence, and narrate their own histories visually."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students take photos of special objects or family artefacts and use ChatterPix Kids to animate them, recording short oral stories about why these items are important. This brings personal histories to life and supports oral storytelling as seen in the unit's focus on sharing and sequencing memories."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Each student creates a digital 'My Life Story' book, combining drawings of 'baby, little, now' with voice recordings and photos. This supports the lesson sequence on personal timelines and encourages multimodal expression of past and present."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Document the inquiry process by having students upload photos of their drawings, timelines, and special objects, then record voice reflections about what they have learned about their past and family. Families can comment, fostering home-school connections and celebrating diverse histories."
+      },
+      {
+        "t": "PicCollage",
+        "d": "Students create a visual collage comparing 'then and now' using photos, drawings, and stickers. They can sequence images to show how they have changed over time, directly supporting lessons on sequencing and understanding change."
+      },
+      {
+        "t": "Bee-Bots",
+        "d": "Design Cycle Project: Students design and build a large floor timeline using paper and images (baby, little, now). They then program Bee-Bots to travel along the timeline, stopping at each stage to trigger a student-recorded message about that life stage. This hands-on STEM project reinforces sequencing, storytelling, and the concept of change over time."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Prep students explore the central idea 'Discovering our past helps us know more about ourselves today' by sharing family stories, creating personal timelines, comparing past and present, and reflecting on personal artefacts and memories through drawing, oral storytelling, and sequencing activities."
   }
 ]
