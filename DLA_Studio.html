@@ -1001,7 +1001,7 @@ function getIssues(){
   DATA.forEach((e,idx)=>{
     const sugs=getSugs(e);
     const realSugs=sugs.filter(isRealSug);
-    if(realSugs.length<6) incomplete.push({e,idx,type:'incomplete',detail:`${realSugs.length}/6 suggestions`});
+    if(realSugs.length<6) incomplete.push({e,idx,type:'incomplete',detail:`${realSugs.length}/6 — no planner uploaded`});
 
     if(sugs.some(s=>sugTool(s).toLowerCase().includes('wevideo')))
       banned.push({e,idx,type:'banned',detail:'WeVideo found'});
@@ -1024,7 +1024,7 @@ function getIssues(){
 
 function filterIssueType(label){
   
-  const map={'banned':'banned','off whitelist':'offwhitelist','duplicates':'duplicate','incomplete':'incomplete','no planner':'missingplanner'};
+  const map={'banned':'banned','off whitelist':'offwhitelist','duplicates':'duplicate','no planner':'incomplete','no planner summary':'missingplanner'};
   const type=map[label];
   const el=document.getElementById('issues-list');
   if(!el) return;
@@ -1042,7 +1042,7 @@ function renderDashboard(){
   document.getElementById('db-sub').textContent=`${DATA.length} entries across ${[...new Set(DATA.map(e=>e.ca))].length} campuses — ${total} issue${total!==1?'s':''} found`;
   const statDefs=[
     {label:'total entries',val:DATA.length,bg:'#C5E84A',col:'#111'},
-    {label:'incomplete',val:incomplete.length,bg:incomplete.length>0?'#F5A623':'#1a1a1a',col:incomplete.length>0?'#111':'#888'},
+    {label:'no planner',val:incomplete.length,bg:incomplete.length>0?'#F5A623':'#1a1a1a',col:incomplete.length>0?'#111':'#888'},
     {label:'banned tools',val:banned.length,bg:banned.length>0?'#FF8080':'#1a1a1a',col:banned.length>0?'#111':'#888'},
     {label:'duplicates',val:duplicates.length,bg:duplicates.length>0?'#9B8BFF':'#1a1a1a',col:duplicates.length>0?'#fff':'#888'},
     {label:'off whitelist',val:offWhitelist.length,bg:offWhitelist.length>0?'#60B8F0':'#1a1a1a',col:offWhitelist.length>0?'#111':'#888'},
@@ -1062,7 +1062,7 @@ function renderDashboard(){
   const fixBar = document.getElementById('fix-incomplete-bar');
   if(fixBar){
     const fixBtns = [];
-    if(incomplete.length>0) fixBtns.push({count:incomplete.length, label:'Fix incomplete', color:'var(--orange)', type:'incomplete', fn:"fixAllOfType('incomplete')"});
+    if(incomplete.length>0) fixBtns.push({count:incomplete.length, label:'Fix no planner', color:'var(--orange)', type:'incomplete', fn:"fixAllOfType('incomplete')"});
     if(duplicates.length>0) fixBtns.push({count:duplicates.length, label:'Fix duplicates', color:'#9B8BFF', type:'duplicate', fn:"fixAllOfType('duplicate')"});
     if(banned.length>0) fixBtns.push({count:banned.length, label:'Fix banned tools', color:'#FF8080', type:'banned', fn:"fixAllOfType('banned')"});
     if(offWhitelist.length>0) fixBtns.push({count:offWhitelist.length, label:'Fix off-list', color:'#60B8F0', type:'offwhitelist', fn:"fixAllOfType('offwhitelist')"});
@@ -1090,7 +1090,7 @@ function renderDashboard(){
     ? all.map(({e,idx,type,detail})=>{
         const badgeBg={'banned':'#FF8080','incomplete':'#F5A623','duplicate':'#9B8BFF','offwhitelist':'#60B8F0','missingplanner':'#D4A017'}[type]||'#888';
         const badgeCol={'banned':'#111','incomplete':'#111','duplicate':'#fff','offwhitelist':'#111','missingplanner':'#111'}[type]||'#fff';
-        const label={'banned':'banned','incomplete':'incomplete','duplicate':'duplicate','offwhitelist':'off-list','missingplanner':'no planner'}[type]||type;
+        const label={'banned':'banned','incomplete':'no planner','duplicate':'duplicate','offwhitelist':'off-list','missingplanner':'no planner'}[type]||type;
         return `<div class="row" onclick="openEntry(${idx})">
           <span style="font-size:11px;padding:4px 11px;border-radius:20px;background:${badgeBg};color:${badgeCol};font-weight:800;letter-spacing:.3px;flex-shrink:0">${label}</span>
           <span style="font-size:13px;color:#9ab89a;width:110px;flex-shrink:0">${esc(e.ca)}</span>
@@ -1539,9 +1539,9 @@ function normaliseToolName(t){
   const key = t.toLowerCase().trim();
   if(map[key]) return map[key];
   // Pattern-based: collapse lesson-specific variants to the base tool name
-  // e.g. "Minecraft Education (Moon Base One)" → "Minecraft Education"
+  // e.g. "Minecraft: Ocean Heroes" → "Minecraft Education"
   // e.g. "Micro:bit — Helping Plants Grow" → "Micro:bit"
-  if(key.startsWith('minecraft education')) return 'Minecraft Education';
+  if(key.startsWith('minecraft')) return 'Minecraft Education';
   if(key.startsWith('micro:bit') || key.startsWith('microbit')) return 'Micro:bit';
   // Handle "Tool Name Activity/Lesson" patterns: extract just the tool
   if(key.startsWith('bee-bot') || key.startsWith('beebot')) return 'Beebots';
@@ -1569,9 +1569,31 @@ function normaliseToolName(t){
   if(key.startsWith('field guide')) return 'Field Guide to Victoria';
   if(key.startsWith('word cloud') || key.startsWith('abcya')) return 'Word Clouds ABCya';
   if(key.startsWith('explain everything')) return 'Explain Everything';
+  if(key.startsWith('seesaw')) return 'Seesaw';
+  if(key.startsWith('canva')) return 'Canva';
+  if(key.startsWith('imovie')) return 'iMovie';
+  if(key.startsWith('ipad')) return 'iPad';
+  if(key.startsWith('book creator')) return 'Book Creator';
+  if(key.startsWith('padlet')) return 'Padlet';
+  if(key.startsWith('kahoot')) return 'Kahoot';
+  if(key.startsWith('tinkercad')) return 'Tinkercad';
+  if(key.startsWith('freeform')) return 'Freeform';
+  if(key.startsWith('sketchbook')) return 'Sketchbook';
+  if(key.startsWith('epic')) return 'Epic';
+  if(key.startsWith('clickview')) return 'Clickview';
+  if(key.startsWith('garageband')) return 'GarageBand';
+  if(key.startsWith('piccollage')) return 'PicCollage';
+  if(key.startsWith('brushes redux')) return 'Brushes Redux';
+  if(key.startsWith('sky map')) return 'Sky Map';
+  if(key.startsWith('geoboard')) return 'Geoboard';
   if(key.startsWith('microsoft ')) return t; // keep specific MS tool
+  // "App Smashing: Tool" → extract the tool
+  if(key.startsWith('app smash')){
+    const afterColon = t.replace(/^App\s*Smash\w*[:\s]+/i, '').trim();
+    return afterColon ? normaliseToolName(afterColon) : t;
+  }
   // Remove parenthetical suffixes for any remaining: "Tool (stuff)" → "Tool"
-  const parenMatch = t.match(/^([A-Z][A-Za-z\s:'-]+?)\s*\(/);
+  const parenMatch = t.match(/^([A-Za-z][A-Za-z0-9\s:'-]+?)\s*\(/);
   if(parenMatch) return parenMatch[1].trim();
   return t;
 }
@@ -1596,10 +1618,8 @@ function computeStats(){
     getSugs(e).forEach(s=>{
       const raw=(s&&s.t&&s.t.trim()&&s.t.trim()!=='TBA')?s.t.trim():null;
       if(!raw) return;
-      // Split combined tool names and app smashes into individual tools for counting
-      // e.g. "Minecraft & OneNote" → ["Minecraft", "OneNote"]
-      // e.g. "Seesaw (App Smash with PicCollage)" → ["Seesaw", "PicCollage"]
-      // e.g. "Delightex + Puppet Pals App Smash" → ["Delightex", "Puppet Pals"]
+      // Strategy: normalise the FULL name first. If it resolves to a known tool, use it directly.
+      // Only split into parts for genuine multi-tool combinations (& + or App Smash patterns).
       let parts = [];
       // Check for "App Smash" pattern: "Tool (App Smash with OtherTool)"
       const appSmashParen = raw.match(/^(.+?)\s*\(\s*App\s*Smash\s+with\s+(.+?)\s*\)/i);
@@ -1609,7 +1629,15 @@ function computeStats(){
       } else if(appSmashPlus){
         parts = [appSmashPlus[1].trim(), appSmashPlus[2].trim()];
       } else {
-        parts = raw.split(/\s*(?:\band\b|[&+])\s*/i).map(t=>t.trim()).filter(Boolean);
+        // Try normalising the whole name first — catches "Minecraft: Area and Volume" → "Minecraft Education"
+        const wholeNorm = normaliseToolName(raw);
+        if(wholeNorm !== raw){
+          // Normalisation matched — use the single normalised name
+          parts = [raw]; // will be normalised again below
+        } else {
+          // No match — try splitting on & and + only (NOT "and" — too aggressive)
+          parts = raw.split(/\s*[&+]\s*/).map(t=>t.trim()).filter(Boolean);
+        }
       }
       const nca=normCa(e.ca);
       parts.forEach(rawT=>{
