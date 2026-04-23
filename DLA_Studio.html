@@ -520,8 +520,18 @@ function recordChange(idx, oldSugs, newSugs){
   if(CHANGE_HISTORY.length > MAX_HISTORY) CHANGE_HISTORY.pop();
 }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function linkify(s){ return esc(s).replace(/(https?:\/\/[^\s)&<]+)/g, '<a href="$1" target="_blank" style="color:var(--mint);text-decoration:none;word-break:break-all">$1</a>'); }
-function linkifyLight(s){ return esc(s).replace(/(https?:\/\/[^\s)&<]+)/g, '<a href="$1" target="_blank" style="color:#2563eb;text-decoration:none;word-break:break-all">$1</a>'); }
+function fixDashCorruption(s){
+  // Fix corrupted em-dashes: '?' between non-whitespace chars should be ' — '
+  // e.g. "Machines'?interactive" → "Machines' — interactive"
+  // Skip URLs so query-string '?' like "foo.com?q=x" isn't mangled.
+  s = String(s||'').replace(/(https?:\/\/\S+)|([^\s])\?([A-Za-z])/g, function(match, url, before, after){
+    if(url) return url;
+    return before + ' — ' + after;
+  });
+  return s.replace(/([^\s])\?\?([A-Za-z])/g, '$1 — $2');
+}
+function linkify(s){ return esc(fixDashCorruption(s)).replace(/(https?:\/\/[^\s)&<]+)/g, '<a href="$1" target="_blank" style="color:var(--mint);text-decoration:none;word-break:break-all">$1</a>'); }
+function linkifyLight(s){ return esc(fixDashCorruption(s)).replace(/(https?:\/\/[^\s)&<]+)/g, '<a href="$1" target="_blank" style="color:#2563eb;text-decoration:none;word-break:break-all">$1</a>'); }
 function caCol(ca){ return CAMPUS_COL[normCa(ca)]||CAMPUS_COL[ca]||'#818cf8'; }
 
 function showScreen(id){
