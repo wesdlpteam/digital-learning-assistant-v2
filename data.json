@@ -4123,9 +4123,35 @@
     "th": "How We Organise Ourselves",
     "ci": "The way a country is governed impacts the lives of citizens.",
     "lo": "The key institutions and functions of Australia's democratic system of government (Function) ??? How government decisions impact citizens at federal, state and local levels (Causation) ??? The rights and responsibilities of Australian citizens and their obligations as global citizens (Equality/Citizenship)",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes + Canva App Smash",
+        "d": "Students design an interactive 3D Merge Cube experience using Canva to create digital overlays that represent the three levels of government, their responsibilities, and how their decisions impact citizens. By scanning the Merge Cube, students can explore pop-up facts, videos, and infographics, making abstract governance concepts tactile and memorable."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students document a 'Day in the Life' of a citizen under different government systems by creating multimedia journals in Seesaw. They can combine voice recordings, annotated images, and short videos to reflect on how laws and policies shape daily experiences, fostering empathy and global awareness."
+      },
+      {
+        "t": "Minecraft: Active Citizen",
+        "d": "Students explore the stories of Nobel Peace Laureates and simulate how active citizenship and government decisions can create positive change. They can build virtual monuments or scenarios that reflect the impact of governance on society.",
+        "url": "https://education.minecraft.net/en-us/lessons/active-citizen"
+      },
+      {
+        "t": "Padlet",
+        "d": "Collaboratively build a digital debate wall where students post arguments, counterarguments, and evidence about real-world government decisions (e.g., social media bans, new laws). This interactive platform allows for peer feedback and the development of critical thinking skills."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "Create dynamic, student-led video explainers or animated infographics that break down the process of how a bill becomes law in Australia. Students can use Adobe Express to storyboard, animate, and narrate the journey from idea to legislation, making civics content engaging and accessible."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Design Cycle STEM Project: Students use the Design Cycle to prototype an automated voting machine or a model of Parliament using Lego Spike Prime. They must program the model to simulate voting, tallying, or decision-making processes, then reflect on how technology can support fair and transparent governance."
+      }
+    ],
+    "audited": true,
+    "plannerText": "In this unit, students investigate how different systems of government function, the roles and responsibilities at each level in Australia, and how government decisions impact citizens' lives. They engage in inquiry-based activities such as mapping government structures, simulating law-making, reflecting on citizenship, and proposing their own bills, culminating in creative reflections and real-world connections."
   },
   {
     "ca": "St Kilda",
@@ -4133,9 +4159,35 @@
     "th": "How the World Works",
     "ci": "The relationships between the Earth, Moon and Sun create predictable patterns that shape life on our planet and are understood through both scientific and cultural perspectives.",
     "lo": "The movement of the Earth, Moon and Sun causes predictable patterns such as day/night, moon phases, tides and seasons (Causation) ??? Different cultures, including Indigenous knowledge systems, interpret the night sky in unique and meaningful ways (Perspective) ??? The Earth, Moon and Sun have specific structures, positions and relationships that can be represented through models and simulations (Form)",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cube + iPad App Smashing",
+        "d": "Students create interactive 3D models of the Earth, Moon, and Sun using Merge Cube and the Merge Explorer app on iPads. They record short video explanations using the iPad camera, then app smash with Canva to overlay cultural stories or scientific facts about celestial patterns, making the invisible visible in augmented reality."
+      },
+      {
+        "t": "Minecraft: The Scientific Method",
+        "d": "Students use 'Minecraft: The Scientific Method' to design and run virtual experiments that model the effects of Earth's rotation, revolution, and the Moon's phases. They collect data, make predictions, and compare their findings to both scientific and Indigenous perspectives on celestial patterns.",
+        "url": "https://education.minecraft.net/en-us/lessons/the-scientific-method"
+      },
+      {
+        "t": "Podcast Equipment + GarageBand",
+        "d": "Students script and record podcasts exploring how different cultures interpret the night sky, or debate the science behind tides and seasons. They use GarageBand to edit, add sound effects, and publish their episodes, fostering communication skills and cross-cultural understanding."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students author digital books that combine diagrams, time-lapse photos (taken with iPad camera), and narrative text to explain the relationships between the Earth, Moon, and Sun. They include sections comparing scientific and Indigenous knowledge, and embed student-created illustrations or animations."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students collaborate on a Padlet wall to crowdsource observations of moon phases, sunrise/sunset times, and cultural stories from their families. This shared digital space becomes a living archive of both scientific data and diverse perspectives, supporting inquiry and reflection."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Using the Design Cycle, students prototype a motorized model that demonstrates the orbits and rotations of the Earth, Moon, and Sun. They program the model to show day/night cycles, lunar phases, and seasonal changes, then present their design process and findings to the class."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students explore the relationships between the Earth, Moon, and Sun through hands-on models, time-lapse videos, moon diaries, and cultural stories. They investigate scientific concepts like rotation, tides, and seasons, compare Indigenous and scientific perspectives, and synthesize their learning through creative projects such as podcasts, diagrams, and choice-board activities."
   },
   {
     "ca": "St Kilda",
@@ -4143,9 +4195,35 @@
     "th": "Sharing the Planet",
     "ci": "Peoples' actions affect the balance of nature.",
     "lo": "What the environment is comprised of and how ecosystems function (Form) ??? Our responsibility to care for and protect the natural world (Responsibility) ??? The interdependence between humans, animals and the environment (Interdependence) ??? The consequences of human actions on the balance of nature (Consequences)",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cube + CoSpaces",
+        "d": "Students design and code interactive 3D augmented reality habitats for endangered Australian species using Merge Cube and CoSpaces. They can simulate the impact of human actions (like pollution or conservation) on the balance of nature, allowing peers to 'walk through' and interact with their virtual ecosystems in the palm of their hand."
+      },
+      {
+        "t": "Minecraft: Build With Bees Habitat",
+        "d": "Students explore how bees' needs and human actions affect the balance of nature by building 'beetopias' in Minecraft Education. They apply their understanding of interdependence and environmental responsibility by designing thriving bee habitats and reflecting on the consequences of human impact.",
+        "url": "https://education.minecraft.net/en-us/lessons/build-with-bees-habitat"
+      },
+      {
+        "t": "Canva",
+        "d": "Students create persuasive digital campaigns or infographics to raise awareness about endangered species and the effects of human actions on the environment. They can use Canva's 'Remove Background' feature to create visually striking posters that inspire action and empathy."
+      },
+      {
+        "t": "Seesaw App Smash with iPad Camera",
+        "d": "Students document their STEM design process and field observations (e.g., at Camp Mallana or the zoo) by capturing photos and videos with the iPad Camera, then annotating, reflecting, and sharing their learning journey on Seesaw for peer and teacher feedback."
+      },
+      {
+        "t": "Podcast Equipment + GarageBand",
+        "d": "Students produce a podcast series interviewing local conservationists, Indigenous land managers, or classmates about how people's actions affect the balance of nature. They use GarageBand to edit and enhance their audio, developing communication and advocacy skills."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Using the Design Cycle, students prototype a robotic device that could help monitor or protect a threatened species in their local environment (e.g., a sensor to detect invasive species or a robot to distribute food or water). They research, design, build, test, and refine their solution, documenting each stage in a digital portfolio."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The Year 6 Sharing the Planet unit focuses on how people's actions affect the balance of nature, with students investigating endangered species, conservation technologies, and Indigenous perspectives. Key activities include a STEM design project to help threatened species, excursions to zoos and natural sites, and the use of digital tools to research, design, and communicate solutions for environmental challenges."
   },
   {
     "ca": "St Kilda",
