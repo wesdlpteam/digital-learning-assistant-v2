@@ -304,7 +304,17 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 
 function linkifyDesc(text){
   if(!text) return '';
-  return text.replace(/(https?:\/\/[^\s)]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:var(--ac);text-decoration:underline;text-decoration-color:#555;text-underline-offset:3px;word-break:break-all">$1</a>');
+  // Fix corrupted em-dashes: '?' between non-whitespace chars should be ' — '
+  // e.g. "Machines'?interactive" → "Machines' — interactive", "scenario?such" → "scenario — such"
+  // Skip URLs so query-string '?' like "foo.com?q=x" isn't mangled.
+  var cleaned = text.replace(/(https?:\/\/\S+)|([^\s])\?([A-Za-z])/g, function(match, url, before, after){
+    if(url) return url; // leave URLs alone
+    return before + ' — ' + after;
+  });
+  // Also fix double-? variants sometimes produced: "word??word" 
+  cleaned = cleaned.replace(/([^\s])\?\?([A-Za-z])/g, '$1 — $2');
+  // Linkify URLs
+  return cleaned.replace(/(https?:\/\/[^\s)]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:var(--ac);text-decoration:underline;text-decoration-color:#555;text-underline-offset:3px;word-break:break-all">$1</a>');
 }
 
 const HT={
