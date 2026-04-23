@@ -262,13 +262,13 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 .point-popup-text{font-size:24px;font-weight:800;color:#CDEB45;font-family:"Space Grotesk",sans-serif}
 .point-popup-sub{font-size:13px;color:#888;margin-top:4px}
 
-.stem-prompt{background:var(--sf);border:2px solid var(--bd);border-radius:16px;padding:16px 20px;margin:20px 0 14px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .15s;user-select:none}
-.stem-prompt:hover{border-color:var(--ac);background:rgba(205,235,69,.04);transform:scale(1.01)}
-.stem-prompt-icon{font-size:28px;flex-shrink:0}
+.stem-prompt{background:linear-gradient(135deg,rgba(124,58,237,.08) 0%,rgba(99,102,241,.08) 100%);border:2px solid #7C3AED;border-radius:16px;padding:16px 20px;margin:20px 0 14px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .15s;user-select:none;box-shadow:0 0 0 0 rgba(124,58,237,0)}
+.stem-prompt:hover{border-color:#A78BFA;background:linear-gradient(135deg,rgba(124,58,237,.14) 0%,rgba(99,102,241,.14) 100%);transform:scale(1.01);box-shadow:0 0 20px 0 rgba(124,58,237,.15)}
+.stem-prompt-icon{font-size:28px;flex-shrink:0;width:44px;height:44px;border-radius:12px;background:rgba(124,58,237,.15);display:flex;align-items:center;justify-content:center;border:1px solid rgba(124,58,237,.25)}
 .stem-prompt-text{flex:1}
 .stem-prompt-title{font-size:15px;font-weight:700;color:#FFF}
-.stem-prompt-sub{font-size:12px;color:var(--mt);margin-top:2px}
-.stem-prompt-arrow{font-size:18px;color:var(--ac);flex-shrink:0}
+.stem-prompt-sub{font-size:12px;color:#A78BFA;margin-top:3px;font-weight:500}
+.stem-prompt-arrow{font-size:18px;color:#A78BFA;flex-shrink:0}
 .stem-overlay{position:fixed !important;top:0;left:0;right:0;bottom:0;width:100vw;height:100vh;background:rgba(0,0,0,.75);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .2s}
 .stem-overlay.open{opacity:1;pointer-events:all}
 .stem-modal{background:#1A1A1A;border:2px solid var(--ac);border-radius:20px;padding:0;width:100%;max-width:500px;max-height:calc(100vh - 32px);overflow-y:auto;position:relative}
@@ -1031,7 +1031,7 @@ if(stemSug && stemSug.t && stemSug.t.indexOf("Planner Needed")===-1){
   window._stemData = {tool:stemTool, toolLabel:stemToolLabel, desc:stemDesc, va:stemVa, fbi:_stemFbi, usi:_stemUsi, valueLabel:I.s};
   
   // Inline teaser only - modal is created on demand, attached to body
-  h+='<div class="stem-prompt" onclick="openStem()"><div class="stem-prompt-icon">🔬</div><div class="stem-prompt-text"><div class="stem-prompt-title">Hands-on STEM activity available</div><div class="stem-prompt-sub">Tap to reveal → '+stemTool+' · v5</div></div><div class="stem-prompt-arrow">→</div></div>';
+  h+='<div class="stem-prompt" onclick="openStem()"><div class="stem-prompt-icon">🔬</div><div class="stem-prompt-text"><div class="stem-prompt-title">Hands-on STEM activity available</div><div class="stem-prompt-sub">Tap to reveal → '+stemTool+'</div></div><div class="stem-prompt-arrow">→</div></div>';
 }
 
 mainSugs.forEach((s,si)=>{
