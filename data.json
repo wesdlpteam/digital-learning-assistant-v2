@@ -2227,9 +2227,34 @@
     "th": "How We Express Ourselves",
     "ci": "Responding to different artistic expressions can promote thinking.",
     "lo": "Ways forms of expression convey messages; Creative and critical thinking skills; The language used to respond to The Arts",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Delightex + Padlet",
+        "d": "Launch a collaborative 'Virtual Art Gallery of the Imagination' using Delightex for students to design immersive, interactive 3D art installations inspired by their poetry, music, or visual art. Students then embed their creations into a Padlet, where peers can 'walk through' and leave reflective comments, fostering a digital curation experience that mirrors a real-world art show."
+      },
+      {
+        "t": "Canva",
+        "d": "Students create digital artist statements and visual reflections using Canva, combining images of their own artwork, poetry, and excursion photos with layered text and design elements to communicate the mood, message, and inspiration behind their creative pieces."
+      },
+      {
+        "t": "Book Creator",
+        "d": "App smash Book Creator with the iPad camera to produce multimedia poetry anthologies. Students record themselves reading their poems, add photos from the NGV excursion, and annotate artworks with their interpretations, creating a rich, interactive eBook for sharing at the art show."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "Facilitate a 'Lyric & Art Mashup' project where students use Adobe Express to design animated lyric videos. They select a song (e.g., from the Bruno Mars lyric analysis), illustrate key lines with digital drawings, and animate transitions to visually express the song's mood and meaning."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Host a 'Response Wall' on Seesaw where students upload short video reflections after each art experience (excursion, incursion, or class activity), responding to prompts about how the artwork made them think or feel, and giving peer feedback to deepen collective understanding."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "STEM Design Cycle Challenge: Students use Lego Spike Prime to prototype an interactive kinetic sculpture that responds to sound or movement. They follow the Design Cycle to ideate, build, test, and refine a sculpture that visually reacts to music or audience interaction, connecting artistic expression with engineering and technology."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit immerses students in diverse artistic expressions, including poetry, visual art inspired by Yayoi Kusama, music composition, and excursions to the NGV and State Theatre. Students analyse, create, and respond to art forms, culminating in a student-led art show where they display and reflect on their own creative works."
   },
   {
     "ca": "Glen Waverley",
@@ -2237,9 +2262,35 @@
     "th": "How We Organise Ourselves",
     "ci": "Communities create rules, laws and services to help people live together fairly and safely.",
     "lo": "Effective and influential leadership; Strengths that help leaders guide others; How leadership impacts communities",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes + Book Creator",
+        "d": "Students design interactive 3D models of community spaces (like a council chamber or emergency services hub) using Merge Cubes, then create an augmented reality 'choose your own adventure' story in Book Creator where users make decisions as community leaders, exploring the impact of different rules and services on fairness and safety."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Students collaboratively design and distribute a digital survey to gather data from peers and families about which community rules and services are most valued, then analyse the results to inform a class debate on effective community organisation."
+      },
+      {
+        "t": "Padlet",
+        "d": "Create a digital 'Community Noticeboard' where students post and respond to real-world scenarios involving rules, laws, and services, encouraging peer-to-peer discussion and reflection on fairness and safety in communities."
+      },
+      {
+        "t": "Canva",
+        "d": "Students work in teams to design persuasive digital posters or infographics advocating for a new community service or law, using Canva's design tools and 'Remove Background' feature to create visually compelling arguments."
+      },
+      {
+        "t": "Minecraft: Active Citizen",
+        "d": "Students explore the stories of Nobel Peace Laureates and build their own virtual community in Minecraft Education, making decisions about rules, laws, and services to ensure fairness and safety for all citizens.",
+        "url": "https://education.minecraft.net/en-us/lessons/active-citizen"
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Using the Design Cycle, students prototype an automated community service robot (e.g., a recycling sorter or safety patrol bot) with Lego Spike Prime, iterating on their design to address a real-world community need and presenting their process and solution to the class."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how communities create rules, laws, and services to help people live together fairly and safely. Students investigate effective leadership, strengths, and actions, engage in scenarios and debates about community organisation, and take action through persuasive speeches and collaborative projects."
   },
   {
     "ca": "Glen Waverley",
@@ -2247,9 +2298,35 @@
     "th": "How the World Works",
     "ci": "The design and use of products can have an impact on the natural world.",
     "lo": "How material properties determine their use; Material solutions for a sustainable future; How research solves problems in the natural world",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes + Book Creator",
+        "d": "Students design interactive 3D models of their animal enrichment prototypes using Merge Cubes, then document the design process, material choices, and environmental impact in a digital science journal on Book Creator. This app smash allows students to virtually 'hold' and explore their creations while reflecting on sustainable design choices."
+      },
+      {
+        "t": "Minecraft: Its Good To Be Green",
+        "d": "Students explore a sustainable building in Minecraft Education, analyzing how material choices and design decisions impact the environment. They can then reflect on how these principles could be applied to their own enrichment toy prototypes.",
+        "url": "https://education.minecraft.net/en-us/lessons/its-good-to-be-green"
+      },
+      {
+        "t": "Canva",
+        "d": "Students create visually engaging infographics or posters in Canva to communicate the life cycle of materials used in their prototypes, highlighting which are biodegradable, recyclable, or reusable, and the impact these choices have on the natural world."
+      },
+      {
+        "t": "Sphero BOLT",
+        "d": "Students program Sphero BOLT robots to simulate animal movement and interaction with different enrichment toy prototypes. This hands-on coding activity helps them test and iterate their designs for functionality and animal engagement."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students use Seesaw to document their research, upload photos of material experiments, and record video reflections about how their product designs could support animal wellbeing and sustainability. Peer and teacher feedback is integrated throughout the process."
+      },
+      {
+        "t": "3D Printer",
+        "d": "Using the Design Cycle, students prototype an animal enrichment toy or feeding device with sustainable materials, iterating their design based on research and testing. They create a digital 3D model (using Tinkercad or similar) and print their final design, then evaluate its impact on animal wellbeing and the environment."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students investigate how material properties influence product design, research sustainable solutions, and document their learning in digital science journals. They experiment with different materials, compare animal enrichment toys, and ultimately design and prototype their own enrichment device for animals, considering both functionality and environmental impact."
   },
   {
     "ca": "Glen Waverley",
@@ -2257,9 +2334,35 @@
     "th": "Sharing the Planet",
     "ci": "Country, language and community are significant to the lives of First Nations people.",
     "lo": "Diversity of First Nations people; Importance of community, family and traditions; Importance of Country to First Nations people",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes + Book Creator",
+        "d": "Students create interactive Dreamtime stories or virtual dioramas using Merge Cubes, overlaying 3D symbols, animals, and landscapes significant to First Nations cultures. They then app smash by documenting their creative process and cultural reflections in Book Creator, combining AR visuals, text, and audio explanations to deepen understanding of Country, language, and community."
+      },
+      {
+        "t": "Canva",
+        "d": "Design a collaborative digital mural in Canva where each student contributes a panel representing an aspect of First Nations identity, such as language, Country, or community. Use Canva's 'Remove Background' feature to incorporate student photos or artwork, and layer in authentic Indigenous symbols and patterns for a visually rich, respectful mural."
+      },
+      {
+        "t": "Padlet",
+        "d": "Build a living digital map on Padlet where students pin locations of different First Nations groups, add audio snippets of local languages, and share research on traditions, family structures, and connections to Country. Encourage students to comment and ask questions to foster inquiry and respectful dialogue."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students record video reflections or interviews with family members about their own connections to place, language, and community, then compare and contrast with First Nations perspectives. Use Seesaw to curate a class gallery of these stories, highlighting diversity and shared values."
+      },
+      {
+        "t": "Minecraft: Build With Bees Habitat",
+        "d": "Students explore how First Nations peoples' knowledge of Country supports biodiversity by building 'beetopias' in Minecraft Education. They apply Indigenous perspectives on land stewardship and sustainable habitats, then reflect on the importance of community and tradition in environmental care.",
+        "url": "https://education.minecraft.net/en-us/lessons/build-with-bees-habitat"
+      },
+      {
+        "t": "Makey Makey",
+        "d": "Design Cycle Project: Students use Makey Makey to prototype interactive storytelling boards that represent the physical, cultural, and spiritual connections of First Nations people to Country. For example, touching different natural materials (leaves, bark, sand) triggers audio clips of Dreamtime stories, language samples, or traditional music, allowing for a multisensory exploration of Indigenous perspectives."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students explore the diversity, traditions, and connections of First Nations people to Country, language, and community through Dreamtime stories, art, excursions, and hands-on experiences. They create narratives, dioramas, and digital projects to synthesise their learning about Indigenous perspectives and cultural significance."
   },
   {
     "ca": "Glen Waverley",
@@ -2267,9 +2370,35 @@
     "th": "Where We Are in Place and Time",
     "ci": "Exploration leads to discoveries, opportunities and new understandings.",
     "lo": "Reasons for exploration; How people have explored over time; Consequences of exploration",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes + Book Creator",
+        "d": "Students create interactive 3D exploration artefacts using Merge Cubes, embedding digital content (audio, video, text) about famous explorers or key discoveries. They then app smash by documenting their process and reflections in a multimedia Book Creator journal, allowing peers to 'hold' and explore their artefacts virtually."
+      },
+      {
+        "t": "Minecraft: The Hall of Inventions",
+        "d": "Students explore the Minecraft Hall of Inventions world, investigating key innovations from history. They then design and build their own 'invention' inspired by a historical explorer or era, reflecting on how exploration led to new opportunities and understandings. https://education.minecraft.net/en-us/challenges/the-hall-of-inventions",
+        "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
+      },
+      {
+        "t": "Canva",
+        "d": "Students design visually engaging digital timelines of major explorations, using Canva's templates and 'Remove Background' feature to create layered, annotated visuals that highlight the impact and consequences of exploration across time."
+      },
+      {
+        "t": "Padlet",
+        "d": "Classes collaborate on a live Padlet 'Exploration Wall', where students post research, questions, and multimedia findings about different explorers, mapping connections between historical events, motivations, and outcomes in real time."
+      },
+      {
+        "t": "Clickview",
+        "d": "Leverage Clickview's documentary library to curate a playlist of exploration-themed videos. Students use these as research sources, then create short video reflections or summaries using iPads, focusing on how exploration has shaped identity and heritage."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Using the Design Cycle, students prototype and build a robotic model of an exploration tool (e.g., a compass, rover, or ship) with Lego Spike Prime. They iterate on their designs to solve a specific exploration challenge, documenting each stage in their digital journals."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit immerses students in the concept of exploration, focusing on why people explore, how exploration has changed over time, and the consequences of these journeys. Students investigate historical and modern explorers, engage in mapping and narrative writing, and present their findings through a variety of digital and creative formats."
   },
   {
     "ca": "Glen Waverley",
