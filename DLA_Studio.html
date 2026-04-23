@@ -262,16 +262,16 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 .point-popup-text{font-size:24px;font-weight:800;color:#CDEB45;font-family:"Space Grotesk",sans-serif}
 .point-popup-sub{font-size:13px;color:#888;margin-top:4px}
 
-.stem-prompt{background:rgba(0,0,0,.25);border:1.5px solid rgba(255,255,255,.2);border-radius:12px;padding:12px 16px;margin:16px 0 0;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .15s;user-select:none;position:relative;z-index:1;backdrop-filter:blur(4px)}
-.stem-prompt:hover{border-color:rgba(255,255,255,.5);background:rgba(0,0,0,.35);transform:scale(1.01)}
+.stem-prompt{background:var(--sf);border:2px solid var(--bd);border-radius:16px;padding:16px 20px;margin:20px 0 14px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .15s;user-select:none}
+.stem-prompt:hover{border-color:var(--ac);background:rgba(205,235,69,.04);transform:scale(1.01)}
 .stem-prompt-icon{font-size:28px;flex-shrink:0}
 .stem-prompt-text{flex:1}
-.stem-prompt-title{font-size:14px;font-weight:700;color:#FFF}
-.stem-prompt-sub{font-size:11px;color:rgba(255,255,255,.7);margin-top:2px}
-.stem-prompt-arrow{font-size:16px;color:rgba(255,255,255,.8);flex-shrink:0}
-.stem-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
+.stem-prompt-title{font-size:15px;font-weight:700;color:#FFF}
+.stem-prompt-sub{font-size:12px;color:var(--mt);margin-top:2px}
+.stem-prompt-arrow{font-size:18px;color:var(--ac);flex-shrink:0}
+.stem-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s;overflow-y:auto}
 .stem-overlay.open{opacity:1;pointer-events:all}
-.stem-modal{background:#1A1A1A;border:2px solid var(--ac);border-radius:20px;padding:0;width:100%;max-width:520px;max-height:85vh;overflow-y:auto;position:relative}
+.stem-modal{background:#1A1A1A;border:2px solid var(--ac);border-radius:20px;padding:0;width:100%;max-width:520px;position:relative;margin:auto;flex-shrink:0}
 .stem-modal-header{padding:24px 28px 16px;border-bottom:1px solid #333;display:flex;align-items:flex-start;gap:14px}
 .stem-modal-icon{width:48px;height:48px;border-radius:12px;background:rgba(205,235,69,.1);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
 .stem-modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:8px;border:1px solid #333;background:#222;color:#888;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all .15s;line-height:1}
@@ -1004,7 +1004,7 @@ h+='<div class="uc" style="background:'+tc+';color:'+(TTX[u.th]||"#FFF")+'" oncl
 else if(v==="detail"){
 const us=gu(ca,yl),u=us[ui];if(!u){S.v='units';S.ui=null;R();return;}const tc=TC[u.th]||"#888";const em=TE[u.th]||"💡";
 
-h+='<div class="dh" style="background:'+tc+';color:'+(TTX[u.th]||"#FFF")+'">'+'<div class="dh-wm">'+em+'</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;position:relative;z-index:1"><span class="tag-t">'+yl+'</span><span class="tag-t">'+CN[ca]+'</span></div><h2 class="dh-title" style="position:relative;z-index:1">'+u.th+'</h2><div class="dh-ci" style="position:relative;z-index:1">“'+u.ci+'”</div>';
+h+='<div class="dh" style="background:'+tc+';color:'+(TTX[u.th]||"#FFF")+'">'+'<div class="dh-wm">'+em+'</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;position:relative;z-index:1"><span class="tag-t">'+yl+'</span><span class="tag-t">'+CN[ca]+'</span></div><h2 class="dh-title" style="position:relative;z-index:1">'+u.th+'</h2><div class="dh-ci" style="position:relative;z-index:1">“'+u.ci+'”</div></div>';
 
 var curList=u.s;
 var mainSugs=curList.slice(0,5);
@@ -1037,8 +1037,6 @@ if(stemSug && stemSug.t && stemSug.t.indexOf("Planner Needed")===-1){
   h+='<div class="sg-fb" style="margin-top:16px;padding-top:16px;border-top:1px solid #333"><button class="sg-used" onclick="markUsed('+_stemUsi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+_stemFbi+')" class="sg-fb-btn">💬 Feedback</button><button class="sg-react-btn sg-react-up" onclick="reactFB('+_stemFbi+',\'up\',this)">👍</button><button class="sg-react-btn" onclick="reactFB('+_stemFbi+',\'down\',this)">👎</button></div></div>';
   h+='</div></div></div>';
 }
-
-h+='</div>'; // close .dh header
 
 h+='<div class="loi-box"><div class="loi-label">Lines of Inquiry</div>';
 var lois=u.lo.split(/[;•]/).filter(l=>l.trim());
@@ -1300,7 +1298,7 @@ document.getElementById("plannerOverlay").classList.add("open");
 function closePlanner(){document.getElementById("plannerOverlay").classList.remove("open");}
 
 function tgSec(id){var el=document.getElementById('sc_'+id);var btn=document.getElementById('sb_'+id);if(el.classList.contains('open')){el.classList.remove('open');btn.classList.remove('open');}else{el.classList.add('open');btn.classList.add('open');}}
-function openStem(){var el=document.getElementById('stemOverlay');if(el)el.classList.add('open');}
+function openStem(){var el=document.getElementById('stemOverlay');if(el){el.scrollTop=0;el.classList.add('open');}}
 function closeStem(){var el=document.getElementById('stemOverlay');if(el)el.classList.remove('open');}
 function tgATL(el,id){var d=document.getElementById("ad_"+id);var p=document.getElementById("ap_"+id);if(d.classList.contains("open")){d.classList.remove("open");p.classList.remove("open")}else{d.classList.add("open");p.classList.add("open")}}
 function tgCur(el,id){var d=document.getElementById("d_"+id);var p=document.getElementById("p_"+id);if(d.classList.contains("open")){d.classList.remove("open");p.classList.remove("open")}else{d.classList.add("open");p.classList.add("open")}}
