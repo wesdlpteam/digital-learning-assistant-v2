@@ -3591,9 +3591,35 @@
     "th": "Where We Are in Place and Time",
     "ci": "Many factors shape the development of cities.",
     "lo": "The essential features of a city; The function of a city; The development of cities through time",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes",
+        "d": "Students design and build an augmented reality city using Merge Cubes, overlaying digital infrastructure, transport systems, and disaster-resilient features. They can record city soundscapes and link them to QR codes on the cubes, creating an interactive, multi-sensory city exploration that brings together geography, design, and music."
+      },
+      {
+        "t": "Canva",
+        "d": "Create an interactive city planning presentation where students map out different city zones, label amenities in English and Chinese, and use Canva's 'Remove Background' feature to visually place themselves in their city designs. Students can app smash by embedding QR codes that link to their own city soundscapes or video reflections."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students collaboratively author a digital class book documenting their research on cities around the world, including comic/graphic pages, city comparisons (e.g., Tokyo vs. New York), and reflections on infrastructure and disaster resilience. Embedded audio allows students to narrate their pages and add city sounds."
+      },
+      {
+        "t": "Padlet",
+        "d": "Launch a global city comparison wall where students post research, images, and reflections about cities they study (e.g., Mexico City, Paris, Tokyo). They can include Venn diagrams, maps, and QR codes linking to their own city soundscapes or digital brochures."
+      },
+      {
+        "t": "Minecraft: The Hall of Inventions",
+        "d": "Students explore the evolution of city infrastructure by visiting a virtual museum of historical innovations, then design and build their own essential city inventions in Minecraft. This directly connects to the unit's inquiry into what cities need to function and how innovations shape urban development.",
+        "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Using the Design Cycle, students prototype and test earthquake-resistant buildings for their class city. They apply knowledge from their study of Tokyo and Shepparton, iterating on their designs to withstand simulated 'disasters' (e.g., shaking platforms), and reflect on how engineering choices impact city resilience."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students investigate how cities adapt and change over time, focusing on infrastructure, transport, and disaster resilience. They research global cities, compare features, design and build their own city models, create soundscapes, and reflect on the factors that shape urban development."
   },
   {
     "ca": "St Kilda",
@@ -3601,9 +3627,34 @@
     "th": "Who We Are",
     "ci": "Health and wellbeing are impacted by the choices we make",
     "lo": "How our body systems connect and function; How our choices affect physical, emotional and mental wellbeing; Strategies to measure and maintain the health of the human body",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cube + Book Creator",
+        "d": "Students create an interactive 3D model of a body system (e.g., digestive, circulatory) using Merge Cube, then app smash by embedding their own narrated explanations, fitness tips, and wellbeing reflections into a Book Creator digital book. This allows students to virtually 'hold' and explore their own health-focused content, making abstract systems tangible and personal."
+      },
+      {
+        "t": "Canva",
+        "d": "Design a personalised 'Wellbeing Infographic' in Canva, where students visually map out their daily choices (food, exercise, sleep, screen time) and their impact on different aspects of health and wellbeing. Encourage students to use Canva's 'Remove Background' feature to add photos of themselves making healthy choices."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Run a 'Wellbeing Vlog Challenge' where students document a week of health-related choices (meals, exercise, mindfulness, digital balance) using the iPad camera and Seesaw's annotation tools. They reflect on how their choices affect their mind and body, sharing insights with peers for feedback."
+      },
+      {
+        "t": "Delightex",
+        "d": "Students use Delightex to collaboratively build branching scenario stories about making healthy and unhealthy choices. Each path leads to different wellbeing outcomes, helping students visualise the consequences of their decisions in a safe, interactive environment."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "Create a 'Mind-Body Connection' multimedia poster in Adobe Express, combining student voice recordings, photos, and graphics to illustrate how exercise, nutrition, and friendships influence their wellbeing. Posters can be shared digitally with families to promote home-school connection."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "STEM Design Cycle Project: Students use the Design Cycle to prototype and code a 'Healthy Habits Helper' robot with Lego Spike Prime. The robot could remind users to stretch, hydrate, or take mindful breaks, and students test and iterate their designs based on peer feedback and real-world use."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how health and wellbeing are impacted by the choices students make, focusing on body systems, fitness, cyber safety, and personal responsibility. Students research and report on body systems, set and track fitness goals, and reflect on strategies for maintaining balanced wellbeing through collaborative and individual activities."
   },
   {
     "ca": "St Kilda",
@@ -3611,9 +3662,34 @@
     "th": "How We Express Ourselves",
     "ci": "The creative process involves understanding and applying artistic elements to communicate ideas and emotions across disciplines",
     "lo": "How colour, movement and music communicate character and mood; The creative process of making a multi-disciplinary presentation; The effort and commitment required to produce a live performance",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes + iPad App Smashing",
+        "d": "Students design and create interactive 3D Beijing Opera masks or character artefacts using Merge Cube and the Merge Explorer app, then use the iPad camera to record themselves performing a short vignette in character. The 3D artefact becomes a digital prop, allowing students to blend physical movement, digital art, and AR storytelling in a single workflow."
+      },
+      {
+        "t": "Canva",
+        "d": "Students create a digital portfolio showcasing their character mask designs, script excerpts, and reflections on how colour and artistic elements communicate emotion and personality, using Canva's visual storytelling tools and 'Remove Background' feature for mask photos."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students collaboratively author a multimedia eBook documenting the creative process behind their Beijing Opera-inspired performances, including audio recordings, video snippets, and annotated images of their masks and poses."
+      },
+      {
+        "t": "GarageBand",
+        "d": "Students compose original soundtracks for their character vignettes, experimenting with tempo, dynamics, and instrument selection to evoke mood and support the narrative, then sync their music to performance videos."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students use Seesaw to document their rehearsal process, upload performance videos, and receive peer and teacher feedback on how effectively they communicate ideas and emotions through artistic elements."
+      },
+      {
+        "t": "Makey Makey",
+        "d": "Using the Design Cycle, students prototype interactive character masks or props that trigger sound effects or music when touched, integrating Makey Makey with conductive materials to physically express character traits and emotions in a live performance context."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit immerses students in the creative process across drama, music, visual arts, and Chinese, focusing on how artistic elements like colour, movement, and sound communicate ideas and emotions. Students design and perform original Beijing Opera-inspired vignettes, create expressive masks, compose music, and reflect on their creative choices through digital portfolios and collaborative projects."
   },
   {
     "ca": "St Kilda",
@@ -3621,9 +3697,34 @@
     "th": "How We Organise Ourselves",
     "ci": "Not-for-profit organisations exist to respond to a variety of needs within our community",
     "lo": "The function and purpose of not-for-profit organisations; How not-for-profit organisations respond to community needs; Our responsibility to take action and make a difference",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes",
+        "d": "Students create interactive 3D models of not-for-profit organisations using Merge Cubes and the Merge Explorer app. Each group designs a virtual 'cube exhibit' that visually explains the mission, impact, and structure of their chosen organisation, then shares these cubes with peers for an immersive, hands-on learning experience."
+      },
+      {
+        "t": "Padlet",
+        "d": "Launch a collaborative digital 'Action Wall' on Padlet where students post and comment on real-world examples of not-for-profit actions, fundraising ideas, and community needs. This living wall can include embedded videos, links, and student-created flyers, fostering ongoing discussion and idea sharing throughout the unit."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design professional-quality digital flyers and infographics in Canva to promote their chosen not-for-profit actions. They use Canva's 'Remove Background' feature to create eye-catching visuals and then distribute these digitally within the school community to raise awareness and encourage participation."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Document the entire inquiry process on Seesaw by having students record video reflections, upload research snapshots, and share progress on their action projects. Families and peers can comment, providing authentic feedback and celebrating student agency in real time."
+      },
+      {
+        "t": "Minecraft: The Hall of Inventions",
+        "d": "Students explore 'The Hall of Inventions' in Minecraft Education, then collaboratively design and build a virtual exhibit for a not-for-profit innovation that addresses a community need. They justify their invention's impact and connect it to real-world organisations. https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
+      },
+      {
+        "t": "Makey Makey",
+        "d": "Using the Design Cycle, students prototype interactive donation boxes or awareness stations for their chosen not-for-profit using Makey Makey and everyday materials. They design, test, and refine their creations, ensuring the device provides feedback (lights, sounds, or digital messages) when someone 'donates' or interacts, then showcase these at a school action fair."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students investigate not-for-profit organisations, research their functions and community impact, and collaborate to design and promote action projects such as fundraising drives and awareness campaigns. They create digital flyers, posters, and presentations to inform and inspire the school community, culminating in student-led initiatives that support local and national causes."
   },
   {
     "ca": "St Kilda",
@@ -3631,9 +3732,35 @@
     "th": "How the World Works",
     "ci": "Engineers design and build structures using specific features and materials to make them strong, stable and fit for purpose",
     "lo": "Different types of bridges and their design features; How materials and engineering principles contribute to structural strength and stability; Testing and refining designs through experimentation",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes + iPad App Smashing",
+        "d": "Students design a 3D interactive model of their bridge using Tinkercad, then export and visualize it on Merge Cubes using the Merge Explorer app on iPads. This allows students to 'hold' and inspect their bridge designs in augmented reality, testing stability and features virtually before building physically."
+      },
+      {
+        "t": "Seesaw + Canva",
+        "d": "Students document their bridge design process by capturing photos and videos at each stage using the iPad camera, then create a digital portfolio in Seesaw. For presentations, they use Canva to create visually engaging posters explaining the engineering choices behind their bridge's strength and stability."
+      },
+      {
+        "t": "Minecraft: Area and Volume",
+        "d": "Students use Minecraft Education's 'Area and Volume' lesson to design and solve real-world area and volume problems related to bridge building, experimenting with different shapes and materials to understand how these factors impact structural integrity.",
+        "url": "https://education.minecraft.net/en-us/lessons/area-and-volume-2"
+      },
+      {
+        "t": "Sphero BOLT",
+        "d": "Students program Sphero BOLT robots to simulate 'stress tests' on their bridge prototypes. By driving the Sphero across different bridge models, students collect data on which designs withstand movement and weight, linking digital coding with hands-on engineering."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students create a digital book chronicling the history of famous bridges, the science behind their construction, and their own design journey. They include interactive diagrams, voice recordings, and video reflections to demonstrate their understanding of engineering principles."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Using the Design Cycle, students work in teams to prototype, test, and refine a physical bridge using Lego Spike Prime. They document each iteration, collect data on load-bearing capacity, and present their final design with a focus on how engineering choices made their structure strong, stable, and fit for purpose."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students inquire into the engineering of bridges, exploring different types, features, and materials that contribute to strength and stability. They research, design, build, and test bridges, reflecting on their process and making improvements based on real-world examples and peer feedback."
   },
   {
     "ca": "St Kilda",
