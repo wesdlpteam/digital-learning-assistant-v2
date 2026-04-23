@@ -269,9 +269,9 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 .stem-prompt-title{font-size:15px;font-weight:700;color:#FFF}
 .stem-prompt-sub{font-size:12px;color:#A78BFA;margin-top:3px;font-weight:500}
 .stem-prompt-arrow{font-size:18px;color:#A78BFA;flex-shrink:0}
-.stem-overlay{position:fixed !important;top:0;left:0;right:0;bottom:0;width:100vw;height:100vh;background:rgba(0,0,0,.75);z-index:99999;padding:16px 0;opacity:0;pointer-events:none;transition:opacity .2s;overflow-y:auto}
+.stem-overlay{position:fixed !important;top:0;left:0;right:0;bottom:0;width:100vw;height:100vh;background:rgba(0,0,0,.75);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .2s;overflow-y:auto}
 .stem-overlay.open{opacity:1;pointer-events:all}
-.stem-modal{background:#1A1A1A;border:2px solid var(--ac);border-radius:20px;padding:0;width:calc(100% - 32px);max-width:500px;position:relative;margin:0 auto}
+.stem-modal{background:#1A1A1A;border:2px solid var(--ac);border-radius:20px;padding:0;width:100%;max-width:500px;position:relative;margin:auto;flex-shrink:0}
 .stem-modal-header{padding:20px 24px 14px;border-bottom:1px solid #333;display:flex;align-items:flex-start;gap:12px}
 .stem-modal-icon{width:42px;height:42px;border-radius:10px;background:rgba(205,235,69,.1);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 .stem-modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:8px;border:1px solid #333;background:#222;color:#888;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all .15s;line-height:1}
