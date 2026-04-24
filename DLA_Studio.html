@@ -3290,6 +3290,46 @@ PODCASTING RULE: Whenever a suggestion involves podcasting, audio recording, aud
 // If banned includes a tool, AI will never suggest it (even if approved).
 let TOOL_INVENTORY = { approved: [], banned: [] };
 
+// Default seeds used when nothing is persisted yet (first time a coordinator visits after this update).
+// The coordinator can add/remove freely from the Tool Inventory card.
+const DEFAULT_APPROVED_TOOLS = [
+  // Microsoft M365
+  'Microsoft Teams', 'Microsoft Word', 'Microsoft PowerPoint', 'Microsoft OneNote',
+  'Microsoft Excel', 'Microsoft Forms', 'Microsoft Sway',
+  // Robotics / STEM hardware
+  'Bee-Bots', 'Sphero Indi', 'Sphero BOLT', 'Lego Spike Essential', 'Lego Spike Prime',
+  'Micro:bit', 'CoDrone EDU', 'Makey Makey',
+  // Maker / AV hardware
+  '3D Printers', 'ClassVR', 'Merge Cubes', 'Green Screen', 'Podcast Equipment', 'iPads',
+  // Core creation
+  'Seesaw', 'Canva', 'Book Creator', 'Padlet',
+  // Video / audio / animation
+  'GarageBand', 'ScratchJR', 'Stop Motion Studio', 'ChatterPix Kids', 'iMovie',
+  'Puppet Pals', 'Adobe Express', 'Adobe Express Podcasting',
+  // Subject specific
+  'Google Maps', 'Google Earth', 'Field Guide to Victoria', 'Sky Map', 'Geoboard',
+  // Other
+  'Clickview', 'Epic', 'PicCollage', 'Brushes Redux', 'Word Clouds ABCya',
+  'Sketchbook', 'Explain Everything', 'Freeform', 'Delightex', 'Kahoot', 'Tinkercad',
+  'Minecraft Education'
+];
+
+const DEFAULT_BANNED_TOOLS = [
+  'ChatGPT', 'Claude', 'Gemini', 'Copilot',
+  'Google Docs', 'Google Slides', 'Google Sheets',
+  'WeVideo', 'Flipgrid'
+];
+
+// Populate defaults if inventory hasn't been loaded from Drive yet
+function seedDefaultInventoryIfEmpty(){
+  if(!TOOL_INVENTORY.approved || TOOL_INVENTORY.approved.length === 0){
+    TOOL_INVENTORY.approved = [...DEFAULT_APPROVED_TOOLS];
+  }
+  if(!TOOL_INVENTORY.banned || TOOL_INVENTORY.banned.length === 0){
+    TOOL_INVENTORY.banned = [...DEFAULT_BANNED_TOOLS];
+  }
+}
+
 // Legacy alias kept for any old references
 function getBannedTools(){ return TOOL_INVENTORY.banned || []; }
 // Treat inventory.banned as the runtime "not available" list
@@ -3641,6 +3681,8 @@ async function loadLibraries(){
         TOOL_INVENTORY.banned = Array.isArray(LIBRARIES_META._inventory.banned) ? LIBRARIES_META._inventory.banned : [];
       }
     }
+    // Seed defaults if either list is empty
+    seedDefaultInventoryIfEmpty();
     // Copy lesson arrays
     const cleaned = {};
     Object.keys(data).forEach(k => {
