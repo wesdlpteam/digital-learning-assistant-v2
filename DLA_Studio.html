@@ -255,53 +255,9 @@
     <!-- BULK TOOLS -->
     <div id="panel-tools" class="panel">
       <div class="page-title">Bulk Tools</div>
-      <div class="page-sub">Regenerate, compare and export suggestions across campuses and year levels.</div>
+      <div class="page-sub">Chat with GPT-4.1 to make changes across your entire library. Manage your tool inventory, run playbooks, and roll back with snapshots.</div>
 
-      <!-- Bulk Regenerate -->
-      <div class="card" style="margin-bottom:14px">
-        <span class="label">Bulk regenerate by campus / year level</span>
-        <p style="font-size:13px;color:var(--dim);margin-bottom:14px;line-height:1.6">Regenerate all entries for a specific campus, year level, or both. Only regenerates entries that currently have 6 valid suggestions — incomplete entries should be fixed first.</p>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
-          <div>
-            <div style="font-size:11px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Campus</div>
-            <select id="bulk-regen-campus" class="inp" style="width:180px;margin-bottom:0">
-              <option value="">All campuses</option>
-            </select>
-          </div>
-          <div>
-            <div style="font-size:11px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Year level</div>
-            <select id="bulk-regen-year" class="inp" style="width:160px;margin-bottom:0">
-              <option value="">All year levels</option>
-            </select>
-          </div>
-          <div style="align-self:flex-end">
-            <span id="bulk-regen-count" style="font-size:13px;color:var(--dim)"></span>
-          </div>
-        </div>
-        <button class="btn-pri" id="btn-bulk-regen" onclick="runBulkRegen()">Regenerate selected entries</button>
-        <div id="bulk-regen-progress" style="display:none;margin-top:14px">
-          <div style="font-size:13px;color:var(--lime);font-weight:600;margin-bottom:8px" id="bulk-regen-label">Starting…</div>
-          <div style="height:5px;background:var(--card2);border-radius:3px"><div id="bulk-regen-bar" style="height:100%;border-radius:3px;background:var(--lime);width:0%;transition:width .4s"></div></div>
-        </div>
-        <div id="bulk-regen-result" style="margin-top:12px"></div>
-      </div>
-
-      <!-- Side-by-side campus comparison -->
-      <div class="card">
-        <span class="label">Side-by-side campus comparison</span>
-        <p style="font-size:13px;color:var(--dim);margin-bottom:14px;line-height:1.6">Pick a unit theme to see how all three campuses' suggestions compare side by side.</p>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
-          <select id="compare-year" class="inp" style="width:160px;margin-bottom:0" onchange="updateCompareThemes()">
-            <option value="">All year levels</option>
-          </select>
-          <select id="compare-theme" class="inp" style="flex:1;min-width:200px;margin-bottom:0" onchange="renderComparison()">
-            <option value="">Select a theme…</option>
-          </select>
-        </div>
-        <div id="comparison-grid"></div>
-      </div>
-
-            <!-- Bulk AI Edit — Chatbot Interface -->
+      <!-- Bulk AI Edit — Chatbot Interface (moved to TOP) -->
       <div class="card" style="margin-bottom:14px;padding:0;overflow:hidden">
         <div style="padding:20px 24px 12px">
           <span class="label">Bulk AI Edit</span>
@@ -323,28 +279,6 @@
           <div style="font-size:13px;color:var(--lime);font-weight:600;margin-bottom:8px" id="bulk-ai-label">Analysing entries…</div>
           <div style="height:5px;background:var(--card);border-radius:3px"><div id="bulk-ai-bar" style="height:100%;border-radius:3px;background:var(--lime);width:0%;transition:width .4s"></div></div>
         </div>
-      </div>
-
-      <!-- Snapshots & Safety -->
-      <div class="card" style="margin-bottom:14px">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
-          <span class="label" style="margin:0">📸 snapshots & undo</span>
-          <div style="flex:1"></div>
-          <button class="btn-sm" onclick="createManualSnapshot()" style="color:var(--lime);border-color:var(--lime)">+ Save snapshot now</button>
-        </div>
-        <p style="font-size:12px;color:var(--dim);margin-bottom:14px">Every Bulk AI Edit creates a snapshot automatically. Restore any snapshot to roll back. Stored locally in your browser (max 20).</p>
-        <div id="snapshots-list"></div>
-      </div>
-
-      <!-- Playbooks -->
-      <div class="card" style="margin-bottom:14px">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
-          <span class="label" style="margin:0">📖 playbooks</span>
-          <div style="flex:1"></div>
-          <button class="btn-sm" onclick="savePlaybookFromChat()" style="color:var(--gold);border-color:var(--gold)">+ Save current as playbook</button>
-        </div>
-        <p style="font-size:12px;color:var(--dim);margin-bottom:14px">Common requests saved for re-use. Click a playbook to auto-fill the chatbot and run it.</p>
-        <div id="playbooks-list"></div>
       </div>
 
       <!-- Tool Inventory -->
@@ -385,6 +319,28 @@
         </div>
       </div>
 
+      <!-- Snapshots & Safety -->
+      <div class="card" style="margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+          <span class="label" style="margin:0">📸 snapshots & undo</span>
+          <div style="flex:1"></div>
+          <button class="btn-sm" onclick="createManualSnapshot()" style="color:var(--lime);border-color:var(--lime)">+ Save snapshot now</button>
+        </div>
+        <p style="font-size:12px;color:var(--dim);margin-bottom:14px">Every Bulk AI Edit creates a snapshot automatically. Restore any snapshot to roll back. Stored locally in your browser (max 20).</p>
+        <div id="snapshots-list"></div>
+      </div>
+
+      <!-- Playbooks -->
+      <div class="card" style="margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+          <span class="label" style="margin:0">📖 playbooks</span>
+          <div style="flex:1"></div>
+          <button class="btn-sm" onclick="savePlaybookFromChat()" style="color:var(--gold);border-color:var(--gold)">+ Save current as playbook</button>
+        </div>
+        <p style="font-size:12px;color:var(--dim);margin-bottom:14px">Common requests saved for re-use. Click a playbook to auto-fill the chatbot and run it.</p>
+        <div id="playbooks-list"></div>
+      </div>
+
       <!-- Run Surgeon -->
       <div class="card" style="margin-bottom:14px">
         <span class="label">Run Surgeon</span>
@@ -405,30 +361,19 @@
         </div>
       </div>
 
-      <!-- Coverage Heatmap -->
-      <div class="card" style="margin-top:14px">
-        <span class="label">Coverage heatmap</span>
-        <p style="font-size:13px;color:var(--dim);margin-bottom:14px;line-height:1.6">Shows which campus × year level combinations have complete, partial, or missing suggestions. Click any cell to jump to that group in Browse.</p>
-        <div id="coverage-heatmap" style="overflow-x:auto"></div>
-      </div>
-
-      <!-- Export -->
-      <div class="card" style="margin-top:14px">
-        <span class="label">Export suggestions</span>
-        <p style="font-size:13px;color:var(--dim);margin-bottom:14px;line-height:1.6">Export all suggestions for a campus and year level as a printable HTML report, or download as JSON.</p>
+      <!-- Side-by-side campus comparison -->
+      <div class="card">
+        <span class="label">Side-by-side campus comparison</span>
+        <p style="font-size:13px;color:var(--dim);margin-bottom:14px;line-height:1.6">Pick a unit theme to see how all three campuses' suggestions compare side by side.</p>
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
-          <select id="export-campus" class="inp" style="width:180px;margin-bottom:0">
-            <option value="">All campuses</option>
-          </select>
-          <select id="export-year" class="inp" style="width:160px;margin-bottom:0">
+          <select id="compare-year" class="inp" style="width:160px;margin-bottom:0" onchange="updateCompareThemes()">
             <option value="">All year levels</option>
           </select>
+          <select id="compare-theme" class="inp" style="flex:1;min-width:200px;margin-bottom:0" onchange="renderComparison()">
+            <option value="">Select a theme…</option>
+          </select>
         </div>
-        <div style="display:flex;gap:8px">
-          <button class="btn-pri" onclick="exportHTML()">Export as HTML report</button>
-          <button class="btn" onclick="exportCSV()">Export as CSV</button>
-          <button class="btn" onclick="downloadJSON()">↓ Full JSON</button>
-        </div>
+        <div id="comparison-grid"></div>
       </div>
     </div>
 
@@ -4128,7 +4073,7 @@ function renderLibraries(){
               </div>
               <div style="display:flex;gap:6px;flex-shrink:0">
                 <button class="btn-sm" onclick="libEditLesson('${esc(key)}','${esc(l.title).replace(/'/g,"\\'")}')">Edit</button>
-                <button class="btn-sm" onclick="libDeleteLesson('${esc(key)}','${esc(l.title).replace(/'/g,"\\'")}')}" style="color:#FF8080">Delete</button>
+                <button class="btn-sm" onclick="libDeleteLesson('${esc(key)}','${esc(l.title).replace(/'/g,"\\'")}')" style="color:#FF8080">Delete</button>
               </div>
             </div>
           `).join('')}
