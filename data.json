@@ -914,12 +914,13 @@
         "d": "Connect the study of floods and community response to real-world engineering by having students use Minecraft: Filtering Water On The Iss (https://education.minecraft.net/en-us/lessons/filtering-water-on-the-iss). Students experiment with designing water filtration systems, linking to how communities recover from floods and ensure safe water supplies after disasters."
       },
       {
-        "t": "Lego Spike Prime Design Cycle Challenge",
-        "d": "Guide students through the Design Cycle to prototype earthquake-resistant buildings using Lego Spike Prime. Students test their designs on a shake table, collect data, and iterate to improve stability?mirroring the real-world engineering challenges faced by communities in earthquake zones."
+        "t": "Disaster-Resilient Community Challenge",
+        "d": "Students use the Design Cycle to collaboratively design, build, and test model communities that can withstand simulated natural disasters. First, they research real-world disasters (earthquakes, floods, bushfires) and brainstorm resilient features. Using physical materials like cardboard, popsticks, recycled plastics, clay, and fabric, they construct miniature buildings, bridges, and landscape features (e.g., levees, retaining walls). Integrating Sphero Indi robots or Bee-Bots, students code the robots to simulate the movement of floodwaters or seismic activity through their models. They observe how their structures respond, document the impact, and iterate their designs for improved resilience. Throughout, students capture their process with iPads (photos/videos), annotate their design choices, and present their final 'resilient community' prototypes to peers, reflecting on how technology and engineering can help communities adapt to Earth's changing environments."
       }
     ],
     "audited": true,
-    "plannerText": "This unit engages Year 4 students in exploring how changes to the Earth, such as natural disasters, impact environments and communities. Through hands-on experiments, research projects, digital presentations, and case studies, students investigate the causes of geological change, the effects of extreme environments, and how communities respond and adapt to these challenges."
+    "plannerText": "This unit engages Year 4 students in exploring how changes to the Earth, such as natural disasters, impact environments and communities. Through hands-on experiments, research projects, digital presentations, and case studies, students investigate the causes of geological change, the effects of extreme environments, and how communities respond and adapt to these challenges.",
+    "stemRebooted": true
   },
   {
     "ca": "Elsternwick",
@@ -950,12 +951,13 @@
         "d": "Students produce a series of audio stories and interviews exploring the significance of Country, language, and community to First Nations people, using Adobe Express Podcasting (https://podcast.adobe.com). They script, record, and edit their own podcasts to share Dreaming stories, language research, and reflections on Indigenous perspectives, culminating in a digital showcase for the school community. This authentic audio storytelling empowers students to amplify First Nations voices and deepen their understanding through creative communication."
       },
       {
-        "t": "Makey Makey",
-        "d": "Design Cycle STEM Project: Students use Makey Makey to prototype an interactive 'Acknowledgement of Country' installation. By connecting conductive materials to a Makey Makey board, students create a physical map or totem display that plays audio snippets of local language, stories, or acknowledgements when touched, blending digital making with cultural respect and community engagement."
+        "t": "Language Landscapes: Talking Totem Trail",
+        "d": "Students work in teams to research and select key First Nations words, symbols, and stories connected to Country and community. Using recycled materials, clay, cardboard, and natural objects, they design and build a series of totem poles or 'story markers' that represent these ideas. Each totem incorporates a simple, student-built electronic sound module (Makey Makey or micro:bit with speakers) hidden inside, which plays a pre-recorded greeting, word, or short story in a local Indigenous language when touched. Students use iPads to record their audio and program the sound triggers. The completed Talking Totem Trail is set up as a physical path around the school grounds, inviting the community to interact with each totem, hear the language, and learn about its significance, blending digital storytelling with hands-on cultural making."
       }
     ],
     "audited": true,
-    "plannerText": "This unit explores the significance of Country, language, and community to First Nations people, with students engaging in research, reflection, and creative activities such as mapping, language exploration, Dreaming stories, and artistic expression. Learning experiences include collaborative digital projects, visual and audio storytelling, and hands-on inquiry into Indigenous perspectives, culminating in authentic action and community sharing."
+    "plannerText": "This unit explores the significance of Country, language, and community to First Nations people, with students engaging in research, reflection, and creative activities such as mapping, language exploration, Dreaming stories, and artistic expression. Learning experiences include collaborative digital projects, visual and audio storytelling, and hands-on inquiry into Indigenous perspectives, culminating in authentic action and community sharing.",
+    "stemRebooted": true
   },
   {
     "ca": "Elsternwick",
@@ -996,12 +998,13 @@
         "d": "Students launch a 'Leadership Voices' podcast, interviewing community leaders and reflecting on the qualities that shape effective leadership. Using Adobe Express Podcasting (https://podcast.adobe.com), they script, record, and edit episodes that explore how leadership impacts communities, fostering authentic connections and communication skills."
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "STEM Design Cycle Project: Challenge students to design and prototype a 'Community Helper Robot' using Lego Spike Prime. Students follow the Design Cycle to empathise with community needs, define a leadership problem (e.g., improving communication or safety), ideate solutions, build and program their robot, and present how their creation demonstrates leadership qualities and supports a positive community."
+        "t": "Leadership Robots: Guiding Our Community",
+        "d": "Students form small 'leadership teams' to design and physically build a miniature community using recycled materials, cardboard, and craft supplies?featuring key spaces like a town hall, park, school, and homes. Each team programs a Sphero Indi robot to act as a 'leader' guiding citizens (represented by small figurines) through the community to solve challenges (e.g., organizing a clean-up, resolving a conflict, planning an event). Teams use the Design Cycle to empathize with community needs, ideate solutions, prototype their community layout and leadership pathways, test their robot's effectiveness as a leader, and refine both the physical build and coding. The project culminates in a showcase where teams explain how their robot's programmed 'leadership qualities' (e.g., clear communication, decision-making, empathy) helped shape and support their community."
       }
     ],
     "audited": true,
-    "plannerText": "This unit explores the central idea 'Leaders shape communities' through inquiries into the roles and responsibilities of effective leadership, the purpose of leadership, and the strengths and qualities of a leader. Students engage in research, reflection, and creative activities to understand how leadership impacts communities, culminating in personal leadership applications and collaborative projects."
+    "plannerText": "This unit explores the central idea 'Leaders shape communities' through inquiries into the roles and responsibilities of effective leadership, the purpose of leadership, and the strengths and qualities of a leader. Students engage in research, reflection, and creative activities to understand how leadership impacts communities, culminating in personal leadership applications and collaborative projects.",
+    "stemRebooted": true
   },
   {
     "ca": "Elsternwick",
@@ -1033,12 +1036,13 @@
         "url": "https://education.minecraft.net/en-us/lessons/the-investigators"
       },
       {
-        "t": "Makey Makey Design Cycle Project",
-        "d": "Using the Design Cycle, students prototype an interactive 'persuasion machine' with Makey Makey and everyday materials. For example, they could create a physical board where pressing different objects triggers audio, video, or light effects designed to persuade or inform a specific audience. Students iterate on their design based on peer feedback, documenting how their choices impact audience engagement and message clarity."
+        "t": "Persuasion Arcade: Interactive Message Machines",
+        "d": "Students work in teams to design and build physical 'message machines'?interactive arcade-style installations that deliver persuasive messages to a target audience. Using micro:bit (or Makey Makey) for simple inputs/outputs, students craft physical structures from cardboard, recycled materials, and craft supplies. Each machine features buttons, levers, or sensors that trigger lights, sounds, or moving parts programmed to convey a persuasive message (e.g., environmental awareness, healthy eating). Students prototype, test, and refine both the physical build and digital code, reflecting on how design choices (visuals, interactivity, language, effects) influence audience response. The final arcade is set up for peers to experience and evaluate the impact of each machine's message."
       }
     ],
     "audited": true,
-    "plannerText": "This unit explores how people create or manipulate messages to target specific audiences, focusing on critical evaluation of media, persuasive devices, and the impact of communication choices. Students analyse mentor texts, advertisements, and campaigns, create their own persuasive media, and reflect on how messages influence beliefs and behaviours."
+    "plannerText": "This unit explores how people create or manipulate messages to target specific audiences, focusing on critical evaluation of media, persuasive devices, and the impact of communication choices. Students analyse mentor texts, advertisements, and campaigns, create their own persuasive media, and reflect on how messages influence beliefs and behaviours.",
+    "stemRebooted": true
   },
   {
     "ca": "Elsternwick",
