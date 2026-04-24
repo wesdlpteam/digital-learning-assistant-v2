@@ -1074,12 +1074,13 @@
         "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "Using the Design Cycle, students prototype a sustainable product or service with Lego Spike Prime, such as an automated recycling sorter or energy-efficient delivery robot. They document each phase?empathise, define, ideate, prototype, test?through video journals and present their working model at the school market."
+        "t": "Eco-Entrepreneur Smart Stalls",
+        "d": "Students work in teams to design and construct a physical miniature market stall from recycled materials (cardboard, fabric scraps, bottle caps, etc.), representing their sustainable product or service. They integrate a simple programmable microcontroller (e.g., Micro:bit or Makey Makey) to add interactive digital features?such as touch-activated customer feedback buttons, LED-lit product displays, or motion-triggered sound effects. Each stall must physically showcase their product prototype, include hand-crafted signage, and use the embedded tech to collect data or enhance the customer experience. The project follows the Design Cycle: empathize with customers, define needs, ideate stall features, prototype and test both physical and digital elements, and refine based on peer feedback before the final market event."
       }
     ],
     "audited": true,
-    "plannerText": "In this unit, Year 5 students inquire into the responsibilities of entrepreneurs to develop, market, and sell sustainable products and services. They engage in market research, apply the design thinking process, prototype and test their ideas, and culminate in a market stall event where they pitch and sell their creations, reflecting on the impact of consumer choices and business practices on the environment."
+    "plannerText": "In this unit, Year 5 students inquire into the responsibilities of entrepreneurs to develop, market, and sell sustainable products and services. They engage in market research, apply the design thinking process, prototype and test their ideas, and culminate in a market stall event where they pitch and sell their creations, reflecting on the impact of consumer choices and business practices on the environment.",
+    "stemRebooted": true
   },
   {
     "ca": "Elsternwick",
@@ -1110,12 +1111,13 @@
         "d": "Students harness Micro:bit to collect and analyse data from their natural hazard prototypes, using real-time feedback to refine their creative solutions. The 'Data Handling' lesson (https://microbit.org/lessons/data-handling/) empowers learners to visualise and interpret data, supporting persuasive pitches and evidence-based design in their community showcase."
       },
       {
-        "t": "Lego Spike Prime STEM Challenge",
-        "d": "Applying the full Design Cycle, students work in teams to prototype and test earthquake-resistant structures using Lego Spike Prime. They iterate their designs based on real-world constraints (height, weight, stability), collect and graph data on performance, and present their engineering process and results to an authentic audience."
+        "t": "Disaster-Resilient Mini-Homes Challenge",
+        "d": "Students work in teams to investigate a specific natural hazard (e.g., earthquake, flood, bushfire). Using the Design Cycle, they sketch, plan, and physically construct a sturdy mini-home prototype from materials like cardboard, popsticks, recycled plastics, fabric, and clay. Teams embed a Sphero Indi or similar programmable robot inside their home to simulate a 'family' that must remain safe during hazard simulations. Students code the robot to react to hazard scenarios (e.g., shaking for earthquakes, moving to higher ground for floods), while testing and refining their physical designs against teacher-created 'hazard events' (e.g., shaking table, water spray, wind tunnel). The project culminates in a showcase where students pitch their disaster-resilient homes, demonstrating both their physical engineering and digital problem-solving."
       }
     ],
     "audited": true,
-    "plannerText": "This unit immerses Year 5 students in the design thinking process as they investigate natural hazards and human responses. Through provocations, data analysis, mapping, and hands-on prototyping, students develop and test creative solutions to real-world challenges, culminating in persuasive pitches and a community showcase."
+    "plannerText": "This unit immerses Year 5 students in the design thinking process as they investigate natural hazards and human responses. Through provocations, data analysis, mapping, and hands-on prototyping, students develop and test creative solutions to real-world challenges, culminating in persuasive pitches and a community showcase.",
+    "stemRebooted": true
   },
   {
     "ca": "Elsternwick",
@@ -1146,12 +1148,13 @@
         "d": "Students collaboratively explore the 'Peace Builders' Minecraft Education world (https://education.minecraft.net/en-us/lessons/peace-builders), engaging with stories of Nobel Peace Laureates and designing their own virtual spaces that promote dialogue, negotiation, and peaceful solutions to conflict. They reflect on how these digital environments can inspire real-world action."
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "Using the Design Cycle, students prototype and code a 'Conflict Resolution Robot' with Lego Spike Prime. The robot could facilitate peer mediation scenarios, deliver 'I statements', or model peaceful negotiation strategies. Students iterate their designs based on peer feedback, linking directly to the unit's emphasis on practical conflict resolution and student agency."
+        "t": "Peace Pathways: Interactive Conflict Resolution Board",
+        "d": "Students collaboratively design and build a large, physical board game that simulates real-world conflict scenarios and peaceful resolution strategies. Using cardboard, recycled materials, clay, and art supplies, they craft the game board, event cards, and player pieces representing diverse cultures and perspectives. Integrating Sphero Indi robots or similar, students program these robots to act as 'peacemakers' that move along the board based on players' decisions and outcomes. As part of the Design Cycle, students empathise by researching global and local conflicts, define key issues, ideate peaceful solutions, prototype their board and tech integrations, test play with classmates, and refine both physical and digital elements. This hands-on, hybrid project fosters creativity, critical thinking, and empathy by blending tangible making with interactive technology."
       }
     ],
     "audited": true,
-    "plannerText": "This unit engages Year 5 students in exploring types, causes, and impacts of conflict, with a strong focus on peaceful conflict resolution both locally and globally. Learning experiences include analysing protest songs, picture books, and historical events, as well as creating collaborative digital resources and participating in practical conflict resolution activities."
+    "plannerText": "This unit engages Year 5 students in exploring types, causes, and impacts of conflict, with a strong focus on peaceful conflict resolution both locally and globally. Learning experiences include analysing protest songs, picture books, and historical events, as well as creating collaborative digital resources and participating in practical conflict resolution activities.",
+    "stemRebooted": true
   },
   {
     "ca": "Elsternwick",
@@ -1183,12 +1186,13 @@
         "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "STEM Design Cycle Project: Students use the Design Cycle to prototype a 'communication device' inspired by both Indigenous and colonial technologies (e.g., signal fires, message sticks, semaphore, or early telegraphs). They build, test, and refine their device using Lego Spike Prime, then present how it could have influenced relationships and power dynamics during colonisation."
+        "t": "StoryWalk Time Machine Dioramas",
+        "d": "Students work in teams to design and build interactive 'time machine' dioramas that physically depict a key moment or place from both Indigenous and colonial perspectives. Using recycled materials, cardboard, clay, and paint, each diorama features movable elements (e.g., sliding doors, pop-up figures, rotating scenery) to show change over time. Students embed simple circuits (LEDs, buzzers) powered by Makey Makey or similar kits to highlight areas or trigger recorded audio snippets (using iPads and conductive materials) that share first-person stories or historical facts. The physical build and tech components are fully integrated: for example, touching a clay figure of a settler or Indigenous person plays their story, or opening a flap reveals contrasting environmental impacts. The project follows the Design Cycle: students empathise by researching diverse perspectives, define a moment to portray, ideate interactive features, prototype and test their builds, and reflect on how their diorama communicates the complexities of colonisation."
       }
     ],
     "audited": true,
-    "plannerText": "This unit explores how colonisation has shaped society by examining its impacts, sharing colonisation stories, and analysing effects on people and places from multiple perspectives. Students engage with historical sources, creative writing, mapping, and hands-on projects to understand both Indigenous and colonial viewpoints, fostering empathy and critical thinking about the past, present, and future."
+    "plannerText": "This unit explores how colonisation has shaped society by examining its impacts, sharing colonisation stories, and analysing effects on people and places from multiple perspectives. Students engage with historical sources, creative writing, mapping, and hands-on projects to understand both Indigenous and colonial viewpoints, fostering empathy and critical thinking about the past, present, and future.",
+    "stemRebooted": true
   },
   {
     "ca": "Elsternwick",
