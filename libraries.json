@@ -1,5 +1,63 @@
 {
-  "_meta": {},
+  "_meta": {
+    "_inventory": {
+      "approved": [
+        "Microsoft Teams",
+        "Microsoft Word",
+        "Microsoft PowerPoint",
+        "Microsoft OneNote",
+        "Microsoft Excel",
+        "Microsoft Forms",
+        "Microsoft Sway",
+        "Bee-Bots",
+        "Sphero Indi",
+        "Sphero BOLT",
+        "Lego Spike Essential",
+        "Lego Spike Prime",
+        "Micro:bit",
+        "CoDrone EDU",
+        "Makey Makey",
+        "3D Printers",
+        "ClassVR",
+        "Merge Cubes",
+        "Green Screen",
+        "Podcast Equipment",
+        "iPads",
+        "Seesaw",
+        "Canva",
+        "Book Creator",
+        "Padlet",
+        "GarageBand",
+        "ScratchJR",
+        "Stop Motion Studio",
+        "ChatterPix Kids",
+        "iMovie",
+        "Puppet Pals",
+        "Adobe Express",
+        "Adobe Express Podcasting",
+        "Google Maps",
+        "Google Earth",
+        "Field Guide to Victoria",
+        "Sky Map",
+        "Geoboard",
+        "Clickview",
+        "Epic",
+        "PicCollage",
+        "Brushes Redux",
+        "Word Clouds ABCya",
+        "Sketchbook",
+        "Explain Everything",
+        "Freeform",
+        "Delightex",
+        "Kahoot",
+        "Tinkercad",
+        "Minecraft Education"
+      ],
+      "banned": [
+        "ClassVR"
+      ]
+    }
+  },
   "minecraft": [
     {
       "title": "Ratio Riddles",
@@ -445,13 +503,17 @@
   "microbit": [
     {
       "title": "Barefoot Litter Hunt",
+      "desc": "Two lessons aimed at students aged 9-11. Students use buttons and sensors on the micro:bit to make different images display, are introduced to the concept of variables, and create a device that records details of litter that can be recycled in the local area.",
       "ages": "8+",
-      "subject": "SCIENCE"
+      "subject": "SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=barefoot-litter-hunt"
     },
     {
       "title": "Barefoot Wildlife Animations",
+      "desc": "Two lessons aimed at students aged 7-9. Students create icons and animations by programming the micro:bit's LED display and using the forever block and count-controlled loops.",
       "ages": "8+",
-      "subject": "SCIENCE"
+      "subject": "SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=barefoot-wildlife-animations"
     },
     {
       "title": "Being Active",
@@ -490,13 +552,17 @@
     },
     {
       "title": "Electrical Conductors",
+      "desc": "Five lessons aimed at students aged 8-9 years. Students develop their understanding of flowchart algorithms, selection, inputs and outputs by programming the BBC micro:bit to make a tester for electrical conductivity.",
       "ages": "8+",
-      "subject": "SCIENCE"
+      "subject": "SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=electrical-conductors-unit-of-work"
     },
     {
       "title": "Energy Awareness",
+      "desc": "Gather data about energy use around you using the BBC micro:bit as a simple data logger, then process and analyse the data to make informed decisions about reducing energy usage",
       "ages": "8+",
-      "subject": "SCIENCE"
+      "subject": "SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=energy-awareness"
     },
     {
       "title": "First Lessons with MakeCode",
@@ -510,18 +576,24 @@
     },
     {
       "title": "Health Tech",
-      "ages": "8+",
-      "subject": "SCIENCE"
+      "desc": "Five lessons designed for students aged 11-14 years to follow on from the ?Computing fundamentals? unit. Students work in teams to design and prototype their own health tech innovation.",
+      "ages": "11+",
+      "subject": "SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=health-tech-unit-of-work"
     },
     {
       "title": "Healthy Oceans",
-      "ages": "8+",
-      "subject": "SCIENCE"
+      "desc": "Two longer, advanced projects to explore how wireless networks, smart materials and algorithms can help keep our oceans clean. Design challenges for finding solutions to the Global Goals for sustainable development (SDGs).",
+      "ages": "11+",
+      "subject": "SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=healthy-oceans"
     },
     {
       "title": "Helping Plants Grow",
-      "ages": "8+",
-      "subject": "SCIENCE"
+      "desc": "Two advanced projects to explore how technology can protect plant life and increase food production. Design challenges for finding solutions to the Global Goals for sustainable development (SDGs).",
+      "ages": "11+",
+      "subject": "SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=helping-plants-grow"
     },
     {
       "title": "Musical Micro:bit",
@@ -535,13 +607,17 @@
     },
     {
       "title": "Night Safety",
+      "desc": "Three simple projects to learn about the importance of road safety at night and create wearable devices to help young people ?Be Safe: Be Seen!? Design challenges for finding solutions to the Global Goals for sustainable development (SDGs).",
       "ages": "8+",
-      "subject": "SCIENCE"
+      "subject": "SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=night-safety"
     },
     {
       "title": "Protecting Animals",
+      "desc": "Two simple activities exploring how technology can be used to protect biodiversity in your neighbourhood and the wider world using the BBC micro:bit. Design challenges for finding solutions to the Global Goals for sustainable development (SDGs).",
       "ages": "8+",
-      "subject": "SCIENCE"
+      "subject": "SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=protecting-animals"
     },
     {
       "title": "Sea Creatures",
