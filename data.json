@@ -2404,12 +2404,13 @@
         "d": "Students design and test sustainable product prototypes using Micro:bit sensors to measure environmental impact or product performance. The 'Energy Awareness' lesson (https://microbit.org/lessons/energy-awareness/) guides learners to monitor energy use and consider eco-friendly design, connecting STEM innovation to real-world sustainability challenges."
       },
       {
-        "t": "3D Printer",
-        "d": "Using the Design Cycle, students prototype an animal enrichment toy or feeding device with sustainable materials, iterating their design based on research and testing. They create a digital 3D model (using Tinkercad or similar) and print their final design, then evaluate its impact on animal wellbeing and the environment."
+        "t": "Eco Enrichment Arcade",
+        "d": "Students use the Design Cycle to invent and build interactive animal enrichment games inspired by arcade machines, focusing on sustainability and animal wellbeing. Working in teams, students brainstorm animal needs, sketch ideas, and prototype enrichment devices using recycled cardboard, plastic bottles, fabric, string, and natural materials. They integrate programmable Bee-Bots or Sphero Indi robots as 'moving parts'?for example, a Bee-Bot could trigger a treat dispenser or reveal a hidden toy when an animal interacts with the device. Teams test and refine their creations, documenting iterations in their digital science journals, and reflect on how their material choices impact both function and environmental footprint."
       }
     ],
     "audited": true,
-    "plannerText": "Students investigate how material properties influence product design, research sustainable solutions, and document their learning in digital science journals. They experiment with different materials, compare animal enrichment toys, and ultimately design and prototype their own enrichment device for animals, considering both functionality and environmental impact."
+    "plannerText": "Students investigate how material properties influence product design, research sustainable solutions, and document their learning in digital science journals. They experiment with different materials, compare animal enrichment toys, and ultimately design and prototype their own enrichment device for animals, considering both functionality and environmental impact.",
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -2440,12 +2441,13 @@
         "url": "https://education.minecraft.net/en-us/lessons/build-with-bees-habitat"
       },
       {
-        "t": "Micro:bit",
-        "d": "Students use Micro:bit to create interactive digital stories or dioramas that bring First Nations connections to Country, language, and community to life. The 'Nature Art' lesson (https://microbit.org/lessons/nature-art/) inspires learners to blend coding, art, and storytelling, deepening their appreciation for Indigenous perspectives through creative technology."
+        "t": "Dreamtime Waterways: Interactive River Journey",
+        "d": "Students work in teams to design and build a large-scale, winding river diorama using recycled materials, clay, cardboard, natural objects, and paint, representing the importance of waterways in First Nations cultures. Along the river, students craft significant landmarks, flora, and fauna, inspired by Dreamtime stories and Indigenous art. Integrating Sphero Indi robots, students code cultural storytelling 'journeys'?the robots follow hand-crafted, painted paths along the river, stopping at key points where QR codes or NFC tags (embedded in crafted rocks or trees) trigger audio narrations, student-created digital artworks, or Dreamtime story segments on iPads. The project blends physical making, coding, and digital storytelling, deepening understanding of Indigenous connections to Country and water."
       }
     ],
     "audited": true,
-    "plannerText": "Students explore the diversity, traditions, and connections of First Nations people to Country, language, and community through Dreamtime stories, art, excursions, and hands-on experiences. They create narratives, dioramas, and digital projects to synthesise their learning about Indigenous perspectives and cultural significance."
+    "plannerText": "Students explore the diversity, traditions, and connections of First Nations people to Country, language, and community through Dreamtime stories, art, excursions, and hands-on experiences. They create narratives, dioramas, and digital projects to synthesise their learning about Indigenous perspectives and cultural significance.",
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -2476,12 +2478,13 @@
         "d": "Learners use Micro:bit to map explorers' journeys and simulate the challenges of exploration, coding devices to represent discoveries and obstacles along the way. The 'Data Handling' lesson (https://microbit.org/lessons/data-handling/) enables students to visualise and analyse exploration data, connecting historical inquiry with digital innovation."
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "Using the Design Cycle, students prototype and build a robotic model of an exploration tool (e.g., a compass, rover, or ship) with Lego Spike Prime. They iterate on their designs to solve a specific exploration challenge, documenting each stage in their digital journals."
+        "t": "Time Travelers' Exploration Pods",
+        "d": "Students work in teams to design and build a 'Time Traveler's Exploration Pod'?a creative, transportable model vehicle inspired by both historical and futuristic exploration methods. Using cardboard, recycled materials, wheels, fabric, and craft supplies, students prototype their pod to represent a chosen era or style of exploration (e.g., ancient sea voyages, space travel, desert caravans). They then integrate programmable Sphero Indi robots as the 'engine' of their pods, coding routes that represent a famous explorer's journey mapped out on a large collaborative floor map. The pods must physically carry a small 'artifact' (clay or 3D-printed token) from one destination to another, simulating the movement and challenges of real explorers. Throughout the Design Cycle, students ideate, sketch, prototype, test, and refine both their vehicle and code, reflecting on how exploration tools have evolved and the obstacles faced across time."
       }
     ],
     "audited": true,
-    "plannerText": "This unit immerses students in the concept of exploration, focusing on why people explore, how exploration has changed over time, and the consequences of these journeys. Students investigate historical and modern explorers, engage in mapping and narrative writing, and present their findings through a variety of digital and creative formats."
+    "plannerText": "This unit immerses students in the concept of exploration, focusing on why people explore, how exploration has changed over time, and the consequences of these journeys. Students investigate historical and modern explorers, engage in mapping and narrative writing, and present their findings through a variety of digital and creative formats.",
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -2511,12 +2514,13 @@
         "d": "Students record video interviews with family members or community leaders about their beliefs and traditions using the iPad camera. They upload and annotate these interviews in Seesaw, tagging key vocabulary and reflecting on how beliefs shape identity."
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "Design Cycle STEM Challenge: Students use the Design Cycle to prototype a 'Celebration Machine' with Lego Spike Prime, programmed to perform a unique movement or display for a chosen religious or cultural festival. They document their process and iterations in a digital journal, reflecting on how technology can celebrate and respect diversity."
+        "t": "Beliefs Bridges: Connecting Cultures Construction",
+        "d": "Students work in teams to research different world religions and spiritual beliefs, identifying key symbols, artefacts, and values. Using recycled materials (cardboard, fabric, string, clay, etc.), each group physically builds a symbolic 'island' representing a belief system?incorporating meaningful structures, colours, and objects. Next, teams collaboratively design and construct 'bridges' (using craft sticks, LEGO, or connectors) that link the islands, symbolizing shared values or respectful connections between beliefs. The bridges feature simple programmable elements: students embed Sphero Indi cars or similar robots, coding them with colour tiles to travel across the bridges and stop at key points where students record short explanations (using iPads to trigger audio via QR codes or NFC tags attached to the bridges). This hands-on project blends physical creativity, digital storytelling, and robotics, helping students visualize and celebrate the diversity and interconnectedness of human beliefs."
       }
     ],
     "audited": true,
-    "plannerText": "This unit explores how people's beliefs contribute to the diversity of human life, focusing on spiritual and religious beliefs, similarities and differences among religions, and the impact of these beliefs on human diversity. Students engage in gallery walks, virtual tours, research, and creative projects to deepen understanding and foster respect for different worldviews."
+    "plannerText": "This unit explores how people's beliefs contribute to the diversity of human life, focusing on spiritual and religious beliefs, similarities and differences among religions, and the impact of these beliefs on human diversity. Students engage in gallery walks, virtual tours, research, and creative projects to deepen understanding and foster respect for different worldviews.",
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
