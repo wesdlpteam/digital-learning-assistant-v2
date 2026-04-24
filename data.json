@@ -1827,12 +1827,13 @@
         "d": "Students use Puppet Pals to create short animated skits that model positive conflict resolution, empathy, and collaboration, using custom characters to act out real-life playground or classroom scenarios discussed in the unit."
       },
       {
-        "t": "Bee-Bots",
-        "d": "Design Cycle STEM Project: Students work in small groups to design and build a 'Wellbeing Maze' for Bee-Bots. Each section of the maze represents a different emotion or social situation. Students program the Bee-Bot to navigate through the maze, stopping at each section to discuss strategies for managing that feeling or scenario, iterating on their maze design based on peer feedback."
+        "t": "Brain-Boosting Wellbeing Adventure Board",
+        "d": "Students work in teams to design and build a large, interactive board game that represents a journey through different emotions and wellbeing challenges. Using cardboard, recycled materials, clay, and craft supplies, they create 3D spaces on the board for key areas like 'Calm Cove', 'Worry Woods', and 'Kindness Castle', each inspired by parts of the brain and emotional responses. Students craft movable game pieces (e.g., clay avatars of themselves) and physically construct action cards and tokens. Integrating tech, students use Sphero Indi cars as 'emotion explorers'?programming simple color code paths for the cars to travel between board locations, triggering actions (like sharing a wellbeing strategy or acting out a scenario) when Indi reaches a new area. The project follows the Design Cycle: empathize (reflect on emotions and wellbeing needs), define (choose key board spaces), ideate (brainstorm board features and challenges), prototype (build and decorate), and test (play and refine the game together, practicing strategies for wellbeing and relationships)."
       }
     ],
     "audited": true,
-    "plannerText": "This yearlong unit explores how thoughts, feelings, and actions shape relationships and wellbeing. Students investigate the function of different parts of the brain, identify situations that trigger a range of emotions, and develop actions and strategies to support their own and others' wellbeing through hands-on, reflective, and collaborative activities."
+    "plannerText": "This yearlong unit explores how thoughts, feelings, and actions shape relationships and wellbeing. Students investigate the function of different parts of the brain, identify situations that trigger a range of emotions, and develop actions and strategies to support their own and others' wellbeing through hands-on, reflective, and collaborative activities.",
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -1862,12 +1863,13 @@
         "d": "Students design vibrant story posters using Canva's visual tools, experimenting with layout, colour, and imagery to communicate a story's mood or key message. They can use the 'Remove Background' feature to insert themselves as characters, making the storytelling experience personal and immersive."
       },
       {
-        "t": "Bee-Bots",
-        "d": "Using the Design Cycle, students physically prototype a 'Story Journey Map' on the floor, then program Bee-Bots to travel through the sequence of a story (beginning, middle, end). Students design and build obstacles or scenery for each story part, iterating on their map and code to ensure the Bee-Bot accurately follows the narrative path, reinforcing sequencing and spatial storytelling."
+        "t": "Shadow Story Theatres",
+        "d": "Students use the Design Cycle to create their own interactive shadow theatres that bring original stories to life. First, they brainstorm and script a short narrative, then design and craft layered backgrounds, characters, and props using cardboard, tissue paper, recycled plastics, and popsticks. To animate their stories, students integrate simple robotics: they build crank or pulley mechanisms (using LEGO, gears, or recycled materials) to move characters, and use a Sphero Indi or Bee-Bot fitted with a detachable 'light carriage' to project light through their scenes. As the robot travels along a student-designed path, it illuminates different parts of the theatre, revealing new story elements and casting dynamic shadows. Students film their performances with iPads, reflecting on how light, movement, and physical design combine to express meaning in storytelling."
       }
     ],
     "audited": true,
-    "plannerText": "This unit immerses Year 2 students in exploring how storytellers use different methods to convey meaning, with a strong focus on visual, oral, and multimodal storytelling. Activities include author and illustrator investigations, digital story creation, and hands-on experiences that encourage students to experiment with various storytelling techniques and reflect on how stories are constructed and shared."
+    "plannerText": "This unit immerses Year 2 students in exploring how storytellers use different methods to convey meaning, with a strong focus on visual, oral, and multimodal storytelling. Activities include author and illustrator investigations, digital story creation, and hands-on experiences that encourage students to experiment with various storytelling techniques and reflect on how stories are constructed and shared.",
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -1897,12 +1899,13 @@
         "d": "Groups design vibrant, interactive posters in Canva that illustrate the components and connections within a familiar system (e.g. the school library's Dewey Decimal system or the evacuation process). They use Canva's 'Remove Background' feature to layer images and highlight interdependence."
       },
       {
-        "t": "Bee-Bots",
-        "d": "Using the Design Cycle, students collaboratively design and build a physical model of a real-world system (such as a lunch delivery route or a recycling process) on a large mat. They then program Bee-Bots to navigate the system, iteratively testing and refining their pathways to ensure each step is in the correct sequence and the system functions smoothly."
+        "t": "System-in-a-Box: Interactive Chain Reaction Machines",
+        "d": "Students work in teams to design, build, and document a physical chain reaction (Rube Goldberg-style) machine that demonstrates how a sequence of processes enables a system to function. Using recycled materials, cardboard, marbles, ramps, levers, and connectors, students create a tangible system where each part triggers the next. They integrate a Sphero Indi or Bee-Bot as a moving component that activates or is activated by their machine (e.g., the robot knocks over a domino line, which triggers a ball to roll). Each group maps their system, labels each step, and records a video tour using iPads, explaining how every part interconnects to achieve a final goal (e.g., ringing a bell or raising a flag), highlighting interdependence and the impact of each part. This project merges digital robotics with hands-on building to bring the concept of systems to life."
       }
     ],
     "audited": true,
-    "plannerText": "This unit explores how a sequence of processes enables systems to function, with students investigating, mapping, and presenting real-world systems from daily routines to school operations. Learners engage in hands-on activities, collaborative research, and creative presentations to understand interdependence, process, and the impact of each part within a system."
+    "plannerText": "This unit explores how a sequence of processes enables systems to function, with students investigating, mapping, and presenting real-world systems from daily routines to school operations. Learners engage in hands-on activities, collaborative research, and creative presentations to understand interdependence, process, and the impact of each part within a system.",
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -1933,12 +1936,13 @@
         "url": "https://education.minecraft.net/en-us/lessons/radical-recycling"
       },
       {
-        "t": "Bee-Bots Design Cycle Challenge",
-        "d": "In the Makerspace, students use the Design Cycle to prototype and test a 'Recycling Robot Route' with Bee-Bots. They design obstacle courses representing different material types and program Bee-Bots to navigate and 'sort' materials into the correct recycling bins, iterating on their designs for efficiency and accuracy."
+        "t": "Material Mash-Up: Sensory Sorting Robots",
+        "d": "Students work in teams to design and build imaginative 'material sorting stations' using recycled boxes, tubes, and everyday items. Each station features a physical track or ramp system that channels different types of materials (e.g., paper, plastic, metal, fabric) into sorting zones. Students program a Sphero Indi robot (or similar) with colour-coded paths and attach simple custom bumpers or scoops made from craft materials. The challenge: as the Indi travels along the track, it pushes or shuttles real material samples into the correct sorting zones. Students prototype, test, and refine both their physical stations and the robot's path, using the Design Cycle. The project culminates in a class showcase where groups demonstrate their creative, tech-integrated recycling solutions and explain material properties and sustainability connections."
       }
     ],
     "audited": true,
-    "plannerText": "This unit immerses Year 2 students in hands-on investigations of material properties, physical changes, and sustainable practices. Through experiments, cultural connections, and creative projects, students explore how materials can be reused and recycled, culminating in innovative showcases and real-world action for sustainability."
+    "plannerText": "This unit immerses Year 2 students in hands-on investigations of material properties, physical changes, and sustainable practices. Through experiments, cultural connections, and creative projects, students explore how materials can be reused and recycled, culminating in innovative showcases and real-world action for sustainability.",
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
