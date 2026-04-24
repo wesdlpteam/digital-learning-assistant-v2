@@ -27,8 +27,8 @@
         "d": "Students use PicCollage on iPads to visually sequence the beginning, middle, and end of a familiar or original story using photos of their play, drawings, or props. This supports understanding of story structure and provides a visual, tactile way to share stories with peers."
       },
       {
-        "t": "Story Path Adventure: Build and Code Your Own Tale",
-        "d": "Students work in small groups to create a 3D story path on large cardboard bases, using recycled materials, clay, and craft supplies to build key scenes from a chosen or original story (e.g., a forest, castle, or animal habitat). Each scene features physical props, characters, and obstacles. Students then use Bee-Bots or Sphero Indi robots as 'story travelers,' decorating them as main characters. They collaboratively plan and code the robot's journey through the story path, stopping at each scene to act out or retell that part of the story, using puppets or props they have made. The project follows the Design Cycle: students imagine, plan, build, test, and improve their story paths and robot routes, emphasizing creativity, problem-solving, and multimodal storytelling."
+        "t": "Story Journey Maps with Bee-Bot",
+        "d": "Students collaboratively design and build a large, tactile story map on the floor using cardboard, fabric scraps, recycled materials, and natural elements. Each section of the map represents a key scene from a familiar story or their own invented tale. Students craft 3D props and set pieces (e.g., trees, houses, bridges) to bring scenes to life. Using Bee-Bots, students program simple routes that 'travel' through the story in sequence, retelling the narrative as the Bee-Bot visits each scene. Students decorate, build, and test the map, iterating on their designs based on how well the Bee-Bot can move through the story. This project blends storytelling, coding, and hands-on making, encouraging creativity and multimodal expression."
       }
     ],
     "audited": true,
@@ -63,8 +63,8 @@
         "d": "Guide students to create vibrant visual collages in PicCollage representing the different roles and connections in their school community, using photos, stickers, and drawings. These can be printed or shared digitally to celebrate community diversity."
       },
       {
-        "t": "Community Helpers Interactive Costume Parade",
-        "d": "Students use the Design Cycle to research and select a community role within the school (e.g., crossing guard, gardener, librarian). They collaboratively design and physically build wearable costumes and props for their chosen role using recycled materials, fabric scraps, cardboard, and craft supplies. Integrating tech, students embed simple programmable LED badges (e.g., using battery-powered LED stickers or pre-made micro:bit badges) that light up or flash when pressed, representing their role's special tools or signals (e.g., a crossing guard's stop sign lights up). The project culminates in a parade where students role-play their community helper, explaining their role and demonstrating their interactive costume to peers and families."
+        "t": "Our School Community Role Robots",
+        "d": "Students work in small groups to select a community role within the school (e.g., librarian, gardener, principal, crossing guard). Using recycled materials, cardboard, and craft supplies, they collaboratively design and build a large, wearable 'role costume' or puppet representing that person?including key tools or symbols (e.g., a watering can for the gardener, a book for the librarian). Next, students integrate a Sphero Indi or similar robot into their creation by designing a simple mechanism (e.g., attaching the robot to a rolling platform or inside a movable cart) so the puppet or costume can 'move' around a mapped-out mini school environment. Students program the robot using color tiles or basic coding to visit different 'zones' (e.g., library, playground, garden), role-playing the responsibilities of their community member at each stop. This hands-on project blends digital robotics, creative construction, and dramatic play to help students understand and embody the roles that make up their school community."
       }
     ],
     "audited": true,
@@ -100,7 +100,7 @@
       },
       {
         "t": "Weather Wonder Machines",
-        "d": "Prep students explore the scientific method by designing and building their own 'weather machines'?interactive models that demonstrate weather phenomena (like rain, wind, or sunshine). Using recycled materials, cardboard, fabric, and craft supplies, students physically construct devices such as rain simulators (with water droppers and sponges), wind makers (fan blades with straws and paper), or sunshine reflectors (foil and mirrors). They then integrate simple technology by attaching Sphero Indi robots or Bee-Bots to trigger moving parts, lights, or sound effects (using colored tiles, basic circuits, or push-button recorders) as part of their machine's demonstration. The project follows the Design Cycle: students investigate real weather, plan their machine, build prototypes, test how well their creation simulates weather, and share observations and improvements. This project combines hands-on making, scientific exploration, and age-appropriate robotics for a creative, inquiry-driven experience."
+        "d": "Students work in teams to design and build imaginative 'weather machines' that demonstrate a weather phenomenon of their choice (like rain, wind, or snow). Using recycled materials, cardboard, fabric scraps, and craft supplies, students physically construct their machines with moving parts (e.g., spinning clouds, falling raindrops). They then use Sphero Indi robots as interactive elements: for example, placing Indi on a track that triggers parts of the machine to move (using levers, ramps, or simple pulleys) as it travels through the weather scene. Students follow the Design Cycle: they investigate real weather, brainstorm, sketch, prototype, test, and improve their creations. Finally, students present how their hybrid machine models the chosen weather, sharing their predictions and conclusions about how weather works."
       }
     ],
     "audited": true,
@@ -145,13 +145,12 @@
         "d": "Guide students to code simple animations in ScratchJr that show two characters navigating a playground scenario?such as sharing, resolving a conflict, or inviting someone to play?demonstrating how positive relationships impact wellbeing. Students can narrate their stories and share them with peers."
       },
       {
-        "t": "Friendship Feelings Garden",
-        "d": "Students collaboratively design and build a large 3D 'garden' using recycled boxes, cardboard tubes, felt, and natural materials. Each student crafts a unique 'emotion flower' or 'friendship creature' representing a feeling or positive action in relationships. Using Sphero Indi cars, children code simple colour path patterns that guide their Indi from one creation to another, telling a story of building friendships and resolving conflicts. As the Indi travels, students role-play scenarios at each stop, connecting physical artefacts to emotions and choices. The project integrates crafting, storytelling, and basic coding in a hands-on, tangible environment, reinforcing how our actions grow positive relationships."
+        "t": "Bee-Bots",
+        "d": "STEM Design Cycle Project: Challenge students to design and build a 'Friendship Maze' using classroom materials. Students program Bee-Bots to travel through the maze, stopping at stations representing acts of kindness or friendship (e.g., 'Say something kind,' 'Help a friend'). Students iterate on their maze design and reflect on how each stop represents ways relationships support wellbeing."
       }
     ],
     "audited": true,
-    "plannerText": "The Prep 'Who We Are' unit explores how relationships impact wellbeing, focusing on developing friendships, understanding how those around us influence our behaviours, and recognising balance in our interactions. Key activities include read-alouds, oral discussions, drawing emotions, role-play, and creating an essential agreement to foster positive classroom relationships.",
-    "stemRebooted": true
+    "plannerText": "The Prep 'Who We Are' unit explores how relationships impact wellbeing, focusing on developing friendships, understanding how those around us influence our behaviours, and recognising balance in our interactions. Key activities include read-alouds, oral discussions, drawing emotions, role-play, and creating an essential agreement to foster positive classroom relationships."
   },
   {
     "ca": "Elsternwick",
