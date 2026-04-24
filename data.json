@@ -27,8 +27,8 @@
         "d": "Students use PicCollage on iPads to visually sequence the beginning, middle, and end of a familiar or original story using photos of their play, drawings, or props. This supports understanding of story structure and provides a visual, tactile way to share stories with peers."
       },
       {
-        "t": "Story Journey Maps with Bee-Bots",
-        "d": "Students collaboratively design and build large, tactile story maps using cardboard, fabric, recycled materials, and craft supplies to represent scenes or settings from a familiar or original story. They then program Bee-Bots to travel through the map, stopping at key points to retell or act out parts of the story using handmade props, puppets, or costumes. This hands-on project integrates digital coding with physical making, encourages sequencing, and allows students to express stories in creative, multimodal ways."
+        "t": "Storytelling Adventure Maps",
+        "d": "Students work in small groups to design and build a large, tactile 'adventure map' for a familiar or original story using cardboard, fabric scraps, recycled materials, and craft supplies. Each group creates 3D settings (forests, houses, rivers, caves) and props that represent key story locations or events. They then program a Bee-Bot or Sphero Indi to travel across the map, stopping at each location to trigger a storytelling moment?students use puppets, costumes, or their own voices to narrate or act out that part of the story. This project combines hands-on building, collaborative storytelling, and basic robotics, allowing students to express stories physically and digitally while practicing sequencing and creative problem-solving through the Design Cycle."
       }
     ],
     "audited": true,
@@ -63,8 +63,8 @@
         "d": "Guide students to create vibrant visual collages in PicCollage representing the different roles and connections in their school community, using photos, stickers, and drawings. These can be printed or shared digitally to celebrate community diversity."
       },
       {
-        "t": "Our Community Helper Robots",
-        "d": "Students work in small groups to select a school community role (e.g., librarian, gardener, crossing guard). Using recycled materials, cardboard, fabric scraps, and craft supplies, each group designs and builds a physical model of a 'helper robot' that could assist with that role. They then use Sphero Indi robots as the 'engine'?integrating the robot into their creation so it can move, carry, or demonstrate a simple task related to the chosen role (e.g., delivering books, watering plants, carrying lunch orders). Students prototype, test, and refine their creations following the Design Cycle: empathize (learn about the role), define, ideate, prototype (build), test (demonstrate movement/task), and reflect. The project culminates with a showcase where students explain how their hybrid robot helps the community and what they learned about teamwork and problem-solving."
+        "t": "Community Helper Robots",
+        "d": "Students work in small groups to select a school community role (e.g., librarian, gardener, crossing guard). Using recycled materials, craft supplies, and simple mechanisms (wheels, levers), each group builds a physical model of their chosen helper and their workspace. They then integrate a Sphero Indi robot as the 'helper'?decorating it to match their creation?and design a hands-on challenge course using cardboard and props that simulates a real task (e.g., delivering books, watering plants, helping students cross a 'street'). Students use color tiles to code the Indi to complete the helper's job, iterating on both the physical course and their coding as they test and refine their designs. The process follows the Design Cycle: Imagine (choose a role and brainstorm), Plan (sketch and gather materials), Create (build and code), and Improve (test and tweak)."
       }
     ],
     "audited": true,
@@ -99,8 +99,8 @@
         "d": "Have students use ScratchJr to visually sequence the steps of a science experiment (e.g., the process of melting ice or rolling objects down ramps). They can animate simple characters to model 'predict, test, observe, record,' reinforcing the scientific process through coding and storytelling."
       },
       {
-        "t": "Weather Wonder Machines",
-        "d": "Prep students work in teams to design and build imaginative 'weather machines' that demonstrate a weather phenomenon (like rain, wind, or snow). Using recycled materials, cardboard, popsticks, and craft supplies, students physically construct their machines?for example, a rainmaker with moving parts or a wind machine with spinning elements. Then, using Sphero Indi cars, students program simple color-coded paths that trigger parts of their weather machine (e.g., Indi rolls over a color tile to activate a lever or spin a pinwheel). Students iterate on their designs using the Design Cycle: they plan, build, test, and improve their machines, observing how changes affect the outcomes, and record their findings with teacher support. This project blends hands-on making, basic programming, and scientific observation in a playful, creative way."
+        "t": "Weather Wonders Machine",
+        "d": "Students work in teams to design and build imaginative 'weather machines' that demonstrate a chosen weather phenomenon (rain, wind, or snow) using recycled materials, cardboard tubes, fabric, and craft supplies. For example, a rain machine might use a hand-cranked mechanism to drop 'raindrops' (beads or pom-poms), while a wind machine could use a fan made from paper and a small motor (with adult help). Once built, students use Bee-Bots to 'deliver' weather reports by programming them to travel between different weather stations on a large, collaboratively painted map. Students test, refine, and present how their machines mimic real weather, documenting their process with photos and simple voice recordings on iPads."
       }
     ],
     "audited": true,
@@ -145,8 +145,8 @@
         "d": "Guide students to code simple animations in ScratchJr that show two characters navigating a playground scenario?such as sharing, resolving a conflict, or inviting someone to play?demonstrating how positive relationships impact wellbeing. Students can narrate their stories and share them with peers."
       },
       {
-        "t": "Friendship Emotion Garden",
-        "d": "Students collaboratively design and build a large 3D 'Emotion Garden' using cardboard, recycled materials, and craft supplies. Each student creates a unique flower or plant representing a feeling or friendship quality (e.g., kindness, sharing, listening) using physical materials. Then, using Sphero Indi cars, students program simple color-coded paths between the flowers to show how positive actions and emotions connect people in their classroom community. The design cycle is followed as students empathise (discuss feelings and friendship qualities), define (choose an emotion/quality to represent), ideate (sketch and plan their plant), prototype (build with materials), and test (navigate Sphero Indi cars through their garden, adjusting paths and plant placement to demonstrate balanced, positive relationships)."
+        "t": "Friendship Feelings Playground",
+        "d": "Students work in small groups to design and build a miniature playground using recycled materials, cardboard, popsticks, and clay, with each playground area representing a different feeling or positive social interaction (e.g., 'Kindness Slide', 'Sharing Sandbox', 'Helping Hand Swing'). Once constructed, students use Sphero Indi cars decorated as 'Friend Bots' to navigate the playground, coding simple colour paths that represent different friendship scenarios (e.g., Indi drives to the 'Kindness Slide' when students code a path for helping a friend). The project follows the Design Cycle: students empathise by discussing playground experiences, ideate playground zones for positive relationships, prototype and build, test their Indi's journey, and reflect on how these spaces and actions foster wellbeing and friendships."
       }
     ],
     "audited": true,
