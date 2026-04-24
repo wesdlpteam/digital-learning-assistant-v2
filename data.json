@@ -1384,12 +1384,13 @@
         "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
       },
       {
-        "t": "3D Printers",
-        "d": "Using the Design Cycle, students select a significant event and design a physical artifact or monument that symbolises its impact on a place (e.g., a model of the Channel Tunnel, a memorial for a migration wave, or a symbolic object from the Black Death). They prototype in Tinkercad, print their models, and present their design thinking process, connecting physical making with historical inquiry."
+        "t": "Migration Journey Board Game",
+        "d": "Students work in teams to design and build a large-scale, interactive board game that simulates the journey of individuals or groups during a significant migration, discovery, or historical milestone. Using recycled cardboard, clay, fabric scraps, and art supplies, they craft the game board with physical 3D terrain, landmarks, and obstacles representing real-world challenges. Students integrate Sphero Indi robots as 'player pieces' that move across the board, programmed via iPads to respond to color-coded tiles and sensors representing decision points, events, or cultural encounters. Throughout the Design Cycle, students research their chosen event, prototype physical components, iterate rules and mechanics, and code Sphero Indis to interact with the board, culminating in a playable experience that demonstrates the interconnectedness and impact of historical journeys on societies and places."
       }
     ],
     "audited": true,
-    "plannerText": "In this unit, students investigate how significant events?such as migrations, discoveries, or historical milestones?shape places and societies. They explore personal and global histories, analyse the causes and impacts of these events, and conduct personal inquiries into events of interest, culminating in informative reports and creative presentations that demonstrate their understanding of the interconnectedness of individuals, groups, and significant events."
+    "plannerText": "In this unit, students investigate how significant events?such as migrations, discoveries, or historical milestones?shape places and societies. They explore personal and global histories, analyse the causes and impacts of these events, and conduct personal inquiries into events of interest, culminating in informative reports and creative presentations that demonstrate their understanding of the interconnectedness of individuals, groups, and significant events.",
+    "stemRebooted": true
   },
   {
     "ca": "Elsternwick",
@@ -1420,12 +1421,13 @@
         "d": "Run a 'Perception Challenge' where students use Seesaw to capture and share photos or short videos representing how their perceptions have changed over time. Peers can comment and ask questions, fostering dialogue about the diversity of influences in the cohort."
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "STEM Design Cycle Project: Students use Lego Spike Prime to prototype a 'Change Machine'?a physical model that metaphorically represents how different influences (represented by sensors, motors, and coded sequences) interact to shape personal identity. Students document their design process, test iterations, and present how their machine symbolises the evolving sense of self."
+        "t": "Identity Time Capsule Robots",
+        "d": "Students design and build a physical 'time capsule' sculpture that visually represents their evolving identity, using recycled materials, cardboard, and craft supplies. Embedded within each capsule is a simple programmable robot (e.g., Sphero Indi or similar), which students code to perform a movement or light sequence that symbolises an aspect of their personal journey or influences. The robot is physically integrated?hidden or revealed through a crafted mechanism (e.g., a door, drawer, or rotating base)?and triggers when peers interact with the sculpture. The project follows the Design Cycle: students investigate personal identity themes, plan capsule designs, prototype with materials, program the robot's sequence, test mechanisms, and present how both the physical and digital elements express 'Who We Are'. This merges hands-on building, coding, and reflective storytelling in a unique, tangible artefact."
       }
     ],
     "audited": true,
-    "plannerText": "The unit 'Who We Are' explores how personal changes and external influences contribute to students' evolving sense of self. Key activities include digital identity mapping, collaborative reflection on influences, creative storytelling, and inquiry into how perceptions are shaped over time. The unit is highly transdisciplinary, connecting personal, social, and emotional learning with digital creation and peer feedback."
+    "plannerText": "The unit 'Who We Are' explores how personal changes and external influences contribute to students' evolving sense of self. Key activities include digital identity mapping, collaborative reflection on influences, creative storytelling, and inquiry into how perceptions are shaped over time. The unit is highly transdisciplinary, connecting personal, social, and emotional learning with digital creation and peer feedback.",
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -1455,12 +1457,13 @@
         "d": "Students use Stop Motion Studio to create short animations that depict characters experiencing and managing different emotions. By sequencing scenes and adding narration, they visually demonstrate strategies for emotional regulation and reflect on how feelings influence behaviour and relationships."
       },
       {
-        "t": "Bee-Bots",
-        "d": "STEM Design Cycle Project: Students design and create a 'Feelings Maze' on a large mat, with each section representing a different emotion (happy, sad, angry, calm). Using the Design Cycle, they plan, build, and test routes for Bee-Bots to travel to different emotions, discussing scenarios that might lead to each feeling and how to navigate back to 'calm'."
+        "t": "Emotion Expression Puppets & Interactive Stage",
+        "d": "Students work in teams to design and build hand or stick puppets representing different emotions using felt, recycled fabric, cardboard tubes, and craft materials. They also collaboratively construct a simple puppet stage from boxes and decorate it with emotion-themed backgrounds. Using iPads, students record short audio clips expressing different feelings (e.g., happy, sad, excited, worried) in their own voices. Each puppet is fitted with a small, color-coded button (made from cardboard and colored paper) that, when pressed, triggers the corresponding audio clip via a simple Bluetooth speaker (with teacher support). The class then uses their puppets and stage to perform short skits about managing emotions, blending creative making, digital storytelling, and hands-on building to deepen emotional understanding."
       }
     ],
     "audited": true,
-    "plannerText": "This Prep HWEO unit explores how emotions influence wellbeing, with students learning to identify, interpret, and manage their feelings through activities like Colour Monster art, emotion discussions, and reflection on how behaviour affects relationships. The unit integrates visual arts, literature, and music to help students express and understand emotions, culminating in creative and collaborative tasks that support emotional intelligence and positive classroom culture."
+    "plannerText": "This Prep HWEO unit explores how emotions influence wellbeing, with students learning to identify, interpret, and manage their feelings through activities like Colour Monster art, emotion discussions, and reflection on how behaviour affects relationships. The unit integrates visual arts, literature, and music to help students express and understand emotions, culminating in creative and collaborative tasks that support emotional intelligence and positive classroom culture.",
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -1490,12 +1493,13 @@
         "d": "Students code simple animations showing the transformation of a food product (e.g., a seed growing into a plant, harvested, and turned into bread). This introduces basic sequencing and computational thinking while reinforcing the unit's central idea."
       },
       {
-        "t": "Bee-Bots",
-        "d": "Design Cycle STEM Project: Students design and build a 'food journey' mat, mapping out the stages a product goes through (e.g., farm, factory, shop, home). Using Bee-Bots, they program routes to simulate the journey of a product, iterating on their mat design and routes as they test and refine their ideas."
+        "t": "Food Journey Conveyor Creations",
+        "d": "Students work in groups to design and build a hands-on conveyor system using recycled cardboard, popsticks, tubes, and simple craft materials to represent the journey of food from farm to table. They create physical models of food items (like clay fruits, vegetables, or bread), then use Bee-Bots programmed with simple routes to 'transport' these items along their custom-built conveyor paths through different stations: farm, processing, market, home. Each station is decorated and labeled by students, who collaboratively decide how food changes at each step. The project follows the Design Cycle: students investigate food journeys, plan their conveyor layouts, build and decorate stations, test Bee-Bot routes, and reflect on how food transforms before reaching their plates."
       }
     ],
     "audited": true,
-    "plannerText": "Prep students investigate where food comes from, how it changes for different purposes, and develop an appreciation for food. Activities include planting seeds, tracing food origins, creating flowcharts, visiting a farm, and exploring food waste and composting, all to understand the process of change in the products people use."
+    "plannerText": "Prep students investigate where food comes from, how it changes for different purposes, and develop an appreciation for food. Activities include planting seeds, tracing food origins, creating flowcharts, visiting a farm, and exploring food waste and composting, all to understand the process of change in the products people use.",
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
