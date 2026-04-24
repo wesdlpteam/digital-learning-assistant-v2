@@ -27,8 +27,8 @@
         "d": "Students use PicCollage on iPads to visually sequence the beginning, middle, and end of a familiar or original story using photos of their play, drawings, or props. This supports understanding of story structure and provides a visual, tactile way to share stories with peers."
       },
       {
-        "t": "Story Path Adventure Maps",
-        "d": "Students work in groups to design and build a large 3D map or scene from a familiar or original story using recycled cardboard, fabric scraps, popsticks, clay, and craft materials. They create physical story settings (forests, castles, rivers) and key story elements (characters, obstacles) as movable pieces. Using Bee-Bots, students program simple story journeys?navigating the Bee-Bot as a main character through the map to retell or invent story events. Along the way, students pause the Bee-Bot at key locations to act out scenes, use props, or record short story narrations with iPads. This project follows the Design Cycle: empathize (choose a story), define (plan the map), ideate (brainstorm features), prototype (build and test), and reflect (share and improve the adventure map and story journey)."
+        "t": "Story Path Adventure: Build and Code Your Own Tale",
+        "d": "Students work in small groups to create a 3D story path on large cardboard bases, using recycled materials, clay, and craft supplies to build key scenes from a chosen or original story (e.g., a forest, castle, or animal habitat). Each scene features physical props, characters, and obstacles. Students then use Bee-Bots or Sphero Indi robots as 'story travelers,' decorating them as main characters. They collaboratively plan and code the robot's journey through the story path, stopping at each scene to act out or retell that part of the story, using puppets or props they have made. The project follows the Design Cycle: students imagine, plan, build, test, and improve their story paths and robot routes, emphasizing creativity, problem-solving, and multimodal storytelling."
       }
     ],
     "audited": true,
@@ -63,8 +63,8 @@
         "d": "Guide students to create vibrant visual collages in PicCollage representing the different roles and connections in their school community, using photos, stickers, and drawings. These can be printed or shared digitally to celebrate community diversity."
       },
       {
-        "t": "Community Helper Robots",
-        "d": "Students work in teams to design and build a model of a community space (e.g., school, park, library) using recycled materials, cardboard, and craft supplies. Each group chooses a 'community helper' role (e.g., teacher, gardener, crossing guard) and invents a simple robot or moving mechanism (using Sphero Indi or simple motor kits) that performs a helpful task in their space. For example, a Sphero Indi decorated as a gardener that 'waters' paper plants, or a cardboard crossing guard with a moving arm powered by a small motor. Students follow the Design Cycle: empathize (interview staff about their roles), define (identify problems helpers solve), ideate (sketch solutions), prototype (build models and robots), test (demonstrate how their robot helps), and share (present to the class). This project blends digital robotics with hands-on making, deepening understanding of roles in the community."
+        "t": "Community Helpers Interactive Costume Parade",
+        "d": "Students use the Design Cycle to research and select a community role within the school (e.g., crossing guard, gardener, librarian). They collaboratively design and physically build wearable costumes and props for their chosen role using recycled materials, fabric scraps, cardboard, and craft supplies. Integrating tech, students embed simple programmable LED badges (e.g., using battery-powered LED stickers or pre-made micro:bit badges) that light up or flash when pressed, representing their role's special tools or signals (e.g., a crossing guard's stop sign lights up). The project culminates in a parade where students role-play their community helper, explaining their role and demonstrating their interactive costume to peers and families."
       }
     ],
     "audited": true,
@@ -100,7 +100,7 @@
       },
       {
         "t": "Weather Wonder Machines",
-        "d": "Students use recycled materials, cardboard, popsticks, and craft supplies to design and build their own 'Weather Wonder Machine'?a physical contraption that demonstrates a weather phenomenon (like rain, wind, or snow). For example, students might create a rainmaker with moving parts or a wind spinner. They then integrate Sphero Indi or Bee-Bot by programming it to travel between different weather stations they have built, triggering simple actions (like knocking over a 'cloud' to release 'rain' beads). The project follows the Design Cycle: students imagine a weather machine, plan and sketch, build prototypes, test how their machine works with the robot interaction, and refine based on what they observe. This merges hands-on making, digital robotics, and scientific inquiry about weather in a playful, creative way."
+        "d": "Prep students explore the scientific method by designing and building their own 'weather machines'?interactive models that demonstrate weather phenomena (like rain, wind, or sunshine). Using recycled materials, cardboard, fabric, and craft supplies, students physically construct devices such as rain simulators (with water droppers and sponges), wind makers (fan blades with straws and paper), or sunshine reflectors (foil and mirrors). They then integrate simple technology by attaching Sphero Indi robots or Bee-Bots to trigger moving parts, lights, or sound effects (using colored tiles, basic circuits, or push-button recorders) as part of their machine's demonstration. The project follows the Design Cycle: students investigate real weather, plan their machine, build prototypes, test how well their creation simulates weather, and share observations and improvements. This project combines hands-on making, scientific exploration, and age-appropriate robotics for a creative, inquiry-driven experience."
       }
     ],
     "audited": true,
@@ -145,8 +145,8 @@
         "d": "Guide students to code simple animations in ScratchJr that show two characters navigating a playground scenario?such as sharing, resolving a conflict, or inviting someone to play?demonstrating how positive relationships impact wellbeing. Students can narrate their stories and share them with peers."
       },
       {
-        "t": "Friendship Feelings Playground",
-        "d": "Students work in small groups to design and build a miniature playground using recycled materials, cardboard, popsticks, and clay. Each playground feature (e.g., swings, slides, bridges) represents a different friendship quality or feeling (like sharing, kindness, or teamwork). Children use Sphero Indi cars with custom-coded colour tiles to 'visit' each playground zone, triggering pre-recorded messages or sounds (recorded on iPads) that share stories or examples of positive relationship behaviours. This project guides students through the Design Cycle: empathising with friends' needs, ideating inclusive play spaces, prototyping structures, testing Sphero Indi navigation, and reflecting on how each zone supports wellbeing and positive interactions."
+        "t": "Friendship Feelings Garden",
+        "d": "Students collaboratively design and build a large 3D 'garden' using recycled boxes, cardboard tubes, felt, and natural materials. Each student crafts a unique 'emotion flower' or 'friendship creature' representing a feeling or positive action in relationships. Using Sphero Indi cars, children code simple colour path patterns that guide their Indi from one creation to another, telling a story of building friendships and resolving conflicts. As the Indi travels, students role-play scenarios at each stop, connecting physical artefacts to emotions and choices. The project integrates crafting, storytelling, and basic coding in a hands-on, tangible environment, reinforcing how our actions grow positive relationships."
       }
     ],
     "audited": true,
@@ -181,13 +181,12 @@
         "d": "Students create visual emotion collages using PicCollage, combining photos of their own facial expressions, emojis, and colourful backgrounds to represent a range of feelings. They can label each collage with the emotion and share with the class, sparking discussion about how we show what we feel."
       },
       {
-        "t": "Emotion Robots: Express Yourself!",
-        "d": "Students work in small groups to design and build a 'Feelings Friend' robot using recycled materials (boxes, fabric scraps, popsticks, bottle caps) as the robot's body. They use a simple programmable robot (e.g., Bee-Bot or Sphero Indi) as the robot's 'heart' or 'brain,' integrating it into their creation. Students craft interchangeable facial features and accessories (mouths, eyebrows, hats, etc.) from felt, paper, and Velcro to show different emotions. Using the design cycle, students brainstorm which emotions to express, prototype their robot's look, and test how moving the robot and swapping features helps communicate feelings (e.g., Bee-Bot moves slowly and wears a blue frown for 'sad', spins and has a big smile for 'happy'). The project ends with students sharing their Emotion Robots, explaining design choices, and demonstrating how tech and physical elements combine to express emotions in creative ways."
+        "t": "Bee-Bots",
+        "d": "Design Cycle STEM Project: Students design and build a simple 'Emotion Maze' for Bee-Bots. Each section of the maze represents a different feeling (e.g., happy, sad, surprised) using colours, symbols, or drawings. Students program the Bee-Bot to travel to a specific emotion, explaining scenarios that might lead to each feeling as part of their design process."
       }
     ],
     "audited": true,
-    "plannerText": "This unit explores how emotions can be expressed in different ways, with students engaging in activities such as reading picture books about feelings, creating artworks and masks to represent emotions, participating in role-play and music to communicate feelings, and reflecting on their own and others' emotional expressions through group discussions and visual projects.",
-    "stemRebooted": true
+    "plannerText": "This unit explores how emotions can be expressed in different ways, with students engaging in activities such as reading picture books about feelings, creating artworks and masks to represent emotions, participating in role-play and music to communicate feelings, and reflecting on their own and others' emotional expressions through group discussions and visual projects."
   },
   {
     "ca": "Elsternwick",
@@ -217,13 +216,12 @@
         "d": "Students go on a 'Community Services Scavenger Hunt' around the school or local area, taking photos with iPads of people and places that provide services. They then create vibrant collages in PicCollage, labeling each service and sharing their findings with the class."
       },
       {
-        "t": "Community Helper Rescue Mission",
-        "d": "Students work in teams to design and physically build a miniature model of a community (using cardboard, recycled materials, clay, etc.), including key local services like the fire station, hospital, post office, and grocery store. Using Bee-Bots or Sphero Indi, students program and decorate their robots as 'community helper vehicles' (e.g., ambulance, fire truck). The challenge: create a rescue mission scenario (e.g., delivering medicine, putting out a fire, helping a lost pet) and build obstacles and routes within their model town. Students must use the Design Cycle: empathise (identify a community need), define (choose a helper and mission), ideate (plan the route and obstacles), prototype (build the town and vehicles), test (run the mission with the robot), and improve (refine the model and code). This project blends digital coding skills with creative hands-on making, and deepens understanding of how local services help people."
+        "t": "Bee-Bots",
+        "d": "Design Cycle STEM Project: Students use the Design Cycle to create a model town map on the floor, identifying key community services (e.g., hospital, fire station, school). They program Bee-Bots to navigate between these locations, simulating how services respond to community needs. Students iterate their map and Bee-Bot routes based on feedback, developing spatial reasoning, sequencing, and problem-solving skills."
       }
     ],
     "audited": true,
-    "plannerText": "In this unit, Year 1 students explore how services are established to help meet the needs of people in the community. Through read-alouds, guest speakers, research, and presentations, students investigate local services, their roles, and how they support the community. Learning experiences include interviews, creative presentations, and writing appreciation letters to community helpers.",
-    "stemRebooted": true
+    "plannerText": "In this unit, Year 1 students explore how services are established to help meet the needs of people in the community. Through read-alouds, guest speakers, research, and presentations, students investigate local services, their roles, and how they support the community. Learning experiences include interviews, creative presentations, and writing appreciation letters to community helpers."
   },
   {
     "ca": "Elsternwick",
@@ -253,13 +251,12 @@
         "d": "Students design simple animations in ScratchJr to model and extend repeating patterns or cycles (e.g., day-night, seasons, animal life cycles). They can program characters to move, change, or transform in a sequence, visually demonstrating their understanding of how patterns repeat and change."
       },
       {
-        "t": "Seasons & Cycles Interactive Garden",
-        "d": "Students work in small groups to design and build a 3D model garden using recycled materials, cardboard, fabric scraps, and natural objects (leaves, twigs, pebbles). The garden must show at least two natural cycles?such as the water cycle (with cotton clouds, blue yarn for rain, and a 'pond') and a plant's life cycle (seeds, sprouts, flowers, fruit). Students embed simple tech by creating moving parts: use a Sphero Indi or Bee-Bot as a 'weather robot' that travels through the garden, triggering events (e.g., rolling over a copper tape switch to light up an LED 'sun', or activating a paper raincloud that sprinkles water with a squeeze bottle). Students prototype, test, and refine their garden using the Design Cycle, documenting changes and discoveries. The final project is a hands-on, interactive model that classmates can explore, demonstrating understanding of natural cycles through both creative making and technology integration."
+        "t": "Bee-Bots",
+        "d": "STEM Design Cycle Project: Challenge students to design and build a 'Pattern Pathway' mat for Bee-Bots, using colored tiles or shapes to represent different cycles (e.g., butterfly life cycle, water cycle). Students plan, test, and refine their mat, then program Bee-Bots to travel through the sequence, reinforcing both computational thinking and pattern recognition."
       }
     ],
     "audited": true,
-    "plannerText": "This unit immerses Year 1 students in exploring patterns and cycles in the natural world and daily life, including life cycles, seasons, and the water cycle. Students engage in hands-on investigations, digital research, and creative activities to observe, document, and interpret patterns, building critical thinking and research skills while making connections across science, art, and literacy.",
-    "stemRebooted": true
+    "plannerText": "This unit immerses Year 1 students in exploring patterns and cycles in the natural world and daily life, including life cycles, seasons, and the water cycle. Students engage in hands-on investigations, digital research, and creative activities to observe, document, and interpret patterns, building critical thinking and research skills while making connections across science, art, and literacy."
   },
   {
     "ca": "Elsternwick",
@@ -289,13 +286,12 @@
         "d": "Students design simple animations showing the journey of a seed growing into a plant, including the resources it needs (sun, water, soil). This visual coding activity helps solidify understanding of plant life cycles and the concept of plants as life-sustaining resources."
       },
       {
-        "t": "Plant Power Parade: Solar Sprout Creations",
-        "d": "Students explore how plants harness the sun's energy by designing and building their own 'solar sprout' models. Using recycled materials (cardboard, plastic bottles, fabric scraps) and simple craft supplies, each student constructs a plant-inspired sculpture with moving parts (e.g., leaves that flap, flowers that spin). The twist: they integrate a mini solar panel kit (age-appropriate, pre-wired) to power a small motor or buzzer, demonstrating how sunlight can create movement or sound. Guided by the Design Cycle, students brainstorm plant features, sketch ideas, prototype with physical materials, test their solar-powered mechanisms outdoors, and refine their designs. They finish by sharing their creations in a 'Plant Power Parade', explaining how their models mimic real plants' relationship with the sun and why plants are vital to life on Earth."
+        "t": "Bee-Bots",
+        "d": "STEM Design Cycle Project: Students design and build a large floor map representing a garden ecosystem. Using the Design Cycle, they plan, create, and test routes for Bee-Bots to 'pollinate' flowers and 'deliver' water to plants, simulating the interconnected roles of plants, pollinators, and resources in sustaining life. This hands-on project integrates robotics, spatial reasoning, and environmental science in a playful, collaborative way."
       }
     ],
     "audited": true,
-    "plannerText": "This unit immerses Year 1 students in exploring how plants are a life-sustaining resource. Through hands-on investigations, digital research, and creative projects, students observe plant life cycles, document changes, and communicate their understanding using visual and tactile digital tools. The learning is grounded in real-world observations and student agency, with strong links to science, literacy, and transdisciplinary inquiry.",
-    "stemRebooted": true
+    "plannerText": "This unit immerses Year 1 students in exploring how plants are a life-sustaining resource. Through hands-on investigations, digital research, and creative projects, students observe plant life cycles, document changes, and communicate their understanding using visual and tactile digital tools. The learning is grounded in real-world observations and student agency, with strong links to science, literacy, and transdisciplinary inquiry."
   },
   {
     "ca": "Elsternwick",
