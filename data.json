@@ -2844,12 +2844,13 @@
         "url": "https://education.minecraft.net/en-us/lessons/the-scientific-method"
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "For the Design Cycle STEM project, students use Lego Spike Prime to design, build, and iterate a working model that demonstrates energy transfer (e.g., a solar-powered vehicle or a Rube Goldberg machine). They follow the full design process: identifying a scientific question, planning, prototyping, testing, and refining their model, then presenting their findings and reflecting on how their experimentation mirrors real scientific inquiry."
+        "t": "Planetary Motion Marble Run: Code & Construct",
+        "d": "Students work in teams to design and build a large-scale, multi-level marble run that models planetary movement and energy transfer. Using recycled materials (cardboard, tubes, tape, popsticks), they physically construct tracks that represent orbits, inclines for gravitational slingshots, and obstacles for celestial events. Teams integrate micro:bit sensors (or similar age-appropriate microcontrollers) to digitally track marbles (planets) as they travel, displaying data (speed, distance, 'orbital period') on a connected tablet. Students program the micro:bit to trigger lights or sounds at key events (e.g., 'eclipse' zones, energy transfers). The project culminates in a science fair demonstration where students explain how their hybrid creation models scientific concepts of motion, energy, and planetary systems, and reflect on how scientists use both physical models and digital tools to test and refine theories."
       }
     ],
     "audited": true,
-    "plannerText": "This unit immerses students in scientific inquiry through hands-on experiments in physical science, chemistry, and earth/space science. Students follow the scientific method to investigate energy transfer, chemical changes, and planetary movement, culminating in a science fair where they present their own experiments and reflect on how scientists confirm, contest, and create new theories."
+    "plannerText": "This unit immerses students in scientific inquiry through hands-on experiments in physical science, chemistry, and earth/space science. Students follow the scientific method to investigate energy transfer, chemical changes, and planetary movement, culminating in a science fair where they present their own experiments and reflect on how scientists confirm, contest, and create new theories.",
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -2880,12 +2881,13 @@
         "url": "https://education.minecraft.net/en-us/lessons/radical-recycling"
       },
       {
-        "t": "3D Printers",
-        "d": "Using the Design Cycle, students prototype and 3D print innovative, sustainable packaging solutions for a commonly used product. They research the environmental impact of current packaging, ideate alternatives, design and print their prototypes, and then test and present their solutions, justifying their choices with evidence from their inquiry."
+        "t": "Sustainable Product Pitch: Smart Packaging Prototypes",
+        "d": "Students work in teams to design, build, and prototype an innovative, eco-friendly product package that addresses an environmental issue caused by consumer choices (e.g., single-use plastics, food waste, over-packaging). Using recycled materials (cardboard, bottles, fabric, etc.), they construct a physical prototype of their packaging solution, integrating a micro:bit or Makey Makey to add an interactive digital feature (such as a touch sensor that plays a persuasive audio message, or a display showing the environmental impact of their design). Students use the Design Cycle: researching existing packaging, brainstorming and sketching solutions, building prototypes, testing with peers, and refining based on feedback. Each team creates a short video pitch using iPads, showcasing their prototype's features and sustainability benefits to a mock 'eco-investor' panel."
       }
     ],
     "audited": true,
-    "plannerText": "Year 6 students investigate how influences shape consumer choices and the resulting impact on the world's sustainable future. They analyze advertising, peer influence, and environmental consequences through research, surveys, and case studies, culminating in collaborative presentations and creative action projects that advocate for just and sustainable consumer models."
+    "plannerText": "Year 6 students investigate how influences shape consumer choices and the resulting impact on the world's sustainable future. They analyze advertising, peer influence, and environmental consequences through research, surveys, and case studies, culminating in collaborative presentations and creative action projects that advocate for just and sustainable consumer models.",
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -2915,12 +2917,13 @@
         "d": "Design and distribute a Microsoft Forms survey to the school community, gathering data on migration backgrounds, reasons for moving, and perceptions of Australian identity. Students analyse the results in Excel, then present their findings on how needs and systems influence migration and citizenship."
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "Using the Design Cycle, students prototype a 'Migration Machine' with Lego Spike Prime that models the journey of migrants across different terrains and obstacles. They program sensors to represent challenges (e.g., borders, resources) and iterate their designs to reflect how human needs and systems drive movement and adaptation."
+        "t": "Migration Memory Machines",
+        "d": "Students will research the journeys and experiences of diverse migrants to Australia, both pre- and post-colonisation. Using the Design Cycle, they will select a real or imagined migration story, then design and build a tangible, interactive 'memory machine'?a physical artifact that tells the story through movement, sound, and light. Students will craft the base using recycled materials, cardboard, and clay, constructing elements like turning wheels, pop-up scenes, or sliding panels. They will integrate simple programmable electronics (e.g., BBC micro:bit or Makey Makey) to trigger recorded oral histories, ambient sounds, or LED lights when parts are moved or touched. Each machine must physically embody key moments or challenges from the migration narrative, allowing viewers to 'travel' through the story by interacting with the device. This hands-on project encourages empathy, creativity, and a deep understanding of how migration shapes identity and nationhood."
       }
     ],
     "audited": true,
-    "plannerText": "This unit explores how human needs drive the development of nations by comparing pre- and post-colonised Australia, examining the relationship between migration and needs, and analysing the influence of systems on citizens. Students engage in historical inquiry, personal narrative, museum excursions, and creative projects to understand migration, citizenship, and the shaping of Australian identity."
+    "plannerText": "This unit explores how human needs drive the development of nations by comparing pre- and post-colonised Australia, examining the relationship between migration and needs, and analysing the influence of systems on citizens. Students engage in historical inquiry, personal narrative, museum excursions, and creative projects to understand migration, citizenship, and the shaping of Australian identity.",
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -2950,12 +2953,13 @@
         "d": "Using Canva, students design vibrant infographics or posters that visually map the parts of the brain, their functions, and links to wellbeing strategies. They can use Canva's 'Remove Background' feature to personalize their posters with their own photos, making neuroscience relevant to their own identities."
       },
       {
-        "t": "Makey Makey",
-        "d": "STEM Design Cycle Project: Students prototype a 'Wellbeing Alert System' using Makey Makey and everyday conductive materials. They design and test a physical device that triggers a sound or visual cue when a user needs a brain break, hydration, or mindfulness moment?integrating anatomy, self-management, and creative problem-solving."
+        "t": "Neurodiversity Quest: Build & Code Your Brain Adventure",
+        "d": "Students work in teams to design and build a large, interactive 3D 'brain map' maze using cardboard, recycled materials, and craft supplies. Each section of the maze physically represents a different brain region or function (e.g., memory, emotion, creativity, self-regulation), decorated with symbols and textures. Students embed simple electronics (e.g., Makey Makey, LED circuits) to trigger sounds, lights, or digital messages when touched. Using Sphero Indi robots or similar, students code a 'neurodiverse explorer' to navigate the maze, encountering hands-on challenges and reflection prompts at each station (e.g., a puzzle about growth mindset, a sensory task for emotional regulation). The project culminates in a showcase where teams guide others through their custom brain adventure, explaining the links between physical structures, mental health, and personal identity."
       }
     ],
     "audited": true,
-    "plannerText": "This unit explores identities as individuals and collectives through physical, emotional, social, and spiritual health and wellbeing, with a focus on the physiology and function of the brain, the impact of mindset and experiences on learning, and strategies to support health, safety, and wellbeing. Students engage in reflective, creative, and collaborative activities to deepen their understanding of neurodiversity, self-regulation, and personal growth."
+    "plannerText": "This unit explores identities as individuals and collectives through physical, emotional, social, and spiritual health and wellbeing, with a focus on the physiology and function of the brain, the impact of mindset and experiences on learning, and strategies to support health, safety, and wellbeing. Students engage in reflective, creative, and collaborative activities to deepen their understanding of neurodiversity, self-regulation, and personal growth.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
