@@ -161,8 +161,8 @@
     "lo": "Recognising our own and others' emotions; Responding to and interpreting our emotions; Different ways we express emotions",
     "s": [
       {
-        "t": "Delightex + ChatterPix Kids",
-        "d": "Students create digital 'emotion avatars' in Delightex, then use ChatterPix Kids to animate their avatars with their own voices expressing different feelings. This app smash allows students to visually design a character and then bring it to life, sharing how emotions can be expressed through both art and voice in a playful, creative way."
+        "t": "Sketchbook",
+        "d": "Students unleash their creativity by drawing expressive self-portraits and vibrant emotion masks in Sketchbook, using digital brushes and colors to capture feelings like joy, sadness, and surprise. As they experiment with layering and blending, learners deepen their understanding of how emotions can be visually communicated, bringing their artworks to life in a dynamic, interactive gallery."
       },
       {
         "t": "Seesaw",
@@ -3733,12 +3733,13 @@
         "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "Using the Design Cycle, students prototype and test earthquake-resistant buildings for their class city. They apply knowledge from their study of Tokyo and Shepparton, iterating on their designs to withstand simulated 'disasters' (e.g., shaking platforms), and reflect on how engineering choices impact city resilience."
+        "t": "Urban Evolution: Interactive City Timeline Track",
+        "d": "Students work in teams to design and construct a large, physical timeline track representing a city's evolution across three eras (past, present, future) using cardboard, recycled materials, and craft supplies. Each era features distinct mini city zones with infrastructure, transport, and disaster-resilient features crafted by students. Teams program Sphero Indi cars to travel along the track, triggering custom-coded sound effects or voice narrations via iPads at key locations (e.g., bridges, tunnels, emergency shelters) using color-coded tiles. As the Indi car journeys through time, it activates physical pop-up elements (e.g., drawbridges, rotating wind turbines, moving trams) built with simple mechanisms like levers or pulleys. Students iterate through the Design Cycle to research, prototype, test, and refine both their city zones and interactive tech integration, culminating in a collaborative showcase where visitors 'drive' through the evolving city and experience the changes firsthand."
       }
     ],
     "audited": true,
-    "plannerText": "Students investigate how cities adapt and change over time, focusing on infrastructure, transport, and disaster resilience. They research global cities, compare features, design and build their own city models, create soundscapes, and reflect on the factors that shape urban development."
+    "plannerText": "Students investigate how cities adapt and change over time, focusing on infrastructure, transport, and disaster resilience. They research global cities, compare features, design and build their own city models, create soundscapes, and reflect on the factors that shape urban development.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3768,12 +3769,13 @@
         "d": "Create a 'Mind-Body Connection' multimedia poster in Adobe Express, combining student voice recordings, photos, and graphics to illustrate how exercise, nutrition, and friendships influence their wellbeing. Posters can be shared digitally with families to promote home-school connection."
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "STEM Design Cycle Project: Students use the Design Cycle to prototype and code a 'Healthy Habits Helper' robot with Lego Spike Prime. The robot could remind users to stretch, hydrate, or take mindful breaks, and students test and iterate their designs based on peer feedback and real-world use."
+        "t": "Body Systems Rescue Mission: Interactive Health Adventure",
+        "d": "Students work in teams to design and build a life-sized, walkable 'Body Systems Adventure Trail' using large cardboard sheets, fabric, recycled materials, and craft supplies to represent different organs and body systems (e.g., heart, lungs, digestive tract). Each station features a hands-on physical challenge or puzzle representing the function of that system (e.g., a heart-rate relay, lung balloon maze, digestive obstacle crawl). Teams embed Sphero Indi robots programmed via iPad to act as 'health messengers'?students must craft custom, attachable sensors or accessories (e.g., cardboard stethoscopes, clay vitamins) for the robots, which trigger digital feedback or clues at each station using color codes or QR codes. The mission: collaboratively navigate the trail, making healthy choices at each stop, and reflect on how their decisions impact overall wellbeing. The project follows the Design Cycle: students empathize with 'body system needs', define challenges, ideate and prototype stations and robot accessories, test the adventure with peers, and improve based on feedback."
       }
     ],
     "audited": true,
-    "plannerText": "This unit explores how health and wellbeing are impacted by the choices students make, focusing on body systems, fitness, cyber safety, and personal responsibility. Students research and report on body systems, set and track fitness goals, and reflect on strategies for maintaining balanced wellbeing through collaborative and individual activities."
+    "plannerText": "This unit explores how health and wellbeing are impacted by the choices students make, focusing on body systems, fitness, cyber safety, and personal responsibility. Students research and report on body systems, set and track fitness goals, and reflect on strategies for maintaining balanced wellbeing through collaborative and individual activities.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3803,12 +3805,13 @@
         "d": "Students use Seesaw to document their rehearsal process, upload performance videos, and receive peer and teacher feedback on how effectively they communicate ideas and emotions through artistic elements."
       },
       {
-        "t": "Makey Makey",
-        "d": "Using the Design Cycle, students prototype interactive character masks or props that trigger sound effects or music when touched, integrating Makey Makey with conductive materials to physically express character traits and emotions in a live performance context."
+        "t": "Opera Automata: Expressive Moving Masks",
+        "d": "Students work in teams to design and build large-scale Beijing Opera-inspired masks using cardboard, papier-m?ch?, fabric, and recycled materials. They integrate simple robotics (e.g., Hummingbird Bit or micro:bit servo kits) to animate features?such as blinking eyes, moving mouths, or fluttering fans?triggered by programmed sequences or sensors. Students sketch and prototype their mask designs, exploring how movement, colour, and facial expression communicate emotion. They use block coding on iPads to control the servos, then physically assemble and decorate their masks. The project culminates in a performance where each team presents their animated mask in a short vignette, reflecting on how their creative and technical choices express character and feeling."
       }
     ],
     "audited": true,
-    "plannerText": "This unit immerses students in the creative process across drama, music, visual arts, and Chinese, focusing on how artistic elements like colour, movement, and sound communicate ideas and emotions. Students design and perform original Beijing Opera-inspired vignettes, create expressive masks, compose music, and reflect on their creative choices through digital portfolios and collaborative projects."
+    "plannerText": "This unit immerses students in the creative process across drama, music, visual arts, and Chinese, focusing on how artistic elements like colour, movement, and sound communicate ideas and emotions. Students design and perform original Beijing Opera-inspired vignettes, create expressive masks, compose music, and reflect on their creative choices through digital portfolios and collaborative projects.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3838,12 +3841,13 @@
         "d": "Students explore 'The Hall of Inventions' in Minecraft Education, then collaboratively design and build a virtual exhibit for a not-for-profit innovation that addresses a community need. They justify their invention's impact and connect it to real-world organisations. https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
       },
       {
-        "t": "Makey Makey",
-        "d": "Using the Design Cycle, students prototype interactive donation boxes or awareness stations for their chosen not-for-profit using Makey Makey and everyday materials. They design, test, and refine their creations, ensuring the device provides feedback (lights, sounds, or digital messages) when someone 'donates' or interacts, then showcase these at a school action fair."
+        "t": "Compassion Kiosks: Interactive Giving Stations",
+        "d": "Students work in teams to design and build physical 'Compassion Kiosks'?miniature, interactive stations that represent not-for-profit organisations and their missions. Using recycled materials, cardboard, and craft supplies, each kiosk features hands-on elements (e.g., spinning info wheels, lift-the-flap facts, donation counters) and integrates simple programmable tech like Makey Makey or micro:bit for interactive features (e.g., pressing a button plays a recorded message about the cause, or lights up an impact meter). Students follow the Design Cycle: empathise by interviewing community members, define their kiosk's purpose, ideate creative features, prototype with both craft and tech, test with peers, and refine. The finished kiosks are set up around the school for others to explore, raising awareness and inspiring action through both tactile engagement and digital interactivity."
       }
     ],
     "audited": true,
-    "plannerText": "Students investigate not-for-profit organisations, research their functions and community impact, and collaborate to design and promote action projects such as fundraising drives and awareness campaigns. They create digital flyers, posters, and presentations to inform and inspire the school community, culminating in student-led initiatives that support local and national causes."
+    "plannerText": "Students investigate not-for-profit organisations, research their functions and community impact, and collaborate to design and promote action projects such as fundraising drives and awareness campaigns. They create digital flyers, posters, and presentations to inform and inspire the school community, culminating in student-led initiatives that support local and national causes.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
