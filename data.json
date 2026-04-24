@@ -27,8 +27,8 @@
         "d": "Students use PicCollage on iPads to visually sequence the beginning, middle, and end of a familiar or original story using photos of their play, drawings, or props. This supports understanding of story structure and provides a visual, tactile way to share stories with peers."
       },
       {
-        "t": "Story Journey Maps with Bee-Bots",
-        "d": "Students work in groups to retell a familiar story by designing and building a large, tactile 'story journey map' using cardboard, fabric, clay, and recycled materials to represent key scenes and settings. They then program Bee-Bots to travel through the sequence of events, stopping at each scene where students use crafted props or puppets to act out or narrate that part of the story. The project follows the Design Cycle: students empathize by discussing what makes stories engaging, define their chosen story, ideate map layouts and materials, create and test their physical map and Bee-Bot code, and finally share their interactive storytelling experience with peers."
+        "t": "Story Path Adventure Maps",
+        "d": "Students collaboratively design and build large, tactile story maps using cardboard, felt, recycled materials, and craft supplies to represent the settings and key events of a familiar or original story. They create movable characters and props (using clay, popsticks, etc.) to act out the narrative. Integrating Bee-Bots, students code simple routes for the robots to 'travel' along their story path, stopping at key points to retell or act out the next part of the story using their crafted props. The project follows the Design Cycle: students imagine their story world, plan the map layout, create and test both the physical map and Bee-Bot journeys, then share their interactive story experience with peers, reflecting on how stories can be expressed through both making and movement."
       }
     ],
     "audited": true,
@@ -63,8 +63,8 @@
         "d": "Guide students to create vibrant visual collages in PicCollage representing the different roles and connections in their school community, using photos, stickers, and drawings. These can be printed or shared digitally to celebrate community diversity."
       },
       {
-        "t": "Community Helpers Interactive Puppets & Stage",
-        "d": "Students work in teams to identify and research different roles within their school community (e.g., teacher, gardener, nurse). Using recycled materials, fabric scraps, and craft supplies, each group designs and builds a hand puppet representing a chosen community member. Next, they collaboratively construct a miniature puppet stage from cardboard and boxes, decorating it to resemble a familiar area of the school. Integrating tech, students use simple programmable buttons (e.g., recordable sound buttons or Makey Makey with ScratchJr) to add interactive audio: recording their own voices to introduce their puppet's role and responsibilities. The final showcase is a hands-on puppet show, where pressing the tech buttons triggers each puppet's introduction, blending digital storytelling with tangible making and performance. The project follows the Design Cycle: empathise (interview staff), define (choose roles), ideate (sketch puppet and stage), prototype (build), test (rehearse show), and share (perform for peers and families)."
+        "t": "Community Helper Robots",
+        "d": "Students select a community role within the school (e.g., librarian, gardener, principal) and, using the Design Cycle, brainstorm and design a simple 'helper robot' that could support that person. Working in small groups, they use recycled boxes, cardboard tubes, fabric scraps, and craft materials to physically build their robot, adding features that represent the chosen role (e.g., a watering can arm for the gardener, a book tray for the librarian). Then, using Sphero Indi robots as the 'brains', students integrate the tech by creating simple coded paths or color card triggers that make their robot models move or respond to tasks (e.g., delivering 'books' to a shelf, 'watering' a plant). The project culminates in a showcase where students explain their robot's design, demonstrate its movement, and reflect on how it supports their chosen community role."
       }
     ],
     "audited": true,
@@ -99,8 +99,8 @@
         "d": "Have students use ScratchJr to visually sequence the steps of a science experiment (e.g., the process of melting ice or rolling objects down ramps). They can animate simple characters to model 'predict, test, observe, record,' reinforcing the scientific process through coding and storytelling."
       },
       {
-        "t": "Weather Wonders Interactive Dioramas",
-        "d": "Prep students work in groups to design and build a 3D diorama representing a weather scene (rainy, sunny, windy, or snowy) using cardboard, fabric scraps, cotton balls, recycled materials, and craft supplies. They integrate simple tech by embedding a Sphero Indi or Bee-Bot, which they decorate as a 'Weather Explorer' character. Students program the robot to travel through their scene, encountering various weather-related obstacles they have physically constructed (e.g., tunnels for rain, fans for wind, bridges for snow). As part of the Design Cycle, students plan, prototype, test, and improve both their diorama and the robot's path, making predictions about how the robot will interact with different materials and surfaces. They record their observations and conclusions, connecting hands-on making with scientific inquiry about weather and materials."
+        "t": "Weather Wonder Machines",
+        "d": "Prep students work in teams to design and build imaginative 'weather machines' that can demonstrate or simulate different weather phenomena (like rain, wind, or sunshine) using recycled materials, cardboard, fabric, and craft supplies. Once built, students use a Sphero Indi or Bee-Bot as the 'weather driver'?programming simple routes that trigger their machine's moving parts (e.g., windmills spin, clouds move, or 'rain' falls) as the bot passes through. The project follows the design cycle: students brainstorm weather ideas, sketch their machine, prototype with tangible materials, test and refine how the robot interacts with their build, and share their process and findings with the class. This hands-on hybrid project immerses students in scientific thinking, creativity, and physical making while exploring how weather works."
       }
     ],
     "audited": true,
@@ -145,8 +145,8 @@
         "d": "Guide students to code simple animations in ScratchJr that show two characters navigating a playground scenario?such as sharing, resolving a conflict, or inviting someone to play?demonstrating how positive relationships impact wellbeing. Students can narrate their stories and share them with peers."
       },
       {
-        "t": "Friendship Feelings Fort",
-        "d": "Students collaboratively design and build a large 'Friendship Fort' using cardboard boxes, fabric, and recycled materials. Inside, they create interactive 'emotion stations'?physical features like spinning emotion wheels, pop-up faces, and tactile emotion boards crafted from clay, felt, and collage materials. Using iPads with the Sphero Indi robot, students program simple color-coded paths that guide Indi through the fort, stopping at each station. At each stop, students share a story or role-play a scenario about friendship and emotions. The project follows the Design Cycle: empathise (discuss how friends make us feel), define (what makes a welcoming space), ideate (sketch fort and station ideas), prototype (build and decorate), and test (navigate Indi and reflect on how the fort helps us understand our feelings and friendships)."
+        "t": "Friendship Feelings Garden",
+        "d": "Students collaboratively design and build a large 3D 'garden' using recycled materials, cardboard, fabric, and clay to represent different emotions and positive relationship qualities (e.g., flowers for kindness, trees for sharing, rocks for resilience). Each student crafts their own unique plant or feature symbolising how they contribute to classroom wellbeing. Using Bee-Bots or Sphero Indi, students program simple routes to visit each feature, sharing stories or role-playing scenarios about friendship and emotions at each stop. The project integrates hands-on building, simple coding, and oral reflection, reinforcing the impact of relationships on wellbeing in a creative, multisensory way."
       }
     ],
     "audited": true,
@@ -1139,8 +1139,9 @@
     "lo": "The impact of colonisation; Colonisation stories; The effects of colonisation ??? past, present and future",
     "s": [
       {
-        "t": "ClassVR & Merge Cubes",
-        "d": "Immerse students in a virtual exploration of colonisation by creating a 'then and now' AR experience. Students can design 3D models of significant sites impacted by colonisation (such as Indigenous lands, early settlements, or famous landmarks) and overlay historical information, stories, and perspectives using Merge Cubes. This allows students to literally hold history in their hands and compare past and present impacts in an interactive, multi-sensory way."
+        "t": "Delightex",
+        "d": "Transform your exploration of colonisation and its impacts by having students create immersive, interactive 3D scenes using Delightex. Students can collaboratively build virtual environments that represent key moments in Australian colonisation from both Indigenous and colonial perspectives. For example, they might design a traditional Indigenous landscape, then overlay changes brought by European settlement, visually demonstrating the effects on people and places. Students can embed historical sources, creative writing, and voiceovers to tell personal stories of colonisation, fostering empathy and critical thinking. Presentations can be shared with the class, allowing for rich discussion and analysis of multiple viewpoints.",
+        "url": ""
       },
       {
         "t": "Google Maps",
@@ -1175,8 +1176,9 @@
     "lo": "How values and beliefs impact choices; How people's choices and actions impact others; Responsible decision-making",
     "s": [
       {
-        "t": "ClassVR & Merge Cubes",
-        "d": "Launch a 'Belief and Values VR Gallery' where students create immersive 360-degree scenes representing different belief systems and value-driven scenarios. Using ClassVR headsets and Merge Cubes, students can virtually 'step into' the shoes of people making real-life decisions influenced by their beliefs, then reflect on how these perspectives might impact others."
+        "t": "Canva",
+        "d": "Students will create an interactive digital poster or infographic in Canva that explores how personal beliefs and values shape decision-making and the ripple effects of those choices on others. They will interview classmates or family members about a value-driven choice, then visually map out the perspectives, motivations, and impacts using Canva's design tools. This creative process encourages empathy, critical thinking, and collaboration, while allowing students to reflect on their own values and how their actions influence their community and the world.",
+        "url": "https://www.canva.com/"
       },
       {
         "t": "Padlet + Seesaw App Smash",
@@ -1220,8 +1222,9 @@
     "lo": "Student-led transdisciplinary themes; Approaches to learning; Research and presentation skills",
     "s": [
       {
-        "t": "ClassVR",
-        "d": "Transform the classroom into a virtual Parliament House or global government hub using ClassVR. Students can 'walk through' the chambers, interact with virtual artefacts, and experience the structure and function of different government systems firsthand, sparking debate and critical thinking about values, power, and decision-making."
+        "t": "Adobe Express",
+        "d": "Transform your Year 6 students into political campaigners and government storytellers! Using Adobe Express, students will create dynamic, interactive presentations or infographics that explain Australia's political system, the journey of a bill becoming law, and compare global government structures. They can embed video interviews from their mock debates, design campaign posters, and even craft animated timelines of key historical changes in governance. This creative approach empowers students to synthesise research, role-play experiences, and critical reflections into visually compelling digital artefacts?perfect for sharing with peers and the wider school community.",
+        "url": "https://express.adobe.com/"
       },
       {
         "t": "Padlet",
@@ -1255,8 +1258,9 @@
     "lo": "Different forms of energy and how they are used; The impact of different energy sources on the planet; Sustainable energy practices",
     "s": [
       {
-        "t": "ClassVR & Merge Cubes",
-        "d": "Launch an immersive 'Energy Transformations Lab' where students use ClassVR headsets and Merge Cubes to interact with 3D models of energy systems (e.g., wind turbines, solar panels, hydroelectric dams). Students can manipulate variables in virtual simulations to see how energy is converted and transformed, then record their observations in a collaborative Padlet for peer analysis."
+        "t": "Adobe Express",
+        "d": "Transform your energy investigations into dynamic, interactive presentations with Adobe Express! Students will create visually engaging multimedia reports that showcase their understanding of how energy is converted, transformed, and used to support human progress. Using Adobe Express, they can combine photos (taken with the iPad Camera app), videos, infographics, and voiceovers to document their hands-on experiments with circuits and Solar Buddy lights, analyse the impacts of different energy sources, and reflect on sustainable practices. This approach empowers students to communicate their real-world learning in creative, professional formats?perfect for sharing with peers, teachers, and the wider Wesley College community.",
+        "url": "https://express.adobe.com/"
       },
       {
         "t": "Canva",
@@ -1291,8 +1295,9 @@
     "lo": "How community values shape the management of the natural environment; The need for sustainable practices; Taking action for environmental stewardship",
     "s": [
       {
-        "t": "ClassVR & Merge Cubes",
-        "d": "Students create immersive 360-degree virtual field trips that showcase how different communities around the world interact with their local environments. Using Merge Cubes, students can design interactive AR models of local flora, fauna, or Indigenous land management practices, then narrate their significance, connecting directly to the unit's focus on environmental stewardship and diverse perspectives."
+        "t": "Minecraft: Climate Futures The Forest",
+        "d": "Immerse Year 6 students in a powerful, hands-on exploration of deforestation and sustainable land management by stepping into a virtual forest ecosystem. Students will investigate the real-world impacts of unsustainable industrialisation and deforestation, directly connecting to Indigenous land management case studies and Camp Mallana experiences. They'll analyse how community values and stewardship can drive positive change, then design and advocate for their own conservation solutions within Minecraft. For their final presentation, students will use Canva or Adobe Express to creatively showcase their Minecraft advocacy projects, highlighting their understanding of environmental stewardship and the urgent need for conservation.",
+        "url": "https://education.minecraft.net/en-us/lessons/climate-futures-the-forest"
       },
       {
         "t": "Padlet + Canva App Smash",
@@ -1327,8 +1332,9 @@
     "lo": "What is a significant event; Why these events occurred; Impact of significant events",
     "s": [
       {
-        "t": "ClassVR & Merge Cubes",
-        "d": "Students create immersive, interactive 3D timelines of significant events that have shaped Australia or the world. Using ClassVR headsets and Merge Cubes, students can 'step into' key moments, view primary source images, and even record short audio reflections as historical witnesses. This transforms the classroom into a living museum, making history tangible and memorable."
+        "t": "Delightex",
+        "d": "Transform your 'Where We Are in Place and Time' unit by having students design immersive, interactive 3D scenes that bring significant historical events, migrations, or discoveries to life. Using Delightex, students can collaboratively build virtual environments that represent key moments in personal or global history?such as a bustling port during a migration wave, the landing site of a famous explorer, or a city transformed by a milestone event. Students can annotate their scenes with facts, primary sources, and personal reflections, then guide classmates through their virtual reconstructions. For their final presentations, students will use Canva to create visually engaging reports and walkthroughs of their Delightex worlds, demonstrating deep understanding of how events shape societies and the interconnectedness of people and places.",
+        "url": "https://www.delightex.com/"
       },
       {
         "t": "Google Maps",
@@ -1363,8 +1369,9 @@
     "lo": "Physical, social, emotional and intellectual changes that occur throughout life; Influences that shape our identity; Developing a sense of self",
     "s": [
       {
-        "t": "ClassVR",
-        "d": "Launch an immersive 'Journey Through Influences' experience where students use ClassVR headsets to virtually step into scenarios representing different physical, social, emotional, and intellectual changes throughout life. Students can record their reflections as avatars, then export their experiences to share with the class, directly connecting to how influences shape our evolving sense of self."
+        "t": "Adobe Express",
+        "d": "For the 'Who We Are' unit, replace ClassVR with Adobe Express to empower students to create immersive, interactive digital identity posters or multimedia stories. Students can combine images, video, audio narration, and text to visually map their evolving sense of self, reflect on personal and external influences, and creatively tell their stories. The drag-and-drop interface allows for easy remixing and peer feedback, while the 'Remove Background' feature can be used to layer personal photos (taken with the iPad Camera app) into their digital collages. This approach fosters deep reflection, digital citizenship, and creative expression, all within a safe, approved platform.",
+        "url": "https://express.adobe.com/"
       },
       {
         "t": "Canva",
