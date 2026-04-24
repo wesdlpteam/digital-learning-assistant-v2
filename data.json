@@ -27,8 +27,8 @@
         "d": "Students use PicCollage on iPads to visually sequence the beginning, middle, and end of a familiar or original story using photos of their play, drawings, or props. This supports understanding of story structure and provides a visual, tactile way to share stories with peers."
       },
       {
-        "t": "Story Journey Maps with Bee-Bot",
-        "d": "Students collaboratively design and build a large, tactile story map on the floor using cardboard, fabric scraps, recycled materials, and natural elements. Each section of the map represents a key scene from a familiar story or their own invented tale. Students craft 3D props and set pieces (e.g., trees, houses, bridges) to bring scenes to life. Using Bee-Bots, students program simple routes that 'travel' through the story in sequence, retelling the narrative as the Bee-Bot visits each scene. Students decorate, build, and test the map, iterating on their designs based on how well the Bee-Bot can move through the story. This project blends storytelling, coding, and hands-on making, encouraging creativity and multimodal expression."
+        "t": "Story Journey Maps with Bee-Bots",
+        "d": "Students work in groups to retell a familiar story by designing and building a large, tactile 'story journey map' using cardboard, fabric, clay, and recycled materials to represent key scenes and settings. They then program Bee-Bots to travel through the sequence of events, stopping at each scene where students use crafted props or puppets to act out or narrate that part of the story. The project follows the Design Cycle: students empathize by discussing what makes stories engaging, define their chosen story, ideate map layouts and materials, create and test their physical map and Bee-Bot code, and finally share their interactive storytelling experience with peers."
       }
     ],
     "audited": true,
@@ -63,8 +63,8 @@
         "d": "Guide students to create vibrant visual collages in PicCollage representing the different roles and connections in their school community, using photos, stickers, and drawings. These can be printed or shared digitally to celebrate community diversity."
       },
       {
-        "t": "Our School Community Role Robots",
-        "d": "Students work in small groups to select a community role within the school (e.g., librarian, gardener, principal, crossing guard). Using recycled materials, cardboard, and craft supplies, they collaboratively design and build a large, wearable 'role costume' or puppet representing that person?including key tools or symbols (e.g., a watering can for the gardener, a book for the librarian). Next, students integrate a Sphero Indi or similar robot into their creation by designing a simple mechanism (e.g., attaching the robot to a rolling platform or inside a movable cart) so the puppet or costume can 'move' around a mapped-out mini school environment. Students program the robot using color tiles or basic coding to visit different 'zones' (e.g., library, playground, garden), role-playing the responsibilities of their community member at each stop. This hands-on project blends digital robotics, creative construction, and dramatic play to help students understand and embody the roles that make up their school community."
+        "t": "Community Helpers Interactive Puppets & Stage",
+        "d": "Students work in teams to identify and research different roles within their school community (e.g., teacher, gardener, nurse). Using recycled materials, fabric scraps, and craft supplies, each group designs and builds a hand puppet representing a chosen community member. Next, they collaboratively construct a miniature puppet stage from cardboard and boxes, decorating it to resemble a familiar area of the school. Integrating tech, students use simple programmable buttons (e.g., recordable sound buttons or Makey Makey with ScratchJr) to add interactive audio: recording their own voices to introduce their puppet's role and responsibilities. The final showcase is a hands-on puppet show, where pressing the tech buttons triggers each puppet's introduction, blending digital storytelling with tangible making and performance. The project follows the Design Cycle: empathise (interview staff), define (choose roles), ideate (sketch puppet and stage), prototype (build), test (rehearse show), and share (perform for peers and families)."
       }
     ],
     "audited": true,
@@ -99,8 +99,8 @@
         "d": "Have students use ScratchJr to visually sequence the steps of a science experiment (e.g., the process of melting ice or rolling objects down ramps). They can animate simple characters to model 'predict, test, observe, record,' reinforcing the scientific process through coding and storytelling."
       },
       {
-        "t": "Weather Wonder Machines",
-        "d": "Students work in teams to design and build imaginative 'weather machines' that demonstrate a weather phenomenon of their choice (like rain, wind, or snow). Using recycled materials, cardboard, fabric scraps, and craft supplies, students physically construct their machines with moving parts (e.g., spinning clouds, falling raindrops). They then use Sphero Indi robots as interactive elements: for example, placing Indi on a track that triggers parts of the machine to move (using levers, ramps, or simple pulleys) as it travels through the weather scene. Students follow the Design Cycle: they investigate real weather, brainstorm, sketch, prototype, test, and improve their creations. Finally, students present how their hybrid machine models the chosen weather, sharing their predictions and conclusions about how weather works."
+        "t": "Weather Wonders Interactive Dioramas",
+        "d": "Prep students work in groups to design and build a 3D diorama representing a weather scene (rainy, sunny, windy, or snowy) using cardboard, fabric scraps, cotton balls, recycled materials, and craft supplies. They integrate simple tech by embedding a Sphero Indi or Bee-Bot, which they decorate as a 'Weather Explorer' character. Students program the robot to travel through their scene, encountering various weather-related obstacles they have physically constructed (e.g., tunnels for rain, fans for wind, bridges for snow). As part of the Design Cycle, students plan, prototype, test, and improve both their diorama and the robot's path, making predictions about how the robot will interact with different materials and surfaces. They record their observations and conclusions, connecting hands-on making with scientific inquiry about weather and materials."
       }
     ],
     "audited": true,
@@ -145,8 +145,8 @@
         "d": "Guide students to code simple animations in ScratchJr that show two characters navigating a playground scenario?such as sharing, resolving a conflict, or inviting someone to play?demonstrating how positive relationships impact wellbeing. Students can narrate their stories and share them with peers."
       },
       {
-        "t": "Friendship Feelings Garden",
-        "d": "Students collaboratively design and build a large, interactive 'Feelings Garden' using recycled materials, cardboard, fabric scraps, and craft supplies to represent different emotions and positive friendship actions (e.g., kindness, sharing, listening). Each flower or plant represents an emotion or behaviour. Students then use Sphero Indi cars, decorating them as 'Friendship Bugs', and program simple colour-based routes on the garden paths to visit different flowers. At each stop, students record a short message or draw a picture (using iPads and a drawing app) about how that emotion or action helps build strong relationships. The project follows the Design Cycle: empathising with classmates' feelings, ideating garden elements, prototyping with craft materials, programming the Indi, and sharing their interactive garden with the class to reflect on the importance of positive relationships."
+        "t": "Friendship Feelings Fort",
+        "d": "Students collaboratively design and build a large 'Friendship Fort' using cardboard boxes, fabric, and recycled materials. Inside, they create interactive 'emotion stations'?physical features like spinning emotion wheels, pop-up faces, and tactile emotion boards crafted from clay, felt, and collage materials. Using iPads with the Sphero Indi robot, students program simple color-coded paths that guide Indi through the fort, stopping at each station. At each stop, students share a story or role-play a scenario about friendship and emotions. The project follows the Design Cycle: empathise (discuss how friends make us feel), define (what makes a welcoming space), ideate (sketch fort and station ideas), prototype (build and decorate), and test (navigate Indi and reflect on how the fort helps us understand our feelings and friendships)."
       }
     ],
     "audited": true,
@@ -371,8 +371,9 @@
     "lo": "Forms of expression; Expressing thoughts and ideas; Understanding and appreciating art",
     "s": [
       {
-        "t": "ClassVR & Merge Cubes",
-        "d": "Launch an immersive 'Art Gallery of the Imagination' using ClassVR headsets and Merge Cubes. Students create their own digital artworks or 3D sculptures, then curate and 'hang' them in a virtual gallery. Peers can explore each other's creations in VR, leaving voice comments about what inspires them, making artistic appreciation a truly interactive, multi-sensory experience."
+        "t": "Delightex",
+        "d": "Invite Year 2 students to step into the shoes of artists, poets, and musicians by designing their own interactive virtual gallery using Delightex. Each student curates a digital 'exhibition room' that showcases their original artworks, poems, and musical expressions created throughout the unit. They can add voice recordings, text reflections, and even short video clips explaining their creative process. The virtual gallery becomes a collaborative celebration of imagination, empathy, and risk-taking, allowing students to explore and appreciate each other's unique forms of expression in a playful, immersive way. For the final presentation, students will create a vibrant showcase poster in Canva, featuring highlights and QR codes linking directly to their Delightex gallery rooms.",
+        "url": ""
       },
       {
         "t": "ChatterPix Kids + Book Creator (App Smash)",
@@ -441,8 +442,9 @@
     "lo": "Forces around us; Scientific laws of motion; Innovations in technology",
     "s": [
       {
-        "t": "ClassVR & Merge Cubes",
-        "d": "Transport students into a fully immersive, interactive world of forces and motion using ClassVR headsets and Merge Cubes. Students can manipulate digital objects, observe how different forces act on them, and even 'walk around' simple machines to see push, pull, gravity, and friction in action from every angle. This hands-on, spatial experience will make abstract concepts tangible and unforgettable."
+        "t": "Delightex",
+        "d": "Transform your forces and motion unit by having Year 2 students create interactive 3D scenes that demonstrate push, pull, gravity, and friction in action! Using Delightex, students can design their own virtual playgrounds or Rube Goldberg machines, placing ramps, levers, and objects to explore how different forces work together. They can experiment with changing surfaces to see how friction affects movement, or add obstacles to test the effects of gravity. Students then narrate their discoveries and share their interactive scenes with the class, making abstract science concepts come alive in a hands-on, digital way.",
+        "url": ""
       },
       {
         "t": "App Smashing: iPad Camera + ChatterPix Kids + Seesaw",
@@ -476,8 +478,9 @@
     "lo": "Earth's resources; How our actions affect the environment; Ways we can care for our planet",
     "s": [
       {
-        "t": "ClassVR + Merge Cubes",
-        "d": "Launch an immersive 'Earth Guardians' VR experience where students use ClassVR headsets and Merge Cubes to virtually explore Earth's resources, pollution hotspots, and endangered habitats. Students can manipulate 3D models of ecosystems, observe the impact of human choices in real time, and record their reflections as short Seesaw videos, making abstract environmental concepts tangible and memorable."
+        "t": "Canva",
+        "d": "Transform your 'Sharing the Planet' unit by having Year 2 students create interactive digital posters in Canva! After investigating Earth's resources and conducting waste audits, students can design vibrant, persuasive posters that showcase practical ways to care for the planet. Using Canva's 'Remove Background' feature, they can add photos of their own eco-friendly actions (taken with the iPad Camera app), then layer in fun graphics, facts, and their own voice recordings. This hands-on project empowers students to become environmental advocates, sharing their learning with the school community in a visually engaging, creative way.",
+        "url": "https://www.canva.com/"
       },
       {
         "t": "ChatterPix Kids + PicCollage",
@@ -511,8 +514,9 @@
     "lo": "The significance of places to different people and cultures; The connection between landmarks and identity; How landmarks and symbols represent our history",
     "s": [
       {
-        "t": "ClassVR & Merge Cubes",
-        "d": "Students embark on a virtual time-travel adventure using ClassVR headsets and Merge Cubes to explore iconic Australian and global landmarks in 3D. They can 'hold' and rotate digital models of Uluru, the Sydney Opera House, or the Great Wall of China, then record short ChatterPix Kids voiceovers as if they are the landmark telling its own story, blending immersive tech with creative storytelling."
+        "t": "Delightex",
+        "d": "Transport your Year 2 students on a virtual journey through Australia's most significant landmarks and places of cultural importance using Delightex's immersive 3D scenes. Students can collaboratively build and explore digital dioramas of local and national sites, layering in Indigenous perspectives, historical facts, and their own creative storytelling. This hands-on, inquiry-driven experience empowers learners to 'walk through' the stories behind monuments and symbols, deepening their understanding of place, culture, and memory. For their final presentation, students can capture their digital dioramas and create a vibrant, multimodal showcase using Canva, sharing their discoveries and reflections with the class.",
+        "url": ""
       },
       {
         "t": "Google Maps",
@@ -581,8 +585,9 @@
     "lo": "The ways personal and cultural events are celebrated; Our appreciation of the diversity of cultures; How celebrations shape community identity",
     "s": [
       {
-        "t": "ClassVR & Merge Cubes",
-        "d": "Immerse students in a global celebration scavenger hunt using ClassVR headsets and Merge Cubes. Students can virtually explore and interact with 3D models of traditional artifacts, foods, and festival scenes from around the world, then record their reflections as digital postcards to share on Seesaw."
+        "t": "Minecraft: Peter Is Here Ai For Cultural Heritage",
+        "d": "Immerse your Year 3 students in a vibrant exploration of global celebrations and traditions by using Minecraft: Peter Is Here Ai For Cultural Heritage. In this lesson, students will virtually visit and help protect famous cultural heritage sites from around the world, discovering how communities express their identities through celebrations, architecture, and shared stories. They'll collaborate to build their own representations of Australian multicultural events, reflecting on what it means to be a global citizen. This hands-on, creative experience will deepen their appreciation for diversity and the importance of preserving cultural traditions.",
+        "url": "https://education.minecraft.net/en-us/lessons/peter-is-here-ai-for-cultural-heritage"
       },
       {
         "t": "Canva",
@@ -616,8 +621,9 @@
     "lo": "The differences between rules and laws; People responsible for enforcing rules and laws; Rights and responsibilities of citizens; The consequences when rules, laws and rights are not met",
     "s": [
       {
-        "t": "ClassVR & Merge Cubes",
-        "d": "Launch a 'Virtual Parliament' experience where students use ClassVR headsets and Merge Cubes to explore 3D models of government buildings, courtrooms, and community spaces. Students can interact with virtual scenarios to make decisions as citizens, judges, or lawmakers, experiencing firsthand how rules and laws are created and enforced."
+        "t": "Delightex",
+        "d": "Transform your 'How We Organise Ourselves' unit by having students collaboratively design immersive 3D scenes that explore the differences between rules and laws, the people who enforce them, and the rights and responsibilities of citizens. Students can create virtual town squares, courtrooms, or global communities, populating them with avatars and interactive elements that represent real-world scenarios. This hands-on, creative approach deepens understanding of citizenship by allowing students to 'step into' the roles of lawmakers, citizens, and enforcers, and reflect on the consequences when rules or rights are not upheld. For their final presentation, students can use Canva to showcase screenshots and reflections from their Delightex worlds, making their learning visible and engaging for the whole class.",
+        "url": ""
       },
       {
         "t": "Canva",
@@ -651,8 +657,9 @@
     "lo": "The work of scientists; The process of learning; How science brings about new understandings and changes",
     "s": [
       {
-        "t": "ClassVR & Merge Cubes",
-        "d": "Launch students into an immersive 'Scientist's Lab' experience using ClassVR headsets and Merge Cubes. Students can virtually manipulate molecules, observe states of matter, and simulate energy transfer, then record their discoveries as short video reflections using the iPad camera. This app smash brings abstract scientific principles to life and lets students 'take action' by sharing their findings with the community."
+        "t": "Minecraft: The Hall of Inventions",
+        "d": "Invite Year 3 students to step into a virtual museum of human ingenuity! In this hands-on, creative experience, students will explore key scientific inventions throughout history, then use their scientific understanding to design and build their own invention in Minecraft. They'll research a scientist or invention connected to the UN Sustainable Development Goals, reflect on how scientific principles drive innovation, and present their creation using Canva or Adobe Express. This immersive activity empowers students to see themselves as inventors, connecting classroom science to real-world action and global challenges.",
+        "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
       },
       {
         "t": "Canva",
@@ -687,8 +694,9 @@
     "lo": "Adaptations and structural features of living things; Roles of living things in an ecosystem; Actions that benefit or harm ecosystems",
     "s": [
       {
-        "t": "ClassVR & Merge Cubes",
-        "d": "Students create and narrate immersive 360-degree virtual field trips exploring endangered ecosystems, using ClassVR headsets and Merge Cubes to interact with 3D models of animals and their adaptations. They can record voiceovers explaining how specific adaptations help survival, directly linking to the unit's focus on adaptation and sustainability."
+        "t": "Minecraft: Planet Earth Iii Lesson Collection2",
+        "d": "Immerse Year 3 students in real-world animal adaptation and sustainability by exploring diverse biomes and playing as different animals in Minecraft. Students will investigate how creatures like the Cape fur seal, great white shark, musk ox, and Arctic wolf adapt to their environments and respond to human impacts. This interactive experience allows students to witness adaptation in action, understand ecosystem roles, and reflect on how sustainability ensures survival in changing environments. Students can document their discoveries and present their team-based findings using Canva or Adobe Express, directly linking to the UN sustainability goals.",
+        "url": "https://education.minecraft.net/en-us/lessons/planet-earth-iii-lesson-collection2"
       },
       {
         "t": "Canva",
@@ -722,8 +730,9 @@
     "lo": "The factors that motivate exploration (Causation); How people reflect on discoveries from the past to inform change (Change); How exploration brings about change and new understandings for people, places and society (Change)",
     "s": [
       {
-        "t": "ClassVR & Merge Cubes",
-        "d": "Launch an immersive 'Explorer's Museum' where students use ClassVR headsets and Merge Cubes to interact with 3D models of ships, artifacts, and maps from the First Fleet and other global explorations. Students can virtually 'handle' historical objects, triggering audio stories and facts, then record their own discoveries as digital museum guides."
+        "t": "Adobe Express",
+        "d": "Students will become 'Exploration News Reporters' and create dynamic multimedia presentations in Adobe Express, retelling the story of the First Fleet from multiple perspectives?including those of Indigenous Australians, convicts, and explorers. They will combine historical images, voice recordings, and text to highlight motivations for exploration, the impact on society, and connections to modern discoveries. This approach encourages empathy, critical thinking, and creativity, allowing students to make powerful connections between past and present explorations.",
+        "url": "https://express.adobe.com/"
       },
       {
         "t": "Seesaw + Canva App Smash",
@@ -758,8 +767,9 @@
     "lo": "Lines of inquiry to be confirmed once planner is uploaded",
     "s": [
       {
-        "t": "ClassVR & Merge Cubes",
-        "d": "Launch a 'Resilience VR Challenge' where students use ClassVR headsets and Merge Cubes to virtually experience scenarios that test their resilience, decision-making, and emotional responses. Students reflect on their choices and strategies for overcoming challenges, directly linking to the unit's focus on personal strategies and growth mindset."
+        "t": "Delightex",
+        "d": "Transform your 'Who We Are' unit by having students design interactive 3D scenarios in Delightex that explore real-life challenges and setbacks. Students can collaboratively build virtual scenes where characters face dilemmas about online safety, resilience, and respectful friendships. They can then role-play solutions, reflect on growth mindset strategies, and demonstrate how to take responsibility for their own wellbeing. This immersive approach empowers student agency, deepens social-emotional learning, and makes abstract concepts tangible and memorable.",
+        "url": ""
       },
       {
         "t": "Canva",
@@ -793,8 +803,9 @@
     "lo": "How technology expands creative possibilities; The evolution of communication tools; The impact of technology on expression",
     "s": [
       {
-        "t": "ClassVR + Merge Cubes",
-        "d": "Transform the classroom into an immersive, interactive gallery where students create and share their own digital 3D artworks or stories using Merge Cubes. Students can use ClassVR headsets to experience each other's creations in augmented reality, exploring how technology can make creative expression multi-sensory and collaborative."
+        "t": "Minecraft: The Hall of Inventions",
+        "d": "Ignite student creativity by having them explore the evolution of communication and creative expression in 'The Hall of Inventions'. Students will journey through a virtual museum of history's greatest innovations, then design and build their own communication tool or creative technology in Minecraft. This hands-on challenge empowers learners to reflect on how technology transforms the way we express ourselves, and to showcase their own ideas for the future. For their final presentation, students will document their invention and its impact using Canva or Adobe Express, connecting their digital creations to real-world communication and ethical practices.",
+        "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
       },
       {
         "t": "Canva",
@@ -828,8 +839,9 @@
     "lo": "Human systems; The interconnections that exist within and across systems; The influence of systems on communities",
     "s": [
       {
-        "t": "ClassVR + Merge Cubes",
-        "d": "Transform the classroom into an immersive systems laboratory by using ClassVR headsets and Merge Cubes to let students virtually manipulate and explore interconnected systems?such as ecosystems, water cycles, or transport networks?allowing them to see, rotate, and interact with 3D models of real-world systems and observe how changes to one part ripple through the whole."
+        "t": "Minecraft: Outflow Order",
+        "d": "Dive into the fascinating world of human-made systems by exploring how wastewater travels from homes to treatment plants in 'Outflow Order.' Students will investigate each part of the water treatment system, map the connections between components, and analyse how changes or disruptions impact the entire process. This immersive, hands-on Minecraft experience perfectly complements your water cycle experiments and systems mapping, allowing students to visualise, build, and test real-world systems in a collaborative digital environment. For their final presentation, students will use Canva to create a dynamic infographic or video explaining the system, its connections, and the consequences of disruptions.",
+        "url": "https://education.minecraft.net/en-us/lessons/outflow-order"
       },
       {
         "t": "Google Maps",
@@ -863,8 +875,9 @@
     "lo": "The causes of geological change over time; How extreme environments cause natural disasters; The impact of natural events on communities",
     "s": [
       {
-        "t": "ClassVR & Merge Cubes",
-        "d": "Immerse students in a virtual reality simulation of natural disasters using ClassVR headsets and Merge Cubes. Students can explore 3D models of earthquakes, volcanoes, and floods, then record their observations and reflections as if they were scientists or community responders on the scene. This brings the unit's focus on geological change and community impact to life in a way that's unforgettable."
+        "t": "Adobe Express",
+        "d": "Transform your students into 'Natural Disaster News Reporters'! In this innovative project, Year 4s will research a real-world natural disaster (such as bushfires, floods, earthquakes, or volcanic eruptions) and create a dynamic multimedia news report using Adobe Express. Students will combine images, video clips (recorded with the iPad Camera app), voiceovers, and text to explain the causes of the disaster, its impact on environments and communities, and how people responded and adapted. This engaging digital storytelling approach empowers students to synthesize their learning, practice digital literacy, and creatively communicate complex scientific ideas to an authentic audience.",
+        "url": "https://express.adobe.com/"
       },
       {
         "t": "Seesaw App Smash with iPad Camera",
@@ -898,8 +911,9 @@
     "lo": "The diversity of First Nations people; The importance of community, family and kinship; The importance of Country to First Nations people",
     "s": [
       {
-        "t": "ClassVR + Merge Cubes",
-        "d": "Create an immersive 'Country, Language, and Community' experience by designing virtual reality scenes that represent significant places, languages, and traditions of First Nations people. Students can use Merge Cubes to interact with 3D artefacts or totems, and ClassVR to 'walk' through digital representations of Country, deepening their connection and understanding in a way that transcends traditional learning."
+        "t": "Minecraft: Peter Is Here Ai For Cultural Heritage",
+        "d": "Immerse your Year 4 students in an interactive exploration of cultural heritage with 'Peter Is Here Ai For Cultural Heritage' in Minecraft Education. Students will investigate the significance of Country, language, and community to First Nations people by virtually exploring, protecting, and celebrating cultural heritage sites. They'll collaborate to research Indigenous perspectives, reflect on the importance of place and language, and creatively build digital representations of Dreaming stories or significant landmarks. This hands-on experience empowers students to become digital custodians of culture, culminating in a class presentation using Canva or Adobe Express to share their discoveries and creative builds with the wider community.",
+        "url": "https://education.minecraft.net/en-us/lessons/peter-is-here-ai-for-cultural-heritage"
       },
       {
         "t": "Padlet + Seesaw App Smash",
@@ -943,8 +957,9 @@
     "lo": "Roles and responsibilities of effective leadership; The purpose of leadership in communities; Qualities of influential leaders",
     "s": [
       {
-        "t": "ClassVR + Merge Cubes",
-        "d": "Create an immersive 'Leadership Through Time' experience where students use ClassVR headsets and Merge Cubes to explore interactive 3D models of famous leaders, community meeting spaces, and decision-making scenarios. Students can virtually 'step into the shoes' of different leaders, reflect on their responsibilities, and record their insights as digital journal entries, directly connecting to the central idea that leaders shape communities."
+        "t": "Minecraft: Active Citizen",
+        "d": "Immerse your Year 4 students in the world of real-life changemakers! In 'Active Citizen', students will explore the inspiring stories of Nobel Peace Laureates and discover how leaders shape communities for the better. They'll journey through interactive Minecraft environments, meet virtual representations of influential leaders, and reflect on the qualities and actions that define effective leadership. After their digital exploration, students will collaborate to design their own 'Hall of Leadership' in Minecraft, showcasing the strengths and values they believe are essential for positive community impact. For their final presentation, students will use Canva to create vibrant digital posters highlighting their chosen leader and the leadership qualities they've learned about, connecting their Minecraft experience directly to the unit's central idea.",
+        "url": "https://education.minecraft.net/en-us/lessons/active-citizen"
       },
       {
         "t": "Canva",
@@ -978,8 +993,9 @@
     "lo": "The devices used to target audiences; Critical evaluation of messages; How we know we have been influenced",
     "s": [
       {
-        "t": "ClassVR & Merge Cubes",
-        "d": "Launch students into a fully immersive, interactive 'media manipulation detective' experience. Using ClassVR headsets and Merge Cubes, students can explore virtual environments where they must identify, deconstruct, and reconstruct persuasive messages and advertisements targeted at different audiences. They can then create their own AR 'ad cubes' to demonstrate how subtle changes in imagery, sound, or language shift audience perception."
+        "t": "Canva",
+        "d": "Transform your Year 5 students into media creators by having them design persuasive advertisements or campaign posters in Canva. Students critically analyse real-world media, then use Canva's powerful design tools?including the 'Remove Background' feature for their own photos (taken with the iPad Camera app)?to craft visually compelling messages targeting specific audiences. They'll experiment with colour, layout, and persuasive language, reflecting on how their choices influence beliefs and behaviours. This hands-on, creative process deepens their understanding of media manipulation and audience targeting, while building essential digital literacy and design skills.",
+        "url": "https://www.canva.com/"
       },
       {
         "t": "Adobe Express Podcasting",
@@ -1014,8 +1030,9 @@
     "lo": "The power of giving back; How our environment is impacted by the products we create; Sustainable business practices",
     "s": [
       {
-        "t": "ClassVR & Merge Cubes",
-        "d": "Students design and pitch a sustainable product or service, then create an immersive 360? virtual reality experience that allows others to 'walk through' their entrepreneurial concept, exploring its environmental impact and business model from the inside out. Use Merge Cubes to showcase interactive 3D prototypes of their products, simulating real-world use and sustainability features."
+        "t": "Adobe Express",
+        "d": "Students will use Adobe Express to create dynamic, interactive marketing materials for their sustainable products or services. They can design eye-catching digital posters, infographics, and short promo videos that highlight their product's unique features, sustainability benefits, and environmental impact. These digital assets can be displayed at the market stall event via QR codes or on iPads, allowing students to practice real-world digital marketing skills and reflect on how entrepreneurs use media to influence consumer choices for a more sustainable future.",
+        "url": "https://express.adobe.com/"
       },
       {
         "t": "Canva",
@@ -1050,8 +1067,9 @@
     "lo": "The nature and impact of natural hazards (Causation); How design processes are used to generate and test solutions (Function); The ethical and practical considerations in human responses to natural challenges (Responsibility)",
     "s": [
       {
-        "t": "ClassVR & Merge Cubes",
-        "d": "Students design and experience immersive simulations of natural hazards (like bushfires, floods, or earthquakes) using ClassVR headsets and Merge Cubes. They can create their own 3D models of disaster scenarios, then 'step inside' to test and refine their design solutions, gaining empathy for affected communities and iterating their ideas in a virtual environment."
+        "t": "Delightex",
+        "d": "Transform your natural hazards unit into an immersive, interactive experience by having students use Delightex to design 3D virtual environments that simulate the impact of natural disasters. Students can collaboratively build scenes depicting earthquakes, floods, or bushfires, then prototype and test their own innovative human response solutions within these environments. This hands-on approach deepens understanding of cause and effect, encourages creative problem-solving, and prepares students for persuasive pitches and the community showcase. All final presentations and solution pitches must be created in Canva or Adobe Express.",
+        "url": ""
       },
       {
         "t": "Google Maps",
@@ -1085,8 +1103,9 @@
     "lo": "Types of conflict; Causes and impacts of conflict; Conflict resolution",
     "s": [
       {
-        "t": "ClassVR & Merge Cubes",
-        "d": "Launch a 'Peacebuilders in History' immersive VR experience where students virtually step into key moments of conflict and resolution from Australian and global contexts. Students use Merge Cubes to interact with 3D artefacts representing peace symbols, treaties, or protest movements, then record a short reflection video using the iPad camera app, sharing how these moments connect to their own ideas about peaceful conflict resolution."
+        "t": "Delightex",
+        "d": "Transform your 'Sharing the Planet' unit by having students collaboratively design immersive 3D scenarios that explore real-world conflicts and peaceful resolutions. Using Delightex, Year 5 students can create interactive virtual environments?such as a divided community, a protest scene, or a peace negotiation table?where they script and animate avatars to role-play different perspectives. This hands-on digital storytelling empowers students to analyse causes and impacts of conflict, then creatively model and present solutions for peace. Final presentations can be screen-recorded and shared via Canva or Adobe Express, ensuring engaging, student-driven learning that brings conflict resolution to life.",
+        "url": ""
       },
       {
         "t": "Padlet + ChatGPT",
