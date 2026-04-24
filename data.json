@@ -4317,12 +4317,13 @@
         "d": "Students collaborate on a Padlet wall to crowdsource observations of moon phases, sunrise/sunset times, and cultural stories from their families. This shared digital space becomes a living archive of both scientific data and diverse perspectives, supporting inquiry and reflection."
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "Using the Design Cycle, students prototype a motorized model that demonstrates the orbits and rotations of the Earth, Moon, and Sun. They program the model to show day/night cycles, lunar phases, and seasonal changes, then present their design process and findings to the class."
+        "t": "Lunar Light Show: Build & Code a Sun-Earth-Moon Shadow Theater",
+        "d": "Students work in teams to design and construct a large, interactive shadow theater using cardboard, recycled materials, and translucent screens. They craft 3D models of the Sun, Earth, and Moon, attaching each to rods or axles for physical movement. Integrating micro:bit or Makey Makey with LEDs and simple motors, students code sequences to simulate lunar phases, eclipses, and day/night cycles. By manipulating their physical models and triggering coded light effects, students visually demonstrate how celestial movements create shadows, phases, and tides. The project culminates with a live 'shadow show' presentation, blending storytelling, science, and hands-on engineering."
       }
     ],
     "audited": true,
-    "plannerText": "Students explore the relationships between the Earth, Moon, and Sun through hands-on models, time-lapse videos, moon diaries, and cultural stories. They investigate scientific concepts like rotation, tides, and seasons, compare Indigenous and scientific perspectives, and synthesize their learning through creative projects such as podcasts, diagrams, and choice-board activities."
+    "plannerText": "Students explore the relationships between the Earth, Moon, and Sun through hands-on models, time-lapse videos, moon diaries, and cultural stories. They investigate scientific concepts like rotation, tides, and seasons, compare Indigenous and scientific perspectives, and synthesize their learning through creative projects such as podcasts, diagrams, and choice-board activities.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -4353,12 +4354,13 @@
         "d": "Students create a podcast series using Adobe Express Podcasting (https://podcast.adobe.com) to document their STEM design projects for endangered species and share interviews with conservation experts. They plan, script, and record episodes that highlight their research, design process, and reflections on how people's actions affect the balance of nature. This authentic audio storytelling experience gives students a platform to advocate for environmental action and connect with a real-world audience."
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "Using the Design Cycle, students prototype a robotic device that could help monitor or protect a threatened species in their local environment (e.g., a sensor to detect invasive species or a robot to distribute food or water). They research, design, build, test, and refine their solution, documenting each stage in a digital portfolio."
+        "t": "Wildlife Guardian Rescue Bots",
+        "d": "Students work in teams to design and build a physical model of a threatened local habitat (e.g., wetland, forest, grassland) using recycled materials, cardboard, and natural elements. They then create a simple programmable rescue robot using Sphero Indi or micro:bit-powered vehicles, which must navigate the habitat to perform 'conservation missions'?such as delivering model food, relocating 'injured' animal figures, or simulating pollution cleanup. Students prototype animal-safe pathways, shelters, and barriers within their habitat, iterating designs based on test runs. The project integrates coding, engineering, and environmental empathy, culminating in a showcase where teams demonstrate how their hybrid physical-digital solutions help restore balance and protect endangered species."
       }
     ],
     "audited": true,
-    "plannerText": "The Year 6 Sharing the Planet unit focuses on how people's actions affect the balance of nature, with students investigating endangered species, conservation technologies, and Indigenous perspectives. Key activities include a STEM design project to help threatened species, excursions to zoos and natural sites, and the use of digital tools to research, design, and communicate solutions for environmental challenges."
+    "plannerText": "The Year 6 Sharing the Planet unit focuses on how people's actions affect the balance of nature, with students investigating endangered species, conservation technologies, and Indigenous perspectives. Key activities include a STEM design project to help threatened species, excursions to zoos and natural sites, and the use of digital tools to research, design, and communicate solutions for environmental challenges.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -4388,12 +4390,13 @@
         "d": "Students create short documentary-style videos in Adobe Express, weaving together interviews, archival footage, and their own narration to explore the causes and effects of migration, culminating in a class film festival that celebrates diverse migration journeys."
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "Design Cycle STEM Project: Students use the Design Cycle to prototype a 'Migration Journey Simulator' with Lego Spike Prime. They design and code a robotic model that simulates the obstacles, decisions, and opportunities faced during migration (e.g., crossing borders, adapting to new environments), then present their process and learning in a digital journal."
+        "t": "Migration Story Suitcase Automata",
+        "d": "Students design and build a physical 'migration suitcase' using recycled cardboard, fabric, and craft materials, representing a migrant's journey from their chosen story. Inside the suitcase, they construct a simple automata (mechanical moving scene) using cams, levers, and gears (wooden sticks, cardboard, dowels) to animate a key moment from the migration story (e.g., crossing a border, boarding a ship, arriving in a new place). Students integrate a micro:bit or Makey Makey to add interactive digital elements?such as triggering audio recordings of oral histories, lighting up arrival points, or playing sound effects?when parts of the automata are moved. The design cycle is used throughout: students empathize with their migrant subject, define the key story moment, ideate suitcase and automata designs, prototype with physical and digital components, test and refine the movement and interactivity, and finally present their finished Migration Story Suitcase Automata to share the lived experiences and emotions of migration in a tangible, creative way."
       }
     ],
     "audited": true,
-    "plannerText": "Students explore the causes, impacts, and personal stories of migration through interviews, storyboarding, and digital presentations. They investigate historical and contemporary migration events, conduct oral histories, and present their findings using multimedia tools, with a strong focus on empathy, diversity, and the lived experiences of migrants."
+    "plannerText": "Students explore the causes, impacts, and personal stories of migration through interviews, storyboarding, and digital presentations. They investigate historical and contemporary migration events, conduct oral histories, and present their findings using multimedia tools, with a strong focus on empathy, diversity, and the lived experiences of migrants.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -4423,12 +4426,13 @@
         "d": "Students document their learning and self-reflections through voice notes, photos, and video journals on Seesaw. They set personal wellbeing goals, track their progress, and share strategies for inclusion and belonging, inviting feedback from teachers and classmates."
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "Design Cycle STEM Project: Students use the Design Cycle to prototype a 'Wellbeing Bot' with Lego Spike Prime. The bot could demonstrate calming breathing patterns with lights and movement, or act out positive social interactions. Students iterate their designs based on peer feedback, linking robotics to emotional regulation and healthy relationships."
+        "t": "Wellbeing Wearables: Design & Code Your Mood Band",
+        "d": "Students will use the Design Cycle to invent and prototype a 'Mood Band'?a wearable bracelet or badge that visually communicates their current emotional state and promotes positive interactions. First, students brainstorm ways to represent emotions and wellbeing visually (e.g., colors, icons). Using materials like felt, fabric, LEDs, conductive thread, and recycled plastics, they build their wearable. Integrating micro:bit or Makey Makey (preloaded with simple, block-based code), students program their wearable to light up or change color according to selected moods (e.g., happy, calm, needing space). The project combines hands-on crafting (sewing, assembling, decorating) with basic coding and circuitry, fostering self-awareness and empathy as students reflect on how sharing their feelings can support healthy, safe interactions in both digital and real-life contexts."
       }
     ],
     "audited": true,
-    "plannerText": "This unit focuses on understanding safe and healthy interactions both online and in real life, strategies for managing friendships and emotions, and the importance of wellbeing and growth mindset. Students engage in activities such as cyber safety lessons, wellbeing poster creation, learner profile self-portraits, goal setting, and reflective Seesaw tasks to build self-awareness and positive relationships."
+    "plannerText": "This unit focuses on understanding safe and healthy interactions both online and in real life, strategies for managing friendships and emotions, and the importance of wellbeing and growth mindset. Students engage in activities such as cyber safety lessons, wellbeing poster creation, learner profile self-portraits, goal setting, and reflective Seesaw tasks to build self-awareness and positive relationships.",
+    "stemRebooted": true
   },
   {
     "ca": "Elsternwick",
