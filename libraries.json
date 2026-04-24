@@ -2,7 +2,6 @@
   "_meta": {
     "_inventory": {
       "approved": [
-        "Microsoft Teams",
         "Microsoft Word",
         "Microsoft PowerPoint",
         "Microsoft OneNote",
@@ -12,7 +11,6 @@
         "Bee-Bots",
         "Sphero Indi",
         "Sphero BOLT",
-        "Lego Spike Essential",
         "Lego Spike Prime",
         "Micro:bit",
         "CoDrone EDU",
@@ -36,7 +34,6 @@
         "Adobe Express",
         "Adobe Express Podcasting",
         "Google Maps",
-        "Google Earth",
         "Field Guide to Victoria",
         "Sky Map",
         "Geoboard",
@@ -54,7 +51,19 @@
         "Minecraft Education"
       ],
       "banned": [
-        "ClassVR"
+        "ClassVR",
+        "Microsoft Teams",
+        "PowerPoint",
+        "Google Earth",
+        "Digital Cameras",
+        "Green Screen Kits",
+        "Lego Spike Essential",
+        "Banqer",
+        "Google Suite",
+        "WeVideo",
+        "OneNote",
+        "Sway",
+        "Apple Keynote"
       ]
     }
   },
@@ -517,38 +526,52 @@
     },
     {
       "title": "Being Active",
+      "desc": "Three simple projects to learn about the importance of being active to help prevent heart disease and create wearable devices to encourage people to be more active. Design challenges for finding solutions to the Global Goals for sustainable development (SDGs).",
       "ages": "8+",
-      "subject": "SEL & LIFE SKILLS"
+      "subject": "SEL & LIFE SKILLS",
+      "url": "https://microbit.org/teach/lessons/?selected=being-active"
     },
     {
       "title": "Computing Fundamentals",
-      "ages": "8+",
-      "subject": "CODING & COMPUTER SCIENCE"
+      "desc": "Six lessons designed for students aged 11-12 years. Students are introduced to the basics of computational thinking, programming and computer systems to ensure a shared level of understanding.",
+      "ages": "11+",
+      "subject": "CODING & COMPUTER SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=computing-fundamentals-unit-of-work"
     },
     {
       "title": "CreateAI Taster Lessons",
+      "desc": "Two lessons introducing the concepts of AI and machine learning using micro:bit CreateAI.",
       "ages": "8+",
-      "subject": "CODING & COMPUTER SCIENCE"
+      "subject": "CODING & COMPUTER SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=createai-taster-lessons"
     },
     {
       "title": "Cryptography",
-      "ages": "8+",
-      "subject": "CODING & COMPUTER SCIENCE"
+      "desc": "Three lessons designed for students aged 11-14 years to follow on from the ?Cyber security unit,? unit and a good first-introduction to text-based programming. Students are introduced to the fascinating world of cryptography through unplugged and programming activities.",
+      "ages": "11+",
+      "subject": "CODING & COMPUTER SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=cryptography"
     },
     {
       "title": "Cyber Security",
-      "ages": "8+",
-      "subject": "CODING & COMPUTER SCIENCE"
+      "desc": "Three lessons designed for students aged 11-14 years introducing cyber security. Students explore the need to create strong passwords before writing algorithms and programs to create their own ?strong password generator? using the BBC micro:bit.",
+      "ages": "11+",
+      "subject": "CODING & COMPUTER SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=cyber-security"
     },
     {
       "title": "Data Handling",
+      "desc": "Five lessons aimed at students aged 9-10 years. Students explore data and the sensors on the BBC micro:bit through a variety of unplugged and programming activities.",
       "ages": "8+",
-      "subject": "MATHEMATICS"
+      "subject": "MATHEMATICS",
+      "url": "https://microbit.org/teach/lessons/?selected=data-handling-unit-summary"
     },
     {
       "title": "Digital Flashcards",
+      "desc": "Five lessons aimed at students aged 7-8 years. Students design and program digital flashcards to help them learn a foreign language using the BBC micro:bit.",
       "ages": "8+",
-      "subject": "CODING & COMPUTER SCIENCE"
+      "subject": "CODING & COMPUTER SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=digital-flashcards-unit-of-work"
     },
     {
       "title": "Electrical Conductors",
@@ -571,8 +594,10 @@
     },
     {
       "title": "Getting Active",
+      "desc": "Five lessons aimed at students aged 10-11. Students are introduced to variables and develop different programs using the BBC micro:bit to help families get active.",
       "ages": "8+",
-      "subject": "SEL & LIFE SKILLS"
+      "subject": "SEL & LIFE SKILLS",
+      "url": "https://microbit.org/teach/lessons/?selected=getting-active-unit-overview"
     },
     {
       "title": "Health Tech",
@@ -597,13 +622,17 @@
     },
     {
       "title": "Musical Micro:bit",
+      "desc": "Five lessons designed for students aged 9-10. Students compose musical phrases and algorithms before exploring how the BBC micro:bit can be programmed to play music.",
       "ages": "8+",
-      "subject": "ARTS & DESIGN"
+      "subject": "ARTS & DESIGN",
+      "url": "https://microbit.org/teach/lessons/?selected=musical-microbit-unit-overview"
     },
     {
       "title": "Nature Art",
+      "desc": "This unit of four lessons is suitable for students aged 7-8 years. They create nature representations, firstly using art materials and are introduced to computational thinking and programming the LEDs on the BBC micro:bit.",
       "ages": "8+",
-      "subject": "ARTS & DESIGN"
+      "subject": "ARTS & DESIGN",
+      "url": "https://microbit.org/teach/lessons/?selected=nature-art-unit-of-work"
     },
     {
       "title": "Night Safety",
@@ -626,13 +655,24 @@
     },
     {
       "title": "Sensory Classroom",
-      "ages": "8+",
-      "subject": "SCIENCE"
+      "desc": "Four lessons designed for students aged 11-14 years. Students explore sensory classrooms and design and create their own sensory learning aids using the BBC micro:bit.",
+      "ages": "11+",
+      "subject": "SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=sensory-classroom"
     },
     {
       "title": "Volcano Animations",
+      "desc": "Five lessons aimed at students aged 8-9 years. Students explore animations, developing their computational thinking and use repetition to create volcanic eruption animations using the LEDs on the BBC micro:bit.",
       "ages": "8+",
-      "subject": "SCIENCE"
+      "subject": "SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=volcano-animations-unit-of-work"
+    },
+    {
+      "title": "Saving Sea Creatures",
+      "desc": "Two simple projects to learn about the threats faced by fish and sea turtles and how technology can help them survive and promote bio-diversity. Design challenges for finding solutions to the Global Goals for sustainable development (SDGs).",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=sea-creatures"
     }
   ]
 }
