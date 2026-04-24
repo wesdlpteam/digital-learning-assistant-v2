@@ -347,6 +347,44 @@
         <div id="playbooks-list"></div>
       </div>
 
+      <!-- Tool Inventory -->
+      <div class="card" style="margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+          <span class="label" style="margin:0">🧰 tool inventory</span>
+          <div style="flex:1"></div>
+          <span id="inv-count" style="font-size:11px;color:var(--dim);font-weight:700"></span>
+        </div>
+        <p style="font-size:12px;color:var(--dim);margin-bottom:14px">Control exactly which tools the AI can suggest. Changes sync with <code style="font-size:11px;color:var(--mint)">libraries.json</code>.</p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div>
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+              <span style="font-size:12px;font-weight:700;color:var(--lime)">✓ WHITELIST</span>
+              <span id="inv-whitelist-count" style="font-size:10px;color:var(--dim);font-weight:600"></span>
+            </div>
+            <div style="font-size:11px;color:var(--dim);margin-bottom:8px;line-height:1.5">Only these tools will be suggested. Leave empty to allow all approved tools.</div>
+            <div style="display:flex;gap:6px;margin-bottom:8px">
+              <input id="inv-whitelist-input" class="inp" placeholder="e.g. Sphero BOLT" style="flex:1;margin-bottom:0;font-size:12px;padding:6px 10px" onkeydown="if(event.key==='Enter'){event.preventDefault();invAddTool('approved')}">
+              <button class="btn-sm" onclick="invAddTool('approved')" style="color:var(--lime);border-color:var(--lime);padding:6px 12px">+ Add</button>
+            </div>
+            <div id="inv-whitelist-pills" style="display:flex;flex-wrap:wrap;gap:4px;min-height:32px"></div>
+          </div>
+
+          <div>
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+              <span style="font-size:12px;font-weight:700;color:#FF8080">⛔ BANNED</span>
+              <span id="inv-banned-count" style="font-size:10px;color:var(--dim);font-weight:600"></span>
+            </div>
+            <div style="font-size:11px;color:var(--dim);margin-bottom:8px;line-height:1.5">Tools Wesley no longer has or doesn't want suggested. AI will never propose these.</div>
+            <div style="display:flex;gap:6px;margin-bottom:8px">
+              <input id="inv-banned-input" class="inp" placeholder="e.g. ClassVR" style="flex:1;margin-bottom:0;font-size:12px;padding:6px 10px" onkeydown="if(event.key==='Enter'){event.preventDefault();invAddTool('banned')}">
+              <button class="btn-sm" onclick="invAddTool('banned')" style="color:#FF8080;border-color:#FF8080;padding:6px 12px">+ Ban</button>
+            </div>
+            <div id="inv-banned-pills" style="display:flex;flex-wrap:wrap;gap:4px;min-height:32px"></div>
+          </div>
+        </div>
+      </div>
+
       <!-- Run Surgeon -->
       <div class="card" style="margin-bottom:14px">
         <span class="label">Run Surgeon</span>
@@ -484,7 +522,12 @@
 
     <!-- LIBRARIES -->
     <div id="panel-libraries" class="panel">
-      <h1 class="page-title">Lesson Libraries</h1>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;flex-wrap:wrap">
+        <h1 class="page-title" style="margin:0">Lesson Libraries</h1>
+        <div style="flex:1"></div>
+        <button class="btn-sm" onclick="pullLibrariesFromGitHub()" title="Pull libraries.json from GitHub Pages and overwrite Drive (use if you edited GitHub directly)" style="color:var(--gold);border-color:var(--gold)">⬇ Pull from GitHub</button>
+        <button class="btn-sm" onclick="refreshLibrariesFromDrive()" title="Reload libraries.json from Drive (discards local cache)">↻ Refresh from Drive</button>
+      </div>
       <p class="page-sub">Curate the lesson libraries that Bulk AI Edit references when proposing changes. Only lessons in these libraries will be suggested — this prevents hallucinations.</p>
 
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
@@ -718,6 +761,64 @@ function renderPlaybooksList(){
 
 loadSnapshots();
 loadPlaybooks();
+
+// ========== TOOL INVENTORY UI ==========
+function invAddTool(listKey){
+  const inputId = listKey === 'approved' ? 'inv-whitelist-input' : 'inv-banned-input';
+  const input = document.getElementById(inputId);
+  if(!input) return;
+  const val = (input.value || '').trim();
+  if(!val) return;
+  TOOL_INVENTORY[listKey] = TOOL_INVENTORY[listKey] || [];
+  const existsLower = TOOL_INVENTORY[listKey].map(x => x.toLowerCase());
+  if(existsLower.includes(val.toLowerCase())){
+    setStatus(`"${val}" is already in the ${listKey === 'approved' ? 'whitelist' : 'banned list'}`, 'error');
+    input.value = '';
+    return;
+  }
+  // If adding to banned, also remove from approved (and vice versa)
+  if(listKey === 'banned'){
+    TOOL_INVENTORY.approved = (TOOL_INVENTORY.approved || []).filter(x => x.toLowerCase() !== val.toLowerCase());
+  } else {
+    TOOL_INVENTORY.banned = (TOOL_INVENTORY.banned || []).filter(x => x.toLowerCase() !== val.toLowerCase());
+  }
+  TOOL_INVENTORY[listKey].push(val);
+  input.value = '';
+  renderToolInventory();
+  saveLibraries();
+  setStatus(`Added "${val}" to ${listKey === 'approved' ? 'whitelist' : 'banned list'}`);
+}
+
+function invRemoveTool(listKey, tool){
+  TOOL_INVENTORY[listKey] = (TOOL_INVENTORY[listKey] || []).filter(x => x.toLowerCase() !== tool.toLowerCase());
+  renderToolInventory();
+  saveLibraries();
+  setStatus(`Removed "${tool}" from ${listKey === 'approved' ? 'whitelist' : 'banned list'}`);
+}
+
+function renderToolInventory(){
+  const whitelistEl = document.getElementById('inv-whitelist-pills');
+  const bannedEl = document.getElementById('inv-banned-pills');
+  const whCountEl = document.getElementById('inv-whitelist-count');
+  const banCountEl = document.getElementById('inv-banned-count');
+  const totalEl = document.getElementById('inv-count');
+  if(!whitelistEl || !bannedEl) return;
+
+  const approved = TOOL_INVENTORY.approved || [];
+  const banned = TOOL_INVENTORY.banned || [];
+
+  if(whCountEl) whCountEl.textContent = approved.length ? `(${approved.length})` : '';
+  if(banCountEl) banCountEl.textContent = banned.length ? `(${banned.length})` : '';
+  if(totalEl) totalEl.textContent = (approved.length || banned.length) ? `${approved.length + banned.length} entries` : '';
+
+  whitelistEl.innerHTML = approved.length
+    ? approved.map(t => `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 4px 4px 10px;background:rgba(197,232,74,0.08);border:1px solid rgba(197,232,74,0.3);border-radius:99px;font-size:12px;font-weight:600;color:var(--lime)">${esc(t)}<button onclick="invRemoveTool('approved','${esc(t).replace(/'/g,"\\'")}')"  style="background:transparent;border:none;color:var(--lime);cursor:pointer;padding:0 6px;font-size:14px;line-height:1;opacity:.7" title="Remove">×</button></span>`).join('')
+    : '<span style="font-size:11px;color:var(--dim);font-style:italic">No whitelist — all approved tools allowed.</span>';
+
+  bannedEl.innerHTML = banned.length
+    ? banned.map(t => `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 4px 4px 10px;background:rgba(255,128,128,0.08);border:1px solid rgba(255,128,128,0.3);border-radius:99px;font-size:12px;font-weight:600;color:#FF8080">${esc(t)}<button onclick="invRemoveTool('banned','${esc(t).replace(/'/g,"\\'")}')"  style="background:transparent;border:none;color:#FF8080;cursor:pointer;padding:0 6px;font-size:14px;line-height:1;opacity:.7" title="Remove">×</button></span>`).join('')
+    : '<span style="font-size:11px;color:var(--dim);font-style:italic">No bans.</span>';
+}
 
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function fixDashCorruption(s){
@@ -1153,7 +1254,7 @@ function switchTab(tab,btn){
   if(tab==='browse') renderBrowse();
   if(tab==='audit') renderAudit();
   if(tab==='live') loadLiveAnalytics();
-  if(tab==='tools'){ initBulkTools(); renderBulkWelcome(); renderSnapshotsList(); renderPlaybooksList(); }
+  if(tab==='tools'){ initBulkTools(); renderBulkWelcome(); renderSnapshotsList(); renderPlaybooksList(); renderToolInventory(); }
   if(tab==='libraries') renderLibraries();
 
 }
@@ -1256,7 +1357,9 @@ function getIssues(){
     const seen=new Set();
     tools.forEach(t=>{ if(seen.has(t)) duplicates.push({e,idx,type:'duplicate',detail:`"${sugTool(realSugs[tools.indexOf(t)])}" appears twice`}); seen.add(t); });
 
-    realSugs.forEach(s=>{
+    realSugs.forEach((s, slotIdx)=>{
+      // STEM Design Cycle slot (#6, index 5) is exempt from whitelist check
+      if(slotIdx === 5) return;
       const t=sugTool(s);
       if(t&&!isWhitelisted(t))
         offWhitelist.push({e,idx,type:'offwhitelist',detail:`"${t}" not in approved list`});
@@ -1991,7 +2094,9 @@ function computeStats(){
   
   DATA.forEach(e=>{
     if(e.audited === false) return;
-    getSugs(e).forEach(s=>{
+    getSugs(e).forEach((s, slotIdx)=>{
+      // Skip STEM Design Cycle slot (#6) so it doesn't pollute the audit chart
+      if(slotIdx === 5) return;
       const raw=(s&&s.t&&s.t.trim()&&s.t.trim()!=='TBA')?s.t.trim():null;
       if(!raw) return;
       // Strategy: normalise the FULL name first. If it resolves to a known tool, use it directly.
@@ -3178,9 +3283,20 @@ PODCASTING RULE: Whenever a suggestion involves podcasting, audio recording, aud
 
 // ========== CENTRALISED TOOL CONSTRAINTS — used by every AI suggestion path ==========
 
-// Tools that exist in the approved list but Wesley does NOT have physical/software access to.
-// AI must never suggest these. Edit this list when hardware/software inventory changes.
-const NOT_AVAILABLE_AT_WESLEY = [];
+// Tool inventory — persisted to libraries.json under _meta._inventory
+// Editable from the Tool Inventory card in the Bulk tab.
+// Structure: { approved: [...], banned: [...] }
+// If approved is non-empty, it takes precedence over the default approved list.
+// If banned includes a tool, AI will never suggest it (even if approved).
+let TOOL_INVENTORY = { approved: [], banned: [] };
+
+// Legacy alias kept for any old references
+function getBannedTools(){ return TOOL_INVENTORY.banned || []; }
+// Treat inventory.banned as the runtime "not available" list
+Object.defineProperty(window, 'NOT_AVAILABLE_AT_WESLEY', {
+  get(){ return TOOL_INVENTORY.banned || []; },
+  configurable: true
+});
 
 const TOOL_AGE_GUIDE = `TOOL AGE GUIDE (HARD RULE — match Australian year levels):
 Prep = ages 5-6 | Year 1 = 6-7 | Year 2 = 7-8 | Year 3 = 8-9 | Year 4 = 9-10 | Year 5 = 10-11 | Year 6 = 11-12
@@ -3245,10 +3361,23 @@ function getAgeAppropriateTools(yearLevel){
     // Year 5+
     {n:'3D Printers', min:5},
   ];
-  return ALL
+  // First filter to age-appropriate tools that aren't banned
+  let filtered = ALL
     .filter(t => yr >= t.min && (t.max === undefined || yr <= t.max))
-    .filter(t => !NOT_AVAILABLE_AT_WESLEY.some(na => na.toLowerCase() === t.n.toLowerCase()))
+    .filter(t => !(TOOL_INVENTORY.banned || []).some(na => na.toLowerCase() === t.n.toLowerCase()))
     .map(t => t.n);
+  // If a custom whitelist is set, intersect with it
+  if((TOOL_INVENTORY.approved || []).length){
+    const approvedLower = TOOL_INVENTORY.approved.map(x => x.toLowerCase());
+    filtered = filtered.filter(t => approvedLower.includes(t.toLowerCase()));
+    // Allow any custom-approved tool through even if not in master list
+    TOOL_INVENTORY.approved.forEach(customTool => {
+      if(!filtered.some(t => t.toLowerCase() === customTool.toLowerCase())){
+        filtered.push(customTool);
+      }
+    });
+  }
+  return filtered;
 }
 
 // Check if a single tool is age-appropriate for a given year level
@@ -3299,17 +3428,28 @@ function detectPlatformContext(text, yearLevel){
 }
 
 const GAS_RULES = `You are an Expert Digital Learning Coach at Wesley College (MICROSOFT school).
-APPROVED TOOLS ONLY:
-- Microsoft M365: Teams, Word, PowerPoint, OneNote, etc.
-- Robotics/STEM Hardware: Beebots, Sphero Indi, Sphero BOLT, Lego Spike Essential, Lego Spike Prime, Micro:bits, CoDrone EDU, Makey Makey
-- Maker/A/V Hardware: 3D Printers, ClassVR, Merge Cubes, Green Screen Kits, Podcast Equipment, Digital Cameras, iPads, Laptops
+APPROVED TOOLS ONLY — you may not invent or infer other tool names:
+- Microsoft M365: Microsoft Teams, Microsoft Word, Microsoft PowerPoint, Microsoft OneNote, Microsoft Excel, Microsoft Forms, Microsoft Sway
+- Robotics/STEM Hardware: Bee-Bots, Sphero Indi, Sphero BOLT, Lego Spike Essential, Lego Spike Prime, Micro:bit, CoDrone EDU, Makey Makey
+- Maker/A/V Hardware: 3D Printers, ClassVR, Merge Cubes, Green Screen, Podcast Equipment, iPads
 - Core Creation: Seesaw, Canva, Book Creator, Padlet
-- Video/Audio/Animation: GarageBand, ScratchJR, Stop Motion Studio, ChatterPix Kids, iMovie, Puppet Pals, Adobe Express (Podcasting, video, character animations, website designer)
-- Subject Specific: Google Maps, Google Earth (ONLY Google tools allowed), Field Guide to Victoria, Sky Map, Geoboard
+- Video/Audio/Animation: GarageBand, ScratchJR, Stop Motion Studio, ChatterPix Kids, iMovie, Puppet Pals, Adobe Express, Adobe Express Podcasting
+- Subject Specific: Google Maps, Google Earth, Field Guide to Victoria, Sky Map, Geoboard
 - Other: Clickview, Epic, PicCollage, Brushes Redux, Word Clouds ABCya, Sketchbook, Explain Everything, Freeform, Delightex, Kahoot, Tinkercad, Minecraft Education
-PROHIBITED: Google Suite (Docs/Slides/Sheets), any tool NOT on the above list, WeVideo.
+
+⛔ STRICTLY PROHIBITED — you will be rejected if you propose any of these:
+- ChatGPT, Claude, Gemini, Copilot, or any other consumer AI assistant (not approved for student use)
+- Google Docs, Google Slides, Google Sheets (use Microsoft M365 equivalents — we are a Microsoft school)
+- WeVideo, Flipgrid, any tool NOT explicitly listed above
+- NEVER invent tool names. If unsure whether a tool is approved, DON'T USE IT.
+
+✓ APP SMASHES ARE ENCOURAGED:
+- Combining two approved tools in a single suggestion is valued ("Seesaw + iMovie", "Book Creator + ChatterPix Kids", "Canva + Padlet").
+- Format app smashes in the "t" field with a " + " separator, e.g. "Delightex + Puppet Pals", or as "Seesaw (App Smash with PicCollage)".
+- BOTH tools in an app smash must be on the approved list above.
+- Never include a prohibited tool (ChatGPT etc.) in an app smash.
+
 YEAR-LEVEL RULES: Microsoft Teams ONLY for Year 4, 5, 6 — NEVER suggest Teams for Prep, Year 1, Year 2, or Year 3. Early years (Prep-Yr2): prefer Seesaw/Canva/Book Creator. Mid (Yr3): Canva, Book Creator, Adobe Express preferred.
-ONE TOOL PER SUGGESTION — never combine tools (e.g. never write 'Book Creator & PowerPoint'). The tool name must be a single tool only.
 ${SUGGESTION_STYLE}`;
 
 
@@ -3426,12 +3566,80 @@ function getLibraryKeys(){
 }
 
 // Load libraries.json — tries Drive (if authed), falls back to GitHub Pages, falls back to empty
+async function refreshLibrariesFromDrive(){
+  try { localStorage.removeItem('dla_libraries_backup'); } catch{}
+  LIBRARIES_FILE_ID = null;
+  LIBRARIES = {};
+  LIBRARIES_META = {};
+  TOOL_INVENTORY = { approved: [], banned: [] };
+  setStatus('Refreshing libraries from Drive…');
+  await loadLibraries();
+  renderLibraries();
+  renderToolInventory();
+  setStatus('Libraries refreshed from Drive ✓');
+}
+
+async function pullLibrariesFromGitHub(){
+  const GITHUB_RAW = 'https://raw.githubusercontent.com/wesdlpteam/digital-learning-assistant-v2/main/libraries.json';
+  if(!confirm(`This will:\n\n1. Fetch libraries.json from GitHub (${GITHUB_RAW})\n2. Overwrite the Drive copy with whatever GitHub has\n3. Discard any unsaved Studio changes\n\nUse this ONLY if you edited libraries.json directly in GitHub and need those edits back in Drive.\n\nContinue?`)) return;
+  
+  setStatus('Pulling libraries.json from GitHub…');
+  try {
+    // Cache-bust the GitHub fetch to avoid CDN staleness
+    const url = GITHUB_RAW + '?cb=' + Date.now();
+    const r = await fetch(url);
+    if(!r.ok) throw new Error(`GitHub returned ${r.status}`);
+    const githubData = await r.json();
+    if(!githubData || typeof githubData !== 'object') throw new Error('Invalid JSON');
+    
+    // Summary of what we pulled
+    const libKeys = Object.keys(githubData).filter(k => !k.startsWith('_'));
+    const summary = libKeys.map(k => {
+      const lessons = githubData[k] || [];
+      const withDesc = lessons.filter(l => l && l.desc).length;
+      const withUrl = lessons.filter(l => l && l.url).length;
+      return `${k}: ${lessons.length} lessons (${withDesc} with descriptions, ${withUrl} with URLs)`;
+    }).join('\n');
+    
+    if(!confirm(`Pulled from GitHub:\n\n${summary}\n\nApply to Drive?`)){
+      setStatus('GitHub pull cancelled');
+      return;
+    }
+    
+    // Load the GitHub data into memory
+    LIBRARIES = {};
+    LIBRARIES_META = githubData._meta || {};
+    libKeys.forEach(k => { LIBRARIES[k] = githubData[k] || []; });
+    if(LIBRARIES_META._inventory){
+      TOOL_INVENTORY.approved = LIBRARIES_META._inventory.approved || [];
+      TOOL_INVENTORY.banned = LIBRARIES_META._inventory.banned || [];
+    }
+    
+    // Save to Drive (overwrites the Drive copy)
+    await saveLibraries();
+    
+    // Re-render
+    renderLibraries();
+    renderToolInventory();
+    setStatus(`GitHub pull complete ✓ ${libKeys.length} libraries synced to Drive`);
+  } catch(e){
+    console.error('GitHub pull failed:', e);
+    setStatus(`GitHub pull failed: ${e.message}`, 'error');
+    alert(`Failed to pull from GitHub:\n${e.message}\n\nCheck that:\n• The file exists at ${GITHUB_RAW}\n• You have internet connection\n• Your edits have been committed to the main branch`);
+  }
+}
+
 async function loadLibraries(){
   function processLoaded(data){
     if(!data || typeof data !== 'object') return false;
     // Extract meta if present
     if(data._meta && typeof data._meta === 'object'){
       LIBRARIES_META = data._meta;
+      // Also load tool inventory if stored in _meta
+      if(LIBRARIES_META._inventory && typeof LIBRARIES_META._inventory === 'object'){
+        TOOL_INVENTORY.approved = Array.isArray(LIBRARIES_META._inventory.approved) ? LIBRARIES_META._inventory.approved : [];
+        TOOL_INVENTORY.banned = Array.isArray(LIBRARIES_META._inventory.banned) ? LIBRARIES_META._inventory.banned : [];
+      }
     }
     // Copy lesson arrays
     const cleaned = {};
@@ -3498,6 +3706,11 @@ async function loadLibraries(){
 
 // Save libraries.json to Drive (includes _meta)
 async function saveLibraries(){
+  // Sync TOOL_INVENTORY into LIBRARIES_META so it persists with libraries.json
+  LIBRARIES_META._inventory = {
+    approved: TOOL_INVENTORY.approved || [],
+    banned: TOOL_INVENTORY.banned || []
+  };
   const saveObj = { _meta: LIBRARIES_META };
   getLibraryKeys().forEach(k => { saveObj[k] = LIBRARIES[k] || []; });
 
@@ -4681,6 +4894,14 @@ ${toolIndexStr}
 
 INSTRUCTION FROM COORDINATOR: ${enrichedInstruction}
 
+CRITICAL — PARSE NEGATIVE INSTRUCTIONS:
+Read the instruction above carefully for any "do NOT" / "don't" / "avoid" / "not X" / "but not X" statements.
+- If coordinator says "but not Lego Spike Prime" → you must NEVER propose Lego Spike Prime as a replacement
+- If coordinator says "avoid Canva" → exclude Canva from all proposed changes
+- If coordinator says "without using X" → X is banned for this entire run
+- Re-read the instruction TWICE before generating each proposal to make sure you haven't violated a negative constraint.
+- If you violate a negative constraint, the coordinator will reject every one of your proposals.
+
 REPLACEMENT STRATEGY — when proposing a change, choose which suggestion slot to replace using this priority:
 1. Replace a suggestion that uses the SAME tool as what you're adding
 2. Replace one of the TOP 5 most overutilised tools
@@ -4768,6 +4989,72 @@ ${fullContext}`;
           if(recovered.length) changes = normaliseChanges(recovered);
         }
       }catch(err){ console.error('Bulk AI parse error', err); }
+    }
+
+    // Hard filter for negative instructions — AI sometimes ignores "don't use X" even when told explicitly
+    if(changes && changes.length){
+      const negativePatterns = [
+        /(?:do\s*not|don't|never|avoid|exclude|not\s+to|but\s+not|without\s+using|except\s+for)\s+(?:use\s+|using\s+|swap\s+with\s+|replace\s+with\s+|suggest\s+)?([a-z][a-z0-9:'\s-]+?)(?:\.|,|;|$|\)|\s+or\s+|\s+and\s+(?:not|don't)\s+|\n)/gi,
+      ];
+      const bannedFromInstruction = new Set();
+      const instrLower = enrichedInstruction.toLowerCase();
+      negativePatterns.forEach(re => {
+        let m;
+        while((m = re.exec(instrLower)) !== null){
+          const banned = m[1].trim().replace(/\s+/g, ' ');
+          if(banned.length > 2 && banned.length < 40){
+            bannedFromInstruction.add(normaliseToolName(banned).toLowerCase());
+          }
+        }
+      });
+      if(bannedFromInstruction.size > 0){
+        const before = changes.length;
+        changes = changes.filter(c => {
+          const t = normaliseToolName((c.t || '').trim()).toLowerCase();
+          for(const banned of bannedFromInstruction){
+            if(t === banned || t.includes(banned) || banned.includes(t)){
+              return false;
+            }
+          }
+          return true;
+        });
+        const filteredOut = before - changes.length;
+        if(filteredOut > 0){
+          console.log(`Bulk AI: filtered out ${filteredOut} proposal(s) violating negative instruction. Banned from instruction:`, [...bannedFromInstruction]);
+        }
+      }
+
+      // Second filter: reject proposals with forbidden tools (ChatGPT, Google Docs, etc)
+      // App smashes are OK as long as both tools are approved — the forbidden-keyword
+      // check catches things like "Padlet + ChatGPT" because ChatGPT is in the keyword list.
+      const FORBIDDEN_KEYWORDS = ['chatgpt', 'gemini', 'claude ai', 'copilot', 'google docs', 'google slides', 'google sheets', 'wevideo', 'flipgrid'];
+      const beforeForbid = changes.length;
+      changes = changes.filter(c => {
+        const t = (c.t || '').toLowerCase();
+        if(FORBIDDEN_KEYWORDS.some(k => t.includes(k))){
+          console.log(`Bulk AI: rejected proposal containing forbidden tool: "${c.t}"`);
+          return false;
+        }
+        return true;
+      });
+      const filteredForbidden = beforeForbid - changes.length;
+      if(filteredForbidden > 0){
+        console.log(`Bulk AI: filtered out ${filteredForbidden} proposal(s) with forbidden tools`);
+      }
+
+      // Third filter: respect TOOL_INVENTORY.banned (user-defined banned list)
+      if(TOOL_INVENTORY.banned && TOOL_INVENTORY.banned.length){
+        const beforeBanned = changes.length;
+        const bannedLower = TOOL_INVENTORY.banned.map(x => x.toLowerCase());
+        changes = changes.filter(c => {
+          const t = normaliseToolName(c.t || '').toLowerCase();
+          return !bannedLower.some(b => t === b || t.includes(b));
+        });
+        const filteredBanned = beforeBanned - changes.length;
+        if(filteredBanned > 0){
+          console.log(`Bulk AI: filtered out ${filteredBanned} proposal(s) using user-banned tools`);
+        }
+      }
     }
 
     if(bar) bar.style.width = '100%';
