@@ -88,7 +88,7 @@
           OpenAI API Key
           <span class="field-badge" id="key-badge">required</span>
         </div>
-        <input type="password" id="api-key-input" class="setup-inp" placeholder="sk-..." oninput="checkKeyInput()">
+        <input type="password" id="api-key-input" class="setup-inp" placeholder="sk-..." oninput="checkKeyInput()" onkeydown="if(event.key==='Enter'){event.preventDefault();saveApiKey()}">
 
         <button class="setup-confirm" onclick="saveApiKey()">confirm →</button>
         <div class="setup-alt">
@@ -138,10 +138,10 @@
         </p>
         <button class="btn-pri full" id="btn-drive" onclick="loadFromDrive()">↑ Load from Google Drive</button>
         <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
-          <button class="btn" onclick="document.getElementById('file-input').click()">Open local file</button>
+          <button class="btn" onclick="document.getElementById('file-input-load').click()">Open local file</button>
           <button class="btn" onclick="showScreen('paste')">Paste JSON</button>
         </div>
-        <input type="file" id="file-input" accept=".json" style="display:none" onchange="loadFromFile(event)">
+        <input type="file" id="file-input-load" accept=".json" style="display:none" onchange="loadFromFile(event)">
         <div id="load-err" style="display:none;margin-top:14px;font-size:12px;color:#f87171;padding:10px;background:#450a0a;border-radius:6px"></div>
       </div>
     </div>
@@ -5156,9 +5156,9 @@ DESCRIPTION-AWARE EDITING:
 - When replacing a weak suggestion, use the current description to decide why that slot is weak; do not choose randomly.
 
 PROTECTED SLOT — STEM DESIGN CYCLE (HARD RULE — ABSOLUTE, NO EXCEPTIONS):
-- Slot index 5 (the 6th suggestion in every entry) is the STEM Design Cycle activity. It is PROTECTED.
+- Suggestion 6 (stored in code as sugIdx:5) is the STEM Design Cycle activity. It is PROTECTED.
 - You MUST NEVER propose any change with "sugIdx":5. EVER.
-- In the entry data below, slot 5 is marked with 🔒STEM — that lock symbol means "do not touch under any circumstance".
+- In the entry data below, Suggestion 6 is marked with 🔒STEM — that lock symbol means "do not touch under any circumstance".
 - Even if slot 5 looks like a perfect fit for the requested tool, you MUST target a different slot (0, 1, 2, 3, or 4) instead.
 - If the only good fit in an entry is slot 5, SKIP that entry entirely — do NOT propose a change to slot 5.
 - Any proposal with "sugIdx":5 will be hard-rejected by the coordinator and counted as a violation.
@@ -5178,7 +5178,7 @@ Read the instruction above carefully for any "do NOT" / "don't" / "avoid" / "not
 - If you violate a negative constraint, the coordinator will reject every one of your proposals.
 
 REPLACEMENT STRATEGY — when proposing a change, choose which suggestion slot to replace using this priority:
-0. NEVER select slot 5 (s5🔒STEM) — it is permanently off-limits. Only consider slots 0, 1, 2, 3, and 4.
+0. NEVER select Suggestion 6 (s5🔒STEM / sugIdx:5) — it is permanently off-limits. Only consider slots 0, 1, 2, 3, and 4.
 1. For description-only requests, keep the existing tool and rewrite the description in the same slot.
 2. For specific-tool requests, replace a suggestion that uses the SAME tool family, a weak/generic description, or an overused tool.
 3. Replace one of the TOP 5 most overutilised tools when the new tool is a good curriculum fit.
@@ -5349,19 +5349,19 @@ ${fullContext}`;
       const filteredUnsafe = beforeSafeTool - changes.length;
       if(filteredUnsafe > 0){ console.log(`Bulk AI: filtered out ${filteredUnsafe} unsafe / age-inappropriate proposal(s)`); }
 
-      // Fifth filter: PROTECT STEM SLOT (sugIdx 5) — never allow replacement of the Design Cycle slot
+      // Fifth filter: PROTECT STEM SUGGESTION 6 (sugIdx:5) — never allow replacement of the Design Cycle slot
       // This is the hard safety net — even if GPT ignores the prompt-level ban, this catches it
       const beforeStemFilter = changes.length;
       changes = changes.filter(c => {
         if(Number(c.sugIdx) === 5){
-          console.log(`Bulk AI: BLOCKED proposal targeting protected STEM slot (s5) in entry ${c.entryIdx}: "${c.t}"`);
+          console.log(`Bulk AI: BLOCKED proposal targeting protected STEM suggestion (Suggestion 6 / sugIdx:5) in entry ${c.entryIdx}: "${c.t}"`);
           return false;
         }
         return true;
       });
       filteredStem = beforeStemFilter - changes.length;
       if(filteredStem > 0){
-        console.log(`Bulk AI: filtered out ${filteredStem} proposal(s) targeting protected STEM slot 5`);
+        console.log(`Bulk AI: filtered out ${filteredStem} proposal(s) targeting protected STEM suggestion 6 (sugIdx:5)`);
       }
     }
 
@@ -5402,7 +5402,7 @@ ${fullContext}`;
       updateReasoningStep(5, 'done');
       setTimeout(hideReasoningSteps, 1200);
       const dupeNote = skippedDupes ? ` (${skippedDupes} duplicate${skippedDupes!==1?'s':''} filtered out)` : '';
-      const stemNote = filteredStem ? ` <span style="color:var(--purple);font-size:11px">· ${filteredStem} STEM slot proposal${filteredStem!==1?'s':''} blocked (s5 protected)</span>` : '';
+      const stemNote = filteredStem ? ` <span style="color:var(--purple);font-size:11px">· ${filteredStem} STEM Suggestion 6 proposal${filteredStem!==1?'s':''} blocked (Suggestion 6 protected)</span>` : '';
       const filterNote = (rawAiCount > changes.length) ? ` <span style="color:var(--dim);font-size:11px">· GPT proposed ${rawAiCount}, ${rawAiCount - changes.length} removed by filters</span>` : '';
       const targetWarn = (explicitCount && rawAiCount < explicitCount - 1)
         ? `<div style="margin-top:8px;padding:8px 12px;background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.35);border-radius:8px;font-size:12px;color:var(--orange)">⚠ You asked for <strong>${explicitCount}</strong> but GPT only returned <strong>${rawAiCount}</strong>. Try rephrasing as "scan EVERY entry and find at least ${explicitCount}" or click ↻ and retry — GPT-4.1 sometimes responds conservatively on the first pass.</div>`
@@ -5433,7 +5433,7 @@ ${fullContext}`;
       const msg = skippedDupes
         ? `All ${skippedDupes} proposal${skippedDupes!==1?'s':''} would have created duplicates${stemBlockNote}. Try a different instruction.`
         : filteredStem > 0
-        ? `GPT proposed ${rawAiCount} changes but all targeted the STEM Design Cycle slot (s5), which is protected. Try rephrasing — e.g. "replace one of the other 5 suggestions with Micro:bit".`
+        ? `GPT proposed ${rawAiCount} changes but all targeted the STEM Design Cycle suggestion (Suggestion 6 / sugIdx:5), which is protected. Try rephrasing — e.g. "replace one of the other 5 suggestions with Micro:bit".`
         : 'No changes proposed for this instruction. Try rephrasing — for example, name a specific tool or lesson library.';
       bulkChatAddMessage('assistant', `⚠️ ${msg}`);
       bulkChatMemory.push({ role: 'assistant', content: `No changes found. ${msg}` });
@@ -5512,6 +5512,7 @@ async function runBulkRegen(){
   const bar=document.getElementById('bulk-regen-bar');
   const lbl=document.getElementById('bulk-regen-label');
   const res=document.getElementById('bulk-regen-result');
+  if(!btn || !prog || !bar || !lbl || !res){ setStatus('Bulk regenerate panel is not available in this Studio view','error'); return; }
   btn.disabled=true; prog.style.display='block'; res.innerHTML='';
   let done=0, fixed=0, failed=0;
 
