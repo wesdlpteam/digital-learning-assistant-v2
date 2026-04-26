@@ -552,6 +552,48 @@ function normaliseChanges(raw){
   }));
 }
 
+// Shared AI safety helpers used by Bulk AI and per-suggestion feedback.
+const AI_FORBIDDEN_TOOL_KEYWORDS = ['chatgpt','gemini','claude ai','copilot','google docs','google slides','google sheets','wevideo','flipgrid'];
+function compactForPrompt(value, max){
+  const text = String(value || '').replace(/\s+/g, ' ').trim();
+  return text.length > max ? text.slice(0, max - 1).trim() + '…' : text;
+}
+function proposalToolParts(toolName){
+  const raw = String(toolName || '').trim();
+  if(!raw) return [];
+  const parts = raw.split(/\s*(?:\+|&|\/|\band\b|\bwith\b)\s*/i).map(p=>p.trim()).filter(Boolean);
+  return parts.length ? parts : [raw];
+}
+function toolContainsForbiddenKeyword(toolName){
+  const t = String(toolName || '').toLowerCase();
+  return AI_FORBIDDEN_TOOL_KEYWORDS.some(k => t.includes(k));
+}
+function toolViolatesInventoryBan(toolName){
+  const raw = String(toolName || '').toLowerCase();
+  const normalised = normaliseToolName(toolName || '').toLowerCase();
+  return (TOOL_INVENTORY?.banned || []).some(b => {
+    const bRaw = String(b || '').toLowerCase();
+    const bNorm = normaliseToolName(b || '').toLowerCase();
+    return normalised === bNorm || normalised.includes(bNorm) || raw.includes(bRaw);
+  });
+}
+function isAiToolSafeForEntry(toolName, entry){
+  if(!String(toolName || '').trim()) return false;
+  if(toolContainsForbiddenKeyword(toolName)) return false;
+  if(toolViolatesInventoryBan(toolName)) return false;
+  if(entry && !isToolAgeAppropriate(toolName, entry.yl)) return false;
+  return true;
+}
+function wouldDupeToolProposalInEntry(entry, toolName, excludeSugIdx){
+  const newKeys = proposalToolParts(toolName).map(toolKey).filter(Boolean);
+  if(!newKeys.length) return false;
+  return getSugs(entry).some((s,i) => {
+    if(i === excludeSugIdx) return false;
+    const existingKeys = proposalToolParts(sugTool(s)).map(toolKey).filter(Boolean);
+    return existingKeys.some(k => newKeys.includes(k));
+  });
+}
+
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
 
 function recordChange(idx, oldSugs, newSugs){
@@ -1728,6 +1770,7 @@ async function applySugFeedbackDirect(uid, entryIdx, sugIdx){
   sendBtn.textContent = 'Thinking\u2026';
   startProgress();
   resultEl.innerHTML = '';
+  if(typeof ensureLibrariesLoadedForAI === 'function') await ensureLibrariesLoadedForAI();
 
   // Age & availability constraints
   const ageAppropriate = getAgeAppropriateTools(entry.yl);
@@ -1781,7 +1824,10 @@ ${platformContext}
 OVERUSED TOOLS across library (avoid unless teacher specifically names them): ${overused.length ? overused.join(', ') : '(none)'}
 UNDERUSED age-appropriate tools (prefer these when suitable): ${underused.length ? underused.join(', ') : '(none)'}
 
-ONE TOOL PER SUGGESTION — never combine tools in the "t" field.
+TOOL FIELD RULE:
+- Prefer one clear tool in the "t" field.
+- If the teacher explicitly asks for an app smash, you may use "Tool A + Tool B" only when BOTH tools are age-appropriate and neither is banned.
+- Never include a banned or unavailable tool, even as part of an app smash.
 ${conversationBlock}
 
 INTENT DETECTION (auto-detect from the teacher's instruction and respond accordingly):
@@ -1792,7 +1838,7 @@ INTENT DETECTION (auto-detect from the teacher's instruction and respond accordi
 
 3. TOOL_BROWSE — teacher asks for alternatives without naming one ("different tool", "something else", "what else", "any alternative", "try something new"). Return 3 options each using a DIFFERENT age-appropriate tool not already in this entry. Prefer underused tools.
 
-4. DIRECT_EDIT — teacher gives literal text instruction ("change 'X' to 'Y'", "replace X with Y", "remove the bit about X", "add a sentence about Y", "use 'learners' instead of 'students'"). Apply the edit literally to the current description. Return 3 close variants of the edited result — all keep the same tool and same overall activity.
+4. DIRECT_EDIT — teacher gives literal text instruction ("change 'X' to 'Y'", "replace X with Y", "remove the bit about X", "add a sentence about Y", "use 'learners' instead of 'students'"). Apply the edit literally to the current description. Option 1 should be the closest exact edit; options 2 and 3 can be lightly polished variants. All keep the same tool and same overall activity unless the teacher explicitly names a new tool.
 
 5. STEM_REFRAME — teacher asks for hands-on Design Cycle / maker / robotics activity. Restructure the activity as Empathise → Define → Ideate → Prototype → Test using an age-appropriate maker/robotics tool. All 3 options should follow the Design Cycle.
 
@@ -1808,6 +1854,9 @@ INTENT DETECTION (auto-detect from the teacher's instruction and respond accordi
 
 If MULTIPLE intents apply (e.g. "use Sphero BOLT and make it more hands-on"), satisfy all of them.
 If intent is AMBIGUOUS or UNCLEAR, default to TOOL_BROWSE and return 3 different age-appropriate tool options.
+
+NEGATIVE INSTRUCTIONS:
+If the teacher says "do not", "don't", "avoid", "not X", "but not X", or "without X", exclude that tool, wording, or approach completely from all 3 options.
 
 GENERAL RULES:
 - Every tool must be in the age-appropriate list above.
@@ -1831,11 +1880,9 @@ Return ONLY a JSON array of exactly 3 suggestions:
     const rejected = [];
     rawSugs.forEach(s => {
       if(!s || !s.t) return;
-      if(wouldDupeInEntry(entry, s.t, sugIdx)){ rejected.push({t:s.t, reason:'already in this unit'}); return; }
-      const toolLower = normaliseToolName(s.t).toLowerCase();
-      if(NOT_AVAILABLE_AT_WESLEY.some(na => na.toLowerCase() === toolLower)){
-        rejected.push({t:s.t, reason:'not available at Wesley'}); return;
-      }
+      if(wouldDupeToolProposalInEntry(entry, s.t, sugIdx)){ rejected.push({t:s.t, reason:'already in this unit'}); return; }
+      if(toolContainsForbiddenKeyword(s.t)){ rejected.push({t:s.t, reason:'forbidden tool'}); return; }
+      if(toolViolatesInventoryBan(s.t)){ rejected.push({t:s.t, reason:'not available at Wesley'}); return; }
       if(!isToolAgeAppropriate(s.t, entry.yl)){
         rejected.push({t:s.t, reason:`not age-appropriate for ${entry.yl}`}); return;
       }
@@ -1974,7 +2021,7 @@ function confirmSugFeedback(entryIdx, sugIdx, uid, choiceIdx){
   if(!suggestions || !suggestions[choiceIdx]) return;
   const newSug = suggestions[choiceIdx];
   // Safety net: if another slot was changed between showing options and confirming, abort
-  if(wouldDupeInEntry(DATA[entryIdx], newSug.t, sugIdx)){
+  if(wouldDupeToolProposalInEntry(DATA[entryIdx], newSug.t, sugIdx)){
     setStatus(`Skipped \u2014 "${newSug.t}" is already used in this unit`, 'error');
     return;
   }
@@ -2656,7 +2703,7 @@ function applyChangesFromPopup(){
     const t=c.t||c.tool||c.technology||c.name||'';
     const d=c.d||c.desc||c.description||c.integration_idea||'';
     // Safety net: if an earlier approved change already put this tool in a sibling slot, skip
-    if(entryIdx>=0 && entryIdx<DATA.length && wouldDupeInEntry(DATA[entryIdx], t, sugIdx)){
+    if(entryIdx>=0 && entryIdx<DATA.length && wouldDupeToolProposalInEntry(DATA[entryIdx], t, sugIdx)){
       skippedDupes++;
       return;
     }
@@ -3879,6 +3926,22 @@ async function loadLibraries(){
   console.log('Libraries: using empty defaults');
 }
 
+let LIBRARIES_LOADING_PROMISE = null;
+function librariesHaveLessons(){
+  return Object.keys(LIBRARIES || {}).some(k => k !== '_meta' && Array.isArray(LIBRARIES[k]) && LIBRARIES[k].length);
+}
+async function ensureLibrariesLoadedForAI(){
+  if(librariesHaveLessons()) return true;
+  if(LIBRARIES_LOADING_PROMISE) return LIBRARIES_LOADING_PROMISE;
+  setStatus('Loading lesson libraries for AI context…', 'loading');
+  LIBRARIES_LOADING_PROMISE = loadLibraries().then(() => {
+    if(librariesHaveLessons()){ renderToolInventory?.(); setStatus('Lesson libraries ready for AI ✓'); return true; }
+    setStatus('AI ready — no lesson libraries found yet', 'loading'); return false;
+  }).catch(e => { console.warn('Library preload failed:', e); setStatus('AI will continue without lesson-library context', 'error'); return false; })
+    .finally(() => { LIBRARIES_LOADING_PROMISE = null; });
+  return LIBRARIES_LOADING_PROMISE;
+}
+
 // Save libraries.json to Drive (includes _meta)
 async function saveLibraries(){
   // Sync TOOL_INVENTORY into LIBRARIES_META so it persists with libraries.json
@@ -4746,6 +4809,7 @@ async function bulkChatSend(){
   const text = input.value.trim();
   if(!text) return;
   input.value = '';
+  if(typeof ensureLibrariesLoadedForAI === 'function') await ensureLibrariesLoadedForAI();
 
   if(bulkChatState === 'analysing'){
     bulkChatAddMessage('assistant', '⏳ Still analysing entries — please wait for the current analysis to complete.');
@@ -5042,17 +5106,19 @@ The coordinator is asking you to scan the entire library for places where a spec
 - Still respect the TOOL AGE GUIDE and duplicate prevention rules` : '';
 
   const libraryContextLen = (platformSection + opportunitySection).length;
-  const plannerLimit = libraryContextLen > 3000 ? 250 : (libraryContextLen > 1500 ? 400 : 0);
+  const plannerLimit = libraryContextLen > 3000 ? 220 : (libraryContextLen > 1500 ? 320 : 520);
+  const descLimit = libraryContextLen > 3000 ? 90 : (libraryContextLen > 1500 ? 130 : 180);
   const fullContext = completeData.map(({e,i})=>{
     const sugs = getSugs(e);
-    // Slot 5 (the 6th suggestion) is the STEM Design Cycle slot — annotate it as protected
-    // so GPT visually understands that slot is off-limits for replacement
+    // Slot 5 is protected; slots 0-4 include short descriptions so GPT can judge quality and make wording-only edits.
     const toolStr = sugs.map((s,si)=>{
-      const tag = (si === 5) ? `s${si}🔒STEM:${sugTool(s)}` : `s${si}:${sugTool(s)}`;
-      return tag;
+      const tool = compactForPrompt(sugTool(s), 70);
+      if(si === 5) return `s${si}🔒STEM:${tool} [protected; do not replace]`;
+      const desc = compactForPrompt(sugDesc(s), descLimit);
+      return `s${si}:${tool}${desc ? ' — '+desc : ''}`;
     }).join(' | ');
-    const plannerText = e.plannerText ? (plannerLimit ? e.plannerText.slice(0, plannerLimit) : e.plannerText) : '';
-    return `[${i}] ${e.ca} | ${e.yl} | "${e.th}"${e.ci?' | CI: '+e.ci:''}${plannerText?' | Planner: '+plannerText:''}\n  ${toolStr}`;
+    const plannerText = e.plannerText ? compactForPrompt(e.plannerText, plannerLimit) : '';
+    return `[${i}] ${e.ca} | ${e.yl} | "${e.th}"${e.ci?' | CI: '+compactForPrompt(e.ci,180):''}${e.lo?' | LOI: '+compactForPrompt(e.lo,180):''}${plannerText?' | Planner: '+plannerText:''}\n  ${toolStr}`;
   }).join('\n');
 
   const system = `You are a Digital Learning Coach at Wesley College, an IB PYP school.
@@ -5083,6 +5149,12 @@ DUPLICATE PREVENTION (HARD RULE):
 - If an entry already contains the tool you're proposing, SKIP that entry entirely.
 - Do NOT propose two different changes for the same entry that would both use the same tool.
 
+DESCRIPTION-AWARE EDITING:
+- Each eligible slot below includes its current tool and a short version of its current description.
+- If the coordinator asks to make suggestions stronger, more vivid, more hands-on, better connected, less generic, easier, harder, shorter, or clearer, you MAY keep the same tool and output an improved description for that same slot.
+- If the coordinator asks for a tool swap or opportunity search, change the tool only when it genuinely improves the unit fit.
+- When replacing a weak suggestion, use the current description to decide why that slot is weak; do not choose randomly.
+
 PROTECTED SLOT — STEM DESIGN CYCLE (HARD RULE — ABSOLUTE, NO EXCEPTIONS):
 - Slot index 5 (the 6th suggestion in every entry) is the STEM Design Cycle activity. It is PROTECTED.
 - You MUST NEVER propose any change with "sugIdx":5. EVER.
@@ -5107,10 +5179,11 @@ Read the instruction above carefully for any "do NOT" / "don't" / "avoid" / "not
 
 REPLACEMENT STRATEGY — when proposing a change, choose which suggestion slot to replace using this priority:
 0. NEVER select slot 5 (s5🔒STEM) — it is permanently off-limits. Only consider slots 0, 1, 2, 3, and 4.
-1. Replace a suggestion that uses the SAME tool as what you're adding
-2. Replace one of the TOP 5 most overutilised tools
-3. Replace a vague or generic description
-4. Replace whichever slot has the weakest connection (excluding s5)
+1. For description-only requests, keep the existing tool and rewrite the description in the same slot.
+2. For specific-tool requests, replace a suggestion that uses the SAME tool family, a weak/generic description, or an overused tool.
+3. Replace one of the TOP 5 most overutilised tools when the new tool is a good curriculum fit.
+4. Replace a vague or generic description.
+5. Replace whichever slot has the weakest connection (excluding s5).
 
 TOOL DIVERSITY RULE (HARD RULE — applies when the coordinator's instruction doesn't name a specific tool):
 When choosing WHICH tool to use as a replacement:
@@ -5239,11 +5312,9 @@ ${fullContext}`;
       // Second filter: reject proposals with forbidden tools (ChatGPT, Google Docs, etc)
       // App smashes are OK as long as both tools are approved — the forbidden-keyword
       // check catches things like "Padlet + ChatGPT" because ChatGPT is in the keyword list.
-      const FORBIDDEN_KEYWORDS = ['chatgpt', 'gemini', 'claude ai', 'copilot', 'google docs', 'google slides', 'google sheets', 'wevideo', 'flipgrid'];
       const beforeForbid = changes.length;
       changes = changes.filter(c => {
-        const t = (c.t || '').toLowerCase();
-        if(FORBIDDEN_KEYWORDS.some(k => t.includes(k))){
+        if(toolContainsForbiddenKeyword(c.t || '')){
           console.log(`Bulk AI: rejected proposal containing forbidden tool: "${c.t}"`);
           return false;
         }
@@ -5257,18 +5328,28 @@ ${fullContext}`;
       // Third filter: respect TOOL_INVENTORY.banned (user-defined banned list)
       if(TOOL_INVENTORY.banned && TOOL_INVENTORY.banned.length){
         const beforeBanned = changes.length;
-        const bannedLower = TOOL_INVENTORY.banned.map(x => x.toLowerCase());
-        changes = changes.filter(c => {
-          const t = normaliseToolName(c.t || '').toLowerCase();
-          return !bannedLower.some(b => t === b || t.includes(b));
-        });
+        changes = changes.filter(c => !toolViolatesInventoryBan(c.t || ''));
         const filteredBanned = beforeBanned - changes.length;
         if(filteredBanned > 0){
           console.log(`Bulk AI: filtered out ${filteredBanned} proposal(s) using user-banned tools`);
         }
       }
 
-      // Fourth filter: PROTECT STEM SLOT (sugIdx 5) — never allow replacement of the Design Cycle slot
+      // Fourth filter: hard age/availability check using the actual entry year level
+      const beforeSafeTool = changes.length;
+      changes = changes.filter(c => {
+        const entry = DATA[c.entryIdx];
+        if(!entry) return false;
+        if(!isAiToolSafeForEntry(c.t || '', entry)){
+          console.log(`Bulk AI: rejected unsafe or age-inappropriate proposal for ${entry.yl}: "${c.t}"`);
+          return false;
+        }
+        return true;
+      });
+      const filteredUnsafe = beforeSafeTool - changes.length;
+      if(filteredUnsafe > 0){ console.log(`Bulk AI: filtered out ${filteredUnsafe} unsafe / age-inappropriate proposal(s)`); }
+
+      // Fifth filter: PROTECT STEM SLOT (sugIdx 5) — never allow replacement of the Design Cycle slot
       // This is the hard safety net — even if GPT ignores the prompt-level ban, this catches it
       const beforeStemFilter = changes.length;
       changes = changes.filter(c => {
@@ -5305,7 +5386,7 @@ ${fullContext}`;
       changes = changes.filter(c => {
         const entry = DATA[c.entryIdx];
         if(!entry) return false;
-        return !wouldDupeInEntry(entry, c.t, c.sugIdx);
+        return !wouldDupeToolProposalInEntry(entry, c.t, c.sugIdx);
       });
       const seenByEntry = {};
       changes = changes.filter(c => {
