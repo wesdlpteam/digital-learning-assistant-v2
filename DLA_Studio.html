@@ -535,10 +535,18 @@ function cleanJSON(s){
   return s.replace(/```json|```/g,'').replace(/"([^"]*)"/g,(_,inner)=>'"'+inner.replace(/\n/g,' ').replace(/\r/g,'')+'"').replace(/,\s*([\]}])/g,'$1').trim();
 }
 
+function normaliseChangeIndex(v, fallback){
+  if(v == null) return fallback;
+  const n = Number(v);
+  if(Number.isFinite(n)) return n;
+  const m = String(v).match(/\d+/);
+  return m ? Number(m[0]) : fallback;
+}
+
 function normaliseChanges(raw){
-  return raw.filter(c=>c&&c.entryIdx!=null).map(c=>({
-    entryIdx:c.entryIdx!=null?c.entryIdx:(c.entry_idx!=null?c.entry_idx:0),
-    sugIdx:c.sugIdx!=null?c.sugIdx:(c.sug_idx!=null?c.sug_idx:0),
+  return raw.filter(c=>c&&(c.entryIdx!=null||c.entry_idx!=null)).map(c=>({
+    entryIdx:normaliseChangeIndex(c.entryIdx!=null?c.entryIdx:c.entry_idx, 0),
+    sugIdx:normaliseChangeIndex(c.sugIdx!=null?c.sugIdx:c.sug_idx, 0),
     t:c.t||c.tool||c.technology||c.name||'',
     d:c.d||c.desc||c.description||c.integration_idea||c.activity||c.suggestion||''
   }));
@@ -5264,7 +5272,7 @@ ${fullContext}`;
       // This is the hard safety net — even if GPT ignores the prompt-level ban, this catches it
       const beforeStemFilter = changes.length;
       changes = changes.filter(c => {
-        if(c.sugIdx === 5){
+        if(Number(c.sugIdx) === 5){
           console.log(`Bulk AI: BLOCKED proposal targeting protected STEM slot (s5) in entry ${c.entryIdx}: "${c.t}"`);
           return false;
         }
