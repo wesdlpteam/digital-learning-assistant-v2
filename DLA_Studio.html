@@ -5037,7 +5037,12 @@ The coordinator is asking you to scan the entire library for places where a spec
   const plannerLimit = libraryContextLen > 3000 ? 250 : (libraryContextLen > 1500 ? 400 : 0);
   const fullContext = completeData.map(({e,i})=>{
     const sugs = getSugs(e);
-    const toolStr = sugs.map((s,si)=>`s${si}:${sugTool(s)}`).join(' | ');
+    // Slot 5 (the 6th suggestion) is the STEM Design Cycle slot — annotate it as protected
+    // so GPT visually understands that slot is off-limits for replacement
+    const toolStr = sugs.map((s,si)=>{
+      const tag = (si === 5) ? `s${si}🔒STEM:${sugTool(s)}` : `s${si}:${sugTool(s)}`;
+      return tag;
+    }).join(' | ');
     const plannerText = e.plannerText ? (plannerLimit ? e.plannerText.slice(0, plannerLimit) : e.plannerText) : '';
     return `[${i}] ${e.ca} | ${e.yl} | "${e.th}"${e.ci?' | CI: '+e.ci:''}${plannerText?' | Planner: '+plannerText:''}\n  ${toolStr}`;
   }).join('\n');
@@ -5069,6 +5074,15 @@ DUPLICATE PREVENTION (HARD RULE):
 - Do NOT propose a change that would use the same tool as another suggestion already in the same entry.
 - If an entry already contains the tool you're proposing, SKIP that entry entirely.
 - Do NOT propose two different changes for the same entry that would both use the same tool.
+
+PROTECTED SLOT — STEM DESIGN CYCLE (HARD RULE — ABSOLUTE, NO EXCEPTIONS):
+- Slot index 5 (the 6th suggestion in every entry) is the STEM Design Cycle activity. It is PROTECTED.
+- You MUST NEVER propose any change with "sugIdx":5. EVER.
+- In the entry data below, slot 5 is marked with 🔒STEM — that lock symbol means "do not touch under any circumstance".
+- Even if slot 5 looks like a perfect fit for the requested tool, you MUST target a different slot (0, 1, 2, 3, or 4) instead.
+- If the only good fit in an entry is slot 5, SKIP that entry entirely — do NOT propose a change to slot 5.
+- Any proposal with "sugIdx":5 will be hard-rejected by the coordinator and counted as a violation.
+- Per entry, you have FIVE eligible slots (s0, s1, s2, s3, s4). Slot 5 is invisible for replacement purposes.
 ${platformSection}${opportunitySection}
 TOOL INDEX:
 ${toolIndexStr}
@@ -5084,10 +5098,11 @@ Read the instruction above carefully for any "do NOT" / "don't" / "avoid" / "not
 - If you violate a negative constraint, the coordinator will reject every one of your proposals.
 
 REPLACEMENT STRATEGY — when proposing a change, choose which suggestion slot to replace using this priority:
+0. NEVER select slot 5 (s5🔒STEM) — it is permanently off-limits. Only consider slots 0, 1, 2, 3, and 4.
 1. Replace a suggestion that uses the SAME tool as what you're adding
 2. Replace one of the TOP 5 most overutilised tools
 3. Replace a vague or generic description
-4. Replace whichever slot has the weakest connection
+4. Replace whichever slot has the weakest connection (excluding s5)
 
 TOOL DIVERSITY RULE (HARD RULE — applies when the coordinator's instruction doesn't name a specific tool):
 When choosing WHICH tool to use as a replacement:
@@ -5180,6 +5195,7 @@ ${fullContext}`;
     }
 
     // Hard filter for negative instructions — AI sometimes ignores "don't use X" even when told explicitly
+    let filteredStem = 0;  // hoisted — needed by both the filter block and the result display
     if(changes && changes.length){
       const negativePatterns = [
         /(?:do\s*not|don't|never|avoid|exclude|not\s+to|but\s+not|without\s+using|except\s+for)\s+(?:use\s+|using\s+|swap\s+with\s+|replace\s+with\s+|suggest\s+)?([a-z][a-z0-9:'\s-]+?)(?:\.|,|;|$|\)|\s+or\s+|\s+and\s+(?:not|don't)\s+|\n)/gi,
@@ -5243,6 +5259,21 @@ ${fullContext}`;
           console.log(`Bulk AI: filtered out ${filteredBanned} proposal(s) using user-banned tools`);
         }
       }
+
+      // Fourth filter: PROTECT STEM SLOT (sugIdx 5) — never allow replacement of the Design Cycle slot
+      // This is the hard safety net — even if GPT ignores the prompt-level ban, this catches it
+      const beforeStemFilter = changes.length;
+      changes = changes.filter(c => {
+        if(c.sugIdx === 5){
+          console.log(`Bulk AI: BLOCKED proposal targeting protected STEM slot (s5) in entry ${c.entryIdx}: "${c.t}"`);
+          return false;
+        }
+        return true;
+      });
+      filteredStem = beforeStemFilter - changes.length;
+      if(filteredStem > 0){
+        console.log(`Bulk AI: filtered out ${filteredStem} proposal(s) targeting protected STEM slot 5`);
+      }
     }
 
     if(bar) bar.style.width = '100%';
@@ -5282,6 +5313,7 @@ ${fullContext}`;
       updateReasoningStep(5, 'done');
       setTimeout(hideReasoningSteps, 1200);
       const dupeNote = skippedDupes ? ` (${skippedDupes} duplicate${skippedDupes!==1?'s':''} filtered out)` : '';
+      const stemNote = filteredStem ? ` <span style="color:var(--purple);font-size:11px">· ${filteredStem} STEM slot proposal${filteredStem!==1?'s':''} blocked (s5 protected)</span>` : '';
       const filterNote = (rawAiCount > changes.length) ? ` <span style="color:var(--dim);font-size:11px">· GPT proposed ${rawAiCount}, ${rawAiCount - changes.length} removed by filters</span>` : '';
       const targetWarn = (explicitCount && rawAiCount < explicitCount - 1)
         ? `<div style="margin-top:8px;padding:8px 12px;background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.35);border-radius:8px;font-size:12px;color:var(--orange)">⚠ You asked for <strong>${explicitCount}</strong> but GPT only returned <strong>${rawAiCount}</strong>. Try rephrasing as "scan EVERY entry and find at least ${explicitCount}" or click ↻ and retry — GPT-4.1 sometimes responds conservatively on the first pass.</div>`
@@ -5297,7 +5329,7 @@ ${fullContext}`;
       const moreCount = Object.keys(byTool).length - 5;
       const moreStr = moreCount > 0 ? `<br>• <em>+ ${moreCount} more tools</em>` : '';
 
-      const resultMsg = `✅ <strong>${changes.length} proposed change${changes.length!==1?'s':''}</strong>${dupeNote}${filterNote}<br><br><div style="font-size:12px;color:var(--lime)">Breakdown:</div>${toolBreakdown}${moreStr}${targetWarn}<br><br>💡 <em>I'll remember this — after reviewing, just type a refinement like "do the same for Year 3 only" or "replace the Minecraft ones with something else".</em>`;
+      const resultMsg = `✅ <strong>${changes.length} proposed change${changes.length!==1?'s':''}</strong>${dupeNote}${stemNote}${filterNote}<br><br><div style="font-size:12px;color:var(--lime)">Breakdown:</div>${toolBreakdown}${moreStr}${targetWarn}<br><br>💡 <em>I'll remember this — after reviewing, just type a refinement like "do the same for Year 3 only" or "replace the Minecraft ones with something else".</em>`;
       bulkChatAddMessage('assistant', resultMsg);
       bulkChatMemory.push({ role: 'assistant', content: `Proposed ${changes.length} changes${dupeNote}. Breakdown: ${Object.entries(byTool).map(([t,n])=>`${n}x ${t}`).join(', ')}` });
       window._snapshotReason = `Before: ${bulkChatContext.rawInstruction ? bulkChatContext.rawInstruction.slice(0, 60) : 'bulk edit'}`;
@@ -5306,8 +5338,13 @@ ${fullContext}`;
     } else {
       updateReasoningStep(5, 'done');
       setTimeout(hideReasoningSteps, 800);
+      const stemBlockNote = filteredStem > 0
+        ? ` (${filteredStem} proposal${filteredStem!==1?'s were':' was'} blocked because they targeted the protected STEM slot)`
+        : '';
       const msg = skippedDupes
-        ? `All ${skippedDupes} proposal${skippedDupes!==1?'s':''} would have created duplicates. Try a different instruction.`
+        ? `All ${skippedDupes} proposal${skippedDupes!==1?'s':''} would have created duplicates${stemBlockNote}. Try a different instruction.`
+        : filteredStem > 0
+        ? `GPT proposed ${rawAiCount} changes but all targeted the STEM Design Cycle slot (s5), which is protected. Try rephrasing — e.g. "replace one of the other 5 suggestions with Micro:bit".`
         : 'No changes proposed for this instruction. Try rephrasing — for example, name a specific tool or lesson library.';
       bulkChatAddMessage('assistant', `⚠️ ${msg}`);
       bulkChatMemory.push({ role: 'assistant', content: `No changes found. ${msg}` });
