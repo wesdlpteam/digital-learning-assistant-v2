@@ -6,7 +6,7 @@
 <title>DLA Studio — Wesley College</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d0d0d'/%3E%3Crect width='32' height='32' rx='8' fill='none' stroke='%23D4A017' stroke-width='1.5' opacity='0.4'/%3E%3Ctext x='16' y='23' font-family='system-ui,sans-serif' font-size='18' font-weight='900' fill='%23D4A017' text-anchor='middle' letter-spacing='-1'%3EW%3C/text%3E%3Ccircle cx='25' cy='7' r='4' fill='%23C5E84A'/%3E%3C/svg%3E">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');:root{--bg:#0d0d0d;--card:#1a1a1a;--card2:#222222;--border:#2e2e2e;--text:#ffffff;--dim:#888888;--gold:#D4A017;--lime:#C5E84A;--purple:#9B8BFF;--blue:#60B8F0;--orange:#F5A623;--salmon:#FF8080;--green:#52B95C;--olive:#2a3010;--mint:#C5E84A;--vivid:#C5E84A;--forest:#0d0d0d;--cream:#ffffff;--yellow:#D4A017;}*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;font-size:15px;line-height:1.6;zoom:0.9}#bg-canvas{display:none}#sidebar{width:240px;background:#111;border-right:1px solid var(--border);position:fixed;top:0;left:0;height:100vh;display:none;flex-direction:column;padding:28px 20px;z-index:50}body.app-mode #sidebar{display:flex}body.app-mode #main{margin-left:240px}#logo{font-size:12px;font-weight:900;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:40px}.nav-item{padding:11px 14px;border-radius:10px;color:var(--dim);cursor:pointer;margin-bottom:4px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;transition:all 0.12s}.nav-item:hover{color:var(--text);background:var(--card2)}.nav-item.active{background:var(--gold);color:#111}#sidebar-footer{margin-top:auto;padding-top:24px;border-top:1px solid var(--border)}#main{min-height:100vh;background:var(--bg)}.screen{display:none;min-height:100vh;align-items:center;justify-content:center;padding:40px 20px}.screen.active{display:flex;flex-direction:column}.screen-inner{width:100%;max-width:460px}#app-content{display:none;padding:44px}body.app-mode #app-content{display:block}#status-bar{font-size:12px;color:var(--dim);text-align:right;min-height:18px;margin-bottom:16px;font-weight:500;letter-spacing:.3px}#global-progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:9999;background:transparent;pointer-events:none}#global-progress-bar{height:100%;width:0%;background:var(--lime);transition:width .3s ease;border-radius:0 2px 2px 0}.panel{display:none;max-width:1200px}.panel.active{display:block}.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:14px}.card2{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:10px}.page-title{font-size:34px;font-weight:900;color:var(--text);margin-bottom:6px;letter-spacing:-0.5px}.page-sub{font-size:15px;color:var(--dim);margin-bottom:28px;line-height:1.6;font-weight:500}.label{font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;letter-spacing:1.5px;margin-bottom:12px;display:block}.inp{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:13px 16px;width:100%;outline:none;font-size:15px;font-family:inherit;font-weight:500;transition:border-color .15s}.inp:focus{border-color:var(--gold)}textarea.inp{resize:vertical;line-height:1.6}select.inp{cursor:pointer}.btn{padding:10px 18px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:13px;font-family:inherit;font-weight:600;transition:all 0.12s}.btn:hover{color:var(--text);border-color:var(--dim)}.btn-pri{background:var(--gold);color:#111;border:none;padding:13px 24px;border-radius:12px;font-weight:800;cursor:pointer;font-size:14px;font-family:inherit;transition:all 0.12s}.btn-pri:hover{background:#c49010}.btn-pri.full{width:100%}.btn-sm{padding:6px 13px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:12px;font-family:inherit;font-weight:600}.btn-sm:hover{border-color:var(--dim);color:var(--text)}button:disabled{opacity:.4;cursor:not-allowed}.stat-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:28px}.stat-card{border:1px solid var(--border);border-radius:14px;padding:22px}.stat-num{font-size:40px;font-weight:900;letter-spacing:-1.5px;line-height:1}.stat-lbl{font-size:12px;margin-top:6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;opacity:.7}.row{display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:all 0.1s}.row:hover{background:var(--card2);border-color:#444}.sug{border-radius:14px;margin-bottom:12px;overflow:hidden;border:1px solid var(--border)}.sug-main{padding:20px 22px;background:var(--card)}.sug-tool{font-size:18px;font-weight:800;color:var(--text);margin-bottom:6px;letter-spacing:-.3px}.sug-desc{font-size:14px;color:#aaa;line-height:1.65}.sug-fb{padding:16px 22px;background:var(--card2);border-top:1px solid var(--border)}.bar-row{margin-bottom:13px;cursor:pointer}.bar-row:hover .bar-label span:first-child{color:var(--lime)}.bar-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;font-weight:600}.bar-label span:first-child{color:var(--text)}.bar-label span:last-child{color:var(--dim)}.bar-track{height:6px;background:var(--card2);border-radius:3px}.bar-fill{height:100%;border-radius:3px;background:var(--lime);transition:width 0.4s}#chat-messages{background:var(--card);border:1px solid var(--border);border-radius:14px 14px 0 0;height:420px;overflow-y:auto;padding:14px 16px;transition:height .15s}.chat-msg{margin-bottom:10px}.chat-msg.user{text-align:right}.chat-bubble{display:inline-block;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.5;max-width:82%;text-align:left;font-weight:500}.chat-msg.user .chat-bubble{background:var(--gold);color:#111;font-weight:700}.chat-msg.model .chat-bubble{background:var(--card2);border:1px solid var(--border);color:var(--text);white-space:pre-wrap}.chat-input-row{display:flex;gap:10px;padding:14px;background:var(--card2);border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px}#bulk-chat-messages .chat-bubble strong{color:var(--lime)}#bulk-chat-messages .chat-msg.model .chat-bubble{white-space:pre-wrap}.view-tabs{display:flex;gap:8px;margin-bottom:22px}.view-tab{padding:8px 18px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:13px;font-family:inherit;font-weight:600;transition:all 0.12s}.view-tab.active{background:var(--text);color:var(--bg);border-color:var(--text)}.kb-focus{outline:2px solid var(--gold)!important;}.back-btn{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:10px 18px;border-radius:10px;cursor:pointer;font-size:13px;font-family:inherit;font-weight:700;margin-bottom:24px;transition:all .12s}.back-btn:hover{background:var(--card)}.preview-ok{padding:16px;background:var(--olive);border:1px solid var(--lime);border-radius:10px;margin-bottom:10px}.preview-tool{font-size:15px;font-weight:800;color:var(--lime);margin-bottom:4px}.preview-desc{font-size:13px;color:#aaa;line-height:1.55}#screen-setup{flex-direction:row!important;align-items:stretch!important;justify-content:flex-start!important;padding:0!important;min-height:100vh}.setup-sidebar{width:200px;flex-shrink:0;background:#111;border-right:1px solid var(--border);display:flex;flex-direction:column;padding:32px 20px}.dla-wordmark{font-size:28px;font-weight:900;color:var(--gold);letter-spacing:1px;margin-bottom:48px}.setup-nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--dim);font-size:13px;font-weight:600;margin-bottom:5px;cursor:pointer}.setup-nav-item.active{color:var(--gold);background:rgba(212,160,23,0.1)}.setup-version{font-size:11px;color:#444;font-weight:700;margin-top:auto;margin-bottom:14px;letter-spacing:.5px}.wesley-brand{display:flex;align-items:center;gap:10px}.wesley-w{font-size:22px;font-weight:900;color:var(--gold)}.wesley-text{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;line-height:1.4}.setup-center{flex:0 0 480px;display:flex;align-items:center;justify-content:center;padding:40px 36px;background:var(--card);border-right:1px solid var(--border)}.setup-card{width:100%}.setup-card-title{font-size:22px;font-weight:900;color:var(--text);margin-bottom:6px;letter-spacing:-.3px;display:flex;align-items:center;gap:12px}.setup-card-sub{font-size:14px;color:var(--dim);margin-bottom:32px;line-height:1.6}.setup-field-label{font-size:10px;color:var(--dim);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.field-badge{font-size:10px;padding:3px 10px;border-radius:20px;background:rgba(212,160,23,0.15);color:var(--gold);font-weight:700;border:1px solid rgba(212,160,23,0.3)}.setup-inp{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:13px 16px;width:100%;outline:none;font-size:15px;font-family:'Inter',sans-serif;transition:border-color .15s;margin-bottom:20px;font-weight:500}.setup-inp:focus{border-color:var(--gold)}.setup-confirm{background:var(--gold);color:#111;border:none;padding:15px;border-radius:12px;font-weight:900;width:100%;cursor:pointer;font-size:14px;font-family:'Inter',sans-serif;letter-spacing:.5px;text-transform:uppercase;transition:background .12s}.setup-confirm:hover{background:#c49010}.setup-alt{display:flex;gap:8px;justify-content:center;margin-top:12px}.setup-right{flex:1;display:flex;flex-direction:column;justify-content:center;padding:60px 52px;background:var(--bg)}.setup-welcome-label{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:18px}.setup-headline{font-size:42px;font-weight:900;color:var(--text);line-height:1.1;margin-bottom:18px;letter-spacing:-1px}.setup-headline span{color:var(--lime)}.setup-tagline{font-size:15px;color:var(--dim);line-height:1.7;margin-bottom:40px;max-width:400px;font-weight:500}.status-cards{display:flex;flex-direction:column;gap:10px}.status-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600}.status-key{color:var(--dim);font-weight:500}.status-val{color:var(--text);font-weight:800}.status-dot{width:8px;height:8px;border-radius:50%;background:var(--lime);display:inline-block;margin-right:8px}@media (max-width:380px){.nav-label{display:none;}.nav-item{min-width:48px;}}.ranking-scope{font-size:10px !important;padding:4px 10px !important;background:transparent;color:var(--dim);border:1px solid var(--border);border-radius:99px;cursor:pointer;font-weight:700;font-family:inherit}.ranking-scope:hover{border-color:var(--lime);color:var(--lime)}.ranking-scope.active{background:var(--lime);color:#111;border-color:var(--lime)}.rank-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}.rank-row:last-child{border-bottom:0}.rank-num{font-size:11px;font-weight:800;color:var(--dim);width:22px;font-family:monospace;flex-shrink:0}.rank-num.gold{color:#F5A623}.rank-num.silver{color:#9CA3AF}.rank-num.bronze{color:#D97706}.rank-body{flex:1;min-width:0}.rank-tool{font-weight:600;color:var(--text);font-size:13px}.rank-count{font-size:11px;color:var(--lime);font-weight:700;flex-shrink:0}.rank-bar{height:3px;background:var(--card2);border-radius:2px;margin-top:4px;overflow:hidden}.rank-bar-fill{height:100%;background:var(--lime);border-radius:2px;transition:width .4s}.dead-row{padding:8px 10px;background:var(--card2);border-radius:8px;margin-bottom:6px;font-size:12px;border-left:2px solid #FF8080}.dead-row .dead-tool{font-weight:700;color:var(--text);margin-bottom:2px}.dead-row .dead-sub{color:var(--dim);font-size:11px}.insight-card{background:linear-gradient(135deg,rgba(167,139,250,.08) 0%,rgba(99,102,241,.08) 100%);border:1px solid rgba(167,139,250,.25);border-radius:12px;padding:14px 16px;margin-bottom:10px}.insight-icon{font-size:18px}.insight-title{font-size:13px;font-weight:800;color:#A78BFA;margin-bottom:4px}.insight-body{font-size:13px;color:var(--text);line-height:1.55}.insight-action{display:inline-block;margin-top:8px;padding:5px 12px;background:rgba(167,139,250,.2);color:#A78BFA;border:1px solid rgba(167,139,250,.4);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;text-decoration:none}.insight-action:hover{background:rgba(167,139,250,.35)}.reasoning-step{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--card2);border-radius:8px;margin-bottom:5px;font-size:12px;color:var(--dim);animation:fadeInUp .3s ease}.reasoning-step.active{color:var(--lime);background:rgba(197,232,74,.05);border:1px solid rgba(197,232,74,.2)}.reasoning-step.done{color:var(--dim);opacity:.6}@keyframes fadeInUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}</style>
+<style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');:root{--bg:#0d0d0d;--card:#1a1a1a;--card2:#222222;--border:#2e2e2e;--text:#ffffff;--dim:#888888;--gold:#D4A017;--lime:#C5E84A;--purple:#9B8BFF;--blue:#60B8F0;--orange:#F5A623;--salmon:#FF8080;--green:#52B95C;--olive:#2a3010;--mint:#C5E84A;--vivid:#C5E84A;--forest:#0d0d0d;--cream:#ffffff;--yellow:#D4A017;}*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;font-size:15px;line-height:1.6;zoom:0.9}#bg-canvas{display:none}#sidebar{width:240px;background:#111;border-right:1px solid var(--border);position:fixed;top:0;left:0;height:100vh;display:none;flex-direction:column;padding:28px 20px;z-index:50}body.app-mode #sidebar{display:flex}body.app-mode #main{margin-left:240px}#logo{font-size:12px;font-weight:900;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:40px}.nav-item{padding:11px 14px;border-radius:10px;color:var(--dim);cursor:pointer;margin-bottom:4px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;transition:all 0.12s}.nav-item:hover{color:var(--text);background:var(--card2)}.nav-item.active{background:var(--gold);color:#111}#sidebar-footer{margin-top:auto;padding-top:24px;border-top:1px solid var(--border)}#main{min-height:100vh;background:var(--bg)}.screen{display:none;min-height:100vh;align-items:center;justify-content:center;padding:40px 20px}.screen.active{display:flex;flex-direction:column}.screen-inner{width:100%;max-width:460px}#app-content{display:none;padding:44px}body.app-mode #app-content{display:block}#status-bar{font-size:12px;color:var(--dim);text-align:right;min-height:18px;margin-bottom:16px;font-weight:500;letter-spacing:.3px}#global-progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:9999;background:transparent;pointer-events:none}#global-progress-bar{height:100%;width:0%;background:var(--lime);transition:width .3s ease;border-radius:0 2px 2px 0}.panel{display:none;max-width:1200px}.panel.active{display:block}.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:14px}.card2{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:10px}.page-title{font-size:34px;font-weight:900;color:var(--text);margin-bottom:6px;letter-spacing:-0.5px}.page-sub{font-size:15px;color:var(--dim);margin-bottom:28px;line-height:1.6;font-weight:500}.label{font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;letter-spacing:1.5px;margin-bottom:12px;display:block}.inp{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:13px 16px;width:100%;outline:none;font-size:15px;font-family:inherit;font-weight:500;transition:border-color .15s}.inp:focus{border-color:var(--gold)}textarea.inp{resize:vertical;line-height:1.6}select.inp{cursor:pointer}.btn{padding:10px 18px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:13px;font-family:inherit;font-weight:600;transition:all 0.12s}.btn:hover{color:var(--text);border-color:var(--dim)}.btn-pri{background:var(--gold);color:#111;border:none;padding:13px 24px;border-radius:12px;font-weight:800;cursor:pointer;font-size:14px;font-family:inherit;transition:all 0.12s}.btn-pri:hover{background:#c49010}.btn-pri.full{width:100%}.btn-sm{padding:6px 13px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:12px;font-family:inherit;font-weight:600}.btn-sm:hover{border-color:var(--dim);color:var(--text)}button:disabled{opacity:.4;cursor:not-allowed}.stat-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:28px}.stat-card{border:1px solid var(--border);border-radius:14px;padding:22px}.stat-num{font-size:40px;font-weight:900;letter-spacing:-1.5px;line-height:1}.stat-lbl{font-size:12px;margin-top:6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;opacity:.7}.row{display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:all 0.1s}.row:hover{background:var(--card2);border-color:#444}.sug{border-radius:14px;margin-bottom:12px;overflow:hidden;border:1px solid var(--border)}.sug-main{padding:20px 22px;background:var(--card)}.sug-tool{font-size:18px;font-weight:800;color:var(--text);margin-bottom:6px;letter-spacing:-.3px}.sug-desc{font-size:14px;color:#aaa;line-height:1.65}.sug-fb{padding:16px 22px;background:var(--card2);border-top:1px solid var(--border)}.bar-row{margin-bottom:13px;cursor:pointer}.bar-row:hover .bar-label span:first-child{color:var(--lime)}.bar-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;font-weight:600}.bar-label span:first-child{color:var(--text)}.bar-label span:last-child{color:var(--dim)}.bar-track{height:6px;background:var(--card2);border-radius:3px}.bar-fill{height:100%;border-radius:3px;background:var(--lime);transition:width 0.4s}#chat-messages{background:var(--card);border:1px solid var(--border);border-radius:14px 14px 0 0;height:420px;overflow-y:auto;padding:14px 16px;transition:height .15s}.chat-msg{margin-bottom:10px}.chat-msg.user{text-align:right}.chat-bubble{display:inline-block;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.5;max-width:82%;text-align:left;font-weight:500}.chat-msg.user .chat-bubble{background:var(--gold);color:#111;font-weight:700}.chat-msg.model .chat-bubble{background:var(--card2);border:1px solid var(--border);color:var(--text);white-space:pre-wrap}.chat-input-row{display:flex;gap:10px;padding:14px;background:var(--card2);border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px}#bulk-chat-messages .chat-bubble strong{color:var(--lime)}#bulk-chat-messages .chat-msg.model .chat-bubble{white-space:pre-wrap}.view-tabs{display:flex;gap:8px;margin-bottom:22px}.view-tab{padding:8px 18px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;font-size:13px;font-family:inherit;font-weight:600;transition:all 0.12s}.view-tab.active{background:var(--text);color:var(--bg);border-color:var(--text)}.kb-focus{outline:2px solid var(--gold)!important;}.back-btn{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:10px 18px;border-radius:10px;cursor:pointer;font-size:13px;font-family:inherit;font-weight:700;margin-bottom:24px;transition:all .12s}.back-btn:hover{background:var(--card)}.preview-ok{padding:16px;background:var(--olive);border:1px solid var(--lime);border-radius:10px;margin-bottom:10px}.preview-tool{font-size:15px;font-weight:800;color:var(--lime);margin-bottom:4px}.preview-desc{font-size:13px;color:#aaa;line-height:1.55}#screen-setup{flex-direction:row!important;align-items:stretch!important;justify-content:flex-start!important;padding:0!important;min-height:100vh}.setup-sidebar{width:200px;flex-shrink:0;background:#111;border-right:1px solid var(--border);display:flex;flex-direction:column;padding:32px 20px}.dla-wordmark{font-size:28px;font-weight:900;color:var(--gold);letter-spacing:1px;margin-bottom:48px}.setup-nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--dim);font-size:13px;font-weight:600;margin-bottom:5px;cursor:pointer}.setup-nav-item.active{color:var(--gold);background:rgba(212,160,23,0.1)}.setup-version{font-size:11px;color:#444;font-weight:700;margin-top:auto;margin-bottom:14px;letter-spacing:.5px}.wesley-brand{display:flex;align-items:center;gap:10px}.wesley-w{font-size:22px;font-weight:900;color:var(--gold)}.wesley-text{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;line-height:1.4}.setup-center{flex:0 0 480px;display:flex;align-items:center;justify-content:center;padding:40px 36px;background:var(--card);border-right:1px solid var(--border)}.setup-card{width:100%}.setup-card-title{font-size:22px;font-weight:900;color:var(--text);margin-bottom:6px;letter-spacing:-.3px;display:flex;align-items:center;gap:12px}.setup-card-sub{font-size:14px;color:var(--dim);margin-bottom:32px;line-height:1.6}.setup-field-label{font-size:10px;color:var(--dim);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.field-badge{font-size:10px;padding:3px 10px;border-radius:20px;background:rgba(212,160,23,0.15);color:var(--gold);font-weight:700;border:1px solid rgba(212,160,23,0.3)}.setup-inp{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:13px 16px;width:100%;outline:none;font-size:15px;font-family:'Inter',sans-serif;transition:border-color .15s;margin-bottom:20px;font-weight:500}.setup-inp:focus{border-color:var(--gold)}.setup-confirm{background:var(--gold);color:#111;border:none;padding:15px;border-radius:12px;font-weight:900;width:100%;cursor:pointer;font-size:14px;font-family:'Inter',sans-serif;letter-spacing:.5px;text-transform:uppercase;transition:background .12s}.setup-confirm:hover{background:#c49010}.setup-alt{display:flex;gap:8px;justify-content:center;margin-top:12px}.setup-right{flex:1;display:flex;flex-direction:column;justify-content:center;padding:60px 52px;background:var(--bg)}.setup-welcome-label{font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:18px}.setup-headline{font-size:42px;font-weight:900;color:var(--text);line-height:1.1;margin-bottom:18px;letter-spacing:-1px}.setup-headline span{color:var(--lime)}.setup-tagline{font-size:15px;color:var(--dim);line-height:1.7;margin-bottom:40px;max-width:400px;font-weight:500}.status-cards{display:flex;flex-direction:column;gap:10px}.status-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600}.status-key{color:var(--dim);font-weight:500}.status-val{color:var(--text);font-weight:800}.status-dot{width:8px;height:8px;border-radius:50%;background:var(--lime);display:inline-block;margin-right:8px}@media (max-width:380px){.nav-label{display:none;}.nav-item{min-width:48px;}}.ranking-scope{font-size:10px !important;padding:4px 10px !important;background:transparent;color:var(--dim);border:1px solid var(--border);border-radius:99px;cursor:pointer;font-weight:700;font-family:inherit}.ranking-scope:hover{border-color:var(--lime);color:var(--lime)}.ranking-scope.active{background:var(--lime);color:#111;border-color:var(--lime)}.rank-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}.rank-row:last-child{border-bottom:0}.rank-num{font-size:11px;font-weight:800;color:var(--dim);width:22px;font-family:monospace;flex-shrink:0}.rank-num.gold{color:#F5A623}.rank-num.silver{color:#9CA3AF}.rank-num.bronze{color:#D97706}.rank-body{flex:1;min-width:0}.rank-tool{font-weight:600;color:var(--text);font-size:13px}.rank-count{font-size:11px;color:var(--lime);font-weight:700;flex-shrink:0}.rank-bar{height:3px;background:var(--card2);border-radius:2px;margin-top:4px;overflow:hidden}.rank-bar-fill{height:100%;background:var(--lime);border-radius:2px;transition:width .4s}.dead-row{padding:8px 10px;background:var(--card2);border-radius:8px;margin-bottom:6px;font-size:12px;border-left:2px solid #FF8080}.dead-row .dead-tool{font-weight:700;color:var(--text);margin-bottom:2px}.dead-row .dead-sub{color:var(--dim);font-size:11px}.insight-card{background:linear-gradient(135deg,rgba(167,139,250,.08) 0%,rgba(99,102,241,.08) 100%);border:1px solid rgba(167,139,250,.25);border-radius:12px;padding:14px 16px;margin-bottom:10px}.insight-icon{font-size:18px}.insight-title{font-size:13px;font-weight:800;color:#A78BFA;margin-bottom:4px}.insight-body{font-size:13px;color:var(--text);line-height:1.55}.insight-action{display:inline-block;margin-top:8px;padding:5px 12px;background:rgba(167,139,250,.2);color:#A78BFA;border:1px solid rgba(167,139,250,.4);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;text-decoration:none}.insight-action:hover{background:rgba(167,139,250,.35)}.reasoning-step{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--card2);border-radius:8px;margin-bottom:5px;font-size:12px;color:var(--dim);animation:fadeInUp .3s ease}.reasoning-step.active{color:var(--lime);background:rgba(197,232,74,.05);border:1px solid rgba(197,232,74,.2)}.reasoning-step.done{color:var(--dim);opacity:.6}@keyframes fadeInUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}.fb-chip{font-size:11px;padding:5px 10px;border-radius:14px;background:var(--card);border:1px solid var(--border);color:var(--text);cursor:pointer;font-weight:600;font-family:inherit;transition:all .12s;white-space:nowrap}.fb-chip:hover{border-color:var(--lime);color:var(--lime);background:rgba(197,232,74,.06)}.fb-chip:disabled{opacity:.4;cursor:not-allowed}.fb-mem-hint{font-size:10px;color:var(--purple);background:rgba(155,139,255,.08);border:1px solid rgba(155,139,255,.2);padding:6px 10px;border-radius:6px;display:flex;align-items:center;gap:8px;line-height:1.4;font-weight:500}.fb-ci-chip{font-size:10px;color:#bbb;background:rgba(155,139,255,.1);padding:3px 9px;border-radius:6px;border:1px solid rgba(155,139,255,.25);max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:default}</style>
 </head>
 <body>
 <canvas id="bg-canvas"></canvas>
@@ -1615,28 +1615,64 @@ function openFeedbackChat(uid, entryIdx, sugIdx){
     if(el.id !== uid+'-chat') el.remove();
   });
   const existing = document.getElementById(uid+'-chat');
-  if(existing){ existing.remove(); return; }
+  if(existing){ existing.remove(); delete window['_fbmem_'+uid]; return; }
+
+  // Reset conversation memory for a fresh panel open
+  delete window['_fbmem_'+uid];
 
   const entry = DATA[entryIdx];
   const sug = getSugs(entry)[sugIdx];
   const sugEl = document.getElementById(uid);
   if(!sugEl) return;
 
+  const isStem = sugIdx === 5;
+  const ciChip = entry.ci ? `<span class="fb-ci-chip" title="${esc(entry.ci)}">💡 ${esc(entry.ci)}</span>` : '';
+
+  // Quick-action chips — most common edit intents, one tap to fire
+  const chips = isStem ? [
+    { label: '🔧 Strengthen Design Cycle', prompt: 'Make the Design Cycle phases (Empathise → Define → Ideate → Prototype → Test) more explicit and concrete' },
+    { label: '✋ More hands-on', prompt: 'Make this activity more hands-on with physical materials and prototyping' },
+    { label: '🎯 Connect to CI', prompt: 'Connect this more explicitly to the central idea' },
+    { label: '🔄 Different tool', prompt: 'Suggest the Design Cycle activity using a different age-appropriate maker or robotics tool' },
+    { label: '🌱 Try underused', prompt: 'Reframe the Design Cycle using an underused age-appropriate maker tool' },
+    { label: '🤝 Group', prompt: 'Reframe this as a small-group collaborative Design Cycle activity' }
+  ] : [
+    { label: '✋ Hands-on', prompt: 'Make this activity more hands-on and physical for students' },
+    { label: '🎯 Connect to CI', prompt: 'Connect this more explicitly to the central idea' },
+    { label: '🔄 New tool', prompt: 'Suggest a different age-appropriate tool for this activity' },
+    { label: '✨ More vivid', prompt: 'Make the description more vivid and specific — replace generic language with concrete student actions' },
+    { label: '🌱 Try underused', prompt: 'Reframe this using an underused age-appropriate tool that fits the unit' },
+    { label: '🤝 Group', prompt: 'Reframe this as a collaborative small-group activity' }
+  ];
+
+  const chipsHtml = chips.map(c =>
+    `<button class="fb-chip" onclick="feedbackQuickAction('${uid}',${entryIdx},${sugIdx},${JSON.stringify(c.prompt).replace(/"/g,'&quot;')})">${esc(c.label)}</button>`
+  ).join('');
+
+  const placeholderText = "e.g. make it hands-on · use Sphero BOLT · connect to provocation · simpler · group · change 'students' to 'learners'…";
+
   const panel = document.createElement('div');
   panel.id = uid+'-chat';
   panel.className = 'sug-chat-window';
   panel.style.cssText = 'background:#0a0f0a;border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;overflow:hidden;margin-bottom:12px';
   panel.innerHTML = `
-    <div style="padding:10px 16px;background:var(--card2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
+    <div style="padding:10px 16px;background:var(--card2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
       <span style="font-size:11px;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:.5px">Edit Suggestion</span>
       <span style="font-size:11px;color:var(--gold);font-weight:600">${esc(sugTool(sug))}</span>
+      ${ciChip}
       <div style="flex:1"></div>
-      <button onclick="document.getElementById('${uid}-chat').remove()" style="background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:16px;padding:0">✕</button>
+      <button onclick="document.getElementById('${uid}-chat').remove();delete window['_fbmem_${uid}']" style="background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:16px;padding:0">✕</button>
+    </div>
+    <div style="padding:10px 16px;background:#0a0f0a;border-bottom:1px solid var(--border)">
+      <div style="font-size:10px;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Quick changes</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">${chipsHtml}</div>
     </div>
     <div style="padding:12px 16px;border-top:1px solid var(--border);background:var(--card2)">
-      <div style="font-size:11px;color:var(--dim);margin-bottom:8px;line-height:1.5">Describe what you want changed — GPT-4.1 Mini will apply it instantly.</div>
+      <div id="${uid}-memhint" style="margin-bottom:8px;display:none"></div>
+      <div style="font-size:11px;color:var(--dim);margin-bottom:8px;line-height:1.5">Type any request — GPT-4.1 Mini understands tool swaps, refinements, direct edits, curriculum ties, and more.</div>
       <div style="display:flex;gap:8px">
-        <input id="${uid}-input" class="inp" placeholder="e.g. make it more hands-on, use a different tool, connect to the provocation..." style="flex:1;margin-bottom:0;font-size:13px" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();applySugFeedbackDirect('${uid}',${entryIdx},${sugIdx})}">
+        <button class="btn-sm" onclick="toggleFeedbackVoice('${uid}')" id="${uid}-voice" title="Speak your request (en-AU)" style="padding:8px 10px;flex-shrink:0">🎤</button>
+        <input id="${uid}-input" class="inp" placeholder="${esc(placeholderText)}" style="flex:1;margin-bottom:0;font-size:13px" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();applySugFeedbackDirect('${uid}',${entryIdx},${sugIdx})}">
         <button class="btn-pri" id="${uid}-send" onclick="applySugFeedbackDirect('${uid}',${entryIdx},${sugIdx})" style="padding:10px 16px;font-size:13px;white-space:nowrap">Apply →</button>
       </div>
       <div id="${uid}-result" style="margin-top:10px"></div>
@@ -1650,6 +1686,7 @@ async function applySugFeedbackDirect(uid, entryIdx, sugIdx){
   const input = document.getElementById(uid+'-input');
   const sendBtn = document.getElementById(uid+'-send');
   const resultEl = document.getElementById(uid+'-result');
+  const memHintEl = document.getElementById(uid+'-memhint');
   const instruction = input?.value.trim();
   if(!instruction) return;
 
@@ -1657,6 +1694,27 @@ async function applySugFeedbackDirect(uid, entryIdx, sugIdx){
   const sug = getSugs(entry)[sugIdx];
   const others = getSugs(entry).filter((_,i)=>i!==sugIdx).map(s=>sugTool(s)).join(', ');
   const isStem = sugIdx === 5;
+  const currentTool = sugTool(sug);
+  const currentDesc = sugDesc(sug);
+
+  // ===== Conversation memory — multi-turn refinements =====
+  const memKey = '_fbmem_' + uid;
+  if(!window[memKey]) window[memKey] = { instructions: [] };
+  window[memKey].instructions.push(instruction);
+  const allInstructions = window[memKey].instructions.slice();
+  const priorInstructions = allInstructions.slice(0, -1);
+
+  // Update memory hint UI
+  if(memHintEl){
+    if(priorInstructions.length){
+      const memList = priorInstructions.map((p,i)=>`${i+1}. "${esc(p.length>50?p.slice(0,50)+'…':p)}"`).join(' &nbsp;·&nbsp; ');
+      memHintEl.style.display = 'block';
+      memHintEl.className = 'fb-mem-hint';
+      memHintEl.innerHTML = `<span style="font-weight:700">↻ Refining</span> <span style="opacity:.85">${memList}</span> <button onclick="resetFeedbackMemory('${uid}')" style="margin-left:auto;background:transparent;border:none;color:var(--purple);cursor:pointer;font-size:10px;font-weight:700;text-decoration:underline">reset</button>`;
+    } else {
+      memHintEl.style.display = 'none';
+    }
+  }
 
   sendBtn.disabled = true;
   sendBtn.textContent = 'Thinking\u2026';
@@ -1667,7 +1725,7 @@ async function applySugFeedbackDirect(uid, entryIdx, sugIdx){
   const ageAppropriate = getAgeAppropriateTools(entry.yl);
   const constraintBlock = buildToolConstraints(entry.yl);
 
-  // Platform detection from the instruction
+  // Platform detection from the latest instruction
   const { platform, contextBlock: platformContext } = detectPlatformContext(instruction, entry.yl);
 
   // Overused / underused awareness
@@ -1689,10 +1747,23 @@ async function applySugFeedbackDirect(uid, entryIdx, sugIdx){
   const stemInstruction = isStem ? `
 NOTE: This is suggestion #6 — the STEM Design Cycle slot. Every proposal must frame a hands-on Empathise → Define → Ideate → Prototype → Test activity using an age-appropriate maker/robotics tool.` : '';
 
+  // Lines of inquiry — useful for CURRICULUM_TIE intent
+  const loiBlock = entry.lo ? `\nLines of Inquiry: ${entry.lo}` : '';
+
+  // Conversation memory injection — when user refines, prior instructions still apply
+  const conversationBlock = priorInstructions.length
+    ? `\nCONVERSATION CONTEXT (multi-turn refinement — apply ALL of these together):
+${priorInstructions.map((p,i)=>`  Earlier: "${p}"`).join('\n')}
+  LATEST: "${instruction}"
+
+The 3 options must satisfy the LATEST instruction AND every earlier instruction in this conversation.`
+    : `\nTeacher's instruction: "${instruction}"`;
+
   const prompt = `You are a Digital Learning Coach at Wesley College improving a technology suggestion for an IB PYP unit.
 
-Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${entry.plannerText?`\nPlanner: ${entry.plannerText.slice(0, 400)}`:''}
-Current suggestion: ${sugTool(sug)} \u2014 ${sugDesc(sug)}
+Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${loiBlock}${entry.plannerText?`\nPlanner: ${entry.plannerText.slice(0, 400)}`:''}
+Current suggestion tool: ${currentTool}
+Current suggestion description: "${currentDesc}"
 Other tools already in this unit (do not repeat): ${others||'none'}
 ${stemInstruction}
 
@@ -1703,16 +1774,37 @@ OVERUSED TOOLS across library (avoid unless teacher specifically names them): ${
 UNDERUSED age-appropriate tools (prefer these when suitable): ${underused.length ? underused.join(', ') : '(none)'}
 
 ONE TOOL PER SUGGESTION — never combine tools in the "t" field.
+${conversationBlock}
 
-Teacher's instruction: "${instruction}"
+INTENT DETECTION (auto-detect from the teacher's instruction and respond accordingly):
 
-RESPONSE RULES:
-- If the teacher names a specific tool (e.g. "change to Canva", "use Minecraft"):
-  → FIRST check if that tool is age-appropriate for ${entry.yl}. If it is NOT, your 3 options must all propose age-appropriate alternatives and politely explain why the requested tool doesn't fit this year level.
-  → If the tool IS age-appropriate, generate 3 DIFFERENT activity ideas all using that specific tool.
-- If the teacher gives a general instruction (e.g. "make it more hands-on", "connect to the provocation"), generate 3 options using 3 DIFFERENT tools, each one age-appropriate for ${entry.yl}.
+1. DESCRIPTION_REFINE — teacher wants to change style, angle, or emphasis ("more hands-on", "shorter", "more vivid", "more concrete", "less generic", "add scaffolding"). Keep the CURRENT tool (${currentTool}). Return 3 different description variants of the activity, all using ${currentTool}, each taking a distinct angle on the refinement.
+
+2. TOOL_SWAP — teacher names a specific tool ("use Canva", "swap for Sphero BOLT", "change to Minecraft"). Use ONLY that tool in all 3 options, with 3 different activity ideas. If the named tool is not age-appropriate or not available at Wesley, return 3 close alternatives and politely note the issue in the description of option 1.
+
+3. TOOL_BROWSE — teacher asks for alternatives without naming one ("different tool", "something else", "what else", "any alternative", "try something new"). Return 3 options each using a DIFFERENT age-appropriate tool not already in this entry. Prefer underused tools.
+
+4. DIRECT_EDIT — teacher gives literal text instruction ("change 'X' to 'Y'", "replace X with Y", "remove the bit about X", "add a sentence about Y", "use 'learners' instead of 'students'"). Apply the edit literally to the current description. Return 3 close variants of the edited result — all keep the same tool and same overall activity.
+
+5. STEM_REFRAME — teacher asks for hands-on Design Cycle / maker / robotics activity. Restructure the activity as Empathise → Define → Ideate → Prototype → Test using an age-appropriate maker/robotics tool. All 3 options should follow the Design Cycle.
+
+6. CURRICULUM_TIE — teacher asks to connect to central idea, lines of inquiry, provocation, or transdisciplinary theme. Reference the relevant curriculum element explicitly in each option using a direct phrase from the central idea or lines of inquiry above. Tool can stay the same or change — your choice based on best fit.
+
+7. DIFFICULTY_ADJUST — "simpler", "easier", "more rigorous", "more challenging", "more scaffolding", "extension for advanced students". Keep the tool unless teacher names a new one; adjust complexity, vocabulary, and scaffolding in the description.
+
+8. OUTPUT_TYPE — teacher specifies an artefact ("produce a video", "create a podcast", "make a poster", "build a model", "design a poster"). Reframe the activity to produce that specific output, choosing or keeping a tool that supports it.
+
+9. SOCIAL_MODE — "group", "individual", "pairs", "collaborative", "small-group", "whole-class". Reframe collaboration structure of the activity.
+
+10. TIME_BOUND — "shorter", "single lesson", "extend over a week", "5-minute warm-up", "full unit". Adjust scope and duration to fit.
+
+If MULTIPLE intents apply (e.g. "use Sphero BOLT and make it more hands-on"), satisfy all of them.
+If intent is AMBIGUOUS or UNCLEAR, default to TOOL_BROWSE and return 3 different age-appropriate tool options.
+
+GENERAL RULES:
 - Every tool must be in the age-appropriate list above.
 - Every description must connect specifically to this unit's content — nothing generic.
+- Each of the 3 options must be MEANINGFULLY different from the others — different tools, OR different angles on the same tool.
 ${SUGGESTION_STYLE}
 
 Return ONLY a JSON array of exactly 3 suggestions:
@@ -1768,7 +1860,14 @@ Return ONLY a JSON array of exactly 3 suggestions:
           <button onclick="confirmSugFeedback(${entryIdx},${sugIdx},'${uid}',${i})" style="flex-shrink:0;padding:7px 14px;background:var(--lime);color:#111;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer">Apply</button>
         </div>
       </div>`).join('') +
-      `<button onclick="document.getElementById('${uid}-result').innerHTML='';document.getElementById('${uid}-input').value=''" style="padding:6px 12px;background:transparent;border:1px solid var(--border);color:var(--dim);border-radius:8px;font-weight:600;font-size:11px;cursor:pointer;margin-top:4px">Try again</button>`;
+      `<div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap">
+        <button onclick="feedbackGetMore('${uid}',${entryIdx},${sugIdx})" style="padding:6px 12px;background:transparent;border:1px solid var(--border);color:var(--lime);border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Get 3 fresh options keeping the same context">🔄 More options</button>
+        <button onclick="resetFeedbackMemory('${uid}')" style="padding:6px 12px;background:transparent;border:1px solid var(--border);color:var(--dim);border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear conversation context and start fresh">↻ Reset</button>
+        <button onclick="document.getElementById('${uid}-result').innerHTML='';document.getElementById('${uid}-input').value=''" style="padding:6px 12px;background:transparent;border:1px solid var(--border);color:var(--dim);border-radius:8px;font-weight:600;font-size:11px;cursor:pointer">Clear</button>
+      </div>`;
+
+    // Clear input ready for next refinement
+    if(input) input.value = '';
 
   }catch(e){
     const isParseError = e.message.includes('JSON') || e.message.includes('No suggestions') || e.message.includes('Empty');
@@ -1776,11 +1875,91 @@ Return ONLY a JSON array of exactly 3 suggestions:
       ? 'AI returned an unexpected format. Try being more specific, e.g. "change the tool to Canva" or "make this about the provocation activity".'
       : e.message.replace(/\n/g, '<br>');
     resultEl.innerHTML = `<div style="font-size:12px;color:#f87171;line-height:1.5">\u2717 ${msg}</div>`;
+    // Roll back this turn from memory since it failed
+    if(window[memKey] && window[memKey].instructions.length){
+      window[memKey].instructions.pop();
+    }
   }
   stopProgress();
   sendBtn.disabled = false;
   sendBtn.textContent = 'Apply \u2192';
 }
+
+// ===== FEEDBACK HELPERS — quick chips, voice, more options, memory reset =====
+
+function feedbackQuickAction(uid, entryIdx, sugIdx, prompt){
+  const input = document.getElementById(uid+'-input');
+  if(!input) return;
+  input.value = prompt;
+  // Slight delay so the user sees what's being submitted
+  setTimeout(() => applySugFeedbackDirect(uid, entryIdx, sugIdx), 150);
+}
+
+let _fbVoiceRec = null;
+function toggleFeedbackVoice(uid){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){
+    alert('Voice input not supported in this browser. Try Chrome or Edge.');
+    return;
+  }
+  // Stop any active recognition
+  if(_fbVoiceRec){
+    try { _fbVoiceRec.stop(); } catch{}
+    _fbVoiceRec = null;
+    return;
+  }
+  const btn = document.getElementById(uid+'-voice');
+  const input = document.getElementById(uid+'-input');
+  _fbVoiceRec = new SR();
+  _fbVoiceRec.lang = 'en-AU';
+  _fbVoiceRec.interimResults = true;
+  _fbVoiceRec.continuous = false;
+
+  let finalText = '';
+  _fbVoiceRec.onstart = () => {
+    if(btn){ btn.textContent = '🛑'; btn.style.background = '#FF6B6B'; btn.style.color = '#FFF'; btn.style.borderColor = '#FF6B6B'; }
+  };
+  _fbVoiceRec.onresult = (e) => {
+    let interim = '';
+    for(let i = e.resultIndex; i < e.results.length; i++){
+      const transcript = e.results[i][0].transcript;
+      if(e.results[i].isFinal) finalText += transcript + ' ';
+      else interim += transcript;
+    }
+    if(input) input.value = (finalText + interim).trim();
+  };
+  _fbVoiceRec.onerror = (e) => {
+    console.warn('Feedback voice error:', e.error);
+    if(btn){ btn.textContent = '🎤'; btn.style.background = ''; btn.style.color = ''; btn.style.borderColor = ''; }
+    _fbVoiceRec = null;
+    if(e.error === 'not-allowed') alert('Microphone access denied. Check browser permissions.');
+  };
+  _fbVoiceRec.onend = () => {
+    if(btn){ btn.textContent = '🎤'; btn.style.background = ''; btn.style.color = ''; btn.style.borderColor = ''; }
+    if(finalText && input){ input.value = finalText.trim(); input.focus(); }
+    _fbVoiceRec = null;
+  };
+  try { _fbVoiceRec.start(); } catch(e){ console.warn(e); _fbVoiceRec = null; }
+}
+
+function feedbackGetMore(uid, entryIdx, sugIdx){
+  const input = document.getElementById(uid+'-input');
+  if(!input) return;
+  // Re-fire keeping conversation memory intact, asking for fresh alternatives
+  input.value = 'Show me 3 more different options that still satisfy the previous instructions';
+  applySugFeedbackDirect(uid, entryIdx, sugIdx);
+}
+
+function resetFeedbackMemory(uid){
+  delete window['_fbmem_'+uid];
+  const memHintEl = document.getElementById(uid+'-memhint');
+  if(memHintEl){ memHintEl.style.display = 'none'; memHintEl.innerHTML = ''; }
+  const resultEl = document.getElementById(uid+'-result');
+  if(resultEl) resultEl.innerHTML = '<div style="font-size:11px;color:var(--dim);padding:6px 0">↻ Conversation reset — next request starts fresh</div>';
+  const input = document.getElementById(uid+'-input');
+  if(input){ input.value = ''; input.focus(); }
+}
+
 
 function confirmSugFeedback(entryIdx, sugIdx, uid, choiceIdx){
   const suggestions = window['_fbsugs_'+uid];
@@ -1799,6 +1978,7 @@ function confirmSugFeedback(entryIdx, sugIdx, uid, choiceIdx){
   saveToDrive();
   setStatus('Suggestion updated and saved');
   delete window['_fbsugs_'+uid];
+  delete window['_fbmem_'+uid];  // clear conversation memory after a successful apply
   document.getElementById(uid+'-chat')?.remove();
   const sugEl = document.getElementById(`s${entryIdx}_${sugIdx}`);
   if(sugEl){
