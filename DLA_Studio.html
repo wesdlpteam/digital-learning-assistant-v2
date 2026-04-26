@@ -4817,13 +4817,27 @@ async function startBulkAnalysis(){
     || null;
 
   const hasUrl = false; // chatbot mode doesn't use the URL field
+
+  // Parse explicit count from coordinator's instruction (e.g. "find 15 opportunities", "at least 12", "give me 20")
+  // This becomes a HARD TARGET for GPT — without it, GPT-4.1 tends to return conservative counts (5-7)
+  const countMatch = (enrichedInstruction || '').match(/\b(?:find|add|propose|suggest|need|want|get|give\s+me|identify|locate|spot|show\s+me)\s+(?:at\s+least\s+|about\s+|around\s+|approximately\s+|up\s+to\s+|some\s+|me\s+)?(\d{1,3})\b/i);
+  const explicitCount = countMatch ? Math.min(parseInt(countMatch[1], 10), 60) : null;
+  const maxCap = explicitCount ? Math.max(explicitCount + 5, 25) : 20;
+
+  const targetBlock = explicitCount ? `
+
+TARGET COUNT (HARD RULE): The coordinator explicitly asked for ${explicitCount} proposals. You MUST aim to find at least ${explicitCount} genuine matches across the library.
+- Do NOT stop at 5 or 6 — scan EVERY entry below and identify the ${explicitCount} strongest curriculum connections.
+- If you cannot find ${explicitCount} genuine matches, get as close as possible (within 1–2). Returning fewer than ${Math.max(1, explicitCount - 2)} is a failure.
+- The library has ${completeData.length} entries. With that many entries, ${explicitCount} matches is realistic — keep scanning until you find them.` : '';
+
   const platformSection = platform ? `
 
 LESSON LIBRARY — ${platform.name.toUpperCase()}:
 ${typeof platform.context === 'string' ? platform.context : platform.context}
-MATCHING RULE: Propose changes wherever a specific ${platform.name} lesson genuinely connects to the unit's activities or central idea. Be thorough — scan every entry and propose ${platform.name} wherever there is a reasonable curriculum connection. Name the specific lesson in every proposal.
+MATCHING RULE: Propose changes wherever a specific ${platform.name} lesson genuinely connects to the unit's activities or central idea. Be thorough — scan every entry and propose ${platform.name} wherever there is a reasonable curriculum connection. Name the specific lesson in every proposal.${targetBlock}
 
-QUANTITY CAP: Propose a MAXIMUM of 20 changes total. If you find more than 20 genuine matches, select only the 20 strongest connections.
+QUANTITY CAP: Propose a maximum of ${maxCap} changes total. If you find more than ${maxCap} genuine matches, select only the ${maxCap} strongest connections.
 ` : '';
 
   const opportunityKeywords = /\b(find|look|search|scan|identify|where|opportunit|more uses?|add more|chance|integrate|incorporate|places? to use)\b/i;
@@ -4835,7 +4849,7 @@ The coordinator is asking you to scan the entire library for places where a spec
 - Scan every single entry below, not just the obvious candidates
 - SKIP any entry that already has the requested tool in one of its suggestion slots — do not propose it again
 - Propose changes wherever there is a reasonable curriculum connection — not just perfect matches
-- Aim for 8-20 proposals rather than 2-3
+- ${explicitCount ? `TARGET: The coordinator asked for ${explicitCount}. Aim for at least ${explicitCount} proposals — do not stop early.` : 'Aim for 8-20 proposals rather than 2-3'}
 - For each proposal, briefly explain the specific curriculum connection in the description
 - Still respect the TOOL AGE GUIDE and duplicate prevention rules` : '';
 
@@ -4978,6 +4992,13 @@ ${fullContext}`;
       }catch(err){ console.error('Bulk AI parse error', err); }
     }
 
+    // Capture the raw count from GPT before any filtering, so we can show the user
+    // how many proposals were filtered out vs how many GPT actually returned.
+    const rawAiCount = (changes && changes.length) || 0;
+    if(explicitCount && rawAiCount < explicitCount){
+      console.log(`Bulk AI: GPT returned ${rawAiCount} proposals (coordinator asked for ${explicitCount}). Likely conservative response — consider re-running.`);
+    }
+
     // Hard filter for negative instructions — AI sometimes ignores "don't use X" even when told explicitly
     if(changes && changes.length){
       const negativePatterns = [
@@ -5081,6 +5102,10 @@ ${fullContext}`;
       updateReasoningStep(5, 'done');
       setTimeout(hideReasoningSteps, 1200);
       const dupeNote = skippedDupes ? ` (${skippedDupes} duplicate${skippedDupes!==1?'s':''} filtered out)` : '';
+      const filterNote = (rawAiCount > changes.length) ? ` <span style="color:var(--dim);font-size:11px">· GPT proposed ${rawAiCount}, ${rawAiCount - changes.length} removed by filters</span>` : '';
+      const targetWarn = (explicitCount && rawAiCount < explicitCount - 1)
+        ? `<div style="margin-top:8px;padding:8px 12px;background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.35);border-radius:8px;font-size:12px;color:var(--orange)">⚠ You asked for <strong>${explicitCount}</strong> but GPT only returned <strong>${rawAiCount}</strong>. Try rephrasing as "scan EVERY entry and find at least ${explicitCount}" or click ↻ and retry — GPT-4.1 sometimes responds conservatively on the first pass.</div>`
+        : '';
 
       const byTool = {};
       changes.forEach(c => {
@@ -5092,7 +5117,7 @@ ${fullContext}`;
       const moreCount = Object.keys(byTool).length - 5;
       const moreStr = moreCount > 0 ? `<br>• <em>+ ${moreCount} more tools</em>` : '';
 
-      const resultMsg = `✅ <strong>${changes.length} proposed change${changes.length!==1?'s':''}</strong>${dupeNote}<br><br><div style="font-size:12px;color:var(--lime)">Breakdown:</div>${toolBreakdown}${moreStr}<br><br>💡 <em>I'll remember this — after reviewing, just type a refinement like "do the same for Year 3 only" or "replace the Minecraft ones with something else".</em>`;
+      const resultMsg = `✅ <strong>${changes.length} proposed change${changes.length!==1?'s':''}</strong>${dupeNote}${filterNote}<br><br><div style="font-size:12px;color:var(--lime)">Breakdown:</div>${toolBreakdown}${moreStr}${targetWarn}<br><br>💡 <em>I'll remember this — after reviewing, just type a refinement like "do the same for Year 3 only" or "replace the Minecraft ones with something else".</em>`;
       bulkChatAddMessage('assistant', resultMsg);
       bulkChatMemory.push({ role: 'assistant', content: `Proposed ${changes.length} changes${dupeNote}. Breakdown: ${Object.entries(byTool).map(([t,n])=>`${n}x ${t}`).join(', ')}` });
       window._snapshotReason = `Before: ${bulkChatContext.rawInstruction ? bulkChatContext.rawInstruction.slice(0, 60) : 'bulk edit'}`;
