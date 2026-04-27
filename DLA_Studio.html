@@ -2831,11 +2831,9 @@ function showChangesPopup(changes){
     <span id="popup-counter" style="font-size:13px;color:var(--dim);margin-left:auto"></span>`;
   popup.appendChild(header);
 
-  const subline=document.createElement('div');
-  subline.style.cssText='font-size:13px;color:var(--dim);margin-bottom:18px;flex-shrink:0;line-height:1.55';
-  const draftFailures = Array.isArray(window._popupDraftFailures) ? window._popupDraftFailures : [];
-  subline.innerHTML = `Approve or decline each suggestion individually, then apply your approved changes.${draftFailures.length ? `<div style="margin-top:10px;padding:10px 12px;background:rgba(255,128,128,.08);border:1px solid rgba(255,128,128,.28);border-left:4px solid #FF8080;border-radius:9px;color:#f8b4b4"><b>${draftFailures.length} flagged suggestion${draftFailures.length!==1?'s':''} could not produce a usable draft.</b> They are not lost — apply the drafts you like, rescan, then use individual “Draft fix” on the remaining flags. First issue: ${esc(draftFailures[0]?.message || 'AI draft failed')}</div>` : ''}`;
-  delete window._popupDraftFailures;
+  const subline=document.createElement('p');
+  subline.style.cssText='font-size:13px;color:var(--dim);margin-bottom:18px;flex-shrink:0';
+  subline.textContent='Approve or decline each suggestion individually, then apply your approved changes.';
   popup.appendChild(subline);
 
   const rowsEl=document.createElement('div');
@@ -3521,14 +3519,8 @@ Return ONLY JSON:
 }`;
   const raw = await callAI([{role:'user',parts:[{text:prompt}]}], null, OPENAI_FAST_MODEL || OPENAI_MODEL);
   const parsed = normaliseImprovementCheck_(extractFirstJsonObject_(raw));
-
-  // IMPORTANT: The quality gate should guide human review, not silently hide drafts.
-  // Earlier versions rejected Low/2-star drafts here, which meant a scan could report
-  // dozens of high-priority flags but only show one or two items in the review popup.
-  // Now every safe, parseable draft is shown, with Low-confidence drafts clearly marked.
   if(parsed.confidence === 'Low' || parsed.score < 3){
-    parsed.remainingConcern = parsed.remainingConcern || parsed.whyBetter || 'AI quality gate could not confirm this is clearly better than the current suggestion. Review carefully before approving.';
-    parsed.qualityGateWarning = true;
+    throw new Error(`Draft failed quality check (${parsed.confidence} ${parsed.score}/5): ${parsed.remainingConcern || parsed.whyBetter || 'It was not clearly better than the current suggestion.'}`);
   }
   return parsed;
 }
@@ -3588,12 +3580,8 @@ Create ONE replacement suggestion that is classroom-realistic, age-appropriate, 
     if(toolKey(parsed.t) !== toolKey(oldTool) && wouldDupeToolProposalInEntry(entry, parsed.t, sugIdx)) throw new Error(`${parsed.t} duplicates another suggestion in this unit.`);
   }
   const realism = checkRealisticToolUse(parsed.t, parsed.d, entry);
+  if(!realism.ok) throw new Error('Draft rejected as unrealistic: ' + realism.reason);
   const quality = await evaluateDraftImprovement(entry, oldSug, parsed, reason, isStem);
-  if(!realism.ok){
-    quality.confidence = quality.confidence === 'High' ? 'Medium' : quality.confidence;
-    quality.remainingConcern = [quality.remainingConcern, 'Studio realism check warning: ' + (realism.reason || 'Tool use may still be unrealistic.')].filter(Boolean).join(' | ');
-    quality.qualityGateWarning = true;
-  }
   const change = {
     entryIdx,
     sugIdx,
@@ -3605,8 +3593,7 @@ Create ONE replacement suggestion that is classroom-realistic, age-appropriate, 
     improvementConfidence: quality.confidence,
     improvementScore: quality.score,
     whyBetter: quality.whyBetter,
-    remainingConcern: quality.remainingConcern,
-    qualityGateWarning: !!quality.qualityGateWarning
+    remainingConcern: quality.remainingConcern
   };
   if(parsed.url) change.url = parsed.url;
   return change;
@@ -3625,7 +3612,7 @@ async function draftAllRealismFixes(scope){
   }
 
   const label = scope === 'high' ? 'high-priority flagged suggestion' : 'flagged suggestion';
-  const confirmed = confirm(`Draft AI fixes for ${targets.length} ${label}${targets.length!==1?'s':''}?\n\nThis will generate replacement drafts one by one, then run an AI quality check comparing each draft against the original. Low-confidence drafts will now be included in the review popup with a warning instead of being silently hidden. Nothing will be saved automatically — every draft still needs human approval.`);
+  const confirmed = confirm(`Draft AI fixes for ${targets.length} ${label}${targets.length!==1?'s':''}?\n\nThis will generate replacement drafts one by one, then run an AI quality check comparing each draft against the original. Low-confidence drafts will be rejected before the review popup. Nothing will be saved automatically — all accepted drafts still need human approval.`);
   if(!confirmed) return;
 
   const buttons = Array.from(document.querySelectorAll('.btn-realism-fix-all'));
@@ -3672,9 +3659,8 @@ async function draftAllRealismFixes(scope){
 
   const failNote = failures.length ? ` (${failures.length} could not be drafted — review remaining flags after applying)` : '';
   window._snapshotReason = `Before applying ${changes.length} realism/age fix${changes.length!==1?'es':''}`;
-  window._popupDraftFailures = failures;
   showChangesPopup(changes);
-  setStatus(`${changes.length} of ${targets.length} realism fix draft${changes.length!==1?'s':''} ready for review${failNote}`);
+  setStatus(`${changes.length} realism fix draft${changes.length!==1?'s':''} ready for review${failNote}`);
 }
 
 async function draftRealismReplacement(entryIdx, sugIdx, reason){
@@ -3730,12 +3716,8 @@ Create ONE replacement suggestion that is classroom-realistic, age-appropriate, 
       if(wouldDupeToolProposalInEntry(entry, parsed.t, sugIdx)) throw new Error(`Draft rejected: ${parsed.t} duplicates another suggestion in this unit.`);
     }
     const realism = checkRealisticToolUse(parsed.t, parsed.d, entry);
+    if(!realism.ok) throw new Error('Draft rejected as unrealistic: ' + realism.reason);
     const quality = await evaluateDraftImprovement(entry, oldSug, parsed, reason || 'May be unrealistic or not age appropriate.', isStem);
-    if(!realism.ok){
-      quality.confidence = quality.confidence === 'High' ? 'Medium' : quality.confidence;
-      quality.remainingConcern = [quality.remainingConcern, 'Studio realism check warning: ' + (realism.reason || 'Tool use may still be unrealistic.')].filter(Boolean).join(' | ');
-      quality.qualityGateWarning = true;
-    }
     const change = {
       entryIdx,
       sugIdx,
@@ -3746,8 +3728,7 @@ Create ONE replacement suggestion that is classroom-realistic, age-appropriate, 
       improvementConfidence: quality.confidence,
       improvementScore: quality.score,
       whyBetter: quality.whyBetter,
-      remainingConcern: quality.remainingConcern,
-      qualityGateWarning: !!quality.qualityGateWarning
+      remainingConcern: quality.remainingConcern
     };
     if(parsed.url) change.url = parsed.url;
     showChangesPopup([change]);
@@ -7128,6 +7109,183 @@ setInterval(async()=>{
     }
   }catch{}
 }, 30000);
+
+
+/* =========================================================
+   DLA Studio Patch — High Priority Draft Retry / Duplicate Fix
+   Fixes Bulk realism drafts failing because AI chose a tool already
+   used elsewhere in the same unit, e.g. "Seesaw duplicates another suggestion".
+   ========================================================= */
+function dlaReplacementAlreadyUsedTools_(entry, sugIdx){
+  return getSugs(entry)
+    .filter((s,i) => i !== sugIdx && isRealSug(s))
+    .map(s => sugTool(s))
+    .filter(Boolean);
+}
+
+function dlaReplacementAvailableTools_(entry, sugIdx, oldTool, reason){
+  const usedKeys = new Set(dlaReplacementAlreadyUsedTools_(entry, sugIdx).map(toolKey));
+  const out = [];
+  const seen = new Set();
+
+  function addTool(t){
+    const name = String(t || '').trim();
+    if(!name) return;
+    const key = toolKey(name);
+    if(!key || seen.has(key)) return;
+    if(usedKeys.has(key)) return;
+    if(!isAiToolSafeForEntry(name, entry)) return;
+    seen.add(key);
+    out.push(name);
+  }
+
+  getAgeAppropriateTools(entry.yl).forEach(addTool);
+
+  const duplicateFlag = /duplicate/i.test(String(reason || ''));
+  if(!duplicateFlag) addTool(oldTool);
+
+  return out;
+}
+
+function dlaExtractDraftJson_(raw){
+  const parsed = extractFirstJsonObject_(raw);
+  return {
+    t: String(parsed.t || parsed.tool || parsed.technology || parsed.name || '').trim(),
+    d: String(parsed.d || parsed.desc || parsed.description || parsed.integration_idea || parsed.activity || parsed.suggestion || '').trim(),
+    url: String(parsed.url || parsed.link || '').trim()
+  };
+}
+
+function dlaBuildReplacementPrompt_(opts){
+  const {entry, oldTool, oldDesc, reason, isStem, availableTools, usedTools, retryNotes} = opts;
+  const usedText = usedTools.length ? usedTools.join(', ') : 'none';
+  const retryText = retryNotes.length
+    ? `\n\nPrevious rejected draft(s):\n${retryNotes.map((n,i)=>`${i+1}. ${n}`).join('\n')}\nYou MUST correct these problems in the next draft.`
+    : '';
+
+  if(isStem){
+    return `You are replacing protected Suggestion 6, the STEM Design Cycle idea, for this IB PYP unit. This is a manual DLP-approved action, not a bulk edit.
+Campus: ${entry.ca}
+Year level: ${entry.yl}
+Theme: ${entry.th}
+Central Idea: ${entry.ci || ''}
+Lines of Inquiry: ${entry.lo || ''}
+Planner summary: ${entry.plannerText || ''}
+Current STEM suggestion: ${oldTool}: ${oldDesc}
+Problem flagged: ${reason || 'May be unrealistic or not age appropriate.'}
+
+Create ONE replacement STEM Design Cycle activity that is realistic for this year level. It must include tangible making/prototyping materials and a clear Empathise → Define → Ideate → Prototype → Test cycle. It may include age-appropriate technology only when the tech is genuinely useful.
+${REALISTIC_TOOL_USE_RULES}${retryText}
+Return ONLY JSON: {"t":"Project name","d":"2-3 practical sentences describing exactly what students build, test and improve."}`;
+  }
+
+  const allowedText = availableTools.length
+    ? availableTools.join(', ')
+    : 'No non-duplicate age-appropriate tools are currently available.';
+
+  return `You are replacing one unrealistic, vague, weakly connected, banned, duplicated or not age-appropriate digital learning suggestion for an IB PYP unit.
+Campus: ${entry.ca}
+Year level: ${entry.yl}
+Theme: ${entry.th}
+Central Idea: ${entry.ci || ''}
+Lines of Inquiry: ${entry.lo || ''}
+Planner summary: ${entry.plannerText || ''}
+Current suggestion to replace: ${oldTool}: ${oldDesc}
+Problem flagged: ${reason}
+
+TOOLS ALREADY USED IN THIS UNIT — DO NOT CHOOSE ANY OF THESE FOR THE REPLACEMENT:
+${usedText}
+
+ALLOWED REPLACEMENT TOOLS FOR THIS EXACT SLOT — CHOOSE ONE TOOL FROM THIS LIST ONLY:
+${allowedText}
+
+Hard requirements:
+- Do not choose Seesaw, Canva, Book Creator, Padlet, Scratch, or any other tool if it is listed under already-used tools above.
+- Do not propose a blended/app-smash tool name such as "Tool A + Tool B".
+- Do not choose a banned tool or a tool outside the configured age range.
+- The new suggestion must fix the flagged problem rather than simply rewording it.
+
+${buildToolConstraints(entry.yl)}
+${SUGGESTION_STYLE}
+${REALISTIC_TOOL_USE_RULES}${retryText}
+
+Create ONE replacement suggestion that is classroom-realistic, age-appropriate, non-duplicated, and directly connected to the unit. Return ONLY JSON: {"t":"Tool Name","d":"2-3 practical sentences describing exactly what students do and create.","url":"optional direct lesson URL"}`;
+}
+
+async function buildRealismReplacementChange(result){
+  const entryIdx = result.entryIdx;
+  const sugIdx = result.sugIdx;
+  const reason = (result.issues || []).map(i=>i.message).join(' | ') || 'May be unrealistic or not age appropriate.';
+  const entry = DATA[entryIdx];
+  if(!entry) throw new Error('Entry not found');
+  const oldSug = getSugs(entry)[sugIdx];
+  if(!oldSug) throw new Error('Suggestion not found');
+
+  const isStem = sugIdx === 5;
+  const oldTool = sugTool(oldSug);
+  const oldDesc = sugDesc(oldSug);
+  const usedTools = dlaReplacementAlreadyUsedTools_(entry, sugIdx);
+  const availableTools = isStem ? [] : dlaReplacementAvailableTools_(entry, sugIdx, oldTool, reason);
+
+  if(!isStem && !availableTools.length){
+    throw new Error(`No non-duplicate, age-appropriate replacement tools are currently available for ${entry.yl} in this unit. Remove another duplicate first or adjust the whitelist age ranges.`);
+  }
+
+  const availableKeys = new Set(availableTools.map(toolKey));
+  const retryNotes = [];
+  let lastError = null;
+  const maxAttempts = isStem ? 2 : 4;
+
+  for(let attempt=1; attempt<=maxAttempts; attempt++){
+    try{
+      const prompt = dlaBuildReplacementPrompt_({entry, oldTool, oldDesc, reason, isStem, availableTools, usedTools, retryNotes});
+      const raw = await callAI([{role:'user',parts:[{text:prompt}]}], null, OPENAI_FAST_MODEL || OPENAI_MODEL);
+      const parsed = dlaExtractDraftJson_(raw);
+      if(!parsed.t || !parsed.d) throw new Error('AI replacement was missing a tool/project name or description.');
+
+      if(!isStem){
+        const key = toolKey(parsed.t);
+        if(!availableKeys.has(key)) throw new Error(`${parsed.t} is not in the allowed replacement list for this slot.`);
+        if(!isAiToolSafeForEntry(parsed.t, entry)) throw new Error(`${parsed.t} is banned or not age-appropriate for ${entry.yl}.`);
+        if(wouldDupeToolProposalInEntry(entry, parsed.t, sugIdx) || wouldDupeInEntry(entry, parsed.t, sugIdx)) throw new Error(`${parsed.t} duplicates another suggestion in this unit.`);
+      }
+
+      const realism = checkRealisticToolUse(parsed.t, parsed.d, entry);
+      const quality = await evaluateDraftImprovement(entry, oldSug, parsed, reason, isStem);
+      if(!realism.ok){
+        quality.confidence = quality.confidence === 'High' ? 'Medium' : quality.confidence;
+        quality.remainingConcern = [quality.remainingConcern, 'Studio realism check warning: ' + (realism.reason || 'Tool use may still be unrealistic.')].filter(Boolean).join(' | ');
+        quality.qualityGateWarning = true;
+      }
+
+      const change = {
+        entryIdx,
+        sugIdx,
+        t: parsed.t,
+        d: parsed.d,
+        auditReason: reason,
+        auditIssues: result.issues || [],
+        auditSource: 'realism-age-audit',
+        improvementConfidence: quality.confidence,
+        improvementScore: quality.score,
+        whyBetter: quality.whyBetter,
+        remainingConcern: quality.remainingConcern,
+        qualityGateWarning: !!quality.qualityGateWarning,
+        retryCount: attempt - 1
+      };
+      if(parsed.url) change.url = parsed.url;
+      return change;
+    }catch(e){
+      lastError = e;
+      const msg = e && e.message ? e.message : String(e);
+      retryNotes.push(msg);
+      console.warn(`Realism replacement attempt ${attempt}/${maxAttempts} failed:`, msg);
+      if(attempt < maxAttempts) await sleep(500 + attempt * 250);
+    }
+  }
+
+  throw new Error(lastError && lastError.message ? lastError.message : 'AI draft failed after retrying.');
+}
 
 (function init(){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
