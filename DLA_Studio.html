@@ -258,6 +258,7 @@
           <span class="label" style="margin:0">🧪 Realism & age audit</span>
           <div style="flex:1"></div>
           <button class="btn-sm" id="btn-full-realism-audit" onclick="runFullRealismAudit()" style="color:var(--lime);border-color:var(--lime)">Scan all suggestions</button>
+          <button class="btn-sm btn-realism-fix-all" onclick="draftAllRealismFixes('all')" style="color:var(--gold);border-color:var(--gold)">✨ Draft fixes for all flagged</button>
         </div>
         <p style="font-size:12px;color:var(--dim);margin-bottom:12px;line-height:1.6">Flags suggestions that may be unrealistic, too vague for classroom use, banned, duplicated, or not age-appropriate. Nothing changes unless a DLP team member drafts a replacement and approves it.</p>
         <div id="realism-audit-result"></div>
@@ -3188,6 +3189,14 @@ function renderRealismResults(results, containerId, opts){
   container.innerHTML = `<div style="padding:12px 14px;background:rgba(255,128,128,0.08);border:1px solid rgba(255,128,128,0.25);border-radius:10px;margin-bottom:10px">
       <div style="font-size:13px;font-weight:800;color:#FF8080;margin-bottom:4px">${results.length} suggestion${results.length!==1?'s':''} flagged</div>
       <div style="font-size:12px;color:var(--dim)">${high} high priority · ${medium} medium · ${low} low</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <button class="btn-sm btn-realism-fix-all" onclick="draftAllRealismFixes('high')" style="color:#FF8080;border-color:#FF8080">✨ Draft fixes for high priority</button>
+        <button class="btn-sm btn-realism-fix-all" onclick="draftAllRealismFixes('all')" style="color:var(--gold);border-color:var(--gold)">✨ Draft fixes for all flagged</button>
+      </div>
+      <div id="realism-batch-progress" style="display:none;margin-top:10px;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px">
+        <div id="realism-batch-label" style="font-size:12px;color:var(--lime);font-weight:700;margin-bottom:7px">Preparing…</div>
+        <div style="height:5px;background:var(--card2);border-radius:3px;overflow:hidden"><div id="realism-batch-bar" style="height:100%;width:0%;background:var(--lime);border-radius:3px;transition:width .25s"></div></div>
+      </div>
     </div>
     <div style="display:flex;flex-direction:column;gap:8px;max-height:${opts.maxHeight || '520px'};overflow-y:auto;padding-right:4px">
       ${display.map((r,idx)=>{
@@ -3248,6 +3257,131 @@ function draftRealismReplacementFromAudit(idx){
   const result = REALISM_AUDIT_RESULTS[idx];
   if(!result){ alert('Audit result not found. Please rescan.'); return; }
   draftRealismReplacement(result.entryIdx, result.sugIdx, result.issues.map(i=>i.message).join(' | '));
+}
+
+async function buildRealismReplacementChange(result){
+  const entryIdx = result.entryIdx;
+  const sugIdx = result.sugIdx;
+  const reason = (result.issues || []).map(i=>i.message).join(' | ') || 'May be unrealistic or not age appropriate.';
+  const entry = DATA[entryIdx];
+  if(!entry) throw new Error('Entry not found');
+  const oldSug = getSugs(entry)[sugIdx];
+  if(!oldSug) throw new Error('Suggestion not found');
+  const isStem = sugIdx === 5;
+  const oldTool = sugTool(oldSug);
+  const oldDesc = sugDesc(oldSug);
+  const otherTools = getSugs(entry).filter((s,i)=>i!==sugIdx && isRealSug(s)).map(s=>sugTool(s)).join(', ');
+  const constraints = isStem ? REALISTIC_TOOL_USE_RULES : buildToolConstraints(entry.yl);
+  const prompt = isStem ? `You are replacing protected Suggestion 6, the STEM Design Cycle idea, for this IB PYP unit. This is a manual DLP-approved action, not a bulk edit.
+Campus: ${entry.ca}
+Year level: ${entry.yl}
+Theme: ${entry.th}
+Central Idea: ${entry.ci || ''}
+Lines of Inquiry: ${entry.lo || ''}
+Planner summary: ${entry.plannerText || ''}
+Current STEM suggestion: ${oldTool}: ${oldDesc}
+Problem flagged: ${reason}
+
+Create ONE replacement STEM Design Cycle activity that is realistic for this year level. It must include tangible making/prototyping materials and a clear Empathise → Define → Ideate → Prototype → Test cycle. It may include age-appropriate technology only when the tech is genuinely useful.
+${REALISTIC_TOOL_USE_RULES}
+Return ONLY JSON: {"t":"Project name","d":"2-3 practical sentences describing exactly what students build, test and improve."}`
+  : `You are replacing one unrealistic, vague, weakly connected, banned or not age-appropriate digital learning suggestion for an IB PYP unit.
+Campus: ${entry.ca}
+Year level: ${entry.yl}
+Theme: ${entry.th}
+Central Idea: ${entry.ci || ''}
+Lines of Inquiry: ${entry.lo || ''}
+Planner summary: ${entry.plannerText || ''}
+Current suggestion to replace: ${oldTool}: ${oldDesc}
+Problem flagged: ${reason}
+Other tools already used in this unit — avoid duplicates unless you are only improving the same tool's description: ${otherTools || 'none'}
+
+${constraints}
+${SUGGESTION_STYLE}
+${REALISTIC_TOOL_USE_RULES}
+
+Create ONE replacement suggestion that is classroom-realistic, age-appropriate, and directly connected to the unit. If the current tool is actually appropriate, you may keep the same tool but must substantially improve the description so the classroom activity is practical and specific. Return ONLY JSON: {"t":"Tool Name","d":"2-3 practical sentences describing exactly what students do and create.","url":"optional direct lesson URL"}`;
+
+  const raw = await callAI([{role:'user',parts:[{text:prompt}]}], null, OPENAI_FAST_MODEL || OPENAI_MODEL);
+  const clean = raw.replace(/```json|```/g,'').trim();
+  const si = clean.indexOf('{'), ei = clean.lastIndexOf('}');
+  if(si === -1 || ei === -1) throw new Error('AI did not return JSON.');
+  const parsed = JSON.parse(clean.slice(si, ei + 1));
+  if(!parsed.t || !parsed.d) throw new Error('AI replacement was missing a tool/project name or description.');
+  if(!isStem){
+    if(!isAiToolSafeForEntry(parsed.t, entry)) throw new Error(`${parsed.t} is banned or not age-appropriate for ${entry.yl}.`);
+    // Allow same-tool description improvements, but reject duplicates with any other slot.
+    if(toolKey(parsed.t) !== toolKey(oldTool) && wouldDupeToolProposalInEntry(entry, parsed.t, sugIdx)) throw new Error(`${parsed.t} duplicates another suggestion in this unit.`);
+  }
+  const realism = checkRealisticToolUse(parsed.t, parsed.d, entry);
+  if(!realism.ok) throw new Error('Draft rejected as unrealistic: ' + realism.reason);
+  const change = {entryIdx, sugIdx, t: parsed.t, d: parsed.d};
+  if(parsed.url) change.url = parsed.url;
+  return change;
+}
+
+async function draftAllRealismFixes(scope){
+  const source = (REALISM_AUDIT_RESULTS || []).slice();
+  if(!source.length){
+    alert('Run the realism audit first.');
+    return;
+  }
+  const targets = source.filter(r => scope === 'high' ? resultHighestSeverity(r) === 'high' : true);
+  if(!targets.length){
+    alert(scope === 'high' ? 'No high-priority flags to fix.' : 'No flagged suggestions to fix.');
+    return;
+  }
+
+  const label = scope === 'high' ? 'high-priority flagged suggestion' : 'flagged suggestion';
+  const confirmed = confirm(`Draft AI fixes for ${targets.length} ${label}${targets.length!==1?'s':''}?\n\nThis will generate replacement drafts one by one and may take several minutes. Nothing will be saved automatically — all drafts will open in the normal review popup for human approval.`);
+  if(!confirmed) return;
+
+  const buttons = Array.from(document.querySelectorAll('.btn-realism-fix-all'));
+  buttons.forEach(b => { b.disabled = true; });
+  const prog = document.getElementById('realism-batch-progress');
+  const bar = document.getElementById('realism-batch-bar');
+  const lbl = document.getElementById('realism-batch-label');
+  if(prog) prog.style.display = 'block';
+  startProgress();
+
+  const changes = [];
+  const failures = [];
+  const seenSlots = new Set();
+
+  for(let i=0; i<targets.length; i++){
+    const r = targets[i];
+    const pct = Math.round(((i+1)/targets.length)*100);
+    const slotKey = `${r.entryIdx}:${r.sugIdx}`;
+    if(seenSlots.has(slotKey)) continue;
+    seenSlots.add(slotKey);
+    if(bar) bar.style.width = pct + '%';
+    if(lbl) lbl.textContent = `${i+1}/${targets.length}: ${r.yl} — ${r.th} — Suggestion ${r.sugIdx + 1}`;
+    setStatus(`Drafting realism fix ${i+1}/${targets.length}: ${r.yl} — ${r.th}`, 'loading');
+    try{
+      const change = await buildRealismReplacementChange(r);
+      if(change) changes.push(change);
+    }catch(e){
+      failures.push({result:r, message:e.message});
+      console.warn('Realism fix failed:', r, e.message);
+    }
+    if(i < targets.length - 1) await sleep(350);
+  }
+
+  buttons.forEach(b => { b.disabled = false; });
+  if(prog) prog.style.display = 'none';
+  stopProgress();
+
+  if(!changes.length){
+    const msg = failures.length ? `No fixes were drafted. First error: ${failures[0].message}` : 'No fixes were drafted.';
+    setStatus(msg, 'error');
+    alert(msg);
+    return;
+  }
+
+  const failNote = failures.length ? ` (${failures.length} could not be drafted — review remaining flags after applying)` : '';
+  window._snapshotReason = `Before applying ${changes.length} realism/age fix${changes.length!==1?'es':''}`;
+  showChangesPopup(changes);
+  setStatus(`${changes.length} realism fix draft${changes.length!==1?'s':''} ready for review${failNote}`);
 }
 
 async function draftRealismReplacement(entryIdx, sugIdx, reason){
@@ -6032,7 +6166,12 @@ ${fullContext}`;
         const entry = DATA[c.entryIdx];
         if(!entry) return false;
         const existingSug = getSugs(entry)[c.sugIdx];
-        if(existingSug && toolKey(sugTool(existingSug)) === toolKey(c.t)) return false;
+        // Allow description-only improvements for realism fixes: reject only if tool AND description are unchanged.
+        if(existingSug && toolKey(sugTool(existingSug)) === toolKey(c.t)){
+          const oldDesc = String(sugDesc(existingSug) || '').replace(/\s+/g,' ').trim();
+          const newDesc = String(c.d || c.desc || c.description || c.integration_idea || c.activity || '').replace(/\s+/g,' ').trim();
+          if(oldDesc === newDesc) return false;
+        }
         return true;
       });
       changes = changes.filter(c => {
