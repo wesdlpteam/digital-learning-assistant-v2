@@ -253,6 +253,15 @@
         <div id="fix-incomplete-bar" style="margin-bottom:14px"></div>
         <div id="issues-list"></div>
       </div>
+      <div class="card" id="realism-audit-card" style="margin-top:8px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;flex-wrap:wrap">
+          <span class="label" style="margin:0">🧪 Realism & age audit</span>
+          <div style="flex:1"></div>
+          <button class="btn-sm" id="btn-full-realism-audit" onclick="runFullRealismAudit()" style="color:var(--lime);border-color:var(--lime)">Scan all suggestions</button>
+        </div>
+        <p style="font-size:12px;color:var(--dim);margin-bottom:12px;line-height:1.6">Flags suggestions that may be unrealistic, too vague for classroom use, banned, duplicated, or not age-appropriate. Nothing changes unless a DLP team member drafts a replacement and approves it.</p>
+        <div id="realism-audit-result"></div>
+      </div>
       <div class="card" style="margin-top:8px">
         <span class="label">Add to Queue</span>
         <p style="font-size:13px;color:var(--dim);margin-bottom:16px;line-height:1.6">
@@ -583,6 +592,14 @@
         <span class="label">Regenerate all 5 with AI</span>
         <button class="btn-pri" id="btn-regen-all" onclick="regenAll()">Generate 6 new suggestions</button>
         <div id="regen-all-result" style="margin-top:12px"></div>
+      </div>
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;flex-wrap:wrap">
+          <span class="label" style="margin-bottom:0">Realism & age scan</span>
+          <button class="btn-sm" id="btn-entry-realism-scan" onclick="scanCurrentEntryRealism()" style="color:var(--lime);border-color:var(--lime)">Scan this entry</button>
+        </div>
+        <p style="font-size:12px;color:var(--dim);margin-bottom:10px">Checks whether each suggestion is practical for a teacher to run, age-appropriate, and connected to the tool's real classroom affordances.</p>
+        <div id="entry-realism-result"></div>
       </div>
       <div class="card">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
@@ -2801,7 +2818,7 @@ function applyChangesFromPopup(){
       const sugs=getSugs(DATA[entryIdx]);
       if(Array.isArray(DATA[entryIdx].s)){
         if(sugIdx>=0&&sugIdx<DATA[entryIdx].s.length){
-          DATA[entryIdx].s[sugIdx]={t,d};
+          DATA[entryIdx].s[sugIdx]=c.url?{t,d,url:c.url}:{t,d};
           applied++;
           DATA[entryIdx].audited=true;
         }
@@ -2809,7 +2826,7 @@ function applyChangesFromPopup(){
         
         DATA[entryIdx].s=sugs.map((s,i)=>({t:sugTool(s),d:sugDesc(s)}));
         if(sugIdx>=0&&sugIdx<DATA[entryIdx].s.length){
-          DATA[entryIdx].s[sugIdx]={t,d};
+          DATA[entryIdx].s[sugIdx]=c.url?{t,d,url:c.url}:{t,d};
           applied++;
           DATA[entryIdx].audited=true;
         }
@@ -3047,6 +3064,256 @@ Return ONLY a JSON array with no markdown:
   }
   stopProgress();
   btn.disabled=false; btn.textContent='Score with AI';
+}
+
+
+
+// ========== REALISM & AGE AUDIT ==========
+let REALISM_AUDIT_RESULTS = [];
+
+function extractUnitKeywords(entry){
+  const raw = `${entry?.th || ''} ${entry?.ci || ''} ${entry?.lo || ''} ${entry?.plannerText || ''}`.toLowerCase();
+  const stop = new Set('the a an and or but for with from into onto over under about across through their there this that these those students learners learning unit inquiry central idea lines place world works who we are how where when why what can will use using used they them our your has have had was were be been being to of in on at by as is it its can may might should would could do does did'.split(' '));
+  const words = (raw.match(/[a-z]{4,}/g) || []).filter(w => !stop.has(w));
+  const counts = {};
+  words.forEach(w => counts[w] = (counts[w] || 0) + 1);
+  return Object.keys(counts).sort((a,b)=>counts[b]-counts[a]).slice(0,18);
+}
+
+function descHasUnitConnection(desc, entry){
+  const d = String(desc || '').toLowerCase();
+  const keywords = extractUnitKeywords(entry);
+  if(!keywords.length) return true;
+  return keywords.some(k => d.includes(k));
+}
+
+function hasConcreteStudentAction(desc){
+  return /(design|create|build|construct|prototype|code|program|record|film|photograph|map|model|test|debug|measure|collect|analyse|compare|survey|interview|animate|publish|present|compose|draw|label|simulate|investigate|explore|document|sequence|classify|sort|graph|explain|reflect|iterate|make)/i.test(String(desc || ''));
+}
+
+function suggestionAuditIssues(entry, sug, sugIdx){
+  const issues = [];
+  const tool = sugTool(sug);
+  const desc = sugDesc(sug);
+  const isStem = sugIdx === 5;
+  const full = `${tool} ${desc}`.toLowerCase();
+
+  if(!isRealSug(sug)){
+    issues.push({type:'missing', severity:'high', message:'Suggestion is missing or incomplete.'});
+    return issues;
+  }
+
+  if(toolContainsForbiddenKeyword(tool) || toolContainsForbiddenKeyword(desc) || toolViolatesInventoryBan(tool)){
+    issues.push({type:'banned', severity:'high', message:'Uses a banned or unavailable tool.'});
+  }
+
+  if(!isStem && !isToolAgeAppropriate(tool, entry.yl)){
+    issues.push({type:'age', severity:'high', message:`${tool} may not be age-appropriate for ${entry.yl}.`});
+  }
+
+  // STEM slot is allowed to be more flexible, but still should be hands-on and age-aware.
+  if(isStem){
+    const lowerYr = getYearNumber(entry.yl);
+    if(lowerYr < 4 && /(codrone|drone|sphero bolt|lego spike prime|tinkercad|3d printer|python)/i.test(full)){
+      issues.push({type:'stem-age', severity:'high', message:'Protected STEM Suggestion 6 uses hardware/software that is too advanced for this year level.'});
+    }
+    if(!/(design cycle|empathise|empathize|define|ideate|prototype|test|iterate|build|construct|make|model|materials|cardboard|recycled|popsticks|clay|maker|makerspace)/i.test(full)){
+      issues.push({type:'stem-realism', severity:'medium', message:'Protected STEM Suggestion 6 should clearly include hands-on making and the design cycle.'});
+    }
+  } else {
+    const realism = checkRealisticToolUse(tool, desc, entry);
+    if(!realism.ok){
+      issues.push({type:'realism', severity:'high', message:realism.reason || 'Tool use may not be realistic for the classroom.'});
+    }
+  }
+
+  if(!hasConcreteStudentAction(desc)){
+    issues.push({type:'vague', severity:'medium', message:'Description lacks a concrete student action/product.'});
+  }
+
+  if(String(desc || '').replace(/\s+/g,' ').trim().length < 95){
+    issues.push({type:'thin', severity:'low', message:'Description is very short; it may need more practical detail.'});
+  }
+
+  if(!descHasUnitConnection(desc, entry)){
+    issues.push({type:'connection', severity:'low', message:'Description may not clearly reference this unit\'s content or vocabulary.'});
+  }
+
+  return issues;
+}
+
+function auditEntrySuggestions(entry, entryIdx){
+  const sugs = getSugs(entry);
+  const results = [];
+  sugs.forEach((sug, sugIdx) => {
+    const issues = suggestionAuditIssues(entry, sug, sugIdx);
+    if(issues.length){
+      results.push({
+        entryIdx,
+        sugIdx,
+        ca: entry.ca,
+        yl: entry.yl,
+        th: entry.th,
+        tool: sugTool(sug),
+        desc: sugDesc(sug),
+        isStem: sugIdx === 5,
+        issues
+      });
+    }
+  });
+  return results;
+}
+
+function severityColour(sev){
+  return sev === 'high' ? '#FF8080' : sev === 'medium' ? '#F5A623' : 'var(--blue)';
+}
+function resultHighestSeverity(result){
+  if(result.issues.some(i=>i.severity==='high')) return 'high';
+  if(result.issues.some(i=>i.severity==='medium')) return 'medium';
+  return 'low';
+}
+
+function renderRealismResults(results, containerId, opts){
+  const container = document.getElementById(containerId);
+  if(!container) return;
+  opts = opts || {};
+  if(!results.length){
+    container.innerHTML = `<div style="padding:12px 14px;background:rgba(197,232,74,0.08);border:1px solid rgba(197,232,74,0.2);border-radius:10px;font-size:13px;color:var(--lime);font-weight:700">✓ No obvious realism or age issues found.</div>`;
+    return;
+  }
+  const high = results.filter(r=>resultHighestSeverity(r)==='high').length;
+  const medium = results.filter(r=>resultHighestSeverity(r)==='medium').length;
+  const low = results.filter(r=>resultHighestSeverity(r)==='low').length;
+  const display = results.slice(0, opts.limit || 80);
+  container.innerHTML = `<div style="padding:12px 14px;background:rgba(255,128,128,0.08);border:1px solid rgba(255,128,128,0.25);border-radius:10px;margin-bottom:10px">
+      <div style="font-size:13px;font-weight:800;color:#FF8080;margin-bottom:4px">${results.length} suggestion${results.length!==1?'s':''} flagged</div>
+      <div style="font-size:12px;color:var(--dim)">${high} high priority · ${medium} medium · ${low} low</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;max-height:${opts.maxHeight || '520px'};overflow-y:auto;padding-right:4px">
+      ${display.map((r,idx)=>{
+        const sev = resultHighestSeverity(r);
+        const col = severityColour(sev);
+        const globalIdx = REALISM_AUDIT_RESULTS.indexOf(r);
+        const btnIdx = globalIdx >= 0 ? globalIdx : idx;
+        return `<div style="padding:12px 14px;background:var(--card2);border:1px solid var(--border);border-left:4px solid ${col};border-radius:10px">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+            <span style="font-size:11px;font-weight:800;color:${col};text-transform:uppercase">${sev}</span>
+            <span style="font-size:12px;color:#9ab89a">${esc(r.ca || '')}</span>
+            <span style="font-size:12px;color:var(--gold);font-weight:700">${esc(r.yl || '')}</span>
+            <span style="font-size:12px;color:var(--dim)">Suggestion ${r.sugIdx + 1}${r.isStem ? ' · STEM' : ''}</span>
+            <span style="flex:1"></span>
+            <button class="btn-sm" onclick="openEntry(${r.entryIdx})">Open</button>
+            <button class="btn-sm" onclick="draftRealismReplacementFromAudit(${btnIdx})" style="color:var(--lime);border-color:var(--lime)">✨ Draft fix</button>
+          </div>
+          <div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:3px">${esc(r.tool || '(missing tool)')}</div>
+          <div style="font-size:12px;color:var(--dim);margin-bottom:6px">${esc(r.th || '')}</div>
+          <ul style="margin:0;padding-left:18px;font-size:12px;color:#ccc;line-height:1.55">
+            ${r.issues.map(i=>`<li><b style="color:${severityColour(i.severity)}">${esc(i.type)}</b>: ${esc(i.message)}</li>`).join('')}
+          </ul>
+        </div>`;
+      }).join('')}
+      ${results.length > display.length ? `<div style="font-size:12px;color:var(--dim);padding:8px 2px">Showing first ${display.length} flagged suggestions. Fix or filter, then rescan.</div>` : ''}
+    </div>`;
+}
+
+function scanCurrentEntryRealism(){
+  if(CURRENT_ENTRY_IDX === null) return;
+  const entry = DATA[CURRENT_ENTRY_IDX];
+  const btn = document.getElementById('btn-entry-realism-scan');
+  if(btn){ btn.disabled = true; btn.textContent = 'Scanning…'; }
+  const results = auditEntrySuggestions(entry, CURRENT_ENTRY_IDX);
+  REALISM_AUDIT_RESULTS = results;
+  renderRealismResults(results, 'entry-realism-result', {maxHeight:'none', limit:20});
+  if(btn){ btn.disabled = false; btn.textContent = 'Scan this entry'; }
+}
+
+function runFullRealismAudit(){
+  const btn = document.getElementById('btn-full-realism-audit');
+  if(btn){ btn.disabled = true; btn.textContent = 'Scanning…'; }
+  const all = [];
+  DATA.forEach((entry, entryIdx) => {
+    all.push(...auditEntrySuggestions(entry, entryIdx));
+  });
+  all.sort((a,b) => {
+    const weight = {high:0, medium:1, low:2};
+    return weight[resultHighestSeverity(a)] - weight[resultHighestSeverity(b)] || String(a.yl).localeCompare(String(b.yl)) || String(a.th).localeCompare(String(b.th));
+  });
+  REALISM_AUDIT_RESULTS = all;
+  renderRealismResults(all, 'realism-audit-result', {maxHeight:'560px', limit:100});
+  setStatus(all.length ? `Realism audit complete — ${all.length} flagged` : 'Realism audit complete — no issues found');
+  if(btn){ btn.disabled = false; btn.textContent = 'Scan all suggestions'; }
+}
+
+function draftRealismReplacementFromAudit(idx){
+  const result = REALISM_AUDIT_RESULTS[idx];
+  if(!result){ alert('Audit result not found. Please rescan.'); return; }
+  draftRealismReplacement(result.entryIdx, result.sugIdx, result.issues.map(i=>i.message).join(' | '));
+}
+
+async function draftRealismReplacement(entryIdx, sugIdx, reason){
+  const entry = DATA[entryIdx];
+  if(!entry) return;
+  const oldSug = getSugs(entry)[sugIdx];
+  if(!oldSug) return;
+  const isStem = sugIdx === 5;
+  const oldTool = sugTool(oldSug);
+  const oldDesc = sugDesc(oldSug);
+  const otherTools = getSugs(entry).filter((s,i)=>i!==sugIdx && isRealSug(s)).map(s=>sugTool(s)).join(', ');
+  const constraints = isStem ? REALISTIC_TOOL_USE_RULES : buildToolConstraints(entry.yl);
+  const prompt = isStem ? `You are replacing protected Suggestion 6, the STEM Design Cycle idea, for this IB PYP unit. This is a manual DLP-approved action, not a bulk edit.
+Campus: ${entry.ca}
+Year level: ${entry.yl}
+Theme: ${entry.th}
+Central Idea: ${entry.ci || ''}
+Lines of Inquiry: ${entry.lo || ''}
+Planner summary: ${entry.plannerText || ''}
+Current STEM suggestion: ${oldTool}: ${oldDesc}
+Problem flagged: ${reason || 'May be unrealistic or not age appropriate.'}
+
+Create ONE replacement STEM Design Cycle activity that is realistic for this year level. It must include tangible making/prototyping materials and a clear Empathise → Define → Ideate → Prototype → Test cycle. It may include age-appropriate technology only when the tech is genuinely useful.
+${REALISTIC_TOOL_USE_RULES}
+Return ONLY JSON: {"t":"Project name","d":"2-3 practical sentences describing exactly what students build, test and improve."}`
+  : `You are replacing one unrealistic or not age-appropriate digital learning suggestion for an IB PYP unit.
+Campus: ${entry.ca}
+Year level: ${entry.yl}
+Theme: ${entry.th}
+Central Idea: ${entry.ci || ''}
+Lines of Inquiry: ${entry.lo || ''}
+Planner summary: ${entry.plannerText || ''}
+Current suggestion to replace: ${oldTool}: ${oldDesc}
+Problem flagged: ${reason || 'May be unrealistic or not age appropriate.'}
+Other tools already used in this unit — avoid duplicates: ${otherTools || 'none'}
+
+${constraints}
+${SUGGESTION_STYLE}
+
+Create ONE replacement suggestion that is classroom-realistic, age-appropriate, and directly connected to the unit. Return ONLY JSON: {"t":"Tool Name","d":"2-3 practical sentences describing exactly what students do and create.","url":"optional direct lesson URL"}`;
+
+  startProgress();
+  setStatus(`Drafting replacement for ${entry.yl} — ${entry.th}…`, 'loading');
+  try{
+    const raw = await callAI([{role:'user',parts:[{text:prompt}]}], null, OPENAI_FAST_MODEL || OPENAI_MODEL);
+    const clean = raw.replace(/```json|```/g,'').trim();
+    const si = clean.indexOf('{'), ei = clean.lastIndexOf('}');
+    if(si === -1 || ei === -1) throw new Error('AI did not return JSON.');
+    const parsed = JSON.parse(clean.slice(si, ei + 1));
+    if(!parsed.t || !parsed.d) throw new Error('AI replacement was missing a tool/project name or description.');
+    if(!isStem){
+      if(!isAiToolSafeForEntry(parsed.t, entry)) throw new Error(`Draft rejected: ${parsed.t} is banned or not age-appropriate for ${entry.yl}.`);
+      if(wouldDupeToolProposalInEntry(entry, parsed.t, sugIdx)) throw new Error(`Draft rejected: ${parsed.t} duplicates another suggestion in this unit.`);
+    }
+    const realism = checkRealisticToolUse(parsed.t, parsed.d, entry);
+    if(!realism.ok) throw new Error('Draft rejected as unrealistic: ' + realism.reason);
+    const change = {entryIdx, sugIdx, t: parsed.t, d: parsed.d};
+    if(parsed.url) change.url = parsed.url;
+    showChangesPopup([change]);
+    setStatus('Replacement drafted — review before applying');
+  }catch(e){
+    alert('Could not draft replacement: ' + e.message);
+    setStatus('Replacement draft failed: ' + e.message, 'error');
+  }finally{
+    stopProgress();
+  }
 }
 
 async function fixAllIncomplete(){
