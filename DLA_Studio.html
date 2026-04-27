@@ -253,16 +253,6 @@
         <div id="fix-incomplete-bar" style="margin-bottom:14px"></div>
         <div id="issues-list"></div>
       </div>
-      <div class="card" id="realism-audit-card" style="margin-top:8px">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;flex-wrap:wrap">
-          <span class="label" style="margin:0">🧪 Realism & age audit</span>
-          <div style="flex:1"></div>
-          <button class="btn-sm" id="btn-full-realism-audit" onclick="runFullRealismAudit()" style="color:var(--lime);border-color:var(--lime)">Scan all suggestions</button>
-          <button class="btn-sm btn-realism-fix-all" onclick="draftAllRealismFixes('all')" style="color:var(--gold);border-color:var(--gold)">✨ Draft fixes for all flagged</button>
-        </div>
-        <p style="font-size:12px;color:var(--dim);margin-bottom:12px;line-height:1.6">Flags suggestions that may be unrealistic, too vague for classroom use, banned, duplicated, or not age-appropriate. Nothing changes unless a DLP team member drafts a replacement and approves it.</p>
-        <div id="realism-audit-result"></div>
-      </div>
       <div class="card" style="margin-top:8px">
         <span class="label">Add to Queue</span>
         <p style="font-size:13px;color:var(--dim);margin-bottom:16px;line-height:1.6">
@@ -367,6 +357,18 @@
           <div style="font-size:13px;color:var(--lime);font-weight:600;margin-bottom:8px" id="bulk-ai-label">Analysing entries…</div>
           <div style="height:5px;background:var(--card);border-radius:3px"><div id="bulk-ai-bar" style="height:100%;border-radius:3px;background:var(--lime);width:0%;transition:width .4s"></div></div>
         </div>
+      </div>
+
+      <!-- Realism & Age Audit -->
+      <div class="card" id="realism-audit-card" style="margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;flex-wrap:wrap">
+          <span class="label" style="margin:0">🧪 Realism & age audit</span>
+          <div style="flex:1"></div>
+          <button class="btn-sm" id="btn-full-realism-audit" onclick="runFullRealismAudit()" style="color:var(--lime);border-color:var(--lime)">Scan all suggestions</button>
+          <button class="btn-sm btn-realism-fix-all" onclick="draftAllRealismFixes('all')" style="color:var(--gold);border-color:var(--gold)">✨ Draft fixes for all flagged</button>
+        </div>
+        <p style="font-size:12px;color:var(--dim);margin-bottom:12px;line-height:1.6">Flags suggestions that may be unrealistic, too vague for classroom use, banned, duplicated, or not age-appropriate. Nothing changes unless a DLP team member drafts a replacement and approves it.</p>
+        <div id="realism-audit-result"></div>
       </div>
 
       <!-- Tool Inventory -->
