@@ -68,7 +68,7 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
         Dashboard
       </div>
-      <div class="setup-version">v5.13</div>
+      <div class="setup-version">v5.16</div>
       <div class="wesley-brand">
         <div class="wesley-w">W</div>
         <div class="wesley-text">Wesley<br>College</div>
@@ -90,10 +90,8 @@
         </div>
 
         <button class="setup-confirm" onclick="showScreen('load')">continue →</button>
-        <div class="setup-alt">
-          <button class="btn" onclick="document.getElementById('file-input').click()" style="font-size:11px">Open local file</button>
-          <button class="btn" onclick="showScreen('paste')" style="font-size:11px">Paste JSON</button>
-          <input type="file" id="file-input" accept=".json" style="display:none" onchange="loadFromFile(event)">
+        <div style="padding:10px 12px;background:rgba(96,184,240,0.08);border:1px solid rgba(96,184,240,0.25);border-radius:10px;margin-top:12px;font-size:11px;color:var(--dim);line-height:1.6;text-align:left">
+          🔒 Production mode: Studio only loads the canonical Drive <code style="color:var(--blue)">data.json</code>. Local JSON import and paste loading are disabled to prevent accidental overwrites.
         </div>
         <p style="font-size:10px;color:var(--dim);margin-top:14px;text-align:center;line-height:1.6;font-family:monospace">
           Optional: set <b>DLA_SHARED_SECRET</b> in GAS and save the matching token in this browser via ⚙ backend.
@@ -136,26 +134,19 @@
           Connect Google Drive to load your <code style="background:#1a1a1a;padding:2px 6px;border-radius:4px;font-size:11px">data.json</code> file.
         </p>
         <button class="btn-pri full" id="btn-drive" onclick="loadFromDrive()">↑ Load from Google Drive</button>
-        <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
-          <button class="btn" onclick="document.getElementById('file-input-load').click()">Open local file</button>
-          <button class="btn" onclick="showScreen('paste')">Paste JSON</button>
-        </div>
-        <input type="file" id="file-input-load" accept=".json" style="display:none" onchange="loadFromFile(event)">
+        <div style="font-size:11px;color:var(--dim);margin-top:12px;line-height:1.6">Local file and paste loading are disabled in production. Use Drive as the single source of truth.</div>
         <div id="load-err" style="display:none;margin-top:14px;font-size:12px;color:#f87171;padding:10px;background:#450a0a;border-radius:6px"></div>
       </div>
     </div>
   </div>
 
-  <!-- PASTE -->
+  <!-- PASTE DISABLED IN PRODUCTION -->
   <div id="screen-paste" class="screen">
     <div class="screen-inner">
       <div class="card">
-        <span class="label">Paste data.json</span>
-        <textarea id="paste-val" class="inp" rows="12" placeholder="Paste full contents of data.json..." style="margin-bottom:14px"></textarea>
-        <div style="display:flex;gap:10px">
-          <button class="btn-pri" onclick="loadFromPaste()">Load</button>
-          <button class="btn" onclick="showScreen('load')">Cancel</button>
-        </div>
+        <span class="label">Local import disabled</span>
+        <p style="font-size:13px;color:var(--dim);line-height:1.6;margin-bottom:14px">For data safety, Studio can only load the canonical Drive data.json. This prevents pasted or local JSON from accidentally overwriting the live library.</p>
+        <button class="btn-pri" onclick="showScreen('load')">Back to Drive load</button>
       </div>
     </div>
   </div>
@@ -1009,16 +1000,18 @@ async function loadFromDrive(){
   }
 }
 
+function localImportDisabled_(){
+  alert('Local JSON import is disabled in production. Load data.json from Google Drive so Drive remains the single source of truth.');
+  return false;
+}
+
 function loadFromFile(e){
-  const f=e.target.files[0]; if(!f) return;
-  const r=new FileReader();
-  r.onload=ev=>{ try{ ingest(JSON.parse(ev.target.result)); }catch{ alert('Invalid JSON file'); } };
-  r.readAsText(f);
+  if(e && e.target) e.target.value = ''; 
+  return localImportDisabled_();
 }
 
 function loadFromPaste(){
-  try{ ingest(JSON.parse(document.getElementById('paste-val').value)); }
-  catch{ alert('Invalid JSON'); }
+  return localImportDisabled_();
 }
 
 function ingest(arr, skipCache){
