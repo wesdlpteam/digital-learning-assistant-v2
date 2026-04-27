@@ -3015,6 +3015,14 @@ function showChangesPopup(changes){
       applyBtn.textContent=`✓ Apply ${n} approved change${n!==1?'s':''}`;
       applyBtn.disabled=n===0;
       applyBtn.style.opacity=n===0?'0.4':'1';
+      applyBtn.dataset.approvedCount = String(n);
+    }
+    const hint=document.getElementById('popup-action-hint');
+    if(hint){
+      const n=states.filter(s=>s==='approved').length;
+      hint.innerHTML = n
+        ? `<b style="color:var(--lime)">${n} change${n!==1?'s are':' is'} approved.</b> Click the green Apply button to save ${n!==1?'them':'it'} to Drive.`
+        : 'Step 1: approve the changes you want. Step 2: click Apply to save them to Drive.';
     }
   }
 
@@ -3092,7 +3100,7 @@ function showChangesPopup(changes){
   const footer=document.createElement('div');
   footer.style.cssText='display:flex;gap:10px;flex-shrink:0;padding-top:12px;border-top:1px solid var(--border);flex-wrap:wrap';
   footer.innerHTML=`
-    <button onclick="(function(){window._popupStates.forEach((_,i)=>setChangeState(i,'approved'));})()"
+    <button id="popup-approve-all-btn" onclick="approveAllChangesFromPopup()"
       style="padding:14px 20px;background:transparent;color:var(--lime);border:1.5px solid var(--lime);border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap">
       ✓ Approve All
     </button>
@@ -3107,7 +3115,10 @@ function showChangesPopup(changes){
     <button onclick="document.getElementById('changes-popup-overlay').remove()"
       style="padding:14px 20px;background:transparent;color:var(--dim);border:1.5px solid var(--border);border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;min-width:80px">
       Close
-    </button>`;
+    </button>
+    <div id="popup-action-hint" style="width:100%;font-size:12px;color:var(--dim);line-height:1.5;padding:2px 2px 0">
+      Step 1: approve the changes you want. Step 2: click Apply to save them to Drive.
+    </div>`;
   popup.appendChild(footer);
   overlay.appendChild(popup);
   overlay._changes=changes;
@@ -3117,6 +3128,73 @@ function showChangesPopup(changes){
   window._popupChanges=changes;
   window._popupUpdateCounter=updateCounter;
   updateCounter();
+}
+
+function approveAllChangesFromPopup(){
+  const states = window._popupStates || [];
+  const changes = window._popupChanges || [];
+  if(!states.length || !changes.length){
+    alert('No proposed changes are available to approve.');
+    return;
+  }
+
+  states.forEach((_, i) => setChangeState(i, 'approved'));
+  if(window._popupUpdateCounter) window._popupUpdateCounter();
+
+  const applyBtn = document.getElementById('popup-apply-btn');
+  if(applyBtn){
+    applyBtn.disabled = false;
+    applyBtn.style.opacity = '1';
+    applyBtn.style.transform = 'scale(1.02)';
+    applyBtn.style.boxShadow = '0 0 0 3px rgba(197,232,74,.25), 0 0 18px rgba(197,232,74,.18)';
+    applyBtn.scrollIntoView({behavior:'smooth', block:'nearest', inline:'nearest'});
+    try{ applyBtn.focus({preventScroll:true}); }catch(e){ applyBtn.focus(); }
+    setTimeout(() => {
+      if(document.body.contains(applyBtn)){
+        applyBtn.style.transform = '';
+        applyBtn.style.boxShadow = '';
+      }
+    }, 1800);
+  }
+
+  const hint = document.getElementById('popup-action-hint');
+  if(hint){
+    hint.innerHTML = `<b style="color:var(--lime)">${states.length} change${states.length!==1?'s are':' is'} now approved.</b> Click the green Apply button to save ${states.length!==1?'them':'it'} to Drive.`;
+  }
+
+  setStatus(`${states.length} proposed change${states.length!==1?'s':''} approved — click Apply to save to Drive.`, 'loading');
+}
+
+function rerenderAfterApprovedBulkChanges(){
+  try{
+    if(typeof renderDashboard === 'function') renderDashboard();
+    if(typeof renderBrowse === 'function') renderBrowse();
+    if(typeof renderBulkWelcome === 'function') renderBulkWelcome();
+    if(typeof renderComparison === 'function') renderComparison();
+    if(typeof renderAuditChart === 'function') renderAuditChart();
+
+    const realismContainer = document.getElementById('realism-audit-result');
+    if(realismContainer && REALISM_AUDIT_RESULTS && REALISM_AUDIT_RESULTS.length){
+      const all = [];
+      DATA.forEach((entry, entryIdx) => all.push(...auditEntrySuggestions(entry, entryIdx)));
+      all.sort((a,b) => {
+        const weight = {high:0, medium:1, low:2};
+        return weight[resultHighestSeverity(a)] - weight[resultHighestSeverity(b)] || String(a.yl).localeCompare(String(b.yl)) || String(a.th).localeCompare(String(b.th));
+      });
+      REALISM_AUDIT_RESULTS = all;
+      renderRealismResults(all, 'realism-audit-result', {maxHeight:'560px', limit:100});
+    }
+
+    if(CURRENT_ENTRY_IDX !== null){
+      renderEntry(CURRENT_ENTRY_IDX);
+      const entryResults = auditEntrySuggestions(DATA[CURRENT_ENTRY_IDX], CURRENT_ENTRY_IDX);
+      if(document.getElementById('entry-realism-result')){
+        renderRealismResults(entryResults, 'entry-realism-result', {maxHeight:'none', limit:20});
+      }
+    }
+  }catch(e){
+    console.warn('Post-apply refresh failed:', e.message);
+  }
 }
 
 function setChangeState(ci, state){
@@ -3140,7 +3218,7 @@ function setChangeState(ci, state){
   if(window._popupUpdateCounter) window._popupUpdateCounter();
 }
 
-function applyChangesFromPopup(){
+async function applyChangesFromPopup(){
   const overlay=document.getElementById('changes-popup-overlay');
   if(!overlay) return;
   const changes=window._popupChanges||[];
@@ -3191,10 +3269,15 @@ function applyChangesFromPopup(){
   delete window._popupChanges;
   delete window._popupUpdateCounter;
 
-  saveToDrive();
-  const dupeNote = skippedDupes ? ` (skipped ${skippedDupes} duplicate${skippedDupes!==1?'s':''})` : '';
-  setStatus(`${applied} suggestion${applied!==1?'s':''} updated and saved${dupeNote}`);
-  renderAuditChart();
+  try{
+    await saveToDrive();
+    rerenderAfterApprovedBulkChanges();
+    const dupeNote = skippedDupes ? ` (skipped ${skippedDupes} duplicate${skippedDupes!==1?'s':''})` : '';
+    setStatus(`${applied} suggestion${applied!==1?'s':''} updated and saved${dupeNote}`);
+  }catch(e){
+    setStatus('Changes were applied locally but Drive save failed: ' + e.message, 'error');
+    alert('Changes were applied locally, but saving to Drive failed. Try saving/reloading after checking Drive access.\n\n' + e.message);
+  }
 }
 
 // ========== BEFORE/AFTER PREVIEW ==========
