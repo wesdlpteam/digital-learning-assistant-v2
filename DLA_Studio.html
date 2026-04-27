@@ -3251,19 +3251,27 @@ function renderLiveReactions(rows){
   }).join('');
 }
 
+let LIVE_THUMBSDOWN_EVENTS = [];
+
 function renderLiveThumbsDown(rows){
   const el = document.getElementById('live-thumbsdown');
   const countEl = document.getElementById('live-thumbsdown-count');
   if(!el) return;
   const events = parseReactionRows(rows).filter(ev => ev.reaction === 'down').reverse();
+  LIVE_THUMBSDOWN_EVENTS = events.slice(0,20);
   if(countEl) countEl.textContent = events.length ? `${events.length} downvote${events.length!==1?'s':''}` : '';
   if(!events.length){
     el.innerHTML='<div style="color:var(--dim);font-size:13px;padding:8px 0">No thumbs-down reactions yet.</div>';
     return;
   }
   const campusCol = {'Elsternwick':'#818cf8','Glen Waverley':'#34d399','St Kilda Rd':'#fb923c','St Kilda':'#fb923c'};
-  el.innerHTML = events.slice(0,20).map(ev => {
+  el.innerHTML = LIVE_THUMBSDOWN_EVENTS.map((ev,idx) => {
     const col = campusCol[ev.campus] || 'var(--dim)';
+    const match = findThumbsDownTarget(ev, {silent:true});
+    const matchHint = match && match.entry
+      ? `${match.isStem ? 'STEM review' : 'AI replacement'} ready`
+      : 'Could not match to library entry';
+    const disabled = match && match.entry ? '' : 'disabled';
     return `<div style="display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)">
       <div style="width:28px;height:28px;border-radius:9px;background:#FF808020;color:#FF8080;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">👎</div>
       <div style="flex:1;min-width:0">
@@ -3275,9 +3283,117 @@ function renderLiveThumbsDown(rows){
         </div>
         <div style="font-size:13px;color:var(--text);font-weight:700;line-height:1.35">${esc(ev.tool || ev.rawTool)}</div>
         <div style="font-size:12px;color:#aaa;line-height:1.45;margin-top:2px">${esc(ev.theme)}</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px">
+          <button id="btn-thumb-ai-${idx}" ${disabled} onclick="draftThumbsDownReplacement(${idx})" class="btn-sm" style="color:var(--lime);border-color:var(--lime);font-size:11px;padding:6px 10px">
+            ✨ Draft replacement with AI
+          </button>
+          <span style="font-size:10px;color:${match && match.entry ? 'var(--dim)' : '#FF8080'}">${esc(matchHint)}</span>
+        </div>
       </div>
     </div>`;
   }).join('');
+}
+
+
+function canonicalForMatch_(value){
+  return String(value || '').toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,' ').trim().replace(/\s+/g,' ');
+}
+function campusCandidatesForReaction_(campus){
+  const c = canonicalForMatch_(campus);
+  if(c.includes('glen')) return ['GW','Glen Waverley'];
+  if(c.includes('elsternwick')) return ['EL','Elsternwick'];
+  if(c.includes('st kilda')) return ['STK','St Kilda','St Kilda Rd','St Kilda Road'];
+  return [campus];
+}
+function campusMatchesReaction_(entryCampus, reactionCampus){
+  const e = canonicalForMatch_(entryCampus);
+  return campusCandidatesForReaction_(reactionCampus).some(c => canonicalForMatch_(c) === e);
+}
+function sugIdxFromReactionPhase_(phase){
+  const m = String(phase || '').match(/#\s*(\d+)/);
+  if(!m) return null;
+  const n = parseInt(m[1], 10) - 1;
+  return Number.isFinite(n) && n >= 0 ? n : null;
+}
+function findThumbsDownTarget(ev, opts){
+  const silent = opts && opts.silent;
+  const themeKey = canonicalForMatch_(ev.theme);
+  const yearKey = canonicalForMatch_(ev.yl);
+  const candidates = DATA.map((e,entryIdx)=>({e,entryIdx})).filter(({e}) =>
+    canonicalForMatch_(e.yl) === yearKey &&
+    canonicalForMatch_(e.th) === themeKey &&
+    campusMatchesReaction_(e.ca, ev.campus)
+  );
+  if(!candidates.length){
+    if(!silent) alert('Could not find the matching unit in data.json. Try refreshing Analytics after loading from Drive.');
+    return null;
+  }
+  const {e, entryIdx} = candidates[0];
+  let sugIdx = sugIdxFromReactionPhase_(ev.phase);
+  const sugs = getSugs(e);
+  if(sugIdx == null || !sugs[sugIdx]){
+    const rawToolKey = toolKey(ev.rawTool || ev.tool);
+    sugIdx = sugs.findIndex(s => toolKey(sugTool(s)) === rawToolKey || toolKey(normaliseToolName(sugTool(s))) === rawToolKey);
+  }
+  if(sugIdx < 0 || !sugs[sugIdx]){
+    if(!silent) alert('Found the unit, but could not match the downvoted suggestion slot.');
+    return null;
+  }
+  return { entry:e, entryIdx, sugIdx, currentSug:sugs[sugIdx], isStem:sugIdx===5 };
+}
+function buildThumbsDownRegenPrompt_(ev, target, retryNote){
+  const e = target.entry;
+  const oldTool = sugTool(target.currentSug);
+  const oldDesc = sugDesc(target.currentSug);
+  const siblings = getSugs(e).map((s,i)=> i===target.sugIdx ? null : sugTool(s)).filter(Boolean).join(', ');
+  const platformContext = detectPlatformContext(`${oldTool} ${oldDesc} ${e.th}`, e.yl).contextBlock || '';
+  const baseContext = `Campus: ${e.ca}\nYear Level: ${e.yl}\nTheme: ${e.th}\nCentral Idea: ${e.ci || 'Not provided'}\nLines of Inquiry: ${e.lo || 'Not provided'}\nUnit Summary: ${e.plannerText || 'Not provided'}\nDownvoted suggestion number: ${target.sugIdx + 1}\nDownvoted tool/project: ${oldTool}\nDownvoted description: ${oldDesc}\nOther tools already used in this unit: ${siblings || 'None'}`;
+  if(target.isStem){
+    return `A teacher clicked thumbs-down on the protected STEM Design Cycle idea for this unit. Draft ONE improved replacement for Suggestion 6 only.\n\n${baseContext}\n\nSTEM-SPECIFIC RULES:\n- This is Suggestion 6, the STEM Design Cycle slot stored as sugIdx:5.\n- Keep it as a hands-on STEM/Makerspace Design Cycle experience.\n- It must include tangible prototyping materials such as cardboard, recycled materials, popsticks, tape, hot glue, clay, Lego, craft materials, or simple robotics where age-appropriate.\n- Explicitly connect to Empathise → Define → Ideate → Prototype → Test.\n- Do not replace it with a normal software-only digital task.\n- Use age-appropriate language and tools for ${e.yl}.\n- Avoid duplicating the other tools/projects in this unit.\n${retryNote || ''}\n\nReturn ONLY valid JSON: {"t":"Project Name","d":"Specific improved STEM Design Cycle description."}`;
+  }
+  return `A teacher clicked thumbs-down on one DLA suggestion. Draft ONE improved replacement for that exact suggestion.\n\n${baseContext}\n\n${buildToolConstraints(e.yl)}${platformContext}\n\nRULES:\n- Replace only Suggestion ${target.sugIdx + 1}.\n- Do NOT touch Suggestion 6 / sugIdx:5 unless the downvoted item itself was Suggestion 6.\n- Prefer a genuinely stronger replacement, but you may keep the same tool if the main issue is the activity description.\n- Do not use any tools already used elsewhere in this unit: ${siblings || 'None'}.\n- Make the description practical, specific, vivid, and directly connected to the central idea/lines of inquiry.\n- Do not use forbidden tools such as ChatGPT, Claude, Gemini, Copilot, Google Docs, Google Slides, Google Sheets, WeVideo, or Flipgrid.\n${retryNote || ''}\n\nReturn ONLY valid JSON: {"t":"Tool Name","d":"Specific improved description."}`;
+}
+async function draftThumbsDownReplacement(idx){
+  const ev = LIVE_THUMBSDOWN_EVENTS[idx];
+  if(!ev) return;
+  const btn = document.getElementById(`btn-thumb-ai-${idx}`);
+  const oldText = btn ? btn.textContent : '';
+  if(btn){ btn.disabled = true; btn.textContent = 'Drafting…'; }
+  setStatus('Drafting replacement from thumbs-down feedback…','loading');
+  try{
+    await ensureLibrariesLoadedForAI();
+    const target = findThumbsDownTarget(ev);
+    if(!target) throw new Error('Could not match this thumbs-down to a current suggestion.');
+
+    let proposal = null;
+    let lastReason = '';
+    for(let attempt=1; attempt<=2; attempt++){
+      const retryNote = lastReason ? `\nPREVIOUS DRAFT WAS REJECTED: ${lastReason}. Correct this now.` : '';
+      const raw = await callAI([{role:'user',parts:[{text:buildThumbsDownRegenPrompt_(ev, target, retryNote)}]}], null, OPENAI_FAST_MODEL);
+      let parsed;
+      try{ parsed = JSON.parse(cleanJSON(raw)); }
+      catch(e){ lastReason = 'The response was not valid JSON.'; continue; }
+      const t = String(parsed.t || parsed.tool || parsed.name || '').trim();
+      const d = String(parsed.d || parsed.desc || parsed.description || parsed.activity || '').trim();
+      if(!t || !d){ lastReason = 'The draft was missing a tool/project title or description.'; continue; }
+      if(toolContainsForbiddenKeyword(t) || toolContainsForbiddenKeyword(d)){ lastReason = 'The draft contained a forbidden AI/Google/legacy tool.'; continue; }
+      if(toolViolatesInventoryBan(t)){ lastReason = 'The draft used a banned inventory item.'; continue; }
+      if(!target.isStem && !isToolAgeAppropriate(t, target.entry.yl)){ lastReason = `${t} is not age-appropriate for ${target.entry.yl}.`; continue; }
+      if(!target.isStem && wouldDupeToolProposalInEntry(target.entry, t, target.sugIdx)){ lastReason = `${t} is already used elsewhere in this unit.`; continue; }
+      proposal = { entryIdx:target.entryIdx, sugIdx:target.sugIdx, t, d };
+      break;
+    }
+    if(!proposal) throw new Error(lastReason || 'AI could not create a valid replacement draft.');
+    window._snapshotReason = `Before applying thumbs-down replacement for ${target.entry.ca} ${target.entry.yl} ${target.entry.th}`;
+    showChangesPopup([proposal]);
+    setStatus('Replacement drafted — review and approve before applying ✓');
+  }catch(e){
+    console.error(e);
+    setStatus('Could not draft replacement: '+e.message,'error');
+    alert('Could not draft replacement:\n' + e.message);
+  }finally{
+    if(btn){ btn.disabled = false; btn.textContent = oldText || '✨ Draft replacement with AI'; }
+  }
 }
 
 function renderLiveTopPages(rows){
