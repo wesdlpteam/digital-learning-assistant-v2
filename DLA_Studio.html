@@ -94,6 +94,24 @@
   #bulk-chat-messages{height:430px!important}
   #chat-messages{height:430px}
 }
+
+/* ===== BULK SECTION COLLAPSIBLE CARDS PATCH ===== */
+#panel-tools .bulk-collapsible-card{padding:0!important;overflow:hidden}
+.bulk-collapse-header{width:100%;display:flex;align-items:center;gap:12px;padding:16px 22px;background:var(--card2);border:0;border-bottom:1px solid var(--border);color:var(--text);font-family:inherit;cursor:pointer;text-align:left}
+.bulk-collapse-header:hover{background:#262626}
+.bulk-collapse-title{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:1.3px;color:var(--lime)}
+.bulk-collapse-sub{font-size:11px;color:var(--dim);font-weight:600;margin-top:2px;text-transform:none;letter-spacing:0}
+.bulk-collapse-spacer{flex:1}
+.bulk-collapse-icon{font-size:16px;color:var(--dim);transition:transform .15s ease}
+.bulk-collapsed .bulk-collapse-icon{transform:rotate(-90deg)}
+.bulk-collapse-body{padding:28px}
+.bulk-collapse-body.bulk-collapse-body-compact{padding:0}
+.bulk-collapsed .bulk-collapse-body{display:none}
+.bulk-collapsed .bulk-collapse-header{border-bottom:0}
+.inv-remove-btn{background:transparent;border:none;cursor:pointer;line-height:1;opacity:.82;font-family:inherit}
+.inv-remove-btn:hover{opacity:1;transform:scale(1.12)}
+@media (min-width:1400px){.bulk-collapse-body{padding:34px}.bulk-collapse-header{padding:18px 26px}.bulk-collapse-title{font-size:13px}}
+
 </style>
 </head>
 <body>
@@ -961,29 +979,57 @@ function normaliseAgeRanges(ranges){
   return out;
 }
 
-function normaliseToolInventory(){
+function normaliseToolInventory(preferredListKey){
   TOOL_INVENTORY = TOOL_INVENTORY && typeof TOOL_INVENTORY === 'object'
     ? TOOL_INVENTORY
     : { approved: [], banned: [], ageRanges: {} };
-  TOOL_INVENTORY.approved = normaliseToolList(TOOL_INVENTORY.approved);
-  TOOL_INVENTORY.banned = normaliseToolList(TOOL_INVENTORY.banned);
+
+  let approved = normaliseToolList(TOOL_INVENTORY.approved);
+  let banned = normaliseToolList(TOOL_INVENTORY.banned);
+
+  // A tool can never live in both lists. On general load/save, the banned list wins
+  // because it is the safety list. When the user intentionally adds a tool to one
+  // side, pass preferredListKey so it moves cleanly from the other side.
+  const approvedKeys = new Set(approved.map(toolInventoryKey));
+  const bannedKeys = new Set(banned.map(toolInventoryKey));
+  const overlappingKeys = [...approvedKeys].filter(k => k && bannedKeys.has(k));
+  if(overlappingKeys.length){
+    const overlap = new Set(overlappingKeys);
+    if(preferredListKey === 'approved'){
+      banned = banned.filter(t => !overlap.has(toolInventoryKey(t)));
+    } else {
+      approved = approved.filter(t => !overlap.has(toolInventoryKey(t)));
+    }
+  }
+
+  TOOL_INVENTORY.approved = approved;
+  TOOL_INVENTORY.banned = banned;
   TOOL_INVENTORY.ageRanges = normaliseAgeRanges(TOOL_INVENTORY.ageRanges);
+
+  // Age ranges are only meaningful for tools that remain whitelisted.
+  const finalApprovedKeys = new Set(TOOL_INVENTORY.approved.map(toolInventoryKey));
+  Object.keys(TOOL_INVENTORY.ageRanges || {}).forEach(k => {
+    if(!finalApprovedKeys.has(k)) delete TOOL_INVENTORY.ageRanges[k];
+  });
+
   return TOOL_INVENTORY;
 }
 
 function loadToolInventoryFromMeta(meta){
-  const inv = (meta && meta._inventory && typeof meta._inventory === 'object') ? meta._inventory : {};
+  const hasInventory = !!(meta && meta._inventory && typeof meta._inventory === 'object');
+  const inv = hasInventory ? meta._inventory : {};
   TOOL_INVENTORY = {
     approved: normaliseToolList(inv.approved || inv.whitelist || inv.allowlist || []),
     banned: normaliseToolList(inv.banned || inv.blocklist || inv.denylist || []),
     ageRanges: normaliseAgeRanges(inv.ageRanges || inv.ranges || inv.age_ranges || {})
   };
-  seedDefaultInventoryIfEmpty();
+  if(hasInventory) normaliseToolInventory('banned');
+  else seedDefaultInventoryIfEmpty();
   return TOOL_INVENTORY;
 }
 
 function serialiseToolInventoryForMeta(){
-  normaliseToolInventory();
+  normaliseToolInventory('banned');
   return {
     approved: TOOL_INVENTORY.approved || [],
     banned: TOOL_INVENTORY.banned || [],
@@ -997,7 +1043,7 @@ function invAddTool(listKey){
   if(!input) return;
   const val = (input.value || '').trim();
   if(!val) return;
-  normaliseToolInventory();
+  normaliseToolInventory(listKey);
   TOOL_INVENTORY[listKey] = TOOL_INVENTORY[listKey] || [];
   const key = toolInventoryKey(val);
   const exists = TOOL_INVENTORY[listKey].some(x => toolInventoryKey(x) === key);
@@ -1006,9 +1052,11 @@ function invAddTool(listKey){
     input.value = '';
     return;
   }
-  // If adding to banned, also remove from approved (and vice versa)
+
+  // Moving between lists is explicit: adding to one side removes from the other.
   if(listKey === 'banned'){
     TOOL_INVENTORY.approved = (TOOL_INVENTORY.approved || []).filter(x => toolInventoryKey(x) !== key);
+    if(TOOL_INVENTORY.ageRanges) delete TOOL_INVENTORY.ageRanges[key];
   } else {
     TOOL_INVENTORY.banned = (TOOL_INVENTORY.banned || []).filter(x => toolInventoryKey(x) !== key);
     const minEl = document.getElementById('inv-whitelist-min');
@@ -1016,21 +1064,30 @@ function invAddTool(listKey){
     const range = normaliseAgeRange({ min: minEl?.value ?? 0, max: maxEl?.value ?? 6 });
     TOOL_INVENTORY.ageRanges[key] = range;
   }
+
   TOOL_INVENTORY[listKey].push(val);
+  normaliseToolInventory(listKey);
   input.value = '';
   renderToolInventory();
   saveLibraries();
   setStatus(`Added "${val}" to ${listKey === 'approved' ? 'whitelist' : 'banned list'}`);
 }
 
-function invRemoveTool(listKey, tool){
-  normaliseToolInventory();
+function invRemoveTool(listKey, tool, evt){
+  if(evt && typeof evt.stopPropagation === 'function') evt.stopPropagation();
+  normaliseToolInventory(listKey === 'approved' ? 'banned' : 'approved');
   const key = toolInventoryKey(tool);
+  const before = (TOOL_INVENTORY[listKey] || []).length;
   TOOL_INVENTORY[listKey] = (TOOL_INVENTORY[listKey] || []).filter(x => toolInventoryKey(x) !== key);
   if(listKey === 'approved' && TOOL_INVENTORY.ageRanges) delete TOOL_INVENTORY.ageRanges[key];
+  normaliseToolInventory(listKey === 'approved' ? 'banned' : 'approved');
   renderToolInventory();
   saveLibraries();
-  setStatus(`Removed "${tool}" from ${listKey === 'approved' ? 'whitelist' : 'banned list'}`);
+  const after = (TOOL_INVENTORY[listKey] || []).length;
+  setStatus(after < before
+    ? `Removed "${tool}" from ${listKey === 'approved' ? 'whitelist' : 'banned list'}`
+    : `"${tool}" was not found in the ${listKey === 'approved' ? 'whitelist' : 'banned list'}`,
+    after < before ? undefined : 'error');
 }
 
 function invUpdateToolAge(tool, edge, value){
@@ -1076,14 +1133,119 @@ function renderToolInventory(){
           </div>
           <select class="inp" title="Minimum year level" onchange="invUpdateToolAge(${jsArg(t)},'min',this.value)" style="margin-bottom:0;font-size:11px;padding:5px 7px;color:var(--lime);border-color:rgba(197,232,74,.3)">${yearSelectOptions(range.min)}</select>
           <select class="inp" title="Maximum year level" onchange="invUpdateToolAge(${jsArg(t)},'max',this.value)" style="margin-bottom:0;font-size:11px;padding:5px 7px;color:var(--lime);border-color:rgba(197,232,74,.3)">${yearSelectOptions(range.max)}</select>
-          <button onclick="invRemoveTool('approved',${jsArg(t)})" style="background:transparent;border:none;color:var(--lime);cursor:pointer;padding:0 6px;font-size:18px;line-height:1;opacity:.8" title="Remove">×</button>
+          <button type="button" class="inv-remove-btn" data-inv-remove="1" data-list="approved" data-tool="${esc(t)}" style="color:var(--lime);padding:0 6px;font-size:18px" title="Remove from whitelist">×</button>
         </div>`;
       }).join('')
     : '<span style="font-size:11px;color:var(--dim);font-style:italic">No whitelist — all approved tools allowed.</span>';
 
   bannedEl.innerHTML = banned.length
-    ? banned.map(t => `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 4px 4px 10px;background:rgba(255,128,128,0.08);border:1px solid rgba(255,128,128,0.3);border-radius:99px;font-size:12px;font-weight:600;color:#FF8080">${esc(t)}<button onclick="invRemoveTool('banned',${jsArg(t)})"  style="background:transparent;border:none;color:#FF8080;cursor:pointer;padding:0 6px;font-size:14px;line-height:1;opacity:.7" title="Remove">×</button></span>`).join('')
+    ? banned.map(t => `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 4px 4px 10px;background:rgba(255,128,128,0.08);border:1px solid rgba(255,128,128,0.3);border-radius:99px;font-size:12px;font-weight:600;color:#FF8080">${esc(t)}<button type="button" class="inv-remove-btn" data-inv-remove="1" data-list="banned" data-tool="${esc(t)}" style="color:#FF8080;padding:0 6px;font-size:14px" title="Remove from banned list">×</button></span>`).join('')
     : '<span style="font-size:11px;color:var(--dim);font-style:italic">No bans.</span>';
+}
+
+
+function setupToolInventoryClickHandlers(){
+  if(window.__DLA_INV_REMOVE_HANDLER) return;
+  window.__DLA_INV_REMOVE_HANDLER = true;
+  document.addEventListener('click', function(event){
+    const btn = event.target.closest('[data-inv-remove]');
+    if(!btn) return;
+    event.preventDefault();
+    event.stopPropagation();
+    invRemoveTool(btn.dataset.list, btn.dataset.tool, event);
+  });
+}
+setupToolInventoryClickHandlers();
+
+function bulkCollapseIdFromCard(card, index){
+  if(card.dataset.bulkCollapseId) return card.dataset.bulkCollapseId;
+  if(card.id) return card.id;
+  return `bulk-section-${index}`;
+}
+
+function bulkCardTitle(card, index){
+  const titles = [
+    'Bulk AI Edit',
+    'Realism & age audit',
+    'Tool Inventory',
+    'Snapshots & undo',
+    'Playbooks',
+    'Run Surgeon',
+    'Side-by-side campus comparison'
+  ];
+  const label = card.querySelector('.label')?.textContent?.replace(/^[^A-Za-z0-9]+/, '').trim();
+  return label || titles[index] || `Bulk tool ${index + 1}`;
+}
+
+function bulkCardSubtitle(title){
+  const key = String(title || '').toLowerCase();
+  if(key.includes('bulk ai')) return 'Chat-driven edits and proposed changes';
+  if(key.includes('realism')) return 'Scan and draft fixes for weak or unrealistic ideas';
+  if(key.includes('tool inventory')) return 'Whitelist, banned tools and editable year-level ranges';
+  if(key.includes('snapshot')) return 'Save and restore rollback points';
+  if(key.includes('playbook')) return 'Reusable bulk-edit prompts';
+  if(key.includes('surgeon')) return 'Remove or replace one tool across the library';
+  if(key.includes('comparison')) return 'Compare campuses for a selected unit';
+  return '';
+}
+
+function applyBulkCollapseState(card, open){
+  card.classList.toggle('bulk-collapsed', !open);
+  const btn = card.querySelector(':scope > .bulk-collapse-header');
+  if(btn){
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    const icon = btn.querySelector('.bulk-collapse-icon');
+    if(icon) icon.textContent = open ? '⌄' : '›';
+  }
+}
+
+function toggleBulkSection(id){
+  const selector = `#panel-tools .bulk-collapsible-card[data-bulk-collapse-id="${CSS.escape(id)}"]`;
+  const card = document.querySelector(selector);
+  if(!card) return;
+  const isOpen = !card.classList.contains('bulk-collapsed');
+  const nextOpen = !isOpen;
+  applyBulkCollapseState(card, nextOpen);
+  try{ localStorage.setItem('dla_bulk_section_open_' + id, nextOpen ? '1' : '0'); }catch(e){}
+}
+
+function makeBulkCardsCollapsible(){
+  const panel = document.getElementById('panel-tools');
+  if(!panel) return;
+  const cards = Array.from(panel.children).filter(el => el.classList && el.classList.contains('card'));
+  cards.forEach((card, index) => {
+    if(card.classList.contains('bulk-collapsible-card')) return;
+    const id = bulkCollapseIdFromCard(card, index);
+    const title = bulkCardTitle(card, index);
+    const subtitle = bulkCardSubtitle(title);
+    const compact = /padding\s*:\s*0/i.test(card.getAttribute('style') || '');
+
+    const body = document.createElement('div');
+    body.className = 'bulk-collapse-body' + (compact ? ' bulk-collapse-body-compact' : '');
+    while(card.firstChild) body.appendChild(card.firstChild);
+
+    const header = document.createElement('button');
+    header.type = 'button';
+    header.className = 'bulk-collapse-header';
+    header.setAttribute('aria-controls', id + '-body');
+    header.onclick = () => toggleBulkSection(id);
+    header.innerHTML = `<div><div class="bulk-collapse-title">${esc(title)}</div>${subtitle ? `<div class="bulk-collapse-sub">${esc(subtitle)}</div>` : ''}</div><div class="bulk-collapse-spacer"></div><span class="bulk-collapse-icon">⌄</span>`;
+
+    body.id = id + '-body';
+    card.dataset.bulkCollapseId = id;
+    card.classList.add('bulk-collapsible-card');
+    card.appendChild(header);
+    card.appendChild(body);
+
+    let open;
+    try{
+      const stored = localStorage.getItem('dla_bulk_section_open_' + id);
+      open = stored == null ? (index === 0 || title.toLowerCase().includes('tool inventory')) : stored === '1';
+    }catch(e){
+      open = (index === 0 || title.toLowerCase().includes('tool inventory'));
+    }
+    applyBulkCollapseState(card, open);
+  });
 }
 
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -1512,9 +1674,12 @@ function switchTab(tab,btn){
     renderBulkWelcome();
     renderSnapshotsList();
     renderPlaybooksList();
+    renderToolInventory();
+    makeBulkCardsCollapsible();
     ensureLibrariesLoaded().then(() => {
       renderToolInventory();
       renderBulkWelcome();
+      makeBulkCardsCollapsible();
     }).catch(e => setStatus(`Libraries failed to load: ${e.message}`, 'error'));
   }
   if(tab==='libraries'){
@@ -4542,13 +4707,14 @@ NEVER propose a tool for a year level outside its configured range.`;
 
 // Populate defaults if inventory hasn't been loaded from Drive yet
 function seedDefaultInventoryIfEmpty(){
-  normaliseToolInventory();
+  normaliseToolInventory('banned');
   if(!TOOL_INVENTORY.approved || TOOL_INVENTORY.approved.length === 0){
     TOOL_INVENTORY.approved = [...DEFAULT_APPROVED_TOOLS];
   }
   if(!TOOL_INVENTORY.banned || TOOL_INVENTORY.banned.length === 0){
     TOOL_INVENTORY.banned = [...DEFAULT_BANNED_TOOLS];
   }
+  normaliseToolInventory('banned');
   TOOL_INVENTORY.ageRanges = TOOL_INVENTORY.ageRanges || {};
   TOOL_INVENTORY.approved.forEach(tool => {
     const key = toolInventoryKey(tool);
@@ -7144,6 +7310,12 @@ setInterval(async()=>{
     if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendChat(); }
   });
 })();
+// Ensure Bulk cards become collapsible even if the Bulk tab is the first visible panel in a restored session.
+document.addEventListener('DOMContentLoaded', () => {
+  setupToolInventoryClickHandlers();
+  makeBulkCardsCollapsible();
+});
+
 </script>
 </body>
 </html>
