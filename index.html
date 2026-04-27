@@ -392,6 +392,38 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 .tech-cur-strand{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#666;margin:12px 0 8px;padding-top:10px;border-top:1px solid #333}
 .tech-cur-strand:first-child{border-top:none;padding-top:0;margin-top:0}
 
+
+
+/* ===== UNITS OF INQUIRY FIT-TO-SCREEN PATCH =====
+   The year-level UOI page usually has six cards. On laptops, classroom TVs and
+   projectors with limited height, compact this page so all units can be seen at once. */
+.uoi-list{display:block}
+@media (min-width:900px) and (max-height:1050px){
+  .uoi-head{margin:12px 0 18px!important}
+  .uoi-head .tag{font-size:13px;padding:7px 16px}
+  .uoi-head .sec-title{font-size:clamp(36px,3.8vw,50px);line-height:1;margin-top:14px}
+  .uoi-list{display:grid;grid-template-columns:1fr;gap:10px}
+  .uoi-list .uc{margin-bottom:0;padding:17px 24px;border-radius:20px;min-height:78px;display:flex;flex-direction:column;justify-content:center}
+  .uoi-list .uc-label{font-size:11px;letter-spacing:1px;margin-bottom:4px}
+  .uoi-list .uc-name{font-size:clamp(22px,2.05vw,29px);line-height:1.12}
+  .uoi-list .uc-emoji{font-size:48px;right:20px}
+}
+@media (min-width:1300px) and (max-height:900px){
+  .hi{padding-top:10px;padding-bottom:10px}
+  .uoi-head{margin:8px 0 14px!important}
+  .uoi-head .sec-title{font-size:clamp(34px,3.2vw,44px);margin-top:12px}
+  .uoi-list{gap:8px}
+  .uoi-list .uc{min-height:68px;padding:13px 24px;border-radius:18px}
+  .uoi-list .uc-label{font-size:10px;margin-bottom:3px}
+  .uoi-list .uc-name{font-size:clamp(20px,1.65vw,25px)}
+  .uoi-list .uc-emoji{font-size:42px}
+}
+@media (min-width:1700px) and (max-height:980px){
+  .uoi-head .sec-title{font-size:46px}
+  .uoi-list .uc{min-height:74px;padding:15px 26px}
+  .uoi-list .uc-name{font-size:26px}
+}
+
 </style></head><body><div id="app"></div>
 <script>
 
@@ -438,12 +470,108 @@ const HT={
 "DJI Drone":"<ol><li><b>Teacher-operated only</b> — students direct but do not fly.</li><li>Open the <b>DJI app</b> and connect the drone.</li><li>Take off in a <b>clear, open outdoor space</b>.</li><li>Capture <b>aerial photos and video</b> of the school, local area or environment.</li><li>Students use the footage in their <b>projects, presentations and reports</b>.</li></ol><div class=\"sg-howto-tip\">Tip: Plan the flight path with students beforehand — they sketch what they want to capture and why.</div>",
 "Delightex (CoSpaces)":"<ol><li>Open <b>cospaces.io</b> and click <b>Create new CoSpace</b>.</li><li>Choose a <b>3D or VR environment</b>.</li><li>Drag in <b>objects, characters and buildings</b> from the library.</li><li>Use <b>CoBlocks</b> (visual coding) to animate objects — movement, speech, triggers.</li><li>Click <b>Play</b> to test in 3D or <b>Share</b> for VR viewing.</li></ol><div class=\"sg-howto-tip\">Tip: Students can explore each others creations in VR using the Pico headsets for a fully immersive experience.</div>"
 };
-// Data is loaded from data.json — edit that file (via Excel) to update lessons
+// Data is loaded from data.json. Curated lesson links are loaded from libraries.json.
 let D = [];
-fetch('data.json')
-  .then(r => r.json())
-  .then(data => { D = data; R(); loadLeaderboard(); })
-  .catch(() => { document.getElementById('app').innerHTML = '<div style="color:#FF6B6B;padding:40px;text-align:center">⚠️ Could not load data.json — make sure it is in the same folder as this file.</div>'; });
+let LIBRARIES = {};
+let LIBRARY_LESSONS = [];
+
+function htmlEsc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function normLessonText(s){
+  return String(s||'').toLowerCase()
+    .replace(/&amp;/g,' and ')
+    .replace(/micro[: ]?bit/g,'microbit')
+    .replace(/minecraft education/g,'minecraft')
+    .replace(/[^a-z0-9]+/g,' ')
+    .replace(/\b(the|a|an|and|on|in|of|to|for|with|using|lesson|activity)\b/g,' ')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+function compactLessonText(s){return normLessonText(s).replace(/\s+/g,'');}
+function libraryPlatformLabel(key){
+  var meta=(LIBRARIES&&LIBRARIES._meta&&LIBRARIES._meta[key])||{};
+  if(meta.name)return meta.name;
+  if(key==='microbit')return 'Micro:bit';
+  if(key==='minecraft')return 'Minecraft Education';
+  return String(key||'Lesson').replace(/[_-]/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
+}
+function buildLibraryLessonIndex(){
+  LIBRARY_LESSONS=[];
+  Object.keys(LIBRARIES||{}).forEach(function(key){
+    if(key==='_meta'||!Array.isArray(LIBRARIES[key]))return;
+    var platform=libraryPlatformLabel(key);
+    LIBRARIES[key].forEach(function(l){
+      if(!l||!l.title||!l.url)return;
+      LIBRARY_LESSONS.push({
+        key:key,platform:platform,title:l.title,url:l.url,ages:l.ages||'',subject:l.subject||'',desc:l.desc||'',
+        normTitle:normLessonText(l.title),compactTitle:compactLessonText(l.title)
+      });
+    });
+  });
+}
+function platformMatchesLesson(tool,lesson){
+  var t=normLessonText(tool),key=normLessonText(lesson.key),plat=normLessonText(lesson.platform);
+  if(!t)return false;
+  if(lesson.key==='microbit'&&(t.includes('microbit')||t.includes('micro bit')))return true;
+  if(lesson.key==='minecraft'&&t.includes('minecraft'))return true;
+  return (key&&t.includes(key))||(plat&&t.includes(plat));
+}
+function tokenOverlapScore(a,b){
+  var A=normLessonText(a).split(' ').filter(Boolean),B=normLessonText(b).split(' ').filter(Boolean);
+  if(!A.length||!B.length)return 0;
+  var setA=new Set(A),hit=0;B.forEach(function(x){if(setA.has(x))hit++;});
+  return hit/Math.max(B.length,1);
+}
+function titleFromToolName(tool){
+  tool=String(tool||'');
+  var parts=tool.split(':');
+  if(parts.length>1)return parts.slice(1).join(':').trim();
+  return tool.replace(/^(Minecraft Education|Minecraft|Micro:bit|Microbits|Microbit)\s*[-–—:]?\s*/i,'').trim();
+}
+function getLibraryLessonForSuggestion(sug){
+  if(!sug)return null;
+  var tool=String(sug.t||''),desc=String(sug.d||''),url=String(sug.url||'').trim();
+  if(url){return {platform:'Lesson Library',title:titleFromToolName(tool)||tool||'Direct lesson',url:url,ages:'',subject:'',desc:''};}
+  if(!LIBRARY_LESSONS.length)return null;
+  var toolTitle=titleFromToolName(tool);
+  var hayNorm=normLessonText(tool+' '+desc),hayCompact=compactLessonText(tool+' '+desc);
+  var best=null,bestScore=0;
+  LIBRARY_LESSONS.forEach(function(lesson){
+    var score=0;
+    var platformMatch=platformMatchesLesson(tool,lesson);
+    if(platformMatch)score+=3;
+    if(lesson.compactTitle&&hayCompact.includes(lesson.compactTitle))score+=8;
+    if(lesson.normTitle&&hayNorm.includes(lesson.normTitle))score+=8;
+    if(toolTitle){
+      var ttCompact=compactLessonText(toolTitle),lt=lesson.compactTitle;
+      if(ttCompact&&lt&&(ttCompact===lt||ttCompact.includes(lt)||lt.includes(ttCompact)))score+=9;
+      score+=tokenOverlapScore(toolTitle,lesson.title)*5;
+    }
+    score+=tokenOverlapScore(tool+' '+desc,lesson.title)*3;
+    var strongExact=(lesson.compactTitle&&hayCompact.includes(lesson.compactTitle));
+    var enough=(platformMatch&&score>=6)||score>=10||strongExact;
+    if(enough&&score>bestScore){best=lesson;bestScore=score;}
+  });
+  return best;
+}
+function renderLibraryLessonResource(lesson){
+  if(!lesson||!lesson.url)return '';
+  var label='Open direct lesson';
+  if(lesson.platform&&lesson.title)label='Open '+lesson.platform+' lesson: '+lesson.title;
+  else if(lesson.title)label='Open lesson: '+lesson.title;
+  return '<a class="sg-ref-link" href="'+htmlEsc(lesson.url)+'" target="_blank" rel="noopener">🔗 '+htmlEsc(label)+'</a>';
+}
+
+Promise.allSettled([
+  fetch('data.json').then(function(r){if(!r.ok)throw new Error('data.json');return r.json();}),
+  fetch('libraries.json').then(function(r){if(!r.ok)throw new Error('libraries.json');return r.json();})
+]).then(function(results){
+  if(results[0].status!=='fulfilled')throw new Error('data.json');
+  D=results[0].value;
+  if(results[1].status==='fulfilled'){LIBRARIES=results[1].value||{};buildLibraryLessonIndex();}
+  R();loadLeaderboard();
+}).catch(function(){
+  document.getElementById('app').innerHTML='<div style="color:#FF6B6B;padding:40px;text-align:center">⚠️ Could not load data.json — make sure it is in the same folder as this file.</div>';
+});
 const BK="https://outlook.office365.com/book/DigitalLearningPractice@WesleyCollegeMelbourne.onmicrosoft.com/?ismsaljsauthenabled=true";
 const TU={
 "Book Creator":"https://bookcreator.com",
@@ -1100,9 +1228,11 @@ h+='</div>';}
 
 else if(v==="units"){
 const us=gu(ca,yl);
-h+='<div style="margin:20px 0 28px"><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="tag" style="background:'+CC[ca]+';color:'+CTX[ca]+'">'+CN[ca]+'</span><span class="tag">'+yl+'</span></div><h2 class="sec-title">Units of Inquiry</h2></div>';
+h+='<div class="uoi-head" style="margin:20px 0 28px"><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="tag" style="background:'+CC[ca]+';color:'+CTX[ca]+'">'+CN[ca]+'</span><span class="tag">'+yl+'</span></div><h2 class="sec-title">Units of Inquiry</h2></div><div class="uoi-list">';
 us.forEach((u,i)=>{const tc=TC[u.th]||"#888";const em=TE[u.th]||"💡";
-h+='<div class="uc" style="background:'+tc+';color:'+(TTX[u.th]||"#FFF")+'" onclick="nv(\'ui\','+i+')"><div class="uc-emoji">'+em+'</div><div class="uc-label">Transdisciplinary Theme</div><div class="uc-name">'+u.th+'</div></div>';});}
+h+='<div class="uc" style="background:'+tc+';color:'+(TTX[u.th]||"#FFF")+'" onclick="nv(\'ui\','+i+')"><div class="uc-emoji">'+em+'</div><div class="uc-label">Transdisciplinary Theme</div><div class="uc-name">'+u.th+'</div></div>';});
+h+='</div>';}
+
 
 else if(v==="detail"){
 const us=gu(ca,yl),u=us[ui];if(!u){S.v='units';S.ui=null;R();return;}const tc=TC[u.th]||"#888";const em=TE[u.th]||"💡";
@@ -1129,9 +1259,10 @@ if(stemSug && stemSug.t && stemSug.t.indexOf("Planner Needed")===-1){
   if(!window._usedData)window._usedData=[];var _stemUsi=window._usedData.length;window._usedData.push({campus:CN[ca],year:yl,theme:u.th,tool:stemTool,phase:'STEM Design Cycle'});
   
   var stemVa=gA(stemTool,stemDesc);
+  var stemLesson=getLibraryLessonForSuggestion(stemSug);
   
   // Store STEM data for modal that gets appended to body on click
-  window._stemData = {tool:stemTool, toolLabel:stemToolLabel, desc:stemDesc, va:stemVa, fbi:_stemFbi, usi:_stemUsi, valueLabel:I.s};
+  window._stemData = {tool:stemTool, toolLabel:stemToolLabel, desc:stemDesc, va:stemVa, fbi:_stemFbi, usi:_stemUsi, valueLabel:I.s, lesson:stemLesson};
   
   // Inline teaser only - modal is created on demand, attached to body
   h+='<div class="stem-prompt" onclick="openStem()"><div class="stem-prompt-icon">🔬</div><div class="stem-prompt-text"><div class="stem-prompt-title">Hands-on STEM activity available</div><div class="stem-prompt-sub">Tap to reveal → '+stemTool+'</div></div><div class="stem-prompt-arrow">→</div></div>';
@@ -1147,7 +1278,8 @@ var phaseLabel="Suggestion";
 h+='<div class="sg"><div class="sg-head"><div class="sg-icon" style="background:'+tc+'">'+em+'</div><div class="sg-meta"><div class="sg-type">'+'Idea #'+(si+1)+' of '+mainSugs.length+'</div><div class="sg-tool">'+toolLabel+'</div></div></div><div class="sg-body">';
 h+='<div class="sg-desc">'+linkifyDesc(s.d)+'</div>';
 h+='';
-if(s.ref||s.docKey){var _rl='<div class="sg-section sg-refs"><div class="sg-label"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h8M4 8h8M4 12h5"/><rect x="2" y="2" width="12" height="12" rx="2"/></svg> Resources</div>';if(s.docKey&&window.DOCS&&DOCS[s.docKey]){var _doc=DOCS[s.docKey];_rl+='<a class="sg-ref-link sg-ref-doc" href="'+_doc.url+'" download="'+_doc.n+'" target="_blank">&#11015;&#65039; '+_doc.n+'</a>';}if(s.ref){s.ref.forEach(function(r){_rl+='<a class="sg-ref-link" href="'+r.url+'" target="_blank" rel="noopener">&#128279; '+r.label+'</a>';});}h+=_rl+'</div>';}
+var _lesson=getLibraryLessonForSuggestion(s);
+if(_lesson||s.ref||s.docKey){var _rl='<div class="sg-section sg-refs"><div class="sg-label"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h8M4 8h8M4 12h5"/><rect x="2" y="2" width="12" height="12" rx="2"/></svg> Resources</div>';if(_lesson){_rl+=renderLibraryLessonResource(_lesson);}if(s.docKey&&window.DOCS&&DOCS[s.docKey]){var _doc=DOCS[s.docKey];_rl+='<a class="sg-ref-link sg-ref-doc" href="'+htmlEsc(_doc.url)+'" download="'+htmlEsc(_doc.n)+'" target="_blank">&#11015;&#65039; '+htmlEsc(_doc.n)+'</a>';}if(s.ref){s.ref.forEach(function(r){_rl+='<a class="sg-ref-link" href="'+htmlEsc(r.url)+'" target="_blank" rel="noopener">&#128279; '+htmlEsc(r.label)+'</a>';});}h+=_rl+'</div>';}
 h+='<div class="sg-section"><div class="sg-label">'+I.s+' Value Add</div><div class="vb" style="border-left-color:'+tc+'">'+va+'</div></div>';
 
 h+='<div class="sg-extras">';
@@ -1395,7 +1527,8 @@ function tgSec(id){var el=document.getElementById('sc_'+id);var btn=document.get
 function openStem(){
   var d=window._stemData;if(!d)return;
   var old=document.getElementById('stemOverlay');if(old)old.remove();
-  var html='<div class="stem-modal"><div class="stem-modal-close" onclick="closeStem()">✕</div><div class="stem-modal-header"><div class="stem-modal-icon">🔬</div><div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ac);margin-bottom:4px">STEM Design Cycle</div><div style="font-size:18px;font-weight:700;color:#FFF;line-height:1.3">'+d.toolLabel+'</div></div></div><div class="stem-modal-body"><div class="stem-label" style="margin-bottom:12px">🔄 Empathise → Define → Ideate → Prototype → Test</div><div class="sg-desc" style="font-size:14px;line-height:1.55">'+linkifyDesc(d.desc)+'</div><div class="sg-fb" style="margin-top:14px;padding-top:14px;border-top:1px solid #333"><button class="sg-used" onclick="markUsed('+d.usi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+d.fbi+')" class="sg-fb-btn">💬 Feedback</button><button class="sg-react-btn sg-react-up" onclick="reactFB('+d.fbi+',\'up\',this)">👍</button><button class="sg-react-btn" onclick="reactFB('+d.fbi+',\'down\',this)">👎</button></div></div></div></div>';
+  var stemResources=d.lesson?'<div class="sg-section sg-refs"><div class="sg-label"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h8M4 8h8M4 12h5"/><rect x="2" y="2" width="12" height="12" rx="2"/></svg> Resources</div>'+renderLibraryLessonResource(d.lesson)+'</div>':'';
+  var html='<div class="stem-modal"><div class="stem-modal-close" onclick="closeStem()">✕</div><div class="stem-modal-header"><div class="stem-modal-icon">🔬</div><div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ac);margin-bottom:4px">STEM Design Cycle</div><div style="font-size:18px;font-weight:700;color:#FFF;line-height:1.3">'+d.toolLabel+'</div></div></div><div class="stem-modal-body"><div class="stem-label" style="margin-bottom:12px">🔄 Empathise → Define → Ideate → Prototype → Test</div><div class="sg-desc" style="font-size:14px;line-height:1.55">'+linkifyDesc(d.desc)+'</div>'+stemResources+'<div class="sg-fb" style="margin-top:14px;padding-top:14px;border-top:1px solid #333"><button class="sg-used" onclick="markUsed('+d.usi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+d.fbi+')" class="sg-fb-btn">💬 Feedback</button><button class="sg-react-btn sg-react-up" onclick="reactFB('+d.fbi+',\'up\',this)">👍</button><button class="sg-react-btn" onclick="reactFB('+d.fbi+',\'down\',this)">👎</button></div></div></div></div>';
   var overlay=document.createElement('div');
   overlay.id='stemOverlay';
   overlay.className='stem-overlay';
