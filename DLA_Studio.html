@@ -128,7 +128,7 @@
     </div>
     <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text)">Wesley College</div>
     <div style="font-size:9px;color:var(--dim);margin-bottom:6px">Melbourne</div>
-    <div style="font-size:9px;color:var(--mint)">● DLA Studio v5.13</div>
+    <div style="font-size:9px;color:var(--mint)">● DLA Studio v5.16</div>
     <div id="sidebar-user-email" style="font-size:10px;color:var(--dim);margin-top:4px;word-break:break-all"></div>
     <div style="margin-top:12px;display:flex;gap:8px">
       <button class="btn-sm" onclick="downloadJSON()">↓ JSON</button>
@@ -2110,6 +2110,11 @@ function confirmSugFeedback(entryIdx, sugIdx, uid, choiceIdx){
     setStatus(`Skipped \u2014 "${newSug.t}" is already used in this unit`, 'error');
     return;
   }
+  const realism = checkRealisticToolUse(newSug.t, newSug.d, DATA[entryIdx]);
+  if(!realism.ok){
+    setStatus(`Skipped \u2014 unrealistic classroom use: ${realism.reason}`, 'error');
+    return;
+  }
   const sugs = [...getSugs(DATA[entryIdx])];
   sugs[sugIdx] = {t: newSug.t, d: newSug.d};
   recordChange(entryIdx, getSugs(DATA[entryIdx]), sugs);
@@ -3467,6 +3472,8 @@ async function draftThumbsDownReplacement(idx){
       if(toolContainsForbiddenKeyword(t) || toolContainsForbiddenKeyword(d)){ lastReason = 'The draft contained a forbidden AI/Google/legacy tool.'; continue; }
       if(toolViolatesInventoryBan(t)){ lastReason = 'The draft used a banned inventory item.'; continue; }
       if(!target.isStem && !isToolAgeAppropriate(t, target.entry.yl)){ lastReason = `${t} is not age-appropriate for ${target.entry.yl}.`; continue; }
+      const realism = checkRealisticToolUse(t, d, target.entry);
+      if(!realism.ok){ lastReason = realism.reason; continue; }
       if(!target.isStem && wouldDupeToolProposalInEntry(target.entry, t, target.sugIdx)){ lastReason = `${t} is already used elsewhere in this unit.`; continue; }
       proposal = { entryIdx:target.entryIdx, sugIdx:target.sugIdx, t, d };
       break;
@@ -3718,6 +3725,14 @@ MINECRAFT EDUCATION URLS: When suggesting Minecraft Education, use the tool name
 
 PODCASTING RULE: Whenever a suggestion involves podcasting, audio recording, audio storytelling, or audio interviews, ALWAYS use the tool name "Adobe Express Podcasting" — not GarageBand, not "Podcast Equipment", not generic "Adobe Express". Adobe Express Podcasting is the school's preferred podcasting platform. Always include the URL https://podcast.adobe.com in the description.`;
 
+const REALISTIC_TOOL_USE_RULES = `REALISTIC CLASSROOM USE RULES (HARD RULE):
+- Suggestions must be practical enough for a teacher to run; name the concrete student action and product.
+- The tool's real affordance must be central. Do not use a tool as a vague metaphor for an abstract idea.
+- Robotics and drones should only be suggested when the unit genuinely involves movement, mapping, forces, systems, navigation, data collection, automation, measurement, environments or spatial thinking.
+- CoDrone EDU rule: only Year 4+; it must involve actual drone actions such as flight paths, take-off/landing, waypoints, altitude, obstacle courses, mapping, aerial observation or sensor/data collection. Do NOT suggest CoDrone for body systems, emotions, wellbeing, fitness challenges, storytelling-only tasks, or purely abstract concepts.
+- Bad example: CoDrone EDU drones model body systems or wellbeing. A flying drone cannot meaningfully model a circulatory system.
+- If you cannot explain exactly what students will do with the hardware/software, choose a different tool.`;
+
 // ========== CENTRALISED TOOL CONSTRAINTS — used by every AI suggestion path ==========
 
 // Tool inventory — persisted to libraries.json under _meta._inventory
@@ -3866,6 +3881,37 @@ function isToolAgeAppropriate(toolName, yearLevel){
   return appropriate.some(a => normalised.includes(a) || a.includes(normalised));
 }
 
+function unitContextTextForRealism(entry){
+  if(!entry) return '';
+  return `${entry.th || ''} ${entry.ci || ''} ${entry.lo || ''} ${entry.plannerText || ''}`;
+}
+function realismResult(ok, reason){ return { ok, reason: reason || '' }; }
+function checkRealisticToolUse(toolName, desc, entry){
+  const rawTool = String(toolName || '').trim();
+  const t = normaliseToolName(rawTool).toLowerCase();
+  const d = String(desc || '').toLowerCase();
+  const unit = unitContextTextForRealism(entry).toLowerCase();
+  const full = `${d} ${unit}`;
+  const yr = getYearNumber(entry && entry.yl);
+  if(!rawTool || !desc) return realismResult(false, 'Missing tool or description.');
+  if(t.includes('codrone')){
+    if(yr < 4) return realismResult(false, 'CoDrone EDU is only appropriate from Year 4 upward.');
+    const concreteDroneAction = /(drone|fly|flight|hover|land|take[- ]?off|waypoint|route|path|altitude|obstacle|mission|coordinate|sequence|sensor|data|measure|map|aerial|photo|video)/i.test(d);
+    if(!concreteDroneAction) return realismResult(false, 'CoDrone EDU suggestion does not describe an actual drone flight/coding/data task.');
+    const abstractMisfit = /(body systems?|circulatory|digestive|respiratory|nervous|muscular|skeletal|heart|lungs|blood|wellbeing|fitness challenge|feelings?|emotion|identity|friendship|beliefs?)/i.test(d);
+    const concreteCourseOrMap = /(flight path|route|pathway|map|mapping|course|obstacle course|mission|waypoint|model landscape|school grounds|aerial|survey)/i.test(d);
+    if(abstractMisfit && !concreteCourseOrMap) return realismResult(false, 'CoDrone EDU was used for an abstract/body/wellbeing idea rather than a concrete flight, mapping or data task.');
+    const unitFit = /(force|motion|movement|flight|map|mapping|navigation|coordinate|environment|survey|aerial|data|sensor|weather|microclimate|obstacle|route|mission|system|algorithm|automation|energy|sustainability|habitat|landform|place|space|distance|speed|angle|measurement|rescue|transport|journey)/i.test(full);
+    if(!unitFit) return realismResult(false, 'CoDrone EDU does not appear to fit the unit context strongly enough.');
+  }
+  if(/(sphero|bee-bot|beebot|lego spike|micro:bit|makey makey|3d printer|tinkercad)/i.test(t)){
+    const concreteHardwareAction = /(code|program|build|prototype|test|debug|measure|collect|sensor|circuit|route|path|navigate|drive|move|design|model|print|construct|iterate)/i.test(d);
+    if(!concreteHardwareAction) return realismResult(false, `${rawTool} needs a concrete build/code/test action, not a vague activity.`);
+  }
+  return realismResult(true, '');
+}
+function isRealisticToolUse(toolName, desc, entry){ return checkRealisticToolUse(toolName, desc, entry).ok; }
+
 // Build a constraint block to inject into every regen/feedback prompt
 function buildToolConstraints(yearLevel){
   const appropriate = getAgeAppropriateTools(yearLevel);
@@ -3878,6 +3924,8 @@ function buildToolConstraints(yearLevel){
 
 THIS UNIT IS ${yrLabel.toUpperCase()} — you may ONLY choose from these age-appropriate tools:
 ${appropriate.join(', ')}${unavailable}
+
+${REALISTIC_TOOL_USE_RULES}
 
 CRITICAL: If you propose a tool NOT in the list above for this year level, your answer is rejected. Check your chosen tool against the list before responding.`;
 }
@@ -5464,6 +5512,8 @@ Prep = ages 5-6 | Year 1 = 6-7 | Year 2 = 7-8 | Year 3 = 8-9 | Year 4 = 9-10 | Y
 - All year levels: Seesaw, Epic, GarageBand, iMovie, PicCollage, Google Maps, Google Earth, Clickview, Green Screen, iPads, Laptops, Digital Cameras, Freeform, Sketchbook, Brushes Redux
 NEVER propose a tool for a year level below its minimum age.
 
+${REALISTIC_TOOL_USE_RULES}
+
 DUPLICATE PREVENTION (HARD RULE):
 - Do NOT propose a change that would use the same tool as another suggestion already in the same entry.
 - If an entry already contains the tool you're proposing, SKIP that entry entirely.
@@ -5669,7 +5719,22 @@ ${fullContext}`;
       const filteredUnsafe = beforeSafeTool - changes.length;
       if(filteredUnsafe > 0){ console.log(`Bulk AI: filtered out ${filteredUnsafe} unsafe / age-inappropriate proposal(s)`); }
 
-      // Fifth filter: PROTECT STEM SUGGESTION 6 (sugIdx:5) — never allow replacement of the Design Cycle slot
+      // Fifth filter: reject unrealistic hardware/tool uses (e.g. CoDrone used as a metaphor for body systems)
+      const beforeRealism = changes.length;
+      changes = changes.filter(c => {
+        const entry = DATA[c.entryIdx];
+        if(!entry) return false;
+        const realism = checkRealisticToolUse(c.t || '', c.d || '', entry);
+        if(!realism.ok){
+          console.log(`Bulk AI: rejected unrealistic proposal for ${entry.yl} ${entry.th}: "${c.t}" — ${realism.reason}`);
+          return false;
+        }
+        return true;
+      });
+      const filteredRealism = beforeRealism - changes.length;
+      if(filteredRealism > 0){ console.log(`Bulk AI: filtered out ${filteredRealism} unrealistic proposal(s)`); }
+
+      // Sixth filter: PROTECT STEM SUGGESTION 6 (sugIdx:5) — never allow replacement of the Design Cycle slot
       // This is the hard safety net — even if GPT ignores the prompt-level ban, this catches it
       const beforeStemFilter = changes.length;
       changes = changes.filter(c => {
