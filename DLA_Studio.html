@@ -387,11 +387,18 @@
               <span id="inv-whitelist-count" style="font-size:10px;color:var(--dim);font-weight:600"></span>
             </div>
             <div style="font-size:11px;color:var(--dim);margin-bottom:8px;line-height:1.5">Only these tools will be suggested. Leave empty to allow all approved tools.</div>
-            <div style="display:flex;gap:6px;margin-bottom:8px">
-              <input id="inv-whitelist-input" class="inp" placeholder="e.g. Sphero BOLT" style="flex:1;margin-bottom:0;font-size:12px;padding:6px 10px" onkeydown="if(event.key==='Enter'){event.preventDefault();invAddTool('approved')}">
+            <div style="display:grid;grid-template-columns:minmax(170px,1fr) 105px 105px auto;gap:6px;margin-bottom:8px;align-items:center">
+              <input id="inv-whitelist-input" class="inp" placeholder="e.g. Sphero BOLT" style="margin-bottom:0;font-size:12px;padding:6px 10px" onkeydown="if(event.key==='Enter'){event.preventDefault();invAddTool('approved')}">
+              <select id="inv-whitelist-min" class="inp" title="Minimum year level" style="margin-bottom:0;font-size:12px;padding:6px 8px">
+                <option value="0">Prep</option><option value="1">Year 1</option><option value="2">Year 2</option><option value="3">Year 3</option><option value="4">Year 4</option><option value="5">Year 5</option><option value="6">Year 6</option>
+              </select>
+              <select id="inv-whitelist-max" class="inp" title="Maximum year level" style="margin-bottom:0;font-size:12px;padding:6px 8px">
+                <option value="0">Prep</option><option value="1">Year 1</option><option value="2">Year 2</option><option value="3">Year 3</option><option value="4">Year 4</option><option value="5">Year 5</option><option value="6" selected>Year 6</option>
+              </select>
               <button class="btn-sm" onclick="invAddTool('approved')" style="color:var(--lime);border-color:var(--lime);padding:6px 12px">+ Add</button>
             </div>
-            <div id="inv-whitelist-pills" style="display:flex;flex-wrap:wrap;gap:4px;min-height:32px"></div>
+            <div style="font-size:10px;color:var(--dim);margin-bottom:8px;line-height:1.5">Set the year-level range for each whitelisted tool. The AI will only suggest it inside that range.</div>
+            <div id="inv-whitelist-pills" style="display:flex;flex-direction:column;gap:6px;min-height:32px"></div>
           </div>
 
           <div>
@@ -877,24 +884,137 @@ loadSnapshots();
 loadPlaybooks();
 
 // ========== TOOL INVENTORY UI ==========
+const YEAR_LEVEL_CHOICES = [
+  { value: 0, label: 'Prep' },
+  { value: 1, label: 'Year 1' },
+  { value: 2, label: 'Year 2' },
+  { value: 3, label: 'Year 3' },
+  { value: 4, label: 'Year 4' },
+  { value: 5, label: 'Year 5' },
+  { value: 6, label: 'Year 6' }
+];
+
+function clampYearLevelValue(value){
+  const n = Number(value);
+  if(!Number.isFinite(n)) return 0;
+  return Math.max(0, Math.min(6, Math.round(n)));
+}
+
+function yearLevelLabel(value){
+  const n = clampYearLevelValue(value);
+  return YEAR_LEVEL_CHOICES.find(y => y.value === n)?.label || `Year ${n}`;
+}
+
+function ageRangeLabel(range){
+  const r = normaliseAgeRange(range);
+  return r.min === r.max ? yearLevelLabel(r.min) : `${yearLevelLabel(r.min)}–${yearLevelLabel(r.max)}`;
+}
+
+function yearSelectOptions(selected){
+  const sel = clampYearLevelValue(selected);
+  return YEAR_LEVEL_CHOICES
+    .map(y => `<option value="${y.value}" ${y.value === sel ? 'selected' : ''}>${y.label}</option>`)
+    .join('');
+}
+
+function jsArg(value){
+  return JSON.stringify(String(value || ''));
+}
+
+function toolInventoryKey(tool){
+  const raw = String(tool || '').trim();
+  if(!raw) return '';
+  try { return normaliseToolName(raw).toLowerCase().trim(); }
+  catch(e){ return raw.toLowerCase().trim(); }
+}
+
+function normaliseToolList(list){
+  if(!Array.isArray(list)) return [];
+  const seen = new Set();
+  const out = [];
+  list.forEach(item => {
+    const value = String(item || '').trim();
+    if(!value) return;
+    const key = toolInventoryKey(value);
+    if(seen.has(key)) return;
+    seen.add(key);
+    out.push(value);
+  });
+  return out;
+}
+
+function normaliseAgeRange(range){
+  const source = range && typeof range === 'object' ? range : {};
+  let min = clampYearLevelValue(source.min ?? source.minYear ?? source.from ?? 0);
+  let max = clampYearLevelValue(source.max ?? source.maxYear ?? source.to ?? 6);
+  if(min > max){ const tmp = min; min = max; max = tmp; }
+  return { min, max };
+}
+
+function normaliseAgeRanges(ranges){
+  const out = {};
+  if(!ranges || typeof ranges !== 'object') return out;
+  Object.entries(ranges).forEach(([tool, range]) => {
+    const key = toolInventoryKey(tool);
+    if(key) out[key] = normaliseAgeRange(range);
+  });
+  return out;
+}
+
+function normaliseToolInventory(){
+  TOOL_INVENTORY = TOOL_INVENTORY && typeof TOOL_INVENTORY === 'object'
+    ? TOOL_INVENTORY
+    : { approved: [], banned: [], ageRanges: {} };
+  TOOL_INVENTORY.approved = normaliseToolList(TOOL_INVENTORY.approved);
+  TOOL_INVENTORY.banned = normaliseToolList(TOOL_INVENTORY.banned);
+  TOOL_INVENTORY.ageRanges = normaliseAgeRanges(TOOL_INVENTORY.ageRanges);
+  return TOOL_INVENTORY;
+}
+
+function loadToolInventoryFromMeta(meta){
+  const inv = (meta && meta._inventory && typeof meta._inventory === 'object') ? meta._inventory : {};
+  TOOL_INVENTORY = {
+    approved: normaliseToolList(inv.approved || inv.whitelist || inv.allowlist || []),
+    banned: normaliseToolList(inv.banned || inv.blocklist || inv.denylist || []),
+    ageRanges: normaliseAgeRanges(inv.ageRanges || inv.ranges || inv.age_ranges || {})
+  };
+  seedDefaultInventoryIfEmpty();
+  return TOOL_INVENTORY;
+}
+
+function serialiseToolInventoryForMeta(){
+  normaliseToolInventory();
+  return {
+    approved: TOOL_INVENTORY.approved || [],
+    banned: TOOL_INVENTORY.banned || [],
+    ageRanges: TOOL_INVENTORY.ageRanges || {}
+  };
+}
+
 function invAddTool(listKey){
   const inputId = listKey === 'approved' ? 'inv-whitelist-input' : 'inv-banned-input';
   const input = document.getElementById(inputId);
   if(!input) return;
   const val = (input.value || '').trim();
   if(!val) return;
+  normaliseToolInventory();
   TOOL_INVENTORY[listKey] = TOOL_INVENTORY[listKey] || [];
-  const existsLower = TOOL_INVENTORY[listKey].map(x => x.toLowerCase());
-  if(existsLower.includes(val.toLowerCase())){
+  const key = toolInventoryKey(val);
+  const exists = TOOL_INVENTORY[listKey].some(x => toolInventoryKey(x) === key);
+  if(exists){
     setStatus(`"${val}" is already in the ${listKey === 'approved' ? 'whitelist' : 'banned list'}`, 'error');
     input.value = '';
     return;
   }
   // If adding to banned, also remove from approved (and vice versa)
   if(listKey === 'banned'){
-    TOOL_INVENTORY.approved = (TOOL_INVENTORY.approved || []).filter(x => x.toLowerCase() !== val.toLowerCase());
+    TOOL_INVENTORY.approved = (TOOL_INVENTORY.approved || []).filter(x => toolInventoryKey(x) !== key);
   } else {
-    TOOL_INVENTORY.banned = (TOOL_INVENTORY.banned || []).filter(x => x.toLowerCase() !== val.toLowerCase());
+    TOOL_INVENTORY.banned = (TOOL_INVENTORY.banned || []).filter(x => toolInventoryKey(x) !== key);
+    const minEl = document.getElementById('inv-whitelist-min');
+    const maxEl = document.getElementById('inv-whitelist-max');
+    const range = normaliseAgeRange({ min: minEl?.value ?? 0, max: maxEl?.value ?? 6 });
+    TOOL_INVENTORY.ageRanges[key] = range;
   }
   TOOL_INVENTORY[listKey].push(val);
   input.value = '';
@@ -904,10 +1024,30 @@ function invAddTool(listKey){
 }
 
 function invRemoveTool(listKey, tool){
-  TOOL_INVENTORY[listKey] = (TOOL_INVENTORY[listKey] || []).filter(x => x.toLowerCase() !== tool.toLowerCase());
+  normaliseToolInventory();
+  const key = toolInventoryKey(tool);
+  TOOL_INVENTORY[listKey] = (TOOL_INVENTORY[listKey] || []).filter(x => toolInventoryKey(x) !== key);
+  if(listKey === 'approved' && TOOL_INVENTORY.ageRanges) delete TOOL_INVENTORY.ageRanges[key];
   renderToolInventory();
   saveLibraries();
   setStatus(`Removed "${tool}" from ${listKey === 'approved' ? 'whitelist' : 'banned list'}`);
+}
+
+function invUpdateToolAge(tool, edge, value){
+  normaliseToolInventory();
+  const key = toolInventoryKey(tool);
+  const current = getToolAgeRange(tool);
+  let next = { min: current.min, max: current.max };
+  if(edge === 'min') next.min = clampYearLevelValue(value);
+  if(edge === 'max') next.max = clampYearLevelValue(value);
+  if(next.min > next.max){
+    if(edge === 'min') next.max = next.min;
+    if(edge === 'max') next.min = next.max;
+  }
+  TOOL_INVENTORY.ageRanges[key] = next;
+  renderToolInventory();
+  saveLibraries();
+  setStatus(`Updated ${tool} age range to ${ageRangeLabel(next)}`);
 }
 
 function renderToolInventory(){
@@ -918,6 +1058,7 @@ function renderToolInventory(){
   const totalEl = document.getElementById('inv-count');
   if(!whitelistEl || !bannedEl) return;
 
+  normaliseToolInventory();
   const approved = TOOL_INVENTORY.approved || [];
   const banned = TOOL_INVENTORY.banned || [];
 
@@ -926,11 +1067,22 @@ function renderToolInventory(){
   if(totalEl) totalEl.textContent = (approved.length || banned.length) ? `${approved.length + banned.length} entries` : '';
 
   whitelistEl.innerHTML = approved.length
-    ? approved.map(t => `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 4px 4px 10px;background:rgba(197,232,74,0.08);border:1px solid rgba(197,232,74,0.3);border-radius:99px;font-size:12px;font-weight:600;color:var(--lime)">${esc(t)}<button onclick="invRemoveTool('approved','${esc(t).replace(/'/g,"\\'")}')"  style="background:transparent;border:none;color:var(--lime);cursor:pointer;padding:0 6px;font-size:14px;line-height:1;opacity:.7" title="Remove">×</button></span>`).join('')
+    ? approved.map(t => {
+        const range = getToolAgeRange(t);
+        return `<div style="display:grid;grid-template-columns:minmax(150px,1fr) 105px 105px auto;gap:6px;align-items:center;padding:7px 8px;background:rgba(197,232,74,0.08);border:1px solid rgba(197,232,74,0.3);border-radius:12px;font-size:12px;color:var(--lime)">
+          <div style="min-width:0">
+            <div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(t)}</div>
+            <div style="font-size:10px;color:var(--dim);font-weight:600">${ageRangeLabel(range)}</div>
+          </div>
+          <select class="inp" title="Minimum year level" onchange="invUpdateToolAge(${jsArg(t)},'min',this.value)" style="margin-bottom:0;font-size:11px;padding:5px 7px;color:var(--lime);border-color:rgba(197,232,74,.3)">${yearSelectOptions(range.min)}</select>
+          <select class="inp" title="Maximum year level" onchange="invUpdateToolAge(${jsArg(t)},'max',this.value)" style="margin-bottom:0;font-size:11px;padding:5px 7px;color:var(--lime);border-color:rgba(197,232,74,.3)">${yearSelectOptions(range.max)}</select>
+          <button onclick="invRemoveTool('approved',${jsArg(t)})" style="background:transparent;border:none;color:var(--lime);cursor:pointer;padding:0 6px;font-size:18px;line-height:1;opacity:.8" title="Remove">×</button>
+        </div>`;
+      }).join('')
     : '<span style="font-size:11px;color:var(--dim);font-style:italic">No whitelist — all approved tools allowed.</span>';
 
   bannedEl.innerHTML = banned.length
-    ? banned.map(t => `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 4px 4px 10px;background:rgba(255,128,128,0.08);border:1px solid rgba(255,128,128,0.3);border-radius:99px;font-size:12px;font-weight:600;color:#FF8080">${esc(t)}<button onclick="invRemoveTool('banned','${esc(t).replace(/'/g,"\\'")}')"  style="background:transparent;border:none;color:#FF8080;cursor:pointer;padding:0 6px;font-size:14px;line-height:1;opacity:.7" title="Remove">×</button></span>`).join('')
+    ? banned.map(t => `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 4px 4px 10px;background:rgba(255,128,128,0.08);border:1px solid rgba(255,128,128,0.3);border-radius:99px;font-size:12px;font-weight:600;color:#FF8080">${esc(t)}<button onclick="invRemoveTool('banned',${jsArg(t)})"  style="background:transparent;border:none;color:#FF8080;cursor:pointer;padding:0 6px;font-size:14px;line-height:1;opacity:.7" title="Remove">×</button></span>`).join('')
     : '<span style="font-size:11px;color:var(--dim);font-style:italic">No bans.</span>';
 }
 
@@ -1112,7 +1264,8 @@ async function loadFromDrive(){
     DRIVE_FILE_ID=d.files[0].id;
     const r2=await fetch(`https://www.googleapis.com/drive/v3/files/${DRIVE_FILE_ID}?alt=media`,{headers:{'Authorization':'Bearer '+tok}});
     ingest(await r2.json());
-    loadLibraries(); // Load lesson libraries after Drive auth
+    LIBRARIES_READY = false;
+    ensureLibrariesLoaded().catch(e => console.warn('Libraries preload failed:', e)); // Load lesson libraries after Drive auth
   }catch(e){
     err.textContent=e.message; err.style.display='block';
     btn.disabled=false; btn.textContent='↑ Load from Google Drive';
@@ -1354,8 +1507,19 @@ function switchTab(tab,btn){
   if(tab==='browse') renderBrowse();
   if(tab==='audit') renderAudit();
   if(tab==='live') loadLiveAnalytics();
-  if(tab==='tools'){ initBulkTools(); renderBulkWelcome(); renderSnapshotsList(); renderPlaybooksList(); renderToolInventory(); }
-  if(tab==='libraries') renderLibraries();
+  if(tab==='tools'){
+    initBulkTools();
+    renderBulkWelcome();
+    renderSnapshotsList();
+    renderPlaybooksList();
+    ensureLibrariesLoaded().then(() => {
+      renderToolInventory();
+      renderBulkWelcome();
+    }).catch(e => setStatus(`Libraries failed to load: ${e.message}`, 'error'));
+  }
+  if(tab==='libraries'){
+    ensureLibrariesLoaded().then(() => renderLibraries()).catch(e => setStatus(`Libraries failed to load: ${e.message}`, 'error'));
+  }
 
 }
 
@@ -4257,7 +4421,7 @@ const REALISTIC_TOOL_USE_RULES = `REALISTIC CLASSROOM USE RULES (HARD RULE):
 - Suggestions must be practical enough for a teacher to run; name the concrete student action and product.
 - The tool's real affordance must be central. Do not use a tool as a vague metaphor for an abstract idea.
 - Robotics and drones should only be suggested when the unit genuinely involves movement, mapping, forces, systems, navigation, data collection, automation, measurement, environments or spatial thinking.
-- CoDrone EDU rule: only Year 4+; it must involve actual drone actions such as flight paths, take-off/landing, waypoints, altitude, obstacle courses, mapping, aerial observation or sensor/data collection. Do NOT suggest CoDrone for body systems, emotions, wellbeing, fitness challenges, storytelling-only tasks, or purely abstract concepts.
+- CoDrone EDU rule: only use it within the Studio-configured year range; it must involve actual drone actions such as flight paths, take-off/landing, waypoints, altitude, obstacle courses, mapping, aerial observation or sensor/data collection. Do NOT suggest CoDrone for body systems, emotions, wellbeing, fitness challenges, storytelling-only tasks, or purely abstract concepts.
 - Bad example: CoDrone EDU drones model body systems or wellbeing. A flying drone cannot meaningfully model a circulatory system.
 - If you cannot explain exactly what students will do with the hardware/software, choose a different tool.`;
 
@@ -4265,10 +4429,11 @@ const REALISTIC_TOOL_USE_RULES = `REALISTIC CLASSROOM USE RULES (HARD RULE):
 
 // Tool inventory — persisted to libraries.json under _meta._inventory
 // Editable from the Tool Inventory card in the Bulk tab.
-// Structure: { approved: [...], banned: [...] }
+// Structure: { approved: [...], banned: [...], ageRanges: { [normalisedToolName]: { min: 0, max: 6 } } }
 // If approved is non-empty, it takes precedence over the default approved list.
 // If banned includes a tool, AI will never suggest it (even if approved).
-let TOOL_INVENTORY = { approved: [], banned: [] };
+// ageRanges are editable from the whitelist UI and are persisted with libraries.json.
+let TOOL_INVENTORY = { approved: [], banned: [], ageRanges: {} };
 
 // Default seeds used when nothing is persisted yet (first time a coordinator visits after this update).
 // The coordinator can add/remove freely from the Tool Inventory card.
@@ -4300,14 +4465,95 @@ const DEFAULT_BANNED_TOOLS = [
   'WeVideo', 'Flipgrid'
 ];
 
+const DEFAULT_TOOL_AGE_RANGES = {
+  // All year levels
+  'Seesaw': {min:0,max:6}, 'Epic': {min:0,max:6}, 'GarageBand': {min:0,max:6},
+  'iMovie': {min:0,max:6}, 'PicCollage': {min:0,max:6}, 'Google Maps': {min:0,max:6},
+  'Google Earth': {min:0,max:6}, 'Clickview': {min:0,max:6}, 'Green Screen': {min:0,max:6},
+  'iPads': {min:0,max:6}, 'Laptops': {min:0,max:6}, 'Digital Cameras': {min:0,max:6},
+  'Freeform': {min:0,max:6}, 'Sketchbook': {min:0,max:6}, 'Brushes Redux': {min:0,max:6},
+  'Delightex': {min:0,max:6}, 'Merge Cubes': {min:0,max:6}, 'Makey Makey': {min:0,max:6},
+  'Word Clouds ABCya': {min:0,max:6}, 'Field Guide to Victoria': {min:0,max:6}, 'Sky Map': {min:0,max:6},
+  'Geoboard': {min:0,max:6}, 'Adobe Express Podcasting': {min:0,max:6},
+  'Microsoft Excel': {min:0,max:6}, 'Microsoft Forms': {min:0,max:6}, 'Microsoft Sway': {min:0,max:6},
+  // Prep-Year 2
+  'Bee-Bots': {min:0,max:2}, 'ScratchJR': {min:0,max:2}, 'ChatterPix Kids': {min:0,max:2},
+  'Puppet Pals': {min:0,max:2}, 'Sphero Indi': {min:0,max:2},
+  // Year 3+
+  'Sphero BOLT': {min:3,max:6}, 'Lego Spike Essential': {min:3,max:6}, 'Micro:bit': {min:3,max:6},
+  'Scratch': {min:3,max:6}, 'Stop Motion Studio': {min:3,max:6}, 'Adobe Express': {min:3,max:6},
+  'Canva': {min:3,max:6}, 'Book Creator': {min:3,max:6}, 'Padlet': {min:3,max:6},
+  'Kahoot': {min:3,max:6}, 'Tinkercad': {min:3,max:6}, 'Explain Everything': {min:3,max:6},
+  // Year 4+
+  'Microsoft Teams': {min:4,max:6}, 'Microsoft Word': {min:4,max:6}, 'Microsoft PowerPoint': {min:4,max:6},
+  'Microsoft OneNote': {min:4,max:6}, 'Lego Spike Prime': {min:4,max:6}, 'CoDrone EDU': {min:4,max:6},
+  'Minecraft Education': {min:4,max:6},
+  // Year 5+
+  '3D Printers': {min:5,max:6}
+};
+
+function getDefaultToolAgeRange(toolName){
+  const key = toolInventoryKey(toolName);
+  const hit = Object.entries(DEFAULT_TOOL_AGE_RANGES).find(([name]) => toolInventoryKey(name) === key);
+  return hit ? normaliseAgeRange(hit[1]) : { min: 0, max: 6 };
+}
+
+function getToolAgeRange(toolName){
+  normaliseToolInventory();
+  const key = toolInventoryKey(toolName);
+  const stored = TOOL_INVENTORY.ageRanges && TOOL_INVENTORY.ageRanges[key];
+  return stored ? normaliseAgeRange(stored) : getDefaultToolAgeRange(toolName);
+}
+
+function setToolAgeRange(toolName, min, max){
+  normaliseToolInventory();
+  const key = toolInventoryKey(toolName);
+  if(!key) return;
+  TOOL_INVENTORY.ageRanges[key] = normaliseAgeRange({min,max});
+}
+
+function buildApprovedToolsList(){
+  normaliseToolInventory();
+  const tools = (TOOL_INVENTORY.approved && TOOL_INVENTORY.approved.length)
+    ? TOOL_INVENTORY.approved
+    : DEFAULT_APPROVED_TOOLS;
+  return tools.join(', ');
+}
+
+function buildBannedToolsList(){
+  normaliseToolInventory();
+  return (TOOL_INVENTORY.banned && TOOL_INVENTORY.banned.length)
+    ? TOOL_INVENTORY.banned.join(', ')
+    : 'None configured';
+}
+
+function buildDynamicToolAgeGuide(){
+  normaliseToolInventory();
+  const tools = (TOOL_INVENTORY.approved && TOOL_INVENTORY.approved.length)
+    ? TOOL_INVENTORY.approved
+    : DEFAULT_APPROVED_TOOLS;
+  const lines = tools.map(t => `- ${t}: ${ageRangeLabel(getToolAgeRange(t))}`).join('\n');
+  return `TOOL AGE GUIDE (HARD RULE — match Australian year levels):
+Prep = ages 5-6 | Year 1 = 6-7 | Year 2 = 7-8 | Year 3 = 8-9 | Year 4 = 9-10 | Year 5 = 10-11 | Year 6 = 11-12
+Current Studio-approved tool age ranges:
+${lines || '- No approved tools configured.'}
+NEVER propose a tool for a year level outside its configured range.`;
+}
+
 // Populate defaults if inventory hasn't been loaded from Drive yet
 function seedDefaultInventoryIfEmpty(){
+  normaliseToolInventory();
   if(!TOOL_INVENTORY.approved || TOOL_INVENTORY.approved.length === 0){
     TOOL_INVENTORY.approved = [...DEFAULT_APPROVED_TOOLS];
   }
   if(!TOOL_INVENTORY.banned || TOOL_INVENTORY.banned.length === 0){
     TOOL_INVENTORY.banned = [...DEFAULT_BANNED_TOOLS];
   }
+  TOOL_INVENTORY.ageRanges = TOOL_INVENTORY.ageRanges || {};
+  TOOL_INVENTORY.approved.forEach(tool => {
+    const key = toolInventoryKey(tool);
+    if(key && !TOOL_INVENTORY.ageRanges[key]) TOOL_INVENTORY.ageRanges[key] = getDefaultToolAgeRange(tool);
+  });
 }
 
 // Legacy alias kept for any old references
@@ -4381,18 +4627,26 @@ function getAgeAppropriateTools(yearLevel){
     // Year 5+
     {n:'3D Printers', min:5},
   ];
-  // First filter to age-appropriate tools that aren't banned
+  normaliseToolInventory();
+  const isBanned = (tool) => (TOOL_INVENTORY.banned || []).some(na => toolInventoryKey(na) === toolInventoryKey(tool));
+  const isInRange = (tool) => {
+    const range = getToolAgeRange(tool);
+    return yr >= range.min && yr <= range.max;
+  };
+  // First filter to age-appropriate tools that aren't banned, using editable Studio age ranges
   let filtered = ALL
-    .filter(t => yr >= t.min && (t.max === undefined || yr <= t.max))
-    .filter(t => !(TOOL_INVENTORY.banned || []).some(na => na.toLowerCase() === t.n.toLowerCase()))
+    .filter(t => isInRange(t.n))
+    .filter(t => !isBanned(t.n))
     .map(t => t.n);
   // If a custom whitelist is set, intersect with it
   if((TOOL_INVENTORY.approved || []).length){
-    const approvedLower = TOOL_INVENTORY.approved.map(x => x.toLowerCase());
-    filtered = filtered.filter(t => approvedLower.includes(t.toLowerCase()));
-    // Allow any custom-approved tool through even if not in master list
+    const approvedKeys = TOOL_INVENTORY.approved.map(toolInventoryKey);
+    filtered = filtered.filter(t => approvedKeys.includes(toolInventoryKey(t)));
+    // Allow any custom-approved tool through even if not in master list, but only inside its configured age range
     TOOL_INVENTORY.approved.forEach(customTool => {
-      if(!filtered.some(t => t.toLowerCase() === customTool.toLowerCase())){
+      if(isBanned(customTool)) return;
+      if(!isInRange(customTool)) return;
+      if(!filtered.some(t => toolInventoryKey(t) === toolInventoryKey(customTool))){
         filtered.push(customTool);
       }
     });
@@ -4423,7 +4677,8 @@ function checkRealisticToolUse(toolName, desc, entry){
   const yr = getYearNumber(entry && entry.yl);
   if(!rawTool || !desc) return realismResult(false, 'Missing tool or description.');
   if(t.includes('codrone')){
-    if(yr < 4) return realismResult(false, 'CoDrone EDU is only appropriate from Year 4 upward.');
+    const codroneRange = getToolAgeRange('CoDrone EDU');
+    if(yr < codroneRange.min || yr > codroneRange.max) return realismResult(false, `CoDrone EDU is configured for ${ageRangeLabel(codroneRange)}.`);
     const concreteDroneAction = /(drone|fly|flight|hover|land|take[- ]?off|waypoint|route|path|altitude|obstacle|mission|coordinate|sequence|sensor|data|measure|map|aerial|photo|video)/i.test(d);
     if(!concreteDroneAction) return realismResult(false, 'CoDrone EDU suggestion does not describe an actual drone flight/coding/data task.');
     const abstractMisfit = /(body systems?|circulatory|digestive|respiratory|nervous|muscular|skeletal|heart|lungs|blood|wellbeing|fitness challenge|feelings?|emotion|identity|friendship|beliefs?)/i.test(d);
@@ -4448,7 +4703,7 @@ function buildToolConstraints(yearLevel){
   const unavailable = NOT_AVAILABLE_AT_WESLEY.length
     ? `\n\nTOOLS NOT AVAILABLE AT WESLEY (never suggest these): ${NOT_AVAILABLE_AT_WESLEY.join(', ')}`
     : '';
-  return `${TOOL_AGE_GUIDE}
+  return `${buildDynamicToolAgeGuide()}
 
 THIS UNIT IS ${yrLabel.toUpperCase()} — you may ONLY choose from these age-appropriate tools:
 ${appropriate.join(', ')}${unavailable}
@@ -4480,30 +4735,31 @@ function detectPlatformContext(text, yearLevel){
   };
 }
 
-const GAS_RULES = `You are an Expert Digital Learning Coach at Wesley College (MICROSOFT school).
+function buildGASRules(yearLevel){
+  const allowedForYear = yearLevel
+    ? `\n\nTHIS UNIT IS ${String(yearLevel).toUpperCase()} — only choose from these age-appropriate tools: ${getAgeAppropriateTools(yearLevel).join(', ')}`
+    : '';
+  return `You are an Expert Digital Learning Coach at Wesley College (MICROSOFT school).
 APPROVED TOOLS ONLY — you may not invent or infer other tool names:
-- Microsoft M365: Microsoft Teams, Microsoft Word, Microsoft PowerPoint, Microsoft OneNote, Microsoft Excel, Microsoft Forms, Microsoft Sway
-- Robotics/STEM Hardware: Bee-Bots, Sphero Indi, Sphero BOLT, Lego Spike Essential, Lego Spike Prime, Micro:bit, CoDrone EDU, Makey Makey
-- Maker/A/V Hardware: 3D Printers, ClassVR, Merge Cubes, Green Screen, Podcast Equipment, iPads
-- Core Creation: Seesaw, Canva, Book Creator, Padlet
-- Video/Audio/Animation: GarageBand, ScratchJR, Stop Motion Studio, ChatterPix Kids, iMovie, Puppet Pals, Adobe Express, Adobe Express Podcasting
-- Subject Specific: Google Maps, Google Earth, Field Guide to Victoria, Sky Map, Geoboard
-- Other: Clickview, Epic, PicCollage, Brushes Redux, Word Clouds ABCya, Sketchbook, Explain Everything, Freeform, Delightex, Kahoot, Tinkercad, Minecraft Education
+${buildApprovedToolsList()}
 
 ⛔ STRICTLY PROHIBITED — you will be rejected if you propose any of these:
+${buildBannedToolsList()}
 - ChatGPT, Claude, Gemini, Copilot, or any other consumer AI assistant (not approved for student use)
 - Google Docs, Google Slides, Google Sheets (use Microsoft M365 equivalents — we are a Microsoft school)
 - WeVideo, Flipgrid, any tool NOT explicitly listed above
 - NEVER invent tool names. If unsure whether a tool is approved, DON'T USE IT.
 
 ✓ APP SMASHES ARE ENCOURAGED:
-- Combining two approved tools in a single suggestion is valued ("Seesaw + iMovie", "Book Creator + ChatterPix Kids", "Canva + Padlet").
+- Combining two approved tools in a single suggestion is valued.
 - Format app smashes in the "t" field with a " + " separator, e.g. "Delightex + Puppet Pals", or as "Seesaw (App Smash with PicCollage)".
-- BOTH tools in an app smash must be on the approved list above.
+- BOTH tools in an app smash must be on the approved list above and inside the year-level range.
 - Never include a prohibited tool (ChatGPT etc.) in an app smash.
 
-YEAR-LEVEL RULES: Microsoft Teams ONLY for Year 4, 5, 6 — NEVER suggest Teams for Prep, Year 1, Year 2, or Year 3. Early years (Prep-Yr2): prefer Seesaw/Canva/Book Creator. Mid (Yr3): Canva, Book Creator, Adobe Express preferred.
+${buildDynamicToolAgeGuide()}${allowedForYear}
 ${SUGGESTION_STYLE}`;
+}
+
 
 
 async function fixAllOfType(type){
@@ -4535,13 +4791,13 @@ async function fixAllOfType(type){
       let prompt='';
 
       if(type==='incomplete'){
-        prompt=`${GAS_RULES}\n\nGenerate exactly 5 digital technology suggestions for this IB PYP unit.\nCampus: ${e.ca} | Year: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: "${e.ci}"`:''}${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nReturn ONLY JSON array: [{"t":"Tool Name","d":"Specific description for this unit."},...]`;
+        prompt=`${buildGASRules(e.yl)}\n\nGenerate exactly 5 digital technology suggestions for this IB PYP unit.\nCampus: ${e.ca} | Year: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: "${e.ci}"`:''}${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nReturn ONLY JSON array: [{"t":"Tool Name","d":"Specific description for this unit."},...]`;
 
       } else if(type==='banned'||type==='offwhitelist'){
-        prompt=`${GAS_RULES}\n\nReplace these non-approved suggestions for this unit. Return 6 total suggestions (the 6th must be a STEM Design Cycle activity).\nUnit: ${e.ca} | ${e.yl} | "${e.th}"${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nCurrent suggestions (keep ones that are approved, replace the rest):\n${currentSugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}\nReturn ONLY JSON array of exactly 6 (the 6th must be a STEM Design Cycle activity): [{"t":"Tool Name","d":"Specific description."},...]`;
+        prompt=`${buildGASRules(e.yl)}\n\nReplace these non-approved suggestions for this unit. Return 6 total suggestions (the 6th must be a STEM Design Cycle activity).\nUnit: ${e.ca} | ${e.yl} | "${e.th}"${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nCurrent suggestions (keep ones that are approved, replace the rest):\n${currentSugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}\nReturn ONLY JSON array of exactly 6 (the 6th must be a STEM Design Cycle activity): [{"t":"Tool Name","d":"Specific description."},...]`;
 
       } else if(type==='duplicate'){
-        prompt=`${GAS_RULES}\n\nFix duplicate tools in this unit — each suggestion must use a DIFFERENT tool.\nUnit: ${e.ca} | ${e.yl} | "${e.th}"${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nCurrent suggestions (fix any duplicates, keep unique ones):\n${currentSugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}\nReturn ONLY JSON array of exactly 6 (the 6th must be a STEM Design Cycle activity) with NO repeated tools: [{"t":"Tool Name","d":"Specific description."},...]`;
+        prompt=`${buildGASRules(e.yl)}\n\nFix duplicate tools in this unit — each suggestion must use a DIFFERENT tool.\nUnit: ${e.ca} | ${e.yl} | "${e.th}"${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nCurrent suggestions (fix any duplicates, keep unique ones):\n${currentSugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}\nReturn ONLY JSON array of exactly 6 (the 6th must be a STEM Design Cycle activity) with NO repeated tools: [{"t":"Tool Name","d":"Specific description."},...]`;
       }
 
       const raw=await callAI([{role:'user',parts:[{text:prompt}]}],null,OPENAI_MODEL);
@@ -4624,9 +4880,11 @@ async function refreshLibrariesFromDrive(){
   LIBRARIES_FILE_ID = null;
   LIBRARIES = {};
   LIBRARIES_META = {};
-  TOOL_INVENTORY = { approved: [], banned: [] };
+  TOOL_INVENTORY = { approved: [], banned: [], ageRanges: {} };
+  LIBRARIES_READY = false;
+  LIBRARIES_LOADING_PROMISE = null;
   setStatus('Refreshing libraries from Drive…');
-  await loadLibraries();
+  await ensureLibrariesLoaded(true);
   renderLibraries();
   renderToolInventory();
   setStatus('Libraries refreshed from Drive ✓');
@@ -4663,10 +4921,7 @@ async function pullLibrariesFromGitHub(){
     LIBRARIES = {};
     LIBRARIES_META = githubData._meta || {};
     libKeys.forEach(k => { LIBRARIES[k] = githubData[k] || []; });
-    if(LIBRARIES_META._inventory){
-      TOOL_INVENTORY.approved = LIBRARIES_META._inventory.approved || [];
-      TOOL_INVENTORY.banned = LIBRARIES_META._inventory.banned || [];
-    }
+    loadToolInventoryFromMeta(LIBRARIES_META);
     
     // Save to Drive (overwrites the Drive copy)
     await saveLibraries();
@@ -4688,14 +4943,9 @@ async function loadLibraries(){
     // Extract meta if present
     if(data._meta && typeof data._meta === 'object'){
       LIBRARIES_META = data._meta;
-      // Also load tool inventory if stored in _meta
-      if(LIBRARIES_META._inventory && typeof LIBRARIES_META._inventory === 'object'){
-        TOOL_INVENTORY.approved = Array.isArray(LIBRARIES_META._inventory.approved) ? LIBRARIES_META._inventory.approved : [];
-        TOOL_INVENTORY.banned = Array.isArray(LIBRARIES_META._inventory.banned) ? LIBRARIES_META._inventory.banned : [];
-      }
     }
-    // Seed defaults if either list is empty
-    seedDefaultInventoryIfEmpty();
+    // Load persisted Tool Inventory, including editable age ranges, then seed defaults if needed
+    loadToolInventoryFromMeta(LIBRARIES_META);
     // Copy lesson arrays
     const cleaned = {};
     Object.keys(data).forEach(k => {
@@ -4759,29 +5009,42 @@ async function loadLibraries(){
   console.log('Libraries: using empty defaults');
 }
 
+let LIBRARIES_READY = false;
 let LIBRARIES_LOADING_PROMISE = null;
 function librariesHaveLessons(){
   return Object.keys(LIBRARIES || {}).some(k => k !== '_meta' && Array.isArray(LIBRARIES[k]) && LIBRARIES[k].length);
 }
-async function ensureLibrariesLoadedForAI(){
-  if(librariesHaveLessons()) return true;
+async function ensureLibrariesLoaded(force){
+  if(!force && LIBRARIES_READY){
+    normaliseToolInventory();
+    return librariesHaveLessons();
+  }
   if(LIBRARIES_LOADING_PROMISE) return LIBRARIES_LOADING_PROMISE;
-  setStatus('Loading lesson libraries for AI context…', 'loading');
   LIBRARIES_LOADING_PROMISE = loadLibraries().then(() => {
-    if(librariesHaveLessons()){ renderToolInventory?.(); setStatus('Lesson libraries ready for AI ✓'); return true; }
-    setStatus('AI ready — no lesson libraries found yet', 'loading'); return false;
-  }).catch(e => { console.warn('Library preload failed:', e); setStatus('AI will continue without lesson-library context', 'error'); return false; })
-    .finally(() => { LIBRARIES_LOADING_PROMISE = null; });
+    LIBRARIES_READY = true;
+    normaliseToolInventory();
+    return librariesHaveLessons();
+  }).catch(e => {
+    LIBRARIES_READY = false;
+    throw e;
+  }).finally(() => {
+    LIBRARIES_LOADING_PROMISE = null;
+  });
   return LIBRARIES_LOADING_PROMISE;
+}
+async function ensureLibrariesLoadedForAI(){
+  if(librariesHaveLessons() && LIBRARIES_READY) return true;
+  setStatus('Loading lesson libraries for AI context…', 'loading');
+  return ensureLibrariesLoaded().then((hasLessons) => {
+    if(hasLessons){ renderToolInventory?.(); setStatus('Lesson libraries ready for AI ✓'); return true; }
+    setStatus('AI ready — no lesson libraries found yet', 'loading'); return false;
+  }).catch(e => { console.warn('Library preload failed:', e); setStatus('AI will continue without lesson-library context', 'error'); return false; });
 }
 
 // Save libraries.json to Drive (includes _meta)
 async function saveLibraries(){
   // Sync TOOL_INVENTORY into LIBRARIES_META so it persists with libraries.json
-  LIBRARIES_META._inventory = {
-    approved: TOOL_INVENTORY.approved || [],
-    banned: TOOL_INVENTORY.banned || []
-  };
+  LIBRARIES_META._inventory = serialiseToolInventoryForMeta();
   const saveObj = { _meta: LIBRARIES_META };
   getLibraryKeys().forEach(k => { saveObj[k] = LIBRARIES[k] || []; });
 
@@ -6019,26 +6282,17 @@ The coordinator is asking you to scan the library for places where a specific to
 
   const system = `You are a Digital Learning Coach at Wesley College, an IB PYP school.
 
-APPROVED TOOLS (Wesley College — Microsoft school):
-- Microsoft M365 (Teams for Year 4+ ONLY), Beebots, Sphero, Lego Spike, Micro:bits, CoDrone, Makey Makey
-- 3D Printers, ClassVR, Merge Cubes, Green Screen, Podcast Equipment, iPads
-- Seesaw, Canva, Book Creator, Padlet
-- GarageBand, ScratchJR, Stop Motion Studio, ChatterPix Kids, iMovie, Puppet Pals, Adobe Express (sub-types: Adobe Express Animate from Audio, Adobe Express Podcasting, Adobe Express Video, Adobe Express Website Designer — always specify the sub-type)
-- Google Maps, Google Earth, Field Guide to Victoria, Sky Map, Geoboard
-- Clickview, Epic, PicCollage, Brushes Redux, Word Clouds ABCya, Sketchbook, Explain Everything, Freeform, Delightex, Kahoot, Tinkercad, Minecraft Education
+APPROVED TOOLS (Wesley College — Microsoft school, from Studio Tool Inventory):
+${buildApprovedToolsList()}
+
+TOOLS NOT AVAILABLE / BANNED:
+${buildBannedToolsList()}
 
 TOOL SELECTION POLICY:
 - By default, only use tools from the APPROVED TOOLS list above.
-- COORDINATOR OVERRIDE: If the coordinator's instruction below explicitly names a specific tool, product, platform, or lesson library (even one NOT on the approved list), treat it as approved for this run.
+- COORDINATOR OVERRIDE: If the coordinator's instruction below explicitly names a specific tool, product, platform, or lesson library (even one NOT on the approved list), treat it as approved for this run only if it is not banned and is age-appropriate.
 
-TOOL AGE GUIDE (HARD RULE — match Australian year levels):
-Prep = ages 5-6 | Year 1 = 6-7 | Year 2 = 7-8 | Year 3 = 8-9 | Year 4 = 9-10 | Year 5 = 10-11 | Year 6 = 11-12
-- Prep-Year 2 ONLY: Bee-Bots, ScratchJR, ChatterPix Kids, Puppet Pals, Sphero Indi
-- Year 3+: Sphero BOLT, Lego Spike Essential, Micro:bits, Scratch, Stop Motion Studio, Adobe Express, Canva, Book Creator, Padlet, Kahoot, Tinkercad, Explain Everything
-- Year 4+: Microsoft Teams, Lego Spike Prime, CoDrone EDU, Minecraft Education (with scaffolding for Year 4)
-- Year 5+: 3D Printers, Python-based coding
-- All year levels: Seesaw, Epic, GarageBand, iMovie, PicCollage, Google Maps, Google Earth, Clickview, Green Screen, iPads, Laptops, Digital Cameras, Freeform, Sketchbook, Brushes Redux
-NEVER propose a tool for a year level below its minimum age.
+${buildDynamicToolAgeGuide()}
 
 ${REALISTIC_TOOL_USE_RULES}
 
@@ -6876,7 +7130,7 @@ setInterval(async()=>{
         new Promise(waitForGSI).then(()=>getDriveToken()).then(tok=>{
           DRIVE_TOKEN=tok;
           getDriveFileModified().then(meta=>{ if(meta) LAST_KNOWN_MODIFIED=meta.modifiedTime; });
-          loadLibraries();
+          ensureLibrariesLoaded().catch(e => console.warn('Libraries preload failed:', e));
           startConflictPolling();
           setStatus('Session restored — connected to Drive');
         }).catch(()=>{ setStatus('Session restored — <span onclick="reconnectDrive()" style="text-decoration:underline;cursor:pointer;font-weight:700">click here to reconnect Drive</span> to save changes','error',true); });
