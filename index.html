@@ -109,6 +109,66 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 .bb:hover{transform:scale(1.01)}
 .bb-sub{font-size:12px;font-weight:500;opacity:.6}
 
+
+/* ===== RESPONSIVE LARGE-SCREEN / TV LAYOUT PATCH =====
+   Keeps the mobile design intact, but lets the teacher-facing DLA breathe on laptops,
+   classroom projectors and large TVs instead of staying locked to a narrow 700px column. */
+@media (min-width:1100px){
+  .hi,.wp{max-width:min(92vw,980px)}
+  .wp{padding:0 28px 100px}
+}
+
+@media (min-width:1500px){
+  body{font-size:18px}
+  .hi,.wp{max-width:min(76vw,1180px)}
+  .hi{padding:22px 28px;gap:14px}
+  .logo{height:44px}
+  .bk{width:46px;height:46px;border-radius:13px;font-size:18px}
+  .hd h1{font-size:20px}.hd-sub{font-size:14px}
+
+  .hero{margin:36px 0 50px}.hero-title{font-size:clamp(56px,5vw,82px)}.hero-sub{font-size:20px;max-width:640px}
+  .sec-title{font-size:clamp(42px,4vw,58px)}
+  .cc{padding:38px;border-radius:28px}.cc-name{font-size:38px}.cc-sub{font-size:19px}.cc-wm{font-size:150px}
+  .yc{padding:32px 26px;border-radius:22px}.yc h3{font-size:28px}.yc .cn{font-size:16px}.yc-dot{width:18px;height:18px}
+  .uc{padding:28px 32px;border-radius:22px;margin-bottom:14px}.uc-label{font-size:14px}.uc-name{font-size:30px}.uc-emoji{font-size:68px}
+
+  .tag,.tag-meta,.tag-tool{font-size:15px;padding:8px 18px}.tag-t{font-size:13px;padding:6px 14px}
+  .dh{padding:42px 44px;margin:26px 0 30px;border-radius:28px}
+  .dh-title{font-size:40px}.dh-ci{font-size:22px}.dh-wm{font-size:140px}
+  .loi-box{padding:30px 36px;border-radius:24px;margin-bottom:28px}
+  .loi-label{font-size:14px}.loi-item{font-size:19px;padding:14px 0}.loi-num{margin-right:12px}
+
+  .stem-prompt{padding:24px 30px;border-radius:22px;gap:22px;margin:28px 0 22px}
+  .stem-prompt-icon{font-size:36px;width:58px;height:58px;border-radius:16px}
+  .stem-prompt-title{font-size:20px}.stem-prompt-sub{font-size:16px}.stem-prompt-arrow{font-size:24px}
+
+  .sg{border-radius:22px;margin-bottom:22px}
+  .sg-head{padding:22px 30px;gap:18px}
+  .sg-icon{width:54px;height:54px;font-size:26px;border-radius:14px}
+  .sg-type{font-size:13px}.sg-tool{font-size:24px}
+  .sg-body{padding:24px 30px 30px}.sg-desc{font-size:20px;line-height:1.75}
+  .sg-label{font-size:14px}.sg-label svg{width:18px;height:18px}
+  .vb{font-size:18px;padding:16px 20px}
+  .atl-pill,.cur-pill,.wds-pill{font-size:15px;padding:8px 15px}.atl-detail,.cur-detail,.wds-detail{font-size:15px}
+  .sg-fb-btn,.sg-used,.sg-react-btn{font-size:16px;padding:12px 22px}
+  .sg-howto-label,.sg-howto-btn{font-size:15px}.sg-howto-steps,.howto-steps li{font-size:16px}
+  .bb{font-size:22px;padding:24px 30px;border-radius:22px}.bb-sub{font-size:15px}
+}
+
+@media (min-width:2400px){
+  body{font-size:20px}
+  .hi,.wp{max-width:min(70vw,1500px)}
+  .hi{padding:28px 34px}.logo{height:54px}.hd h1{font-size:24px}.hd-sub{font-size:16px}
+  .hero-title{font-size:clamp(76px,4.8vw,110px)}.hero-sub{font-size:26px;max-width:780px}
+  .sec-title{font-size:68px}
+  .cc-name{font-size:48px}.cc-sub{font-size:24px}
+  .yc h3{font-size:36px}.yc .cn{font-size:20px}.uc-name{font-size:38px}
+  .dh{padding:56px 60px}.dh-title{font-size:52px}.dh-ci{font-size:28px}
+  .loi-box{padding:40px 48px}.loi-label{font-size:17px}.loi-item{font-size:24px;padding:18px 0}
+  .stem-prompt{padding:32px 40px}.stem-prompt-icon{font-size:46px;width:72px;height:72px}.stem-prompt-title{font-size:26px}.stem-prompt-sub{font-size:20px}
+  .sg-head{padding:30px 40px}.sg-icon{width:68px;height:68px;font-size:34px}.sg-type{font-size:16px}.sg-tool{font-size:30px}
+  .sg-body{padding:32px 40px 40px}.sg-desc{font-size:25px;line-height:1.75}.vb{font-size:22px}
+}
 @media(max-width:480px){.hero-title{font-size:36px}.cc-name{font-size:22px}.cc-wm{font-size:80px}}
 
 .atl-section{margin-top:16px}
