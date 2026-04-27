@@ -169,8 +169,8 @@
         "d": "Students document and reflect on their own emotional expressions by uploading photos, drawings, or short videos showing different feelings. Teachers can prompt students to capture moments throughout the day when they feel happy, sad, excited, or calm, and add voice recordings to explain their emotions."
       },
       {
-        "t": "Book Creator",
-        "d": "Students collaboratively build a digital class book titled 'Our Feelings', where each page features a student's drawing or photo of an emotion, paired with their recorded explanation or a short story about when they felt that way. This supports multimodal expression and builds empathy as students learn about each other's feelings."
+        "t": "ChatterPix Kids",
+        "d": "Students take photos of their own faces or drawings of emotions, then use ChatterPix Kids to animate the images by recording their voices explaining when they feel that emotion or telling a short story about it. This playful activity helps Year 1 learners express and share their feelings in a fun, multimodal way that builds empathy and communication skills."
       },
       {
         "t": "Puppet Pals",
@@ -541,8 +541,8 @@
         "d": "Students program simple animated stories in ScratchJR that take characters on journeys to different landmarks, narrating the stories and histories behind each place. Through sequencing and coding, learners connect the significance of landmarks to identity and culture while developing foundational computational thinking skills."
       },
       {
-        "t": "Canva",
-        "d": "Students design vibrant digital posters in Canva, showcasing a chosen landmark's story, cultural significance, and a key symbol. They use Canva's 'Remove Background' feature to add themselves into the scene, making the learning personal and visually engaging."
+        "t": "PicCollage",
+        "d": "Students create vibrant digital collages in PicCollage that combine photos, drawings, and text to tell the story of a chosen landmark?s history and cultural significance. They use simple tools to layer images of the landmark, add key symbols, and write short captions, making their learning personal and visually engaging while exploring how landmarks represent identity and history."
       },
       {
         "t": "Story Stones & Interactive Landmarks Trail",
@@ -1454,8 +1454,8 @@
         "d": "Collaboratively build a digital class book in Book Creator titled 'Our Feelings, Our Stories.' Each student contributes a page with a drawing or photo of themselves, an emoji, and a simple sentence or audio clip about a time they felt a particular emotion and what helped them."
       },
       {
-        "t": "Stop Motion Studio",
-        "d": "Students use Stop Motion Studio to create short animations that depict characters experiencing and managing different emotions. By sequencing scenes and adding narration, they visually demonstrate strategies for emotional regulation and reflect on how feelings influence behaviour and relationships."
+        "t": "Puppet Pals",
+        "d": "Students create simple puppet shows using Puppet Pals to act out scenarios where characters experience different emotions and demonstrate ways to manage those feelings. Through storytelling and role-play, learners explore how emotions influence behaviour and relationships, then share their digital puppet performances with the class to reflect on wellbeing and empathy."
       },
       {
         "t": "Emotion Expression Puppets & Interactive Stage",
@@ -2220,8 +2220,8 @@
         "d": "Students program Sphero BOLT robots to navigate a classroom 'terrain' map representing different soil and rock types, using sensors to detect and respond to surface textures. By coding movement patterns and collecting data on each 'soil zone,' learners explore how Earth's materials influence human activities and practice responsible resource use through interactive challenges."
       },
       {
-        "t": "Minecraft: Radical Recycling",
-        "d": "Students explore the Minecraft: Radical Recycling lesson (https://education.minecraft.net/en-us/lessons/radical-recycling) to understand recycling processes and the importance of using Earth's resources wisely. They participate in in-game challenges that reinforce the value of sustainable practices and resource management."
+        "t": "Stop Motion Studio",
+        "d": "Students create stop-motion animations that illustrate the journey of soils, rocks, and minerals as Earth?s resources. They design scenes showing how these materials are used responsibly and incorporate First Nations perspectives by animating traditional knowledge and sustainable practices. This hands-on digital storytelling deepens understanding of the central idea through creative visual narratives."
       },
       {
         "t": "Soil Stories: Interactive Diorama Quest",
@@ -3068,8 +3068,9 @@
         "d": "Have students document their 'action for the environment' (e.g., picking up rubbish, using reusable containers) by taking photos or short videos in Seesaw. They can then record voice-overs explaining their choices, creating a digital portfolio of sustainable actions to share with families."
       },
       {
-        "t": "Book Creator",
-        "d": "Guide students to collaboratively create a digital class book about different environments and how to care for them. Each student contributes a page with a drawing, a photo, and a short audio recording describing a positive action for the planet, reinforcing the central idea that human actions change the environment."
+        "t": "Adobe Express Podcasting",
+        "d": "Students collaborate to create a class podcast series where each child records a short audio segment describing a local environment and a positive action they can take to care for it, reinforcing the central idea that human actions change the environment. Using Adobe Express Podcasting, learners practice speaking clearly and listen to each other?s contributions, then combine their recordings into a shared podcast that can be played for families and the school community to inspire environmental care.",
+        "url": "https://podcast.adobe.com"
       },
       {
         "t": "PicCollage",
@@ -3724,9 +3725,8 @@
         "d": "Launch a global city comparison wall where students post research, images, and reflections about cities they study (e.g., Mexico City, Paris, Tokyo). They can include Venn diagrams, maps, and QR codes linking to their own city soundscapes or digital brochures."
       },
       {
-        "t": "Minecraft: The Hall of Inventions",
-        "d": "Students explore the evolution of city infrastructure by visiting a virtual museum of historical innovations, then design and build their own essential city inventions in Minecraft. This directly connects to the unit's inquiry into what cities need to function and how innovations shape urban development.",
-        "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
+        "t": "Tinkercad",
+        "d": "Students investigate the essential features and innovations that shape cities by designing their own 3D models of city infrastructure elements such as bridges, buildings, or transport hubs in Tinkercad. They apply their understanding of how cities develop and adapt over time by creating functional, age-appropriate inventions that reflect real-world urban challenges and solutions. This hands-on digital design activity deepens their inquiry into the central idea by combining creativity with problem-solving in a safe, accessible platform."
       },
       {
         "t": "Earthquake-Resistant Building Challenge",
