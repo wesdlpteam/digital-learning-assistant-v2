@@ -1312,10 +1312,7 @@ if(!window._usedData)window._usedData=[];var _usi=window._usedData.length;window
 h+='<div class="sg-fb"><button class="sg-used" onclick="markUsed('+_usi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+_fbi+')" class="sg-fb-btn">💬 Feedback</button><button class="sg-react-btn sg-react-up" onclick="reactFB('+_fbi+',\'up\',this)">👍</button><button class="sg-react-btn" onclick="reactFB('+_fbi+',\'down\',this)">👎</button></div></div>';
 h+='</div></div>';});
 
-// Technologies Curriculum toggle
-h+='<div class="tech-cur-toggle" id="techCurToggle" onclick="tgTechCur()"><span style="font-size:16px">📋</span><span style="flex:1;font-size:14px;font-weight:700;color:#38BDF8">Technologies Curriculum — '+yl+'</span><span style="font-size:12px;color:#888">ACARA v9.0</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 8 10 12 14 8"/></svg></div>';
-h+='<div class="tech-cur-body" id="techCurBody">'+renderTechCurriculum(yl)+'</div>';
-
+// Technologies Curriculum expandable section removed from teacher-facing DLA.
 h+='<a href="'+BK+'" target="_blank" rel="noopener noreferrer" class="bb">📅 Book a Digital Learning Coach<span class="bb-sub">Schedule a session with the DLP team</span></a>';}
 
 h+='</div></div>';var pv=a.dataset.lastView||'';var cv=S.v+S.ca+S.yl+S.ui;var isTabSwitch=(cv===pv);a.innerHTML=h;if(!isTabSwitch)window.scrollTo(0,0);a.dataset.lastView=cv;a.classList.remove('tab-fade');if(isTabSwitch){void a.offsetWidth;a.classList.add('tab-fade');}}
