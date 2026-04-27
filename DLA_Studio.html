@@ -532,8 +532,13 @@ const CAMPUS_COL = { Elsternwick:'#818cf8', 'Glen Waverley':'#34d399', 'St Kilda
 function getKey(){ return ''; } // Legacy no-op: OpenAI key now lives in GAS Script Properties.
 function getGASToken(){ return localStorage.getItem('dla_shared_secret') || ''; }
 function withGASToken(payload){
+  const out = Object.assign({}, payload);
+  // Send the verified Google OAuth token to GAS so the backend can enforce the DLP staff allowlist.
+  // This token is already required for Drive access and includes userinfo.email scope.
+  if(DRIVE_TOKEN) out.googleAccessToken = DRIVE_TOKEN;
   const token = getGASToken();
-  return token ? Object.assign({}, payload, { token }) : payload;
+  if(token) out.token = token; // optional emergency/shared-secret fallback
+  return out;
 }
 function cleanJSON(s){
   return s.replace(/```json|```/g,'').replace(/"([^"]*)"/g,(_,inner)=>'"'+inner.replace(/\n/g,' ').replace(/\r/g,'')+'"').replace(/,\s*([\]}])/g,'$1').trim();
