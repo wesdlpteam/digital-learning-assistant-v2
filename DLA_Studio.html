@@ -4020,6 +4020,37 @@ ${sections}
 When suggesting ${meta.name}, use tool name "${meta.name}" and include the lesson's URL from the list above directly in the description. Do NOT tell teachers to search the website — give them the direct link.`;
 }
 
+// Compact version for Bulk AI opportunity scans. Prevents OpenAI TPM/request-size errors
+// when a lesson library (for example Micro:bit with 20+ lessons) is scanned against many units.
+function buildLibraryContextCompact(key){
+  const lessons = getLibraryLessons(key);
+  const meta = getLibraryMeta(key);
+  if(!lessons.length) return `No ${meta.name} lessons have been curated in the Libraries panel yet.`;
+  const lines = lessons.map(l => {
+    const bits = [
+      `- ${l.title}`,
+      l.subject ? `subject ${l.subject}` : '',
+      l.ages ? `ages ${l.ages}` : '',
+      l.desc ? compactForPrompt(l.desc, 95) : '',
+      l.url ? `URL: ${l.url}` : ''
+    ].filter(Boolean);
+    return bits.join(' | ');
+  }).join('\n');
+  return `${meta.name.toUpperCase()} — VERIFIED LESSON LIBRARY (${lessons.length} lessons):\nUse ONLY these verified lessons. Do NOT invent lesson titles. Respect lesson age ranges. Include the lesson URL in the description.\n${lines}`;
+}
+
+function bulkInstructionLooksLikeOpportunity(instruction){
+  return /\b(find|look|search|scan|identify|where|opportunit|more uses?|add more|chance|integrate|incorporate|places? to use)\b/i.test(instruction || '');
+}
+
+function getBulkPlatformToolName(platform){
+  if(!platform) return '';
+  const name = platform.name || '';
+  if(/micro.?bit/i.test(name)) return 'Micro:bit';
+  if(/minecraft/i.test(name)) return 'Minecraft Education';
+  return name;
+}
+
 // Backward-compatible alias
 function buildMinecraftContext(){ return buildLibraryContext('minecraft'); }
 
@@ -4381,9 +4412,9 @@ function renderLibraries(){
 // Build KNOWN_PLATFORMS dynamically — includes all user-created libraries with lessons
 function buildKnownPlatforms(){
   const platforms = [
-    { match: /minecraft/i, name: 'Minecraft Education',
+    { match: /minecraft/i, name: 'Minecraft Education', key: 'minecraft',
       get context(){ return buildLibraryContext('minecraft'); } },
-    { match: /microbit\.org|micro.?bit/i, name: 'Micro:bit',
+    { match: /microbit\.org|micro.?bit/i, name: 'Micro:bit', key: 'microbit',
       get context(){ return buildLibraryContext('microbit'); } },
     { match: /code\.org/i, name: 'Code.org',
       context: 'You have strong knowledge of Code.org courses and lesson plans. Reference specific lessons, courses and activities from Code.org when proposing changes.' },
@@ -4410,6 +4441,7 @@ function buildKnownPlatforms(){
     platforms.push({
       match: new RegExp(pattern, 'i'),
       name: meta.name,
+      key,
       get context(){ return buildLibraryContext(key); }
     });
   });
@@ -5034,8 +5066,32 @@ async function startBulkAnalysis(){
   setTimeout(() => updateReasoningStep(0, 'done'), 400);
   setTimeout(() => updateReasoningStep(1, 'active'), 450);
   
+  const platforms = buildKnownPlatforms();
+  const platform = bulkChatContext.platform
+    || platforms.find(p=>p.match.test(enrichedInstruction))
+    || null;
+  const isOpportunityStyle = bulkInstructionLooksLikeOpportunity(enrichedInstruction);
+  const platformToolName = getBulkPlatformToolName(platform);
+
+  // If this is a platform opportunity search (e.g. "find Micro:bit opportunities"),
+  // pre-filter locally before GPT sees the data. This keeps prompts under token limits and
+  // removes entries that would be rejected anyway because of age rules or duplicates.
+  let analysisData = completeData;
+  let filteredForPlatformOpportunity = false;
+  if(platform && isOpportunityStyle && platformToolName){
+    const filtered = completeData.filter(({e}) =>
+      isAiToolSafeForEntry(platformToolName, e) &&
+      !wouldDupeToolProposalInEntry(e, platformToolName, -1)
+    );
+    if(filtered.length){
+      analysisData = filtered;
+      filteredForPlatformOpportunity = true;
+    }
+  }
+  analysisData = analysisData.slice(0, 140); // defensive cap; current library is ~127 entries
+
   const toolIndex = {};
-  completeData.forEach(({e,i})=>{
+  analysisData.forEach(({e,i})=>{
     getSugs(e).forEach((s,si)=>{
       const t = sugTool(s).trim().toLowerCase();
       if(!t) return;
@@ -5045,7 +5101,12 @@ async function startBulkAnalysis(){
   });
   const toolIndexStr = Object.entries(toolIndex)
     .sort((a,b)=>b[1].length-a[1].length)
-    .map(([tool,entries])=>`${tool} (${entries.length}x): `+entries.map(e=>`[${e.entryIdx}]s${e.sugIdx}`).join(', '))
+    .slice(0, 25)
+    .map(([tool,entries])=>{
+      const shown = entries.slice(0,18).map(e=>`[${e.entryIdx}]s${e.sugIdx}`).join(', ');
+      const more = entries.length > 18 ? ` … +${entries.length-18}` : '';
+      return `${tool} (${entries.length}x): ${shown}${more}`;
+    })
     .join('\n');
 
   // Compute overused tools — anything appearing more than 13 times
@@ -5063,11 +5124,6 @@ async function startBulkAnalysis(){
     .map(t => `"${t.tool}" (${t.count}x)`)
     .join(', ');
 
-  const platforms = buildKnownPlatforms();
-  const platform = bulkChatContext.platform
-    || platforms.find(p=>p.match.test(enrichedInstruction))
-    || null;
-
   const hasUrl = false; // chatbot mode doesn't use the URL field
 
   // Parse explicit count from coordinator's instruction (e.g. "find 15 opportunities", "at least 12", "give me 20")
@@ -5078,48 +5134,55 @@ async function startBulkAnalysis(){
 
   const targetBlock = explicitCount ? `
 
-TARGET COUNT (HARD RULE): The coordinator explicitly asked for ${explicitCount} proposals. You MUST aim to find at least ${explicitCount} genuine matches across the library.
-- Do NOT stop at 5 or 6 — scan EVERY entry below and identify the ${explicitCount} strongest curriculum connections.
+TARGET COUNT (HARD RULE): The coordinator explicitly asked for ${explicitCount} proposals. You MUST aim to find at least ${explicitCount} genuine matches across the candidate entries.
+- Do NOT stop at 5 or 6 — scan EVERY candidate entry below and identify the ${explicitCount} strongest curriculum connections.
 - If you cannot find ${explicitCount} genuine matches, get as close as possible (within 1–2). Returning fewer than ${Math.max(1, explicitCount - 2)} is a failure.
-- The library has ${completeData.length} entries. With that many entries, ${explicitCount} matches is realistic — keep scanning until you find them.` : '';
+- The prompt contains ${analysisData.length} candidate entries. Keep scanning until you find the strongest matches.` : '';
 
+  const platformContextText = platform
+    ? (platform.key && isOpportunityStyle ? buildLibraryContextCompact(platform.key) : (typeof platform.context === 'string' ? platform.context : platform.context))
+    : '';
   const platformSection = platform ? `
 
 LESSON LIBRARY — ${platform.name.toUpperCase()}:
-${typeof platform.context === 'string' ? platform.context : platform.context}
-MATCHING RULE: Propose changes wherever a specific ${platform.name} lesson genuinely connects to the unit's activities or central idea. Be thorough — scan every entry and propose ${platform.name} wherever there is a reasonable curriculum connection. Name the specific lesson in every proposal.${targetBlock}
+${platformContextText}
+MATCHING RULE: Propose changes wherever a specific ${platform.name} lesson genuinely connects to the unit's activities or central idea. Be thorough — scan every candidate entry and propose ${platform.name} wherever there is a reasonable curriculum connection. Name the specific lesson in every proposal.${targetBlock}
 
 QUANTITY CAP: Propose a maximum of ${maxCap} changes total. If you find more than ${maxCap} genuine matches, select only the ${maxCap} strongest connections.
 ` : '';
 
-  const opportunityKeywords = /\b(find|look|search|scan|identify|where|opportunit|more uses?|add more|chance|integrate|incorporate|places? to use)\b/i;
-  const isOpportunitySearch = opportunityKeywords.test(enrichedInstruction || '') && !platform;
+  const isOpportunitySearch = isOpportunityStyle && !platform;
   const opportunitySection = isOpportunitySearch ? `
 
 OPPORTUNITY SEARCH MODE:
-The coordinator is asking you to scan the entire library for places where a specific tool could be added or used more. Be thorough:
-- Scan every single entry below, not just the obvious candidates
+The coordinator is asking you to scan the library for places where a specific tool could be added or used more. Be thorough:
+- Scan every candidate entry below, not just the obvious candidates
 - SKIP any entry that already has the requested tool in one of its suggestion slots — do not propose it again
 - Propose changes wherever there is a reasonable curriculum connection — not just perfect matches
 - ${explicitCount ? `TARGET: The coordinator asked for ${explicitCount}. Aim for at least ${explicitCount} proposals — do not stop early.` : 'Aim for 8-20 proposals rather than 2-3'}
 - For each proposal, briefly explain the specific curriculum connection in the description
 - Still respect the TOOL AGE GUIDE and duplicate prevention rules` : '';
 
+  const compactOpportunityMode = isOpportunityStyle || (platformSection + opportunitySection).length > 3000;
   const libraryContextLen = (platformSection + opportunitySection).length;
-  const plannerLimit = libraryContextLen > 3000 ? 220 : (libraryContextLen > 1500 ? 320 : 520);
-  const descLimit = libraryContextLen > 3000 ? 90 : (libraryContextLen > 1500 ? 130 : 180);
-  const fullContext = completeData.map(({e,i})=>{
+  const plannerLimit = compactOpportunityMode ? 0 : (libraryContextLen > 1500 ? 120 : 180);
+  const descLimit = compactOpportunityMode ? 0 : (libraryContextLen > 1500 ? 70 : 110);
+  const fullContext = analysisData.map(({e,i})=>{
     const sugs = getSugs(e);
-    // Slot 5 is protected; slots 0-4 include short descriptions so GPT can judge quality and make wording-only edits.
+    // Suggestion 6 is protected; slots 0-4 include short descriptions when needed for wording-quality edits.
     const toolStr = sugs.map((s,si)=>{
       const tool = compactForPrompt(sugTool(s), 70);
       if(si === 5) return `s${si}🔒STEM:${tool} [protected; do not replace]`;
-      const desc = compactForPrompt(sugDesc(s), descLimit);
+      const desc = descLimit > 0 ? compactForPrompt(sugDesc(s), descLimit) : '';
       return `s${si}:${tool}${desc ? ' — '+desc : ''}`;
     }).join(' | ');
-    const plannerText = e.plannerText ? compactForPrompt(e.plannerText, plannerLimit) : '';
-    return `[${i}] ${e.ca} | ${e.yl} | "${e.th}"${e.ci?' | CI: '+compactForPrompt(e.ci,180):''}${e.lo?' | LOI: '+compactForPrompt(e.lo,180):''}${plannerText?' | Planner: '+plannerText:''}\n  ${toolStr}`;
+    const plannerText = plannerLimit > 0 && e.plannerText ? compactForPrompt(e.plannerText, plannerLimit) : '';
+    return `[${i}] ${e.ca} | ${e.yl} | "${e.th}"${e.ci?' | CI: '+compactForPrompt(e.ci,160):''}${e.lo?' | LOI: '+compactForPrompt(e.lo,160):''}${plannerText?' | Planner: '+plannerText:''}\n  ${toolStr}`;
   }).join('\n');
+
+  const candidateNote = filteredForPlatformOpportunity
+    ? `\nCANDIDATE PREFILTER: To avoid token-limit errors and bad proposals, the data below has been pre-filtered to ${analysisData.length} age-appropriate entries that do not already contain ${platformToolName}. The full library has ${completeData.length} complete entries.`
+    : '';
 
   const system = `You are a Digital Learning Coach at Wesley College, an IB PYP school.
 
@@ -5193,7 +5256,7 @@ When choosing WHICH tool to use as a replacement:
 - When suggesting a replacement for an overused tool, always pick from the underused list or introduce variety — do NOT swap one overused tool for another.
 - Aim to broaden tool variety across the library with every change.
 
-Analyse ALL ${completeData.length} complete entries and propose changes wherever the instruction applies.
+Analyse ALL ${analysisData.length} candidate entries and propose changes wherever the instruction applies.${candidateNote}
 
 Output ONLY the APPLY_CHANGES block — no preamble:
 APPLY_CHANGES:[{"entryIdx":3,"sugIdx":1,"t":"Tool Name","d":"2-3 vivid sentences..."},...]
@@ -5201,11 +5264,11 @@ APPLY_CHANGES:[{"entryIdx":3,"sugIdx":1,"t":"Tool Name","d":"2-3 vivid sentences
 ${SUGGESTION_STYLE}
 The JSON must be complete and valid. Include ALL proposed changes in one array.
 
-FULL ENTRY DATA:
+CANDIDATE ENTRY DATA:
 ${fullContext}`;
 
   const estimatedTokens = Math.round(system.length / 4) + 100;
-  console.log(`Bulk AI Chat: ${completeData.length} entries, ~${estimatedTokens.toLocaleString()} tokens`);
+  console.log(`Bulk AI Chat: ${analysisData.length}/${completeData.length} candidate entries, ~${estimatedTokens.toLocaleString()} tokens`);
 
   let animPct = 30;
   let animInterval = null;
@@ -5217,7 +5280,7 @@ ${fullContext}`;
     updateReasoningStep(4, 'active', `Generating proposals with GPT-4.1 (~${Math.round(estimatedTokens/1000)}K tokens)`);
     
     if(bar) bar.style.width = '30%';
-    if(lbl) lbl.textContent = `Analysing ${completeData.length} entries (~${Math.round(estimatedTokens/1000)}K tokens)…`;
+    if(lbl) lbl.textContent = `Analysing ${analysisData.length} candidate entries (~${Math.round(estimatedTokens/1000)}K tokens)…`;
     animInterval = setInterval(()=>{
       if(animPct < 88){ animPct += 0.5; if(bar) bar.style.width = animPct + '%'; }
     }, 1000);
