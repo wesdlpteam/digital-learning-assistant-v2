@@ -3377,6 +3377,8 @@ function renderRealismResults(results, containerId, opts){
       <div style="font-size:12px;color:var(--dim)">${high} high priority · ${medium} medium · ${low} low</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
         <button class="btn-sm btn-realism-fix-all" onclick="draftAllRealismFixes('high')" style="color:#FF8080;border-color:#FF8080">✨ Draft fixes for high priority</button>
+        <button class="btn-sm btn-realism-fix-all" onclick="draftAllRealismFixes('medium')" style="color:#F5A623;border-color:#F5A623">✨ Draft fixes for medium issues</button>
+        <button class="btn-sm btn-realism-fix-all" onclick="draftAllRealismFixes('low')" style="color:var(--blue);border-color:var(--blue)">✨ Draft fixes for light issues</button>
         <button class="btn-sm btn-realism-fix-all" onclick="draftAllRealismFixes('all')" style="color:var(--gold);border-color:var(--gold)">✨ Draft fixes for all flagged</button>
       </div>
       <div id="realism-batch-progress" style="display:none;margin-top:10px;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px">
@@ -3605,14 +3607,33 @@ async function draftAllRealismFixes(scope){
     alert('Run the realism audit first.');
     return;
   }
-  const targets = source.filter(r => scope === 'high' ? resultHighestSeverity(r) === 'high' : true);
+  const normalisedScope = scope === 'light' ? 'low' : (scope || 'all');
+  const targets = source.filter(r => {
+    const sev = resultHighestSeverity(r);
+    if(normalisedScope === 'high') return sev === 'high';
+    if(normalisedScope === 'medium') return sev === 'medium';
+    if(normalisedScope === 'low') return sev === 'low';
+    return true;
+  });
+  const scopeLabels = {
+    high: 'high-priority flagged suggestion',
+    medium: 'medium-priority flagged suggestion',
+    low: 'light flagged suggestion',
+    all: 'flagged suggestion'
+  };
   if(!targets.length){
-    alert(scope === 'high' ? 'No high-priority flags to fix.' : 'No flagged suggestions to fix.');
+    const noneLabels = {
+      high: 'No high-priority flags to fix.',
+      medium: 'No medium-priority flags to fix.',
+      low: 'No light flags to fix.',
+      all: 'No flagged suggestions to fix.'
+    };
+    alert(noneLabels[normalisedScope] || noneLabels.all);
     return;
   }
 
-  const label = scope === 'high' ? 'high-priority flagged suggestion' : 'flagged suggestion';
-  const confirmed = confirm(`Draft AI fixes for ${targets.length} ${label}${targets.length!==1?'s':''}?\n\nThis will generate replacement drafts one by one, then run an AI quality check comparing each draft against the original. Low-confidence drafts will be rejected before the review popup. Nothing will be saved automatically — all accepted drafts still need human approval.`);
+  const label = scopeLabels[normalisedScope] || scopeLabels.all;
+  const confirmed = confirm(`Draft AI fixes for ${targets.length} ${label}${targets.length!==1?'s':''}?\n\nThis will generate rewrite/replacement drafts one by one, then run an AI quality check comparing each draft against the original. For concrete-action or weak-unit-connection flags, Studio keeps the same tool and task and only rewrites the description. Nothing will be saved automatically — all accepted drafts still need human approval.`);
   if(!confirmed) return;
 
   const buttons = Array.from(document.querySelectorAll('.btn-realism-fix-all'));
@@ -7285,6 +7306,290 @@ async function buildRealismReplacementChange(result){
   }
 
   throw new Error(lastError && lastError.message ? lastError.message : 'AI draft failed after retrying.');
+}
+
+/* =========================================================
+   DLA Studio Patch — Concrete Action/Product Reword Fix
+   For flags that only say the description lacks a concrete
+   student action/product, keep the same tool and task. The AI
+   rewrites the description instead of replacing the technology.
+   ========================================================= */
+function dlaIssueIsConcreteAction_(issue){
+  const type = String(issue?.type || '').toLowerCase();
+  const msg = String(issue?.message || '').toLowerCase();
+  return type === 'vague' || /concrete\s+student\s+action\s*\/\s*product|lacks\s+a\s+concrete/i.test(msg);
+}
+
+function dlaIssueIsUnitConnection_(issue){
+  const type = String(issue?.type || '').toLowerCase();
+  const msg = String(issue?.message || '').toLowerCase();
+  return type === 'connection' || /unit.{0,30}(content|vocabulary|connection)|connect.{0,30}unit|clearly\s+reference\s+this\s+unit|unit'?s\s+content/i.test(msg);
+}
+
+function dlaReasonNeedsUnitConnection_(reason){
+  const r = String(reason || '').toLowerCase();
+  return /unit.{0,30}(content|vocabulary|connection)|connect.{0,30}unit|clearly\s+reference\s+this\s+unit|unit'?s\s+content/i.test(r);
+}
+
+function dlaReasonNeedsConcreteAction_(reason){
+  const r = String(reason || '').toLowerCase();
+  return /concrete\s+student\s+action\s*\/\s*product|lacks\s+a\s+concrete/i.test(r);
+}
+
+function dlaSameTaskPseudoIssue_(reason){
+  if(dlaReasonNeedsUnitConnection_(reason) && !dlaReasonNeedsConcreteAction_(reason)){
+    return {type:'connection', severity:'low', message: reason || 'Description may not clearly reference this unit\'s content or vocabulary.'};
+  }
+  return {type:'vague', severity:'medium', message: reason || 'Description lacks a concrete student action/product.'};
+}
+
+function dlaIssueIsHardReplacementBlocker_(issue){
+  const type = String(issue?.type || '').toLowerCase();
+  const msg = String(issue?.message || '').toLowerCase();
+  if(['missing','banned','age','stem-age','realism','duplicate','stem-realism'].includes(type)) return true;
+  return /banned|unavailable|too advanced|not age[- ]?appropriate|duplicates?|unrealistic|does not describe|missing or incomplete/i.test(msg);
+}
+
+function dlaShouldRewriteSameTaskForConcreteAction_(result){
+  const issues = Array.isArray(result?.issues) ? result.issues : [];
+  if(!issues.length) return false;
+  const hasSameTaskRewordFlag = issues.some(dlaIssueIsConcreteAction_) || issues.some(dlaIssueIsUnitConnection_);
+  if(!hasSameTaskRewordFlag) return false;
+  return !issues.some(dlaIssueIsHardReplacementBlocker_);
+}
+
+function dlaReasonIsConcreteActionRewrite_(reason){
+  const r = String(reason || '');
+  const wantsSameTaskReword = dlaReasonNeedsConcreteAction_(r) || dlaReasonNeedsUnitConnection_(r);
+  if(!wantsSameTaskReword) return false;
+  return !/banned|unavailable|too advanced|not age[- ]?appropriate|duplicates?|unrealistic|does not describe|missing or incomplete/i.test(r);
+}
+
+function dlaHasConcreteStudentOutcome_(desc){
+  const d = String(desc || '').toLowerCase();
+  if(!hasConcreteStudentAction(desc)) return false;
+  return /\b(product|artefact|artifact|prototype|model|map|diagram|poster|presentation|slide|video|film|podcast|audio|recording|animation|book|page|journal|reflection|report|survey|graph|chart|timeline|story|explanation|labelled|labeled|plan|design|code|program|photo|portfolio|exhibit|display|script|voiceover|route|sequence|dataset|data set|table|infographic|comic|interview|field guide|quiz|collage|caption|annotation)\b/i.test(d)
+    || /\b(create|make|build|construct|produce|publish|present|record|film|draw|design|code|program|map|model)\b.{0,40}\b(a|an|their|the|one|two|group|class)\b/i.test(d);
+}
+
+function dlaBuildSameTaskRewritePrompt_(opts){
+  const {entry, oldTool, oldDesc, reason, retryNotes} = opts;
+  const retryText = retryNotes && retryNotes.length
+    ? `\n\nPrevious rejected draft(s):\n${retryNotes.map((n,i)=>`${i+1}. ${n}`).join('\n')}\nYou MUST correct these problems in the next draft.`
+    : '';
+  return `You are improving one existing Wesley College Digital Learning Assistant suggestion.
+This is NOT a tool replacement. Keep the same technology and the same basic classroom task, but rewrite the description so it fixes the flagged wording issue. For concrete-action flags, add a clear student action and product. For unit-connection flags, make the same task explicitly connect to the unit content, central idea, lines of inquiry or vocabulary.
+
+Campus: ${entry.ca}
+Year level: ${entry.yl}
+Theme: ${entry.th}
+Central Idea: ${entry.ci || ''}
+Lines of Inquiry: ${entry.lo || ''}
+Planner summary: ${entry.plannerText || ''}
+
+CURRENT TOOL — keep this exact tool name:
+${oldTool}
+
+CURRENT DESCRIPTION — keep the same underlying task/intent:
+${oldDesc}
+
+Problem flagged:
+${reason || 'Description lacks a concrete student action/product.'}
+
+Rewrite rules:
+- Keep the tool name exactly as "${oldTool}".
+- Keep the same basic activity/task; do not swap in a different technology or a totally different lesson.
+- Make the description 2-3 practical sentences.
+- Explicitly state what students DO, using action verbs such as create, build, record, map, model, code, compare, label, publish or present.
+- Explicitly state what students PRODUCE, such as a labelled map, short video, recorded explanation, prototype, model, graph, Book Creator page, Seesaw post, Padlet board, presentation, coded animation, podcast segment, diagram or reflection.
+- Make the connection to this unit explicit; use language from the theme, central idea, lines of inquiry or planner summary rather than a generic activity description.
+- The final wording should make it clear why this exact task belongs in this exact unit.
+- Write it so a teacher can picture the classroom task immediately.
+
+${SUGGESTION_STYLE}${retryText}
+
+Return ONLY JSON: {"t":"${oldTool.replace(/"/g, '\\"')}","d":"2-3 practical sentences with a clear student action, product and unit connection.","url":"optional existing direct lesson URL if the old suggestion had one"}`;
+}
+
+function dlaBuildReplacementPrompt_(opts){
+  const {entry, oldTool, oldDesc, reason, isStem, availableTools, usedTools, retryNotes, rewriteSameTask} = opts;
+  if(rewriteSameTask) return dlaBuildSameTaskRewritePrompt_(opts);
+
+  const usedText = usedTools.length ? usedTools.join(', ') : 'none';
+  const retryText = retryNotes.length
+    ? `\n\nPrevious rejected draft(s):\n${retryNotes.map((n,i)=>`${i+1}. ${n}`).join('\n')}\nYou MUST correct these problems in the next draft.`
+    : '';
+
+  if(isStem){
+    return `You are replacing protected Suggestion 6, the STEM Design Cycle idea, for this IB PYP unit. This is a manual DLP-approved action, not a bulk edit.
+Campus: ${entry.ca}
+Year level: ${entry.yl}
+Theme: ${entry.th}
+Central Idea: ${entry.ci || ''}
+Lines of Inquiry: ${entry.lo || ''}
+Planner summary: ${entry.plannerText || ''}
+Current STEM suggestion: ${oldTool}: ${oldDesc}
+Problem flagged: ${reason || 'May be unrealistic or not age appropriate.'}
+
+Create ONE replacement STEM Design Cycle activity that is realistic for this year level. It must include tangible making/prototyping materials and a clear Empathise → Define → Ideate → Prototype → Test cycle. It may include age-appropriate technology only when the tech is genuinely useful.
+${REALISTIC_TOOL_USE_RULES}${retryText}
+Return ONLY JSON: {"t":"Project name","d":"2-3 practical sentences describing exactly what students build, test and improve."}`;
+  }
+
+  const allowedText = availableTools.length
+    ? availableTools.join(', ')
+    : 'No non-duplicate age-appropriate tools are currently available.';
+
+  return `You are replacing one unrealistic, vague, weakly connected, banned, duplicated or not age-appropriate digital learning suggestion for an IB PYP unit.
+Campus: ${entry.ca}
+Year level: ${entry.yl}
+Theme: ${entry.th}
+Central Idea: ${entry.ci || ''}
+Lines of Inquiry: ${entry.lo || ''}
+Planner summary: ${entry.plannerText || ''}
+Current suggestion to replace: ${oldTool}: ${oldDesc}
+Problem flagged: ${reason}
+
+TOOLS ALREADY USED IN THIS UNIT — DO NOT CHOOSE ANY OF THESE FOR THE REPLACEMENT:
+${usedText}
+
+ALLOWED REPLACEMENT TOOLS FOR THIS EXACT SLOT — CHOOSE ONE TOOL FROM THIS LIST ONLY:
+${allowedText}
+
+Hard requirements:
+- Do not choose Seesaw, Canva, Book Creator, Padlet, Scratch, or any other tool if it is listed under already-used tools above.
+- Do not propose a blended/app-smash tool name such as "Tool A + Tool B".
+- Do not choose a banned tool or a tool outside the configured age range.
+- The new suggestion must fix the flagged problem rather than simply rewording it.
+
+${buildToolConstraints(entry.yl)}
+${SUGGESTION_STYLE}
+${REALISTIC_TOOL_USE_RULES}${retryText}
+
+Create ONE replacement suggestion that is classroom-realistic, age-appropriate, non-duplicated, and directly connected to the unit. Return ONLY JSON: {"t":"Tool Name","d":"2-3 practical sentences describing exactly what students do and create.","url":"optional direct lesson URL"}`;
+}
+
+async function buildRealismReplacementChange(result){
+  const entryIdx = result.entryIdx;
+  const sugIdx = result.sugIdx;
+  const reason = (result.issues || []).map(i=>i.message).join(' | ') || 'May be unrealistic or not age appropriate.';
+  const entry = DATA[entryIdx];
+  if(!entry) throw new Error('Entry not found');
+  const oldSug = getSugs(entry)[sugIdx];
+  if(!oldSug) throw new Error('Suggestion not found');
+
+  const isStem = sugIdx === 5;
+  const oldTool = sugTool(oldSug);
+  const oldDesc = sugDesc(oldSug);
+  const usedTools = dlaReplacementAlreadyUsedTools_(entry, sugIdx);
+  const rewriteSameTask = !isStem && dlaShouldRewriteSameTaskForConcreteAction_(result);
+  const availableTools = isStem ? [] : (rewriteSameTask ? [oldTool] : dlaReplacementAvailableTools_(entry, sugIdx, oldTool, reason));
+
+  if(!isStem && !rewriteSameTask && !availableTools.length){
+    throw new Error(`No non-duplicate, age-appropriate replacement tools are currently available for ${entry.yl} in this unit. Remove another duplicate first or adjust the whitelist age ranges.`);
+  }
+
+  const availableKeys = new Set(availableTools.map(toolKey));
+  const retryNotes = [];
+  let lastError = null;
+  const maxAttempts = rewriteSameTask ? 3 : (isStem ? 2 : 4);
+
+  for(let attempt=1; attempt<=maxAttempts; attempt++){
+    try{
+      const prompt = dlaBuildReplacementPrompt_({entry, oldTool, oldDesc, reason, isStem, availableTools, usedTools, retryNotes, rewriteSameTask});
+      const raw = await callAI([{role:'user',parts:[{text:prompt}]}], null, OPENAI_FAST_MODEL || OPENAI_MODEL);
+      const parsed = dlaExtractDraftJson_(raw);
+      if(!parsed.t || !parsed.d) throw new Error('AI draft was missing a tool/project name or description.');
+
+      if(rewriteSameTask){
+        parsed.t = oldTool;
+        if(!dlaHasConcreteStudentOutcome_(parsed.d)) throw new Error('Rewrite still does not clearly name both a concrete student action and a student product.');
+        if(dlaReasonNeedsUnitConnection_(reason) && !descHasUnitConnection(parsed.d, entry)){
+          throw new Error('Rewrite still does not clearly connect to this unit\'s content or vocabulary.');
+        }
+      } else if(!isStem){
+        const key = toolKey(parsed.t);
+        if(!availableKeys.has(key)) throw new Error(`${parsed.t} is not in the allowed replacement list for this slot.`);
+        if(!isAiToolSafeForEntry(parsed.t, entry)) throw new Error(`${parsed.t} is banned or not age-appropriate for ${entry.yl}.`);
+        if(wouldDupeToolProposalInEntry(entry, parsed.t, sugIdx) || wouldDupeInEntry(entry, parsed.t, sugIdx)) throw new Error(`${parsed.t} duplicates another suggestion in this unit.`);
+      }
+
+      const realism = checkRealisticToolUse(parsed.t, parsed.d, entry);
+      const quality = await evaluateDraftImprovement(entry, oldSug, parsed, reason, isStem);
+      if(!realism.ok){
+        quality.confidence = quality.confidence === 'High' ? 'Medium' : quality.confidence;
+        quality.remainingConcern = [quality.remainingConcern, 'Studio realism check warning: ' + (realism.reason || 'Tool use may still be unrealistic.')].filter(Boolean).join(' | ');
+        quality.qualityGateWarning = true;
+      }
+
+      const change = {
+        entryIdx,
+        sugIdx,
+        t: parsed.t,
+        d: parsed.d,
+        auditReason: reason,
+        auditIssues: result.issues || [],
+        auditSource: rewriteSameTask ? 'same-task-reword' : 'realism-age-audit',
+        improvementConfidence: quality.confidence,
+        improvementScore: quality.score,
+        whyBetter: rewriteSameTask ? (quality.whyBetter || 'Same task rewritten with a concrete student action, product and clearer unit connection.') : quality.whyBetter,
+        remainingConcern: quality.remainingConcern,
+        qualityGateWarning: !!quality.qualityGateWarning,
+        retryCount: attempt - 1
+      };
+      if(parsed.url) change.url = parsed.url;
+      else if(oldSug.url) change.url = oldSug.url;
+      return change;
+    }catch(e){
+      lastError = e;
+      const msg = e && e.message ? e.message : String(e);
+      retryNotes.push(msg);
+      console.warn(`Realism replacement/rewrite attempt ${attempt}/${maxAttempts} failed:`, msg);
+      if(attempt < maxAttempts) await sleep(500 + attempt * 250);
+    }
+  }
+
+  throw new Error(lastError && lastError.message ? lastError.message : 'AI draft failed after retrying.');
+}
+
+async function draftRealismReplacement(entryIdx, sugIdx, reason){
+  const entry = DATA[entryIdx];
+  if(!entry) return;
+  const oldSug = getSugs(entry)[sugIdx];
+  if(!oldSug) return;
+
+  const isStem = sugIdx === 5;
+  const oldTool = sugTool(oldSug);
+  const oldDesc = sugDesc(oldSug);
+  const usedTools = dlaReplacementAlreadyUsedTools_(entry, sugIdx);
+  const rewriteSameTask = !isStem && dlaReasonIsConcreteActionRewrite_(reason);
+  const availableTools = isStem ? [] : (rewriteSameTask ? [oldTool] : dlaReplacementAvailableTools_(entry, sugIdx, oldTool, reason));
+
+  if(!isStem && !rewriteSameTask && !availableTools.length){
+    alert(`No non-duplicate, age-appropriate replacement tools are currently available for ${entry.yl} in this unit. Remove another duplicate first or adjust the whitelist age ranges.`);
+    return;
+  }
+
+  const pseudoResult = {
+    entryIdx,
+    sugIdx,
+    issues: rewriteSameTask
+      ? [dlaSameTaskPseudoIssue_(reason)]
+      : [{type:'realism', severity:'high', message: reason || 'May be unrealistic or not age appropriate.'}]
+  };
+
+  startProgress();
+  setStatus(`${rewriteSameTask ? 'Rewriting same task' : 'Drafting replacement'} for ${entry.yl} — ${entry.th}…`, 'loading');
+  try{
+    const change = await buildRealismReplacementChange(pseudoResult);
+    showChangesPopup([change]);
+    setStatus(rewriteSameTask ? 'Rewrite drafted — review before applying' : 'Replacement drafted — review before applying');
+  }catch(e){
+    alert('Could not draft fix: ' + e.message);
+    setStatus('Draft failed: ' + e.message, 'error');
+  }finally{
+    stopProgress();
+  }
 }
 
 (function init(){
