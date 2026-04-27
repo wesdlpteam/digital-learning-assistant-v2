@@ -2702,6 +2702,20 @@ function showChangesPopup(changes){
       <div style="font-size:9px;color:#F5A623;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;font-weight:900">Reason flagged</div>
       <div style="font-size:12px;color:#F8D28A;line-height:1.55">${formattedReason}</div>
     </div>` : '';
+    const improvementConfidence = (c.improvementConfidence || c.confidence || '').toString();
+    const improvementScore = c.improvementScore != null ? c.improvementScore : '';
+    const whyBetter = c.whyBetter || c.improvementRationale || c.qualityRationale || '';
+    const remainingConcern = c.remainingConcern || c.remainingConcerns || '';
+    const confKey = improvementConfidence.toLowerCase();
+    const confColour = confKey.includes('high') ? 'var(--lime)' : confKey.includes('medium') ? '#F5A623' : '#FF8080';
+    const improvementHtml = improvementConfidence ? `<div style="padding:10px 12px;background:rgba(155,139,255,0.09);border:1px solid rgba(155,139,255,0.35);border-left:4px solid ${confColour};border-radius:9px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+        <div style="font-size:9px;color:#A78BFA;text-transform:uppercase;letter-spacing:.8px;font-weight:900">AI quality check</div>
+        <div style="font-size:11px;color:${confColour};font-weight:900;margin-left:auto">${esc(improvementConfidence)}${improvementScore!=='' ? ' · '+esc(improvementScore)+'/5' : ''}</div>
+      </div>
+      ${whyBetter ? `<div style="font-size:12px;color:#ddd;line-height:1.55;margin-bottom:${remainingConcern?'5px':'0'}"><b style="color:#A78BFA">Why this should be better:</b> ${esc(whyBetter)}</div>` : ''}
+      ${remainingConcern ? `<div style="font-size:12px;color:#F8D28A;line-height:1.55"><b>Remaining concern:</b> ${esc(remainingConcern)}</div>` : ''}
+    </div>` : '';
 
     const card=document.createElement('div');
     card.id=`change-card-${ci}`;
@@ -2716,7 +2730,7 @@ function showChangesPopup(changes){
 
     const detail=document.createElement('div');
     detail.style.cssText='padding:0 16px 14px;display:block';
-    detail.innerHTML=`${reasonHtml}<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:10px;margin-bottom:10px">
+    detail.innerHTML=`${reasonHtml}${improvementHtml}<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:10px;margin-bottom:10px">
       <div style="padding:10px 12px;background:#1a0808;border:1px solid #3a1818;border-radius:10px;min-width:0">
         <div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:700">Current suggestion being replaced</div>
         <div style="font-size:14px;font-weight:900;color:#ff9999;margin-bottom:6px;line-height:1.25">${esc(oldTool)}</div>
@@ -3267,6 +3281,86 @@ function draftRealismReplacementFromAudit(idx){
   draftRealismReplacement(result.entryIdx, result.sugIdx, result.issues.map(i=>i.message).join(' | '));
 }
 
+
+function extractFirstJsonObject_(text){
+  const clean = String(text || '').replace(/```json|```/g,'').trim();
+  const si = clean.indexOf('{');
+  const ei = clean.lastIndexOf('}');
+  if(si === -1 || ei === -1 || ei <= si) throw new Error('AI did not return JSON.');
+  return JSON.parse(clean.slice(si, ei + 1));
+}
+
+function normaliseImprovementCheck_(raw){
+  const confidenceRaw = String(raw.confidence || raw.improvementConfidence || raw.rating || '').trim().toLowerCase();
+  let confidence = confidenceRaw.includes('high') ? 'High' : confidenceRaw.includes('medium') ? 'Medium' : confidenceRaw.includes('low') ? 'Low' : '';
+  let score = Number(raw.score || raw.improvementScore || raw.ratingScore || 0);
+  if(!confidence){
+    if(score >= 4) confidence = 'High';
+    else if(score >= 3) confidence = 'Medium';
+    else confidence = 'Low';
+  }
+  if(!score){
+    score = confidence === 'High' ? 5 : confidence === 'Medium' ? 3 : 1;
+  }
+  score = Math.max(1, Math.min(5, Math.round(score)));
+  return {
+    confidence,
+    score,
+    whyBetter: raw.whyBetter || raw.rationale || raw.reason || raw.improvementRationale || '',
+    remainingConcern: raw.remainingConcern || raw.concern || raw.remainingConcerns || ''
+  };
+}
+
+async function evaluateDraftImprovement(entry, oldSug, draft, flagReason, isStem){
+  const oldTool = sugTool(oldSug);
+  const oldDesc = sugDesc(oldSug);
+  const prompt = `You are the DLP quality gate for Wesley College's Digital Learning Assistant.
+Your job is to compare an OLD suggestion with a DRAFT replacement and decide whether the draft is genuinely better.
+Be strict. Do NOT rubber-stamp. If the new draft still has the same problem, mark it Low.
+
+Unit context:
+Campus: ${entry.ca}
+Year level: ${entry.yl}
+Theme: ${entry.th}
+Central Idea: ${entry.ci || ''}
+Lines of Inquiry: ${entry.lo || ''}
+Planner summary: ${entry.plannerText || ''}
+Suggestion type: ${isStem ? 'Protected STEM Design Cycle Suggestion 6' : 'Digital learning suggestion'}
+
+Original flagged problem:
+${flagReason || 'May be unrealistic, weakly connected or not age appropriate.'}
+
+OLD suggestion:
+Tool/project: ${oldTool}
+Description: ${oldDesc}
+
+DRAFT replacement:
+Tool/project: ${draft.t || ''}
+Description: ${draft.d || ''}
+
+Score the draft against these criteria:
+1. realistic classroom use
+2. age appropriateness
+3. specific connection to this unit
+4. teacher practicality
+5. clear student task/product
+6. whether it actually fixes the original flagged problem
+
+Return ONLY JSON:
+{
+  "confidence": "High" | "Medium" | "Low",
+  "score": 1-5,
+  "whyBetter": "one concise sentence explaining the improvement",
+  "remainingConcern": "one concise sentence, or empty string if none"
+}`;
+  const raw = await callAI([{role:'user',parts:[{text:prompt}]}], null, OPENAI_FAST_MODEL || OPENAI_MODEL);
+  const parsed = normaliseImprovementCheck_(extractFirstJsonObject_(raw));
+  if(parsed.confidence === 'Low' || parsed.score < 3){
+    throw new Error(`Draft failed quality check (${parsed.confidence} ${parsed.score}/5): ${parsed.remainingConcern || parsed.whyBetter || 'It was not clearly better than the current suggestion.'}`);
+  }
+  return parsed;
+}
+
 async function buildRealismReplacementChange(result){
   const entryIdx = result.entryIdx;
   const sugIdx = result.sugIdx;
@@ -3323,6 +3417,7 @@ Create ONE replacement suggestion that is classroom-realistic, age-appropriate, 
   }
   const realism = checkRealisticToolUse(parsed.t, parsed.d, entry);
   if(!realism.ok) throw new Error('Draft rejected as unrealistic: ' + realism.reason);
+  const quality = await evaluateDraftImprovement(entry, oldSug, parsed, reason, isStem);
   const change = {
     entryIdx,
     sugIdx,
@@ -3330,7 +3425,11 @@ Create ONE replacement suggestion that is classroom-realistic, age-appropriate, 
     d: parsed.d,
     auditReason: reason,
     auditIssues: result.issues || [],
-    auditSource: 'realism-age-audit'
+    auditSource: 'realism-age-audit',
+    improvementConfidence: quality.confidence,
+    improvementScore: quality.score,
+    whyBetter: quality.whyBetter,
+    remainingConcern: quality.remainingConcern
   };
   if(parsed.url) change.url = parsed.url;
   return change;
@@ -3349,7 +3448,7 @@ async function draftAllRealismFixes(scope){
   }
 
   const label = scope === 'high' ? 'high-priority flagged suggestion' : 'flagged suggestion';
-  const confirmed = confirm(`Draft AI fixes for ${targets.length} ${label}${targets.length!==1?'s':''}?\n\nThis will generate replacement drafts one by one and may take several minutes. Nothing will be saved automatically — all drafts will open in the normal review popup for human approval.`);
+  const confirmed = confirm(`Draft AI fixes for ${targets.length} ${label}${targets.length!==1?'s':''}?\n\nThis will generate replacement drafts one by one, then run an AI quality check comparing each draft against the original. Low-confidence drafts will be rejected before the review popup. Nothing will be saved automatically — all accepted drafts still need human approval.`);
   if(!confirmed) return;
 
   const buttons = Array.from(document.querySelectorAll('.btn-realism-fix-all'));
@@ -3454,13 +3553,18 @@ Create ONE replacement suggestion that is classroom-realistic, age-appropriate, 
     }
     const realism = checkRealisticToolUse(parsed.t, parsed.d, entry);
     if(!realism.ok) throw new Error('Draft rejected as unrealistic: ' + realism.reason);
+    const quality = await evaluateDraftImprovement(entry, oldSug, parsed, reason || 'May be unrealistic or not age appropriate.', isStem);
     const change = {
       entryIdx,
       sugIdx,
       t: parsed.t,
       d: parsed.d,
       auditReason: reason || 'May be unrealistic or not age appropriate.',
-      auditSource: 'realism-age-audit'
+      auditSource: 'realism-age-audit',
+      improvementConfidence: quality.confidence,
+      improvementScore: quality.score,
+      whyBetter: quality.whyBetter,
+      remainingConcern: quality.remainingConcern
     };
     if(parsed.url) change.url = parsed.url;
     showChangesPopup([change]);
