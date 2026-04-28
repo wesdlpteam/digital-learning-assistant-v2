@@ -5679,8 +5679,8 @@ function computeBulkInsights(){
     insights.push({
       icon: '🔎',
       title: `${weakCount} weak suggestions detected`,
-      body: `Descriptions that are very short (<60 chars), generic ("research online", "just use the app"), or vague. These rarely get used by teachers.`,
-      action: 'Scan the library for weak or generic suggestions and propose stronger replacements'
+      body: `Descriptions that are brief, generic ("research online", "just use the app"), or vague. These rarely get used by teachers.`,
+      action: 'Bulk up weak or generic descriptions using the same tool'
     });
   }
 
@@ -8001,6 +8001,356 @@ async function draftRealismReplacement(entryIdx, sugIdx, reason){
     stopProgress();
   }
 }
+
+/* =========================================================
+   DLA Studio Patch — Brief/Thin Description Detail Fix
+   When a suggestion is flagged only because the description is
+   brief/thin/generic/weak, keep the same tool and same task.
+   The fix now expands the practical detail instead of swapping apps.
+   ========================================================= */
+function dlaIssueIsBriefDetail_(issue){
+  const type = String(issue?.type || '').toLowerCase();
+  const msg = String(issue?.message || '').toLowerCase();
+  return type === 'thin' || /very\s+short|brief|thin|more\s+practical\s+detail|needs?\s+more\s+detail|under\s*60|<\s*60|less\s+than\s+60/i.test(msg);
+}
+
+function dlaReasonNeedsBriefDetail_(reason){
+  const r = String(reason || '').toLowerCase();
+  return /very\s+short|brief|thin|more\s+practical\s+detail|needs?\s+more\s+detail|under\s*60|<\s*60|less\s+than\s+60/i.test(r);
+}
+
+if(typeof dlaSameTaskPseudoIssue_ === 'function'){
+  dlaSameTaskPseudoIssue_ = function(reason){
+    if(dlaReasonNeedsBriefDetail_(reason) && !dlaReasonNeedsConcreteAction_(reason) && !dlaReasonNeedsUnitConnection_(reason)){
+      return {type:'thin', severity:'low', message: reason || 'Description is brief; it needs more practical detail.'};
+    }
+    if(dlaReasonNeedsUnitConnection_(reason) && !dlaReasonNeedsConcreteAction_(reason)){
+      return {type:'connection', severity:'low', message: reason || 'Description may not clearly reference this unit\'s content or vocabulary.'};
+    }
+    return {type:'vague', severity:'medium', message: reason || 'Description lacks a concrete student action/product.'};
+  };
+}
+
+if(typeof dlaShouldRewriteSameTaskForConcreteAction_ === 'function'){
+  dlaShouldRewriteSameTaskForConcreteAction_ = function(result){
+    const issues = Array.isArray(result?.issues) ? result.issues : [];
+    if(!issues.length) return false;
+    const hasSameTaskRewordFlag = issues.some(dlaIssueIsConcreteAction_) || issues.some(dlaIssueIsUnitConnection_) || issues.some(dlaIssueIsBriefDetail_);
+    if(!hasSameTaskRewordFlag) return false;
+    return !issues.some(dlaIssueIsHardReplacementBlocker_);
+  };
+}
+
+if(typeof dlaReasonIsConcreteActionRewrite_ === 'function'){
+  dlaReasonIsConcreteActionRewrite_ = function(reason){
+    const r = String(reason || '');
+    const wantsSameTaskReword = dlaReasonNeedsConcreteAction_(r) || dlaReasonNeedsUnitConnection_(r) || dlaReasonNeedsBriefDetail_(r);
+    if(!wantsSameTaskReword) return false;
+    return !/banned|unavailable|too advanced|not age[- ]?appropriate|duplicates?|unrealistic|does not describe|missing or incomplete/i.test(r);
+  };
+}
+
+if(typeof dlaBuildSameTaskRewritePrompt_ === 'function'){
+  dlaBuildSameTaskRewritePrompt_ = function(opts){
+    const {entry, oldTool, oldDesc, reason, retryNotes} = opts;
+    const retryText = retryNotes && retryNotes.length
+      ? `\n\nPrevious rejected draft(s):\n${retryNotes.map((n,i)=>`${i+1}. ${n}`).join('\n')}\nYou MUST correct these problems in the next draft.`
+      : '';
+    return `You are improving one existing Wesley College Digital Learning Assistant suggestion.
+This is NOT a tool replacement. Keep the same technology and the same basic classroom task. Rewrite only the description so it fixes the flagged wording issue.
+
+For brief/thin-description flags, bulk up the practical detail of the SAME activity instead of swapping apps.
+For concrete-action flags, add a clear student action and product.
+For unit-connection flags, make the same task explicitly connect to the unit content, central idea, lines of inquiry or vocabulary.
+
+Campus: ${entry.ca}
+Year level: ${entry.yl}
+Theme: ${entry.th}
+Central Idea: ${entry.ci || ''}
+Lines of Inquiry: ${entry.lo || ''}
+Planner summary: ${entry.plannerText || ''}
+
+CURRENT TOOL — keep this exact tool name:
+${oldTool}
+
+CURRENT DESCRIPTION — keep the same underlying task/intent:
+${oldDesc}
+
+Problem flagged:
+${reason || 'Description is brief and needs more practical detail.'}
+
+Rewrite rules:
+- Keep the tool name exactly as "${oldTool}".
+- Keep the same basic activity/task; do not swap in a different technology or a totally different lesson.
+- Make the description 2-3 practical, teacher-ready sentences.
+- Add enough classroom detail that the activity no longer feels brief, generic or thin.
+- Explicitly state what students DO, using action verbs such as create, build, record, map, model, code, compare, label, publish or present.
+- Explicitly state what students PRODUCE, such as a labelled map, short video, recorded explanation, prototype, model, graph, Book Creator page, Seesaw post, Padlet board, presentation, coded animation, podcast segment, diagram or reflection.
+- Make the connection to this unit explicit; use language from the theme, central idea, lines of inquiry or planner summary rather than a generic activity description.
+- The final wording should make it clear why this exact task belongs in this exact unit.
+- Write it so a teacher can picture the classroom task immediately.
+
+${SUGGESTION_STYLE}${retryText}
+
+Return ONLY JSON: {"t":"${String(oldTool).replace(/"/g, '\\"')}","d":"2-3 practical sentences with more detail, a clear student action, product and unit connection.","url":"optional existing direct lesson URL if the old suggestion had one"}`;
+  };
+}
+
+function parseBulkWeakDescriptionRewriteRequest(instruction){
+  const text = String(instruction || '').toLowerCase();
+  if(!text.trim()) return null;
+  const weakIntent = /(weak|generic|vague|brief|short|thin|under\s*60|<\s*60|less\s+than\s+60|more\s+detail|detailed|bulk\s*up|strengthen|stronger|clearer|practical\s+detail)/i.test(text);
+  if(!weakIntent) return null;
+  const hardToolSwap = /(diversify\s+\w+|replace\s+(?:some|all|the)?\s*[a-z0-9:&+'’\/-]+\s+with\s+(?:other|different|new|top)\s+tools?|ban\s+|remove\s+|delete\s+)/i.test(text);
+  if(hardToolSwap && !/(weak|generic|vague|brief|short|thin|detail|strengthen)/i.test(text)) return null;
+  return {mode:'same-tool-detail-rewrite'};
+}
+
+function bulkDescriptionWordCount_(desc){
+  return (String(desc || '').match(/\b[\w’'-]+\b/g) || []).length;
+}
+
+function bulkWeakDescriptionReasons_(entry, sug, instruction){
+  const desc = sugDesc(sug);
+  const reasons = [];
+  const d = String(desc || '').replace(/\s+/g,' ').trim();
+  const words = bulkDescriptionWordCount_(d);
+  const chars = d.length;
+  const instr = String(instruction || '').toLowerCase();
+  const weakPatterns = [
+    /research online/i, /look up/i, /google (this|it)/i,
+    /type (your|the)/i, /write (about|up)/i,
+    /use (the|a) (app|tool|program)/i,
+    /simply|basically|just to/i
+  ];
+  if(chars < 95) reasons.push('Description is very short and needs more practical classroom detail.');
+  if(words < 60 && /brief|short|thin|under\s*60|<\s*60|less\s+than\s+60|more\s+detail|bulk\s*up|stronger|weak|generic/i.test(instr)) reasons.push('Description is brief (<60 words), so keep the same tool and expand the detail.');
+  if(weakPatterns.some(p => p.test(d))) reasons.push('Description sounds generic or thin and needs a clearer student task.');
+  if(!hasConcreteStudentAction(d)) reasons.push('Description lacks a concrete student action/product.');
+  if(!descHasUnitConnection(d, entry)) reasons.push('Description may not clearly reference this unit\'s content or vocabulary.');
+  return [...new Set(reasons)];
+}
+
+function bulkFindWeakDescriptionRewriteCandidates_(instruction){
+  const out = [];
+  DATA.forEach((entry, entryIdx) => {
+    if(!entry || !entry.audited) return;
+    getSugs(entry).forEach((sug, sugIdx) => {
+      if(sugIdx === 5) return;
+      if(!isRealSug(sug)) return;
+      const tool = sugTool(sug);
+      if(!tool || !isAiToolSafeForEntry(tool, entry)) return;
+      const auditIssues = suggestionAuditIssues(entry, sug, sugIdx);
+      if(auditIssues.some(dlaIssueIsHardReplacementBlocker_)) return;
+      const reasons = bulkWeakDescriptionReasons_(entry, sug, instruction);
+      if(!reasons.length) return;
+      out.push({
+        entryIdx,
+        sugIdx,
+        ca: entry.ca,
+        yl: entry.yl,
+        th: entry.th,
+        ci: entry.ci || '',
+        lo: entry.lo || '',
+        plannerText: entry.plannerText || '',
+        tool,
+        desc: sugDesc(sug),
+        url: sug.url || '',
+        reasons
+      });
+    });
+  });
+  return out;
+}
+
+function getBulkWeakRewriteTargetCount_(instruction, candidateCount){
+  const text = String(instruction || '');
+  const m = text.match(/\b(?:first|top|fix|rewrite|improve|strengthen)?\s*(\d{1,3})\b/i);
+  if(m) return Math.max(1, Math.min(candidateCount, Number(m[1])));
+  if(/\ball\b|fix\s+all|every\b/i.test(text)) return Math.min(candidateCount, 60);
+  return Math.min(candidateCount, 40);
+}
+
+function bulkExpandSameToolFallbackDescription_(toolName, entry, oldDesc){
+  const product = bulkProductForTool(toolName);
+  const focus = bulkUnitFocus(entry);
+  const cleaned = String(oldDesc || '').replace(/\s+/g,' ').replace(/[.\s]+$/,'').trim();
+  const taskLine = cleaned
+    ? `Students continue the same ${toolName} task: ${cleaned}.`
+    : `Students use ${toolName} to create a ${product} that shows their understanding of ${focus}.`;
+  return `${taskLine} They develop a ${product} connected to ${focus}, adding unit evidence, labels, examples or narration so their thinking is visible. Students then share the finished artefact and explain how it connects to the unit vocabulary, central idea or lines of inquiry.`;
+}
+
+function parseBulkWeakRewriteChanges_(response){
+  return parseApplyChangesFromText(response);
+}
+
+async function runTargetedWeakDescriptionRewrite(enrichedInstruction){
+  bulkChatState = 'analysing';
+  const prog = document.getElementById('bulk-ai-progress');
+  const lbl = document.getElementById('bulk-ai-label');
+  const bar = document.getElementById('bulk-ai-bar');
+  if(prog) prog.style.display = 'block';
+  if(bar) bar.style.width = '12%';
+  if(lbl) lbl.textContent = 'Finding brief or generic descriptions only…';
+
+  bulkChatAddMessage('assistant', '🎯 Targeted scan: finding brief, generic or thin descriptions so Studio can expand the same tool/task instead of swapping apps.');
+  showReasoningSteps([
+    { text: 'Finding weak descriptions', status: 'active' },
+    { text: 'Keeping each original tool locked', status: 'pending' },
+    { text: 'Drafting richer descriptions', status: 'pending' },
+    { text: 'Filtering for same-tool rewrites', status: 'pending' }
+  ]);
+  startProgress();
+
+  try{
+    const candidates = bulkFindWeakDescriptionRewriteCandidates_(enrichedInstruction);
+    updateReasoningStep(0, 'done', `Found ${candidates.length} weak description${candidates.length===1?'':'s'}`);
+    updateReasoningStep(1, 'active');
+    if(!candidates.length){
+      if(prog) prog.style.display = 'none';
+      setTimeout(hideReasoningSteps, 700);
+      bulkChatAddMessage('assistant', '✓ I could not find any editable brief/generic descriptions that can be safely fixed as same-tool rewrites.');
+      bulkChatState = 'idle';
+      return;
+    }
+
+    const targetCount = getBulkWeakRewriteTargetCount_(enrichedInstruction, candidates.length);
+    const selected = candidates.slice(0, targetCount);
+    updateReasoningStep(1, 'done', `Locked ${selected.length} original tool${selected.length===1?'':'s'}`);
+    updateReasoningStep(2, 'active');
+    if(bar) bar.style.width = '38%';
+    if(lbl) lbl.textContent = `Expanding ${selected.length} description${selected.length===1?'':'s'} with the same tools…`;
+
+    const candidateLines = selected.map(c => {
+      const context = [
+        c.ci ? `CI:${compactForPrompt(c.ci, 120)}` : '',
+        c.lo ? `LOI:${compactForPrompt(c.lo, 120)}` : ''
+      ].filter(Boolean).join(' | ');
+      return `[${c.entryIdx}]s${c.sugIdx} ${c.ca} | ${c.yl} | ${compactForPrompt(c.th, 62)}${context ? ' | '+context : ''}\n  LOCKED TOOL: ${compactForPrompt(c.tool, 42)}\n  issue(s): ${c.reasons.map(r=>compactForPrompt(r, 90)).join(' / ')}\n  current description: ${compactForPrompt(c.desc, 220)}`;
+    }).join('\n');
+
+    const prompt = `You are a Digital Learning Coach at Wesley College, an IB PYP school.
+
+TASK: Improve brief, generic or thin DLA suggestion descriptions WITHOUT changing the technology.
+
+COORDINATOR REQUEST:
+${enrichedInstruction}
+
+HARD RULES:
+- This is NOT a tool replacement task.
+- For every item, keep the exact same tool shown after LOCKED TOOL.
+- Keep the same basic classroom task/intent from the current description.
+- Do not swap apps. Do not propose alternatives. Do not invent a different tool.
+- Do not change sugIdx 5 / Suggestion 6; it is protected and not in the list.
+- Rewrite each description into 2-3 practical, teacher-ready sentences.
+- Add concrete detail: what students DO, what students CREATE/PRODUCE, and how it connects to the specific unit.
+- Use language from the central idea, lines of inquiry, theme or planner context where available.
+- Return ONLY an APPLY_CHANGES block with valid JSON.
+
+Output format:
+APPLY_CHANGES:[{"entryIdx":3,"sugIdx":1,"t":"Same Locked Tool","d":"2-3 richer sentences using the same task and same tool..."}]
+
+${SUGGESTION_STYLE}
+
+CANDIDATE SAME-TOOL DESCRIPTION REWRITES:
+${candidateLines}`;
+
+    let response = '';
+    try{
+      response = await callAI(
+        [{role:'user', parts:[{text:'Rewrite the weak descriptions while keeping the same tools.'}]}],
+        prompt,
+        prompt.length < 65000 ? OPENAI_MODEL : OPENAI_FAST_MODEL
+      );
+    }catch(aiErr){
+      console.warn('Weak description rewrite AI failed; using local same-tool fallback:', aiErr.message);
+      response = '';
+    }
+
+    updateReasoningStep(2, 'done');
+    updateReasoningStep(3, 'active');
+    if(bar) bar.style.width = '84%';
+    if(lbl) lbl.textContent = 'Checking same-tool rewrites…';
+
+    const candidateBySlot = {};
+    selected.forEach(c => { candidateBySlot[`${c.entryIdx}::${c.sugIdx}`] = c; });
+    const seenSlots = new Set();
+    let changes = parseBulkWeakRewriteChanges_(response);
+    const rawCount = changes.length;
+    changes = changes.filter(c => {
+      const slotKey = `${c.entryIdx}::${c.sugIdx}`;
+      const cand = candidateBySlot[slotKey];
+      if(!cand || seenSlots.has(slotKey)) return false;
+      seenSlots.add(slotKey);
+      if(Number(c.sugIdx) === 5) return false;
+      const oldDesc = String(cand.desc || '').replace(/\s+/g,' ').trim();
+      const newDesc = String(c.d || '').replace(/\s+/g,' ').trim();
+      if(!newDesc || newDesc === oldDesc) return false;
+      c.t = cand.tool;
+      if(cand.url && !c.url) c.url = cand.url;
+      c.auditSource = 'same-tool-detail-rewrite';
+      c.auditReason = cand.reasons.join(' | ');
+      c.whyBetter = 'Same tool and task expanded with clearer student action, product and unit detail.';
+      return true;
+    });
+
+    if(changes.length < selected.length){
+      const existingSlots = new Set(changes.map(c => `${c.entryIdx}::${c.sugIdx}`));
+      for(const cand of selected){
+        if(existingSlots.has(`${cand.entryIdx}::${cand.sugIdx}`)) continue;
+        changes.push({
+          entryIdx: cand.entryIdx,
+          sugIdx: cand.sugIdx,
+          t: cand.tool,
+          d: bulkExpandSameToolFallbackDescription_(cand.tool, DATA[cand.entryIdx], cand.desc),
+          url: cand.url || undefined,
+          auditSource: 'same-tool-detail-rewrite-local-fallback',
+          auditReason: cand.reasons.join(' | '),
+          whyBetter: 'Same tool kept; description expanded with practical detail and unit connection.'
+        });
+      }
+    }
+
+    if(bar) bar.style.width = '100%';
+    if(prog) prog.style.display = 'none';
+    updateReasoningStep(3, 'done');
+    setTimeout(hideReasoningSteps, 900);
+
+    const note = candidates.length > selected.length
+      ? `<div style="font-size:11px;color:var(--orange);margin-top:8px">Found ${candidates.length} matching descriptions; drafted the first ${selected.length}. Run it again to continue through the rest.</div>`
+      : '';
+    const rawLine = rawCount ? `<div style="font-size:11px;color:var(--dim);margin-top:8px">GPT returned ${rawCount}; Studio hard-locked every draft to the original tool.</div>` : `<div style="font-size:11px;color:var(--gold);margin-top:8px">Studio used safe local same-tool fallbacks because GPT did not return usable drafts.</div>`;
+    bulkChatAddMessage('assistant', `✅ <strong>${changes.length} same-tool description rewrite${changes.length!==1?'s':''} ready for review</strong><br><div style="font-size:12px;color:var(--lime);margin-top:8px">No apps were swapped — each draft keeps the original technology and bulks up the detail.</div>${rawLine}${note}<br><br>Review the drafts below, then approve/apply only the ones you want.`);
+    bulkChatMemory.push({ role:'assistant', content:`Proposed ${changes.length} same-tool description rewrites. No apps were swapped.` });
+    window._snapshotReason = `Before: ${bulkChatContext.rawInstruction ? bulkChatContext.rawInstruction.slice(0, 60) : 'same-tool detail rewrite'}`;
+    showChangesPopup(changes);
+    bulkChatState = 'done';
+  }catch(e){
+    if(prog) prog.style.display = 'none';
+    updateReasoningStep(2, 'error');
+    setTimeout(hideReasoningSteps, 1200);
+    bulkChatAddMessage('assistant', `❌ Same-tool detail rewrite failed: ${esc(e.message)}\n\nTry asking for a smaller number, e.g. "Bulk up 15 brief descriptions".`);
+    bulkChatState = 'idle';
+  }
+  stopProgress();
+}
+
+const DLA_ORIGINAL_START_BULK_ANALYSIS_DETAIL_REWRITE = startBulkAnalysis;
+startBulkAnalysis = async function startBulkAnalysis(){
+  const instruction = bulkChatContext.rawInstruction;
+  const clarifications = bulkChatContext.clarifications || [];
+  const enrichedInstruction = clarifications.length
+    ? `${instruction}\n\nAdditional context from conversation:\n${clarifications.map(c => `Q: ${c.question}\nA: ${c.answer}`).join('\n')}`
+    : instruction;
+
+  const weakRewrite = parseBulkWeakDescriptionRewriteRequest(enrichedInstruction);
+  if(weakRewrite){
+    return runTargetedWeakDescriptionRewrite(enrichedInstruction);
+  }
+
+  return DLA_ORIGINAL_START_BULK_ANALYSIS_DETAIL_REWRITE.apply(this, arguments);
+};
 
 (function init(){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
