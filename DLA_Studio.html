@@ -94,6 +94,24 @@
   #bulk-chat-messages{height:430px!important}
   #chat-messages{height:430px}
 }
+
+/* ===== BULK SECTION COLLAPSIBLE CARDS PATCH v2 =====
+   Reinstates expandable/collapsible Bulk cards. All sections start collapsed by default,
+   then remember their open/closed state after the first click. */
+#panel-tools .bulk-collapsible-card{padding:0!important;overflow:hidden}
+.bulk-collapse-header{width:100%;display:flex;align-items:center;gap:12px;padding:16px 22px;background:var(--card2);border:0;border-bottom:1px solid var(--border);color:var(--text);font-family:inherit;cursor:pointer;text-align:left}
+.bulk-collapse-header:hover{background:#262626}
+.bulk-collapse-title{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:1.3px;color:var(--lime)}
+.bulk-collapse-sub{font-size:11px;color:var(--dim);font-weight:600;margin-top:2px;text-transform:none;letter-spacing:0}
+.bulk-collapse-spacer{flex:1}
+.bulk-collapse-icon{font-size:16px;color:var(--dim);transition:transform .15s ease}
+.bulk-collapsed .bulk-collapse-icon{transform:rotate(-90deg)}
+.bulk-collapse-body{padding:28px}
+.bulk-collapse-body.bulk-collapse-body-compact{padding:0}
+.bulk-collapsed .bulk-collapse-body{display:none}
+.bulk-collapsed .bulk-collapse-header{border-bottom:0}
+@media (min-width:1400px){.bulk-collapse-body{padding:34px}.bulk-collapse-header{padding:18px 26px}.bulk-collapse-title{font-size:13px}}
+
 </style>
 </head>
 <body>
@@ -3377,8 +3395,6 @@ function renderRealismResults(results, containerId, opts){
       <div style="font-size:12px;color:var(--dim)">${high} high priority · ${medium} medium · ${low} low</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
         <button class="btn-sm btn-realism-fix-all" onclick="draftAllRealismFixes('high')" style="color:#FF8080;border-color:#FF8080">✨ Draft fixes for high priority</button>
-        <button class="btn-sm btn-realism-fix-all" onclick="draftAllRealismFixes('medium')" style="color:#F5A623;border-color:#F5A623">✨ Draft fixes for medium issues</button>
-        <button class="btn-sm btn-realism-fix-all" onclick="draftAllRealismFixes('low')" style="color:var(--blue);border-color:var(--blue)">✨ Draft fixes for light issues</button>
         <button class="btn-sm btn-realism-fix-all" onclick="draftAllRealismFixes('all')" style="color:var(--gold);border-color:var(--gold)">✨ Draft fixes for all flagged</button>
       </div>
       <div id="realism-batch-progress" style="display:none;margin-top:10px;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px">
@@ -3607,33 +3623,14 @@ async function draftAllRealismFixes(scope){
     alert('Run the realism audit first.');
     return;
   }
-  const normalisedScope = scope === 'light' ? 'low' : (scope || 'all');
-  const targets = source.filter(r => {
-    const sev = resultHighestSeverity(r);
-    if(normalisedScope === 'high') return sev === 'high';
-    if(normalisedScope === 'medium') return sev === 'medium';
-    if(normalisedScope === 'low') return sev === 'low';
-    return true;
-  });
-  const scopeLabels = {
-    high: 'high-priority flagged suggestion',
-    medium: 'medium-priority flagged suggestion',
-    low: 'light flagged suggestion',
-    all: 'flagged suggestion'
-  };
+  const targets = source.filter(r => scope === 'high' ? resultHighestSeverity(r) === 'high' : true);
   if(!targets.length){
-    const noneLabels = {
-      high: 'No high-priority flags to fix.',
-      medium: 'No medium-priority flags to fix.',
-      low: 'No light flags to fix.',
-      all: 'No flagged suggestions to fix.'
-    };
-    alert(noneLabels[normalisedScope] || noneLabels.all);
+    alert(scope === 'high' ? 'No high-priority flags to fix.' : 'No flagged suggestions to fix.');
     return;
   }
 
-  const label = scopeLabels[normalisedScope] || scopeLabels.all;
-  const confirmed = confirm(`Draft AI fixes for ${targets.length} ${label}${targets.length!==1?'s':''}?\n\nThis will generate rewrite/replacement drafts one by one, then run an AI quality check comparing each draft against the original. For concrete-action or weak-unit-connection flags, Studio keeps the same tool and task and only rewrites the description. Nothing will be saved automatically — all accepted drafts still need human approval.`);
+  const label = scope === 'high' ? 'high-priority flagged suggestion' : 'flagged suggestion';
+  const confirmed = confirm(`Draft AI fixes for ${targets.length} ${label}${targets.length!==1?'s':''}?\n\nThis will generate replacement drafts one by one, then run an AI quality check comparing each draft against the original. Low-confidence drafts will be rejected before the review popup. Nothing will be saved automatically — all accepted drafts still need human approval.`);
   if(!confirmed) return;
 
   const buttons = Array.from(document.querySelectorAll('.btn-realism-fix-all'));
@@ -5679,8 +5676,8 @@ function computeBulkInsights(){
     insights.push({
       icon: '🔎',
       title: `${weakCount} weak suggestions detected`,
-      body: `Descriptions that are brief, generic ("research online", "just use the app"), or vague. These rarely get used by teachers.`,
-      action: 'Bulk up weak or generic descriptions using the same tool'
+      body: `Descriptions that are very short (<60 chars), generic ("research online", "just use the app"), or vague. These rarely get used by teachers.`,
+      action: 'Scan the library for weak or generic suggestions and propose stronger replacements'
     });
   }
 
@@ -6151,411 +6148,6 @@ function askNextClarification(){
   bulkChatAddMessage('assistant', q.text, q.options);
 }
 
-
-// ========== BULK AI TARGETED TOOL DIVERSIFICATION — SAFE FALLBACK PATCH ==========
-// Handles requests such as "Diversify Seesaw suggestions across the library" without
-// sending the whole data.json to GPT. It sends only matching tool slots, includes each
-// unit's existing tools so GPT avoids duplicates, and falls back to safe local drafts
-// instead of returning "No safe proposed changes" when GPT is too conservative.
-function parseBulkDiversifyToolRequest(instruction){
-  const text = String(instruction || '').replace(/\s+/g, ' ').trim();
-  if(!text) return null;
-
-  let m = text.match(/\bdiversify\s+([A-Za-z0-9:&+\/.'’\- ]+?)(?:\s+suggestions?\b|\s+across\b|\s+throughout\b|\s+in\b|\s+with\b|$)/i);
-  if(!m){
-    m = text.match(/\breplace\s+(?:some\s+|all\s+|the\s+)?([A-Za-z0-9:&+\/.'’\- ]+?)(?:\s+suggestions?\b|\s+with\b|\s+across\b|\s+throughout\b|\s+in\b|$)/i);
-  }
-  if(!m) return null;
-
-  let tool = String(m[1] || '').trim()
-    .replace(/^(some|all|the)\s+/i, '')
-    .replace(/\s+(suggestions?|slots?|ideas?)$/i, '')
-    .replace(/[.?!]+$/g, '')
-    .trim();
-
-  const lower = tool.toLowerCase();
-  const bad = ['tool', 'tools', 'technology', 'tech', 'top tools', 'other top tools', 'library', 'the library'];
-  if(!tool || tool.length < 2 || bad.includes(lower)) return null;
-
-  return { tool };
-}
-
-function getBulkDiversifyTargetCount(instruction, candidateCount){
-  const text = String(instruction || '');
-  const countMatch = text.match(/\b(?:find|add|propose|suggest|need|want|get|give\s+me|identify|locate|spot|show\s+me|replace|diversify)\s+(?:at\s+least\s+|about\s+|around\s+|approximately\s+|up\s+to\s+|some\s+|me\s+)?(\d{1,3})\b/i);
-  if(countMatch) return Math.max(1, Math.min(Number(countMatch[1]) || 1, candidateCount, 60));
-  if(/\b(all|every|each)\b/i.test(text)) return Math.min(candidateCount, 60);
-  return Math.min(candidateCount, Math.max(8, Math.ceil(candidateCount * 0.35), Math.min(24, candidateCount)));
-}
-
-function getBulkDiversifyAlternatives(targetTool, candidates){
-  const target = toolKey(targetTool);
-  const freq = {};
-  DATA.forEach(e => {
-    getSugs(e).forEach(s => {
-      const raw = normaliseToolName(sugTool(s));
-      const key = toolKey(raw);
-      if(!key || key === target) return;
-      if(toolContainsForbiddenKeyword(raw) || toolViolatesInventoryBan(raw)) return;
-      freq[raw] = (freq[raw] || 0) + 1;
-    });
-  });
-
-  const approved = (TOOL_INVENTORY && Array.isArray(TOOL_INVENTORY.approved)) ? TOOL_INVENTORY.approved : [];
-  const whitelisted = approved
-    .map(t => normaliseToolName(t))
-    .filter(t => t && toolKey(t) !== target && !toolContainsForbiddenKeyword(t) && !toolViolatesInventoryBan(t));
-
-  const existingLowUse = Object.entries(freq)
-    .sort((a,b)=>a[1]-b[1])
-    .map(([t])=>t);
-
-  const merged = [...whitelisted, ...existingLowUse];
-  const unique = [];
-  const seen = new Set();
-  merged.forEach(t => {
-    const k = toolKey(t);
-    if(!k || seen.has(k)) return;
-    seen.add(k);
-    unique.push(t);
-  });
-
-  const candidateYears = new Set((candidates || []).map(c => c.yl));
-  const yearChecked = unique.filter(t => {
-    for(const yl of candidateYears){
-      if(isToolAgeAppropriate(t, yl)) return true;
-    }
-    return false;
-  });
-
-  return (yearChecked.length ? yearChecked : unique).slice(0, 48);
-}
-
-function bulkExistingToolKeysForEntry(entry, excludeSugIdx){
-  const keys = new Set();
-  getSugs(entry).forEach((s, idx) => {
-    if(idx === excludeSugIdx) return;
-    const k = toolKey(sugTool(s));
-    if(k) keys.add(k);
-  });
-  return keys;
-}
-
-function bulkSafeAlternativesForSlot(entry, targetTool, alternatives, sugIdx){
-  const targetKey = toolKey(targetTool);
-  const existing = bulkExistingToolKeysForEntry(entry, sugIdx);
-  const out = [];
-  const seen = new Set();
-  alternatives.forEach(tool => {
-    const k = toolKey(tool);
-    if(!k || seen.has(k)) return;
-    seen.add(k);
-    if(k === targetKey) return;
-    if(existing.has(k)) return;
-    if(toolContainsForbiddenKeyword(tool) || toolViolatesInventoryBan(tool)) return;
-    if(!isAiToolSafeForEntry(tool, entry)) return;
-    out.push(tool);
-  });
-  return out;
-}
-
-function parseApplyChangesFromText(response){
-  const text = String(response || '');
-  const changeMatch = text.match(/APPLY_CHANGES:\s*([\s\S]*)/s);
-  const source = changeMatch ? changeMatch[1].trim() : text.trim();
-  try{
-    const arrStart = source.indexOf('[');
-    if(arrStart === -1) return [];
-    let arrStr = source.slice(arrStart);
-    const arrEnd = arrStr.lastIndexOf(']');
-    if(arrEnd !== -1){
-      return normaliseChanges(JSON.parse(cleanJSON(arrStr.slice(0, arrEnd + 1))));
-    }
-  }catch(err){
-    console.warn('Bulk targeted parse failed:', err.message);
-  }
-  return [];
-}
-
-function bulkProductForTool(toolName){
-  const t = String(toolName || '').toLowerCase();
-  if(t.includes('book creator')) return 'multimedia page or short digital book';
-  if(t.includes('canva')) return 'annotated poster, infographic or visual explanation';
-  if(t.includes('padlet')) return 'collaborative evidence wall with images, notes and comments';
-  if(t.includes('scratch')) return 'interactive model, animation or choose-your-own pathway';
-  if(t.includes('micro')) return 'coded prototype that uses inputs, outputs or sensor data';
-  if(t.includes('sphero') || t.includes('indi') || t.includes('bee')) return 'coded pathway or physical challenge model';
-  if(t.includes('lego')) return 'working prototype or robotic model';
-  if(t.includes('minecraft')) return 'collaborative build or simulated environment';
-  if(t.includes('forms')) return 'survey, quiz and response chart';
-  if(t.includes('excel')) return 'simple table, chart or data display';
-  if(t.includes('tinkercad') || t.includes('3d')) return '3D model or printable prototype';
-  if(t.includes('garageband') || t.includes('podcast')) return 'short audio explanation or podcast segment';
-  if(t.includes('imovie') || t.includes('adobe express') || t.includes('video')) return 'short video explanation';
-  if(t.includes('green screen')) return 'green-screen explainer scene';
-  if(t.includes('google earth') || t.includes('maps')) return 'annotated map or location tour';
-  if(t.includes('seesaw')) return 'recorded reflection or portfolio post';
-  return 'digital artefact that explains their thinking';
-}
-
-function bulkUnitFocus(entry){
-  const ci = compactForPrompt(entry?.ci || '', 120);
-  if(ci) return ci.replace(/^['"]|['"]$/g, '');
-  const lo = compactForPrompt(entry?.lo || '', 120);
-  if(lo) return lo.replace(/[;•]+/g, ', ');
-  return compactForPrompt(entry?.th || 'the unit idea', 90);
-}
-
-function bulkFallbackDescription(toolName, entry){
-  const product = bulkProductForTool(toolName);
-  const focus = bulkUnitFocus(entry);
-  return `Students use ${toolName} to create a ${product} that shows their understanding of ${focus}. They include unit evidence, labels or narration, then share the product with peers so they can explain, compare and refine their thinking.`;
-}
-
-function buildLocalTargetedDiversifyFallback(candidates, targetCount){
-  const toolUse = {};
-  DATA.forEach(e => getSugs(e).forEach(s => {
-    const t = normaliseToolName(sugTool(s));
-    if(t) toolUse[t] = (toolUse[t] || 0) + 1;
-  }));
-
-  const selected = [];
-  const seenEntry = new Set();
-  const sortedCandidates = [...candidates].sort((a,b) => {
-    const ya = String(a.yl || ''), yb = String(b.yl || '');
-    if(ya !== yb) return ya.localeCompare(yb);
-    const ca = String(a.ca || ''), cb = String(b.ca || '');
-    if(ca !== cb) return ca.localeCompare(cb);
-    return a.entryIdx - b.entryIdx;
-  });
-
-  for(const c of sortedCandidates){
-    if(selected.length >= targetCount) break;
-    if(seenEntry.has(c.entryIdx)) continue;
-    const entry = DATA[c.entryIdx];
-    if(!entry || !c.allowedTools || !c.allowedTools.length) continue;
-    const bestTool = [...c.allowedTools].sort((a,b) => (toolUse[a] || 0) - (toolUse[b] || 0))[0];
-    if(!bestTool) continue;
-    selected.push({
-      entryIdx: c.entryIdx,
-      sugIdx: c.sugIdx,
-      t: bestTool,
-      d: bulkFallbackDescription(bestTool, entry)
-    });
-    seenEntry.add(c.entryIdx);
-    toolUse[bestTool] = (toolUse[bestTool] || 0) + 1;
-  }
-
-  if(selected.length < targetCount){
-    const seenSlots = new Set(selected.map(c => `${c.entryIdx}::${c.sugIdx}`));
-    for(const c of sortedCandidates){
-      if(selected.length >= targetCount) break;
-      const slot = `${c.entryIdx}::${c.sugIdx}`;
-      if(seenSlots.has(slot)) continue;
-      const entry = DATA[c.entryIdx];
-      if(!entry || !c.allowedTools || !c.allowedTools.length) continue;
-      const bestTool = [...c.allowedTools].sort((a,b) => (toolUse[a] || 0) - (toolUse[b] || 0))[0];
-      if(!bestTool) continue;
-      selected.push({ entryIdx:c.entryIdx, sugIdx:c.sugIdx, t:bestTool, d:bulkFallbackDescription(bestTool, entry) });
-      seenSlots.add(slot);
-      toolUse[bestTool] = (toolUse[bestTool] || 0) + 1;
-    }
-  }
-
-  return selected;
-}
-
-function publishBulkChatChanges(changes, meta){
-  meta = meta || {};
-  if(!changes || !changes.length){
-    const detail = meta.detail ? ': ' + esc(meta.detail) : '.';
-    bulkChatAddMessage('assistant', `⚠️ No safe proposed changes were found${detail}`);
-    bulkChatMemory.push({ role: 'assistant', content: 'No safe proposed changes were found.' });
-    bulkChatState = 'idle';
-    return;
-  }
-
-  const byTool = {};
-  changes.forEach(c => { byTool[c.t || 'Unknown'] = (byTool[c.t || 'Unknown'] || 0) + 1; });
-  const toolBreakdown = Object.entries(byTool).sort((a,b)=>b[1]-a[1]).slice(0, 6)
-    .map(([t,n]) => `• <strong>${n}×</strong> ${esc(t)}`).join('<br>');
-  const moreCount = Object.keys(byTool).length - 6;
-  const moreStr = moreCount > 0 ? `<br>• <em>+ ${moreCount} more tools</em>` : '';
-  const targetLine = meta.targetTool ? `<div style="font-size:12px;color:var(--dim);margin-bottom:8px">Targeted scan: ${esc(meta.targetTool)} · ${meta.candidateCount || 0} matching slot${meta.candidateCount===1?'':'s'} · ${meta.safeCandidateCount || meta.candidateCount || 0} with at least one non-duplicate replacement · ${meta.rawCount || changes.length} AI draft${meta.rawCount===1?'':'s'} before filters</div>` : '';
-  const filteredLine = meta.filteredCount ? `<div style="font-size:11px;color:var(--orange);margin-top:8px">${meta.filteredCount} AI draft${meta.filteredCount===1?' was':'s were'} removed because they were duplicate, age-inappropriate, banned, unchanged, or unrealistic.</div>` : '';
-  const fallbackLine = meta.usedFallback ? `<div style="font-size:11px;color:var(--gold);margin-top:8px">AI did not return enough safe drafts, so Studio generated safe review drafts locally from your whitelist, age ranges and duplicate rules. Please review before applying.</div>` : '';
-
-  bulkChatAddMessage('assistant', `✅ <strong>${changes.length} proposed change${changes.length!==1?'s':''}</strong><br>${targetLine}<div style="font-size:12px;color:var(--lime);margin-top:8px">Breakdown:</div>${toolBreakdown}${moreStr}${filteredLine}${fallbackLine}<br><br>Review the drafts below, then approve/apply only the ones you want.`);
-  bulkChatMemory.push({ role: 'assistant', content: `Proposed ${changes.length} targeted changes. Breakdown: ${Object.entries(byTool).map(([t,n])=>`${n}x ${t}`).join(', ')}` });
-  window._snapshotReason = `Before: ${bulkChatContext.rawInstruction ? bulkChatContext.rawInstruction.slice(0, 60) : 'targeted bulk edit'}`;
-  showChangesPopup(changes);
-  bulkChatState = 'done';
-}
-
-async function runTargetedToolDiversification(enrichedInstruction, parsed){
-  bulkChatState = 'analysing';
-  const targetTool = parsed.tool;
-  const targetKey = toolKey(targetTool);
-  const prog = document.getElementById('bulk-ai-progress');
-  const lbl = document.getElementById('bulk-ai-label');
-  const bar = document.getElementById('bulk-ai-bar');
-  if(prog) prog.style.display = 'block';
-  if(bar) bar.style.width = '12%';
-  if(lbl) lbl.textContent = `Finding ${targetTool} suggestions only…`;
-
-  bulkChatAddMessage('assistant', `🎯 Targeted scan: finding only <strong>${esc(targetTool)}</strong> suggestions so this does not overload GPT-4.1.`);
-  showReasoningSteps([
-    { text: `Finding ${targetTool} slots`, status: 'active' },
-    { text: 'Building per-unit safe replacement lists', status: 'pending' },
-    { text: 'Drafting concise proposals', status: 'pending' },
-    { text: 'Filtering duplicates and age-range issues', status: 'pending' }
-  ]);
-
-  try{
-    const rawCandidates = [];
-    DATA.forEach((e, entryIdx) => {
-      if(!e || !e.audited || getSugs(e).filter(isRealSug).length < 6) return;
-      getSugs(e).forEach((s, sugIdx) => {
-        if(sugIdx === 5) return;
-        const tool = sugTool(s);
-        const k = toolKey(tool);
-        const norm = normaliseToolName(tool).toLowerCase();
-        const targetNorm = normaliseToolName(targetTool).toLowerCase();
-        if(k === targetKey || norm.includes(targetNorm) || targetNorm.includes(norm)){
-          rawCandidates.push({
-            entryIdx, sugIdx,
-            ca: e.ca || '', yl: e.yl || '', th: e.th || '', ci: e.ci || '', lo: e.lo || '',
-            tool,
-            desc: sugDesc(s)
-          });
-        }
-      });
-    });
-
-    updateReasoningStep(0, 'done', `Found ${rawCandidates.length} ${targetTool} slot${rawCandidates.length===1?'':'s'}`);
-    updateReasoningStep(1, 'active');
-    if(!rawCandidates.length){
-      if(prog) prog.style.display = 'none';
-      setTimeout(hideReasoningSteps, 800);
-      bulkChatAddMessage('assistant', `⚠️ I could not find any editable <strong>${esc(targetTool)}</strong> suggestions in slots 1–5. Suggestion 6 is protected and was not considered.`);
-      bulkChatState = 'idle';
-      return;
-    }
-
-    const alternatives = getBulkDiversifyAlternatives(targetTool, rawCandidates);
-    const candidates = rawCandidates.map(c => {
-      const entry = DATA[c.entryIdx];
-      const existingTools = getSugs(entry).map(sugTool).filter(Boolean);
-      const allowedTools = bulkSafeAlternativesForSlot(entry, targetTool, alternatives, c.sugIdx).slice(0, 14);
-      return Object.assign({}, c, { existingTools, allowedTools });
-    }).filter(c => c.allowedTools.length > 0);
-
-    if(!candidates.length){
-      if(prog) prog.style.display = 'none';
-      setTimeout(hideReasoningSteps, 800);
-      bulkChatAddMessage('assistant', `⚠️ I found ${rawCandidates.length} ${esc(targetTool)} slots, but none had a safe replacement available after applying whitelist, banned-tool, age-range and duplicate rules. Try widening the whitelist or age ranges first.`);
-      bulkChatState = 'idle';
-      return;
-    }
-
-    const targetCount = getBulkDiversifyTargetCount(enrichedInstruction, candidates.length);
-    updateReasoningStep(1, 'done', `${candidates.length} slots have safe non-duplicate replacements`);
-    updateReasoningStep(2, 'active');
-    if(bar) bar.style.width = '35%';
-    if(lbl) lbl.textContent = `Drafting ${targetCount} diversified replacements from ${candidates.length} safe ${targetTool} slots…`;
-
-    const candidateLines = candidates.map(c => {
-      const context = [
-        c.ci ? `CI:${compactForPrompt(c.ci, 100)}` : '',
-        c.lo ? `LOI:${compactForPrompt(c.lo, 100)}` : ''
-      ].filter(Boolean).join(' | ');
-      const existing = c.existingTools.map(t => compactForPrompt(t, 32)).join(', ');
-      const allowed = c.allowedTools.map(t => compactForPrompt(t, 32)).join(', ');
-      return `[${c.entryIdx}]s${c.sugIdx} ${c.ca} | ${c.yl} | ${compactForPrompt(c.th, 62)}${context ? ' | '+context : ''}\n  existing in unit: ${existing}\n  allowed replacements for THIS slot: ${allowed}\n  current ${targetTool} description: ${compactForPrompt(c.desc, 90)}`;
-    }).join('\n');
-
-    const prompt = `You are a Digital Learning Coach at Wesley College, an IB PYP school.\n\nTASK: Diversify overused ${targetTool} suggestions. Replace SOME, not necessarily all, ${targetTool} slots with other suitable tools.\n\nCOORDINATOR REQUEST:\n${enrichedInstruction}\n\nTARGET:\n- There are ${rawCandidates.length} editable ${targetTool} slots, and ${candidates.length} have at least one safe non-duplicate replacement.\n- Draft exactly ${targetCount} high-quality replacement suggestions unless fewer are genuinely suitable.\n- Choose the strongest curriculum fits across the spread of campuses/year levels.\n\nHARD RULES:\n- Use ONLY tools listed in "allowed replacements for THIS slot" for that exact slot.\n- Do NOT use ${targetTool} as the new tool.\n- Do NOT use any tool listed in "existing in unit" for that unit.\n- Do NOT change sugIdx 5 / Suggestion 6; it is protected and is not in the candidate list.\n- Respect age ranges and banned tools.\n- Use varied replacements; do not replace everything with one tool.\n- Keep each description concrete: what students do, what students create/produce, and how it connects to the unit.\n- Return ONLY an APPLY_CHANGES block with valid JSON.\n\nOutput format:\nAPPLY_CHANGES:[{"entryIdx":3,"sugIdx":1,"t":"Tool Name","d":"2-3 vivid sentences..."}]\n\n${SUGGESTION_STYLE}\n\nCANDIDATE ${targetTool.toUpperCase()} SLOTS:\n${candidateLines}`;
-
-    const estimatedTokens = Math.round(prompt.length / 4) + 1200;
-    console.log(`Targeted diversify ${targetTool}: ${rawCandidates.length} raw candidates, ${candidates.length} safe, target ${targetCount}, ~${estimatedTokens.toLocaleString()} tokens`);
-
-    let response = '';
-    try{
-      response = await callAI(
-        [{role:'user', parts:[{text:'Draft the targeted diversification proposals.'}]}],
-        prompt,
-        estimatedTokens < 18000 ? OPENAI_MODEL : OPENAI_FAST_MODEL
-      );
-    }catch(aiErr){
-      console.warn('Targeted diversify AI draft failed; using local safe fallback:', aiErr.message);
-      response = '';
-    }
-
-    updateReasoningStep(2, 'done');
-    updateReasoningStep(3, 'active');
-    if(bar) bar.style.width = '82%';
-    if(lbl) lbl.textContent = 'Filtering proposals…';
-
-    let changes = parseApplyChangesFromText(response);
-    const rawCount = changes.length;
-    const candidateBySlot = {};
-    candidates.forEach(c => { candidateBySlot[`${c.entryIdx}::${c.sugIdx}`] = c; });
-    const validCandidateKeys = new Set(Object.keys(candidateBySlot));
-    const seenSlots = new Set();
-    changes = changes.filter(c => {
-      const entry = DATA[c.entryIdx];
-      if(!entry) return false;
-      const slotKey = `${c.entryIdx}::${c.sugIdx}`;
-      const cand = candidateBySlot[slotKey];
-      if(!validCandidateKeys.has(slotKey) || !cand) return false;
-      if(seenSlots.has(slotKey)) return false;
-      seenSlots.add(slotKey);
-      if(Number(c.sugIdx) === 5) return false;
-      if(toolKey(c.t || '') === targetKey) return false;
-      const allowedKeys = new Set((cand.allowedTools || []).map(toolKey));
-      if(!allowedKeys.has(toolKey(c.t || ''))) return false;
-      if(toolContainsForbiddenKeyword(c.t || '') || toolViolatesInventoryBan(c.t || '')) return false;
-      if(!isAiToolSafeForEntry(c.t || '', entry)) return false;
-      if(wouldDupeToolProposalInEntry(entry, c.t || '', c.sugIdx)) return false;
-      const oldSug = getSugs(entry)[c.sugIdx];
-      if(oldSug && toolKey(sugTool(oldSug)) === toolKey(c.t || '')) return false;
-      const realism = checkRealisticToolUse(c.t || '', c.d || '', entry);
-      if(!realism.ok) return false;
-      return true;
-    }).slice(0, targetCount);
-
-    let usedFallback = false;
-    if(changes.length < Math.min(3, targetCount)){
-      const fallback = buildLocalTargetedDiversifyFallback(candidates, targetCount);
-      if(fallback.length > changes.length){
-        changes = fallback;
-        usedFallback = true;
-      }
-    }
-
-    if(bar) bar.style.width = '100%';
-    if(prog) prog.style.display = 'none';
-    updateReasoningStep(3, 'done');
-    setTimeout(hideReasoningSteps, 900);
-    publishBulkChatChanges(changes, {
-      targetTool,
-      candidateCount: rawCandidates.length,
-      safeCandidateCount: candidates.length,
-      rawCount,
-      filteredCount: Math.max(0, rawCount - changes.length),
-      usedFallback,
-      detail: candidates.length ? '' : 'No candidates had non-duplicate replacements.'
-    });
-  }catch(e){
-    if(prog) prog.style.display = 'none';
-    updateReasoningStep(2, 'error');
-    setTimeout(hideReasoningSteps, 1200);
-    bulkChatAddMessage('assistant', `❌ Targeted diversification failed: ${esc(e.message)}\n\nTry asking for a smaller number, e.g. "Diversify 15 ${esc(targetTool)} suggestions".`);
-    bulkChatState = 'idle';
-  }
-  stopProgress();
-}
-
 async function startBulkAnalysis(){
   bulkChatState = 'analysing';
 
@@ -6564,11 +6156,6 @@ async function startBulkAnalysis(){
   const enrichedInstruction = clarifications.length
     ? `${instruction}\n\nAdditional context from conversation:\n${clarifications.map(c => `Q: ${c.question}\nA: ${c.answer}`).join('\n')}`
     : instruction;
-
-  const targetedDiversify = parseBulkDiversifyToolRequest(enrichedInstruction);
-  if(targetedDiversify){
-    return runTargetedToolDiversification(enrichedInstruction, targetedDiversify);
-  }
 
   bulkChatAddMessage('assistant', '🔍 Analysing all entries now — this may take a minute...');
 
@@ -7718,639 +7305,135 @@ async function buildRealismReplacementChange(result){
   throw new Error(lastError && lastError.message ? lastError.message : 'AI draft failed after retrying.');
 }
 
-/* =========================================================
-   DLA Studio Patch — Concrete Action/Product Reword Fix
-   For flags that only say the description lacks a concrete
-   student action/product, keep the same tool and task. The AI
-   rewrites the description instead of replacing the technology.
-   ========================================================= */
-function dlaIssueIsConcreteAction_(issue){
-  const type = String(issue?.type || '').toLowerCase();
-  const msg = String(issue?.message || '').toLowerCase();
-  return type === 'vague' || /concrete\s+student\s+action\s*\/\s*product|lacks\s+a\s+concrete/i.test(msg);
-}
-
-function dlaIssueIsUnitConnection_(issue){
-  const type = String(issue?.type || '').toLowerCase();
-  const msg = String(issue?.message || '').toLowerCase();
-  return type === 'connection' || /unit.{0,30}(content|vocabulary|connection)|connect.{0,30}unit|clearly\s+reference\s+this\s+unit|unit'?s\s+content/i.test(msg);
-}
-
-function dlaReasonNeedsUnitConnection_(reason){
-  const r = String(reason || '').toLowerCase();
-  return /unit.{0,30}(content|vocabulary|connection)|connect.{0,30}unit|clearly\s+reference\s+this\s+unit|unit'?s\s+content/i.test(r);
-}
-
-function dlaReasonNeedsConcreteAction_(reason){
-  const r = String(reason || '').toLowerCase();
-  return /concrete\s+student\s+action\s*\/\s*product|lacks\s+a\s+concrete/i.test(r);
-}
-
-function dlaSameTaskPseudoIssue_(reason){
-  if(dlaReasonNeedsUnitConnection_(reason) && !dlaReasonNeedsConcreteAction_(reason)){
-    return {type:'connection', severity:'low', message: reason || 'Description may not clearly reference this unit\'s content or vocabulary.'};
-  }
-  return {type:'vague', severity:'medium', message: reason || 'Description lacks a concrete student action/product.'};
-}
-
-function dlaIssueIsHardReplacementBlocker_(issue){
-  const type = String(issue?.type || '').toLowerCase();
-  const msg = String(issue?.message || '').toLowerCase();
-  if(['missing','banned','age','stem-age','realism','duplicate','stem-realism'].includes(type)) return true;
-  return /banned|unavailable|too advanced|not age[- ]?appropriate|duplicates?|unrealistic|does not describe|missing or incomplete/i.test(msg);
-}
-
-function dlaShouldRewriteSameTaskForConcreteAction_(result){
-  const issues = Array.isArray(result?.issues) ? result.issues : [];
-  if(!issues.length) return false;
-  const hasSameTaskRewordFlag = issues.some(dlaIssueIsConcreteAction_) || issues.some(dlaIssueIsUnitConnection_);
-  if(!hasSameTaskRewordFlag) return false;
-  return !issues.some(dlaIssueIsHardReplacementBlocker_);
-}
-
-function dlaReasonIsConcreteActionRewrite_(reason){
-  const r = String(reason || '');
-  const wantsSameTaskReword = dlaReasonNeedsConcreteAction_(r) || dlaReasonNeedsUnitConnection_(r);
-  if(!wantsSameTaskReword) return false;
-  return !/banned|unavailable|too advanced|not age[- ]?appropriate|duplicates?|unrealistic|does not describe|missing or incomplete/i.test(r);
-}
-
-function dlaHasConcreteStudentOutcome_(desc){
-  const d = String(desc || '').toLowerCase();
-  if(!hasConcreteStudentAction(desc)) return false;
-  return /\b(product|artefact|artifact|prototype|model|map|diagram|poster|presentation|slide|video|film|podcast|audio|recording|animation|book|page|journal|reflection|report|survey|graph|chart|timeline|story|explanation|labelled|labeled|plan|design|code|program|photo|portfolio|exhibit|display|script|voiceover|route|sequence|dataset|data set|table|infographic|comic|interview|field guide|quiz|collage|caption|annotation)\b/i.test(d)
-    || /\b(create|make|build|construct|produce|publish|present|record|film|draw|design|code|program|map|model)\b.{0,40}\b(a|an|their|the|one|two|group|class)\b/i.test(d);
-}
-
-function dlaBuildSameTaskRewritePrompt_(opts){
-  const {entry, oldTool, oldDesc, reason, retryNotes} = opts;
-  const retryText = retryNotes && retryNotes.length
-    ? `\n\nPrevious rejected draft(s):\n${retryNotes.map((n,i)=>`${i+1}. ${n}`).join('\n')}\nYou MUST correct these problems in the next draft.`
-    : '';
-  return `You are improving one existing Wesley College Digital Learning Assistant suggestion.
-This is NOT a tool replacement. Keep the same technology and the same basic classroom task, but rewrite the description so it fixes the flagged wording issue. For concrete-action flags, add a clear student action and product. For unit-connection flags, make the same task explicitly connect to the unit content, central idea, lines of inquiry or vocabulary.
-
-Campus: ${entry.ca}
-Year level: ${entry.yl}
-Theme: ${entry.th}
-Central Idea: ${entry.ci || ''}
-Lines of Inquiry: ${entry.lo || ''}
-Planner summary: ${entry.plannerText || ''}
-
-CURRENT TOOL — keep this exact tool name:
-${oldTool}
-
-CURRENT DESCRIPTION — keep the same underlying task/intent:
-${oldDesc}
-
-Problem flagged:
-${reason || 'Description lacks a concrete student action/product.'}
-
-Rewrite rules:
-- Keep the tool name exactly as "${oldTool}".
-- Keep the same basic activity/task; do not swap in a different technology or a totally different lesson.
-- Make the description 2-3 practical sentences.
-- Explicitly state what students DO, using action verbs such as create, build, record, map, model, code, compare, label, publish or present.
-- Explicitly state what students PRODUCE, such as a labelled map, short video, recorded explanation, prototype, model, graph, Book Creator page, Seesaw post, Padlet board, presentation, coded animation, podcast segment, diagram or reflection.
-- Make the connection to this unit explicit; use language from the theme, central idea, lines of inquiry or planner summary rather than a generic activity description.
-- The final wording should make it clear why this exact task belongs in this exact unit.
-- Write it so a teacher can picture the classroom task immediately.
-
-${SUGGESTION_STYLE}${retryText}
-
-Return ONLY JSON: {"t":"${oldTool.replace(/"/g, '\\"')}","d":"2-3 practical sentences with a clear student action, product and unit connection.","url":"optional existing direct lesson URL if the old suggestion had one"}`;
-}
-
-function dlaBuildReplacementPrompt_(opts){
-  const {entry, oldTool, oldDesc, reason, isStem, availableTools, usedTools, retryNotes, rewriteSameTask} = opts;
-  if(rewriteSameTask) return dlaBuildSameTaskRewritePrompt_(opts);
-
-  const usedText = usedTools.length ? usedTools.join(', ') : 'none';
-  const retryText = retryNotes.length
-    ? `\n\nPrevious rejected draft(s):\n${retryNotes.map((n,i)=>`${i+1}. ${n}`).join('\n')}\nYou MUST correct these problems in the next draft.`
-    : '';
-
-  if(isStem){
-    return `You are replacing protected Suggestion 6, the STEM Design Cycle idea, for this IB PYP unit. This is a manual DLP-approved action, not a bulk edit.
-Campus: ${entry.ca}
-Year level: ${entry.yl}
-Theme: ${entry.th}
-Central Idea: ${entry.ci || ''}
-Lines of Inquiry: ${entry.lo || ''}
-Planner summary: ${entry.plannerText || ''}
-Current STEM suggestion: ${oldTool}: ${oldDesc}
-Problem flagged: ${reason || 'May be unrealistic or not age appropriate.'}
-
-Create ONE replacement STEM Design Cycle activity that is realistic for this year level. It must include tangible making/prototyping materials and a clear Empathise → Define → Ideate → Prototype → Test cycle. It may include age-appropriate technology only when the tech is genuinely useful.
-${REALISTIC_TOOL_USE_RULES}${retryText}
-Return ONLY JSON: {"t":"Project name","d":"2-3 practical sentences describing exactly what students build, test and improve."}`;
-  }
-
-  const allowedText = availableTools.length
-    ? availableTools.join(', ')
-    : 'No non-duplicate age-appropriate tools are currently available.';
-
-  return `You are replacing one unrealistic, vague, weakly connected, banned, duplicated or not age-appropriate digital learning suggestion for an IB PYP unit.
-Campus: ${entry.ca}
-Year level: ${entry.yl}
-Theme: ${entry.th}
-Central Idea: ${entry.ci || ''}
-Lines of Inquiry: ${entry.lo || ''}
-Planner summary: ${entry.plannerText || ''}
-Current suggestion to replace: ${oldTool}: ${oldDesc}
-Problem flagged: ${reason}
-
-TOOLS ALREADY USED IN THIS UNIT — DO NOT CHOOSE ANY OF THESE FOR THE REPLACEMENT:
-${usedText}
-
-ALLOWED REPLACEMENT TOOLS FOR THIS EXACT SLOT — CHOOSE ONE TOOL FROM THIS LIST ONLY:
-${allowedText}
-
-Hard requirements:
-- Do not choose Seesaw, Canva, Book Creator, Padlet, Scratch, or any other tool if it is listed under already-used tools above.
-- Do not propose a blended/app-smash tool name such as "Tool A + Tool B".
-- Do not choose a banned tool or a tool outside the configured age range.
-- The new suggestion must fix the flagged problem rather than simply rewording it.
-
-${buildToolConstraints(entry.yl)}
-${SUGGESTION_STYLE}
-${REALISTIC_TOOL_USE_RULES}${retryText}
-
-Create ONE replacement suggestion that is classroom-realistic, age-appropriate, non-duplicated, and directly connected to the unit. Return ONLY JSON: {"t":"Tool Name","d":"2-3 practical sentences describing exactly what students do and create.","url":"optional direct lesson URL"}`;
-}
-
-async function buildRealismReplacementChange(result){
-  const entryIdx = result.entryIdx;
-  const sugIdx = result.sugIdx;
-  const reason = (result.issues || []).map(i=>i.message).join(' | ') || 'May be unrealistic or not age appropriate.';
-  const entry = DATA[entryIdx];
-  if(!entry) throw new Error('Entry not found');
-  const oldSug = getSugs(entry)[sugIdx];
-  if(!oldSug) throw new Error('Suggestion not found');
-
-  const isStem = sugIdx === 5;
-  const oldTool = sugTool(oldSug);
-  const oldDesc = sugDesc(oldSug);
-  const usedTools = dlaReplacementAlreadyUsedTools_(entry, sugIdx);
-  const rewriteSameTask = !isStem && dlaShouldRewriteSameTaskForConcreteAction_(result);
-  const availableTools = isStem ? [] : (rewriteSameTask ? [oldTool] : dlaReplacementAvailableTools_(entry, sugIdx, oldTool, reason));
-
-  if(!isStem && !rewriteSameTask && !availableTools.length){
-    throw new Error(`No non-duplicate, age-appropriate replacement tools are currently available for ${entry.yl} in this unit. Remove another duplicate first or adjust the whitelist age ranges.`);
-  }
-
-  const availableKeys = new Set(availableTools.map(toolKey));
-  const retryNotes = [];
-  let lastError = null;
-  const maxAttempts = rewriteSameTask ? 3 : (isStem ? 2 : 4);
-
-  for(let attempt=1; attempt<=maxAttempts; attempt++){
-    try{
-      const prompt = dlaBuildReplacementPrompt_({entry, oldTool, oldDesc, reason, isStem, availableTools, usedTools, retryNotes, rewriteSameTask});
-      const raw = await callAI([{role:'user',parts:[{text:prompt}]}], null, OPENAI_FAST_MODEL || OPENAI_MODEL);
-      const parsed = dlaExtractDraftJson_(raw);
-      if(!parsed.t || !parsed.d) throw new Error('AI draft was missing a tool/project name or description.');
-
-      if(rewriteSameTask){
-        parsed.t = oldTool;
-        if(!dlaHasConcreteStudentOutcome_(parsed.d)) throw new Error('Rewrite still does not clearly name both a concrete student action and a student product.');
-        if(dlaReasonNeedsUnitConnection_(reason) && !descHasUnitConnection(parsed.d, entry)){
-          throw new Error('Rewrite still does not clearly connect to this unit\'s content or vocabulary.');
-        }
-      } else if(!isStem){
-        const key = toolKey(parsed.t);
-        if(!availableKeys.has(key)) throw new Error(`${parsed.t} is not in the allowed replacement list for this slot.`);
-        if(!isAiToolSafeForEntry(parsed.t, entry)) throw new Error(`${parsed.t} is banned or not age-appropriate for ${entry.yl}.`);
-        if(wouldDupeToolProposalInEntry(entry, parsed.t, sugIdx) || wouldDupeInEntry(entry, parsed.t, sugIdx)) throw new Error(`${parsed.t} duplicates another suggestion in this unit.`);
-      }
-
-      const realism = checkRealisticToolUse(parsed.t, parsed.d, entry);
-      const quality = await evaluateDraftImprovement(entry, oldSug, parsed, reason, isStem);
-      if(!realism.ok){
-        quality.confidence = quality.confidence === 'High' ? 'Medium' : quality.confidence;
-        quality.remainingConcern = [quality.remainingConcern, 'Studio realism check warning: ' + (realism.reason || 'Tool use may still be unrealistic.')].filter(Boolean).join(' | ');
-        quality.qualityGateWarning = true;
-      }
-
-      const change = {
-        entryIdx,
-        sugIdx,
-        t: parsed.t,
-        d: parsed.d,
-        auditReason: reason,
-        auditIssues: result.issues || [],
-        auditSource: rewriteSameTask ? 'same-task-reword' : 'realism-age-audit',
-        improvementConfidence: quality.confidence,
-        improvementScore: quality.score,
-        whyBetter: rewriteSameTask ? (quality.whyBetter || 'Same task rewritten with a concrete student action, product and clearer unit connection.') : quality.whyBetter,
-        remainingConcern: quality.remainingConcern,
-        qualityGateWarning: !!quality.qualityGateWarning,
-        retryCount: attempt - 1
-      };
-      if(parsed.url) change.url = parsed.url;
-      else if(oldSug.url) change.url = oldSug.url;
-      return change;
-    }catch(e){
-      lastError = e;
-      const msg = e && e.message ? e.message : String(e);
-      retryNotes.push(msg);
-      console.warn(`Realism replacement/rewrite attempt ${attempt}/${maxAttempts} failed:`, msg);
-      if(attempt < maxAttempts) await sleep(500 + attempt * 250);
-    }
-  }
-
-  throw new Error(lastError && lastError.message ? lastError.message : 'AI draft failed after retrying.');
-}
-
-async function draftRealismReplacement(entryIdx, sugIdx, reason){
-  const entry = DATA[entryIdx];
-  if(!entry) return;
-  const oldSug = getSugs(entry)[sugIdx];
-  if(!oldSug) return;
-
-  const isStem = sugIdx === 5;
-  const oldTool = sugTool(oldSug);
-  const oldDesc = sugDesc(oldSug);
-  const usedTools = dlaReplacementAlreadyUsedTools_(entry, sugIdx);
-  const rewriteSameTask = !isStem && dlaReasonIsConcreteActionRewrite_(reason);
-  const availableTools = isStem ? [] : (rewriteSameTask ? [oldTool] : dlaReplacementAvailableTools_(entry, sugIdx, oldTool, reason));
-
-  if(!isStem && !rewriteSameTask && !availableTools.length){
-    alert(`No non-duplicate, age-appropriate replacement tools are currently available for ${entry.yl} in this unit. Remove another duplicate first or adjust the whitelist age ranges.`);
-    return;
-  }
-
-  const pseudoResult = {
-    entryIdx,
-    sugIdx,
-    issues: rewriteSameTask
-      ? [dlaSameTaskPseudoIssue_(reason)]
-      : [{type:'realism', severity:'high', message: reason || 'May be unrealistic or not age appropriate.'}]
-  };
-
-  startProgress();
-  setStatus(`${rewriteSameTask ? 'Rewriting same task' : 'Drafting replacement'} for ${entry.yl} — ${entry.th}…`, 'loading');
-  try{
-    const change = await buildRealismReplacementChange(pseudoResult);
-    showChangesPopup([change]);
-    setStatus(rewriteSameTask ? 'Rewrite drafted — review before applying' : 'Replacement drafted — review before applying');
-  }catch(e){
-    alert('Could not draft fix: ' + e.message);
-    setStatus('Draft failed: ' + e.message, 'error');
-  }finally{
-    stopProgress();
-  }
-}
 
 /* =========================================================
-   DLA Studio Patch — Brief/Thin Description Detail Fix
-   When a suggestion is flagged only because the description is
-   brief/thin/generic/weak, keep the same tool and same task.
-   The fix now expands the practical detail instead of swapping apps.
+   DLA Studio Patch — Bulk section collapsible cards v2
+   Restores collapsed-by-default Bulk cards after later patches.
    ========================================================= */
-function dlaIssueIsBriefDetail_(issue){
-  const type = String(issue?.type || '').toLowerCase();
-  const msg = String(issue?.message || '').toLowerCase();
-  return type === 'thin' || /very\s+short|brief|thin|more\s+practical\s+detail|needs?\s+more\s+detail|under\s*60|<\s*60|less\s+than\s+60/i.test(msg);
-}
+(function(){
+  const STORE_PREFIX = 'dla_bulk_section_open_v2_';
 
-function dlaReasonNeedsBriefDetail_(reason){
-  const r = String(reason || '').toLowerCase();
-  return /very\s+short|brief|thin|more\s+practical\s+detail|needs?\s+more\s+detail|under\s*60|<\s*60|less\s+than\s+60/i.test(r);
-}
+  function safeEsc_(s){
+    if(typeof esc === 'function') return esc(s);
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
 
-if(typeof dlaSameTaskPseudoIssue_ === 'function'){
-  dlaSameTaskPseudoIssue_ = function(reason){
-    if(dlaReasonNeedsBriefDetail_(reason) && !dlaReasonNeedsConcreteAction_(reason) && !dlaReasonNeedsUnitConnection_(reason)){
-      return {type:'thin', severity:'low', message: reason || 'Description is brief; it needs more practical detail.'};
+  function bulkCollapseIdFromCard_(card, index){
+    if(card.dataset.bulkCollapseId) return card.dataset.bulkCollapseId;
+    if(card.id) return card.id;
+    const label = card.querySelector('.label')?.textContent || '';
+    const key = label.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    return key ? `bulk-${key}` : `bulk-section-${index}`;
+  }
+
+  function bulkCardTitle_(card, index){
+    const fallbackTitles = [
+      'Bulk AI Edit',
+      'Realism & age audit',
+      'Tool Inventory',
+      'Snapshots & undo',
+      'Playbooks',
+      'Run Surgeon',
+      'Side-by-side campus comparison'
+    ];
+    const label = card.querySelector('.label')?.textContent?.replace(/^[^A-Za-z0-9]+/, '').trim();
+    return label || fallbackTitles[index] || `Bulk section ${index + 1}`;
+  }
+
+  function bulkCardSubtitle_(title){
+    const key = String(title || '').toLowerCase();
+    if(key.includes('bulk ai')) return 'Chat-driven edits and proposed changes';
+    if(key.includes('realism')) return 'Scan and draft fixes for weak, brief, unrealistic, duplicated or age-mismatched ideas';
+    if(key.includes('tool inventory')) return 'Whitelist, banned tools and editable year-level ranges';
+    if(key.includes('snapshot')) return 'Save and restore rollback points';
+    if(key.includes('playbook')) return 'Reusable bulk-edit prompts';
+    if(key.includes('surgeon')) return 'Remove or replace one tool across the library';
+    if(key.includes('comparison')) return 'Compare campuses for a selected unit';
+    return '';
+  }
+
+  function setBulkCollapseState_(card, open){
+    card.classList.toggle('bulk-collapsed', !open);
+    const header = card.querySelector(':scope > .bulk-collapse-header');
+    if(header){
+      header.setAttribute('aria-expanded', open ? 'true' : 'false');
+      const icon = header.querySelector('.bulk-collapse-icon');
+      if(icon) icon.textContent = open ? '⌄' : '›';
     }
-    if(dlaReasonNeedsUnitConnection_(reason) && !dlaReasonNeedsConcreteAction_(reason)){
-      return {type:'connection', severity:'low', message: reason || 'Description may not clearly reference this unit\'s content or vocabulary.'};
-    }
-    return {type:'vague', severity:'medium', message: reason || 'Description lacks a concrete student action/product.'};
+  }
+
+  window.toggleBulkSection = function toggleBulkSection(id){
+    const cards = Array.from(document.querySelectorAll('#panel-tools .bulk-collapsible-card'));
+    const card = cards.find(c => c.dataset.bulkCollapseId === id);
+    if(!card) return;
+    const nextOpen = card.classList.contains('bulk-collapsed');
+    setBulkCollapseState_(card, nextOpen);
+    try{ localStorage.setItem(STORE_PREFIX + id, nextOpen ? '1' : '0'); }catch(e){}
   };
-}
 
-if(typeof dlaShouldRewriteSameTaskForConcreteAction_ === 'function'){
-  dlaShouldRewriteSameTaskForConcreteAction_ = function(result){
-    const issues = Array.isArray(result?.issues) ? result.issues : [];
-    if(!issues.length) return false;
-    const hasSameTaskRewordFlag = issues.some(dlaIssueIsConcreteAction_) || issues.some(dlaIssueIsUnitConnection_) || issues.some(dlaIssueIsBriefDetail_);
-    if(!hasSameTaskRewordFlag) return false;
-    return !issues.some(dlaIssueIsHardReplacementBlocker_);
-  };
-}
+  window.makeBulkCardsCollapsible = function makeBulkCardsCollapsible(){
+    const panel = document.getElementById('panel-tools');
+    if(!panel) return;
 
-if(typeof dlaReasonIsConcreteActionRewrite_ === 'function'){
-  dlaReasonIsConcreteActionRewrite_ = function(reason){
-    const r = String(reason || '');
-    const wantsSameTaskReword = dlaReasonNeedsConcreteAction_(r) || dlaReasonNeedsUnitConnection_(r) || dlaReasonNeedsBriefDetail_(r);
-    if(!wantsSameTaskReword) return false;
-    return !/banned|unavailable|too advanced|not age[- ]?appropriate|duplicates?|unrealistic|does not describe|missing or incomplete/i.test(r);
-  };
-}
+    const cards = Array.from(panel.children).filter(el => el.classList && el.classList.contains('card'));
+    cards.forEach((card, index) => {
+      if(!card.classList.contains('bulk-collapsible-card')){
+        const id = bulkCollapseIdFromCard_(card, index);
+        const title = bulkCardTitle_(card, index);
+        const subtitle = bulkCardSubtitle_(title);
+        const compact = /padding\s*:\s*0/i.test(card.getAttribute('style') || '');
 
-if(typeof dlaBuildSameTaskRewritePrompt_ === 'function'){
-  dlaBuildSameTaskRewritePrompt_ = function(opts){
-    const {entry, oldTool, oldDesc, reason, retryNotes} = opts;
-    const retryText = retryNotes && retryNotes.length
-      ? `\n\nPrevious rejected draft(s):\n${retryNotes.map((n,i)=>`${i+1}. ${n}`).join('\n')}\nYou MUST correct these problems in the next draft.`
-      : '';
-    return `You are improving one existing Wesley College Digital Learning Assistant suggestion.
-This is NOT a tool replacement. Keep the same technology and the same basic classroom task. Rewrite only the description so it fixes the flagged wording issue.
+        const body = document.createElement('div');
+        body.className = 'bulk-collapse-body' + (compact ? ' bulk-collapse-body-compact' : '');
+        body.id = id + '-body';
+        while(card.firstChild) body.appendChild(card.firstChild);
 
-For brief/thin-description flags, bulk up the practical detail of the SAME activity instead of swapping apps.
-For concrete-action flags, add a clear student action and product.
-For unit-connection flags, make the same task explicitly connect to the unit content, central idea, lines of inquiry or vocabulary.
+        const header = document.createElement('button');
+        header.type = 'button';
+        header.className = 'bulk-collapse-header';
+        header.setAttribute('aria-controls', body.id);
+        header.setAttribute('aria-expanded', 'false');
+        header.onclick = () => window.toggleBulkSection(id);
+        header.innerHTML = `<div><div class="bulk-collapse-title">${safeEsc_(title)}</div>${subtitle ? `<div class="bulk-collapse-sub">${safeEsc_(subtitle)}</div>` : ''}</div><div class="bulk-collapse-spacer"></div><span class="bulk-collapse-icon">›</span>`;
 
-Campus: ${entry.ca}
-Year level: ${entry.yl}
-Theme: ${entry.th}
-Central Idea: ${entry.ci || ''}
-Lines of Inquiry: ${entry.lo || ''}
-Planner summary: ${entry.plannerText || ''}
+        card.dataset.bulkCollapseId = id;
+        card.classList.add('bulk-collapsible-card');
+        card.appendChild(header);
+        card.appendChild(body);
+      }
 
-CURRENT TOOL — keep this exact tool name:
-${oldTool}
-
-CURRENT DESCRIPTION — keep the same underlying task/intent:
-${oldDesc}
-
-Problem flagged:
-${reason || 'Description is brief and needs more practical detail.'}
-
-Rewrite rules:
-- Keep the tool name exactly as "${oldTool}".
-- Keep the same basic activity/task; do not swap in a different technology or a totally different lesson.
-- Make the description 2-3 practical, teacher-ready sentences.
-- Add enough classroom detail that the activity no longer feels brief, generic or thin.
-- Explicitly state what students DO, using action verbs such as create, build, record, map, model, code, compare, label, publish or present.
-- Explicitly state what students PRODUCE, such as a labelled map, short video, recorded explanation, prototype, model, graph, Book Creator page, Seesaw post, Padlet board, presentation, coded animation, podcast segment, diagram or reflection.
-- Make the connection to this unit explicit; use language from the theme, central idea, lines of inquiry or planner summary rather than a generic activity description.
-- The final wording should make it clear why this exact task belongs in this exact unit.
-- Write it so a teacher can picture the classroom task immediately.
-
-${SUGGESTION_STYLE}${retryText}
-
-Return ONLY JSON: {"t":"${String(oldTool).replace(/"/g, '\\"')}","d":"2-3 practical sentences with more detail, a clear student action, product and unit connection.","url":"optional existing direct lesson URL if the old suggestion had one"}`;
-  };
-}
-
-function parseBulkWeakDescriptionRewriteRequest(instruction){
-  const text = String(instruction || '').toLowerCase();
-  if(!text.trim()) return null;
-  const weakIntent = /(weak|generic|vague|brief|short|thin|under\s*60|<\s*60|less\s+than\s+60|more\s+detail|detailed|bulk\s*up|strengthen|stronger|clearer|practical\s+detail)/i.test(text);
-  if(!weakIntent) return null;
-  const hardToolSwap = /(diversify\s+\w+|replace\s+(?:some|all|the)?\s*[a-z0-9:&+'’\/-]+\s+with\s+(?:other|different|new|top)\s+tools?|ban\s+|remove\s+|delete\s+)/i.test(text);
-  if(hardToolSwap && !/(weak|generic|vague|brief|short|thin|detail|strengthen)/i.test(text)) return null;
-  return {mode:'same-tool-detail-rewrite'};
-}
-
-function bulkDescriptionWordCount_(desc){
-  return (String(desc || '').match(/\b[\w’'-]+\b/g) || []).length;
-}
-
-function bulkWeakDescriptionReasons_(entry, sug, instruction){
-  const desc = sugDesc(sug);
-  const reasons = [];
-  const d = String(desc || '').replace(/\s+/g,' ').trim();
-  const words = bulkDescriptionWordCount_(d);
-  const chars = d.length;
-  const instr = String(instruction || '').toLowerCase();
-  const weakPatterns = [
-    /research online/i, /look up/i, /google (this|it)/i,
-    /type (your|the)/i, /write (about|up)/i,
-    /use (the|a) (app|tool|program)/i,
-    /simply|basically|just to/i
-  ];
-  if(chars < 95) reasons.push('Description is very short and needs more practical classroom detail.');
-  if(words < 60 && /brief|short|thin|under\s*60|<\s*60|less\s+than\s+60|more\s+detail|bulk\s*up|stronger|weak|generic/i.test(instr)) reasons.push('Description is brief (<60 words), so keep the same tool and expand the detail.');
-  if(weakPatterns.some(p => p.test(d))) reasons.push('Description sounds generic or thin and needs a clearer student task.');
-  if(!hasConcreteStudentAction(d)) reasons.push('Description lacks a concrete student action/product.');
-  if(!descHasUnitConnection(d, entry)) reasons.push('Description may not clearly reference this unit\'s content or vocabulary.');
-  return [...new Set(reasons)];
-}
-
-function bulkFindWeakDescriptionRewriteCandidates_(instruction){
-  const out = [];
-  DATA.forEach((entry, entryIdx) => {
-    if(!entry || !entry.audited) return;
-    getSugs(entry).forEach((sug, sugIdx) => {
-      if(sugIdx === 5) return;
-      if(!isRealSug(sug)) return;
-      const tool = sugTool(sug);
-      if(!tool || !isAiToolSafeForEntry(tool, entry)) return;
-      const auditIssues = suggestionAuditIssues(entry, sug, sugIdx);
-      if(auditIssues.some(dlaIssueIsHardReplacementBlocker_)) return;
-      const reasons = bulkWeakDescriptionReasons_(entry, sug, instruction);
-      if(!reasons.length) return;
-      out.push({
-        entryIdx,
-        sugIdx,
-        ca: entry.ca,
-        yl: entry.yl,
-        th: entry.th,
-        ci: entry.ci || '',
-        lo: entry.lo || '',
-        plannerText: entry.plannerText || '',
-        tool,
-        desc: sugDesc(sug),
-        url: sug.url || '',
-        reasons
-      });
+      const id = card.dataset.bulkCollapseId;
+      let open = false; // collapsed by default
+      try{
+        const stored = localStorage.getItem(STORE_PREFIX + id);
+        if(stored != null) open = stored === '1';
+      }catch(e){}
+      setBulkCollapseState_(card, open);
     });
+  };
+
+  window.refreshBulkCollapsibleSections = function refreshBulkCollapsibleSections(){
+    // Run more than once because the Bulk tab renders some content immediately and some after libraries.json loads.
+    window.makeBulkCardsCollapsible();
+    setTimeout(window.makeBulkCardsCollapsible, 0);
+    setTimeout(window.makeBulkCardsCollapsible, 250);
+    setTimeout(window.makeBulkCardsCollapsible, 1000);
+  };
+
+  if(typeof window.switchTab === 'function' && !window.__DLA_BULK_COLLAPSE_SWITCH_PATCHED_V2){
+    const originalSwitchTab = window.switchTab;
+    window.switchTab = function patchedBulkCollapseSwitchTab(tab, btn){
+      const result = originalSwitchTab.apply(this, arguments);
+      if(tab === 'tools') window.refreshBulkCollapsibleSections();
+      return result;
+    };
+    window.__DLA_BULK_COLLAPSE_SWITCH_PATCHED_V2 = true;
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    window.refreshBulkCollapsibleSections();
   });
-  return out;
-}
-
-function getBulkWeakRewriteTargetCount_(instruction, candidateCount){
-  const text = String(instruction || '');
-  const m = text.match(/\b(?:first|top|fix|rewrite|improve|strengthen)?\s*(\d{1,3})\b/i);
-  if(m) return Math.max(1, Math.min(candidateCount, Number(m[1])));
-  if(/\ball\b|fix\s+all|every\b/i.test(text)) return Math.min(candidateCount, 60);
-  return Math.min(candidateCount, 40);
-}
-
-function bulkExpandSameToolFallbackDescription_(toolName, entry, oldDesc){
-  const product = bulkProductForTool(toolName);
-  const focus = bulkUnitFocus(entry);
-  const cleaned = String(oldDesc || '').replace(/\s+/g,' ').replace(/[.\s]+$/,'').trim();
-  const taskLine = cleaned
-    ? `Students continue the same ${toolName} task: ${cleaned}.`
-    : `Students use ${toolName} to create a ${product} that shows their understanding of ${focus}.`;
-  return `${taskLine} They develop a ${product} connected to ${focus}, adding unit evidence, labels, examples or narration so their thinking is visible. Students then share the finished artefact and explain how it connects to the unit vocabulary, central idea or lines of inquiry.`;
-}
-
-function parseBulkWeakRewriteChanges_(response){
-  return parseApplyChangesFromText(response);
-}
-
-async function runTargetedWeakDescriptionRewrite(enrichedInstruction){
-  bulkChatState = 'analysing';
-  const prog = document.getElementById('bulk-ai-progress');
-  const lbl = document.getElementById('bulk-ai-label');
-  const bar = document.getElementById('bulk-ai-bar');
-  if(prog) prog.style.display = 'block';
-  if(bar) bar.style.width = '12%';
-  if(lbl) lbl.textContent = 'Finding brief or generic descriptions only…';
-
-  bulkChatAddMessage('assistant', '🎯 Targeted scan: finding brief, generic or thin descriptions so Studio can expand the same tool/task instead of swapping apps.');
-  showReasoningSteps([
-    { text: 'Finding weak descriptions', status: 'active' },
-    { text: 'Keeping each original tool locked', status: 'pending' },
-    { text: 'Drafting richer descriptions', status: 'pending' },
-    { text: 'Filtering for same-tool rewrites', status: 'pending' }
-  ]);
-  startProgress();
-
-  try{
-    const candidates = bulkFindWeakDescriptionRewriteCandidates_(enrichedInstruction);
-    updateReasoningStep(0, 'done', `Found ${candidates.length} weak description${candidates.length===1?'':'s'}`);
-    updateReasoningStep(1, 'active');
-    if(!candidates.length){
-      if(prog) prog.style.display = 'none';
-      setTimeout(hideReasoningSteps, 700);
-      bulkChatAddMessage('assistant', '✓ I could not find any editable brief/generic descriptions that can be safely fixed as same-tool rewrites.');
-      bulkChatState = 'idle';
-      return;
-    }
-
-    const targetCount = getBulkWeakRewriteTargetCount_(enrichedInstruction, candidates.length);
-    const selected = candidates.slice(0, targetCount);
-    updateReasoningStep(1, 'done', `Locked ${selected.length} original tool${selected.length===1?'':'s'}`);
-    updateReasoningStep(2, 'active');
-    if(bar) bar.style.width = '38%';
-    if(lbl) lbl.textContent = `Expanding ${selected.length} description${selected.length===1?'':'s'} with the same tools…`;
-
-    const candidateLines = selected.map(c => {
-      const context = [
-        c.ci ? `CI:${compactForPrompt(c.ci, 120)}` : '',
-        c.lo ? `LOI:${compactForPrompt(c.lo, 120)}` : ''
-      ].filter(Boolean).join(' | ');
-      return `[${c.entryIdx}]s${c.sugIdx} ${c.ca} | ${c.yl} | ${compactForPrompt(c.th, 62)}${context ? ' | '+context : ''}\n  LOCKED TOOL: ${compactForPrompt(c.tool, 42)}\n  issue(s): ${c.reasons.map(r=>compactForPrompt(r, 90)).join(' / ')}\n  current description: ${compactForPrompt(c.desc, 220)}`;
-    }).join('\n');
-
-    const prompt = `You are a Digital Learning Coach at Wesley College, an IB PYP school.
-
-TASK: Improve brief, generic or thin DLA suggestion descriptions WITHOUT changing the technology.
-
-COORDINATOR REQUEST:
-${enrichedInstruction}
-
-HARD RULES:
-- This is NOT a tool replacement task.
-- For every item, keep the exact same tool shown after LOCKED TOOL.
-- Keep the same basic classroom task/intent from the current description.
-- Do not swap apps. Do not propose alternatives. Do not invent a different tool.
-- Do not change sugIdx 5 / Suggestion 6; it is protected and not in the list.
-- Rewrite each description into 2-3 practical, teacher-ready sentences.
-- Add concrete detail: what students DO, what students CREATE/PRODUCE, and how it connects to the specific unit.
-- Use language from the central idea, lines of inquiry, theme or planner context where available.
-- Return ONLY an APPLY_CHANGES block with valid JSON.
-
-Output format:
-APPLY_CHANGES:[{"entryIdx":3,"sugIdx":1,"t":"Same Locked Tool","d":"2-3 richer sentences using the same task and same tool..."}]
-
-${SUGGESTION_STYLE}
-
-CANDIDATE SAME-TOOL DESCRIPTION REWRITES:
-${candidateLines}`;
-
-    let response = '';
-    try{
-      response = await callAI(
-        [{role:'user', parts:[{text:'Rewrite the weak descriptions while keeping the same tools.'}]}],
-        prompt,
-        prompt.length < 65000 ? OPENAI_MODEL : OPENAI_FAST_MODEL
-      );
-    }catch(aiErr){
-      console.warn('Weak description rewrite AI failed; using local same-tool fallback:', aiErr.message);
-      response = '';
-    }
-
-    updateReasoningStep(2, 'done');
-    updateReasoningStep(3, 'active');
-    if(bar) bar.style.width = '84%';
-    if(lbl) lbl.textContent = 'Checking same-tool rewrites…';
-
-    const candidateBySlot = {};
-    selected.forEach(c => { candidateBySlot[`${c.entryIdx}::${c.sugIdx}`] = c; });
-    const seenSlots = new Set();
-    let changes = parseBulkWeakRewriteChanges_(response);
-    const rawCount = changes.length;
-    changes = changes.filter(c => {
-      const slotKey = `${c.entryIdx}::${c.sugIdx}`;
-      const cand = candidateBySlot[slotKey];
-      if(!cand || seenSlots.has(slotKey)) return false;
-      seenSlots.add(slotKey);
-      if(Number(c.sugIdx) === 5) return false;
-      const oldDesc = String(cand.desc || '').replace(/\s+/g,' ').trim();
-      const newDesc = String(c.d || '').replace(/\s+/g,' ').trim();
-      if(!newDesc || newDesc === oldDesc) return false;
-      c.t = cand.tool;
-      if(cand.url && !c.url) c.url = cand.url;
-      c.auditSource = 'same-tool-detail-rewrite';
-      c.auditReason = cand.reasons.join(' | ');
-      c.whyBetter = 'Same tool and task expanded with clearer student action, product and unit detail.';
-      return true;
-    });
-
-    if(changes.length < selected.length){
-      const existingSlots = new Set(changes.map(c => `${c.entryIdx}::${c.sugIdx}`));
-      for(const cand of selected){
-        if(existingSlots.has(`${cand.entryIdx}::${cand.sugIdx}`)) continue;
-        changes.push({
-          entryIdx: cand.entryIdx,
-          sugIdx: cand.sugIdx,
-          t: cand.tool,
-          d: bulkExpandSameToolFallbackDescription_(cand.tool, DATA[cand.entryIdx], cand.desc),
-          url: cand.url || undefined,
-          auditSource: 'same-tool-detail-rewrite-local-fallback',
-          auditReason: cand.reasons.join(' | '),
-          whyBetter: 'Same tool kept; description expanded with practical detail and unit connection.'
-        });
-      }
-    }
-
-    if(bar) bar.style.width = '100%';
-    if(prog) prog.style.display = 'none';
-    updateReasoningStep(3, 'done');
-    setTimeout(hideReasoningSteps, 900);
-
-    const note = candidates.length > selected.length
-      ? `<div style="font-size:11px;color:var(--orange);margin-top:8px">Found ${candidates.length} matching descriptions; drafted the first ${selected.length}. Run it again to continue through the rest.</div>`
-      : '';
-    const rawLine = rawCount ? `<div style="font-size:11px;color:var(--dim);margin-top:8px">GPT returned ${rawCount}; Studio hard-locked every draft to the original tool.</div>` : `<div style="font-size:11px;color:var(--gold);margin-top:8px">Studio used safe local same-tool fallbacks because GPT did not return usable drafts.</div>`;
-    bulkChatAddMessage('assistant', `✅ <strong>${changes.length} same-tool description rewrite${changes.length!==1?'s':''} ready for review</strong><br><div style="font-size:12px;color:var(--lime);margin-top:8px">No apps were swapped — each draft keeps the original technology and bulks up the detail.</div>${rawLine}${note}<br><br>Review the drafts below, then approve/apply only the ones you want.`);
-    bulkChatMemory.push({ role:'assistant', content:`Proposed ${changes.length} same-tool description rewrites. No apps were swapped.` });
-    window._snapshotReason = `Before: ${bulkChatContext.rawInstruction ? bulkChatContext.rawInstruction.slice(0, 60) : 'same-tool detail rewrite'}`;
-    showChangesPopup(changes);
-    bulkChatState = 'done';
-  }catch(e){
-    if(prog) prog.style.display = 'none';
-    updateReasoningStep(2, 'error');
-    setTimeout(hideReasoningSteps, 1200);
-    bulkChatAddMessage('assistant', `❌ Same-tool detail rewrite failed: ${esc(e.message)}\n\nTry asking for a smaller number, e.g. "Bulk up 15 brief descriptions".`);
-    bulkChatState = 'idle';
-  }
-  stopProgress();
-}
-
-const DLA_ORIGINAL_START_BULK_ANALYSIS_DETAIL_REWRITE = startBulkAnalysis;
-startBulkAnalysis = async function startBulkAnalysis(){
-  const instruction = bulkChatContext.rawInstruction;
-  const clarifications = bulkChatContext.clarifications || [];
-  const enrichedInstruction = clarifications.length
-    ? `${instruction}\n\nAdditional context from conversation:\n${clarifications.map(c => `Q: ${c.question}\nA: ${c.answer}`).join('\n')}`
-    : instruction;
-
-  const weakRewrite = parseBulkWeakDescriptionRewriteRequest(enrichedInstruction);
-  if(weakRewrite){
-    return runTargetedWeakDescriptionRewrite(enrichedInstruction);
-  }
-
-  return DLA_ORIGINAL_START_BULK_ANALYSIS_DETAIL_REWRITE.apply(this, arguments);
-};
+})();
 
 (function init(){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
