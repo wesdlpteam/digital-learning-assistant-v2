@@ -395,7 +395,7 @@
               <select id="inv-whitelist-max" class="inp" title="Maximum year level" style="margin-bottom:0;font-size:12px;padding:6px 8px">
                 <option value="0">Prep</option><option value="1">Year 1</option><option value="2">Year 2</option><option value="3">Year 3</option><option value="4">Year 4</option><option value="5">Year 5</option><option value="6" selected>Year 6</option>
               </select>
-              <button class="btn-sm" onclick="invAddTool('approved')" style="color:var(--lime);border-color:var(--lime);padding:6px 12px">+ Add</button>
+              <button id="inv-whitelist-add" data-inv-add="approved" type="button" class="btn-sm" onclick="invAddTool('approved')" style="color:var(--lime);border-color:var(--lime);padding:6px 12px">+ Add</button>
             </div>
             <div style="font-size:10px;color:var(--dim);margin-bottom:8px;line-height:1.5">Set the year-level range for each whitelisted tool. The AI will only suggest it inside that range.</div>
             <div id="inv-whitelist-pills" style="display:flex;flex-direction:column;gap:6px;min-height:32px"></div>
@@ -409,7 +409,7 @@
             <div style="font-size:11px;color:var(--dim);margin-bottom:8px;line-height:1.5">Tools Wesley no longer has or doesn't want suggested. AI will never propose these.</div>
             <div style="display:flex;gap:6px;margin-bottom:8px">
               <input id="inv-banned-input" class="inp" placeholder="e.g. ClassVR" style="flex:1;margin-bottom:0;font-size:12px;padding:6px 10px" onkeydown="if(event.key==='Enter'){event.preventDefault();invAddTool('banned')}">
-              <button class="btn-sm" onclick="invAddTool('banned')" style="color:#FF8080;border-color:#FF8080;padding:6px 12px">+ Ban</button>
+              <button id="inv-banned-add" data-inv-add="banned" type="button" class="btn-sm" onclick="invAddTool('banned')" style="color:#FF8080;border-color:#FF8080;padding:6px 12px">+ Ban</button>
             </div>
             <div id="inv-banned-pills" style="display:flex;flex-wrap:wrap;gap:4px;min-height:32px"></div>
           </div>
@@ -1625,7 +1625,7 @@ function closeEntry(){
 
 const TOOL_WHITELIST = [
   
-  'microsoft','m365','teams','word','powerpoint','onenote','excel','forms','sway',
+  'microsoft','m365','teams','word','powerpoint','onenote','excel','forms','sway','wise','schoolbox','wise discussion chatbots','schoolbox discussion chatbots',
   
   'beebot','beebots','bee-bot','bee-bots','sphero indi','sphero bolt','sphero','lego spike essential',
   'lego spike prime','lego spike','lego','micro:bit','microbit','codrone','makey makey',
@@ -2525,6 +2525,7 @@ function normaliseToolName(t){
     'microsoft word':'Microsoft Word','microsoft teams':'Microsoft Teams',
     'microsoft forms':'Microsoft Forms','forms':'Microsoft Forms','ms forms':'Microsoft Forms','office forms':'Microsoft Forms',
     'microsoft sway':'Microsoft Sway','sway':'Microsoft Sway','ms sway':'Microsoft Sway','office sway':'Microsoft Sway','m365 sway':'Microsoft Sway',
+    'wise discussion chatbots':'Wise Discussion Chatbots','wise discussion chatbot':'Wise Discussion Chatbots','wise chatbot':'Wise Discussion Chatbots','wise chatbots':'Wise Discussion Chatbots','schoolbox discussion chatbots':'Wise Discussion Chatbots','schoolbox ai discussion chatbots':'Wise Discussion Chatbots','ai discussion chatbots':'Wise Discussion Chatbots','ai discussion chatbot':'Wise Discussion Chatbots',
     'microsoft excel':'Microsoft Excel','excel':'Microsoft Excel','ms excel':'Microsoft Excel','office excel':'Microsoft Excel',
     'word':'Microsoft Word','ms word':'Microsoft Word','office word':'Microsoft Word',
     'teams':'Microsoft Teams','ms teams':'Microsoft Teams','office teams':'Microsoft Teams',
@@ -2592,6 +2593,7 @@ function normaliseToolName(t){
   if(key === 'powerpoint' || key.endsWith(' powerpoint') || key.endsWith(' power point')) return 'Microsoft PowerPoint';
   if(key === 'teams' || key.endsWith(' teams')) return 'Microsoft Teams';
   if(key === 'onenote' || key === 'one note' || key.endsWith(' onenote') || key.endsWith(' one note')) return 'Microsoft OneNote';
+  if((key.includes('wise') && key.includes('chatbot')) || (key.includes('wise') && key.includes('discussion')) || (key.includes('schoolbox') && key.includes('chatbot')) || (key.includes('schoolbox') && key.includes('discussion')) || (key.includes('ai discussion') && key.includes('chatbot'))) return 'Wise Discussion Chatbots';
   if(key.startsWith('microsoft ')) return t; // keep other specific MS tools
   // "App Smashing: Tool" → extract the tool
   if(key.startsWith('app smash')){
@@ -4513,7 +4515,7 @@ let TOOL_INVENTORY = { approved: [], banned: [], ageRanges: {} };
 const DEFAULT_APPROVED_TOOLS = [
   // Microsoft M365
   'Microsoft Teams', 'Microsoft Word', 'Microsoft PowerPoint', 'Microsoft OneNote',
-  'Microsoft Excel', 'Microsoft Forms', 'Microsoft Sway',
+  'Microsoft Excel', 'Microsoft Forms', 'Microsoft Sway', 'Wise Discussion Chatbots',
   // Robotics / STEM hardware
   'Bee-Bots', 'Sphero Indi', 'Sphero BOLT', 'Lego Spike Essential', 'Lego Spike Prime',
   'Micro:bit', 'CoDrone EDU', 'Makey Makey',
@@ -4549,6 +4551,7 @@ const DEFAULT_TOOL_AGE_RANGES = {
   'Word Clouds ABCya': {min:0,max:6}, 'Field Guide to Victoria': {min:0,max:6}, 'Sky Map': {min:0,max:6},
   'Geoboard': {min:0,max:6}, 'Adobe Express Podcasting': {min:0,max:6},
   'Microsoft Excel': {min:0,max:6}, 'Microsoft Forms': {min:0,max:6}, 'Microsoft Sway': {min:0,max:6},
+  'Wise Discussion Chatbots': {min:3,max:6},
   // Prep-Year 2
   'Bee-Bots': {min:0,max:2}, 'ScratchJR': {min:0,max:2}, 'ChatterPix Kids': {min:0,max:2},
   'Puppet Pals': {min:0,max:2}, 'Sphero Indi': {min:0,max:2},
@@ -4623,6 +4626,18 @@ function seedDefaultInventoryIfEmpty(){
     TOOL_INVENTORY.banned = [...DEFAULT_BANNED_TOOLS];
   }
   TOOL_INVENTORY.ageRanges = TOOL_INVENTORY.ageRanges || {};
+
+  // New Wesley/Schoolbox tool: keep it available after this update unless the coordinator has explicitly banned it.
+  const wiseTool = 'Wise Discussion Chatbots';
+  const wiseKey = toolInventoryKey(wiseTool);
+  const wiseAlreadyApproved = (TOOL_INVENTORY.approved || []).some(t => toolInventoryKey(t) === wiseKey);
+  const wiseAlreadyBanned = (TOOL_INVENTORY.banned || []).some(t => toolInventoryKey(t) === wiseKey);
+  if(wiseKey && !wiseAlreadyApproved && !wiseAlreadyBanned){
+    TOOL_INVENTORY.approved.push(wiseTool);
+    TOOL_INVENTORY.ageRanges[wiseKey] = getDefaultToolAgeRange(wiseTool);
+    if(typeof TOOL_INVENTORY_CLEANUP_PENDING !== 'undefined') TOOL_INVENTORY_CLEANUP_PENDING = true;
+  }
+
   TOOL_INVENTORY.approved.forEach(tool => {
     const key = toolInventoryKey(tool);
     if(key && !TOOL_INVENTORY.ageRanges[key]) TOOL_INVENTORY.ageRanges[key] = getDefaultToolAgeRange(tool);
@@ -4640,7 +4655,7 @@ Object.defineProperty(window, 'NOT_AVAILABLE_AT_WESLEY', {
 const TOOL_AGE_GUIDE = `TOOL AGE GUIDE (HARD RULE — match Australian year levels):
 Prep = ages 5-6 | Year 1 = 6-7 | Year 2 = 7-8 | Year 3 = 8-9 | Year 4 = 9-10 | Year 5 = 10-11 | Year 6 = 11-12
 - Prep-Year 2 ONLY: Bee-Bots, ScratchJR, ChatterPix Kids, Puppet Pals, Sphero Indi
-- Year 3+: Sphero BOLT, Lego Spike Essential, Micro:bits, Scratch, Stop Motion Studio, Adobe Express, Canva, Book Creator, Padlet, Kahoot, Tinkercad, Explain Everything
+- Year 3+: Sphero BOLT, Lego Spike Essential, Micro:bits, Scratch, Stop Motion Studio, Adobe Express, Canva, Book Creator, Padlet, Kahoot, Tinkercad, Explain Everything, Wise Discussion Chatbots
 - Year 4+: Microsoft Teams, Lego Spike Prime, CoDrone EDU, Minecraft Education (with scaffolding for Year 4)
 - Year 5+: 3D Printers, Python-based coding
 - All year levels: Seesaw, Epic, GarageBand, iMovie, PicCollage, Google Maps, Google Earth, Clickview, Green Screen, iPads, Laptops, Digital Cameras, Freeform, Sketchbook, Brushes Redux
@@ -4686,6 +4701,7 @@ function getAgeAppropriateTools(yearLevel){
     {n:'Canva',            min:3},
     {n:'Book Creator',     min:3},
     {n:'Padlet',           min:3},
+    {n:'Wise Discussion Chatbots', min:3},
     {n:'Kahoot',           min:3},
     {n:'Tinkercad',        min:3},
     {n:'Explain Everything', min:3},
@@ -4808,6 +4824,17 @@ function detectPlatformContext(text, yearLevel){
   };
 }
 
+
+const WISE_DISCUSSION_CHATBOTS_CONTEXT = `WISE DISCUSSION CHATBOTS CONTEXT:
+- Wesley uses Schoolbox under the name Wise.
+- The approved tool name is "Wise Discussion Chatbots".
+- Teachers create an AI Discussion chatbot by choosing a topic, connecting it to curriculum, and selecting a scenario.
+- Available scenarios include Character Interview, Project Ideation, Self-Reflection, and Socratic Tutor.
+- Use this when students should ask questions, test thinking, explore a perspective/persona, reflect on their learning, or develop project ideas through guided dialogue.
+- A strong DLA suggestion should name the scenario, give the chatbot topic/persona/purpose, and specify the student product after the chat, such as a reflection, question bank, comparison table, project proposal, exit ticket, or revised inquiry plan.
+- Keep the teacher in control: frame it as a teacher-created Wise chatbot with curriculum connection, not an open consumer AI assistant.`;
+
+
 function buildGASRules(yearLevel){
   const allowedForYear = yearLevel
     ? `\n\nTHIS UNIT IS ${String(yearLevel).toUpperCase()} — only choose from these age-appropriate tools: ${getAgeAppropriateTools(yearLevel).join(', ')}`
@@ -4829,7 +4856,9 @@ ${buildBannedToolsList()}
 - BOTH tools in an app smash must be on the approved list above and inside the year-level range.
 - Never include a prohibited tool (ChatGPT etc.) in an app smash.
 
-${buildDynamicToolAgeGuide()}${allowedForYear}
+${buildDynamicToolAgeGuide()}
+
+${WISE_DISCUSSION_CHATBOTS_CONTEXT}${allowedForYear}
 ${SUGGESTION_STYLE}`;
 }
 
@@ -5585,6 +5614,8 @@ function buildKnownPlatforms(){
       get context(){ return buildLibraryContext('minecraft'); } },
     { match: /microbit\.org|micro.?bit/i, name: 'Micro:bit', key: 'microbit',
       get context(){ return buildLibraryContext('microbit'); } },
+    { match: /wise discussion|schoolbox.*discussion|schoolbox.*chatbot|ai discussion chatbot|discussion chatbot/i, name: 'Wise Discussion Chatbots',
+      context: WISE_DISCUSSION_CHATBOTS_CONTEXT },
     { match: /code\.org/i, name: 'Code.org',
       context: 'You have strong knowledge of Code.org courses and lesson plans. Reference specific lessons, courses and activities from Code.org when proposing changes.' },
     { match: /scratch\.mit|scratchfoundation/i, name: 'Scratch',
@@ -6529,6 +6560,8 @@ TOOL SELECTION POLICY:
 
 ${buildDynamicToolAgeGuide()}
 
+${WISE_DISCUSSION_CHATBOTS_CONTEXT}
+
 ${REALISTIC_TOOL_USE_RULES}
 
 DUPLICATE PREVENTION (HARD RULE):
@@ -7379,6 +7412,264 @@ setInterval(async()=>{
     if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendChat(); }
   });
 })();
+
+
+/* =========================================================
+   DLA Studio Patch — Tool Inventory click + alias hardening
+   Fixes remove X/add buttons and treats equivalent names as one tool.
+   ========================================================= */
+(function(){
+  const PATCH_ID = 'inventory-click-alias-hardening-v2';
+  if(window.__DLA_INVENTORY_PATCH_ID === PATCH_ID) return;
+  window.__DLA_INVENTORY_PATCH_ID = PATCH_ID;
+
+  const MICROSOFT_ALIAS_DISPLAY = {
+    'sway': 'Microsoft Sway',
+    'forms': 'Microsoft Forms',
+    'excel': 'Microsoft Excel',
+    'word': 'Microsoft Word',
+    'powerpoint': 'Microsoft PowerPoint',
+    'power point': 'Microsoft PowerPoint',
+    'teams': 'Microsoft Teams',
+    'onenote': 'Microsoft OneNote',
+    'one note': 'Microsoft OneNote',
+    'wise discussion chatbots': 'Wise Discussion Chatbots',
+    'wise discussion chatbot': 'Wise Discussion Chatbots',
+    'wise chatbot': 'Wise Discussion Chatbots',
+    'wise chatbots': 'Wise Discussion Chatbots',
+    'schoolbox discussion chatbots': 'Wise Discussion Chatbots',
+    'schoolbox ai discussion chatbots': 'Wise Discussion Chatbots',
+    'ai discussion chatbots': 'Wise Discussion Chatbots',
+    'ai discussion chatbot': 'Wise Discussion Chatbots'
+  };
+
+  function invNormText(value){
+    return String(value || '')
+      .toLowerCase()
+      .replace(/&amp;/g, ' and ')
+      .replace(/\b(microsoft|ms|office|m365|microsoft 365)\b/g, '')
+      .replace(/[^a-z0-9:+]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function invCanonicalDisplay(value){
+    const raw = String(value || '').trim();
+    if(!raw) return '';
+    const stripped = invNormText(raw);
+    if(MICROSOFT_ALIAS_DISPLAY[stripped]) return MICROSOFT_ALIAS_DISPLAY[stripped];
+    try {
+      const normalised = normaliseToolName(raw);
+      const strippedNormalised = invNormText(normalised);
+      if(MICROSOFT_ALIAS_DISPLAY[strippedNormalised]) return MICROSOFT_ALIAS_DISPLAY[strippedNormalised];
+      return String(normalised || raw).trim();
+    } catch(e){ return raw; }
+  }
+
+  function invCanonicalKey(value){
+    const display = invCanonicalDisplay(value);
+    return invNormText(display || value);
+  }
+
+  try {
+    toolInventoryKey = function patchedToolInventoryKey(tool){ return invCanonicalKey(tool); };
+    window.toolInventoryKey = toolInventoryKey;
+  } catch(e){ window.toolInventoryKey = invCanonicalKey; }
+
+  function invAttr(value){
+    return String(value || '')
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;')
+      .replace(/'/g,'&#39;');
+  }
+
+  function invEnsureShape(){
+    if(!TOOL_INVENTORY || typeof TOOL_INVENTORY !== 'object') TOOL_INVENTORY = { approved: [], banned: [], ageRanges: {} };
+    if(!Array.isArray(TOOL_INVENTORY.approved)) TOOL_INVENTORY.approved = [];
+    if(!Array.isArray(TOOL_INVENTORY.banned)) TOOL_INVENTORY.banned = [];
+    if(!TOOL_INVENTORY.ageRanges || typeof TOOL_INVENTORY.ageRanges !== 'object') TOOL_INVENTORY.ageRanges = {};
+  }
+
+  function invDedupe(list){
+    const seen = new Set();
+    const out = [];
+    (Array.isArray(list) ? list : []).forEach(item => {
+      const display = invCanonicalDisplay(item);
+      const key = invCanonicalKey(display);
+      if(!display || !key || seen.has(key)) return;
+      seen.add(key);
+      out.push(display);
+    });
+    return out.sort((a,b)=>a.localeCompare(b));
+  }
+
+  function invCleanup(preferList){
+    invEnsureShape();
+    TOOL_INVENTORY.approved = invDedupe(TOOL_INVENTORY.approved);
+    TOOL_INVENTORY.banned = invDedupe(TOOL_INVENTORY.banned);
+    const approvedKeys = new Set(TOOL_INVENTORY.approved.map(invCanonicalKey));
+    const bannedKeys = new Set(TOOL_INVENTORY.banned.map(invCanonicalKey));
+    if(preferList === 'approved'){
+      TOOL_INVENTORY.banned = TOOL_INVENTORY.banned.filter(t => !approvedKeys.has(invCanonicalKey(t)));
+    } else {
+      TOOL_INVENTORY.approved = TOOL_INVENTORY.approved.filter(t => !bannedKeys.has(invCanonicalKey(t)));
+      bannedKeys.forEach(k => { delete TOOL_INVENTORY.ageRanges[k]; });
+    }
+    const nextRanges = {};
+    Object.entries(TOOL_INVENTORY.ageRanges || {}).forEach(([tool, range]) => {
+      const key = invCanonicalKey(tool);
+      if(!key) return;
+      try { nextRanges[key] = normaliseAgeRange(range); }
+      catch(e){ nextRanges[key] = range; }
+    });
+    TOOL_INVENTORY.ageRanges = nextRanges;
+  }
+
+  function invPersist(){
+    try {
+      if(typeof saveLibraries === 'function'){
+        const result = saveLibraries();
+        if(result && typeof result.catch === 'function') result.catch(e => setStatus(`Tool inventory save failed: ${e.message}`, 'error'));
+      }
+    } catch(e){
+      console.warn('[DLA Inventory Patch] saveLibraries failed', e);
+      if(typeof setStatus === 'function') setStatus(`Tool inventory save failed: ${e.message}`, 'error');
+    }
+  }
+
+  invAddTool = function patchedInvAddTool(listKey){
+    const safeList = listKey === 'banned' ? 'banned' : 'approved';
+    const inputId = safeList === 'approved' ? 'inv-whitelist-input' : 'inv-banned-input';
+    const input = document.getElementById(inputId);
+    if(!input) return false;
+    const raw = String(input.value || '').trim();
+    if(!raw) return false;
+    invEnsureShape();
+    const display = invCanonicalDisplay(raw);
+    const key = invCanonicalKey(display);
+    if(!display || !key) return false;
+    const sameList = TOOL_INVENTORY[safeList].some(t => invCanonicalKey(t) === key);
+    if(sameList){
+      input.value = '';
+      if(typeof setStatus === 'function') setStatus(`"${display}" is already in the ${safeList === 'approved' ? 'whitelist' : 'banned list'}`, 'error');
+      if(typeof renderToolInventory === 'function') renderToolInventory();
+      return false;
+    }
+    if(safeList === 'banned'){
+      TOOL_INVENTORY.approved = TOOL_INVENTORY.approved.filter(t => invCanonicalKey(t) !== key);
+      delete TOOL_INVENTORY.ageRanges[key];
+    } else {
+      TOOL_INVENTORY.banned = TOOL_INVENTORY.banned.filter(t => invCanonicalKey(t) !== key);
+      const minEl = document.getElementById('inv-whitelist-min');
+      const maxEl = document.getElementById('inv-whitelist-max');
+      try { TOOL_INVENTORY.ageRanges[key] = normaliseAgeRange({ min: minEl?.value ?? 0, max: maxEl?.value ?? 6 }); }
+      catch(e){ TOOL_INVENTORY.ageRanges[key] = { min: 0, max: 6 }; }
+    }
+    TOOL_INVENTORY[safeList].push(display);
+    invCleanup(safeList);
+    input.value = '';
+    renderToolInventory();
+    invPersist();
+    if(typeof setStatus === 'function') setStatus(`Added "${display}" to ${safeList === 'approved' ? 'whitelist' : 'banned list'}`);
+    return false;
+  };
+  window.invAddTool = invAddTool;
+
+  invRemoveTool = function patchedInvRemoveTool(listKey, tool){
+    const safeList = listKey === 'banned' ? 'banned' : 'approved';
+    invEnsureShape();
+    const key = invCanonicalKey(tool);
+    const before = TOOL_INVENTORY[safeList].length;
+    TOOL_INVENTORY[safeList] = TOOL_INVENTORY[safeList].filter(t => invCanonicalKey(t) !== key);
+    if(safeList === 'approved') delete TOOL_INVENTORY.ageRanges[key];
+    invCleanup('banned');
+    renderToolInventory();
+    invPersist();
+    const removed = before - TOOL_INVENTORY[safeList].length;
+    if(typeof setStatus === 'function') setStatus(removed ? `Removed "${invCanonicalDisplay(tool) || tool}" from ${safeList === 'approved' ? 'whitelist' : 'banned list'}` : `"${tool}" was already removed`);
+    return false;
+  };
+  window.invRemoveTool = invRemoveTool;
+
+  invUpdateToolAge = function patchedInvUpdateToolAge(tool, edge, value){
+    invEnsureShape();
+    const display = invCanonicalDisplay(tool);
+    const key = invCanonicalKey(display);
+    const current = (typeof getToolAgeRange === 'function') ? getToolAgeRange(display) : {min:0,max:6};
+    let next = { min: current.min, max: current.max };
+    if(edge === 'min') next.min = clampYearLevelValue(value);
+    if(edge === 'max') next.max = clampYearLevelValue(value);
+    if(next.min > next.max){ if(edge === 'min') next.max = next.min; if(edge === 'max') next.min = next.max; }
+    TOOL_INVENTORY.ageRanges[key] = next;
+    renderToolInventory();
+    invPersist();
+    if(typeof setStatus === 'function') setStatus(`Updated ${display} age range to ${ageRangeLabel(next)}`);
+    return false;
+  };
+  window.invUpdateToolAge = invUpdateToolAge;
+
+  renderToolInventory = function patchedRenderToolInventory(){
+    const whitelistEl = document.getElementById('inv-whitelist-pills');
+    const bannedEl = document.getElementById('inv-banned-pills');
+    const whCountEl = document.getElementById('inv-whitelist-count');
+    const banCountEl = document.getElementById('inv-banned-count');
+    const totalEl = document.getElementById('inv-count');
+    if(!whitelistEl || !bannedEl) return;
+    invCleanup('banned');
+    const approved = TOOL_INVENTORY.approved || [];
+    const banned = TOOL_INVENTORY.banned || [];
+    if(whCountEl) whCountEl.textContent = approved.length ? `(${approved.length})` : '';
+    if(banCountEl) banCountEl.textContent = banned.length ? `(${banned.length})` : '';
+    if(totalEl) totalEl.textContent = (approved.length || banned.length) ? `${approved.length + banned.length} entries` : '';
+    whitelistEl.innerHTML = approved.length ? approved.map(t => {
+      const range = (typeof getToolAgeRange === 'function') ? getToolAgeRange(t) : {min:0,max:6};
+      const toolAttr = invAttr(t);
+      return `<div style="display:grid;grid-template-columns:minmax(150px,1fr) 105px 105px auto;gap:6px;align-items:center;padding:7px 8px;background:rgba(197,232,74,0.08);border:1px solid rgba(197,232,74,0.3);border-radius:12px;font-size:12px;color:var(--lime)">
+        <div style="min-width:0"><div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(t)}</div><div style="font-size:10px;color:var(--dim);font-weight:600">${ageRangeLabel(range)}</div></div>
+        <select class="inp" data-inv-age-tool="${toolAttr}" data-inv-age-edge="min" title="Minimum year level" style="margin-bottom:0;font-size:11px;padding:5px 7px;color:var(--lime);border-color:rgba(197,232,74,.3)">${yearSelectOptions(range.min)}</select>
+        <select class="inp" data-inv-age-tool="${toolAttr}" data-inv-age-edge="max" title="Maximum year level" style="margin-bottom:0;font-size:11px;padding:5px 7px;color:var(--lime);border-color:rgba(197,232,74,.3)">${yearSelectOptions(range.max)}</select>
+        <button type="button" data-inv-remove="approved" data-inv-tool="${toolAttr}" style="background:transparent;border:none;color:var(--lime);cursor:pointer;padding:0 6px;font-size:18px;line-height:1;opacity:.8" title="Remove">×</button>
+      </div>`;
+    }).join('') : '<span style="font-size:11px;color:var(--dim);font-style:italic">No whitelist — all approved tools allowed.</span>';
+    bannedEl.innerHTML = banned.length ? banned.map(t => `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 4px 4px 10px;background:rgba(255,128,128,0.08);border:1px solid rgba(255,128,128,0.3);border-radius:99px;font-size:12px;font-weight:600;color:#FF8080">${esc(t)}<button type="button" data-inv-remove="banned" data-inv-tool="${invAttr(t)}" style="background:transparent;border:none;color:#FF8080;cursor:pointer;padding:0 6px;font-size:14px;line-height:1;opacity:.7" title="Remove">×</button></span>`).join('') : '<span style="font-size:11px;color:var(--dim);font-style:italic">No bans.</span>';
+  };
+  window.renderToolInventory = renderToolInventory;
+
+  if(!window.__DLA_INVENTORY_DELEGATED_EVENTS){
+    window.__DLA_INVENTORY_DELEGATED_EVENTS = true;
+    document.addEventListener('click', function(e){
+      const removeBtn = e.target && e.target.closest ? e.target.closest('[data-inv-remove]') : null;
+      if(removeBtn){
+        e.preventDefault(); e.stopPropagation(); if(e.stopImmediatePropagation) e.stopImmediatePropagation();
+        invRemoveTool(removeBtn.getAttribute('data-inv-remove'), removeBtn.getAttribute('data-inv-tool'));
+        return false;
+      }
+      const addBtn = e.target && e.target.closest ? e.target.closest('[data-inv-add],#inv-whitelist-add,#inv-banned-add') : null;
+      if(addBtn){
+        e.preventDefault(); e.stopPropagation(); if(e.stopImmediatePropagation) e.stopImmediatePropagation();
+        const listKey = addBtn.getAttribute('data-inv-add') || (addBtn.id === 'inv-banned-add' ? 'banned' : 'approved');
+        invAddTool(listKey);
+        return false;
+      }
+    }, true);
+    document.addEventListener('keydown', function(e){
+      if(e.key !== 'Enter') return;
+      if(e.target && e.target.id === 'inv-whitelist-input'){ e.preventDefault(); e.stopPropagation(); invAddTool('approved'); }
+      if(e.target && e.target.id === 'inv-banned-input'){ e.preventDefault(); e.stopPropagation(); invAddTool('banned'); }
+    }, true);
+    document.addEventListener('change', function(e){
+      const sel = e.target && e.target.matches && e.target.matches('[data-inv-age-tool][data-inv-age-edge]') ? e.target : null;
+      if(!sel) return;
+      e.preventDefault(); e.stopPropagation();
+      invUpdateToolAge(sel.getAttribute('data-inv-age-tool'), sel.getAttribute('data-inv-age-edge'), sel.value);
+    }, true);
+  }
+  setTimeout(() => { try { if(document.getElementById('inv-whitelist-pills') && document.getElementById('inv-banned-pills')) renderToolInventory(); } catch(e){ console.warn('[DLA Inventory Patch] initial render failed', e); } }, 0);
+  console.log('[DLA PATCH] Tool Inventory click + alias hardening installed');
+})();
+
 </script>
 </body>
 </html>
