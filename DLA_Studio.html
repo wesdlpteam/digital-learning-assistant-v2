@@ -4831,7 +4831,9 @@ const WISE_DISCUSSION_CHATBOTS_CONTEXT = `WISE DISCUSSION CHATBOTS CONTEXT:
 - Teachers create an AI Discussion chatbot by choosing a topic, connecting it to curriculum, and selecting a scenario.
 - Available scenarios include Character Interview, Project Ideation, Self-Reflection, and Socratic Tutor.
 - Use this when students should ask questions, test thinking, explore a perspective/persona, reflect on their learning, or develop project ideas through guided dialogue.
-- A strong DLA suggestion should name the scenario, give the chatbot topic/persona/purpose, and specify the student product after the chat, such as a reflection, question bank, comparison table, project proposal, exit ticket, or revised inquiry plan.
+- A strong DLA suggestion MUST be specific: name the selected scenario, name the chatbot's role/persona as a concrete fictional character or expert (for example, "Dr Maya Chen, a wildlife ecologist" rather than "a relevant perspective"), include 1–2 example student questions/prompts, and specify the student product after the chat.
+- Avoid generic wording such as "a relevant character", "a topic", or "explore perspectives". Make it easy for a teacher to imagine creating the Wise chatbot tomorrow.
+- Good products include a reflection, question bank, comparison table, project proposal, exit ticket, revised inquiry plan, claim-evidence-reasoning response, or perspective summary.
 - Keep the teacher in control: frame it as a teacher-created Wise chatbot with curriculum connection, not an open consumer AI assistant.`;
 
 
@@ -6480,25 +6482,93 @@ function chooseWiseReplacementSlot_(entry, instruction){
   return best;
 }
 
+function wiseSpecificPersonaForEntry_(entry, scenario){
+  const text = unitContextTextForRealism(entry).toLowerCase();
+  const theme = String(entry?.th || 'the unit').trim();
+
+  if(scenario === 'Character Interview'){
+    if(/adapt|survival|habitat|ecosystem|biodiversity|sustainab|environment|living thing|species|animal|plant|climate|water|ocean|pollution|waste|sharing the planet/i.test(text)){
+      return {
+        name: 'Dr Maya Chen, a wildlife ecologist advising the class about local habitats',
+        examples: '“Which adaptation would help this species survive a hotter summer?” and “What human action is putting this habitat under pressure?”'
+      };
+    }
+    if(/celebration|tradition|culture|community|identity|express|family|heritage|ritual|festival|belief/i.test(text)){
+      return {
+        name: 'Ava, a community celebration organiser explaining why particular traditions matter to different families',
+        examples: '“How does this celebration show what your community values?” and “What might outsiders misunderstand about this tradition?”'
+      };
+    }
+    if(/history|migration|settlement|explorer|colony|past|timeline|change over time|first nations|indigenous|elder|ancestor/i.test(text)){
+      return {
+        name: 'Samira, a museum curator preparing an exhibition about lived experiences from this period',
+        examples: '“What object would you place in the exhibition and why?” and “Whose perspective is missing from this story?”'
+      };
+    }
+    if(/rights|responsibilit|government|law|citizen|decision|leadership|democracy|conflict|peace|fairness/i.test(text)){
+      return {
+        name: 'Jordan, a youth council representative helping the class weigh different community viewpoints',
+        examples: '“Who is affected by this decision?” and “What would make the solution fair for more people?”'
+      };
+    }
+    return {
+      name: 'Nina, a knowledgeable community member connected to '+theme,
+      examples: '“What do you want students to understand from your perspective?” and “What evidence from the unit supports your view?”'
+    };
+  }
+
+  if(scenario === 'Project Ideation'){
+    if(/sustainab|environment|waste|adapt|habitat|climate|action|sharing the planet/i.test(text)){
+      return {
+        name: 'Leo, a student sustainability coach helping teams turn inquiry questions into realistic action projects',
+        examples: '“What small change could our class actually test this week?” and “How will we know if our action helped?”'
+      };
+    }
+    if(/design|prototype|machine|force|materials|engineering|innovation|how the world works/i.test(text)){
+      return {
+        name: 'Priya, an engineer-in-residence who challenges students to improve and test their designs',
+        examples: '“Which part of your prototype is most likely to fail?” and “What evidence will prove your design works?”'
+      };
+    }
+    return {
+      name: 'Kai, a project coach who helps students narrow broad inquiry ideas into one practical proposal',
+      examples: '“Which idea best connects to our central idea?” and “What resources, success criteria and next steps do you need?”'
+    };
+  }
+
+  if(scenario === 'Self-Reflection'){
+    return {
+      name: 'Mia, a reflection coach who helps students explain how their thinking has changed',
+      examples: '“What did you think at the start of the unit?” and “What evidence changed or strengthened your thinking?”'
+    };
+  }
+
+  return {
+    name: 'Dr Nova, a Socratic tutor who answers with probing questions rather than giving students the answer',
+    examples: '“What evidence supports your claim?” and “What is another explanation or counterexample we should consider?”'
+  };
+}
+
 function buildWiseOpportunityDescription_(entry, oldTool, instruction){
   const scenario = wiseScenarioForEntry_(entry);
   const topic = wiseTopicForEntry_(entry);
   const theme = String(entry?.th || 'the unit').trim();
+  const persona = wiseSpecificPersonaForEntry_(entry, scenario);
   const productByScenario = {
-    'Character Interview': 'a question bank and a short perspective summary comparing the chatbot response with evidence from the unit',
-    'Project Ideation': 'a project proposal with a chosen idea, success criteria, resources needed and next steps',
-    'Self-Reflection': 'a reflection note naming what their thinking changed, what evidence supports it and one next learning goal',
-    'Socratic Tutor': 'a claim-evidence-reasoning response or exit ticket that explains their current understanding'
+    'Character Interview': 'a question bank plus a short perspective-and-evidence summary that compares the chatbot responses with unit sources',
+    'Project Ideation': 'a one-page project proposal naming the chosen idea, success criteria, resources, first prototype/action step and how it connects to the unit',
+    'Self-Reflection': 'a structured reflection note naming what changed in their thinking, the evidence that caused the change and one next learning goal',
+    'Socratic Tutor': 'a claim-evidence-reasoning response or exit ticket that records the strongest question the bot asked and how the student improved their answer'
   };
   const purposeByScenario = {
-    'Character Interview': 'explore a relevant perspective through guided questioning',
-    'Project Ideation': 'test and refine possible inquiry actions or design ideas',
+    'Character Interview': 'explore a named perspective through guided questioning rather than general research',
+    'Project Ideation': 'test and refine possible inquiry actions or design ideas before committing to one plan',
     'Self-Reflection': 'make their learning, misconceptions and next steps more visible',
     'Socratic Tutor': 'strengthen their reasoning through probing follow-up questions'
   };
   const product = productByScenario[scenario] || productByScenario['Socratic Tutor'];
   const purpose = purposeByScenario[scenario] || purposeByScenario['Socratic Tutor'];
-  return `The teacher creates a Wise Discussion Chatbot using the ${scenario} scenario with the topic “${topic}”. Students chat with the bot to ${purpose}, then produce ${product} connected to ${theme}.`;
+  return `The teacher creates a Wise Discussion Chatbot using the ${scenario} scenario and sets the bot's role as ${persona.name}. The topic is “${topic}”. Students chat with the bot to ${purpose}; for example, they ask ${persona.examples}. After the chat, students produce ${product} linked explicitly to ${theme}.`;
 }
 
 function buildWiseOpportunityChange_(candidate, instruction){
