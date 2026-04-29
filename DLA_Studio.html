@@ -812,7 +812,7 @@ let PLAYBOOKS = [];
 const PLAYBOOK_KEY = 'dla_playbooks_v1';
 const SEED_PLAYBOOKS = [
   { name: 'Diversify most overused tool', prompt: 'Find the most overused tool in the library and propose replacements for the worst offenders using underused alternatives.' },
-  { name: 'Scan for Minecraft opportunities', prompt: 'Find opportunities to use Minecraft Education, including creative original build/challenge ideas where a curated lesson is not the best fit.' },
+  { name: 'Scan for Minecraft opportunities', prompt: 'Find opportunities to use verified Minecraft Education lessons from the curated library wherever they genuinely connect to the unit.' },
   { name: 'Scan for Micro:bit opportunities', prompt: 'Find opportunities to use Micro:bit wherever a curated lesson genuinely connects to the unit.' },
   { name: 'Bulk up weak/generic descriptions', prompt: 'Scan the entire library for vague, brief, generic, or weakly-connected descriptions and improve the description using the same tool.' },
   { name: 'Boost hands-on STEM (Year 4+)', prompt: 'Find Year 4, 5 and 6 entries where a hands-on STEM tool (Sphero BOLT, Lego Spike Prime, Micro:bit, CoDrone, 3D Printers) could genuinely connect but is missing.' }
@@ -4488,13 +4488,12 @@ const SUGGESTION_STYLE = `DESCRIPTION STYLE:
 
 ORDERING: Put the most innovative, exciting, or unexpected suggestion FIRST (slot 0). Teachers see the top suggestion first — lead with something that makes them think 'I want to try that!' Save the more familiar tools (Seesaw, Canva, Book Creator) for later slots.
 
-MINECRAFT EDUCATION CREATIVE USE:
+MINECRAFT EDUCATION VERIFIED LESSON USE:
 - Use the tool name "Minecraft Education".
-- Minecraft suggestions may EITHER use a verified lesson from the Minecraft library OR be an original Minecraft Education build/challenge designed for the unit.
-- For bulk Minecraft opportunity requests, use a visible MIX of both: verified Minecraft library lessons and original Minecraft build/challenges. Do not make all proposals original/made-up if verified lesson matches exist, and do not make all proposals library-only.
-- If using a verified lesson, name the lesson and include its direct URL.
-- If creating an original Minecraft idea, do NOT invent a lesson title or fake URL. Instead describe the specific world/build, roles, constraints, evidence students gather, and final product.
-- Do not force a maths-only Minecraft lesson such as Area and Volume into non-maths units. For identity/wellbeing/culture/change units, create an original Minecraft empathy map, identity museum, community simulation, decision maze, or perspective-based build only if it genuinely fits the unit.
+- Minecraft suggestions must come from the verified Minecraft library only.
+- Name the specific Minecraft library lesson and include its direct URL.
+- Do NOT invent original Minecraft build challenges, fake lesson titles, or fake URLs.
+- Do NOT force a maths-only Minecraft lesson such as Area and Volume into non-maths units. Only use a verified Minecraft lesson when its lesson content genuinely connects to the unit.
 
 PODCASTING RULE: Whenever a suggestion involves podcasting, audio recording, audio storytelling, or audio interviews, ALWAYS use the tool name "Adobe Express Podcasting" — not GarageBand, not "Podcast Equipment", not generic "Adobe Express". Adobe Express Podcasting is the school's preferred podcasting platform. Always include the URL https://podcast.adobe.com in the description.`;
 
@@ -4805,23 +4804,15 @@ function curatedLessonLooksMathOnly_(lesson){
   return mathHits && !widerContext;
 }
 function checkMinecraftEducationFit(toolName, desc, entry){
-  const d = String(desc || '');
   const lesson = findCuratedLessonMention_('minecraft', toolName, desc);
-  if(lesson){
-    if(curatedLessonLooksMathOnly_(lesson) && !unitHasMathMeasurementContext_(entry)){
-      return { ok:false, reason:`Minecraft lesson "${lesson.title}" appears to be maths/measurement-focused and does not fit this unit context.` };
-    }
-    if(/\barea\b/i.test(lesson.title || '') && /\bvolume\b/i.test(lesson.title || '') && unitHasIdentityWellbeingContext_(entry) && !unitHasMathMeasurementContext_(entry)){
-      return { ok:false, reason:`Minecraft lesson "${lesson.title}" is an Area and Volume maths lesson, not a fit for this identity/wellbeing unit.` };
-    }
-    return { ok:true, reason:'' };
+  if(!lesson){
+    return { ok:false, reason:'Minecraft Education suggestions must use a verified lesson from the curated Minecraft library and include the real lesson title or URL.' };
   }
-  const concreteMinecraft = /(build|construct|design|create|model|world|village|museum|simulation|quest|npc|non player|character|map|maze|challenge|survival|prototype|landscape|habitat|ecosystem|settlement|community|gallery|tour|evidence|journal|signs?|portfolio|present|explain|compare|reflect)/i.test(d);
-  if(!concreteMinecraft){
-    return { ok:false, reason:'Original Minecraft Education suggestion needs a concrete world/build/challenge and student product, not a vague activity.' };
+  if(curatedLessonLooksMathOnly_(lesson) && !unitHasMathMeasurementContext_(entry)){
+    return { ok:false, reason:`Minecraft lesson "${lesson.title}" appears to be maths/measurement-focused and does not fit this unit context.` };
   }
-  if(/\barea\b.*\bvolume\b|\bvolume\b.*\barea\b/i.test(d) && !unitHasMathMeasurementContext_(entry)){
-    return { ok:false, reason:'Area and Volume framing is not a fit for this non-maths unit.' };
+  if(/\barea\b/i.test(lesson.title || '') && /\bvolume\b/i.test(lesson.title || '') && unitHasIdentityWellbeingContext_(entry) && !unitHasMathMeasurementContext_(entry)){
+    return { ok:false, reason:`Minecraft lesson "${lesson.title}" is an Area and Volume maths lesson, not a fit for this identity/wellbeing unit.` };
   }
   return { ok:true, reason:'' };
 }
@@ -4894,7 +4885,7 @@ function detectPlatformContext(text, yearLevel){
   if(/minecraft/i.test(platform.name || '')){
     return {
       platform,
-      contextBlock: `\n\nDETECTED PLATFORM: ${platform.name}\n${ctx}\nMinecraft may be used in two ways:\n1. VERIFIED LESSON MODE — use a lesson from the curated library only when it genuinely matches the unit. Include the direct lesson URL.\n2. CREATIVE BUILD MODE — create an original Minecraft Education world/build/challenge for this unit. Do not invent a fake lesson title or URL. Name exactly what students build, simulate, investigate, document, and present.\nDo not force a maths-only Minecraft lesson into a non-maths unit.`
+      contextBlock: `\n\nDETECTED PLATFORM: ${platform.name}\n${ctx}\nMinecraft Education must use VERIFIED LESSON MODE only — choose a lesson from the curated Minecraft library when it genuinely matches the unit. Include the real lesson title and direct URL. Do NOT create original Minecraft build/challenge ideas, and do NOT invent fake lesson titles or fake URLs. Do not force a maths-only Minecraft lesson into a non-maths unit.`
     };
   }
   return {
@@ -5287,28 +5278,20 @@ function buildLibraryContext(key){
     .join('\n\n');
 
   if(key === 'minecraft'){
-    return `${meta.name.toUpperCase()} — VERIFIED LESSON LIBRARY + CREATIVE BUILD MODE (${lessons.length} lessons):
-You MAY use the verified lessons below when there is a genuine content match. Do NOT force a lesson just because it is in the library.
-You MAY also create an original Minecraft Education build/challenge when that would better fit the unit. For original ideas, do not invent a fake lesson title or URL — describe the build/world/challenge directly.
-
-MIX REQUIREMENT FOR BULK MINECRAFT OPPORTUNITY REQUESTS:
-- Do not return all verified-library lessons, and do not return all original/made-up Minecraft ideas.
-- Use a deliberate mix: roughly half verified Minecraft library lessons and half original Minecraft Education build/challenges.
-- If the coordinator asks for a number, aim for at least one third of the proposals to be verified lessons from the list below, provided genuine matches exist.
-- Verified lesson proposals must clearly name the lesson title and include its real URL from the library list.
-- Original proposals must be labelled through wording such as "Original Minecraft build challenge" and must not include fake lesson titles or URLs.
+    return `${meta.name.toUpperCase()} — VERIFIED LESSON LIBRARY (${lessons.length} lessons):
+Use the verified lessons below when there is a genuine content match. Do NOT force a lesson just because it is in the library. Do NOT create original Minecraft Education build/challenge ideas, fake lesson titles, or fake URLs.
 
 AGE GATING FOR VERIFIED LESSONS: Each lesson has a minimum age. Match against Australian year levels:
   Prep = ages 5-6 | Year 1 = 6-7 | Year 2 = 7-8 | Year 3 = 8-9 | Year 4 = 9-10 | Year 5 = 10-11 | Year 6 = 11-12
   "ages 5+" = all year levels | "ages 8+" = Year 3+ only | "ages 10+" = Year 5+ only | "ages 11+" = Year 6 only
   NEVER propose a verified lesson for a year level below its minimum age.
 
-LESSON-FIT HARD RULE: If a verified lesson is mainly mathematics/measurement (for example Area and Volume), only use it for units that genuinely involve mathematics, measurement, geometry, spatial design, scale, mapping or data. For identity, wellbeing, empathy, culture, change or relationship units, prefer an original Minecraft build/challenge.
+LESSON-FIT HARD RULE: If a verified lesson is mainly mathematics/measurement (for example Area and Volume), only use it for units that genuinely involve mathematics, measurement, geometry, spatial design, scale, mapping or data. Do not force maths-only lessons into identity, wellbeing, empathy, culture, change or relationship units.
 
 VERIFIED LESSONS AVAILABLE:
 ${sections}
 
-When suggesting ${meta.name}, use tool name "${meta.name}". If using a verified lesson, include the direct URL. If using an original idea, do not include a URL unless you have a real one.`;
+When suggesting ${meta.name}, use tool name "${meta.name}" and include the lesson's URL from the list above directly in the description.`;
   }
 
   return `${meta.name.toUpperCase()} — VERIFIED LESSON LIBRARY (${lessons.length} lessons):
@@ -5342,7 +5325,7 @@ function buildLibraryContextCompact(key){
   }).join('\n');
   if(key === 'minecraft'){
     return `${meta.name.toUpperCase()} — VERIFIED LESSON LIBRARY + CREATIVE BUILD MODE (${lessons.length} lessons):
-Use a MIX of sources. Do NOT make every proposal an original/made-up Minecraft idea, and do NOT make every proposal a library lesson. For bulk opportunity requests, aim for roughly half verified Minecraft lessons from the list and half original Minecraft build/challenges. If a number is requested, at least one third should be verified lessons when genuine matches exist. VERIFIED lessons must include the real lesson title and URL from this list. ORIGINAL ideas must not invent fake lesson titles or URLs. Respect lesson age ranges. Avoid maths-only lessons like Area and Volume unless the unit genuinely involves maths/measurement/spatial design.
+Use VERIFIED Minecraft library lessons only. Do NOT create original/made-up Minecraft ideas, invent lesson titles, or invent URLs. Every Minecraft proposal must name a real lesson from this list and include its real URL. Respect lesson age ranges. Avoid maths-only lessons like Area and Volume unless the unit genuinely involves maths/measurement/spatial design.
 ${lines}`;
   }
   return `${meta.name.toUpperCase()} — VERIFIED LESSON LIBRARY (${lessons.length} lessons):\nUse ONLY these verified lessons. Do NOT invent lesson titles. Respect lesson age ranges. Include the lesson URL in the description.\n${lines}`;
@@ -6820,15 +6803,15 @@ async function runBulkMinecraftOpportunityFlow_(instruction,completeData,prog,lb
   updateReasoningStep(0,'done');updateReasoningStep(1,'done');updateReasoningStep(2,'done');updateReasoningStep(3,'active','Finding safe Minecraft Education opportunities'); if(lbl)lbl.textContent='Finding safe Minecraft Education opportunities…'; if(bar)bar.style.width='25%'; await ensureLibrariesLoadedForAI();
   const target=getBulkExplicitCount_(instruction,10), cand=[]; let age=0, existing=0, noslot=0;
   completeData.forEach(({e,i})=>{if(!isAiToolSafeForEntry('Minecraft Education',e)){age++;return;} if(entryAlreadyHasTool_(e,'Minecraft Education')){existing++;return;} const slot=mcChooseSlot_(e,instruction); if(!slot){noslot++;return;} cand.push({entryIdx:i,...slot});});
-  const usedE=new Set(), usedL=new Set(), changes=[]; const wantLib=Math.max(1,Math.min(Math.round(target*.45),target-1));
+  const usedE=new Set(), usedL=new Set(), changes=[]; const wantLib=target;
   const lib=cand.map(c=>{const fit=mcBestLesson_(DATA[c.entryIdx],usedL); return fit?{...c,lesson:fit.lesson,score:c.score+fit.score}:null;}).filter(Boolean).sort((a,b)=>b.score-a.score);
   for(const c of lib){if(changes.length>=wantLib)break; if(usedE.has(c.entryIdx))continue; const ch=mcChange_(c,'lesson',c.lesson); if(!checkRealisticToolUse(ch.t,ch.d,DATA[c.entryIdx]).ok)continue; changes.push(ch); usedE.add(c.entryIdx); usedL.add(dlaTextForFit_(c.lesson.title||''));}
-  cand.filter(c=>!usedE.has(c.entryIdx)).sort((a,b)=>b.score-a.score).forEach(c=>{if(changes.length>=target)return; const ch=mcChange_(c,'creative'); if(checkRealisticToolUse(ch.t,ch.d,DATA[c.entryIdx]).ok){changes.push(ch); usedE.add(c.entryIdx);}});
+  // Verified-only mode: do not generate original Minecraft build/challenge fallbacks.
   if(changes.length<target){for(const c of lib){if(changes.length>=target)break; if(usedE.has(c.entryIdx))continue; const ch=mcChange_(c,'lesson',c.lesson); if(checkRealisticToolUse(ch.t,ch.d,DATA[c.entryIdx]).ok){changes.push(ch);usedE.add(c.entryIdx);}}}
   if(bar)bar.style.width='100%'; if(prog)prog.style.display='none'; updateReasoningStep(3,'done');updateReasoningStep(4,'done');updateReasoningStep(5,'done'); setTimeout(hideReasoningSteps,1000); if(bulkChatHistory.length&&bulkChatHistory[bulkChatHistory.length-1].content.includes('Analysing all entries'))bulkChatHistory.pop();
-  const vc=changes.filter(c=>c.auditSource==='bulk-minecraft-targeted-library').length, cc=changes.length-vc;
-  if(changes.length){const short=changes.length<target?'<br><span style="font-size:12px;color:var(--orange)">I found '+changes.length+' safe opportunities out of '+target+'. '+age+' outside age range, '+existing+' already had Minecraft, '+noslot+' had no safe non-STEM slot.</span>':''; const sample=changes.slice(0,5).map(c=>{const e=DATA[c.entryIdx], old=getSugs(e)[c.sugIdx]?sugTool(getSugs(e)[c.sugIdx]):'existing suggestion'; return '• '+esc(e.yl)+' '+esc(e.th)+' — '+(c.auditSource.includes('library')?'verified lesson':'original build')+', replacing '+esc(old);}).join('<br>'); bulkChatAddMessage('assistant','✅ <strong>'+changes.length+' Minecraft Education opportunities</strong> ready for review.<br><span style="font-size:12px;color:var(--lime)">'+vc+' verified lesson matches · '+cc+' original build/challenge ideas</span>'+short+'<br><br><span style="font-size:12px;color:var(--lime)">Sample targets:</span><br>'+sample+(changes.length>5?'<br>• …':'')); bulkChatMemory.push({role:'assistant',content:'Proposed '+changes.length+' Minecraft opportunities.'}); window._snapshotReason='Before Minecraft Education opportunities'; showChangesPopup(changes); bulkChatState='done';}
-  else{bulkChatAddMessage('assistant','⚠️ I found no safe Minecraft Education opportunities. Checked '+completeData.length+' entries: '+age+' outside age range, '+existing+' already contain Minecraft, '+noslot+' had no safe non-STEM slot.'); bulkChatState='idle';}
+  const vc=changes.filter(c=>c.auditSource==='bulk-minecraft-targeted-library').length;
+  if(changes.length){const short=changes.length<target?'<br><span style="font-size:12px;color:var(--orange)">I found '+changes.length+' safe opportunities out of '+target+'. '+age+' outside age range, '+existing+' already had Minecraft, '+noslot+' had no safe non-STEM slot.</span>':''; const sample=changes.slice(0,5).map(c=>{const e=DATA[c.entryIdx], old=getSugs(e)[c.sugIdx]?sugTool(getSugs(e)[c.sugIdx]):'existing suggestion'; return '• '+esc(e.yl)+' '+esc(e.th)+' — '+'verified lesson'+', replacing '+esc(old);}).join('<br>'); bulkChatAddMessage('assistant','✅ <strong>'+changes.length+' verified Minecraft Education lesson opportunities</strong> ready for review.<br><span style="font-size:12px;color:var(--lime)">'+vc+' verified lesson matches</span>'+short+'<br><br><span style="font-size:12px;color:var(--lime)">Sample targets:</span><br>'+sample+(changes.length>5?'<br>• …':'')); bulkChatMemory.push({role:'assistant',content:'Proposed '+changes.length+' verified Minecraft lesson opportunities.'}); window._snapshotReason='Before verified Minecraft Education opportunities'; showChangesPopup(changes); bulkChatState='done';}
+  else{bulkChatAddMessage('assistant','⚠️ I found no safe verified Minecraft Education lesson opportunities. Checked '+completeData.length+' entries: '+age+' outside age range, '+existing+' already contain Minecraft, '+noslot+' had no safe non-STEM slot.'); bulkChatState='idle';}
   stopProgress(); return true;
 }
 async function startBulkAnalysis(){
@@ -6962,15 +6945,13 @@ TARGET COUNT (HARD RULE): The coordinator explicitly asked for ${explicitCount} 
   const isMinecraftPlatform = !!(platform && /minecraft/i.test(platform.name || ''));
   const platformHeading = isMinecraftPlatform ? 'MINECRAFT EDUCATION MODE' : `LESSON LIBRARY — ${platform ? platform.name.toUpperCase() : ''}`;
   const platformMatchingRule = isMinecraftPlatform
-    ? `MATCHING RULE: Propose Minecraft Education wherever it genuinely strengthens the unit. You MUST produce a mixed set of proposals: some verified Minecraft library lessons AND some original Minecraft Education build/challenges. Do not make all proposals original/made-up. Do not make all proposals from the library. ${explicitCount ? `For ${explicitCount} requested proposals, aim for about ${Math.max(1, Math.round(explicitCount * 0.45))} verified library lesson proposals and ${Math.max(1, explicitCount - Math.max(1, Math.round(explicitCount * 0.45)))} original build/challenge proposals, while only using verified lessons where the fit is genuine.` : 'Aim for roughly half verified lessons and half original build/challenges when genuine matches exist.'} Verified lesson proposals must name the real lesson and include its URL. Original ideas must be creative and specific: describe what students build, simulate, role-play, test, document, and present; do not invent a lesson title or fake URL. Avoid maths-only lessons like Area and Volume unless the unit genuinely involves maths, measurement, geometry, spatial design, scale, mapping or data.${targetBlock}`
+    ? `MATCHING RULE: Propose Minecraft Education only when a verified Minecraft library lesson genuinely strengthens the unit. Every proposal must name a real Minecraft lesson from the library and include its URL. Do NOT create original Minecraft build/challenge ideas, and do NOT invent fake lesson titles or fake URLs. Avoid maths-only lessons like Area and Volume unless the unit genuinely involves maths, measurement, geometry, spatial design, scale, mapping or data.${targetBlock}`
     : `MATCHING RULE: Propose changes wherever a specific ${platform ? platform.name : 'platform'} lesson genuinely connects to the unit's activities or central idea. Be thorough — scan every candidate entry and propose ${platform ? platform.name : 'the platform'} wherever there is a reasonable curriculum connection. Name the specific lesson in every proposal.${targetBlock}`;
   const platformSection = platform ? `
 
 ${platformHeading}:
 ${platformContextText}
 ${platformMatchingRule}
-${isMinecraftPlatform ? `
-MINECRAFT SOURCE BALANCE CHECK (HARD RULE): Before finalising, count your proposals. If every Minecraft proposal is an original idea, replace several with genuine verified lesson matches from the library. If every proposal is a verified lesson, replace several with original build/challenge ideas. The final set should visibly include both types.` : ''}
 
 QUANTITY CAP: Propose a maximum of ${maxCap} changes total. If you find more than ${maxCap} genuine matches, select only the ${maxCap} strongest connections.
 ` : '';
