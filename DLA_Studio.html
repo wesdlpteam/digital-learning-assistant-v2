@@ -94,24 +94,6 @@
   #bulk-chat-messages{height:430px!important}
   #chat-messages{height:430px}
 }
-
-/* ===== BULK SECTION COLLAPSIBLE CARDS PATCH v2 =====
-   Reinstates expandable/collapsible Bulk cards. All sections start collapsed by default,
-   then remember their open/closed state after the first click. */
-#panel-tools .bulk-collapsible-card{padding:0!important;overflow:hidden}
-.bulk-collapse-header{width:100%;display:flex;align-items:center;gap:12px;padding:16px 22px;background:var(--card2);border:0;border-bottom:1px solid var(--border);color:var(--text);font-family:inherit;cursor:pointer;text-align:left}
-.bulk-collapse-header:hover{background:#262626}
-.bulk-collapse-title{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:1.3px;color:var(--lime)}
-.bulk-collapse-sub{font-size:11px;color:var(--dim);font-weight:600;margin-top:2px;text-transform:none;letter-spacing:0}
-.bulk-collapse-spacer{flex:1}
-.bulk-collapse-icon{font-size:16px;color:var(--dim);transition:transform .15s ease}
-.bulk-collapsed .bulk-collapse-icon{transform:rotate(-90deg)}
-.bulk-collapse-body{padding:28px}
-.bulk-collapse-body.bulk-collapse-body-compact{padding:0}
-.bulk-collapsed .bulk-collapse-body{display:none}
-.bulk-collapsed .bulk-collapse-header{border-bottom:0}
-@media (min-width:1400px){.bulk-collapse-body{padding:34px}.bulk-collapse-header{padding:18px 26px}.bulk-collapse-title{font-size:13px}}
-
 </style>
 </head>
 <body>
@@ -832,7 +814,7 @@ const SEED_PLAYBOOKS = [
   { name: 'Diversify most overused tool', prompt: 'Find the most overused tool in the library and propose replacements for the worst offenders using underused alternatives.' },
   { name: 'Scan for Minecraft opportunities', prompt: 'Find opportunities to use Minecraft Education wherever a curated lesson genuinely connects to the unit.' },
   { name: 'Scan for Micro:bit opportunities', prompt: 'Find opportunities to use Micro:bit wherever a curated lesson genuinely connects to the unit.' },
-  { name: 'Find weak/generic suggestions', prompt: 'Scan the entire library for vague, generic, or weakly-connected suggestions and propose stronger replacements.' },
+  { name: 'Bulk up weak/generic descriptions', prompt: 'Scan the entire library for vague, brief, generic, or weakly-connected descriptions and improve the description using the same tool.' },
   { name: 'Boost hands-on STEM (Year 4+)', prompt: 'Find Year 4, 5 and 6 entries where a hands-on STEM tool (Sphero BOLT, Lego Spike Prime, Micro:bit, CoDrone, 3D Printers) could genuinely connect but is missing.' }
 ];
 
@@ -979,6 +961,39 @@ function normaliseAgeRanges(ranges){
   return out;
 }
 
+let TOOL_INVENTORY_CLEANUP_PENDING = false;
+
+function removeToolInventoryCrossListConflicts(preferList){
+  TOOL_INVENTORY.approved = Array.isArray(TOOL_INVENTORY.approved) ? TOOL_INVENTORY.approved : [];
+  TOOL_INVENTORY.banned = Array.isArray(TOOL_INVENTORY.banned) ? TOOL_INVENTORY.banned : [];
+  TOOL_INVENTORY.ageRanges = TOOL_INVENTORY.ageRanges || {};
+
+  const before = JSON.stringify({
+    approved: TOOL_INVENTORY.approved,
+    banned: TOOL_INVENTORY.banned,
+    ageRanges: TOOL_INVENTORY.ageRanges
+  });
+
+  const bannedKeys = new Set(TOOL_INVENTORY.banned.map(toolInventoryKey).filter(Boolean));
+  const approvedKeys = new Set(TOOL_INVENTORY.approved.map(toolInventoryKey).filter(Boolean));
+
+  // Safety-first default: if the same tool appears in both lists under aliases
+  // such as "Sway" and "Microsoft Sway", banned wins.
+  if(preferList === 'approved'){
+    TOOL_INVENTORY.banned = TOOL_INVENTORY.banned.filter(t => !approvedKeys.has(toolInventoryKey(t)));
+  } else {
+    TOOL_INVENTORY.approved = TOOL_INVENTORY.approved.filter(t => !bannedKeys.has(toolInventoryKey(t)));
+    bannedKeys.forEach(k => { if(k && TOOL_INVENTORY.ageRanges) delete TOOL_INVENTORY.ageRanges[k]; });
+  }
+
+  const after = JSON.stringify({
+    approved: TOOL_INVENTORY.approved,
+    banned: TOOL_INVENTORY.banned,
+    ageRanges: TOOL_INVENTORY.ageRanges
+  });
+  if(before !== after) TOOL_INVENTORY_CLEANUP_PENDING = true;
+}
+
 function normaliseToolInventory(){
   TOOL_INVENTORY = TOOL_INVENTORY && typeof TOOL_INVENTORY === 'object'
     ? TOOL_INVENTORY
@@ -986,6 +1001,7 @@ function normaliseToolInventory(){
   TOOL_INVENTORY.approved = normaliseToolList(TOOL_INVENTORY.approved);
   TOOL_INVENTORY.banned = normaliseToolList(TOOL_INVENTORY.banned);
   TOOL_INVENTORY.ageRanges = normaliseAgeRanges(TOOL_INVENTORY.ageRanges);
+  removeToolInventoryCrossListConflicts('banned');
   return TOOL_INVENTORY;
 }
 
@@ -1013,8 +1029,9 @@ function invAddTool(listKey){
   const inputId = listKey === 'approved' ? 'inv-whitelist-input' : 'inv-banned-input';
   const input = document.getElementById(inputId);
   if(!input) return;
-  const val = (input.value || '').trim();
-  if(!val) return;
+  const rawVal = (input.value || '').trim();
+  if(!rawVal) return;
+  const val = normaliseToolName(rawVal).trim() || rawVal;
   normaliseToolInventory();
   TOOL_INVENTORY[listKey] = TOOL_INVENTORY[listKey] || [];
   const key = toolInventoryKey(val);
@@ -1027,6 +1044,7 @@ function invAddTool(listKey){
   // If adding to banned, also remove from approved (and vice versa)
   if(listKey === 'banned'){
     TOOL_INVENTORY.approved = (TOOL_INVENTORY.approved || []).filter(x => toolInventoryKey(x) !== key);
+    if(TOOL_INVENTORY.ageRanges) delete TOOL_INVENTORY.ageRanges[key];
   } else {
     TOOL_INVENTORY.banned = (TOOL_INVENTORY.banned || []).filter(x => toolInventoryKey(x) !== key);
     const minEl = document.getElementById('inv-whitelist-min');
@@ -1044,11 +1062,13 @@ function invAddTool(listKey){
 function invRemoveTool(listKey, tool){
   normaliseToolInventory();
   const key = toolInventoryKey(tool);
+  const before = (TOOL_INVENTORY[listKey] || []).length;
   TOOL_INVENTORY[listKey] = (TOOL_INVENTORY[listKey] || []).filter(x => toolInventoryKey(x) !== key);
   if(listKey === 'approved' && TOOL_INVENTORY.ageRanges) delete TOOL_INVENTORY.ageRanges[key];
   renderToolInventory();
   saveLibraries();
-  setStatus(`Removed "${tool}" from ${listKey === 'approved' ? 'whitelist' : 'banned list'}`);
+  const removed = before - (TOOL_INVENTORY[listKey] || []).length;
+  setStatus(removed ? `Removed "${tool}" from ${listKey === 'approved' ? 'whitelist' : 'banned list'}` : `"${tool}" was already removed`);
 }
 
 function invUpdateToolAge(tool, edge, value){
@@ -1077,8 +1097,19 @@ function renderToolInventory(){
   if(!whitelistEl || !bannedEl) return;
 
   normaliseToolInventory();
+  const shouldPersistInventoryCleanup = TOOL_INVENTORY_CLEANUP_PENDING;
+  TOOL_INVENTORY_CLEANUP_PENDING = false;
   const approved = TOOL_INVENTORY.approved || [];
   const banned = TOOL_INVENTORY.banned || [];
+
+  if(shouldPersistInventoryCleanup){
+    if(DRIVE_TOKEN && LIBRARIES_FILE_ID && typeof saveLibraries === 'function'){
+      setTimeout(() => saveLibraries().catch(e => console.warn('Inventory cleanup save failed:', e)), 0);
+      setStatus('Cleaned duplicate tool aliases across whitelist/banned lists ✓');
+    } else {
+      setStatus('Cleaned duplicate tool aliases locally — reconnect Drive to persist', 'loading');
+    }
+  }
 
   if(whCountEl) whCountEl.textContent = approved.length ? `(${approved.length})` : '';
   if(banCountEl) banCountEl.textContent = banned.length ? `(${banned.length})` : '';
@@ -1094,13 +1125,13 @@ function renderToolInventory(){
           </div>
           <select class="inp" title="Minimum year level" onchange="invUpdateToolAge(${jsArg(t)},'min',this.value)" style="margin-bottom:0;font-size:11px;padding:5px 7px;color:var(--lime);border-color:rgba(197,232,74,.3)">${yearSelectOptions(range.min)}</select>
           <select class="inp" title="Maximum year level" onchange="invUpdateToolAge(${jsArg(t)},'max',this.value)" style="margin-bottom:0;font-size:11px;padding:5px 7px;color:var(--lime);border-color:rgba(197,232,74,.3)">${yearSelectOptions(range.max)}</select>
-          <button onclick="invRemoveTool('approved',${jsArg(t)})" style="background:transparent;border:none;color:var(--lime);cursor:pointer;padding:0 6px;font-size:18px;line-height:1;opacity:.8" title="Remove">×</button>
+          <button type="button" onclick="event.stopPropagation(); invRemoveTool('approved',${jsArg(t)}); return false;" style="background:transparent;border:none;color:var(--lime);cursor:pointer;padding:0 6px;font-size:18px;line-height:1;opacity:.8" title="Remove">×</button>
         </div>`;
       }).join('')
     : '<span style="font-size:11px;color:var(--dim);font-style:italic">No whitelist — all approved tools allowed.</span>';
 
   bannedEl.innerHTML = banned.length
-    ? banned.map(t => `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 4px 4px 10px;background:rgba(255,128,128,0.08);border:1px solid rgba(255,128,128,0.3);border-radius:99px;font-size:12px;font-weight:600;color:#FF8080">${esc(t)}<button onclick="invRemoveTool('banned',${jsArg(t)})"  style="background:transparent;border:none;color:#FF8080;cursor:pointer;padding:0 6px;font-size:14px;line-height:1;opacity:.7" title="Remove">×</button></span>`).join('')
+    ? banned.map(t => `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 4px 4px 10px;background:rgba(255,128,128,0.08);border:1px solid rgba(255,128,128,0.3);border-radius:99px;font-size:12px;font-weight:600;color:#FF8080">${esc(t)}<button type="button" onclick="event.stopPropagation(); invRemoveTool('banned',${jsArg(t)}); return false;"  style="background:transparent;border:none;color:#FF8080;cursor:pointer;padding:0 6px;font-size:14px;line-height:1;opacity:.7" title="Remove">×</button></span>`).join('')
     : '<span style="font-size:11px;color:var(--dim);font-style:italic">No bans.</span>';
 }
 
@@ -1839,14 +1870,15 @@ async function regenSingleSug(entryIdx, sugIdx){
   startProgress();
 
   const entry = DATA[entryIdx];
+  const currentSug = getSugs(entry)[sugIdx];
+  const currentTool = sugTool(currentSug);
   const others = getSugs(entry).filter((_,i)=>i!==sugIdx).map(s=>sugTool(s)).join(', ');
   const isStem = sugIdx === 5;
 
-  // Age-appropriate tools for this unit's year level
-  const ageAppropriate = getAgeAppropriateTools(entry.yl);
+  // Age-appropriate tools for this unit's year level. Exclude the current tool so regenerate is actually fresh.
+  const ageAppropriate = getAgeAppropriateTools(entry.yl).filter(t => toolKey(t) !== toolKey(currentTool));
   const constraintBlock = buildToolConstraints(entry.yl);
 
-  // Find overused tools (>13 uses) and underused tools (≤2 uses)
   const freq = {};
   DATA.forEach(e => {
     getSugs(e).forEach(s => {
@@ -1855,28 +1887,33 @@ async function regenSingleSug(entryIdx, sugIdx){
     });
   });
   const overused = Object.entries(freq).filter(([t,c]) => c > 13).map(([t])=>t);
-  // Underused AND age-appropriate (so we don't suggest them if they're wrong for the year)
   const ageAppropriateLower = ageAppropriate.map(t=>t.toLowerCase());
   const underused = Object.entries(freq)
     .filter(([t,c]) => c <= 2 && ageAppropriateLower.includes(t.toLowerCase()))
     .sort((a,b)=>a[1]-b[1])
     .slice(0, 8)
     .map(([t,c])=>`${t} (${c}x)`);
-
-  // Also add any age-appropriate tools that are NEVER used
   const neverUsed = ageAppropriate.filter(t => !freq[t]).slice(0, 6);
 
-  const othersLower = (others || '').toLowerCase();
   const stemInstruction = isStem ? `
 THIS IS SUGGESTION #6 — IT MUST BE A STEM DESIGN CYCLE ACTIVITY using the cycle: Empathise → Define → Ideate → Prototype → Test. Use a hands-on maker/robotics tool that is age-appropriate.` : '';
 
   const prompt = `You are a Digital Learning Coach at Wesley College generating a fresh technology suggestion for an IB PYP unit.
 
-Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${entry.plannerText?`\nPlanner: ${entry.plannerText.slice(0, 400)}`:''}
+Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`
+Central Idea: "${entry.ci}"`:''}${entry.plannerText?`
+Planner: ${entry.plannerText.slice(0, 400)}`:''}
+Current suggestion being regenerated: ${currentTool}: ${sugDesc(currentSug)}
 Tools already used in this unit (do not repeat): ${others||'none'}
 
 ${constraintBlock}
 ${stemInstruction}
+
+HARD RULES:
+- This is a regeneration, not a wording tweak.
+- Do NOT use the current tool again: ${currentTool || '(none)'}.
+- Pick a DIFFERENT age-appropriate Wesley-approved tool.
+- Do NOT duplicate any other tool already used in this unit.
 
 OVERUSED TOOLS (avoid unless perfect fit — already appears 14+ times across library): ${overused.length ? overused.join(', ') : '(none)'}
 UNDERUSED TOOLS for this year level (PREFER one of these if it fits): ${underused.length ? underused.join(', ') : '(none below threshold)'}
@@ -1890,11 +1927,20 @@ Return ONLY JSON: {"t":"Tool Name","d":"2-3 vivid sentences connecting to this u
   try{
     let newSug = null;
     let lastIssue = null;
-    for(let attempt=0; attempt<3; attempt++){
+    for(let attempt=0; attempt<4; attempt++){
       let retryNote = '';
-      if(lastIssue === 'dupe') retryNote = `\n\nRETRY: Previous response used a tool already in this unit. Pick DIFFERENT tool NOT in: ${others}.`;
-      else if(lastIssue === 'age') retryNote = `\n\nRETRY: Previous response proposed a tool NOT age-appropriate for ${entry.yl}. You MUST pick from: ${ageAppropriate.join(', ')}.`;
-      else if(lastIssue === 'unavailable') retryNote = `\n\nRETRY: Previous response proposed a tool Wesley does NOT have. Pick a different tool.`;
+      if(lastIssue === 'same') retryNote = `
+
+RETRY: You used the same tool (${currentTool}). You MUST choose a DIFFERENT tool.`;
+      else if(lastIssue === 'dupe') retryNote = `
+
+RETRY: Previous response used a tool already in this unit. Pick DIFFERENT tool NOT in: ${others}.`;
+      else if(lastIssue === 'age') retryNote = `
+
+RETRY: Previous response proposed a tool NOT age-appropriate for ${entry.yl}. You MUST pick from: ${ageAppropriate.join(', ')}.`;
+      else if(lastIssue === 'unavailable') retryNote = `
+
+RETRY: Previous response proposed a tool Wesley does NOT have. Pick a different tool.`;
 
       const raw = await callAI([{role:'user',parts:[{text:prompt+retryNote}]}], null, OPENAI_FAST_MODEL);
       const clean = raw.replace(/```json|```/g,'').trim();
@@ -1903,18 +1949,19 @@ Return ONLY JSON: {"t":"Tool Name","d":"2-3 vivid sentences connecting to this u
       const parsed = JSON.parse(clean.slice(si, ei+1));
       if(!parsed.t||!parsed.d) throw new Error('Invalid');
 
-      // Check duplicate
+      if(toolKey(parsed.t) === toolKey(currentTool)){
+        lastIssue = 'same';
+        continue;
+      }
       if(wouldDupeInEntry(entry, parsed.t, sugIdx)){
         lastIssue = 'dupe';
         continue;
       }
-      // Check availability (Wesley-specific)
       const toolLower = normaliseToolName(parsed.t).toLowerCase();
       if(NOT_AVAILABLE_AT_WESLEY.some(na => na.toLowerCase() === toolLower)){
         lastIssue = 'unavailable';
         continue;
       }
-      // Check age-appropriateness
       if(!isToolAgeAppropriate(parsed.t, entry.yl)){
         lastIssue = 'age';
         continue;
@@ -1923,25 +1970,21 @@ Return ONLY JSON: {"t":"Tool Name","d":"2-3 vivid sentences connecting to this u
       break;
     }
     if(!newSug){
-      const problem = lastIssue === 'age' ? 'AI kept proposing tools not age-appropriate' :
+      const problem = lastIssue === 'same' ? 'AI kept repeating the same tool' :
+                      lastIssue === 'age' ? 'AI kept proposing tools not age-appropriate' :
                       lastIssue === 'dupe' ? 'AI kept proposing tools already in this unit' :
                       lastIssue === 'unavailable' ? 'AI kept proposing tools Wesley does not have' :
-                      'AI failed after 3 attempts';
+                      'AI failed after 4 attempts';
       throw new Error(`${problem} — try 💬 feedback with a specific tool name`);
     }
-    const sugs = [...getSugs(DATA[entryIdx])];
-    recordChange(entryIdx, sugs, [...sugs.slice(0,sugIdx), newSug, ...sugs.slice(sugIdx+1)]);
-    DATA[entryIdx].s[sugIdx] = newSug;
-    saveToDrive();
-    setStatus('Suggestion regenerated');
-    const sugEl = document.getElementById(uid);
-    if(sugEl){
-      const newRow = document.createElement('div');
-      newRow.innerHTML = buildSugRow(newSug, entryIdx, sugIdx);
-      sugEl.replaceWith(newRow.firstElementChild);
-    }
+
+    // Safety-first: do not apply or save immediately. Show before/after for approval.
+    window._snapshotReason = `Before regenerating ${currentTool || 'suggestion'} in ${entry.yl} ${entry.th}`;
+    showChangesPopup([{ entryIdx, sugIdx, t:newSug.t, d:newSug.d, reason:'Single suggestion regeneration from Browse Library' }]);
+    setStatus('Regenerated draft ready for review');
   }catch(e){
     setStatus('Regen failed: '+e.message, 'error');
+  }finally{
     stopProgress();
     if(btn){ btn.textContent='↻'; btn.disabled=false; }
   }
@@ -2480,7 +2523,11 @@ function normaliseToolName(t){
     'microsoft onenote':'Microsoft OneNote','onenote':'Microsoft OneNote',
     'microsoft powerpoint':'Microsoft PowerPoint','powerpoint':'Microsoft PowerPoint',
     'microsoft word':'Microsoft Word','microsoft teams':'Microsoft Teams',
-    'microsoft forms':'Microsoft Forms','microsoft sway':'Microsoft Sway',
+    'microsoft forms':'Microsoft Forms','forms':'Microsoft Forms','ms forms':'Microsoft Forms','office forms':'Microsoft Forms',
+    'microsoft sway':'Microsoft Sway','sway':'Microsoft Sway','ms sway':'Microsoft Sway','office sway':'Microsoft Sway','m365 sway':'Microsoft Sway',
+    'microsoft excel':'Microsoft Excel','excel':'Microsoft Excel','ms excel':'Microsoft Excel','office excel':'Microsoft Excel',
+    'word':'Microsoft Word','ms word':'Microsoft Word','office word':'Microsoft Word',
+    'teams':'Microsoft Teams','ms teams':'Microsoft Teams','office teams':'Microsoft Teams',
     'google earth':'Google Earth','google maps':'Google Maps',
     'book creator':'Book Creator','garageband':'GarageBand',
     'imovie':'iMovie','piccollage':'PicCollage','tinkercad':'Tinkercad',
@@ -2537,7 +2584,15 @@ function normaliseToolName(t){
   if(key.startsWith('brushes redux')) return 'Brushes Redux';
   if(key.startsWith('sky map')) return 'Sky Map';
   if(key.startsWith('geoboard')) return 'Geoboard';
-  if(key.startsWith('microsoft ')) return t; // keep specific MS tool
+  // Microsoft/Office aliases: treat bare and prefixed app names as the same tool.
+  if(key === 'sway' || key.endsWith(' sway')) return 'Microsoft Sway';
+  if(key === 'forms' || key.endsWith(' forms')) return 'Microsoft Forms';
+  if(key === 'excel' || key.endsWith(' excel')) return 'Microsoft Excel';
+  if(key === 'word' || key.endsWith(' word')) return 'Microsoft Word';
+  if(key === 'powerpoint' || key.endsWith(' powerpoint') || key.endsWith(' power point')) return 'Microsoft PowerPoint';
+  if(key === 'teams' || key.endsWith(' teams')) return 'Microsoft Teams';
+  if(key === 'onenote' || key === 'one note' || key.endsWith(' onenote') || key.endsWith(' one note')) return 'Microsoft OneNote';
+  if(key.startsWith('microsoft ')) return t; // keep other specific MS tools
   // "App Smashing: Tool" → extract the tool
   if(key.startsWith('app smash')){
     const afterColon = t.replace(/^App\s*Smash\w*[:\s]+/i, '').trim();
@@ -6148,6 +6203,161 @@ function askNextClarification(){
   bulkChatAddMessage('assistant', q.text, q.options);
 }
 
+function bulkInstructionIsDescriptionOnly_(text){
+  const t = String(text || '').toLowerCase();
+  const hasDescriptionQualitySignal = /(vague|brief|too\s*short|short\s*description|thin|generic|weak|weakly|lacks?\s+(?:a\s+)?concrete|concrete\s+student\s+action|student\s+action|student\s+product|student\s+output|needs?\s+(?:more\s+)?detail|bulk\s+up|make\s+.*(?:more\s+)?specific|add\s+detail|improve\s+(?:the\s+)?description|strengthen\s+(?:the\s+)?description|unit\s+connection|connection\s+to\s+the\s+unit|connect\s+.*unit|clearer\s+connection|better\s+connected|less\s+generic)/i.test(t);
+  if(!hasDescriptionQualitySignal) return false;
+  const asksForDifferentTools = /(diversif|replace\s+.*\s+with\s+other|swap\s+.*\s+with|different\s+(?:app|apps|tool|tools)|new\s+(?:app|apps|tool|tools)|opportunit(?:y|ies)\s+to\s+use|find\s+opportunit)/i.test(t);
+  return !asksForDifferentTools;
+}
+
+function weakDescriptionTarget_(entry, sug, sugIdx, instruction){
+  if(!entry || !sug || sugIdx === 5) return null;
+  const desc = String(sugDesc(sug) || '').replace(/\s+/g,' ').trim();
+  const tool = sugTool(sug);
+  if(!tool || !desc) return null;
+  const issues = suggestionAuditIssues(entry, sug, sugIdx).filter(i => ['vague','thin','connection'].includes(i.type));
+  const weakPatterns = [
+    /research online/i, /look up/i, /google (this|it)/i,
+    /type (your|the)/i, /write (about|up)/i,
+    /use (the|a) (app|tool|program)/i,
+    /simply|basically|just to/i
+  ];
+  if(desc.length < 95 && issues.length === 0){
+    issues.push({type:'thin', severity:'low', message:'Description is very short; it may need more practical detail.'});
+  }
+  if(weakPatterns.some(p => p.test(desc))){
+    issues.push({type:'generic', severity:'medium', message:'Description uses generic wording and needs a clearer student task/product.'});
+  }
+  if(!issues.length) return null;
+  return { issues, reason: issues.map(i=>i.message).join(' | ') };
+}
+
+async function buildSameToolDescriptionRewriteChange_(entryIdx, sugIdx, reason, instruction){
+  const entry = DATA[entryIdx];
+  const oldSug = getSugs(entry)[sugIdx];
+  const oldTool = sugTool(oldSug);
+  const oldDesc = sugDesc(oldSug);
+  const safeToolForJson = JSON.stringify(String(oldTool || '')).slice(1, -1);
+  const prompt = `You are improving the wording of ONE digital learning suggestion for an IB PYP unit at Wesley College.
+
+IMPORTANT: This is a DESCRIPTION-ONLY fix. Keep the SAME tool exactly: ${oldTool}
+Do NOT suggest a different app, platform, device, or tool.
+Keep the same basic classroom task unless the old task is unclear; make it more concrete rather than replacing it.
+
+Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"
+Central Idea: ${entry.ci || ''}
+Lines of Inquiry: ${entry.lo || ''}
+Planner summary: ${entry.plannerText ? entry.plannerText.slice(0, 900) : ''}
+
+Issue to fix: ${reason || instruction || 'The description is vague or too brief.'}
+Current tool: ${oldTool}
+Current description: ${oldDesc}
+
+Rewrite the description into 2-3 practical sentences that clearly state:
+- what students DO using ${oldTool}
+- what students CREATE / PRODUCE / CAPTURE / SHARE
+- how the task connects to the unit content, central idea or line of inquiry
+- enough classroom detail that a teacher can picture the lesson
+
+Return ONLY JSON: {"t":"${safeToolForJson}","d":"Improved description using the same tool."}`;
+
+  const raw = await callAI([{role:'user', parts:[{text:prompt}]}], null, OPENAI_FAST_MODEL || OPENAI_MODEL);
+  const clean = raw.replace(/```json|```/g,'').trim();
+  const si = clean.indexOf('{'), ei = clean.lastIndexOf('}');
+  if(si === -1 || ei === -1) throw new Error('AI did not return JSON.');
+  const parsed = JSON.parse(clean.slice(si, ei + 1));
+  const newDesc = String(parsed.d || parsed.desc || parsed.description || '').trim();
+  if(!newDesc) throw new Error('AI returned an empty description.');
+  if(newDesc.replace(/\s+/g,' ').trim() === String(oldDesc || '').replace(/\s+/g,' ').trim()){
+    throw new Error('AI returned the same description.');
+  }
+  return {
+    entryIdx,
+    sugIdx,
+    t: oldTool,
+    d: newDesc,
+    auditReason: reason || 'Description-only improvement requested.',
+    auditSource: 'bulk-same-tool-description-rewrite',
+    improvementConfidence: 'Description-only',
+    improvementScore: 4,
+    whyBetter: 'Keeps the same tool and adds clearer student action, product and unit connection.',
+    remainingConcern: ''
+  };
+}
+
+async function runBulkSameToolDescriptionRewrite_(enrichedInstruction, completeData, prog, lbl, bar){
+  updateReasoningStep(0, 'done');
+  updateReasoningStep(1, 'done');
+  updateReasoningStep(2, 'done');
+  updateReasoningStep(3, 'done');
+  updateReasoningStep(4, 'active', 'Rewriting weak descriptions with the same tools');
+  if(lbl) lbl.textContent = 'Finding vague / brief descriptions and keeping the same tools…';
+  if(bar) bar.style.width = '25%';
+
+  const targets = [];
+  completeData.forEach(({e,i}) => {
+    getSugs(e).forEach((sug, sugIdx) => {
+      const target = weakDescriptionTarget_(e, sug, sugIdx, enrichedInstruction);
+      if(target) targets.push({entryIdx:i, sugIdx, reason:target.reason});
+    });
+  });
+
+  if(!targets.length){
+    if(prog) prog.style.display = 'none';
+    updateReasoningStep(4, 'done');
+    setTimeout(hideReasoningSteps, 800);
+    if(bulkChatHistory.length && bulkChatHistory[bulkChatHistory.length-1].content.includes('Analysing all entries')){
+      bulkChatHistory.pop();
+    }
+    bulkChatAddMessage('assistant', '✓ I could not find any non-STEM suggestions that are currently vague, brief, generic, or weakly connected.');
+    bulkChatState = 'idle';
+    stopProgress();
+    return true;
+  }
+
+  const cap = Math.min(targets.length, 35);
+  const changes = [];
+  const failures = [];
+  for(let i=0; i<cap; i++){
+    const t = targets[i];
+    const pct = Math.round(((i+1)/cap)*100);
+    if(bar) bar.style.width = `${25 + Math.round(pct*0.65)}%`;
+    if(lbl) lbl.textContent = `${i+1}/${cap}: bulking up same-tool description…`;
+    try{
+      const change = await buildSameToolDescriptionRewriteChange_(t.entryIdx, t.sugIdx, t.reason, enrichedInstruction);
+      changes.push(change);
+    }catch(err){
+      failures.push({target:t, error:err.message});
+    }
+    if(i < cap-1) await sleep(350);
+  }
+
+  if(prog) prog.style.display = 'none';
+  updateReasoningStep(4, 'done');
+  updateReasoningStep(5, 'done');
+  setTimeout(hideReasoningSteps, 1200);
+  if(bulkChatHistory.length && bulkChatHistory[bulkChatHistory.length-1].content.includes('Analysing all entries')){
+    bulkChatHistory.pop();
+  }
+
+  if(changes.length){
+    const cappedNote = targets.length > cap ? `<br><span style="font-size:12px;color:var(--dim)">I drafted the first ${cap} of ${targets.length} matching description fixes to avoid overloading the AI. Apply these, rescan, then run it again for the rest.</span>` : '';
+    const failNote = failures.length ? `<br><span style="font-size:12px;color:#F5A623">${failures.length} draft${failures.length!==1?'s':''} failed and were skipped.</span>` : '';
+    bulkChatAddMessage('assistant', `✅ <strong>${changes.length} same-tool description improvement${changes.length!==1?'s':''}</strong> ready for review.<br><br>These keep the original app/tool and only bulk up the description with clearer student action, product and unit connection.${cappedNote}${failNote}`);
+    bulkChatMemory.push({ role:'assistant', content:`Proposed ${changes.length} same-tool description rewrites.` });
+    window._snapshotReason = `Before same-tool description rewrites`;
+    showChangesPopup(changes);
+    bulkChatState = 'done';
+  } else {
+    const first = failures[0]?.error || 'No usable drafts were returned.';
+    bulkChatAddMessage('assistant', `⚠️ I found ${targets.length} possible description-only targets, but could not draft usable same-tool rewrites. First issue: ${esc(first)}`);
+    bulkChatState = 'idle';
+  }
+  stopProgress();
+  return true;
+}
+
 async function startBulkAnalysis(){
   bulkChatState = 'analysing';
 
@@ -6176,6 +6386,13 @@ async function startBulkAnalysis(){
 
   // ===== Build the same system prompt as the old runBulkAIEdit =====
   const completeData = DATA.map((e,i)=>({e,i})).filter(({e})=>e.audited && getSugs(e).filter(isRealSug).length >= 6);
+
+  // Description-quality requests should NOT swap apps. They should keep the original tool
+  // and bulk up the detail/action/product/unit connection for that exact suggestion.
+  if(bulkInstructionIsDescriptionOnly_(enrichedInstruction)){
+    await runBulkSameToolDescriptionRewrite_(enrichedInstruction, completeData, prog, lbl, bar);
+    return;
+  }
   
   setTimeout(() => updateReasoningStep(0, 'done'), 400);
   setTimeout(() => updateReasoningStep(1, 'active'), 450);
@@ -7127,313 +7344,6 @@ setInterval(async()=>{
     }
   }catch{}
 }, 30000);
-
-
-/* =========================================================
-   DLA Studio Patch — High Priority Draft Retry / Duplicate Fix
-   Fixes Bulk realism drafts failing because AI chose a tool already
-   used elsewhere in the same unit, e.g. "Seesaw duplicates another suggestion".
-   ========================================================= */
-function dlaReplacementAlreadyUsedTools_(entry, sugIdx){
-  return getSugs(entry)
-    .filter((s,i) => i !== sugIdx && isRealSug(s))
-    .map(s => sugTool(s))
-    .filter(Boolean);
-}
-
-function dlaReplacementAvailableTools_(entry, sugIdx, oldTool, reason){
-  const usedKeys = new Set(dlaReplacementAlreadyUsedTools_(entry, sugIdx).map(toolKey));
-  const out = [];
-  const seen = new Set();
-
-  function addTool(t){
-    const name = String(t || '').trim();
-    if(!name) return;
-    const key = toolKey(name);
-    if(!key || seen.has(key)) return;
-    if(usedKeys.has(key)) return;
-    if(!isAiToolSafeForEntry(name, entry)) return;
-    seen.add(key);
-    out.push(name);
-  }
-
-  getAgeAppropriateTools(entry.yl).forEach(addTool);
-
-  const duplicateFlag = /duplicate/i.test(String(reason || ''));
-  if(!duplicateFlag) addTool(oldTool);
-
-  return out;
-}
-
-function dlaExtractDraftJson_(raw){
-  const parsed = extractFirstJsonObject_(raw);
-  return {
-    t: String(parsed.t || parsed.tool || parsed.technology || parsed.name || '').trim(),
-    d: String(parsed.d || parsed.desc || parsed.description || parsed.integration_idea || parsed.activity || parsed.suggestion || '').trim(),
-    url: String(parsed.url || parsed.link || '').trim()
-  };
-}
-
-function dlaBuildReplacementPrompt_(opts){
-  const {entry, oldTool, oldDesc, reason, isStem, availableTools, usedTools, retryNotes} = opts;
-  const usedText = usedTools.length ? usedTools.join(', ') : 'none';
-  const retryText = retryNotes.length
-    ? `\n\nPrevious rejected draft(s):\n${retryNotes.map((n,i)=>`${i+1}. ${n}`).join('\n')}\nYou MUST correct these problems in the next draft.`
-    : '';
-
-  if(isStem){
-    return `You are replacing protected Suggestion 6, the STEM Design Cycle idea, for this IB PYP unit. This is a manual DLP-approved action, not a bulk edit.
-Campus: ${entry.ca}
-Year level: ${entry.yl}
-Theme: ${entry.th}
-Central Idea: ${entry.ci || ''}
-Lines of Inquiry: ${entry.lo || ''}
-Planner summary: ${entry.plannerText || ''}
-Current STEM suggestion: ${oldTool}: ${oldDesc}
-Problem flagged: ${reason || 'May be unrealistic or not age appropriate.'}
-
-Create ONE replacement STEM Design Cycle activity that is realistic for this year level. It must include tangible making/prototyping materials and a clear Empathise → Define → Ideate → Prototype → Test cycle. It may include age-appropriate technology only when the tech is genuinely useful.
-${REALISTIC_TOOL_USE_RULES}${retryText}
-Return ONLY JSON: {"t":"Project name","d":"2-3 practical sentences describing exactly what students build, test and improve."}`;
-  }
-
-  const allowedText = availableTools.length
-    ? availableTools.join(', ')
-    : 'No non-duplicate age-appropriate tools are currently available.';
-
-  return `You are replacing one unrealistic, vague, weakly connected, banned, duplicated or not age-appropriate digital learning suggestion for an IB PYP unit.
-Campus: ${entry.ca}
-Year level: ${entry.yl}
-Theme: ${entry.th}
-Central Idea: ${entry.ci || ''}
-Lines of Inquiry: ${entry.lo || ''}
-Planner summary: ${entry.plannerText || ''}
-Current suggestion to replace: ${oldTool}: ${oldDesc}
-Problem flagged: ${reason}
-
-TOOLS ALREADY USED IN THIS UNIT — DO NOT CHOOSE ANY OF THESE FOR THE REPLACEMENT:
-${usedText}
-
-ALLOWED REPLACEMENT TOOLS FOR THIS EXACT SLOT — CHOOSE ONE TOOL FROM THIS LIST ONLY:
-${allowedText}
-
-Hard requirements:
-- Do not choose Seesaw, Canva, Book Creator, Padlet, Scratch, or any other tool if it is listed under already-used tools above.
-- Do not propose a blended/app-smash tool name such as "Tool A + Tool B".
-- Do not choose a banned tool or a tool outside the configured age range.
-- The new suggestion must fix the flagged problem rather than simply rewording it.
-
-${buildToolConstraints(entry.yl)}
-${SUGGESTION_STYLE}
-${REALISTIC_TOOL_USE_RULES}${retryText}
-
-Create ONE replacement suggestion that is classroom-realistic, age-appropriate, non-duplicated, and directly connected to the unit. Return ONLY JSON: {"t":"Tool Name","d":"2-3 practical sentences describing exactly what students do and create.","url":"optional direct lesson URL"}`;
-}
-
-async function buildRealismReplacementChange(result){
-  const entryIdx = result.entryIdx;
-  const sugIdx = result.sugIdx;
-  const reason = (result.issues || []).map(i=>i.message).join(' | ') || 'May be unrealistic or not age appropriate.';
-  const entry = DATA[entryIdx];
-  if(!entry) throw new Error('Entry not found');
-  const oldSug = getSugs(entry)[sugIdx];
-  if(!oldSug) throw new Error('Suggestion not found');
-
-  const isStem = sugIdx === 5;
-  const oldTool = sugTool(oldSug);
-  const oldDesc = sugDesc(oldSug);
-  const usedTools = dlaReplacementAlreadyUsedTools_(entry, sugIdx);
-  const availableTools = isStem ? [] : dlaReplacementAvailableTools_(entry, sugIdx, oldTool, reason);
-
-  if(!isStem && !availableTools.length){
-    throw new Error(`No non-duplicate, age-appropriate replacement tools are currently available for ${entry.yl} in this unit. Remove another duplicate first or adjust the whitelist age ranges.`);
-  }
-
-  const availableKeys = new Set(availableTools.map(toolKey));
-  const retryNotes = [];
-  let lastError = null;
-  const maxAttempts = isStem ? 2 : 4;
-
-  for(let attempt=1; attempt<=maxAttempts; attempt++){
-    try{
-      const prompt = dlaBuildReplacementPrompt_({entry, oldTool, oldDesc, reason, isStem, availableTools, usedTools, retryNotes});
-      const raw = await callAI([{role:'user',parts:[{text:prompt}]}], null, OPENAI_FAST_MODEL || OPENAI_MODEL);
-      const parsed = dlaExtractDraftJson_(raw);
-      if(!parsed.t || !parsed.d) throw new Error('AI replacement was missing a tool/project name or description.');
-
-      if(!isStem){
-        const key = toolKey(parsed.t);
-        if(!availableKeys.has(key)) throw new Error(`${parsed.t} is not in the allowed replacement list for this slot.`);
-        if(!isAiToolSafeForEntry(parsed.t, entry)) throw new Error(`${parsed.t} is banned or not age-appropriate for ${entry.yl}.`);
-        if(wouldDupeToolProposalInEntry(entry, parsed.t, sugIdx) || wouldDupeInEntry(entry, parsed.t, sugIdx)) throw new Error(`${parsed.t} duplicates another suggestion in this unit.`);
-      }
-
-      const realism = checkRealisticToolUse(parsed.t, parsed.d, entry);
-      const quality = await evaluateDraftImprovement(entry, oldSug, parsed, reason, isStem);
-      if(!realism.ok){
-        quality.confidence = quality.confidence === 'High' ? 'Medium' : quality.confidence;
-        quality.remainingConcern = [quality.remainingConcern, 'Studio realism check warning: ' + (realism.reason || 'Tool use may still be unrealistic.')].filter(Boolean).join(' | ');
-        quality.qualityGateWarning = true;
-      }
-
-      const change = {
-        entryIdx,
-        sugIdx,
-        t: parsed.t,
-        d: parsed.d,
-        auditReason: reason,
-        auditIssues: result.issues || [],
-        auditSource: 'realism-age-audit',
-        improvementConfidence: quality.confidence,
-        improvementScore: quality.score,
-        whyBetter: quality.whyBetter,
-        remainingConcern: quality.remainingConcern,
-        qualityGateWarning: !!quality.qualityGateWarning,
-        retryCount: attempt - 1
-      };
-      if(parsed.url) change.url = parsed.url;
-      return change;
-    }catch(e){
-      lastError = e;
-      const msg = e && e.message ? e.message : String(e);
-      retryNotes.push(msg);
-      console.warn(`Realism replacement attempt ${attempt}/${maxAttempts} failed:`, msg);
-      if(attempt < maxAttempts) await sleep(500 + attempt * 250);
-    }
-  }
-
-  throw new Error(lastError && lastError.message ? lastError.message : 'AI draft failed after retrying.');
-}
-
-
-/* =========================================================
-   DLA Studio Patch — Bulk section collapsible cards v2
-   Restores collapsed-by-default Bulk cards after later patches.
-   ========================================================= */
-(function(){
-  const STORE_PREFIX = 'dla_bulk_section_open_v2_';
-
-  function safeEsc_(s){
-    if(typeof esc === 'function') return esc(s);
-    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  function bulkCollapseIdFromCard_(card, index){
-    if(card.dataset.bulkCollapseId) return card.dataset.bulkCollapseId;
-    if(card.id) return card.id;
-    const label = card.querySelector('.label')?.textContent || '';
-    const key = label.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-    return key ? `bulk-${key}` : `bulk-section-${index}`;
-  }
-
-  function bulkCardTitle_(card, index){
-    const fallbackTitles = [
-      'Bulk AI Edit',
-      'Realism & age audit',
-      'Tool Inventory',
-      'Snapshots & undo',
-      'Playbooks',
-      'Run Surgeon',
-      'Side-by-side campus comparison'
-    ];
-    const label = card.querySelector('.label')?.textContent?.replace(/^[^A-Za-z0-9]+/, '').trim();
-    return label || fallbackTitles[index] || `Bulk section ${index + 1}`;
-  }
-
-  function bulkCardSubtitle_(title){
-    const key = String(title || '').toLowerCase();
-    if(key.includes('bulk ai')) return 'Chat-driven edits and proposed changes';
-    if(key.includes('realism')) return 'Scan and draft fixes for weak, brief, unrealistic, duplicated or age-mismatched ideas';
-    if(key.includes('tool inventory')) return 'Whitelist, banned tools and editable year-level ranges';
-    if(key.includes('snapshot')) return 'Save and restore rollback points';
-    if(key.includes('playbook')) return 'Reusable bulk-edit prompts';
-    if(key.includes('surgeon')) return 'Remove or replace one tool across the library';
-    if(key.includes('comparison')) return 'Compare campuses for a selected unit';
-    return '';
-  }
-
-  function setBulkCollapseState_(card, open){
-    card.classList.toggle('bulk-collapsed', !open);
-    const header = card.querySelector(':scope > .bulk-collapse-header');
-    if(header){
-      header.setAttribute('aria-expanded', open ? 'true' : 'false');
-      const icon = header.querySelector('.bulk-collapse-icon');
-      if(icon) icon.textContent = open ? '⌄' : '›';
-    }
-  }
-
-  window.toggleBulkSection = function toggleBulkSection(id){
-    const cards = Array.from(document.querySelectorAll('#panel-tools .bulk-collapsible-card'));
-    const card = cards.find(c => c.dataset.bulkCollapseId === id);
-    if(!card) return;
-    const nextOpen = card.classList.contains('bulk-collapsed');
-    setBulkCollapseState_(card, nextOpen);
-    try{ localStorage.setItem(STORE_PREFIX + id, nextOpen ? '1' : '0'); }catch(e){}
-  };
-
-  window.makeBulkCardsCollapsible = function makeBulkCardsCollapsible(){
-    const panel = document.getElementById('panel-tools');
-    if(!panel) return;
-
-    const cards = Array.from(panel.children).filter(el => el.classList && el.classList.contains('card'));
-    cards.forEach((card, index) => {
-      if(!card.classList.contains('bulk-collapsible-card')){
-        const id = bulkCollapseIdFromCard_(card, index);
-        const title = bulkCardTitle_(card, index);
-        const subtitle = bulkCardSubtitle_(title);
-        const compact = /padding\s*:\s*0/i.test(card.getAttribute('style') || '');
-
-        const body = document.createElement('div');
-        body.className = 'bulk-collapse-body' + (compact ? ' bulk-collapse-body-compact' : '');
-        body.id = id + '-body';
-        while(card.firstChild) body.appendChild(card.firstChild);
-
-        const header = document.createElement('button');
-        header.type = 'button';
-        header.className = 'bulk-collapse-header';
-        header.setAttribute('aria-controls', body.id);
-        header.setAttribute('aria-expanded', 'false');
-        header.onclick = () => window.toggleBulkSection(id);
-        header.innerHTML = `<div><div class="bulk-collapse-title">${safeEsc_(title)}</div>${subtitle ? `<div class="bulk-collapse-sub">${safeEsc_(subtitle)}</div>` : ''}</div><div class="bulk-collapse-spacer"></div><span class="bulk-collapse-icon">›</span>`;
-
-        card.dataset.bulkCollapseId = id;
-        card.classList.add('bulk-collapsible-card');
-        card.appendChild(header);
-        card.appendChild(body);
-      }
-
-      const id = card.dataset.bulkCollapseId;
-      let open = false; // collapsed by default
-      try{
-        const stored = localStorage.getItem(STORE_PREFIX + id);
-        if(stored != null) open = stored === '1';
-      }catch(e){}
-      setBulkCollapseState_(card, open);
-    });
-  };
-
-  window.refreshBulkCollapsibleSections = function refreshBulkCollapsibleSections(){
-    // Run more than once because the Bulk tab renders some content immediately and some after libraries.json loads.
-    window.makeBulkCardsCollapsible();
-    setTimeout(window.makeBulkCardsCollapsible, 0);
-    setTimeout(window.makeBulkCardsCollapsible, 250);
-    setTimeout(window.makeBulkCardsCollapsible, 1000);
-  };
-
-  if(typeof window.switchTab === 'function' && !window.__DLA_BULK_COLLAPSE_SWITCH_PATCHED_V2){
-    const originalSwitchTab = window.switchTab;
-    window.switchTab = function patchedBulkCollapseSwitchTab(tab, btn){
-      const result = originalSwitchTab.apply(this, arguments);
-      if(tab === 'tools') window.refreshBulkCollapsibleSections();
-      return result;
-    };
-    window.__DLA_BULK_COLLAPSE_SWITCH_PATCHED_V2 = true;
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    window.refreshBulkCollapsibleSections();
-  });
-})();
 
 (function init(){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
