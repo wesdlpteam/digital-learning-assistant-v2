@@ -6389,6 +6389,194 @@ async function runBulkSameToolDescriptionRewrite_(enrichedInstruction, completeD
   return true;
 }
 
+
+
+function bulkInstructionTargetsWiseOpportunities_(instruction){
+  const t = String(instruction || '').toLowerCase();
+  const namesWise = /(wise\s+discussion|wise\s+chatbot|wise\s+chatbots|schoolbox.*(?:discussion|chatbot)|ai\s+discussion\s+chatbot|discussion\s+chatbot)/i.test(t);
+  return namesWise && bulkInstructionLooksLikeOpportunity(t);
+}
+
+function getBulkExplicitCount_(instruction, fallback){
+  const m = String(instruction || '').match(/\b(?:find|add|propose|suggest|need|want|get|give\s+me|identify|locate|spot|show\s+me)\s+(?:at\s+least\s+|about\s+|around\s+|approximately\s+|up\s+to\s+|some\s+|more\s+|additional\s+|me\s+)?(\d{1,3})\b/i);
+  if(!m) return fallback;
+  const n = Number(m[1]);
+  return Number.isFinite(n) ? Math.max(1, Math.min(n, 40)) : fallback;
+}
+
+function instructionProtectsExistingTool_(instruction, toolName){
+  const t = String(instruction || '').toLowerCase();
+  const key = toolInventoryKey(toolName || '').toLowerCase();
+  const names = new Set([key, String(toolName || '').toLowerCase()]);
+  if(key === toolInventoryKey('Micro:bit').toLowerCase()) names.add('microbit'), names.add('micro bit'), names.add('micro:bit');
+  if(key === toolInventoryKey('Minecraft Education').toLowerCase()) names.add('minecraft'), names.add('minecraft education');
+  if(key === toolInventoryKey('Wise Discussion Chatbots').toLowerCase()) names.add('wise'), names.add('wise discussion chatbots'), names.add('discussion chatbots');
+  const hasProtectPhrase = /(do\s*not|don't|never|avoid|without|but\s+not|not\s+replace|don't\s+replace|do\s+not\s+replace|leave|keep|preserve|protect)/i.test(t);
+  if(!hasProtectPhrase) return false;
+  return [...names].some(n => n && t.includes(n));
+}
+
+function entryAlreadyHasTool_(entry, toolName){
+  const wanted = toolInventoryKey(toolName);
+  return getSugs(entry).some(s => toolInventoryKey(sugTool(s)) === wanted || wouldDupeToolProposalInEntry(entry, toolName, -1));
+}
+
+function wiseScenarioForEntry_(entry){
+  const text = unitContextTextForRealism(entry).toLowerCase();
+  if(/(histor|perspective|persona|character|leader|community member|first nations|migration|settlement|explorer|interview|point of view|viewpoint|rights|responsibilit|culture|identity)/i.test(text)){
+    return 'Character Interview';
+  }
+  if(/(design|prototype|solution|innovation|invent|create|project|action|sustainab|entrepreneur|campaign|proposal|improve|change|future|problem)/i.test(text)){
+    return 'Project Ideation';
+  }
+  if(/(wellbeing|identity|growth|learning|goal|reflection|self|emotion|friendship|belong|mindset|strength|challenge|choice)/i.test(text)){
+    return 'Self-Reflection';
+  }
+  return 'Socratic Tutor';
+}
+
+function wiseTopicForEntry_(entry){
+  const theme = String(entry?.th || 'this unit').trim();
+  const ci = String(entry?.ci || '').replace(/^['"]|['"]$/g,'').trim();
+  if(ci && ci.length < 170) return `${theme}: ${ci}`;
+  return theme;
+}
+
+function wiseCandidateSlotScore_(entry, sug, sugIdx, instruction){
+  if(!entry || !sug || Number(sugIdx) === 5) return -9999;
+  const existingTool = sugTool(sug);
+  const existingKey = toolInventoryKey(existingTool);
+  if(existingKey === toolInventoryKey('Wise Discussion Chatbots')) return -9999;
+  if(instructionProtectsExistingTool_(instruction, 'Micro:bit') && existingKey === toolInventoryKey('Micro:bit')) return -9999;
+  if(instructionProtectsExistingTool_(instruction, 'Minecraft Education') && existingKey === toolInventoryKey('Minecraft Education')) return -9999;
+
+  const desc = String(sugDesc(sug) || '').replace(/\s+/g,' ').trim();
+  const issues = (typeof suggestionAuditIssues === 'function') ? suggestionAuditIssues(entry, sug, sugIdx) : [];
+  let score = 0;
+  const typeSet = new Set(issues.map(i => i.type));
+  if(typeSet.has('vague') || typeSet.has('thin') || typeSet.has('connection') || typeSet.has('generic')) score += 8;
+  if(desc.length < 90) score += 5;
+  if(!/(create|produce|record|build|design|publish|share|capture|explain|compare|reflect|draft|prototype|present|map|model|question|interview)/i.test(desc)) score += 3;
+
+  const commonTool = toolInventoryKey(existingTool).toLowerCase();
+  if(['seesaw','book creator','canva','padlet','adobe express','microsoft sway','sway','microsoft powerpoint','powerpoint'].some(k => commonTool.includes(k))) score += 4;
+  if(/worksheet|research|poster|presentation|reflection/i.test(desc)) score += 2;
+
+  // Do not eagerly displace curated/hands-on tools unless the slot is clearly weak.
+  if(/micro:?bit|minecraft|sphero|lego spike|codrone|3d printer|tinkercad/i.test(existingTool)) score -= 4;
+  if(sug.url) score -= 2;
+  return score;
+}
+
+function chooseWiseReplacementSlot_(entry, instruction){
+  let best = null;
+  getSugs(entry).forEach((sug, sugIdx) => {
+    const score = wiseCandidateSlotScore_(entry, sug, sugIdx, instruction);
+    if(score <= -999) return;
+    if(!best || score > best.score){
+      best = {sugIdx, score, oldTool:sugTool(sug), oldDesc:sugDesc(sug)};
+    }
+  });
+  return best;
+}
+
+function buildWiseOpportunityDescription_(entry, oldTool, instruction){
+  const scenario = wiseScenarioForEntry_(entry);
+  const topic = wiseTopicForEntry_(entry);
+  const theme = String(entry?.th || 'the unit').trim();
+  const productByScenario = {
+    'Character Interview': 'a question bank and a short perspective summary comparing the chatbot response with evidence from the unit',
+    'Project Ideation': 'a project proposal with a chosen idea, success criteria, resources needed and next steps',
+    'Self-Reflection': 'a reflection note naming what their thinking changed, what evidence supports it and one next learning goal',
+    'Socratic Tutor': 'a claim-evidence-reasoning response or exit ticket that explains their current understanding'
+  };
+  const purposeByScenario = {
+    'Character Interview': 'explore a relevant perspective through guided questioning',
+    'Project Ideation': 'test and refine possible inquiry actions or design ideas',
+    'Self-Reflection': 'make their learning, misconceptions and next steps more visible',
+    'Socratic Tutor': 'strengthen their reasoning through probing follow-up questions'
+  };
+  const product = productByScenario[scenario] || productByScenario['Socratic Tutor'];
+  const purpose = purposeByScenario[scenario] || purposeByScenario['Socratic Tutor'];
+  return `The teacher creates a Wise Discussion Chatbot using the ${scenario} scenario with the topic “${topic}”. Students chat with the bot to ${purpose}, then produce ${product} connected to ${theme}.`;
+}
+
+function buildWiseOpportunityChange_(candidate, instruction){
+  const entry = DATA[candidate.entryIdx];
+  const desc = buildWiseOpportunityDescription_(entry, candidate.oldTool, instruction);
+  return {
+    entryIdx: candidate.entryIdx,
+    sugIdx: candidate.sugIdx,
+    t: 'Wise Discussion Chatbots',
+    d: desc,
+    auditReason: `Adds a Wise Discussion Chatbot opportunity while preserving protected tools such as Micro:bit/Minecraft when requested. Replaces: ${candidate.oldTool}.`,
+    auditSource: 'bulk-wise-opportunity-targeted',
+    improvementConfidence: 'Targeted local draft',
+    improvementScore: 4,
+    whyBetter: 'Adds a teacher-created Wise chatbot with a named scenario, student dialogue purpose and concrete student product.',
+    remainingConcern: ''
+  };
+}
+
+async function runBulkWiseOpportunityFlow_(enrichedInstruction, completeData, prog, lbl, bar){
+  updateReasoningStep(0, 'done');
+  updateReasoningStep(1, 'done');
+  updateReasoningStep(2, 'done');
+  updateReasoningStep(3, 'active', 'Finding safe Wise Discussion Chatbot opportunities');
+  if(lbl) lbl.textContent = 'Finding safe Wise Discussion Chatbot opportunities…';
+  if(bar) bar.style.width = '35%';
+
+  const targetCount = getBulkExplicitCount_(enrichedInstruction, 10);
+  const protectMicrobit = instructionProtectsExistingTool_(enrichedInstruction, 'Micro:bit');
+  const protectMinecraft = instructionProtectsExistingTool_(enrichedInstruction, 'Minecraft Education');
+
+  const candidates = [];
+  let skippedExistingWise = 0;
+  let skippedAge = 0;
+  let skippedNoSlot = 0;
+  completeData.forEach(({e,i}) => {
+    if(!isAiToolSafeForEntry('Wise Discussion Chatbots', e)){ skippedAge++; return; }
+    if(entryAlreadyHasTool_(e, 'Wise Discussion Chatbots')){ skippedExistingWise++; return; }
+    const slot = chooseWiseReplacementSlot_(e, enrichedInstruction);
+    if(!slot){ skippedNoSlot++; return; }
+    candidates.push({entryIdx:i, ...slot, year:e.yl, theme:e.th});
+  });
+
+  candidates.sort((a,b) => b.score - a.score);
+  const selected = candidates.slice(0, targetCount);
+  const changes = selected.map(c => buildWiseOpportunityChange_(c, enrichedInstruction));
+
+  if(bar) bar.style.width = '100%';
+  if(prog) prog.style.display = 'none';
+  updateReasoningStep(3, 'done');
+  updateReasoningStep(4, 'done');
+  updateReasoningStep(5, 'done');
+  setTimeout(hideReasoningSteps, 1000);
+  if(bulkChatHistory.length && bulkChatHistory[bulkChatHistory.length-1].content.includes('Analysing all entries')){
+    bulkChatHistory.pop();
+  }
+
+  if(changes.length){
+    const protectNote = (protectMicrobit || protectMinecraft)
+      ? `<br><span style="font-size:12px;color:var(--lime)">Protected existing ${[protectMicrobit?'Micro:bit':'', protectMinecraft?'Minecraft':''].filter(Boolean).join(' and ')} slots from being replaced.</span>`
+      : '';
+    const shortfall = changes.length < targetCount
+      ? `<br><span style="font-size:12px;color:var(--orange)">I found ${changes.length} safe opportunities out of the ${targetCount} requested. ${skippedAge} were outside the Wise age range, ${skippedExistingWise} already had Wise, and ${skippedNoSlot} had no safe replaceable non-STEM slot.</span>`
+      : '';
+    const replaced = selected.slice(0,5).map(c => `• ${esc(DATA[c.entryIdx].yl)} ${esc(DATA[c.entryIdx].th)} — replacing ${esc(c.oldTool)}`).join('<br>');
+    bulkChatAddMessage('assistant', `✅ <strong>${changes.length} Wise Discussion Chatbot opportunit${changes.length!==1?'ies':'y'}</strong> ready for review.${protectNote}${shortfall}<br><br><span style="font-size:12px;color:var(--lime)">Sample targets:</span><br>${replaced}${selected.length>5?'<br>• …':''}`);
+    bulkChatMemory.push({ role:'assistant', content:`Proposed ${changes.length} Wise Discussion Chatbot opportunities.` });
+    window._snapshotReason = `Before Wise Discussion Chatbot opportunities`;
+    showChangesPopup(changes);
+    bulkChatState = 'done';
+  } else {
+    bulkChatAddMessage('assistant', `⚠️ I found no safe Wise Discussion Chatbot opportunities. Checked ${completeData.length} complete entries: ${skippedAge} outside the configured Wise age range, ${skippedExistingWise} already contain Wise, and ${skippedNoSlot} had no safe replaceable non-STEM slot.${protectMicrobit||protectMinecraft?' I also protected existing Micro:bit/Minecraft slots as requested.':''}`);
+    bulkChatMemory.push({ role:'assistant', content:'No safe Wise Discussion Chatbot opportunities found.' });
+    bulkChatState = 'idle';
+  }
+  stopProgress();
+  return true;
+}
 async function startBulkAnalysis(){
   bulkChatState = 'analysing';
 
@@ -6422,6 +6610,14 @@ async function startBulkAnalysis(){
   // and bulk up the detail/action/product/unit connection for that exact suggestion.
   if(bulkInstructionIsDescriptionOnly_(enrichedInstruction)){
     await runBulkSameToolDescriptionRewrite_(enrichedInstruction, completeData, prog, lbl, bar);
+    return;
+  }
+
+  // Wise Discussion Chatbots are a broad Schoolbox/Wise feature, not a curated lesson library.
+  // Handle “find/add more Wise opportunities” locally and safely so GPT does not return zero
+  // changes or replace protected Micro:bit/Minecraft suggestions.
+  if(bulkInstructionTargetsWiseOpportunities_(enrichedInstruction)){
+    await runBulkWiseOpportunityFlow_(enrichedInstruction, completeData, prog, lbl, bar);
     return;
   }
   
