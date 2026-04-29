@@ -3,11 +3,8 @@
     "_inventory": {
       "approved": [
         "Microsoft Word",
-        "Microsoft PowerPoint",
-        "Microsoft OneNote",
         "Microsoft Excel",
         "Microsoft Forms",
-        "Microsoft Sway",
         "Bee-Bots",
         "Sphero Indi",
         "Sphero BOLT",
@@ -16,9 +13,7 @@
         "CoDrone EDU",
         "Makey Makey",
         "3D Printers",
-        "ClassVR",
         "Merge Cubes",
-        "Green Screen",
         "Podcast Equipment",
         "iPads",
         "Seesaw",
@@ -48,8 +43,7 @@
         "Delightex",
         "Kahoot",
         "Tinkercad",
-        "Minecraft Education",
-        "Word"
+        "Minecraft Education"
       ],
       "banned": [
         "ClassVR",
@@ -65,7 +59,177 @@
         "OneNote",
         "Sway",
         "Apple Keynote"
-      ]
+      ],
+      "ageRanges": {
+        "microsoft word": {
+          "min": 4,
+          "max": 6
+        },
+        "microsoft excel": {
+          "min": 0,
+          "max": 6
+        },
+        "microsoft forms": {
+          "min": 0,
+          "max": 6
+        },
+        "beebots": {
+          "min": 0,
+          "max": 2
+        },
+        "sphero indi": {
+          "min": 0,
+          "max": 2
+        },
+        "sphero bolt": {
+          "min": 3,
+          "max": 6
+        },
+        "lego spike prime": {
+          "min": 4,
+          "max": 6
+        },
+        "micro:bit": {
+          "min": 3,
+          "max": 6
+        },
+        "codrone edu": {
+          "min": 4,
+          "max": 6
+        },
+        "makey makey": {
+          "min": 0,
+          "max": 6
+        },
+        "3d printers": {
+          "min": 5,
+          "max": 6
+        },
+        "merge cubes": {
+          "min": 0,
+          "max": 6
+        },
+        "podcast equipment": {
+          "min": 0,
+          "max": 6
+        },
+        "ipad": {
+          "min": 0,
+          "max": 6
+        },
+        "seesaw": {
+          "min": 0,
+          "max": 6
+        },
+        "canva": {
+          "min": 3,
+          "max": 6
+        },
+        "book creator": {
+          "min": 3,
+          "max": 6
+        },
+        "padlet": {
+          "min": 3,
+          "max": 6
+        },
+        "garageband": {
+          "min": 0,
+          "max": 6
+        },
+        "scratchjr": {
+          "min": 0,
+          "max": 2
+        },
+        "stop motion studio": {
+          "min": 3,
+          "max": 6
+        },
+        "chatterpix kids": {
+          "min": 0,
+          "max": 2
+        },
+        "imovie": {
+          "min": 0,
+          "max": 6
+        },
+        "puppet pals": {
+          "min": 0,
+          "max": 2
+        },
+        "adobe express": {
+          "min": 3,
+          "max": 6
+        },
+        "adobe express podcasting": {
+          "min": 0,
+          "max": 6
+        },
+        "google maps": {
+          "min": 0,
+          "max": 6
+        },
+        "field guide to victoria": {
+          "min": 0,
+          "max": 6
+        },
+        "sky map": {
+          "min": 0,
+          "max": 6
+        },
+        "geoboard": {
+          "min": 0,
+          "max": 6
+        },
+        "clickview": {
+          "min": 0,
+          "max": 6
+        },
+        "epic": {
+          "min": 0,
+          "max": 6
+        },
+        "piccollage": {
+          "min": 0,
+          "max": 6
+        },
+        "brushes redux": {
+          "min": 0,
+          "max": 6
+        },
+        "word clouds abcya": {
+          "min": 0,
+          "max": 6
+        },
+        "sketchbook": {
+          "min": 0,
+          "max": 6
+        },
+        "explain everything": {
+          "min": 3,
+          "max": 6
+        },
+        "freeform": {
+          "min": 0,
+          "max": 6
+        },
+        "delightex": {
+          "min": 0,
+          "max": 6
+        },
+        "kahoot": {
+          "min": 3,
+          "max": 6
+        },
+        "tinkercad": {
+          "min": 3,
+          "max": 6
+        },
+        "minecraft education": {
+          "min": 4,
+          "max": 6
+        }
+      }
     }
   },
   "minecraft": [
