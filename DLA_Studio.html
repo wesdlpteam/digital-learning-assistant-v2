@@ -6756,6 +6756,81 @@ async function runBulkWiseOpportunityFlow_(enrichedInstruction, completeData, pr
   stopProgress();
   return true;
 }
+
+
+function bulkInstructionTargetsMinecraftOpportunities_(instruction){
+  const t=String(instruction||'').toLowerCase();
+  return /minecraft/.test(t) && bulkInstructionLooksLikeOpportunity(t);
+}
+function mcLessonMinYear_(l){
+  const nums=(String(l&&l.ages||'').match(/\d+/g)||[]).map(Number);
+  const a=nums.length?Math.min.apply(null,nums):9;
+  return a<=5?0:a<=6?1:a<=7?2:a<=8?3:a<=9?4:a<=10?5:6;
+}
+function mcTokens_(v){
+  return dlaTextForFit_(v).split(' ').filter(w=>w.length>3&&!/^(students|student|lesson|learning|inquiry|central|idea|using|create|build|design|this|that|with|from|their|unit)$/.test(w));
+}
+function mcLessonScore_(lesson,entry){
+  if(!lesson||getYearNumber(entry&&entry.yl)<mcLessonMinYear_(lesson)) return -999;
+  if(curatedLessonLooksMathOnly_(lesson)&&!unitHasMathMeasurementContext_(entry)) return -999;
+  const u=(entry.th||'')+' '+(entry.ci||'')+' '+(entry.lo||'')+' '+(entry.plannerText||'');
+  const l=(lesson.title||'')+' '+(lesson.desc||'')+' '+(lesson.subject||'');
+  const us=new Set(mcTokens_(u)); let sc=0; mcTokens_(l).forEach(t=>{if(us.has(t))sc++;});
+  const un=dlaTextForFit_(u), ln=dlaTextForFit_(l);
+  [[/sustain|environment|habitat|ecosystem|climate|adapt|water|waste|sharing planet/,/sustain|environment|habitat|ecosystem|climate|adapt|water|waste|conservation/],[/culture|community|identity|celebration|tradition|express/,/culture|community|identity|museum|story|tradition|society/],[/force|motion|energy|material|machine|system|science|world works/,/force|motion|energy|material|machine|system|science|redstone|engineering/],[/map|place|settlement|migration|journey|geography|history|where we are/,/map|place|settlement|journey|geography|history|biome/],[/area|volume|geometry|measurement|scale|coordinate|data|math/,/area|volume|geometry|measurement|scale|coordinate|data|math/]].forEach(p=>{if(p[0].test(un)&&p[1].test(ln))sc+=5;});
+  return sc;
+}
+function mcBestLesson_(entry,used){
+  let best=null; (getMinecraftLessons()||[]).forEach(l=>{const k=dlaTextForFit_(l&&l.title||''); if(used&&used.has(k))return; const sc=mcLessonScore_(l,entry); if(sc>1&&(!best||sc>best.score))best={lesson:l,score:sc};}); return best;
+}
+function mcSlotScore_(entry,sug,idx,instruction){
+  if(idx===5||!sug)return-9999; const tool=sugTool(sug), key=toolInventoryKey(tool);
+  if(key===toolInventoryKey('Minecraft Education'))return-9999;
+  if(instructionProtectsExistingTool_(instruction,'Micro:bit')&&key===toolInventoryKey('Micro:bit'))return-9999;
+  if(instructionProtectsExistingTool_(instruction,'Wise Discussion Chatbots')&&key===toolInventoryKey('Wise Discussion Chatbots'))return-9999;
+  const d=String(sugDesc(sug)||''); let sc=0;
+  const issues=(typeof suggestionAuditIssues==='function')?suggestionAuditIssues(entry,sug,idx):[]; const types=new Set(issues.map(i=>i.type));
+  if(types.has('vague')||types.has('thin')||types.has('connection')||types.has('generic'))sc+=7;
+  if(d.length<100)sc+=4; if(!/(create|produce|record|build|design|share|explain|compare|reflect|present|map|model)/i.test(d))sc+=3;
+  if(/seesaw|book creator|canva|padlet|adobe express|sway|powerpoint/i.test(key))sc+=4;
+  if(/micro:?bit|sphero|lego spike|codrone|3d printer|tinkercad|wise discussion/i.test(tool))sc-=4;
+  if(sug.url)sc-=2; return sc;
+}
+function mcChooseSlot_(entry,instruction){
+  let best=null; getSugs(entry).forEach((s,i)=>{const sc=mcSlotScore_(entry,s,i,instruction); if(sc<=-999)return; if(!best||sc>best.score)best={sugIdx:i,score:sc,oldTool:sugTool(s),oldDesc:sugDesc(s)};}); return best;
+}
+function mcCreativeDesc_(entry){
+  const t=unitContextTextForRealism(entry).toLowerCase(), th=String(entry&&entry.th||'the unit'); let build='an original Minecraft inquiry world with zones that model key concepts, tensions, evidence and possible actions', product='a short portfolio or guided tour explaining how the build represents the central idea and lines of inquiry';
+  if(/sustain|environment|habitat|ecosystem|adapt|water|waste|climate|sharing the planet/.test(t)){build='a habitat or sustainable community simulation with labelled zones for resources, risks, human impacts and possible actions';product='a conservation briefing or guided world tour using screenshots and signs as evidence';}
+  else if(/identity|empathy|wellbeing|relationship|change|growth|who we are/.test(t)){build='an identity-and-empathy museum or decision maze where rooms represent challenges, supports, choices and turning points';product='a reflective gallery walk explaining personal change, empathy and support strategies';}
+  else if(/culture|celebration|tradition|community|express/.test(t)){build='a cultural celebration gallery or community festival route with stations for symbols, stories, rituals and values';product='a narrated virtual tour comparing how communities express identity and belonging';}
+  else if(/force|motion|energy|material|machine|system|world works|science/.test(t)){build='a test world where students change one variable at a time, such as material, slope, distance, redstone timing or machine design';product='a design explanation showing how the model demonstrates the scientific principle';}
+  else if(/map|place|settlement|migration|journey|geography|history|where we are/.test(t)){build='a mapped settlement, journey route or historical place model with landmarks, barriers, resources and decision points';product='a comparative map tour explaining how place, resources and movement shaped choices';}
+  return 'Original Minecraft build challenge: students collaboratively build '+build+'. They collect screenshots, annotations and student notes as evidence. The final product is '+product+', explicitly connected to '+th+'.';
+}
+function mcLessonDesc_(entry,l){
+  const th=String(entry&&entry.th||'the unit'), title=l&&l.title||'the selected Minecraft lesson', url=l&&l.url?' ('+l.url+')':'';
+  const focus=l&&l.desc?' The verified lesson focuses on '+String(l.desc).replace(/\s+/g,' ').trim()+'.':'';
+  return 'Students use the verified Minecraft Education lesson “'+title+'”'+url+' as the launchpad for a unit-connected build or investigation.'+focus+' They adapt the world task to '+th+', document their design decisions with screenshots and signs, and produce a short explanation showing how the Minecraft evidence connects to the central idea or lines of inquiry.';
+}
+function mcChange_(c,mode,lesson){
+  const e=DATA[c.entryIdx]; return {entryIdx:c.entryIdx,sugIdx:c.sugIdx,t:'Minecraft Education',d:mode==='lesson'?mcLessonDesc_(e,lesson):mcCreativeDesc_(e),auditSource:mode==='lesson'?'bulk-minecraft-targeted-library':'bulk-minecraft-targeted-creative',auditReason:(mode==='lesson'?'Verified Minecraft lesson':'Original Minecraft build')+' replacing '+c.oldTool};
+}
+async function runBulkMinecraftOpportunityFlow_(instruction,completeData,prog,lbl,bar){
+  updateReasoningStep(0,'done');updateReasoningStep(1,'done');updateReasoningStep(2,'done');updateReasoningStep(3,'active','Finding safe Minecraft Education opportunities'); if(lbl)lbl.textContent='Finding safe Minecraft Education opportunities…'; if(bar)bar.style.width='25%'; await ensureLibrariesLoadedForAI();
+  const target=getBulkExplicitCount_(instruction,10), cand=[]; let age=0, existing=0, noslot=0;
+  completeData.forEach(({e,i})=>{if(!isAiToolSafeForEntry('Minecraft Education',e)){age++;return;} if(entryAlreadyHasTool_(e,'Minecraft Education')){existing++;return;} const slot=mcChooseSlot_(e,instruction); if(!slot){noslot++;return;} cand.push({entryIdx:i,...slot});});
+  const usedE=new Set(), usedL=new Set(), changes=[]; const wantLib=Math.max(1,Math.min(Math.round(target*.45),target-1));
+  const lib=cand.map(c=>{const fit=mcBestLesson_(DATA[c.entryIdx],usedL); return fit?{...c,lesson:fit.lesson,score:c.score+fit.score}:null;}).filter(Boolean).sort((a,b)=>b.score-a.score);
+  for(const c of lib){if(changes.length>=wantLib)break; if(usedE.has(c.entryIdx))continue; const ch=mcChange_(c,'lesson',c.lesson); if(!checkRealisticToolUse(ch.t,ch.d,DATA[c.entryIdx]).ok)continue; changes.push(ch); usedE.add(c.entryIdx); usedL.add(dlaTextForFit_(c.lesson.title||''));}
+  cand.filter(c=>!usedE.has(c.entryIdx)).sort((a,b)=>b.score-a.score).forEach(c=>{if(changes.length>=target)return; const ch=mcChange_(c,'creative'); if(checkRealisticToolUse(ch.t,ch.d,DATA[c.entryIdx]).ok){changes.push(ch); usedE.add(c.entryIdx);}});
+  if(changes.length<target){for(const c of lib){if(changes.length>=target)break; if(usedE.has(c.entryIdx))continue; const ch=mcChange_(c,'lesson',c.lesson); if(checkRealisticToolUse(ch.t,ch.d,DATA[c.entryIdx]).ok){changes.push(ch);usedE.add(c.entryIdx);}}}
+  if(bar)bar.style.width='100%'; if(prog)prog.style.display='none'; updateReasoningStep(3,'done');updateReasoningStep(4,'done');updateReasoningStep(5,'done'); setTimeout(hideReasoningSteps,1000); if(bulkChatHistory.length&&bulkChatHistory[bulkChatHistory.length-1].content.includes('Analysing all entries'))bulkChatHistory.pop();
+  const vc=changes.filter(c=>c.auditSource==='bulk-minecraft-targeted-library').length, cc=changes.length-vc;
+  if(changes.length){const short=changes.length<target?'<br><span style="font-size:12px;color:var(--orange)">I found '+changes.length+' safe opportunities out of '+target+'. '+age+' outside age range, '+existing+' already had Minecraft, '+noslot+' had no safe non-STEM slot.</span>':''; const sample=changes.slice(0,5).map(c=>{const e=DATA[c.entryIdx], old=getSugs(e)[c.sugIdx]?sugTool(getSugs(e)[c.sugIdx]):'existing suggestion'; return '• '+esc(e.yl)+' '+esc(e.th)+' — '+(c.auditSource.includes('library')?'verified lesson':'original build')+', replacing '+esc(old);}).join('<br>'); bulkChatAddMessage('assistant','✅ <strong>'+changes.length+' Minecraft Education opportunities</strong> ready for review.<br><span style="font-size:12px;color:var(--lime)">'+vc+' verified lesson matches · '+cc+' original build/challenge ideas</span>'+short+'<br><br><span style="font-size:12px;color:var(--lime)">Sample targets:</span><br>'+sample+(changes.length>5?'<br>• …':'')); bulkChatMemory.push({role:'assistant',content:'Proposed '+changes.length+' Minecraft opportunities.'}); window._snapshotReason='Before Minecraft Education opportunities'; showChangesPopup(changes); bulkChatState='done';}
+  else{bulkChatAddMessage('assistant','⚠️ I found no safe Minecraft Education opportunities. Checked '+completeData.length+' entries: '+age+' outside age range, '+existing+' already contain Minecraft, '+noslot+' had no safe non-STEM slot.'); bulkChatState='idle';}
+  stopProgress(); return true;
+}
 async function startBulkAnalysis(){
   bulkChatState = 'analysing';
 
@@ -6797,6 +6872,11 @@ async function startBulkAnalysis(){
   // changes or replace protected Micro:bit/Minecraft suggestions.
   if(bulkInstructionTargetsWiseOpportunities_(enrichedInstruction)){
     await runBulkWiseOpportunityFlow_(enrichedInstruction, completeData, prog, lbl, bar);
+    return;
+  }
+
+  if(bulkInstructionTargetsMinecraftOpportunities_(enrichedInstruction)){
+    await runBulkMinecraftOpportunityFlow_(enrichedInstruction, completeData, prog, lbl, bar);
     return;
   }
   
