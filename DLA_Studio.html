@@ -2935,6 +2935,8 @@ function showChangesPopup(changes){
     const oldDesc=oldSug?sugDesc(oldSug):'';
     const newTool=c.t||c.tool||c.technology||c.name||'(unknown tool)';
     const newDesc=c.d||c.desc||c.description||c.integration_idea||c.activity||'';
+    const newUrl=c.url||c.lessonUrl||'';
+    const newUrlHtml=newUrl?`<div style="font-size:11px;margin-top:8px"><a href="${esc(newUrl)}" target="_blank" rel="noopener" style="color:var(--lime);text-decoration:none;font-weight:800">↗ Verified lesson link</a></div>`:'';
     const rawReason = c.auditReason || c.reason || c.flagReason || c.reviewReason || c.problem || '';
     const formattedReason = rawReason ? esc(rawReason).replace(/\s*\|\s*/g, '<br>') : '';
     const reasonHtml = formattedReason ? `<div style="padding:10px 12px;background:rgba(245,166,35,0.10);border:1px solid rgba(245,166,35,0.35);border-left:4px solid #F5A623;border-radius:9px;margin-bottom:10px">
@@ -2979,6 +2981,7 @@ function showChangesPopup(changes){
         <div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:700">Suggested replacement</div>
         <div style="font-size:14px;font-weight:900;color:var(--lime);margin-bottom:6px;line-height:1.25">${esc(newTool)}</div>
         <div style="font-size:12px;color:#d8d8d8;line-height:1.6;max-height:220px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;padding-right:6px">${linkify(newDesc||'No description')}</div>
+        ${newUrlHtml}
       </div>
     </div>
     <div style="display:flex;gap:8px">
@@ -4492,6 +4495,12 @@ MINECRAFT EDUCATION VERIFIED LESSON USE:
 - Use the tool name "Minecraft Education".
 - Minecraft suggestions must come from the verified Minecraft library only.
 - Name the specific Minecraft library lesson and include its direct URL.
+- Keep Minecraft descriptions SHORT: exactly 2 practical sentences, ideally 45-70 words total.
+- Do NOT paste or paraphrase the full Minecraft lesson overview, standards text, NGSS codes, or library description.
+- Do NOT use vague filler such as "launchpad", "unit-connected build", or "build or investigation".
+- Sentence 1 should say which verified lesson students use and the main classroom purpose.
+- Sentence 2 should say the concrete student product, using simple evidence such as screenshots, signs, a short explanation, map, model, or reflection.
+- If the lesson fit cannot be explained clearly in 2 sentences, do NOT propose Minecraft for that unit.
 - Do NOT invent original Minecraft build challenges, fake lesson titles, or fake URLs.
 - Do NOT force a maths-only Minecraft lesson such as Area and Volume into non-maths units. Only use a verified Minecraft lesson when its lesson content genuinely connects to the unit.
 
@@ -4803,11 +4812,31 @@ function curatedLessonLooksMathOnly_(lesson){
   const widerContext = /(ecosystem|habitat|sustainability|climate|adaptation|culture|community|history|geography|water|weather|energy|forces?|materials?|animal|plants?|country|place|environment|civics|economy|story|narrative)/i.test(txt);
   return mathHits && !widerContext;
 }
+function minecraftDescriptionQuality_(desc){
+  const text = String(desc || '').replace(/\s+/g, ' ').trim();
+  if(!text) return { ok:false, reason:'Minecraft description is empty.' };
+  if(text.length > 560) return { ok:false, reason:'Minecraft description is too long. Use two short classroom sentences, not the full lesson overview.' };
+  if(/\b(NGSS|ACARA|Victorian Curriculum|HS-LS|MS-LS|K-ESS|standard[s]?|curriculum code[s]?)\b/i.test(text)){
+    return { ok:false, reason:'Minecraft description appears to include standards/curriculum text rather than a practical classroom task.' };
+  }
+  if(/verified lesson focuses on|launchpad for a unit-connected build|unit-connected build or investigation|complex issues surrounding|students develop an understanding/i.test(text)){
+    return { ok:false, reason:'Minecraft description is importing lesson-library wording or vague filler instead of a clear classroom activity.' };
+  }
+  const studentMentions = (text.match(/\bstudents\b/ig) || []).length;
+  if(studentMentions > 3) return { ok:false, reason:'Minecraft description is repetitive. Use two concise sentences.' };
+  if(!/(screenshot|sign|portfolio|brief|explanation|tour|map|model|reflection|evidence|annotat|journal|pitch|diagram|record)/i.test(text)){
+    return { ok:false, reason:'Minecraft description needs a concrete student evidence/product such as screenshots, signs, a map, model, brief or explanation.' };
+  }
+  return { ok:true, reason:'' };
+}
+
 function checkMinecraftEducationFit(toolName, desc, entry){
   const lesson = findCuratedLessonMention_('minecraft', toolName, desc);
   if(!lesson){
     return { ok:false, reason:'Minecraft Education suggestions must use a verified lesson from the curated Minecraft library and include the real lesson title or URL.' };
   }
+  const quality = minecraftDescriptionQuality_(desc);
+  if(!quality.ok) return quality;
   if(curatedLessonLooksMathOnly_(lesson) && !unitHasMathMeasurementContext_(entry)){
     return { ok:false, reason:`Minecraft lesson "${lesson.title}" appears to be maths/measurement-focused and does not fit this unit context.` };
   }
@@ -6791,13 +6820,47 @@ function mcCreativeDesc_(entry){
   else if(/map|place|settlement|migration|journey|geography|history|where we are/.test(t)){build='a mapped settlement, journey route or historical place model with landmarks, barriers, resources and decision points';product='a comparative map tour explaining how place, resources and movement shaped choices';}
   return 'Original Minecraft build challenge: students collaboratively build '+build+'. They collect screenshots, annotations and student notes as evidence. The final product is '+product+', explicitly connected to '+th+'.';
 }
+function mcCleanTitle_(title){
+  return String(title || 'the selected Minecraft lesson')
+    .replace(/\bWatr\b/gi, 'Water')
+    .replace(/\bAnd\b/g, 'and')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+function mcFocusPhraseForEntry_(entry){
+  const t = unitContextTextForRealism(entry).toLowerCase();
+  if(/sustain|environment|habitat|ecosystem|adapt|water|waste|climate|sharing the planet|biodiversity|conservation/.test(t)) return 'human impact, habitats and possible environmental action';
+  if(/identity|empathy|wellbeing|relationship|change|growth|who we are|belonging|perspective/.test(t)) return 'perspective, choices and how people respond to change';
+  if(/culture|celebration|tradition|community|express|values/.test(t)) return 'how communities express identity, values and belonging';
+  if(/force|motion|energy|material|machine|system|world works|science|engineering/.test(t)) return 'systems, variables and evidence from testing';
+  if(/map|place|settlement|migration|journey|geography|history|where we are/.test(t)) return 'place, movement and how environments shape decisions';
+  if(/area|volume|geometry|measurement|scale|coordinate|data|math/.test(t)) return 'measurement, spatial reasoning and evidence';
+  return 'the unit\'s central idea and lines of inquiry';
+}
+function mcProductForEntry_(entry){
+  const t = unitContextTextForRealism(entry).toLowerCase();
+  if(/sustain|environment|habitat|ecosystem|adapt|water|waste|climate|sharing the planet|biodiversity|conservation/.test(t)) return 'a short conservation brief showing the issue, the evidence and one realistic action';
+  if(/identity|empathy|wellbeing|relationship|change|growth|who we are|belonging|perspective/.test(t)) return 'a reflection slide or gallery note explaining the choice, challenge or perspective shown in the world';
+  if(/culture|celebration|tradition|community|express|values/.test(t)) return 'a labelled gallery or tour explaining the symbols, places or stories represented in the world';
+  if(/force|motion|energy|material|machine|system|world works|science|engineering/.test(t)) return 'a test log with screenshots showing what changed, what happened and what evidence supports their explanation';
+  if(/map|place|settlement|migration|journey|geography|history|where we are/.test(t)) return 'an annotated map or guided tour explaining how place, resources or movement shaped decisions';
+  if(/area|volume|geometry|measurement|scale|coordinate|data|math/.test(t)) return 'a labelled screenshot set explaining the measurements, model or data they used';
+  return 'a short evidence note connecting the Minecraft task back to the unit';
+}
 function mcLessonDesc_(entry,l){
-  const th=String(entry&&entry.th||'the unit'), title=l&&l.title||'the selected Minecraft lesson', url=l&&l.url?' ('+l.url+')':'';
-  const focus=l&&l.desc?' The verified lesson focuses on '+String(l.desc).replace(/\s+/g,' ').trim()+'.':'';
-  return 'Students use the verified Minecraft Education lesson “'+title+'”'+url+' as the launchpad for a unit-connected build or investigation.'+focus+' They adapt the world task to '+th+', document their design decisions with screenshots and signs, and produce a short explanation showing how the Minecraft evidence connects to the central idea or lines of inquiry.';
+  const title = mcCleanTitle_(l&&l.title);
+  const url = String(l&&l.url||'').trim();
+  const focus = mcFocusPhraseForEntry_(entry);
+  const product = mcProductForEntry_(entry);
+  const link = url ? ' ('+url+')' : '';
+  return 'Students use the verified Minecraft Education lesson “'+title+'”'+link+' to explore '+focus+'. They capture 2–3 screenshots or signs from the world and turn them into '+product+'.';
 }
 function mcChange_(c,mode,lesson){
-  const e=DATA[c.entryIdx]; return {entryIdx:c.entryIdx,sugIdx:c.sugIdx,t:'Minecraft Education',d:mode==='lesson'?mcLessonDesc_(e,lesson):mcCreativeDesc_(e),auditSource:mode==='lesson'?'bulk-minecraft-targeted-library':'bulk-minecraft-targeted-creative',auditReason:(mode==='lesson'?'Verified Minecraft lesson':'Original Minecraft build')+' replacing '+c.oldTool};
+  const e=DATA[c.entryIdx];
+  const d=mode==='lesson'?mcLessonDesc_(e,lesson):mcCreativeDesc_(e);
+  const out={entryIdx:c.entryIdx,sugIdx:c.sugIdx,t:'Minecraft Education',d,auditSource:mode==='lesson'?'bulk-minecraft-targeted-library':'bulk-minecraft-targeted-creative',auditReason:(mode==='lesson'?'Verified Minecraft lesson':'Original Minecraft build')+' replacing '+c.oldTool};
+  if(mode==='lesson'&&lesson&&lesson.url) out.url=lesson.url;
+  return out;
 }
 async function runBulkMinecraftOpportunityFlow_(instruction,completeData,prog,lbl,bar){
   updateReasoningStep(0,'done');updateReasoningStep(1,'done');updateReasoningStep(2,'done');updateReasoningStep(3,'active','Finding safe Minecraft Education opportunities'); if(lbl)lbl.textContent='Finding safe Minecraft Education opportunities…'; if(bar)bar.style.width='25%'; await ensureLibrariesLoadedForAI();
@@ -6945,7 +7008,7 @@ TARGET COUNT (HARD RULE): The coordinator explicitly asked for ${explicitCount} 
   const isMinecraftPlatform = !!(platform && /minecraft/i.test(platform.name || ''));
   const platformHeading = isMinecraftPlatform ? 'MINECRAFT EDUCATION MODE' : `LESSON LIBRARY — ${platform ? platform.name.toUpperCase() : ''}`;
   const platformMatchingRule = isMinecraftPlatform
-    ? `MATCHING RULE: Propose Minecraft Education only when a verified Minecraft library lesson genuinely strengthens the unit. Every proposal must name a real Minecraft lesson from the library and include its URL. Do NOT create original Minecraft build/challenge ideas, and do NOT invent fake lesson titles or fake URLs. Avoid maths-only lessons like Area and Volume unless the unit genuinely involves maths, measurement, geometry, spatial design, scale, mapping or data.${targetBlock}`
+    ? `MATCHING RULE: Propose Minecraft Education only when a verified Minecraft library lesson genuinely strengthens the unit. Every proposal must name a real Minecraft lesson from the library and include its URL. Keep every Minecraft description to exactly 2 short classroom sentences; do not paste the lesson overview, standards text, NGSS codes, or library description. Sentence 1 names the lesson and classroom purpose; sentence 2 names the student evidence/product. Do NOT use vague filler such as "launchpad", "unit-connected build", or "build or investigation". Do NOT create original Minecraft build/challenge ideas, and do NOT invent fake lesson titles or fake URLs. Avoid maths-only lessons like Area and Volume unless the unit genuinely involves maths, measurement, geometry, spatial design, scale, mapping or data.${targetBlock}`
     : `MATCHING RULE: Propose changes wherever a specific ${platform ? platform.name : 'platform'} lesson genuinely connects to the unit's activities or central idea. Be thorough — scan every candidate entry and propose ${platform ? platform.name : 'the platform'} wherever there is a reasonable curriculum connection. Name the specific lesson in every proposal.${targetBlock}`;
   const platformSection = platform ? `
 
