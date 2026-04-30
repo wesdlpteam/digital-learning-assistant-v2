@@ -9399,6 +9399,390 @@ setInterval(async()=>{
 })();
 /* ===== end DLA hotfix ===== */
 
+
+/* ===== DLA hotfix: make Human Verified gold glow immediate and obvious =====
+   Fixes cases where the tick saved but the Browse row did not visibly glow. */
+(function(){
+  const SIG_FIELD = 'humanVerifiedSuggestionSignature';
+
+  function hvGlowSignature_(entry){
+    try{
+      const sugs = (typeof getSugs === 'function') ? getSugs(entry) : (Array.isArray(entry && entry.s) ? entry.s : []);
+      return JSON.stringify(sugs.map(function(s){
+        const tool = (typeof sugTool === 'function') ? sugTool(s) : (s && (s.t || s.tool || s.technology || s.name) || '');
+        const desc = (typeof sugDesc === 'function') ? sugDesc(s) : (s && (s.d || s.desc || s.description || s.integration_idea || s.activity) || '');
+        const clean = function(v){
+          try { if(typeof cleanSuggestionText_ === 'function') return cleanSuggestionText_(v); } catch(e){}
+          return String(v == null ? '' : v).replace(/\s+/g,' ').trim();
+        };
+        return { t:clean(tool), d:clean(desc), url:clean(s && (s.url || s.lessonUrl || '')) };
+      }));
+    }catch(e){ return ''; }
+  }
+
+  function hvGlowIsVerified_(entry){
+    try { if(typeof isHumanVerifiedEntry_ === 'function') return isHumanVerifiedEntry_(entry); } catch(e){}
+    return !!(entry && (entry.humanVerified === true || entry.humanVerifiedAt || entry.human_verified === true));
+  }
+
+  // Replace the original style block with a stronger, unmistakable gold treatment.
+  ensureHumanVerificationStyles_ = window.ensureHumanVerificationStyles_ = function(){
+    const existing = document.getElementById('human-verify-styles');
+    if(existing) existing.remove();
+    const style = document.createElement('style');
+    style.id = 'human-verify-styles';
+    style.textContent = `
+      .human-verified-unit{
+        position:relative!important;
+        isolation:isolate;
+        border:1.5px solid rgba(212,160,23,1)!important;
+        border-left:6px solid var(--gold)!important;
+        background:
+          radial-gradient(circle at 22px 50%,rgba(212,160,23,.30),rgba(212,160,23,.08) 36%,rgba(26,26,26,.98) 70%),
+          linear-gradient(90deg,rgba(212,160,23,.18),rgba(26,26,26,.98) 48%,rgba(197,232,74,.06))!important;
+        box-shadow:
+          0 0 0 1px rgba(212,160,23,.62),
+          0 0 26px rgba(212,160,23,.32),
+          0 0 60px rgba(212,160,23,.14),
+          inset 0 0 30px rgba(212,160,23,.08)!important;
+      }
+      .human-verified-unit::after{
+        content:'';
+        position:absolute;
+        inset:-3px;
+        border-radius:14px;
+        border:1px solid rgba(212,160,23,.28);
+        pointer-events:none;
+        z-index:-1;
+        filter:blur(.2px);
+      }
+      .human-verified-unit:hover{
+        border-color:var(--gold)!important;
+        box-shadow:
+          0 0 0 1px rgba(212,160,23,.85),
+          0 0 34px rgba(212,160,23,.45),
+          0 0 78px rgba(212,160,23,.18),
+          inset 0 0 34px rgba(212,160,23,.10)!important;
+      }
+      .human-verify-flash{animation:humanVerifyGoldFlash 1.35s ease-out 1!important;}
+      @keyframes humanVerifyGoldFlash{
+        0%{transform:scale(.992);filter:brightness(1);box-shadow:0 0 0 0 rgba(212,160,23,.95),0 0 0 rgba(212,160,23,0),inset 0 0 0 rgba(212,160,23,0)}
+        32%{transform:scale(1.008);filter:brightness(1.18);box-shadow:0 0 0 5px rgba(212,160,23,.42),0 0 52px rgba(212,160,23,.70),inset 0 0 32px rgba(212,160,23,.16)}
+        100%{transform:scale(1);filter:brightness(1)}
+      }
+      .human-verified-tick{
+        display:inline-flex;align-items:center;gap:5px;margin-left:10px;padding:4px 11px;border-radius:999px;
+        background:linear-gradient(180deg,rgba(212,160,23,.25),rgba(212,160,23,.10));
+        border:1px solid rgba(212,160,23,.88);color:var(--gold);
+        font-size:10px;font-weight:950;letter-spacing:.72px;text-transform:uppercase;vertical-align:middle;white-space:nowrap;
+        box-shadow:0 0 18px rgba(212,160,23,.30),inset 0 0 10px rgba(212,160,23,.08);
+      }
+      .human-verified-btn,.human-verified-entry-btn{
+        padding:7px 12px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--dim);
+        font-size:11px;font-weight:900;font-family:inherit;cursor:pointer;letter-spacing:.45px;text-transform:uppercase;white-space:nowrap;
+        transition:all .12s ease;
+      }
+      .human-verified-btn:hover,.human-verified-entry-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(212,160,23,.09);}
+      .human-verified-btn.verified,.human-verified-entry-btn.verified{
+        border-color:rgba(212,160,23,1);background:rgba(212,160,23,.18);color:var(--gold);
+        box-shadow:0 0 16px rgba(212,160,23,.24),inset 0 0 8px rgba(212,160,23,.08);
+      }
+      .human-verified-entry-banner{
+        padding:10px 14px;background:rgba(212,160,23,.12);border:1px solid rgba(212,160,23,.72);border-left:5px solid var(--gold);border-radius:11px;margin-bottom:10px;
+        color:var(--gold);font-size:12px;font-weight:900;box-shadow:0 0 24px rgba(212,160,23,.18),inset 0 0 18px rgba(212,160,23,.05);
+      }
+      .human-verified-entry-glow{
+        border-color:rgba(212,160,23,.85)!important;
+        box-shadow:0 0 0 1px rgba(212,160,23,.38),0 0 28px rgba(212,160,23,.22),inset 0 0 24px rgba(212,160,23,.055)!important;
+      }
+    `;
+    document.head.appendChild(style);
+  };
+
+  function hvApplyGoldDomState_(idx, flash){
+    try{
+      if(typeof DATA === 'undefined' || !DATA || !DATA[idx]) return;
+      ensureHumanVerificationStyles_();
+      const verified = hvGlowIsVerified_(DATA[idx]);
+      const row = document.getElementById('browse-row-' + idx);
+      if(row){
+        row.classList.toggle('human-verified-unit', verified);
+        row.classList.remove('human-verify-flash');
+        if(verified && flash){
+          void row.offsetWidth;
+          row.classList.add('human-verify-flash');
+          row.scrollIntoView({behavior:'smooth', block:'center'});
+        }
+      }
+      const entryHeader = document.getElementById('entry-header');
+      if(entryHeader && typeof CURRENT_ENTRY_IDX !== 'undefined' && CURRENT_ENTRY_IDX === idx){
+        entryHeader.classList.toggle('human-verified-entry-glow', verified);
+        entryHeader.classList.remove('human-verify-flash');
+        if(verified && flash){ void entryHeader.offsetWidth; entryHeader.classList.add('human-verify-flash'); }
+      }
+    }catch(e){ console.warn('Human verified glow update failed:', e); }
+  }
+
+  // Keep the gold classes in sync after each Browse render, even if another patch re-renders the rows.
+  if(typeof renderBrowse === 'function'){
+    const oldRenderBrowse = renderBrowse;
+    renderBrowse = window.renderBrowse = function(){
+      ensureHumanVerificationStyles_();
+      const out = oldRenderBrowse.apply(this, arguments);
+      try{
+        if(Array.isArray(DATA)) DATA.forEach(function(entry, idx){ hvApplyGoldDomState_(idx, window._lastHumanVerifiedIdx === idx); });
+      }catch(e){}
+      return out;
+    };
+  }
+
+  if(typeof renderEntry === 'function'){
+    const oldRenderEntry = renderEntry;
+    renderEntry = window.renderEntry = function(idx){
+      ensureHumanVerificationStyles_();
+      const out = oldRenderEntry.apply(this, arguments);
+      hvApplyGoldDomState_(idx, false);
+      return out;
+    };
+  }
+
+  if(typeof setHumanVerifiedForEntry_ === 'function'){
+    const oldSetHumanVerifiedForEntry = setHumanVerifiedForEntry_;
+    setHumanVerifiedForEntry_ = window.setHumanVerifiedForEntry_ = function(idx, verified){
+      const out = oldSetHumanVerifiedForEntry.apply(this, arguments);
+      try{
+        const entry = (typeof DATA !== 'undefined' && DATA) ? DATA[idx] : null;
+        if(entry && verified){
+          entry[SIG_FIELD] = hvGlowSignature_(entry);
+          delete entry.humanVerifiedResetAt;
+          delete entry.humanVerifiedResetReason;
+        } else if(entry && !verified){
+          delete entry[SIG_FIELD];
+        }
+      }catch(e){}
+      return out;
+    };
+  }
+
+  // Immediate visual feedback: update the page first, then save to Drive.
+  toggleHumanVerified = window.toggleHumanVerified = function(idx){
+    const entry = (typeof DATA !== 'undefined' && DATA) ? DATA[idx] : null;
+    if(!entry) return;
+    const next = !hvGlowIsVerified_(entry);
+    setHumanVerifiedForEntry_(idx, next);
+    window._lastHumanVerifiedIdx = next ? idx : null;
+
+    try { if(typeof setStatus === 'function') setStatus(next ? `Human verified: ${entry.yl} — ${entry.th}` : `Human verification removed: ${entry.yl} — ${entry.th}`); } catch(e){}
+    try { if(typeof renderBrowse === 'function') renderBrowse(); } catch(e){}
+    try { if(typeof CURRENT_ENTRY_IDX !== 'undefined' && CURRENT_ENTRY_IDX === idx && typeof renderEntry === 'function') renderEntry(idx); } catch(e){}
+    setTimeout(function(){ hvApplyGoldDomState_(idx, next); }, 30);
+    setTimeout(function(){ hvApplyGoldDomState_(idx, next); }, 250);
+
+    try { if(typeof saveToDrive === 'function') saveToDrive(); } catch(e){ console.warn('Human verify save failed:', e); }
+  };
+
+  // Apply the stronger CSS immediately for already-rendered verified rows.
+  ensureHumanVerificationStyles_();
+  setTimeout(function(){
+    try { if(Array.isArray(DATA)) DATA.forEach(function(entry, idx){ hvApplyGoldDomState_(idx, false); }); } catch(e){}
+  }, 0);
+})();
+/* ===== end DLA hotfix ===== */
+
+
+/* ===== DLA hotfix: Human Verify glows all entry suggestion cards + quiet background save =====
+   Makes verification feel instant in the unit detail view and removes the top loading bar. */
+(function(){
+  const SIG_FIELD = 'humanVerifiedSuggestionSignature';
+
+  function hvEntryGlowIsVerified_(entry){
+    try { if(typeof isHumanVerifiedEntry_ === 'function') return isHumanVerifiedEntry_(entry); } catch(e){}
+    return !!(entry && (entry.humanVerified === true || entry.humanVerifiedAt || entry.human_verified === true));
+  }
+
+  function hvEntryGlowSignature_(entry){
+    try{
+      const sugs = (typeof getSugs === 'function') ? getSugs(entry) : (Array.isArray(entry && entry.s) ? entry.s : []);
+      const clean = function(v){
+        try { if(typeof cleanSuggestionText_ === 'function') return cleanSuggestionText_(v); } catch(e){}
+        return String(v == null ? '' : v).replace(/\s+/g,' ').trim();
+      };
+      return JSON.stringify(sugs.map(function(s){
+        const tool = (typeof sugTool === 'function') ? sugTool(s) : (s && (s.t || s.tool || s.technology || s.name) || '');
+        const desc = (typeof sugDesc === 'function') ? sugDesc(s) : (s && (s.d || s.desc || s.description || s.integration_idea || s.activity) || '');
+        return { t:clean(tool), d:clean(desc), url:clean(s && (s.url || s.lessonUrl || '')) };
+      }));
+    }catch(e){ return ''; }
+  }
+
+  function hvEnsureEntryLessonGlowStyles_(){
+    if(typeof ensureHumanVerificationStyles_ === 'function') ensureHumanVerificationStyles_();
+    const old = document.getElementById('human-verify-entry-lesson-glow-styles');
+    if(old) old.remove();
+    const style = document.createElement('style');
+    style.id = 'human-verify-entry-lesson-glow-styles';
+    style.textContent = `
+      .human-verified-entry-glow{
+        border-color:rgba(212,160,23,.95)!important;
+        box-shadow:0 0 0 1px rgba(212,160,23,.5),0 0 32px rgba(212,160,23,.28),inset 0 0 24px rgba(212,160,23,.065)!important;
+      }
+      #entry-sugs .sug.human-verified-lesson-glow{
+        position:relative!important;
+        border-color:rgba(212,160,23,1)!important;
+        background:linear-gradient(135deg,rgba(212,160,23,.12),rgba(26,26,26,.96) 46%,rgba(212,160,23,.055))!important;
+        box-shadow:0 0 0 1px rgba(212,160,23,.54),0 0 28px rgba(212,160,23,.27),inset 0 0 24px rgba(212,160,23,.06)!important;
+      }
+      #entry-sugs .sug.human-verified-lesson-glow .sug-main{
+        background:linear-gradient(135deg,rgba(212,160,23,.105),rgba(26,26,26,.98) 44%,rgba(212,160,23,.04))!important;
+      }
+      #entry-sugs .sug.human-verified-lesson-glow::after{
+        content:'✓ HUMAN VERIFIED';
+        position:absolute;
+        top:10px;
+        right:12px;
+        padding:3px 9px;
+        border-radius:999px;
+        border:1px solid rgba(212,160,23,.72);
+        background:rgba(212,160,23,.13);
+        color:var(--gold);
+        font-size:9px;
+        font-weight:950;
+        letter-spacing:.75px;
+        box-shadow:0 0 14px rgba(212,160,23,.20);
+        pointer-events:none;
+      }
+      #entry-sugs .sug.human-verified-lesson-flash{animation:humanVerifyLessonGoldFlash 1.25s ease-out 1!important;}
+      @keyframes humanVerifyLessonGoldFlash{
+        0%{transform:scale(.993);filter:brightness(1);}
+        36%{transform:scale(1.006);filter:brightness(1.18);box-shadow:0 0 0 5px rgba(212,160,23,.36),0 0 54px rgba(212,160,23,.62),inset 0 0 28px rgba(212,160,23,.14)!important;}
+        100%{transform:scale(1);filter:brightness(1);}
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function hvApplyEntryLessonGlow_(idx, flash){
+    try{
+      hvEnsureEntryLessonGlowStyles_();
+      const entry = (typeof DATA !== 'undefined' && DATA) ? DATA[idx] : null;
+      const verified = hvEntryGlowIsVerified_(entry);
+      const onEntry = (typeof CURRENT_ENTRY_IDX !== 'undefined' && CURRENT_ENTRY_IDX === idx);
+      if(!onEntry) return;
+
+      const header = document.getElementById('entry-header');
+      if(header){
+        header.classList.toggle('human-verified-entry-glow', verified);
+        header.classList.remove('human-verify-flash');
+        if(verified && flash){ void header.offsetWidth; header.classList.add('human-verify-flash'); }
+      }
+
+      document.querySelectorAll('#entry-sugs .sug').forEach(function(card){
+        card.classList.toggle('human-verified-lesson-glow', verified);
+        card.classList.remove('human-verified-lesson-flash');
+        if(verified && flash){ void card.offsetWidth; card.classList.add('human-verified-lesson-flash'); }
+      });
+    }catch(e){ console.warn('Human verified lesson glow failed:', e); }
+  }
+
+  function hvUpdateEntryVerifyButton_(idx){
+    try{
+      const entry = (typeof DATA !== 'undefined' && DATA) ? DATA[idx] : null;
+      const verified = hvEntryGlowIsVerified_(entry);
+      document.querySelectorAll('.human-verified-entry-btn').forEach(function(btn){
+        btn.classList.toggle('verified', verified);
+        btn.textContent = verified ? '✓ Human verified' : 'Human verify';
+        btn.title = verified ? 'Remove human verification' : 'Mark this unit as manually checked by a human';
+      });
+      document.querySelectorAll('.human-verified-entry-banner').forEach(function(b){ b.remove(); });
+      const header = document.getElementById('entry-header');
+      if(header && verified && !header.querySelector('.human-verified-entry-banner')){
+        const meta = (typeof humanVerifiedMeta_ === 'function') ? humanVerifiedMeta_(entry) : '';
+        const banner = document.createElement('div');
+        banner.className = 'human-verified-entry-banner human-verify-flash';
+        banner.textContent = '✓ Human verified' + (meta ? ' · ' + meta : '');
+        header.insertBefore(banner, header.firstChild ? header.firstChild.nextSibling : null);
+      }
+    }catch(e){}
+  }
+
+  async function hvQuietSaveToDrive_(){
+    if(typeof saveToDrive !== 'function') return;
+    const oldStart = window.startProgress;
+    const oldStop = window.stopProgress;
+    const oldShow = window.showProgress;
+    try{
+      window.startProgress = function(){};
+      window.stopProgress = function(){};
+      window.showProgress = function(){};
+      const maybe = saveToDrive();
+      if(maybe && typeof maybe.then === 'function') await maybe;
+    }catch(e){
+      console.warn('Human verification background save failed:', e);
+      try { if(typeof setStatus === 'function') setStatus('Human verification changed locally, but Drive save failed: ' + (e.message || e), 'error'); } catch(_){}
+    }finally{
+      window.startProgress = oldStart;
+      window.stopProgress = oldStop;
+      window.showProgress = oldShow;
+    }
+  }
+
+  if(typeof renderEntry === 'function'){
+    const oldRenderEntry = renderEntry;
+    renderEntry = window.renderEntry = function(idx){
+      hvEnsureEntryLessonGlowStyles_();
+      const out = oldRenderEntry.apply(this, arguments);
+      hvApplyEntryLessonGlow_(idx, false);
+      return out;
+    };
+  }
+
+  // Override click behaviour: no page-level loading bar, immediate unit-detail glow on every suggestion card.
+  toggleHumanVerified = window.toggleHumanVerified = function(idx){
+    const entry = (typeof DATA !== 'undefined' && DATA) ? DATA[idx] : null;
+    if(!entry) return;
+    hvEnsureEntryLessonGlowStyles_();
+
+    const next = !hvEntryGlowIsVerified_(entry);
+    if(typeof setHumanVerifiedForEntry_ === 'function') setHumanVerifiedForEntry_(idx, next);
+    else {
+      entry.humanVerified = next;
+      if(next){ entry.humanVerifiedAt = new Date().toISOString(); entry.humanVerifiedBy = (typeof CURRENT_USER_EMAIL !== 'undefined' && CURRENT_USER_EMAIL) || localStorage.getItem('dla_user_email') || 'DLP team'; }
+      else { delete entry.humanVerifiedAt; delete entry.humanVerifiedBy; delete entry.humanVerifiedReason; }
+    }
+    if(next){
+      entry[SIG_FIELD] = hvEntryGlowSignature_(entry);
+      delete entry.humanVerifiedResetAt;
+      delete entry.humanVerifiedResetReason;
+    } else {
+      delete entry[SIG_FIELD];
+    }
+    window._lastHumanVerifiedIdx = next ? idx : null;
+
+    // Immediate UI update in the current unit view.
+    if(typeof CURRENT_ENTRY_IDX !== 'undefined' && CURRENT_ENTRY_IDX === idx){
+      try { if(typeof renderEntry === 'function') renderEntry(idx); } catch(e){}
+      hvUpdateEntryVerifyButton_(idx);
+      hvApplyEntryLessonGlow_(idx, next);
+    } else {
+      try { if(typeof renderBrowse === 'function') renderBrowse(); } catch(e){}
+      try { if(typeof hvApplyGoldDomState_ === 'function') hvApplyGoldDomState_(idx, next); } catch(e){}
+    }
+
+    try { if(typeof setStatus === 'function') setStatus(next ? `Human verified: ${entry.yl} — ${entry.th}` : `Human verification removed: ${entry.yl} — ${entry.th}`); } catch(e){}
+
+    // Persist quietly in the background without the top progress/loading bar.
+    setTimeout(hvQuietSaveToDrive_, 0);
+  };
+
+  hvEnsureEntryLessonGlowStyles_();
+  setTimeout(function(){
+    try{
+      if(typeof CURRENT_ENTRY_IDX !== 'undefined' && CURRENT_ENTRY_IDX !== null) hvApplyEntryLessonGlow_(CURRENT_ENTRY_IDX, false);
+    }catch(e){}
+  }, 0);
+})();
+/* ===== end DLA hotfix ===== */
+
 </script>
 </body>
 </html>
