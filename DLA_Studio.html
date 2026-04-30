@@ -625,7 +625,6 @@
 </div><!-- end main -->
 
 <script>
-
 let DATA = [];
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzIoUL_vbTaH4P7PXuX8HeU9Xh6HuiEWJ05k7q50aJjCg7oeF-ELrlLuPx8uxPFHmE-eA/exec';
 let DRIVE_TOKEN = null;
@@ -6201,6 +6200,63 @@ function renderBulkChat(){
   container.scrollTop = container.scrollHeight;
 }
 
+
+function handleBulkAnalysisError_(err){
+  const message = err && err.message ? err.message : String(err || 'Unknown error');
+  console.error('Bulk analysis failed safely:', err);
+  try { hideReasoningSteps(); } catch(e){}
+  try { stopProgress(); } catch(e){}
+  try {
+    const prog = document.getElementById('bulk-ai-progress');
+    if(prog) prog.style.display = 'none';
+  } catch(e){}
+  bulkChatState = 'idle';
+  const safe = (typeof esc === 'function') ? esc(message) : message.replace(/[&<>"']/g, function(ch){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]; });
+  bulkChatAddMessage('assistant', '❌ Bulk analysis stopped safely instead of crashing the Studio.<br><br><span style="font-size:12px;color:#f87171">' + safe + '</span><br><br><span style="font-size:12px;color:var(--dim)">Try the request again, or click ↻ to reset the Bulk AI Chat if the conversation state looks stale.</span>');
+}
+
+function runStartBulkAnalysisSafely_(){
+  return startBulkAnalysis().catch(handleBulkAnalysisError_);
+}
+
+function bulkChatUserTurns_(){
+  return (bulkChatMemory || [])
+    .filter(m => m && m.role === 'user')
+    .map(m => String(m.content || '').trim())
+    .filter(Boolean);
+}
+
+function bulkChatEffectiveInstruction_(rawInstruction){
+  const raw = String(rawInstruction || '').trim();
+  const userTurns = bulkChatUserTurns_();
+  const priorTurns = userTurns.slice(0, -1);
+  const isFollowUp = !!(bulkChatContext && bulkChatContext.isFollowUp);
+  const refersBack = /\b(it|that|this|same|previous|above|those|them|connect|connected|relevant planners|all relevant planners|planners|units|entries)\b/i.test(raw);
+
+  if(isFollowUp && priorTurns.length && refersBack){
+    return priorTurns.join('\n') + '\n\nFollow-up instruction: ' + raw;
+  }
+
+  // If a follow-up is short and does not name the platform/lesson again, carry the previous user request forward.
+  if(isFollowUp && priorTurns.length && raw.length < 120 && !/\b(minecraft|micro:?bit|wise|sphero|canva|book creator|lesson|tool|app)\b/i.test(raw)){
+    return priorTurns.join('\n') + '\n\nFollow-up instruction: ' + raw;
+  }
+
+  return raw;
+}
+
+function bulkAppendClarifications_(instruction, clarifications){
+  const list = Array.isArray(clarifications) ? clarifications : [];
+  if(!list.length) return instruction;
+  return String(instruction || '') + '\n\nAdditional context from conversation:\n' + list.map(c => 'Q: ' + (c.question || '') + '\nA: ' + (c.answer || '')).join('\n');
+}
+
+function bulkPlatformSearchText_(latestText){
+  const userTurns = bulkChatUserTurns_();
+  const base = userTurns.length ? userTurns.join('\n') : String(latestText || '');
+  return base + '\n' + String(latestText || '');
+}
+
 function bulkChatSelectOption(msgIdx, optionIdx){
   const msg = bulkChatHistory[msgIdx];
   if(!msg || !msg.options) return;
@@ -6217,7 +6273,7 @@ function bulkChatSelectOption(msgIdx, optionIdx){
 
     // Check if we have enough clarification (max 3 rounds)
     if(bulkChatContext.clarifyRound >= 2 || selected.value === '__proceed__'){
-      startBulkAnalysis();
+      runStartBulkAnalysisSafely_();
     } else {
       bulkChatContext.clarifyRound++;
       askNextClarification();
@@ -6243,7 +6299,7 @@ async function bulkChatSend(){
     bulkChatAddMessage('user', text);
     bulkChatContext.clarifications = bulkChatContext.clarifications || [];
     bulkChatContext.clarifications.push({ question: 'Additional context from user', answer: text });
-    startBulkAnalysis();
+    runStartBulkAnalysisSafely_();
     return;
   }
 
@@ -6270,9 +6326,11 @@ async function bulkChatSend(){
   bulkChatAddMessage('user', text);
   bulkChatMemory.push({ role: 'user', content: text });
 
-  // Detect platform from input (scan full memory)
+  // Detect platform from the full user conversation on follow-ups, so "connect it to all relevant planners"
+  // still inherits the earlier Minecraft / specific-lesson request.
   const platforms = buildKnownPlatforms();
-  const platform = platforms.find(p => p.match.test(text)) || bulkChatContext.platform || null;
+  const platformSearchText = bulkPlatformSearchText_(text);
+  const platform = platforms.find(p => p.match.test(platformSearchText)) || bulkChatContext.platform || null;
 
   bulkChatContext.rawInstruction = text;
   bulkChatContext.platform = platform;
@@ -6313,7 +6371,7 @@ async function bulkChatSend(){
       // AI thinks the instruction is clear enough — proceed directly
       bulkChatAddMessage('assistant', `${parsed.summary || "Got it!"}\n\nI understand what you want — let me analyse all entries now.`);
       bulkChatMemory.push({ role: 'assistant', content: parsed.summary || 'Understood — analysing.' });
-      startBulkAnalysis();
+      runStartBulkAnalysisSafely_();
     } else {
       // Show the first clarifying question
       bulkChatContext.pendingQuestions = parsed.questions || [];
@@ -6338,7 +6396,7 @@ function buildClarifyPrompt(instruction, platform){
   const topTools = Object.entries(allTools).sort((a,b)=>b[1]-a[1]).slice(0,15).map(([t,c])=>`${t} (${c}x)`).join(', ');
 
   // Include conversation memory for multi-turn context
-  const memoryContext = bulkChatMemory.length > 2 ? `
+  const memoryContext = bulkChatMemory.length > 1 ? `
 PRIOR CONVERSATION (for context — the latest message is the current request):
 ${bulkChatMemory.slice(0, -1).map(m => `${m.role === 'user' ? 'Coordinator' : 'You'}: ${m.content}`).join('\n')}
 ` : '';
@@ -6394,7 +6452,7 @@ function parseClarifyResponse(response){
 function showNextQuestion(parsed){
   if(!parsed.questions || !parsed.questions.length){
     bulkChatAddMessage('assistant', `${parsed.summary || "Got it!"}\n\nLet me analyse all entries now.`);
-    startBulkAnalysis();
+    runStartBulkAnalysisSafely_();
     return;
   }
 
@@ -6414,7 +6472,7 @@ function showNextQuestion(parsed){
 function askNextClarification(){
   const remaining = bulkChatContext.pendingQuestions || [];
   if(!remaining.length){
-    startBulkAnalysis();
+    runStartBulkAnalysisSafely_();
     return;
   }
   const q = remaining.shift();
@@ -7018,11 +7076,11 @@ async function runBulkMinecraftOpportunityFlow_(instruction,completeData,prog,lb
 async function startBulkAnalysis(){
   bulkChatState = 'analysing';
 
-  const instruction = bulkChatContext.rawInstruction;
+  const instruction = bulkChatEffectiveInstruction_(bulkChatContext.rawInstruction);
   const clarifications = bulkChatContext.clarifications || [];
-  const enrichedInstruction = clarifications.length
-    ? `${instruction}\n\nAdditional context from conversation:\n${clarifications.map(c => `Q: ${c.question}\nA: ${c.answer}`).join('\n')}`
-    : instruction;
+  const enrichedInstruction = bulkAppendClarifications_(instruction, clarifications);
+  bulkChatContext.effectiveInstruction = enrichedInstruction;
+
 
   bulkChatAddMessage('assistant', '🔍 Analysing all entries now — this may take a minute...');
 
@@ -8312,6 +8370,608 @@ setInterval(async()=>{
   }
   setTimeout(() => { try { if(document.getElementById('inv-whitelist-pills') && document.getElementById('inv-banned-pills')) renderToolInventory(); } catch(e){ console.warn('[DLA Inventory Patch] initial render failed', e); } }, 0);
   console.log('[DLA PATCH] Tool Inventory click + alias hardening installed');
+})();
+
+/* ===== DLA hotfix: audit section consistency patch =====
+   Makes counts, drilldowns, campus view and year view use the same tool-indexing logic.
+   Fixes the Lego Spike Prime issue where the headline count excluded STEM slot #6 but the drilldown included it. */
+(function(){
+  var AUDIT_INCLUDE_STEM_LOCAL = false;
+
+  function auditIsStemSlot_(slotIdx){ return Number(slotIdx) === 5; }
+  function auditIsAuditedEntry_(entry){ return !!entry && entry.audited !== false; }
+  function auditRawTool_(suggestion){
+    var t = (typeof sugTool === 'function') ? sugTool(suggestion) : (suggestion && suggestion.t);
+    t = String(t || '').trim();
+    return t && t !== 'TBA' ? t : '';
+  }
+  function auditToolParts_(raw){
+    var text = String(raw || '').trim();
+    if(!text || text === 'TBA') return [];
+
+    var parts = [];
+    var appSmashParen = text.match(/^(.+?)\s*\(\s*App\s*Smash\s+with\s+(.+?)\s*\)/i);
+    var appSmashPlus = text.match(/^(.+?)\s*[+]\s*(.+?)\s+App\s*Smash/i);
+    if(appSmashParen){
+      parts = [appSmashParen[1].trim(), appSmashParen[2].trim()];
+    } else if(appSmashPlus){
+      parts = [appSmashPlus[1].trim(), appSmashPlus[2].trim()];
+    } else if(/[&+]/.test(text)){
+      parts = text.split(/\s*[&+]\s*/).map(function(t){ return t.trim(); }).filter(Boolean);
+    } else {
+      // Normalise the whole tool first. This catches lesson-specific names such as
+      // "Minecraft: Area and Volume" -> "Minecraft Education" without splitting titles.
+      parts = [text];
+    }
+
+    var seen = new Set();
+    return parts.map(function(t){ return normaliseToolName(t).trim(); }).filter(Boolean).filter(function(t){
+      var key = toolKey(t);
+      if(!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+  function auditRows_(entries, includeStem){
+    var rows = [];
+    (entries || DATA || []).forEach(function(entry, sourceIdx){
+      if(!auditIsAuditedEntry_(entry)) return;
+      var dataIdx = (DATA || []).indexOf(entry);
+      var entryIdx = dataIdx >= 0 ? dataIdx : sourceIdx;
+      getSugs(entry).forEach(function(suggestion, slotIdx){
+        if(!includeStem && auditIsStemSlot_(slotIdx)) return;
+        var raw = auditRawTool_(suggestion);
+        if(!raw) return;
+        auditToolParts_(raw).forEach(function(tool){
+          rows.push({
+            entry: entry,
+            entryIdx: entryIdx,
+            slotIdx: slotIdx,
+            rawTool: raw,
+            tool: tool,
+            key: toolKey(tool),
+            desc: sugDesc(suggestion)
+          });
+        });
+      });
+    });
+    return rows;
+  }
+
+  computeStats = window.computeStats = function(options){
+    options = options || {};
+    var includeStem = !!options.includeStem;
+    var entries = Array.isArray(options.entries) ? options.entries : DATA;
+    var toolCounts = Object.create(null);
+    var campusTools = Object.create(null);
+    var yearTools = Object.create(null);
+    var toolRows = Object.create(null);
+    var total = 0;
+    var coreSuggestionTotal = 0;
+    var stemSuggestionTotal = 0;
+
+    (entries || []).forEach(function(entry){
+      if(!auditIsAuditedEntry_(entry)) return;
+      getSugs(entry).forEach(function(suggestion, slotIdx){
+        if(!auditRawTool_(suggestion)) return;
+        if(auditIsStemSlot_(slotIdx)) stemSuggestionTotal++;
+        else coreSuggestionTotal++;
+      });
+    });
+
+    auditRows_(entries, includeStem).forEach(function(row){
+      var tool = row.tool;
+      var campus = normCa(row.entry.ca);
+      toolCounts[tool] = (toolCounts[tool] || 0) + 1;
+      if(!campusTools[campus]) campusTools[campus] = Object.create(null);
+      campusTools[campus][tool] = (campusTools[campus][tool] || 0) + 1;
+      if(!yearTools[row.entry.yl]) yearTools[row.entry.yl] = Object.create(null);
+      yearTools[row.entry.yl][tool] = (yearTools[row.entry.yl][tool] || 0) + 1;
+      if(!toolRows[tool]) toolRows[tool] = [];
+      toolRows[tool].push(row);
+      total++;
+    });
+
+    var incompleteEntries = (DATA || []).filter(function(entry){
+      return entry.audited === false || getSugs(entry).length < 6 || getSugs(entry).some(function(s){ return !s || !s.t || !String(s.t).trim() || String(s.t).trim() === 'TBA'; });
+    });
+    var sorted = Object.entries(toolCounts)
+      .sort(function(a,b){ return b[1] - a[1] || a[0].localeCompare(b[0]); })
+      .map(function(pair){ return { name: pair[0], count: pair[1], pct: total ? Math.round(pair[1] / total * 100) : 0 }; });
+
+    return { sorted: sorted, campusTools: campusTools, yearTools: yearTools, total: total, incompleteCount: incompleteEntries.length, toolRows: toolRows, includeStem: includeStem, coreSuggestionTotal: coreSuggestionTotal, stemSuggestionTotal: stemSuggestionTotal };
+  };
+
+  window.setAuditStemScope = function(includeStem){
+    AUDIT_INCLUDE_STEM_LOCAL = !!includeStem;
+    renderAuditChart();
+  };
+
+  function auditScopeHtml_(stats){
+    var coreActive = !AUDIT_INCLUDE_STEM_LOCAL;
+    var stemActive = AUDIT_INCLUDE_STEM_LOCAL;
+    var scopeText = AUDIT_INCLUDE_STEM_LOCAL
+      ? 'Including STEM slot #6 · ' + stats.total + ' counted tool occurrence' + (stats.total !== 1 ? 's' : '')
+      : 'Core suggestions only, slots 1–5 · ' + stats.total + ' counted tool occurrence' + (stats.total !== 1 ? 's' : '');
+    return '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;padding:10px 12px;background:var(--card2);border:1px solid var(--border);border-radius:10px">'
+      + '<span style="font-size:12px;color:var(--dim);font-weight:700">Audit scope:</span>'
+      + '<button class="btn-sm" onclick="setAuditStemScope(false)" style="' + (coreActive ? 'background:var(--lime);color:#111;border-color:var(--lime)' : '') + '">Core slots 1–5</button>'
+      + '<button class="btn-sm" onclick="setAuditStemScope(true)" style="' + (stemActive ? 'background:var(--lime);color:#111;border-color:var(--lime)' : '') + '">Include STEM slot 6</button>'
+      + '<span style="font-size:12px;color:var(--dim);margin-left:auto">' + esc(scopeText) + '</span>'
+      + '</div>';
+  }
+
+  renderAuditChart = window.renderAuditChart = function(){
+    var stats = computeStats({ includeStem: AUDIT_INCLUDE_STEM_LOCAL });
+    var container = document.getElementById('audit-chart');
+    var filterEl = document.getElementById('year-campus-filter');
+    if(!container) return;
+
+    container.innerHTML = '';
+    if(filterEl) filterEl.innerHTML = '';
+
+    var campusDebug = [...new Set((DATA || []).map(function(e){ return e.ca; }))];
+    var debugEl = document.getElementById('audit-campus-debug');
+    if(debugEl){
+      debugEl.innerHTML = 'Campuses in data: ' + campusDebug.map(function(campus){
+        return '<span style="margin-right:8px;color:' + caCol(campus) + '">' + esc(campus) + ' (' + (DATA || []).filter(function(e){ return e.ca === campus; }).length + ')</span>';
+      }).join('');
+    }
+
+    container.innerHTML = auditScopeHtml_(stats);
+
+    if(!stats.sorted.length){
+      container.innerHTML += '<div style="padding:40px;text-align:center;color:var(--dim);font-size:14px">No suggestion data found in this audit scope.</div>';
+      return;
+    }
+
+    if(AUDIT_VIEW === 'tools'){
+      var card = document.createElement('div');
+      card.className = 'card';
+      var warningNote = stats.incompleteCount > 0
+        ? ' <span style="color:#FF8080;font-size:11px;font-weight:600">· ' + stats.incompleteCount + ' entries pending audit</span>'
+        : '';
+      card.innerHTML = '<span class="label">Tool frequency — ' + stats.total + ' total — click a bar to see matching suggestions</span>' + warningNote;
+
+      var top = stats.sorted.slice(0,50);
+      var mx = top[0].count || 1;
+      top.forEach(function(item, rankIdx){
+        var name = item.name;
+        var count = item.count;
+        var pct = item.pct;
+        var isWarn = name.startsWith('\u26a0');
+        var barCol = isWarn ? '#FF8080' : 'var(--lime)';
+        var nameCol = isWarn ? '#FF8080' : 'var(--text)';
+        var uid = 'dd_' + rankIdx + '_' + name.replace(/\W/g,'').slice(0,18) + '_' + count;
+
+        var wrap = document.createElement('div');
+        wrap.style.cssText = 'margin-bottom:14px;cursor:pointer';
+
+        var labelRow = document.createElement('div');
+        labelRow.style.cssText = 'display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:5px';
+        labelRow.innerHTML = '<span style="color:' + nameCol + '">' + esc(name) + '</span><span style="color:var(--dim)">' + count + '\u00d7 (' + pct + '%)</span>';
+
+        var track = document.createElement('div');
+        track.style.cssText = 'height:6px;background:var(--card2);border-radius:3px;margin-bottom:0';
+        var fill = document.createElement('div');
+        fill.style.cssText = 'height:100%;border-radius:3px;background:' + barCol + ';width:' + Math.round((count/mx)*100) + '%';
+        track.appendChild(fill);
+
+        var dd = document.createElement('div');
+        dd.id = uid;
+        dd.style.cssText = 'display:none;margin-top:10px;padding:8px;background:var(--card2);border-radius:8px;border:1px solid var(--border)';
+        (stats.toolRows[name] || []).forEach(function(rowData){
+          var entry = rowData.entry;
+          var slotLabel = auditIsStemSlot_(rowData.slotIdx) ? 'Slot 6 · STEM' : 'Slot ' + (rowData.slotIdx + 1);
+          var rawNote = rowData.rawTool && normaliseToolName(rowData.rawTool) !== name
+            ? '<span style="font-size:10px;color:var(--dim);margin-left:6px">from ' + esc(rowData.rawTool) + '</span>'
+            : '';
+          var row = document.createElement('div');
+          row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:7px 10px;cursor:pointer;border-radius:6px;font-size:12px';
+          row.innerHTML = '<span style="color:var(--dim);width:100px;flex-shrink:0">' + esc(entry.ca) + '</span>'
+            + '<span style="color:var(--gold);font-weight:600;width:62px;flex-shrink:0">' + esc(entry.yl) + '</span>'
+            + '<span style="font-size:10px;color:' + (auditIsStemSlot_(rowData.slotIdx) ? '#60B8F0' : 'var(--dim)') + ';font-weight:800;width:86px;flex-shrink:0">' + slotLabel + '</span>'
+            + '<span style="flex:1">' + esc(entry.th) + rawNote + '</span>'
+            + '<span style="color:var(--dim)">\u203a</span>';
+          row.onmouseover = function(){ row.style.background = 'var(--card)'; };
+          row.onmouseout = function(){ row.style.background = ''; };
+          row.onclick = function(ev){ ev.stopPropagation(); openEntry(rowData.entryIdx); };
+          dd.appendChild(row);
+        });
+        if(!dd.children.length) dd.innerHTML = '<div style="color:var(--dim);font-size:12px;padding:6px">No matching suggestions found in this audit scope</div>';
+
+        wrap.onclick = function(){
+          var open = dd.style.display !== 'none';
+          container.querySelectorAll('[id^="dd_"]').forEach(function(el){ el.style.display = 'none'; });
+          dd.style.display = open ? 'none' : 'block';
+        };
+        wrap.appendChild(labelRow);
+        wrap.appendChild(track);
+        wrap.appendChild(dd);
+        card.appendChild(wrap);
+      });
+      container.appendChild(card);
+      return;
+    }
+
+    if(AUDIT_VIEW === 'campus'){
+      var campuses = [...new Set((DATA || []).map(function(e){ return normCa(e.ca); }))].sort();
+      var palette = ['#F5A623','#C5E84A','#60B8F0','#9B8BFF','#52B95C','#FF8080'];
+      campuses.forEach(function(campus, ci){
+        var tools = stats.campusTools[campus] || {};
+        var totalSugs = Object.values(tools).reduce(function(a,b){ return a+b; }, 0);
+        var sorted = Object.entries(tools).sort(function(a,b){ return b[1]-a[1] || a[0].localeCompare(b[0]); }).slice(0,12);
+        var mx = sorted[0]?.[1] || 1;
+        var col = palette[ci % palette.length];
+        var card = document.createElement('div');
+        card.className = 'card';
+        card.style.marginBottom = '14px';
+        var html = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">'
+          + '<div style="width:10px;height:10px;border-radius:3px;background:' + col + '"></div>'
+          + '<span style="font-weight:800;font-size:16px">' + esc(campus) + '</span>'
+          + '<span style="color:var(--dim);font-size:12px">' + totalSugs + ' counted tool occurrence' + (totalSugs!==1?'s':'') + '</span></div>';
+        if(totalSugs === 0){
+          html += '<div style="color:var(--dim);font-size:13px;padding:8px 0">No audited suggestions in this scope</div>';
+          card.innerHTML = html;
+          container.appendChild(card);
+          return;
+        }
+        sorted.forEach(function(pair){
+          html += '<div style="margin-bottom:12px">'
+            + '<div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:4px"><span>' + esc(pair[0]) + '</span><span style="color:var(--dim)">' + pair[1] + '\u00d7</span></div>'
+            + '<div style="height:6px;background:var(--card2);border-radius:3px"><div style="height:100%;border-radius:3px;background:' + col + ';width:' + Math.round((pair[1]/mx)*100) + '%"></div></div>'
+            + '</div>';
+        });
+        card.innerHTML = html;
+        container.appendChild(card);
+      });
+      return;
+    }
+
+    var campusesForYear = [...new Set((DATA || []).map(function(e){ return normCa(e.ca); }))].sort();
+    var paletteForYear = ['#F5A623','#C5E84A','#9B8BFF'];
+
+    var allBtn = document.createElement('button');
+    allBtn.className = 'view-tab' + (AUDIT_YEAR_CAMPUS === '' ? ' active' : '');
+    allBtn.textContent = 'All';
+    allBtn.onclick = function(){ setYrCampus('', allBtn); };
+    if(filterEl) filterEl.appendChild(allBtn);
+
+    campusesForYear.forEach(function(campus){
+      var b = document.createElement('button');
+      b.className = 'view-tab' + (AUDIT_YEAR_CAMPUS === campus ? ' active' : '');
+      b.textContent = campus;
+      b.onclick = function(){ setYrCampus(campus, b); };
+      if(filterEl) filterEl.appendChild(b);
+    });
+
+    var fd = AUDIT_YEAR_CAMPUS ? (DATA || []).filter(function(e){ return normCa(e.ca) === AUDIT_YEAR_CAMPUS; }) : DATA;
+    var scopedStats = computeStats({ entries: fd, includeStem: AUDIT_INCLUDE_STEM_LOCAL });
+    var colForYear = AUDIT_YEAR_CAMPUS ? paletteForYear[campusesForYear.indexOf(AUDIT_YEAR_CAMPUS) % paletteForYear.length] : '#C5E84A';
+    var yearsWithData = YR.filter(function(year){ return scopedStats.yearTools[year]; });
+    if(!yearsWithData.length){
+      container.innerHTML += '<div style="padding:40px;text-align:center;color:var(--dim);font-size:14px">No year-level data found in this audit scope.</div>';
+      return;
+    }
+    yearsWithData.forEach(function(year){
+      var sorted = Object.entries(scopedStats.yearTools[year]).sort(function(a,b){ return b[1]-a[1] || a[0].localeCompare(b[0]); }).slice(0,10);
+      var mx = sorted[0]?.[1] || 1;
+      var card = document.createElement('div');
+      card.className = 'card';
+      card.style.marginBottom = '14px';
+      var html = '<div style="font-weight:800;font-size:17px;color:var(--lime);margin-bottom:14px">' + year + (AUDIT_YEAR_CAMPUS ? ' — ' + AUDIT_YEAR_CAMPUS : '') + '</div>';
+      sorted.forEach(function(pair){
+        html += '<div style="margin-bottom:12px">'
+          + '<div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:4px"><span>' + esc(pair[0]) + '</span><span style="color:var(--dim)">' + pair[1] + '\u00d7</span></div>'
+          + '<div style="height:6px;background:var(--card2);border-radius:3px"><div style="height:100%;border-radius:3px;background:' + colForYear + ';width:' + Math.round((pair[1]/mx)*100) + '%"></div></div>'
+          + '</div>';
+      });
+      card.innerHTML = html;
+      container.appendChild(card);
+    });
+  };
+})();
+/* ===== end DLA hotfix: audit section consistency patch ===== */
+
+
+
+/* =========================================================
+   DLA Studio Patch — Bulk collapsible sections + manual Tool Inventory save
+   - Restores collapsible Bulk cards with remembered open/closed state.
+   - Adds an explicit Save changes button for Tool Inventory edits.
+   - Suppresses Tool Inventory auto-save so edits are clearly saved on demand.
+   ========================================================= */
+(function(){
+  const PATCH_ID = 'bulk-collapsible-inventory-save-v1';
+  if(window.__DLA_BULK_COLLAPSE_SAVE_PATCH_ID === PATCH_ID) return;
+  window.__DLA_BULK_COLLAPSE_SAVE_PATCH_ID = PATCH_ID;
+
+  const BULK_STATE_KEY = 'dla_bulk_collapsible_state_v1';
+  let inventoryDirty = false;
+  let inventorySaving = false;
+  const realSaveLibraries = (typeof saveLibraries === 'function') ? saveLibraries : null;
+
+  function loadBulkState_(){
+    try { return JSON.parse(localStorage.getItem(BULK_STATE_KEY) || '{}') || {}; }
+    catch(e){ return {}; }
+  }
+  function saveBulkState_(state){
+    try { localStorage.setItem(BULK_STATE_KEY, JSON.stringify(state || {})); }
+    catch(e){}
+  }
+  function bulkCardTitle_(card){
+    const label = card.querySelector('.label');
+    return (label && label.textContent ? label.textContent : 'Bulk section').replace(/\s+/g,' ').trim();
+  }
+  function bulkCardKey_(card, idx){
+    const title = bulkCardTitle_(card).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    return (card.id || title || ('section-'+idx));
+  }
+  function stopBulkToggleFromControl_(event){
+    const interactive = event.target && event.target.closest && event.target.closest('button,input,select,textarea,a,[contenteditable="true"]');
+    return !!interactive;
+  }
+  function setBulkCardOpen_(card, open, persist){
+    const body = card.querySelector(':scope > .bulk-card-body');
+    const caret = card.querySelector(':scope > .bulk-card-header .bulk-collapse-caret');
+    const stateText = card.querySelector(':scope > .bulk-card-header .bulk-collapse-state');
+    if(body) body.style.display = open ? 'block' : 'none';
+    if(caret) caret.textContent = open ? '▾' : '▸';
+    if(stateText) stateText.textContent = open ? 'Hide' : 'Show';
+    card.classList.toggle('bulk-card-open', !!open);
+    card.classList.toggle('bulk-card-collapsed', !open);
+    if(persist){
+      const key = card.getAttribute('data-bulk-section-key');
+      const state = loadBulkState_();
+      state[key] = open ? 'open' : 'closed';
+      saveBulkState_(state);
+    }
+  }
+
+  function ensureBulkStyle_(){
+    if(document.getElementById('bulk-collapsible-inventory-style')) return;
+    const style = document.createElement('style');
+    style.id = 'bulk-collapsible-inventory-style';
+    style.textContent = `
+      #panel-tools > .card.bulk-collapsible-card{overflow:hidden;}
+      #panel-tools > .card.bulk-collapsible-card > .bulk-card-header{cursor:pointer;user-select:none;position:relative;}
+      #panel-tools > .card.bulk-collapsible-card > .bulk-card-header:hover .label{color:var(--lime)!important;}
+      .bulk-collapse-caret{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:6px;background:var(--card2);border:1px solid var(--border);color:var(--lime);font-size:13px;font-weight:900;line-height:1;flex-shrink:0;}
+      .bulk-collapse-state{font-size:10px;color:var(--dim);font-weight:800;letter-spacing:.7px;text-transform:uppercase;margin-left:4px;}
+      .bulk-card-collapsed{border-color:#242424;}
+      .bulk-card-collapsed > .bulk-card-header{margin-bottom:0!important;}
+      .bulk-card-body{transition:opacity .12s ease;}
+      #inv-save-btn{transition:all .12s ease;}
+      #inv-save-btn.inv-dirty{background:var(--gold)!important;color:#111!important;border-color:var(--gold)!important;opacity:1!important;}
+      #inv-save-status{font-size:11px;color:var(--dim);font-weight:700;white-space:nowrap;}
+    `;
+    document.head.appendChild(style);
+  }
+
+  function makeHeaderForCard_(card){
+    let header = card.firstElementChild;
+    if(header && header.classList && header.classList.contains('bulk-card-header')) return header;
+
+    if(header && header.matches && header.matches('div') && header.querySelector('.label')){
+      // Use the card's existing title/action row as the collapsible header.
+    } else {
+      const newHeader = document.createElement('div');
+      newHeader.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:4px;flex-wrap:wrap';
+      if(header && header.matches && header.matches('.label')){
+        card.insertBefore(newHeader, header);
+        newHeader.appendChild(header);
+      } else {
+        const label = card.querySelector(':scope > .label') || card.querySelector('.label');
+        card.insertBefore(newHeader, card.firstChild);
+        if(label) newHeader.appendChild(label);
+        else {
+          const fallback = document.createElement('span');
+          fallback.className = 'label';
+          fallback.style.margin = '0';
+          fallback.textContent = 'Bulk section';
+          newHeader.appendChild(fallback);
+        }
+      }
+      header = newHeader;
+    }
+
+    header.classList.add('bulk-card-header');
+    header.setAttribute('role','button');
+    header.setAttribute('tabindex','0');
+    if(!header.querySelector('.bulk-collapse-caret')){
+      const caret = document.createElement('span');
+      caret.className = 'bulk-collapse-caret';
+      caret.textContent = '▸';
+      header.insertBefore(caret, header.firstChild);
+    }
+    const label = header.querySelector('.label');
+    if(label) label.style.margin = '0';
+    if(!header.querySelector('.bulk-collapse-state')){
+      const stateText = document.createElement('span');
+      stateText.className = 'bulk-collapse-state';
+      stateText.textContent = 'Show';
+      const flex = document.createElement('div');
+      flex.className = 'bulk-collapse-flex-spacer';
+      flex.style.cssText = 'flex:1;min-width:12px';
+      if(!Array.from(header.children).some(el => el.style && String(el.style.flex).startsWith('1'))){
+        header.appendChild(flex);
+      }
+      header.appendChild(stateText);
+    }
+    return header;
+  }
+
+  function wrapBulkCardBody_(card){
+    if(card.querySelector(':scope > .bulk-card-body')) return;
+    const body = document.createElement('div');
+    body.className = 'bulk-card-body';
+    while(card.children.length > 1){
+      body.appendChild(card.children[1]);
+    }
+    card.appendChild(body);
+  }
+
+  function setupBulkCollapsibleSections(){
+    const panel = document.getElementById('panel-tools');
+    if(!panel) return;
+    ensureBulkStyle_();
+    injectToolInventorySaveButton_();
+    const state = loadBulkState_();
+    const cards = Array.from(panel.querySelectorAll(':scope > .card'));
+    cards.forEach((card, idx) => {
+      if(!card.getAttribute('data-bulk-section-key')) card.setAttribute('data-bulk-section-key', bulkCardKey_(card, idx));
+      if(card.getAttribute('data-bulk-collapsible-ready') === '1') return;
+      card.classList.add('bulk-collapsible-card');
+      const header = makeHeaderForCard_(card);
+      wrapBulkCardBody_(card);
+      const key = card.getAttribute('data-bulk-section-key');
+      const open = state[key] === 'open'; // default collapsed unless previously opened
+      setBulkCardOpen_(card, open, false);
+      header.addEventListener('click', function(event){
+        if(stopBulkToggleFromControl_(event)) return;
+        setBulkCardOpen_(card, !card.classList.contains('bulk-card-open'), true);
+      });
+      header.addEventListener('keydown', function(event){
+        if(event.key !== 'Enter' && event.key !== ' ') return;
+        if(stopBulkToggleFromControl_(event)) return;
+        event.preventDefault();
+        setBulkCardOpen_(card, !card.classList.contains('bulk-card-open'), true);
+      });
+      card.setAttribute('data-bulk-collapsible-ready','1');
+    });
+    updateInventorySaveButton_();
+  }
+  window.setupBulkCollapsibleSections = setupBulkCollapsibleSections;
+
+  function injectToolInventorySaveButton_(){
+    const invCount = document.getElementById('inv-count');
+    if(!invCount || document.getElementById('inv-save-btn')) return;
+    const saveBtn = document.createElement('button');
+    saveBtn.id = 'inv-save-btn';
+    saveBtn.type = 'button';
+    saveBtn.className = 'btn-sm';
+    saveBtn.style.cssText = 'color:var(--dim);border-color:var(--border);padding:6px 12px';
+    saveBtn.textContent = 'Saved';
+    saveBtn.onclick = function(event){
+      event.stopPropagation();
+      invSaveChanges();
+    };
+    const status = document.createElement('span');
+    status.id = 'inv-save-status';
+    status.textContent = '';
+    invCount.parentNode.insertBefore(status, invCount);
+    invCount.parentNode.insertBefore(saveBtn, invCount);
+  }
+
+  function updateInventorySaveButton_(){
+    injectToolInventorySaveButton_();
+    const btn = document.getElementById('inv-save-btn');
+    const status = document.getElementById('inv-save-status');
+    if(!btn) return;
+    btn.disabled = inventorySaving || !inventoryDirty;
+    btn.classList.toggle('inv-dirty', inventoryDirty && !inventorySaving);
+    if(inventorySaving){
+      btn.textContent = 'Saving…';
+      if(status) status.textContent = 'Saving inventory…';
+      return;
+    }
+    if(inventoryDirty){
+      btn.textContent = 'Save changes';
+      if(status) { status.textContent = 'Unsaved Tool Inventory changes'; status.style.color = 'var(--gold)'; }
+    } else {
+      btn.textContent = 'Saved';
+      if(status) { status.textContent = ''; status.style.color = 'var(--dim)'; }
+    }
+  }
+
+  function markInventoryDirty_(message){
+    inventoryDirty = true;
+    updateInventorySaveButton_();
+    if(message) setStatus(message, 'loading');
+  }
+  window.invMarkDirty = markInventoryDirty_;
+
+  window.invSaveChanges = async function invSaveChanges(){
+    if(!realSaveLibraries){ setStatus('Could not save Tool Inventory — saveLibraries() was not found', 'error'); return; }
+    if(inventorySaving) return;
+    if(!inventoryDirty){ setStatus('Tool Inventory already saved ✓'); return; }
+    inventorySaving = true;
+    updateInventorySaveButton_();
+    try{
+      await realSaveLibraries.call(this);
+      inventoryDirty = false;
+      setStatus('Tool Inventory saved to libraries.json ✓');
+    }catch(e){
+      setStatus('Tool Inventory save failed: ' + (e && e.message ? e.message : e), 'error');
+    }finally{
+      inventorySaving = false;
+      updateInventorySaveButton_();
+    }
+  };
+
+  function inventorySnapshot_(){
+    try{
+      if(typeof normaliseToolInventory === 'function') normaliseToolInventory();
+      return JSON.stringify({
+        approved: TOOL_INVENTORY && TOOL_INVENTORY.approved || [],
+        banned: TOOL_INVENTORY && TOOL_INVENTORY.banned || [],
+        ageRanges: TOOL_INVENTORY && TOOL_INVENTORY.ageRanges || {}
+      });
+    }catch(e){ return ''; }
+  }
+
+  function runInventoryEditWithoutAutosave_(fn){
+    const before = inventorySnapshot_();
+    const previousSaveLibraries = saveLibraries;
+    saveLibraries = window.saveLibraries = function(){ return Promise.resolve(); };
+    try { return fn(); }
+    finally {
+      saveLibraries = window.saveLibraries = previousSaveLibraries;
+      const after = inventorySnapshot_();
+      if(before !== after) markInventoryDirty_('Tool Inventory changed — click “Save changes” to update libraries.json');
+      else updateInventorySaveButton_();
+    }
+  }
+
+  if(typeof invAddTool === 'function'){
+    const oldInvAddTool = invAddTool;
+    invAddTool = window.invAddTool = function(){
+      return runInventoryEditWithoutAutosave_(() => oldInvAddTool.apply(this, arguments));
+    };
+  }
+  if(typeof invRemoveTool === 'function'){
+    const oldInvRemoveTool = invRemoveTool;
+    invRemoveTool = window.invRemoveTool = function(){
+      return runInventoryEditWithoutAutosave_(() => oldInvRemoveTool.apply(this, arguments));
+    };
+  }
+  if(typeof invUpdateToolAge === 'function'){
+    const oldInvUpdateToolAge = invUpdateToolAge;
+    invUpdateToolAge = window.invUpdateToolAge = function(){
+      return runInventoryEditWithoutAutosave_(() => oldInvUpdateToolAge.apply(this, arguments));
+    };
+  }
+  if(typeof renderToolInventory === 'function'){
+    const oldRenderToolInventory = renderToolInventory;
+    renderToolInventory = window.renderToolInventory = function(){
+      const out = oldRenderToolInventory.apply(this, arguments);
+      injectToolInventorySaveButton_();
+      updateInventorySaveButton_();
+      return out;
+    };
+  }
+
+  if(typeof switchTab === 'function'){
+    const oldSwitchTab = switchTab;
+    switchTab = window.switchTab = function(tab, btn){
+      const result = oldSwitchTab.apply(this, arguments);
+      if(tab === 'tools') setTimeout(setupBulkCollapsibleSections, 0);
+      return result;
+    };
+  }
+
+  // If the Bulk panel is already visible when this patch loads, apply immediately.
+  setTimeout(setupBulkCollapsibleSections, 0);
 })();
 
 </script>
