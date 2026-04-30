@@ -5420,8 +5420,8 @@ function buildLibraryContextCompact(key){
     return bits.join(' | ');
   }).join('\n');
   if(key === 'minecraft'){
-    return `${meta.name.toUpperCase()} — VERIFIED LESSON LIBRARY + CREATIVE BUILD MODE (${lessons.length} lessons):
-Use VERIFIED Minecraft library lessons only. Do NOT create original/made-up Minecraft ideas, invent lesson titles, or invent URLs. Every Minecraft proposal must name a real lesson from this list and include its real URL. Respect lesson age ranges. Avoid maths-only lessons like Area and Volume unless the unit genuinely involves maths/measurement/spatial design.
+    return `${meta.name.toUpperCase()} — VERIFIED LESSON LIBRARY (${lessons.length} lessons):
+Use VERIFIED Minecraft library lessons only. Do NOT create original/made-up Minecraft ideas, invent lesson titles, or invent URLs. If the teacher names a specific lesson, use ONLY that exact lesson and do not substitute other Minecraft lessons. Every Minecraft proposal must name a real lesson from this list and include its real URL. Respect lesson age ranges. Avoid maths-only lessons like Area and Volume unless the unit genuinely involves maths/measurement/spatial design.
 ${lines}`;
   }
   return `${meta.name.toUpperCase()} — VERIFIED LESSON LIBRARY (${lessons.length} lessons):\nUse ONLY these verified lessons. Do NOT invent lesson titles. Respect lesson age ranges. Include the lesson URL in the description.\n${lines}`;
@@ -6862,6 +6862,42 @@ function mcLessonScore_(lesson,entry){
 function mcBestLesson_(entry,used){
   let best=null; (getMinecraftLessons()||[]).forEach(l=>{const k=dlaTextForFit_(l&&l.title||''); if(used&&used.has(k))return; const sc=mcLessonScore_(l,entry); if(sc>1&&(!best||sc>best.score))best={lesson:l,score:sc};}); return best;
 }
+function mcTitleTokens_(value){
+  return dlaTextForFit_(value).split(' ').filter(w=>w.length>2&&!/^(the|and|for|with|from|into|using|minecraft|education|lesson|lessons|activity|activities|world|student|students)$/.test(w));
+}
+function mcSpecificLessonFromInstruction_(instruction){
+  const text = cleanSuggestionText_(instruction || '');
+  const norm = dlaTextForFit_(text);
+  const lessons = getMinecraftLessons() || [];
+  if(!/minecraft|lesson|lessons|world/i.test(text) || !lessons.length) return null;
+  const quoted = (text.match(/[“"]([^”"]+)[”"]/g) || [])
+    .map(x => dlaTextForFit_(x.replace(/[“”"]/g,'')))
+    .filter(Boolean);
+  let best = null;
+  lessons.forEach(l => {
+    const title = String(l && l.title || '').trim();
+    const titleNorm = dlaTextForFit_(title);
+    if(!titleNorm) return;
+    const titleTokens = mcTitleTokens_(title);
+    let score = 0;
+    if(norm.includes(titleNorm)) score += 120;
+    if(quoted.some(q => q === titleNorm || q.includes(titleNorm) || titleNorm.includes(q))) score += 100;
+    const normTokens = norm.split(' ').filter(Boolean);
+    const overlap = titleTokens.filter(t => normTokens.includes(t));
+    if(titleTokens.length && overlap.length === titleTokens.length) score += 80 + overlap.length;
+    else if(titleTokens.length >= 3 && overlap.length >= Math.ceil(titleTokens.length * 0.75)) score += 45 + overlap.length;
+    const beforeMinecraft = norm.split(/minecraft|lesson|world/)[0] || '';
+    const beforeTokens = mcTitleTokens_(beforeMinecraft);
+    const beforeOverlap = titleTokens.filter(t => beforeTokens.includes(t));
+    if(titleTokens.length && beforeOverlap.length === titleTokens.length) score += 80;
+    if(score && (!best || score > best.score)) best = { lesson:l, score, title };
+  });
+  return best && best.score >= 80 ? best.lesson : null;
+}
+function mcLessonFitForEntry_(lesson,entry){
+  const score = mcLessonScore_(lesson, entry);
+  return score > 1 ? { lesson, score } : null;
+}
 function mcSlotScore_(entry,sug,idx,instruction){
   if(idx===5||!sug)return-9999; const tool=sugTool(sug), key=toolInventoryKey(tool);
   if(key===toolInventoryKey('Minecraft Education'))return-9999;
@@ -6950,17 +6986,33 @@ function mcChange_(c,mode,lesson){
 }
 async function runBulkMinecraftOpportunityFlow_(instruction,completeData,prog,lbl,bar){
   updateReasoningStep(0,'done');updateReasoningStep(1,'done');updateReasoningStep(2,'done');updateReasoningStep(3,'active','Finding safe Minecraft Education opportunities'); if(lbl)lbl.textContent='Finding safe Minecraft Education opportunities…'; if(bar)bar.style.width='25%'; await ensureLibrariesLoadedForAI();
-  const target=getBulkExplicitCount_(instruction,10), cand=[]; let age=0, existing=0, noslot=0;
+  const target=getBulkExplicitCount_(instruction,10), cand=[]; let age=0, existing=0, noslot=0, nofit=0;
+  const specificLesson = mcSpecificLessonFromInstruction_(instruction);
+  const specificLessonTitle = specificLesson ? mcCleanTitle_(specificLesson.title || 'the selected Minecraft lesson') : '';
   completeData.forEach(({e,i})=>{if(!isAiToolSafeForEntry('Minecraft Education',e)){age++;return;} if(entryAlreadyHasTool_(e,'Minecraft Education')){existing++;return;} const slot=mcChooseSlot_(e,instruction); if(!slot){noslot++;return;} cand.push({entryIdx:i,...slot});});
   const usedE=new Set(), usedL=new Set(), changes=[]; const wantLib=target;
-  const lib=cand.map(c=>{const fit=mcBestLesson_(DATA[c.entryIdx],usedL); return fit?{...c,lesson:fit.lesson,score:c.score+fit.score}:null;}).filter(Boolean).sort((a,b)=>b.score-a.score);
-  for(const c of lib){if(changes.length>=wantLib)break; if(usedE.has(c.entryIdx))continue; const ch=mcChange_(c,'lesson',c.lesson); if(!checkRealisticToolUse(ch.t,ch.d,DATA[c.entryIdx]).ok)continue; changes.push(ch); usedE.add(c.entryIdx); usedL.add(dlaTextForFit_(c.lesson.title||''));}
+  let lib=[];
+  if(specificLesson){
+    // When a teacher names one Minecraft lesson, this flow must test ONLY that lesson.
+    // It may reuse the same verified lesson across multiple units; it must not silently substitute others.
+    lib = cand.map(c=>{const fit=mcLessonFitForEntry_(specificLesson, DATA[c.entryIdx]); if(!fit){nofit++; return null;} return {...c,lesson:specificLesson,score:c.score+fit.score};}).filter(Boolean).sort((a,b)=>b.score-a.score);
+  } else {
+    lib = cand.map(c=>{const fit=mcBestLesson_(DATA[c.entryIdx],usedL); return fit?{...c,lesson:fit.lesson,score:c.score+fit.score}:null;}).filter(Boolean).sort((a,b)=>b.score-a.score);
+  }
+  for(const c of lib){if(changes.length>=wantLib)break; if(usedE.has(c.entryIdx))continue; const ch=mcChange_(c,'lesson',c.lesson); if(specificLesson){ch.auditReason='Specific verified Minecraft lesson “'+specificLessonTitle+'” replacing '+c.oldTool;} if(!checkRealisticToolUse(ch.t,ch.d,DATA[c.entryIdx]).ok)continue; changes.push(ch); usedE.add(c.entryIdx); if(!specificLesson) usedL.add(dlaTextForFit_(c.lesson.title||''));}
   // Verified-only mode: do not generate original Minecraft build/challenge fallbacks.
-  if(changes.length<target){for(const c of lib){if(changes.length>=target)break; if(usedE.has(c.entryIdx))continue; const ch=mcChange_(c,'lesson',c.lesson); if(checkRealisticToolUse(ch.t,ch.d,DATA[c.entryIdx]).ok){changes.push(ch);usedE.add(c.entryIdx);}}}
+  // For a named lesson, do not backfill with other lessons just to reach the requested count.
+  if(!specificLesson && changes.length<target){for(const c of lib){if(changes.length>=target)break; if(usedE.has(c.entryIdx))continue; const ch=mcChange_(c,'lesson',c.lesson); if(checkRealisticToolUse(ch.t,ch.d,DATA[c.entryIdx]).ok){changes.push(ch);usedE.add(c.entryIdx);}}}
   if(bar)bar.style.width='100%'; if(prog)prog.style.display='none'; updateReasoningStep(3,'done');updateReasoningStep(4,'done');updateReasoningStep(5,'done'); setTimeout(hideReasoningSteps,1000); if(bulkChatHistory.length&&bulkChatHistory[bulkChatHistory.length-1].content.includes('Analysing all entries'))bulkChatHistory.pop();
   const vc=changes.filter(c=>c.auditSource==='bulk-minecraft-targeted-library').length;
-  if(changes.length){const short=changes.length<target?'<br><span style="font-size:12px;color:var(--orange)">I found '+changes.length+' safe opportunities out of '+target+'. '+age+' outside age range, '+existing+' already had Minecraft, '+noslot+' had no safe non-STEM slot.</span>':''; const sample=changes.slice(0,5).map(c=>{const e=DATA[c.entryIdx], old=getSugs(e)[c.sugIdx]?sugTool(getSugs(e)[c.sugIdx]):'existing suggestion'; return '• '+esc(e.yl)+' '+esc(e.th)+' — '+'verified lesson'+', replacing '+esc(old);}).join('<br>'); bulkChatAddMessage('assistant','✅ <strong>'+changes.length+' verified Minecraft Education lesson opportunities</strong> ready for review.<br><span style="font-size:12px;color:var(--lime)">'+vc+' verified lesson matches</span>'+short+'<br><br><span style="font-size:12px;color:var(--lime)">Sample targets:</span><br>'+sample+(changes.length>5?'<br>• …':'')); bulkChatMemory.push({role:'assistant',content:'Proposed '+changes.length+' verified Minecraft lesson opportunities.'}); window._snapshotReason='Before verified Minecraft Education opportunities'; showChangesPopup(changes); bulkChatState='done';}
-  else{bulkChatAddMessage('assistant','⚠️ I found no safe verified Minecraft Education lesson opportunities. Checked '+completeData.length+' entries: '+age+' outside age range, '+existing+' already contain Minecraft, '+noslot+' had no safe non-STEM slot.'); bulkChatState='idle';}
+  if(changes.length){
+    const lessonNote = specificLesson ? '<br><span style="font-size:12px;color:var(--lime)">Constrained to the specific lesson: <strong>'+esc(specificLessonTitle)+'</strong>. No other Minecraft lessons were used.</span>' : '';
+    const short=changes.length<target?'<br><span style="font-size:12px;color:var(--orange)">I found '+changes.length+' safe opportunities out of '+target+'. '+age+' outside age range, '+existing+' already had Minecraft, '+noslot+' had no safe non-STEM slot'+(specificLesson?', '+nofit+' did not strongly fit this specific lesson':'')+'.</span>':'';
+    const sample=changes.slice(0,5).map(c=>{const e=DATA[c.entryIdx], old=getSugs(e)[c.sugIdx]?sugTool(getSugs(e)[c.sugIdx]):'existing suggestion'; return '• '+esc(e.yl)+' '+esc(e.th)+' — '+(specificLesson?esc(specificLessonTitle):'verified lesson')+', replacing '+esc(old);}).join('<br>');
+    bulkChatAddMessage('assistant','✅ <strong>'+changes.length+' verified Minecraft Education lesson opportunities</strong> ready for review.'+lessonNote+'<br><span style="font-size:12px;color:var(--lime)">'+vc+' verified lesson matches</span>'+short+'<br><br><span style="font-size:12px;color:var(--lime)">Sample targets:</span><br>'+sample+(changes.length>5?'<br>• …':'')); bulkChatMemory.push({role:'assistant',content:'Proposed '+changes.length+(specificLesson?' opportunities for '+specificLessonTitle:' verified Minecraft lesson opportunities')+'.'}); window._snapshotReason=specificLesson?'Before '+specificLessonTitle+' Minecraft opportunities':'Before verified Minecraft Education opportunities'; showChangesPopup(changes); bulkChatState='done';}
+  else{
+    const missingSpecific = specificLesson ? ' I only tested the requested lesson “'+esc(specificLessonTitle)+'” and did not substitute other Minecraft lessons.' : '';
+    bulkChatAddMessage('assistant','⚠️ I found no safe verified Minecraft Education lesson opportunities.'+missingSpecific+' Checked '+completeData.length+' entries: '+age+' outside age range, '+existing+' already contain Minecraft, '+noslot+' had no safe non-STEM slot'+(specificLesson?', '+nofit+' did not strongly fit this specific lesson':'')+'.'); bulkChatState='idle';}
   stopProgress(); return true;
 }
 async function startBulkAnalysis(){
