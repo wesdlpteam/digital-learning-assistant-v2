@@ -465,7 +465,7 @@
       },
       {
         "t": "Freeform",
-        "d": "Students use a shared Freeform board to brainstorm and visually organise the roles, responsibilities, and qualities of effective leaders. Each group adds images, sticky notes, and connections to real-world examples, building a collaborative leadership mind map. The board is then used for a gallery walk and peer feedback session."
+        "d": "Students collaborate on a shared Freeform board to visually organise and categorise different types of forces they observe in their environment, such as push, pull, gravity, and friction. They add images, drawings, and simple labels from their hands-on experiments with ramps, magnets, and playground activities, creating a dynamic mind map that connects forces to real-world examples and innovations in technology."
       },
       {
         "t": "PicCollage",
@@ -493,7 +493,7 @@
       },
       {
         "t": "Freeform",
-        "d": "Students collaborate on a shared Freeform board to map out the journey of goods and services from raw materials to the consumer. Each group adds images, arrows, and notes to trace the flow through a marketplace, highlighting ethical considerations and points of exchange. The final board is used as a visual anchor for class discussion and reflection."
+        "d": "Students collaborate on a shared Freeform board to visually organise and label Earth's key resources, such as water, soil, and plants, linking each to how their everyday choices affect these resources. They add drawings, images, and simple notes to show actions that help care for the planet, creating a colourful mind map that supports class discussions about responsible decision-making and environmental care."
       },
       {
         "t": "Microsoft Excel",
@@ -611,8 +611,8 @@
         "d": "Facilitate a collaborative digital book in Book Creator where each student authors a page about a celebration or tradition from their family or heritage, including photos, drawings, and audio explanations. The final book can be shared with the school community or families."
       },
       {
-        "t": "Freeform",
-        "d": "Students use a shared Freeform board to map out the causes and consequences of migration, visually connecting push and pull factors with changes in societies. Each group adds images, notes, and arrows to trace migration stories and their impacts. The completed board is used for a class discussion and reflection on migration?s effects."
+        "t": "Padlet",
+        "d": "Students collaboratively create a Padlet wall to share and organise images, videos, and short descriptions of different celebrations and traditions from their own families and cultures around Australia. They categorise posts by type of event and reflect on how these celebrations contribute to community identity, using the Padlet board as a visual tool to appreciate cultural diversity and express their understanding of the central idea."
       },
       {
         "t": "Wise Discussion Chatbots",
@@ -674,8 +674,8 @@
     "lo": "The work of scientists; The process of learning; How science brings about new understandings and changes",
     "s": [
       {
-        "t": "Tinkercad",
-        "d": "Students design and build their own simple inventions in Tinkercad, applying scientific principles they have learned about forces, materials, and energy. They research a scientist or invention linked to the UN Sustainable Development Goals, then create a 3D model of an innovative solution to a real-world problem. Finally, students present their designs using screenshots and explanations in Book Creator to share how science drives innovation and action."
+        "t": "Stop Motion Studio",
+        "d": "Students create stop-motion videos that demonstrate scientific principles such as forces, energy, or material properties by animating simple experiments or models they build with everyday materials. They storyboard their ideas, capture frame-by-frame sequences, and add voice-over explanations to show how science drives innovation and action in real-world problems linked to the UN Sustainable Development Goals."
       },
       {
         "t": "Micro:bit",
@@ -756,8 +756,8 @@
         "d": "The teacher creates a Wise Discussion Chatbot using the Character Interview scenario and sets the bot's role as Samira, a museum curator preparing an exhibition about lived experiences from this period. The topic is ?Where We Are in Place and Time: Exploration leads to new discoveries that can shape and change society.?. Students chat with the bot to explore a named perspective through guided questioning rather than general research; for example, they ask ?What object would you place in the exhibition and why?? and ?Whose perspective is missing from this story??. After the chat, students produce a question bank plus a short perspective-and-evidence summary that compares the chatbot responses with unit sources linked explicitly to Where We Are in Place and Time."
       },
       {
-        "t": "Tinkercad",
-        "d": "Students design and build 3D models of key objects or simple structures related to early exploration and Indigenous Australian culture, such as ships from the First Fleet or traditional tools. They experiment with shapes and spatial reasoning to understand how exploration influenced technology and daily life, then share their models to explain how these discoveries shaped society."
+        "t": "Stop Motion Studio",
+        "d": "Students create stop-motion animations that depict key moments from early exploration, such as the First Fleet's journey or Indigenous Australian cultural stories. They use simple props or drawings to bring historical events to life, then narrate how these explorations led to new discoveries and changes in society, sharing their animated stories with the class to reflect on multiple perspectives."
       },
       {
         "t": "Book Creator",
@@ -861,9 +861,9 @@
     "lo": "Human systems; The interconnections that exist within and across systems; The influence of systems on communities",
     "s": [
       {
-        "t": "Minecraft: Filtering Water On The ISS",
-        "d": "Students will explore the concept of interconnected systems by designing and testing water filtration systems in Minecraft Education. After learning how water is filtered on the International Space Station, students work collaboratively to build their own filtration systems, observing how each component (filters, pipes, tanks) interacts as part of a larger system. They will analyse what happens when parts of the system are changed or disrupted, drawing parallels to real-world water systems in their school and community. This hands-on challenge deepens understanding of system components, connections, and the impact of change, perfectly aligning with the 'How We Organise Ourselves' unit.",
-        "url": "https://education.minecraft.net/en-us/lessons/filtering-water-on-the-iss"
+        "t": "Minecraft Education",
+        "d": "Students use the verified Minecraft lesson 'Filtering Water on the ISS' to explore how water filtration systems work as interconnected parts of a larger system. They build and test their own filtration models in Minecraft, then capture screenshots and write short reflections explaining how changes to components affect the system's function.",
+        "url": "https://education.minecraft.net/class-resources/lessons/filtering-water-on-the-iss"
       },
       {
         "t": "Google Maps",
@@ -874,8 +874,8 @@
         "d": "Students engineer chain reaction systems using Micro:bit, inspired by the 'Electrical Conductors' lesson (https://microbit.org/teach/lessons/?selected=electrical-conductors-unit-of-work), to explore how systems connect us. By building and testing circuits, learners discover how inputs and outputs work together in both digital and physical systems, deepening their understanding of connections and interdependence. This interactive approach transforms abstract systems thinking into a tangible, collaborative experience."
       },
       {
-        "t": "Book Creator",
-        "d": "Students create interactive digital books in Book Creator, each page dedicated to a different system (school, natural, technological, social), embedding videos, voice recordings, and diagrams to explain the system's parts, connections, and what happens when it is disrupted. Books can be shared with younger students to foster cross-age learning."
+        "t": "Lego Spike Prime",
+        "d": "Students engineer and code a Lego Spike Prime model to represent a key human system (such as transport, communication, or water supply) that connects people in a community. Teams design, build and program their system to demonstrate how different parts interact, then present their working model and explain how it mirrors real-world systems."
       },
       {
         "t": "CoDrone EDU",
@@ -1077,9 +1077,9 @@
         "d": "Collaboratively build a digital 'Entrepreneurial Journey Wall' where students document each stage of their business development process, share reflections, and receive peer feedback. Include embedded videos, sketches, and pitch rehearsals."
       },
       {
-        "t": "Minecraft: Its Good To Be Green",
-        "d": "Students will explore a sustainable building in Minecraft Education, analysing real-world eco-friendly design features such as solar panels, green roofs, and water-saving systems. In teams, students will identify which sustainable solutions could be adapted for their own entrepreneurial product or service. They will then design a digital 'Eco-Upgrade Plan' for their business idea, mapping out how these features could reduce environmental impact and appeal to eco-conscious consumers. This hands-on, immersive experience deepens understanding of sustainability in business and empowers students to make informed, responsible choices as young entrepreneurs.",
-        "url": "https://education.minecraft.net/en-us/lessons/its-good-to-be-green"
+        "t": "Adobe Express Podcasting",
+        "d": "Students interview local entrepreneurs or classmates about how they develop and market sustainable products, then use Adobe Express Podcasting to record and edit their audio stories. They create a podcast episode that highlights responsible business practices and reflects on the environmental impact of consumer choices, sharing their learning with the school community.",
+        "url": "https://podcast.adobe.com"
       },
       {
         "t": "Eco-Entrepreneur Smart Stalls",
@@ -1111,9 +1111,8 @@
         "url": "https://microbit.org/teach/lessons/?selected=volcano-animations-unit-of-work"
       },
       {
-        "t": "Minecraft Education",
-        "d": "Students use the verified Minecraft Education lesson ?BUILD WITH BEES: BUMBLE BUZZ? (https://education.minecraft.net/en-us/lessons/build-with-bees-bumble-buzz) to explore how communities express identity, values and belonging. They capture 2?3 screenshots or signs from the world and turn them into a labelled gallery or tour explaining the symbols, places or stories represented in the world.",
-        "url": "https://education.minecraft.net/en-us/lessons/build-with-bees-bumble-buzz"
+        "t": "Lego Spike Prime",
+        "d": "Learners design and build a Lego Spike Prime structure that can withstand simulated natural hazards, such as earthquakes or floods, linking to their study of design processes and natural disasters. They test and refine their models, documenting the design changes and presenting their findings on what makes a structure resilient."
       },
       {
         "t": "CoDrone EDU",
@@ -1148,9 +1147,8 @@
         "d": "Students create a 'Peace Talks' podcast, analysing protest songs, historical events, and personal stories of conflict resolution. Using Adobe Express Podcasting (https://podcast.adobe.com), they collaborate to script and record episodes that explore peaceful solutions to conflict, amplifying diverse perspectives and fostering empathy."
       },
       {
-        "t": "Canva",
-        "d": "Students will work in teams to create an interactive digital 'Peace Pathways' infographic in Canva. Each group will research a real-world conflict (local or global), identify its causes and impacts, and then design a visually engaging flowchart that maps out peaceful conflict resolution strategies. Students will incorporate protest song lyrics, quotes from historical peacemakers, and their own reflections. The final Canva project will include clickable elements linking to student-created audio reflections or short video explanations, making the resource both informative and interactive. This empowers students to synthesise their learning and share actionable pathways to peace with the wider school community.",
-        "url": "https://www.canva.com/"
+        "t": "Lego Spike Prime",
+        "d": "Students collaborate to build a Lego Spike Prime conflict resolution machine?an interactive model that demonstrates peaceful solutions to conflict scenarios. They code the model to show different outcomes based on choices, then share a reflection on how technology can help visualise and solve real-world disagreements."
       },
       {
         "t": "Minecraft: Active Citizen",
@@ -1188,9 +1186,8 @@
         "url": "https://www.canva.com/"
       },
       {
-        "t": "Minecraft Education",
-        "d": "Students use the verified Minecraft Education lesson ?Revamp Melbourne? (https://education.minecraft.net/en-us/lessons/revamp-melbourne) to explore perspective, choices and how people respond to change. They capture 2?3 screenshots or signs from the world and turn them into a reflection slide or gallery note explaining the choice, challenge or perspective shown in the world.",
-        "url": "https://education.minecraft.net/en-us/lessons/revamp-melbourne"
+        "t": "Lego Spike Prime",
+        "d": "Learners construct a Lego Spike Prime timeline machine that physically moves through key events of colonisation, using sensors or motors to trigger short presentations or facts at each stop. This hands-on build helps students visualise the sequence and impact of historical events, culminating in a group reflection on the journey."
       },
       {
         "t": "Adobe Express",
@@ -1219,8 +1216,8 @@
         "url": "https://www.canva.com/"
       },
       {
-        "t": "Padlet + Seesaw App Smash",
-        "d": "Facilitate a digital 'Ripple Effect Wall' where students post real-life examples of choices influenced by beliefs and values on Padlet, then use Seesaw to record video reflections or role-plays showing how those choices impact others. This workflow encourages empathy and critical thinking about the consequences of decision-making."
+        "t": "Lego Spike Prime",
+        "d": "Students design and code a Lego Spike Prime 'Decision Machine' that models how beliefs and values influence choices and actions. By programming different pathways and outcomes, learners explore the consequences of various decisions, then present their machine and discuss how personal values shape real-life outcomes."
       },
       {
         "t": "Adobe Express",
@@ -1276,8 +1273,8 @@
         "d": "Students design persuasive campaign posters and infographics for their invented political parties, using Canva's templates and 'Remove Background' feature to create visually compelling materials for the mock election and preferential voting activities."
       },
       {
-        "t": "Epic",
-        "d": "Learners research exhibition topics using Epic, curating a digital library of relevant books, articles, and videos. They annotate and share their favourite resources with peers, building a collaborative knowledge base for their PYPEX projects. This approach fosters independent research skills and a love of reading for inquiry."
+        "t": "Lego Spike Prime",
+        "d": "Exhibition groups use Lego Spike Prime to prototype a moving model or interactive display that represents their PYPX inquiry theme. Students integrate sensors, motors, and creative coding to bring their research to life, then showcase their model as part of their exhibition presentation."
       },
       {
         "t": "Book Creator",
@@ -1309,9 +1306,9 @@
         "d": "Students use Micro:bit to gather real-time data about energy use and experiment with simple data logging, directly connecting to the unit's focus on energy transformation and sustainability. Learners design investigations to measure light, temperature, or movement, then analyse their findings to propose more sustainable energy practices. (https://microbit.org/teach/lessons/?selected=energy-awareness)"
       },
       {
-        "t": "Minecraft: Alternative Energy",
-        "d": "Students will embark on an immersive exploration of alternative energy sources within a dynamic Minecraft world. Working in teams, they will investigate how hydropower, wind, and waste-to-energy systems operate, then design and build functioning models of power plants. Students will trace the journey of energy from generation to community use, analyze the environmental impacts of each method, and propose ways to make energy production more sustainable. This hands-on digital experience directly supports the unit's focus on energy conversion, transformation, and sustainable practices, allowing students to visualize and test real-world solutions in a collaborative, inquiry-driven environment.",
-        "url": "https://education.minecraft.net/en-us/lessons/alternative-energy"
+        "t": "Minecraft Education",
+        "d": "Students use the verified lesson 'Alternative Energy' to explore how hydropower, wind, and waste-to-energy systems generate power and impact the environment. They create models of energy plants in Minecraft and document their designs with signs explaining energy conversion and sustainability.",
+        "url": "https://education.minecraft.net/class-resources/lessons/alternative-energy/"
       },
       {
         "t": "Book Creator",
@@ -1358,8 +1355,8 @@
         "url": "https://www.canva.com/"
       },
       {
-        "t": "Micro:bit Energy Awareness",
-        "d": "Students use Micro:bit to monitor environmental factors such as temperature or light, investigating how communities interact with and manage natural resources. They design simple data loggers to support environmental stewardship projects, connecting technology to sustainability. (https://microbit.org/teach/lessons/?selected=energy-awareness)"
+        "t": "Lego Spike Prime",
+        "d": "Students engineer a Lego Spike Prime environmental stewardship robot that demonstrates a sustainable action?such as sorting recyclables or simulating tree planting. They code and test their robot, then create a short video or poster explaining how their design supports community interaction with the environment."
       },
       {
         "t": "Eco-Action Interactive Dioramas",
@@ -1391,13 +1388,13 @@
         "url": "https://www.canva.com/"
       },
       {
-        "t": "Book Creator",
-        "d": "Students author and publish interactive eBooks documenting the story of a significant event, combining text, images, audio interviews, and video clips. These digital books can be shared with the school community or used as resources for younger students."
+        "t": "Lego Spike Prime",
+        "d": "Learners build a Lego Spike Prime model that represents a significant event in local or global history, using movement or sensors to tell the story of change and impact. They present their interactive model alongside a timeline or storyboard, making connections between engineering and historical understanding."
       },
       {
-        "t": "Minecraft: Historical Homes",
-        "d": "Students will embark on a time-travel building challenge to investigate how significant events?such as migrations, discoveries, or historical milestones?have shaped societies and architecture across eras. In teams, students will research a chosen event (e.g., the Gold Rush, post-war migration, or the Industrial Revolution) and then collaboratively design and build a historically accurate home or community structure in Minecraft that reflects the social, cultural, and technological impacts of that event. As they build, students will annotate their creations with signs explaining how specific features connect to the causes and impacts of their chosen event. The project culminates in a virtual 'walking tour' where students present their builds and discuss the interconnectedness of people, place, and history. Final presentations will be created in Canva or Adobe Express, combining screenshots and student reflections.",
-        "url": "https://education.minecraft.net/en-us/challenges/historical-homes"
+        "t": "Minecraft Education",
+        "d": "Students explore the verified Minecraft lesson 'Historical Homes' to investigate how significant events shaped societies and architecture. They create annotated builds of homes or community structures that reflect the social and cultural impacts of their chosen event, capturing screenshots and writing reflections to share their understanding.",
+        "url": "https://education.minecraft.net/class-resources/lessons/historical-homes"
       },
       {
         "t": "Migration Journey Board Game",
@@ -1420,9 +1417,9 @@
         "d": "Learners design digital 'identity cubes' on Merge Cube, layering personal influences, values, and milestones in 3D, then animate their evolving sense of self with Delightex. This app smash transforms abstract reflections into interactive artefacts, letting students visually map how personal changes and external influences shape who they are. The process encourages deep self-reflection and creative storytelling, culminating in a gallery walk of digital identities."
       },
       {
-        "t": "Minecraft Education",
-        "d": "Students use the verified Minecraft Education lesson ?Active Citizen? (https://education.minecraft.net/en-us/lessons/active-citizen) to explore perspective, choices and how people respond to change. They capture 2?3 screenshots or signs from the world and turn them into a reflection slide or gallery note explaining the choice, challenge or perspective shown in the world.",
-        "url": "https://education.minecraft.net/en-us/lessons/active-citizen"
+        "t": "Adobe Express Podcasting",
+        "d": "Students record and produce personal podcasts exploring how physical, social, emotional, and intellectual changes have shaped their evolving sense of self. They script and share stories about key influences in their lives, using Adobe Express Podcasting?s editing tools to add sound effects and music that enhance their reflections.",
+        "url": "https://podcast.adobe.com"
       },
       {
         "t": "Adobe Express",
@@ -1430,8 +1427,8 @@
         "url": "https://express.adobe.com/"
       },
       {
-        "t": "Book Creator",
-        "d": "Guide students to author a digital 'Evolving Me' book in Book Creator, documenting key moments of change, influential people, and shifting perceptions. Include multimedia elements such as audio interviews with family or friends, scanned artwork, and personal reflections."
+        "t": "Lego Spike Prime",
+        "d": "Students create a Lego Spike Prime 'Identity Machine' that uses coded movements or displays to represent the influences and changes that shape personal identity. They share their model with peers, explaining how each programmed feature symbolises a different aspect of their evolving sense of self."
       },
       {
         "t": "Padlet",
@@ -2277,8 +2274,8 @@
         "d": "Students use Google Maps to explore representations of land and place, comparing First Nations Countries, Australian states, and neighbouring regions. They create custom maps highlighting cultural, historical, and geographical features, deepening their understanding of how land is valued and represented in different ways. This digital mapping fosters empathy and perspective-taking."
       },
       {
-        "t": "Tinkercad",
-        "d": "Students design simple 3D models of cultural artefacts or landmarks from different Australian states, territories, or First Nations Countries, exploring how these objects represent place and identity. They collaborate to research the significance of their chosen item, then use Tinkercad?s intuitive tools to create and share their digital representations, deepening their understanding of diverse ways land and place are valued."
+        "t": "Stop Motion Studio",
+        "d": "Students create stop-motion animations that tell stories about cultural artefacts, landmarks, or First Nations connections to Country, using clay models, drawings, or printed images. They plan their scenes to show how these objects represent place and identity, then capture and edit their animations to share diverse ways land and place are valued."
       },
       {
         "t": "Adobe Express",
@@ -2649,9 +2646,9 @@
         "d": "Students engineer early warning wearables for natural disasters using Micro:bit, guided by the 'Night Safety' lesson (https://microbit.org/teach/lessons/?selected=night-safety). They code devices that simulate alerts for bushfires, floods, or earthquakes, linking science, technology, and community safety. This hands-on project empowers students to turn empathy into action through innovation."
       },
       {
-        "t": "Minecraft Education",
-        "d": "Students use the verified Minecraft Education lesson ?Water Meet The Rangers? (https://education.minecraft.net/en-us/lessons/watr-meet-the-rangers) to explore human impact, habitats and possible environmental action. They capture 2?3 screenshots or signs from the world and turn them into a short conservation brief showing the issue, the evidence and one realistic action.",
-        "url": "https://education.minecraft.net/en-us/lessons/watr-meet-the-rangers"
+        "t": "Adobe Express Podcasting",
+        "d": "Students collaborate to research natural disasters like bushfires, floods, and earthquakes, then script and record a podcast episode explaining how structural features and adaptations help living things survive these events. Using Adobe Express Podcasting, they produce a clear audio presentation that includes scientific explanations and community safety advice, demonstrating their understanding of the interactions between living things, materials, and light. This podcast can be shared with peers to raise awareness and support informed decision-making about disaster preparedness.",
+        "url": "https://podcast.adobe.com"
       },
       {
         "t": "CoDrone EDU",
@@ -2790,9 +2787,9 @@
         "d": "Students design and build immersive 3D virtual 'advertising worlds' where visitors interact with persuasive media, ethical dilemmas, and alternative consumer models. Each group creates a virtual experience that challenges peers to think critically about advertising influence and sustainability, directly linking to the unit's focus on media engagement and audience response."
       },
       {
-        "t": "Minecraft Education",
-        "d": "Students use the verified Minecraft Education lesson ?Revamp Melbourne? (https://education.minecraft.net/en-us/lessons/revamp-melbourne) to explore human impact, habitats and possible environmental action. They capture 2?3 screenshots or signs from the world and turn them into a short conservation brief showing the issue, the evidence and one realistic action.",
-        "url": "https://education.minecraft.net/en-us/lessons/revamp-melbourne"
+        "t": "Adobe Express Podcasting",
+        "d": "Students collaborate to script and record persuasive podcasts that analyse how media targets audiences and uses techniques to engage and persuade. They incorporate interviews, sound effects, and music to critically evaluate media messages and present their findings as compelling audio stories on ethical consumer choices. This hands-on activity deepens understanding of media influence and invites authentic audience response.",
+        "url": "https://podcast.adobe.com"
       },
       {
         "t": "GarageBand",
@@ -2940,7 +2937,7 @@
       },
       {
         "t": "Minecraft Education",
-        "d": "Students use the verified Minecraft Education lesson ?The Hall of Inventions? (https://education.minecraft.net/en-us/challenges/the-hall-of-inventions) to explore perspective, choices and how people respond to change. They capture 2?3 screenshots or signs from the world and turn them into a reflection slide or gallery note explaining the choice, challenge or perspective shown in the world.",
+        "d": "Students use the verified Minecraft Education lesson ?The Hall of Inventions? (https://education.minecraft.net/en-us/challenges/the-hall-of-inventions) to explore how human needs have inspired inventions that shaped nations. They capture 2?3 screenshots of inventions or signs in the world and create a reflection slide explaining how these inventions address specific human needs and influence national development.",
         "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
       },
       {
@@ -3725,8 +3722,8 @@
         "d": "Students collaboratively author a digital class book documenting famous natural disasters, including survivor stories, scientific explanations, and resilience strategies, integrating photos, drawings, and audio reflections."
       },
       {
-        "t": "Tinkercad",
-        "d": "Students design and build simple 3D models of disaster-resilient homes or community shelters using Tinkercad, applying their understanding of natural disaster impacts and resilient features. They experiment with shapes and structures that could withstand floods, earthquakes, or bushfires, then share their designs digitally to explain how their creations help communities respond with resilience."
+        "t": "Stop Motion Studio",
+        "d": "Students create stop-motion animations that illustrate how disaster-resilient homes and community shelters protect people during natural disasters. They design simple paper or clay models of buildings with resilient features, then capture frame-by-frame sequences showing how their structures withstand floods, earthquakes, or bushfires, culminating in a narrated animation that explains their design choices and how these help communities respond with resilience."
       },
       {
         "t": "Adobe Express",
@@ -3764,8 +3761,8 @@
         "d": "Launch a global city comparison wall where students post research, images, and reflections about cities they study (e.g., Mexico City, Paris, Tokyo). They can include Venn diagrams, maps, and QR codes linking to their own city soundscapes or digital brochures."
       },
       {
-        "t": "Tinkercad",
-        "d": "Students investigate the essential features and innovations that shape cities by designing their own 3D models of city infrastructure elements such as bridges, buildings, or transport hubs in Tinkercad. They apply their understanding of how cities develop and adapt over time by creating functional, age-appropriate inventions that reflect real-world urban challenges and solutions. This hands-on digital design activity deepens their inquiry into the central idea by combining creativity with problem-solving in a safe, accessible platform."
+        "t": "Explain Everything",
+        "d": "Students collaborate to design interactive digital posters that showcase the essential features and functions of cities, using Explain Everything?s drawing, annotation, and multimedia tools to illustrate how infrastructure and transport evolve over time. They record voiceovers explaining their city designs and adaptations to urban challenges, creating engaging presentations that deepen their understanding of the factors shaping city development."
       },
       {
         "t": "Earthquake-Resistant Building Challenge",
@@ -3859,9 +3856,9 @@
         "d": "Students create interactive 3D models of not-for-profit organisations using Merge Cubes and the Merge Explorer app. Each group designs a virtual 'cube exhibit' that visually explains the mission, impact, and structure of their chosen organisation, then shares these cubes with peers for an immersive, hands-on learning experience."
       },
       {
-        "t": "Minecraft Education",
-        "d": "Students use the verified Minecraft Education lesson ?Revamp Melbourne? (https://education.minecraft.net/en-us/lessons/revamp-melbourne) to explore how communities express identity, values and belonging. They capture 2?3 screenshots or signs from the world and turn them into a labelled gallery or tour explaining the symbols, places or stories represented in the world.",
-        "url": "https://education.minecraft.net/en-us/lessons/revamp-melbourne"
+        "t": "Adobe Express Podcasting",
+        "d": "Students interview local not-for-profit organisation representatives or community members to explore how these groups respond to community needs. They script, record, and edit their podcasts using Adobe Express Podcasting to share stories that highlight the organisations? purposes and inspire listeners to take action.",
+        "url": "https://podcast.adobe.com"
       },
       {
         "t": "Canva",
@@ -3932,9 +3929,9 @@
         "d": "Students create interactive 3D artefacts using Merge Cubes and the iPad camera, overlaying their own First Nations-inspired symbols and stories. They record oral storytelling in their own voices, then use the Merge Explorer app to bring their artefacts to life, allowing peers to 'hold' and explore each other's stories in augmented reality."
       },
       {
-        "t": "Minecraft Education",
-        "d": "Students use the verified Minecraft Education lesson ?Revamp Melbourne? (https://education.minecraft.net/en-us/lessons/revamp-melbourne) to explore human impact, habitats and possible environmental action. They capture 2?3 screenshots or signs from the world and turn them into a short conservation brief showing the issue, the evidence and one realistic action.",
-        "url": "https://education.minecraft.net/en-us/lessons/revamp-melbourne"
+        "t": "Adobe Express Podcasting",
+        "d": "Students record interviews or storytelling segments that share Indigenous perspectives on connection to Country, language, and culture. Using Adobe Express Podcasting, they create a polished audio reflection that highlights custodial responsibilities and the diversity of First Nations communities, incorporating sounds or music inspired by their learning. This podcast episode can be shared with peers to deepen understanding and respect for Indigenous voices.",
+        "url": "https://podcast.adobe.com"
       },
       {
         "t": "iMovie",
@@ -3976,9 +3973,9 @@
         "d": "Students design visually engaging digital timelines or infographics that compare pre- and post-European arrival in Australia, highlighting key explorers, their routes, and the resulting changes in landscape, demographics, and identity."
       },
       {
-        "t": "Minecraft: Historical Homes",
-        "d": "Students will research key explorers from the Age of Exploration and early Australian history, then select a significant stop or settlement from their journey. In Minecraft: Historical Homes, students will collaboratively design and build historically accurate homes or structures that represent the places explorers visited or established. As they build, students will annotate their creations with signs explaining the significance of each location, the challenges faced by explorers, and the perspectives of both European arrivals and Indigenous Australians. This immersive task allows students to step into the shoes of explorers and those they encountered, deepening their understanding of the impact of exploration and discovery on Australia's history.",
-        "url": "https://education.minecraft.net/en-us/challenges/historical-homes"
+        "t": "Adobe Express Podcasting",
+        "d": "Students research different explorers and Indigenous perspectives from the Age of Exploration, then script and record short podcasts sharing these stories and viewpoints. They use Adobe Express Podcasting to edit and publish their episodes, creating an audio collection that reflects how exploration shaped the world and impacted Australia?s history.",
+        "url": "https://podcast.adobe.com"
       },
       {
         "t": "Adobe Express",
@@ -4114,7 +4111,7 @@
       },
       {
         "t": "Minecraft Education",
-        "d": "Students use the verified Minecraft Education lesson ?Dependable Forests? (https://education.minecraft.net/en-us/lessons/dependable-forests) to explore human impact, habitats and possible environmental action. They capture 2?3 screenshots or signs from the world and turn them into a short conservation brief showing the issue, the evidence and one realistic action.",
+        "d": "Students use the verified Minecraft Education lesson ?Dependable Forests? (https://education.minecraft.net/en-us/lessons/dependable-forests) to explore how human inventions and initiatives impact forest ecosystems and address environmental challenges. They capture 2?3 screenshots showing evidence of human impact and create a short conservation brief explaining the problem, supporting evidence, and one realistic invention or initiative that could help protect forests.",
         "url": "https://education.minecraft.net/en-us/lessons/dependable-forests"
       },
       {
@@ -4198,9 +4195,9 @@
         "d": "Curate a playlist of documentary clips and historical re-enactments about colonisation. Students use ClickView's interactive video features to annotate, ask questions, and respond to key moments, deepening their understanding of causation and change."
       },
       {
-        "t": "Minecraft: The Hall of Inventions",
-        "d": "Students explore the museum of key innovations from history, then research and build their own 'inventions' that either resulted from or responded to colonisation. This activity encourages students to consider how technological and cultural changes were shaped by, and in turn shaped, colonisation.",
-        "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
+        "t": "Adobe Express Podcasting",
+        "d": "Students create and record a podcast episode exploring the perspectives of colonisers and those colonised, using research from the unit to script empathetic interviews or narratives. They produce a polished audio story that demonstrates their understanding of colonisation?s lasting impact, sharing their episodes with peers for reflection and discussion.",
+        "url": "https://podcast.adobe.com"
       },
       {
         "t": "3D Printers + Design Cycle",
@@ -4270,9 +4267,9 @@
         "d": "Students collaboratively author interactive digital books that document their inquiry journey, research findings, and action plans. These multimedia books can include embedded videos, audio reflections, and clickable links, serving as both a portfolio and a tool for advocacy."
       },
       {
-        "t": "Minecraft: Peace Builders",
-        "d": "Students will step into the shoes of Nobel Peace Laureates in Minecraft: Peace Builders, exploring real stories of individuals who used communication, advocacy, and collaboration to inspire global change. In small teams, students will investigate the challenges faced by these leaders, then use Minecraft's immersive world to design and build interactive monuments or scenes that represent their chosen Laureate's vision and methods of peaceful expression. Each group will script and record a short in-game presentation, explaining how their build communicates the Laureate's message and connects to a current global issue. This hands-on, creative task empowers students to understand the power of expression and advocacy, while practicing digital storytelling and teamwork.",
-        "url": "https://education.minecraft.net/en-us/lessons/peace-builders"
+        "t": "Minecraft Education",
+        "d": "Students explore the verified Minecraft Education lesson 'Peace Builders' to investigate how Nobel Peace Laureates used communication and collaboration to inspire change. They create in-game monuments representing their Laureate?s message and write short signs explaining how their build connects to current global issues.",
+        "url": "https://education.minecraft.net/class-resources/lessons/peace-builders"
       },
       {
         "t": "Lego Spike Prime",
@@ -4331,9 +4328,9 @@
         "d": "Students create interactive 3D models of the Earth, Moon, and Sun using Merge Cube and the Merge Explorer app on iPads. They record short video explanations using the iPad camera, then app smash with Canva to overlay cultural stories or scientific facts about celestial patterns, making the invisible visible in augmented reality."
       },
       {
-        "t": "Minecraft: Moon Base One",
-        "d": "Students will collaborate to design and build a sustainable lunar base in Minecraft Education, applying their understanding of the Earth-Moon-Sun system. They will need to consider how the Moon's rotation, orbit, and lack of atmosphere affect daily life, seasons, and tides on their base. Students will research and incorporate both scientific and Indigenous perspectives on lunar cycles, then present their base's features and cultural significance using Canva or Adobe Express. This hands-on project allows students to synthesize their learning about celestial relationships, environmental challenges, and cultural stories in a creative, immersive way.",
-        "url": "https://education.minecraft.net/en-us/lessons/moon-base-one"
+        "t": "Minecraft Education",
+        "d": "Students use the verified Minecraft Education lesson 'Moon Base One' to explore how the Moon?s rotation and orbit affect conditions on a lunar base. They create a digital model of their base, adding signs that explain how Earth-Moon-Sun relationships influence daily life and lunar cycles.",
+        "url": "https://education.minecraft.net/lessons/moon-base-one"
       },
       {
         "t": "Adobe Express Podcasting",
