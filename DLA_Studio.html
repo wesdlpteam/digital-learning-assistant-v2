@@ -625,6 +625,7 @@
 </div><!-- end main -->
 
 <script>
+
 let DATA = [];
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzIoUL_vbTaH4P7PXuX8HeU9Xh6HuiEWJ05k7q50aJjCg7oeF-ELrlLuPx8uxPFHmE-eA/exec';
 let DRIVE_TOKEN = null;
@@ -1825,7 +1826,131 @@ function renderDashboard(){
     : '<div style="text-align:center;padding:24px;color:var(--dim);font-size:13px">No issues found ✓</div>';
 }
 
+
+// ========== HUMAN VERIFICATION + REALISM RESCAN HELPERS ==========
+function ensureHumanVerificationStyles_(){
+  if(document.getElementById('human-verify-styles')) return;
+  const style = document.createElement('style');
+  style.id = 'human-verify-styles';
+  style.textContent = `
+    .human-verified-unit{
+      border-color:rgba(212,160,23,.95)!important;
+      background:linear-gradient(90deg,rgba(212,160,23,.13),rgba(26,26,26,.98) 46%,rgba(197,232,74,.04))!important;
+      box-shadow:0 0 0 1px rgba(212,160,23,.42),0 0 24px rgba(212,160,23,.24),inset 0 0 22px rgba(212,160,23,.055);
+    }
+    .human-verified-unit:hover{
+      border-color:var(--gold)!important;
+      box-shadow:0 0 0 1px rgba(212,160,23,.75),0 0 32px rgba(212,160,23,.35),inset 0 0 26px rgba(212,160,23,.08);
+    }
+    .human-verify-flash{animation:humanVerifyGoldFlash 1.25s ease-out 1;}
+    @keyframes humanVerifyGoldFlash{
+      0%{transform:scale(.992);box-shadow:0 0 0 0 rgba(212,160,23,.9),0 0 0 rgba(212,160,23,0)}
+      42%{transform:scale(1.006);box-shadow:0 0 0 4px rgba(212,160,23,.42),0 0 42px rgba(212,160,23,.58)}
+      100%{transform:scale(1);}
+    }
+    .human-verified-tick{
+      display:inline-flex;align-items:center;gap:5px;margin-left:10px;padding:3px 10px;border-radius:999px;
+      background:rgba(212,160,23,.16);border:1px solid rgba(212,160,23,.68);color:var(--gold);
+      font-size:10px;font-weight:900;letter-spacing:.65px;text-transform:uppercase;vertical-align:middle;white-space:nowrap;
+      box-shadow:0 0 14px rgba(212,160,23,.18);
+    }
+    .human-verified-btn,.human-verified-entry-btn{
+      padding:7px 12px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--dim);
+      font-size:11px;font-weight:900;font-family:inherit;cursor:pointer;letter-spacing:.45px;text-transform:uppercase;white-space:nowrap;
+      transition:all .12s ease;
+    }
+    .human-verified-btn:hover,.human-verified-entry-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(212,160,23,.08);}
+    .human-verified-btn.verified,.human-verified-entry-btn.verified{
+      border-color:rgba(212,160,23,.9);background:rgba(212,160,23,.16);color:var(--gold);
+      box-shadow:0 0 14px rgba(212,160,23,.16);
+    }
+    .human-verified-entry-banner{
+      padding:9px 14px;background:rgba(212,160,23,.10);border:1px solid rgba(212,160,23,.55);border-radius:10px;margin-bottom:10px;
+      color:var(--gold);font-size:12px;font-weight:800;box-shadow:0 0 18px rgba(212,160,23,.12);
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+function isHumanVerifiedEntry_(entry){
+  return !!(entry && (entry.humanVerified === true || entry.humanVerifiedAt || entry.human_verified === true));
+}
+
+function humanVerifiedMeta_(entry){
+  if(!entry) return '';
+  const bits = [];
+  if(entry.humanVerifiedBy) bits.push(entry.humanVerifiedBy);
+  if(entry.humanVerifiedAt){
+    try { bits.push(new Date(entry.humanVerifiedAt).toLocaleString('en-AU', {dateStyle:'medium', timeStyle:'short'})); }
+    catch(e){ bits.push(entry.humanVerifiedAt); }
+  }
+  return bits.join(' · ');
+}
+
+function setHumanVerifiedForEntry_(idx, verified){
+  const entry = DATA && DATA[idx];
+  if(!entry) return false;
+  if(verified){
+    entry.humanVerified = true;
+    entry.humanVerifiedAt = new Date().toISOString();
+    entry.humanVerifiedBy = CURRENT_USER_EMAIL || localStorage.getItem('dla_user_email') || 'DLP team';
+  } else {
+    entry.humanVerified = false;
+    delete entry.humanVerifiedAt;
+    delete entry.humanVerifiedBy;
+    delete entry.humanVerifiedReason;
+  }
+  return true;
+}
+
+function toggleHumanVerified(idx){
+  const entry = DATA && DATA[idx];
+  if(!entry) return;
+  const next = !isHumanVerifiedEntry_(entry);
+  setHumanVerifiedForEntry_(idx, next);
+  window._lastHumanVerifiedIdx = next ? idx : null;
+  saveToDrive();
+  setStatus(next ? `Human verified: ${entry.yl} — ${entry.th}` : `Human verification removed: ${entry.yl} — ${entry.th}`);
+  if(typeof renderBrowse === 'function') renderBrowse();
+  if(CURRENT_ENTRY_IDX === idx && typeof renderEntry === 'function') renderEntry(idx);
+}
+
+function markEntryNeedsHumanRecheck_(idx, reason){
+  const entry = DATA && DATA[idx];
+  if(!entry || !isHumanVerifiedEntry_(entry)) return;
+  entry.humanVerified = false;
+  entry.humanVerifiedResetAt = new Date().toISOString();
+  entry.humanVerifiedResetReason = reason || 'Suggestion changed after human verification';
+  delete entry.humanVerifiedAt;
+  delete entry.humanVerifiedBy;
+}
+
+function isRealismAuditChange_(change){
+  const text = [change && change.auditSource, change && change.auditReason, change && change.reason, change && change.flagReason].filter(Boolean).join(' ');
+  return /realism|age audit|age-audit|audit-deterministic|too long|unrealistic|age-appropriate|vague|generic|weak/i.test(text);
+}
+
+function rescanRealismAfterApprovedFixes_(appliedCount, skippedDupes){
+  try{
+    const before = (REALISM_AUDIT_RESULTS || []).length;
+    runFullRealismAudit();
+    const after = (REALISM_AUDIT_RESULTS || []).length;
+    const reduced = Math.max(0, before - after);
+    const host = document.getElementById('realism-audit-result');
+    if(host){
+      host.insertAdjacentHTML('afterbegin', `<div style="padding:12px 14px;background:rgba(197,232,74,.09);border:1px solid rgba(197,232,74,.32);border-left:4px solid var(--lime);border-radius:10px;margin-bottom:10px">
+        <div style="font-size:13px;font-weight:900;color:var(--lime);margin-bottom:4px">✓ Re-scanned after applying fixes</div>
+        <div style="font-size:12px;color:#ddd;line-height:1.55">Applied ${appliedCount} approved fix${appliedCount!==1?'es':''}${skippedDupes?` and skipped ${skippedDupes} duplicate${skippedDupes!==1?'s':''}`:''}. ${reduced ? `The audit now shows ${reduced} fewer flag${reduced!==1?'s':''}.` : 'The audit has refreshed below so remaining flags are current.'}</div>
+      </div>`);
+    }
+  }catch(e){
+    console.warn('Auto-rescan after approved fixes failed:', e);
+    setStatus('Fixes saved, but automatic rescan failed — run Scan all suggestions again.', 'error');
+  }
+}
+
 function renderBrowse(){
+  ensureHumanVerificationStyles_();
   const ca=document.getElementById('f-campus')?.value||'';
   const yr=document.getElementById('f-year')?.value||'';
   const q=(document.getElementById('f-search')?.value||'').toLowerCase();
@@ -1833,22 +1958,46 @@ function renderBrowse(){
   const filtered=DATA.map((e,idx)=>({e,idx})).filter(({e})=>{
     if(ca&&e.ca!==ca) return false;
     if(yr&&e.yl!==yr) return false;
-    if(q&&!e.th?.toLowerCase().includes(q)&&!getSugs(e).some(s=>sugTool(s).toLowerCase().includes(q))) return false;
+    const verifiedText = isHumanVerifiedEntry_(e) ? 'human verified verified checked approved' : '';
+    if(q&&!e.th?.toLowerCase().includes(q)&&!verifiedText.includes(q)&&!getSugs(e).some(s=>sugTool(s).toLowerCase().includes(q)||sugDesc(s).toLowerCase().includes(q))) return false;
     if(tool&&!getSugs(e).some(s=>sugTool(s).toLowerCase().includes(tool))) return false;
     return true;
   });
-  document.getElementById('browse-count').textContent=`${filtered.length} entries`;
-  document.getElementById('browse-list').innerHTML=filtered.map(({e,idx})=>`
-    <div class="row" onclick="openEntry(${idx})">
+  const verifiedCount = filtered.filter(({e})=>isHumanVerifiedEntry_(e)).length;
+  const totalVerifiedCount = DATA.filter(e=>isHumanVerifiedEntry_(e)).length;
+  const remainingCount = Math.max(0, DATA.length - totalVerifiedCount);
+  document.getElementById('browse-count').textContent=`${filtered.length} entries · ${verifiedCount} human verified in view`;
+  const verificationSummaryHtml = `<div class="card2" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-color:${remainingCount ? 'rgba(212,160,23,.35)' : 'rgba(197,232,74,.4)'};background:${remainingCount ? 'rgba(212,160,23,.06)' : 'rgba(197,232,74,.08)'}">
+    <span class="human-verified-tick" style="margin-left:0">✓ Human verified audit</span>
+    <span style="font-size:13px;color:var(--text);font-weight:800">${totalVerifiedCount}/${DATA.length} units checked</span>
+    <span style="font-size:12px;color:var(--dim)">${remainingCount ? `${remainingCount} still need a human check` : 'All units have been human verified'}</span>
+  </div>`;
+  document.getElementById('browse-list').innerHTML=verificationSummaryHtml + filtered.map(({e,idx})=>{
+    const verified = isHumanVerifiedEntry_(e);
+    const flash = window._lastHumanVerifiedIdx === idx ? ' human-verify-flash' : '';
+    const meta = verified ? humanVerifiedMeta_(e) : '';
+    const tick = verified ? `<span class="human-verified-tick" title="${esc(meta || 'Human verified')}">✓ Human verified</span>` : '';
+    const btnText = verified ? '✓ Human verified' : 'Human verify';
+    const btnTitle = verified ? `Click to remove human verification${meta ? ' — '+esc(meta) : ''}` : 'Mark this unit as manually checked by a human';
+    return `<div class="row ${verified ? 'human-verified-unit' : ''}${flash}" id="browse-row-${idx}" onclick="openEntry(${idx})">
       <span style="font-size:13px;color:#9ab89a;width:110px;flex-shrink:0">${esc(e.ca)}</span>
       <span style="font-size:13px;color:var(--gold);font-weight:700;width:70px;flex-shrink:0">${esc(e.yl)}</span>
-      <span style="flex:1;font-size:14px;font-weight:600;color:var(--text)">${esc(e.th)}</span>
-      <span style="font-size:13px;color:#9ab89a">${getSugs(e).length}/6 ›</span>
-    </div>`).join('');
+      <span style="flex:1;font-size:14px;font-weight:700;color:var(--text);min-width:0;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <span style="overflow:hidden;text-overflow:ellipsis">${esc(e.th)}</span>${tick}
+      </span>
+      <button class="human-verified-btn ${verified?'verified':''}" title="${btnTitle}" onclick="event.stopPropagation();toggleHumanVerified(${idx});return false;">${btnText}</button>
+      <span style="font-size:13px;color:#9ab89a;min-width:52px;text-align:right">${getSugs(e).length}/6 ›</span>
+    </div>`;
+  }).join('');
+  window._lastHumanVerifiedIdx = null;
 }
 
 function renderEntry(idx){
   const e=DATA[idx];
+  ensureHumanVerificationStyles_();
+  const entryHumanVerified = isHumanVerifiedEntry_(e);
+  const entryHumanVerifiedMeta = entryHumanVerified ? humanVerifiedMeta_(e) : '';
+  const entryHumanVerifiedBanner = entryHumanVerified ? `<div class="human-verified-entry-banner" title="${esc(entryHumanVerifiedMeta || 'Human verified')}">✓ Human verified${entryHumanVerifiedMeta ? ` · ${esc(entryHumanVerifiedMeta)}` : ''}</div>` : '';
   
   const existingLock = isLocked(idx);
   const lockBanner = existingLock && !isLockedByMe(idx)
@@ -1858,13 +2007,16 @@ function renderEntry(idx){
     : `<div style="padding:6px 14px;background:rgba(197,232,74,0.08);border:1px solid rgba(197,232,74,0.2);border-radius:8px;margin-bottom:10px;font-size:11px;color:var(--lime)">
         ✓ Locked by you — others will see this entry is in use
       </div>`;
-  document.getElementById('entry-header').innerHTML=lockBanner+`
+  document.getElementById('entry-header').innerHTML=lockBanner+entryHumanVerifiedBanner+`
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:${(e.ci||e.lo||e.plannerText)?'16px':'0'}">
       <div>
         <h2 style="font-size:24px;font-weight:700;color:#fff;margin-bottom:6px">${esc(e.th)}</h2>
         <p style="font-size:14px;color:var(--dim);font-weight:500">${esc(e.ca)} · ${esc(e.yl)}</p>
       </div>
-      <button onclick="deleteEntry(${idx})" style="flex-shrink:0;padding:7px 14px;background:transparent;border:1px solid #FF8080;color:#FF8080;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit" title="Delete this entry">🗑 Delete</button>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+        <button class="human-verified-entry-btn ${entryHumanVerified?'verified':''}" onclick="toggleHumanVerified(${idx})" title="${entryHumanVerified ? 'Remove human verification' : 'Mark this unit as manually checked by a human'}">${entryHumanVerified ? '✓ Human verified' : 'Human verify'}</button>
+        <button onclick="deleteEntry(${idx})" style="flex-shrink:0;padding:7px 14px;background:transparent;border:1px solid #FF8080;color:#FF8080;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit" title="Delete this entry">🗑 Delete</button>
+      </div>
     </div>
     ${e.ci?`<div style="padding:12px 16px;background:var(--card2);border-radius:10px;border-left:3px solid var(--gold);margin-bottom:12px">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:4px">Central Idea</div>
@@ -2425,6 +2577,7 @@ function confirmSugFeedback(entryIdx, sugIdx, uid, choiceIdx){
   recordChange(entryIdx, getSugs(DATA[entryIdx]), sugs);
   DATA[entryIdx].s = sugs;
   DATA[entryIdx].audited = true;
+  markEntryNeedsHumanRecheck_(entryIdx, 'Suggestion feedback edit applied after human verification');
   saveToDrive();
   setStatus('Suggestion updated and saved');
   delete window['_fbsugs_'+uid];
@@ -2498,6 +2651,7 @@ function applyRegenAll(idx,pendingId){
   const sugs=window[pendingId]; if(!sugs) return;
   DATA[idx].s=sugs.map(cleanSuggestionObject_);
   DATA[idx].audited=true;
+  markEntryNeedsHumanRecheck_(idx, 'Regenerated suggestions after human verification');
   delete window[pendingId];
   setStatus('Saved'); saveToDrive();
   renderEntry(idx);
@@ -3120,6 +3274,7 @@ function applyChangesFromPopup(){
   const changes=window._popupChanges||[];
   const states=window._popupStates||[];
   let applied=0, skippedDupes=0;
+  let appliedRealismFixes=false;
   
   // Auto-create a snapshot before applying bulk changes
   const approvedCount = states.filter(s => s === 'approved').length;
@@ -3148,6 +3303,8 @@ function applyChangesFromPopup(){
           DATA[entryIdx].s[sugIdx]=url?{t,d,url}:{t,d};
           applied++;
           DATA[entryIdx].audited=true;
+          if(isRealismAuditChange_(c)) appliedRealismFixes=true;
+          markEntryNeedsHumanRecheck_(entryIdx, 'AI suggestion change applied after human verification');
         }
       } else {
         
@@ -3156,6 +3313,8 @@ function applyChangesFromPopup(){
           DATA[entryIdx].s[sugIdx]=url?{t,d,url}:{t,d};
           applied++;
           DATA[entryIdx].audited=true;
+          if(isRealismAuditChange_(c)) appliedRealismFixes=true;
+          markEntryNeedsHumanRecheck_(entryIdx, 'AI suggestion change applied after human verification');
         }
       }
     }
@@ -3168,8 +3327,14 @@ function applyChangesFromPopup(){
 
   saveToDrive();
   const dupeNote = skippedDupes ? ` (skipped ${skippedDupes} duplicate${skippedDupes!==1?'s':''})` : '';
-  setStatus(`${applied} suggestion${applied!==1?'s':''} updated and saved${dupeNote}`);
+  if(appliedRealismFixes){
+    setStatus(`${applied} suggestion${applied!==1?'s':''} updated and saved${dupeNote} — rescanning realism audit…`, 'loading');
+    setTimeout(() => rescanRealismAfterApprovedFixes_(applied, skippedDupes), 250);
+  } else {
+    setStatus(`${applied} suggestion${applied!==1?'s':''} updated and saved${dupeNote}`);
+  }
   renderAuditChart();
+  if(typeof renderBrowse === 'function') renderBrowse();
 }
 
 // ========== BEFORE/AFTER PREVIEW ==========
@@ -3665,6 +3830,106 @@ Return ONLY JSON:
   return parsed;
 }
 
+
+function realismAuditReasonText_(result){
+  return ((result && result.issues) || []).map(i => i && i.message ? i.message : '').filter(Boolean).join(' | ') || 'May be unrealistic or not age appropriate.';
+}
+
+function realismAuditIssueTypes_(result){
+  return new Set(((result && result.issues) || []).map(i => String(i && i.type || '').toLowerCase()).filter(Boolean));
+}
+
+function auditResultIsDescriptionOnlyIssue_(result){
+  const types = realismAuditIssueTypes_(result);
+  const reason = realismAuditReasonText_(result).toLowerCase();
+  return types.has('vague') || types.has('thin') || types.has('connection') || types.has('generic') ||
+    /description|too long|lesson overview|punctuation|corruption|lesson-library wording|vague|brief|thin|generic|student action|student product|unit connection/i.test(reason);
+}
+
+function findMinecraftLessonForExistingSuggestion_(entry, oldSug){
+  const oldTool = sugTool(oldSug);
+  const oldDesc = sugDesc(oldSug);
+  const hay = [oldTool, oldDesc, oldSug && oldSug.url, oldSug && oldSug.lessonUrl].filter(Boolean).join(' ');
+  let lesson = null;
+  try { lesson = findCuratedLessonMention_('minecraft', oldTool, hay); } catch(e) { lesson = null; }
+  if(lesson) return lesson;
+
+  // Fallback for existing suggestions titled like "Minecraft: Revamp Melbourne" where the
+  // description was corrupted or overlong and no URL survived in the suggestion object.
+  const titleFromTool = String(oldTool || '').match(/minecraft\s*[:—-]\s*(.+)$/i);
+  const wantedTitle = titleFromTool ? titleFromTool[1].trim() : '';
+  if(!wantedTitle) return null;
+  const wanted = dlaTextForFit_(wantedTitle);
+  const lessons = getLibraryLessons('minecraft') || [];
+  return lessons.find(l => dlaTextForFit_(l && l.title || '') === wanted || dlaTextForFit_(l && l.title || '').includes(wanted) || wanted.includes(dlaTextForFit_(l && l.title || ''))) || null;
+}
+
+function buildDeterministicMinecraftAuditFix_(result){
+  const entryIdx = result.entryIdx;
+  const sugIdx = result.sugIdx;
+  const entry = DATA[entryIdx];
+  if(!entry) return null;
+  const oldSug = getSugs(entry)[sugIdx];
+  if(!oldSug) return null;
+  const oldTool = sugTool(oldSug);
+  const oldDesc = sugDesc(oldSug);
+  if(!/minecraft/i.test(oldTool + ' ' + oldDesc)) return null;
+
+  const lesson = findMinecraftLessonForExistingSuggestion_(entry, oldSug);
+  if(!lesson) return null;
+
+  const newDesc = mcLessonDesc_(entry, lesson);
+  const realism = checkRealisticToolUse('Minecraft Education', newDesc, entry);
+  if(!realism.ok){
+    throw new Error('Deterministic Minecraft clean-up failed: ' + realism.reason);
+  }
+
+  const reason = realismAuditReasonText_(result);
+  return {
+    entryIdx,
+    sugIdx,
+    t: 'Minecraft Education',
+    d: newDesc,
+    url: mcCleanUrl_(lesson.url || oldSug.url || ''),
+    auditReason: cleanSuggestionText_(reason + ' | Auto-shortened to a verified two-sentence Minecraft classroom task.'),
+    auditIssues: result.issues || [],
+    auditSource: 'realism-age-audit-deterministic-minecraft-cleanup',
+    improvementConfidence: 'High',
+    improvementScore: 5,
+    whyBetter: 'Keeps the same verified Minecraft lesson, removes copied lesson-overview wording, and gives teachers a concise classroom task with a clear student product.',
+    remainingConcern: ''
+  };
+}
+
+function buildDeterministicRealismFix_(result){
+  // Some audit flags do not need AI at all. In particular, Minecraft length/grammar
+  // flags should keep the same verified lesson and rewrite only the description.
+  const entry = DATA[result && result.entryIdx];
+  const oldSug = entry ? getSugs(entry)[result.sugIdx] : null;
+  const oldTool = oldSug ? sugTool(oldSug) : '';
+  const oldDesc = oldSug ? sugDesc(oldSug) : '';
+  if(/minecraft/i.test(oldTool + ' ' + oldDesc) && auditResultIsDescriptionOnlyIssue_(result)){
+    return buildDeterministicMinecraftAuditFix_(result);
+  }
+  return null;
+}
+
+function renderRealismBatchFailureSummary_(failures){
+  const old = document.getElementById('realism-batch-failure-summary');
+  if(old) old.remove();
+  if(!failures || !failures.length) return;
+  const host = document.getElementById('realism-audit-result') || document.getElementById('entry-realism-result');
+  if(!host) return;
+  const html = `<div id="realism-batch-failure-summary" style="padding:12px 14px;background:rgba(245,166,35,0.10);border:1px solid rgba(245,166,35,0.35);border-radius:10px;margin-bottom:10px">
+    <div style="font-size:13px;font-weight:900;color:#F5A623;margin-bottom:5px">${failures.length} flagged suggestion${failures.length!==1?'s':''} could not be drafted</div>
+    <div style="font-size:12px;color:#ddd;line-height:1.55;margin-bottom:8px">The accepted drafts are still shown for review. These remaining flags were not auto-applied or hidden.</div>
+    <details style="font-size:12px;color:#bbb;line-height:1.55"><summary style="cursor:pointer;color:#F5A623;font-weight:800">Show failed draft reasons</summary>
+      <ul style="margin:8px 0 0;padding-left:18px">${failures.slice(0,12).map(f => `<li><b>${esc((f.result && f.result.yl) || '')} ${esc((f.result && f.result.th) || '')}</b> — ${esc(f.message || 'Unknown error')}</li>`).join('')}${failures.length>12?`<li>…and ${failures.length-12} more.</li>`:''}</ul>
+    </details>
+  </div>`;
+  host.insertAdjacentHTML('afterbegin', html);
+}
+
 async function buildRealismReplacementChange(result){
   const entryIdx = result.entryIdx;
   const sugIdx = result.sugIdx;
@@ -3673,6 +3938,8 @@ async function buildRealismReplacementChange(result){
   if(!entry) throw new Error('Entry not found');
   const oldSug = getSugs(entry)[sugIdx];
   if(!oldSug) throw new Error('Suggestion not found');
+  const deterministicFix = buildDeterministicRealismFix_(result);
+  if(deterministicFix) return deterministicFix;
   const isStem = sugIdx === 5;
   const oldTool = sugTool(oldSug);
   const oldDesc = sugDesc(oldSug);
@@ -3789,6 +4056,7 @@ async function draftAllRealismFixes(scope){
   buttons.forEach(b => { b.disabled = false; });
   if(prog) prog.style.display = 'none';
   stopProgress();
+  renderRealismBatchFailureSummary_(failures);
 
   if(!changes.length){
     const msg = failures.length ? `No fixes were drafted. First error: ${failures[0].message}` : 'No fixes were drafted.';
@@ -3797,7 +4065,7 @@ async function draftAllRealismFixes(scope){
     return;
   }
 
-  const failNote = failures.length ? ` (${failures.length} could not be drafted — review remaining flags after applying)` : '';
+  const failNote = failures.length ? ` (${failures.length} could not be drafted — see the failure summary below the audit results)` : '';
   window._snapshotReason = `Before applying ${changes.length} realism/age fix${changes.length!==1?'es':''}`;
   showChangesPopup(changes);
   setStatus(`${changes.length} realism fix draft${changes.length!==1?'s':''} ready for review${failNote}`);
@@ -3811,6 +4079,20 @@ async function draftRealismReplacement(entryIdx, sugIdx, reason){
   const isStem = sugIdx === 5;
   const oldTool = sugTool(oldSug);
   const oldDesc = sugDesc(oldSug);
+  try{
+    const deterministicFix = buildDeterministicRealismFix_({
+      entryIdx,
+      sugIdx,
+      issues: [{type:'description', severity:'high', message: reason || 'May be unrealistic or not age appropriate.'}]
+    });
+    if(deterministicFix){
+      showChangesPopup([deterministicFix]);
+      setStatus('Minecraft description clean-up drafted — review before applying');
+      return;
+    }
+  }catch(detErr){
+    console.warn('Deterministic realism fix failed, falling back to AI:', detErr.message);
+  }
   const otherTools = getSugs(entry).filter((s,i)=>i!==sugIdx && isRealSug(s)).map(s=>sugTool(s)).join(', ');
   const constraints = isStem ? REALISTIC_TOOL_USE_RULES : buildToolConstraints(entry.yl);
   const prompt = isStem ? `You are replacing protected Suggestion 6, the STEM Design Cycle idea, for this IB PYP unit. This is a manual DLP-approved action, not a bulk edit.
@@ -8973,6 +9255,149 @@ setInterval(async()=>{
   // If the Bulk panel is already visible when this patch loads, apply immediately.
   setTimeout(setupBulkCollapsibleSections, 0);
 })();
+
+/* ===== DLA hotfix: auto-remove Human Verified when suggestions change =====
+   Keeps the gold tick as a true human-audit marker. Any edit/swap/regeneration
+   to a verified unit's suggestions removes the tick so the unit must be checked again. */
+(function(){
+  const SIG_FIELD = 'humanVerifiedSuggestionSignature';
+
+  function hvClean_(value){
+    try { if(typeof cleanSuggestionText_ === 'function') return cleanSuggestionText_(value); } catch(e){}
+    return String(value == null ? '' : value).replace(/\s+/g, ' ').trim();
+  }
+
+  function hvIsVerified_(entry){
+    try { if(typeof isHumanVerifiedEntry_ === 'function') return isHumanVerifiedEntry_(entry); } catch(e){}
+    return !!(entry && (entry.humanVerified === true || entry.humanVerifiedAt || entry.human_verified === true));
+  }
+
+  function hvSuggestionSignature_(entry){
+    try{
+      const sugs = (typeof getSugs === 'function') ? getSugs(entry) : (Array.isArray(entry && entry.s) ? entry.s : []);
+      const compact = sugs.map(function(s){
+        const tool = (typeof sugTool === 'function') ? sugTool(s) : (s && (s.t || s.tool || s.technology || s.name) || '');
+        const desc = (typeof sugDesc === 'function') ? sugDesc(s) : (s && (s.d || s.desc || s.description || s.integration_idea || s.activity) || '');
+        return {
+          t: hvClean_(tool),
+          d: hvClean_(desc),
+          url: hvClean_(s && (s.url || s.lessonUrl || ''))
+        };
+      });
+      return JSON.stringify(compact);
+    }catch(e){
+      return '';
+    }
+  }
+
+  function hvDeleteVerificationFields_(entry, reason){
+    if(!entry) return;
+    entry.humanVerified = false;
+    delete entry.human_verified;
+    delete entry.humanVerifiedAt;
+    delete entry.humanVerifiedBy;
+    delete entry.humanVerifiedReason;
+    delete entry[SIG_FIELD];
+    entry.humanVerifiedResetAt = new Date().toISOString();
+    entry.humanVerifiedResetReason = reason || 'Suggestion changed after human verification';
+  }
+
+  function hvSeedVerifiedSignatures_(){
+    try{
+      if(typeof DATA === 'undefined' || !Array.isArray(DATA)) return;
+      DATA.forEach(function(entry){
+        if(hvIsVerified_(entry) && !entry[SIG_FIELD]) entry[SIG_FIELD] = hvSuggestionSignature_(entry);
+      });
+    }catch(e){}
+  }
+
+  function hvRemoveTicksForChangedSuggestions_(){
+    const changed = [];
+    try{
+      if(typeof DATA === 'undefined' || !Array.isArray(DATA)) return changed;
+      DATA.forEach(function(entry, idx){
+        if(!hvIsVerified_(entry)) return;
+        const currentSig = hvSuggestionSignature_(entry);
+        if(!entry[SIG_FIELD]){
+          // Existing verified data from before this patch: treat the loaded state as the human-checked baseline.
+          entry[SIG_FIELD] = currentSig;
+          return;
+        }
+        if(entry[SIG_FIELD] !== currentSig){
+          const label = [entry.yl, entry.th].filter(Boolean).join(' — ') || ('Entry ' + (idx + 1));
+          hvDeleteVerificationFields_(entry, 'Suggestion edited, swapped, regenerated or changed after human verification');
+          changed.push(label);
+        }
+      });
+    }catch(e){ console.warn('Human verification dirty-check failed:', e); }
+    return changed;
+  }
+
+  // Patch the verifier so every new human tick stores a snapshot of the currently approved suggestions.
+  if(typeof setHumanVerifiedForEntry_ === 'function'){
+    const oldSetHumanVerifiedForEntry = setHumanVerifiedForEntry_;
+    setHumanVerifiedForEntry_ = window.setHumanVerifiedForEntry_ = function(idx, verified){
+      const out = oldSetHumanVerifiedForEntry.apply(this, arguments);
+      try{
+        const entry = (typeof DATA !== 'undefined' && DATA) ? DATA[idx] : null;
+        if(entry && verified){
+          entry[SIG_FIELD] = hvSuggestionSignature_(entry);
+          delete entry.humanVerifiedResetAt;
+          delete entry.humanVerifiedResetReason;
+        } else if(entry && !verified){
+          delete entry[SIG_FIELD];
+        }
+      }catch(e){}
+      return out;
+    };
+  }
+
+  // Patch the existing re-check marker so it also clears the stored baseline signature.
+  if(typeof markEntryNeedsHumanRecheck_ === 'function'){
+    const oldMarkEntryNeedsHumanRecheck = markEntryNeedsHumanRecheck_;
+    markEntryNeedsHumanRecheck_ = window.markEntryNeedsHumanRecheck_ = function(idx, reason){
+      const entry = (typeof DATA !== 'undefined' && DATA) ? DATA[idx] : null;
+      const wasVerified = hvIsVerified_(entry);
+      const out = oldMarkEntryNeedsHumanRecheck.apply(this, arguments);
+      if(entry && wasVerified) delete entry[SIG_FIELD];
+      return out;
+    };
+  }
+
+  // Seed signatures after data loads from Drive.
+  if(typeof ingest === 'function'){
+    const oldIngest = ingest;
+    ingest = window.ingest = function(){
+      const out = oldIngest.apply(this, arguments);
+      hvSeedVerifiedSignatures_();
+      return out;
+    };
+  }
+
+  // Final safety net: any code path that edits DATA and then saves will remove stale human ticks.
+  if(typeof saveToDrive === 'function'){
+    const oldSaveToDrive = saveToDrive;
+    saveToDrive = window.saveToDrive = async function(){
+      hvSeedVerifiedSignatures_();
+      const removed = hvRemoveTicksForChangedSuggestions_();
+      const result = await oldSaveToDrive.apply(this, arguments);
+      if(removed.length){
+        try{
+          if(typeof renderBrowse === 'function') renderBrowse();
+          if(typeof CURRENT_ENTRY_IDX !== 'undefined' && CURRENT_ENTRY_IDX !== null && typeof renderEntry === 'function') renderEntry(CURRENT_ENTRY_IDX);
+          const sample = removed.slice(0,3).join('; ');
+          const extra = removed.length > 3 ? ' and ' + (removed.length - 3) + ' more' : '';
+          if(typeof setStatus === 'function') setStatus('Human verification removed for ' + removed.length + ' changed unit' + (removed.length!==1?'s':'') + ': ' + sample + extra,'loading');
+        }catch(e){}
+      }
+      return result;
+    };
+  }
+
+  // If data was already loaded before this patch ran, baseline it now.
+  setTimeout(hvSeedVerifiedSignatures_, 0);
+})();
+/* ===== end DLA hotfix ===== */
 
 </script>
 </body>
