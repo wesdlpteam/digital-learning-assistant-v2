@@ -109,99 +109,6 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 .bb:hover{transform:scale(1.01)}
 .bb-sub{font-size:12px;font-weight:500;opacity:.6}
 
-
-/* ===== RESPONSIVE LARGE-SCREEN / TV LAYOUT PATCH =====
-   Keeps the mobile design intact, but lets the teacher-facing DLA breathe on laptops,
-   classroom projectors and large TVs instead of staying locked to a narrow 700px column. */
-@media (min-width:1100px){
-  .hi,.wp{max-width:min(92vw,980px)}
-  .wp{padding:0 28px 100px}
-}
-
-@media (min-width:1500px){
-  body{font-size:18px}
-  .hi,.wp{max-width:min(76vw,1180px)}
-  .hi{padding:22px 28px;gap:14px}
-  .logo{height:44px}
-  .bk{width:46px;height:46px;border-radius:13px;font-size:18px}
-  .hd h1{font-size:20px}.hd-sub{font-size:14px}
-
-  .hero{margin:36px 0 50px}.hero-title{font-size:clamp(56px,5vw,82px)}.hero-sub{font-size:20px;max-width:640px}
-  .sec-title{font-size:clamp(42px,4vw,58px)}
-  .cc{padding:38px;border-radius:28px}.cc-name{font-size:38px}.cc-sub{font-size:19px}.cc-wm{font-size:150px}
-  .yc{padding:32px 26px;border-radius:22px}.yc h3{font-size:28px}.yc .cn{font-size:16px}.yc-dot{width:18px;height:18px}
-  .uc{padding:28px 32px;border-radius:22px;margin-bottom:14px}.uc-label{font-size:14px}.uc-name{font-size:30px}.uc-emoji{font-size:68px}
-
-  .tag,.tag-meta,.tag-tool{font-size:15px;padding:8px 18px}.tag-t{font-size:13px;padding:6px 14px}
-  .dh{padding:42px 44px;margin:26px 0 30px;border-radius:28px}
-  .dh-title{font-size:40px}.dh-ci{font-size:22px}.dh-wm{font-size:140px}
-  .loi-box{padding:30px 36px;border-radius:24px;margin-bottom:28px}
-  .loi-label{font-size:14px}.loi-item{font-size:19px;padding:14px 0}.loi-num{margin-right:12px}
-
-  .stem-prompt{padding:24px 30px;border-radius:22px;gap:22px;margin:28px 0 22px}
-  .stem-prompt-icon{font-size:36px;width:58px;height:58px;border-radius:16px}
-  .stem-prompt-title{font-size:20px}.stem-prompt-sub{font-size:16px}.stem-prompt-arrow{font-size:24px}
-
-  .sg{border-radius:22px;margin-bottom:22px}
-  .sg-head{padding:22px 30px;gap:18px}
-  .sg-icon{width:54px;height:54px;font-size:26px;border-radius:14px}
-  .sg-type{font-size:13px}.sg-tool{font-size:24px}
-  .sg-body{padding:24px 30px 30px}.sg-desc{font-size:20px;line-height:1.75}
-  .sg-label{font-size:14px}.sg-label svg{width:18px;height:18px}
-  .vb{font-size:18px;padding:16px 20px}
-  .atl-pill,.cur-pill,.wds-pill{font-size:15px;padding:8px 15px}.atl-detail,.cur-detail,.wds-detail{font-size:15px}
-  .sg-fb-btn,.sg-used,.sg-react-btn{font-size:16px;padding:12px 22px}
-  .sg-howto-label,.sg-howto-btn{font-size:15px}.sg-howto-steps,.howto-steps li{font-size:16px}
-  .bb{font-size:22px;padding:24px 30px;border-radius:22px}.bb-sub{font-size:15px}
-}
-
-@media (min-width:2400px){
-  body{font-size:20px}
-  .hi,.wp{max-width:min(70vw,1500px)}
-  .hi{padding:28px 34px}.logo{height:54px}.hd h1{font-size:24px}.hd-sub{font-size:16px}
-  .hero-title{font-size:clamp(76px,4.8vw,110px)}.hero-sub{font-size:26px;max-width:780px}
-  .sec-title{font-size:68px}
-  .cc-name{font-size:48px}.cc-sub{font-size:24px}
-  .yc h3{font-size:36px}.yc .cn{font-size:20px}.uc-name{font-size:38px}
-  .dh{padding:56px 60px}.dh-title{font-size:52px}.dh-ci{font-size:28px}
-  .loi-box{padding:40px 48px}.loi-label{font-size:17px}.loi-item{font-size:24px;padding:18px 0}
-  .stem-prompt{padding:32px 40px}.stem-prompt-icon{font-size:46px;width:72px;height:72px}.stem-prompt-title{font-size:26px}.stem-prompt-sub{font-size:20px}
-  .sg-head{padding:30px 40px}.sg-icon{width:68px;height:68px;font-size:34px}.sg-type{font-size:16px}.sg-tool{font-size:30px}
-  .sg-body{padding:32px 40px 40px}.sg-desc{font-size:25px;line-height:1.75}.vb{font-size:22px}
-}
-
-/* ===== HOMEPAGE COMPACT DESKTOP PATCH =====
-   Keeps the bigger responsive layout on deep displays, but prevents the home screen
-   from feeling over-zoomed on laptops, projectors and classroom TVs with limited height.
-   Goal: the three campus cards should be visible without scrolling on common 16:9 screens. */
-@media (min-width:1100px) and (max-height:1050px){
-  .hero{margin:18px 0 26px}
-  .hero-title{font-size:clamp(44px,4.1vw,68px);line-height:1.03;letter-spacing:-2px}
-  .hero-sub{font-size:clamp(16px,1.15vw,18px);margin-top:14px;line-height:1.45;max-width:560px}
-  .cc{padding:24px 32px;margin-bottom:10px;border-radius:24px;min-height:112px;display:flex;align-items:center}
-  .cc-name{font-size:clamp(28px,2vw,34px)}
-  .cc-sub{font-size:clamp(14px,1.05vw,16px);margin-top:2px}
-  .cc-wm{font-size:clamp(92px,7.5vw,126px);right:-12px;bottom:-22px}
-  .lb-section{margin-top:36px;padding-top:26px}
-}
-
-@media (min-width:1500px) and (max-height:950px){
-  .hi{padding-top:14px;padding-bottom:14px}
-  .logo{height:38px}
-  .hd h1{font-size:18px}.hd-sub{font-size:12px}
-  .hero{margin:14px 0 22px}
-  .hero-title{font-size:clamp(50px,4vw,66px)}
-  .hero-sub{font-size:17px;margin-top:12px;max-width:560px}
-  .cc{padding:22px 32px;min-height:104px;border-radius:22px}
-  .cc-name{font-size:30px}.cc-sub{font-size:15px}
-  .cc-wm{font-size:108px}
-}
-
-@media (min-width:1500px) and (min-height:1051px){
-  .hero-title{font-size:clamp(56px,4.4vw,78px)}
-  .cc-name{font-size:34px}
-}
-
 @media(max-width:480px){.hero-title{font-size:36px}.cc-name{font-size:22px}.cc-wm{font-size:80px}}
 
 .atl-section{margin-top:16px}
@@ -393,36 +300,34 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 .tech-cur-strand:first-child{border-top:none;padding-top:0;margin-top:0}
 
 
-
-/* ===== UNITS OF INQUIRY FIT-TO-SCREEN PATCH =====
-   The year-level UOI page usually has six cards. On laptops, classroom TVs and
-   projectors with limited height, compact this page so all units can be seen at once. */
-.uoi-list{display:block}
-@media (min-width:900px) and (max-height:1050px){
-  .uoi-head{margin:12px 0 18px!important}
-  .uoi-head .tag{font-size:13px;padding:7px 16px}
-  .uoi-head .sec-title{font-size:clamp(36px,3.8vw,50px);line-height:1;margin-top:14px}
-  .uoi-list{display:grid;grid-template-columns:1fr;gap:10px}
-  .uoi-list .uc{margin-bottom:0;padding:17px 24px;border-radius:20px;min-height:78px;display:flex;flex-direction:column;justify-content:center}
-  .uoi-list .uc-label{font-size:11px;letter-spacing:1px;margin-bottom:4px}
-  .uoi-list .uc-name{font-size:clamp(22px,2.05vw,29px);line-height:1.12}
-  .uoi-list .uc-emoji{font-size:48px;right:20px}
-}
-@media (min-width:1300px) and (max-height:900px){
-  .hi{padding-top:10px;padding-bottom:10px}
-  .uoi-head{margin:8px 0 14px!important}
-  .uoi-head .sec-title{font-size:clamp(34px,3.2vw,44px);margin-top:12px}
-  .uoi-list{gap:8px}
-  .uoi-list .uc{min-height:68px;padding:13px 24px;border-radius:18px}
-  .uoi-list .uc-label{font-size:10px;margin-bottom:3px}
-  .uoi-list .uc-name{font-size:clamp(20px,1.65vw,25px)}
-  .uoi-list .uc-emoji{font-size:42px}
-}
-@media (min-width:1700px) and (max-height:980px){
-  .uoi-head .sec-title{font-size:46px}
-  .uoi-list .uc{min-height:74px;padding:15px 26px}
-  .uoi-list .uc-name{font-size:26px}
-}
+/* ===== Copilot teaching helper ===== */
+.sg-copilot{margin-top:16px;padding-top:14px;border-top:1px solid var(--bd)}
+.sg-copilot-btn{width:100%;display:flex;align-items:center;gap:12px;text-align:left;background:linear-gradient(135deg,rgba(56,189,248,.14),rgba(147,51,234,.10));border:1px solid rgba(56,189,248,.45);border-radius:14px;color:#EAF7FF;padding:13px 15px;font-family:inherit;cursor:pointer;transition:transform .15s,border-color .15s,background .15s;box-shadow:0 0 0 rgba(56,189,248,0)}
+.sg-copilot-btn:hover{transform:translateY(-1px);border-color:#38BDF8;background:linear-gradient(135deg,rgba(56,189,248,.22),rgba(147,51,234,.16));box-shadow:0 0 18px rgba(56,189,248,.10)}
+.sg-copilot-ico{width:34px;height:34px;border-radius:10px;background:#38BDF820;color:#38BDF8;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
+.sg-copilot-main{font-size:14px;font-weight:800;letter-spacing:-.2px;color:#FFF}
+.sg-copilot-sub{font-size:12px;color:#A7C7D9;line-height:1.35;margin-top:2px;font-weight:500}
+.copilot-overlay{position:fixed;inset:0;background:rgba(0,0,0,.76);z-index:100000;display:flex;align-items:center;justify-content:center;padding:18px;opacity:0;pointer-events:none;transition:opacity .2s}
+.copilot-overlay.open{opacity:1;pointer-events:all}
+.copilot-modal{background:#1A1A1A;border:2px solid #38BDF8;border-radius:22px;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 80px rgba(0,0,0,.45)}
+.copilot-modal-head{padding:22px 24px 14px;border-bottom:1px solid #333;display:flex;align-items:flex-start;gap:12px}
+.copilot-modal-icon{width:42px;height:42px;border-radius:12px;background:#38BDF820;color:#38BDF8;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.copilot-modal-title{font-size:18px;font-weight:800;color:#FFF;margin-bottom:4px;letter-spacing:-.3px}
+.copilot-modal-sub{font-size:13px;color:#AAA;line-height:1.5}
+.copilot-modal-body{padding:18px 24px 24px}
+.copilot-status{padding:12px 14px;border-radius:12px;margin-bottom:14px;font-size:13px;line-height:1.5;background:rgba(205,235,69,.08);border:1px solid rgba(205,235,69,.25);color:#CDEB45}
+.copilot-status.warn{background:rgba(245,166,35,.08);border-color:rgba(245,166,35,.28);color:#F5A623}
+.copilot-steps{margin:0 0 14px 0;padding:0;list-style:none;counter-reset:copilotStep}
+.copilot-steps li{position:relative;counter-increment:copilotStep;padding:8px 0 8px 34px;font-size:13px;color:#DDD;line-height:1.5}
+.copilot-steps li::before{content:counter(copilotStep);position:absolute;left:0;top:7px;width:23px;height:23px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#38BDF820;color:#38BDF8;font-weight:800;font-size:11px}
+.copilot-prompt-box{width:100%;min-height:130px;background:#111;border:1px solid #333;border-radius:12px;color:#DDD;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;line-height:1.5;padding:12px;resize:vertical;outline:none;margin-top:8px}
+.copilot-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.copilot-primary,.copilot-secondary{border:none;border-radius:12px;padding:11px 16px;font-family:inherit;font-weight:800;font-size:13px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.copilot-primary{background:#38BDF8;color:#07131A}
+.copilot-primary:hover{background:#67D4FF}
+.copilot-secondary{background:#252525;color:#CCC;border:1px solid #3A3A3A}
+.copilot-secondary:hover{background:#333;color:#FFF}
+.copilot-note{font-size:12px;color:#888;line-height:1.5;margin-top:12px}
 
 </style></head><body><div id="app"></div>
 <script>
@@ -470,108 +375,12 @@ const HT={
 "DJI Drone":"<ol><li><b>Teacher-operated only</b> — students direct but do not fly.</li><li>Open the <b>DJI app</b> and connect the drone.</li><li>Take off in a <b>clear, open outdoor space</b>.</li><li>Capture <b>aerial photos and video</b> of the school, local area or environment.</li><li>Students use the footage in their <b>projects, presentations and reports</b>.</li></ol><div class=\"sg-howto-tip\">Tip: Plan the flight path with students beforehand — they sketch what they want to capture and why.</div>",
 "Delightex (CoSpaces)":"<ol><li>Open <b>cospaces.io</b> and click <b>Create new CoSpace</b>.</li><li>Choose a <b>3D or VR environment</b>.</li><li>Drag in <b>objects, characters and buildings</b> from the library.</li><li>Use <b>CoBlocks</b> (visual coding) to animate objects — movement, speech, triggers.</li><li>Click <b>Play</b> to test in 3D or <b>Share</b> for VR viewing.</li></ol><div class=\"sg-howto-tip\">Tip: Students can explore each others creations in VR using the Pico headsets for a fully immersive experience.</div>"
 };
-// Data is loaded from data.json. Curated lesson links are loaded from libraries.json.
+// Data is loaded from data.json — edit that file (via Excel) to update lessons
 let D = [];
-let LIBRARIES = {};
-let LIBRARY_LESSONS = [];
-
-function htmlEsc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
-function normLessonText(s){
-  return String(s||'').toLowerCase()
-    .replace(/&amp;/g,' and ')
-    .replace(/micro[: ]?bit/g,'microbit')
-    .replace(/minecraft education/g,'minecraft')
-    .replace(/[^a-z0-9]+/g,' ')
-    .replace(/\b(the|a|an|and|on|in|of|to|for|with|using|lesson|activity)\b/g,' ')
-    .replace(/\s+/g,' ')
-    .trim();
-}
-function compactLessonText(s){return normLessonText(s).replace(/\s+/g,'');}
-function libraryPlatformLabel(key){
-  var meta=(LIBRARIES&&LIBRARIES._meta&&LIBRARIES._meta[key])||{};
-  if(meta.name)return meta.name;
-  if(key==='microbit')return 'Micro:bit';
-  if(key==='minecraft')return 'Minecraft Education';
-  return String(key||'Lesson').replace(/[_-]/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
-}
-function buildLibraryLessonIndex(){
-  LIBRARY_LESSONS=[];
-  Object.keys(LIBRARIES||{}).forEach(function(key){
-    if(key==='_meta'||!Array.isArray(LIBRARIES[key]))return;
-    var platform=libraryPlatformLabel(key);
-    LIBRARIES[key].forEach(function(l){
-      if(!l||!l.title||!l.url)return;
-      LIBRARY_LESSONS.push({
-        key:key,platform:platform,title:l.title,url:l.url,ages:l.ages||'',subject:l.subject||'',desc:l.desc||'',
-        normTitle:normLessonText(l.title),compactTitle:compactLessonText(l.title)
-      });
-    });
-  });
-}
-function platformMatchesLesson(tool,lesson){
-  var t=normLessonText(tool),key=normLessonText(lesson.key),plat=normLessonText(lesson.platform);
-  if(!t)return false;
-  if(lesson.key==='microbit'&&(t.includes('microbit')||t.includes('micro bit')))return true;
-  if(lesson.key==='minecraft'&&t.includes('minecraft'))return true;
-  return (key&&t.includes(key))||(plat&&t.includes(plat));
-}
-function tokenOverlapScore(a,b){
-  var A=normLessonText(a).split(' ').filter(Boolean),B=normLessonText(b).split(' ').filter(Boolean);
-  if(!A.length||!B.length)return 0;
-  var setA=new Set(A),hit=0;B.forEach(function(x){if(setA.has(x))hit++;});
-  return hit/Math.max(B.length,1);
-}
-function titleFromToolName(tool){
-  tool=String(tool||'');
-  var parts=tool.split(':');
-  if(parts.length>1)return parts.slice(1).join(':').trim();
-  return tool.replace(/^(Minecraft Education|Minecraft|Micro:bit|Microbits|Microbit)\s*[-–—:]?\s*/i,'').trim();
-}
-function getLibraryLessonForSuggestion(sug){
-  if(!sug)return null;
-  var tool=String(sug.t||''),desc=String(sug.d||''),url=String(sug.url||'').trim();
-  if(url){return {platform:'Lesson Library',title:titleFromToolName(tool)||tool||'Direct lesson',url:url,ages:'',subject:'',desc:''};}
-  if(!LIBRARY_LESSONS.length)return null;
-  var toolTitle=titleFromToolName(tool);
-  var hayNorm=normLessonText(tool+' '+desc),hayCompact=compactLessonText(tool+' '+desc);
-  var best=null,bestScore=0;
-  LIBRARY_LESSONS.forEach(function(lesson){
-    var score=0;
-    var platformMatch=platformMatchesLesson(tool,lesson);
-    if(platformMatch)score+=3;
-    if(lesson.compactTitle&&hayCompact.includes(lesson.compactTitle))score+=8;
-    if(lesson.normTitle&&hayNorm.includes(lesson.normTitle))score+=8;
-    if(toolTitle){
-      var ttCompact=compactLessonText(toolTitle),lt=lesson.compactTitle;
-      if(ttCompact&&lt&&(ttCompact===lt||ttCompact.includes(lt)||lt.includes(ttCompact)))score+=9;
-      score+=tokenOverlapScore(toolTitle,lesson.title)*5;
-    }
-    score+=tokenOverlapScore(tool+' '+desc,lesson.title)*3;
-    var strongExact=(lesson.compactTitle&&hayCompact.includes(lesson.compactTitle));
-    var enough=(platformMatch&&score>=6)||score>=10||strongExact;
-    if(enough&&score>bestScore){best=lesson;bestScore=score;}
-  });
-  return best;
-}
-function renderLibraryLessonResource(lesson){
-  if(!lesson||!lesson.url)return '';
-  var label='Open direct lesson';
-  if(lesson.platform&&lesson.title)label='Open '+lesson.platform+' lesson: '+lesson.title;
-  else if(lesson.title)label='Open lesson: '+lesson.title;
-  return '<a class="sg-ref-link" href="'+htmlEsc(lesson.url)+'" target="_blank" rel="noopener">🔗 '+htmlEsc(label)+'</a>';
-}
-
-Promise.allSettled([
-  fetch('data.json').then(function(r){if(!r.ok)throw new Error('data.json');return r.json();}),
-  fetch('libraries.json').then(function(r){if(!r.ok)throw new Error('libraries.json');return r.json();})
-]).then(function(results){
-  if(results[0].status!=='fulfilled')throw new Error('data.json');
-  D=results[0].value;
-  if(results[1].status==='fulfilled'){LIBRARIES=results[1].value||{};buildLibraryLessonIndex();}
-  R();loadLeaderboard();
-}).catch(function(){
-  document.getElementById('app').innerHTML='<div style="color:#FF6B6B;padding:40px;text-align:center">⚠️ Could not load data.json — make sure it is in the same folder as this file.</div>';
-});
+fetch('data.json')
+  .then(r => r.json())
+  .then(data => { D = data; R(); loadLeaderboard(); })
+  .catch(() => { document.getElementById('app').innerHTML = '<div style="color:#FF6B6B;padding:40px;text-align:center">⚠️ Could not load data.json — make sure it is in the same folder as this file.</div>'; });
 const BK="https://outlook.office365.com/book/DigitalLearningPractice@WesleyCollegeMelbourne.onmicrosoft.com/?ismsaljsauthenabled=true";
 const TU={
 "Book Creator":"https://bookcreator.com",
@@ -608,8 +417,141 @@ const TU={
 "Beebots":"https://www.bee-bot.us",
 "Cubetto":"https://www.primotoys.com",
 "Indi Robot":"https://sphero.com/products/indi-learning-robot",
+
 "Adobe Express Character Animator":"https://www.adobe.com/express/"
 };
+
+// ========== COPILOT TEACHING HELPER ==========
+const COPILOT_CHAT_URL = "https://m365.cloud.microsoft/chat";
+
+function stripForPrompt(value){
+  return String(value||'')
+    .replace(/<[^>]*>/g,' ')
+    .replace(/&nbsp;/g,' ')
+    .replace(/&amp;/g,'&')
+    .replace(/&lt;/g,'<')
+    .replace(/&gt;/g,'>')
+    .replace(/&quot;/g,'"')
+    .replace(/&#39;/g,"'")
+    .replace(/\s+/g,' ')
+    .trim();
+}
+function formatPromptResources(resources){
+  if(!resources || !resources.length) return 'None provided.';
+  return resources.map(function(r,i){
+    return (i+1)+'. '+stripForPrompt(r.label||'Resource')+(r.url?' — '+r.url:'');
+  }).join('\n');
+}
+function buildCopilotPrompt(d){
+  d=d||{};
+  return [
+    'I am a primary teacher at Wesley College in Melbourne. Help me run this digital learning activity in a practical classroom way.',
+    '',
+    'Use Australian spelling. Keep the advice clear, concrete and suitable for a busy primary classroom teacher. Do not assume I already know the tool well.',
+    '',
+    'Context:',
+    'Campus: '+(d.campus||''),
+    'Year level: '+(d.year||''),
+    'Unit of Inquiry / theme: '+(d.theme||''),
+    d.centralIdea ? 'Central idea: '+stripForPrompt(d.centralIdea) : '',
+    d.linesOfInquiry ? 'Lines of inquiry: '+stripForPrompt(d.linesOfInquiry) : '',
+    'Suggested digital tool: '+stripForPrompt(d.tool||''),
+    d.phase ? 'DLA suggestion: '+stripForPrompt(d.phase) : '',
+    '',
+    'Activity description from the Digital Learning Assistant:',
+    stripForPrompt(d.description||''),
+    '',
+    'Relevant links or resources:',
+    formatPromptResources(d.resources),
+    '',
+    'Please give me:',
+    '1. A simple teacher setup checklist',
+    '2. A 45–60 minute lesson sequence',
+    '3. Student instructions written in child-friendly language',
+    '4. Differentiation for students who need support and students who need extension',
+    '5. A simple success criteria checklist',
+    '6. Common troubleshooting tips for the tool',
+    '7. Safety, privacy, copyright or classroom management considerations',
+    '',
+    'Important: Keep the plan realistic. Make it something I could actually use with my class this week.'
+  ].filter(function(line){return line!=='' || line=== '';}).join('\n');
+}
+function copyTextFallback(text){
+  var ta=document.createElement('textarea');
+  ta.value=text;
+  ta.setAttribute('readonly','');
+  ta.style.position='fixed';
+  ta.style.left='-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  try{document.execCommand('copy');document.body.removeChild(ta);return true;}
+  catch(e){document.body.removeChild(ta);return false;}
+}
+function copyPromptToClipboard(text){
+  if(navigator.clipboard && window.isSecureContext){
+    return navigator.clipboard.writeText(text).then(function(){return true;}).catch(function(){return copyTextFallback(text);});
+  }
+  return Promise.resolve(copyTextFallback(text));
+}
+function openCopilotHelper(idx,btn){
+  var d=(window._copilotData||[])[idx];
+  if(!d)return;
+  var prompt=buildCopilotPrompt(d);
+  if(btn){btn.disabled=true;btn.style.opacity='.75';}
+  var opened=null;
+  try{opened=window.open(COPILOT_CHAT_URL,'_blank'); if(opened) opened.opener=null;}catch(e){opened=null;}
+  copyPromptToClipboard(prompt).then(function(copied){
+    showCopilotInstructions(prompt,copied,!!opened,d);
+  }).finally(function(){
+    if(btn){btn.disabled=false;btn.style.opacity='';}
+  });
+}
+function showCopilotInstructions(prompt,copied,opened,d){
+  var old=document.getElementById('copilotOverlay');if(old)old.remove();
+  var status=copied
+    ? '✅ Copilot prompt copied. Nothing has been sent yet — you stay in control.'
+    : '⚠️ I could not copy automatically. Use the “Copy prompt again” button or select the prompt below manually.';
+  var warnClass=copied?'':' warn';
+  var openLine=opened
+    ? '<li>Copilot has opened in a new tab. Switch to that tab.</li>'
+    : '<li>Your browser blocked the new tab. Click <b>Open Copilot</b> below.</li>';
+  var html='<div class="copilot-modal"><div class="copilot-modal-head"><div class="copilot-modal-icon">🤖</div><div><div class="copilot-modal-title">How do I teach this?</div><div class="copilot-modal-sub">A ready-to-use prompt has been prepared for Microsoft 365 Copilot Chat.</div></div></div><div class="copilot-modal-body">'
+    +'<div class="copilot-status'+warnClass+'">'+status+'</div>'
+    +'<ol class="copilot-steps">'
+    +openLine
+    +'<li>Click inside the Copilot message box.</li>'
+    +'<li>Paste the prompt using <b>Ctrl + V</b> on Windows or <b>Command + V</b> on Mac.</li>'
+    +'<li>Read the prompt, adjust anything you want, then click send.</li>'
+    +'</ol>'
+    +'<div style="font-size:12px;color:#AAA;font-weight:700;text-transform:uppercase;letter-spacing:.6px">Prompt preview</div>'
+    +'<textarea class="copilot-prompt-box" id="copilotPromptBox" readonly>'+escapeTextarea(prompt)+'</textarea>'
+    +'<div class="copilot-actions"><button class="copilot-primary" onclick="copyCopilotPromptAgain()">📋 Copy prompt again</button><a class="copilot-secondary" href="'+COPILOT_CHAT_URL+'" target="_blank" rel="noopener noreferrer">↗ Open Copilot</a><button class="copilot-secondary" onclick="closeCopilotInstructions()">Close</button></div>'
+    +'<div class="copilot-note">Tip: Copilot will not receive anything until you paste the prompt and press send. This lets you check the wording first.</div>'
+    +'</div></div>';
+  var overlay=document.createElement('div');
+  overlay.id='copilotOverlay';
+  overlay.className='copilot-overlay';
+  overlay.innerHTML=html;
+  overlay.onclick=function(e){if(e.target===overlay)closeCopilotInstructions();};
+  document.body.appendChild(overlay);
+  requestAnimationFrame(function(){overlay.classList.add('open');});
+}
+function escapeTextarea(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function copyCopilotPromptAgain(){
+  var ta=document.getElementById('copilotPromptBox');
+  if(!ta)return;
+  copyPromptToClipboard(ta.value).then(function(ok){
+    var status=document.querySelector('#copilotOverlay .copilot-status');
+    if(status){status.classList.toggle('warn',!ok);status.textContent=ok?'✅ Copilot prompt copied again. Paste it into Copilot when ready.':'⚠️ Copy still did not work. Select the text box and copy manually.';}
+  });
+}
+function closeCopilotInstructions(){
+  var el=document.getElementById('copilotOverlay');
+  if(el){el.classList.remove('open');setTimeout(function(){if(el.parentNode)el.remove();},180);}
+}
+// ========== END COPILOT TEACHING HELPER ==========
 
 
 // ========== TECHNOLOGIES CURRICULUM (ACARA v9.0) ==========
@@ -1228,11 +1170,9 @@ h+='</div>';}
 
 else if(v==="units"){
 const us=gu(ca,yl);
-h+='<div class="uoi-head" style="margin:20px 0 28px"><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="tag" style="background:'+CC[ca]+';color:'+CTX[ca]+'">'+CN[ca]+'</span><span class="tag">'+yl+'</span></div><h2 class="sec-title">Units of Inquiry</h2></div><div class="uoi-list">';
+h+='<div style="margin:20px 0 28px"><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="tag" style="background:'+CC[ca]+';color:'+CTX[ca]+'">'+CN[ca]+'</span><span class="tag">'+yl+'</span></div><h2 class="sec-title">Units of Inquiry</h2></div>';
 us.forEach((u,i)=>{const tc=TC[u.th]||"#888";const em=TE[u.th]||"💡";
-h+='<div class="uc" style="background:'+tc+';color:'+(TTX[u.th]||"#FFF")+'" onclick="nv(\'ui\','+i+')"><div class="uc-emoji">'+em+'</div><div class="uc-label">Transdisciplinary Theme</div><div class="uc-name">'+u.th+'</div></div>';});
-h+='</div>';}
-
+h+='<div class="uc" style="background:'+tc+';color:'+(TTX[u.th]||"#FFF")+'" onclick="nv(\'ui\','+i+')"><div class="uc-emoji">'+em+'</div><div class="uc-label">Transdisciplinary Theme</div><div class="uc-name">'+u.th+'</div></div>';});}
 
 else if(v==="detail"){
 const us=gu(ca,yl),u=us[ui];if(!u){S.v='units';S.ui=null;R();return;}const tc=TC[u.th]||"#888";const em=TE[u.th]||"💡";
@@ -1247,7 +1187,7 @@ h+='</div>';
 var curList=u.s;
 var mainSugs=curList.slice(0,5);
 var stemSug=curList.length>=6?curList[5]:null;
-window._sid=0;window._aid=0;window._wid=0;
+window._sid=0;window._aid=0;window._wid=0;window._copilotData=[];
 
 // STEM Design Cycle — teaser prompt + modal overlay
 if(stemSug && stemSug.t && stemSug.t.indexOf("Planner Needed")===-1){
@@ -1259,10 +1199,10 @@ if(stemSug && stemSug.t && stemSug.t.indexOf("Planner Needed")===-1){
   if(!window._usedData)window._usedData=[];var _stemUsi=window._usedData.length;window._usedData.push({campus:CN[ca],year:yl,theme:u.th,tool:stemTool,phase:'STEM Design Cycle'});
   
   var stemVa=gA(stemTool,stemDesc);
-  var stemLesson=getLibraryLessonForSuggestion(stemSug);
   
   // Store STEM data for modal that gets appended to body on click
-  window._stemData = {tool:stemTool, toolLabel:stemToolLabel, desc:stemDesc, va:stemVa, fbi:_stemFbi, usi:_stemUsi, valueLabel:I.s, lesson:stemLesson};
+  var _stemCpi=window._copilotData.length;window._copilotData.push({campus:CN[ca],year:yl,theme:u.th,centralIdea:u.ci,linesOfInquiry:lois.join('; '),tool:stemTool,description:stemDesc,phase:'STEM Design Cycle',resources:[]});
+  window._stemData = {tool:stemTool, toolLabel:stemToolLabel, desc:stemDesc, va:stemVa, fbi:_stemFbi, usi:_stemUsi, valueLabel:I.s, cpi:_stemCpi};
   
   // Inline teaser only - modal is created on demand, attached to body
   h+='<div class="stem-prompt" onclick="openStem()"><div class="stem-prompt-icon">🔬</div><div class="stem-prompt-text"><div class="stem-prompt-title">Hands-on STEM activity available</div><div class="stem-prompt-sub">Tap to reveal → '+stemTool+'</div></div><div class="stem-prompt-arrow">→</div></div>';
@@ -1278,9 +1218,11 @@ var phaseLabel="Suggestion";
 h+='<div class="sg"><div class="sg-head"><div class="sg-icon" style="background:'+tc+'">'+em+'</div><div class="sg-meta"><div class="sg-type">'+'Idea #'+(si+1)+' of '+mainSugs.length+'</div><div class="sg-tool">'+toolLabel+'</div></div></div><div class="sg-body">';
 h+='<div class="sg-desc">'+linkifyDesc(s.d)+'</div>';
 h+='';
-var _lesson=getLibraryLessonForSuggestion(s);
-if(_lesson||s.ref||s.docKey){var _rl='<div class="sg-section sg-refs"><div class="sg-label"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h8M4 8h8M4 12h5"/><rect x="2" y="2" width="12" height="12" rx="2"/></svg> Resources</div>';if(_lesson){_rl+=renderLibraryLessonResource(_lesson);}if(s.docKey&&window.DOCS&&DOCS[s.docKey]){var _doc=DOCS[s.docKey];_rl+='<a class="sg-ref-link sg-ref-doc" href="'+htmlEsc(_doc.url)+'" download="'+htmlEsc(_doc.n)+'" target="_blank">&#11015;&#65039; '+htmlEsc(_doc.n)+'</a>';}if(s.ref){s.ref.forEach(function(r){_rl+='<a class="sg-ref-link" href="'+htmlEsc(r.url)+'" target="_blank" rel="noopener">&#128279; '+htmlEsc(r.label)+'</a>';});}h+=_rl+'</div>';}
+if(s.ref||s.docKey){var _rl='<div class="sg-section sg-refs"><div class="sg-label"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h8M4 8h8M4 12h5"/><rect x="2" y="2" width="12" height="12" rx="2"/></svg> Resources</div>';if(s.docKey&&window.DOCS&&DOCS[s.docKey]){var _doc=DOCS[s.docKey];_rl+='<a class="sg-ref-link sg-ref-doc" href="'+_doc.url+'" download="'+_doc.n+'" target="_blank">&#11015;&#65039; '+_doc.n+'</a>';}if(s.ref){s.ref.forEach(function(r){_rl+='<a class="sg-ref-link" href="'+r.url+'" target="_blank" rel="noopener">&#128279; '+r.label+'</a>';});}h+=_rl+'</div>';}
 h+='<div class="sg-section"><div class="sg-label">'+I.s+' Value Add</div><div class="vb" style="border-left-color:'+tc+'">'+va+'</div></div>';
+var _cpResources=[];if(s.docKey&&window.DOCS&&DOCS[s.docKey]){_cpResources.push({label:DOCS[s.docKey].n,url:DOCS[s.docKey].url});}if(s.ref){s.ref.forEach(function(r){_cpResources.push({label:r.label,url:r.url});});}
+var _cpi=window._copilotData.length;window._copilotData.push({campus:CN[ca],year:yl,theme:u.th,centralIdea:u.ci,linesOfInquiry:lois.join('; '),tool:s.t,description:s.d,phase:'Idea #'+(si+1),resources:_cpResources});
+h+='<div class="sg-copilot"><button class="sg-copilot-btn" onclick="openCopilotHelper('+_cpi+',this)"><span class="sg-copilot-ico">🤖</span><span style="flex:1"><span class="sg-copilot-main">How do I teach this?</span><span class="sg-copilot-sub">Copies a practical prompt, opens Copilot, then you paste and send.</span></span></button></div>';
 
 h+='<div class="sg-extras">';
 var sid2='s'+window._sid++;
@@ -1312,7 +1254,10 @@ if(!window._usedData)window._usedData=[];var _usi=window._usedData.length;window
 h+='<div class="sg-fb"><button class="sg-used" onclick="markUsed('+_usi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+_fbi+')" class="sg-fb-btn">💬 Feedback</button><button class="sg-react-btn sg-react-up" onclick="reactFB('+_fbi+',\'up\',this)">👍</button><button class="sg-react-btn" onclick="reactFB('+_fbi+',\'down\',this)">👎</button></div></div>';
 h+='</div></div>';});
 
-// Technologies Curriculum expandable section removed from teacher-facing DLA.
+// Technologies Curriculum toggle
+h+='<div class="tech-cur-toggle" id="techCurToggle" onclick="tgTechCur()"><span style="font-size:16px">📋</span><span style="flex:1;font-size:14px;font-weight:700;color:#38BDF8">Technologies Curriculum — '+yl+'</span><span style="font-size:12px;color:#888">ACARA v9.0</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 8 10 12 14 8"/></svg></div>';
+h+='<div class="tech-cur-body" id="techCurBody">'+renderTechCurriculum(yl)+'</div>';
+
 h+='<a href="'+BK+'" target="_blank" rel="noopener noreferrer" class="bb">📅 Book a Digital Learning Coach<span class="bb-sub">Schedule a session with the DLP team</span></a>';}
 
 h+='</div></div>';var pv=a.dataset.lastView||'';var cv=S.v+S.ca+S.yl+S.ui;var isTabSwitch=(cv===pv);a.innerHTML=h;if(!isTabSwitch)window.scrollTo(0,0);a.dataset.lastView=cv;a.classList.remove('tab-fade');if(isTabSwitch){void a.offsetWidth;a.classList.add('tab-fade');}}
@@ -1524,8 +1469,7 @@ function tgSec(id){var el=document.getElementById('sc_'+id);var btn=document.get
 function openStem(){
   var d=window._stemData;if(!d)return;
   var old=document.getElementById('stemOverlay');if(old)old.remove();
-  var stemResources=d.lesson?'<div class="sg-section sg-refs"><div class="sg-label"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h8M4 8h8M4 12h5"/><rect x="2" y="2" width="12" height="12" rx="2"/></svg> Resources</div>'+renderLibraryLessonResource(d.lesson)+'</div>':'';
-  var html='<div class="stem-modal"><div class="stem-modal-close" onclick="closeStem()">✕</div><div class="stem-modal-header"><div class="stem-modal-icon">🔬</div><div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ac);margin-bottom:4px">STEM Design Cycle</div><div style="font-size:18px;font-weight:700;color:#FFF;line-height:1.3">'+d.toolLabel+'</div></div></div><div class="stem-modal-body"><div class="stem-label" style="margin-bottom:12px">🔄 Empathise → Define → Ideate → Prototype → Test</div><div class="sg-desc" style="font-size:14px;line-height:1.55">'+linkifyDesc(d.desc)+'</div>'+stemResources+'<div class="sg-fb" style="margin-top:14px;padding-top:14px;border-top:1px solid #333"><button class="sg-used" onclick="markUsed('+d.usi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+d.fbi+')" class="sg-fb-btn">💬 Feedback</button><button class="sg-react-btn sg-react-up" onclick="reactFB('+d.fbi+',\'up\',this)">👍</button><button class="sg-react-btn" onclick="reactFB('+d.fbi+',\'down\',this)">👎</button></div></div></div></div>';
+  var html='<div class="stem-modal"><div class="stem-modal-close" onclick="closeStem()">✕</div><div class="stem-modal-header"><div class="stem-modal-icon">🔬</div><div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ac);margin-bottom:4px">STEM Design Cycle</div><div style="font-size:18px;font-weight:700;color:#FFF;line-height:1.3">'+d.toolLabel+'</div></div></div><div class="stem-modal-body"><div class="stem-label" style="margin-bottom:12px">🔄 Empathise → Define → Ideate → Prototype → Test</div><div class="sg-desc" style="font-size:14px;line-height:1.55">'+linkifyDesc(d.desc)+'</div><div class="sg-copilot"><button class="sg-copilot-btn" onclick="openCopilotHelper('+d.cpi+',this)"><span class="sg-copilot-ico">🤖</span><span style="flex:1"><span class="sg-copilot-main">How do I teach this?</span><span class="sg-copilot-sub">Copies a practical prompt, opens Copilot, then you paste and send.</span></span></button></div><div class="sg-fb" style="margin-top:14px;padding-top:14px;border-top:1px solid #333"><button class="sg-used" onclick="markUsed('+d.usi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+d.fbi+')" class="sg-fb-btn">💬 Feedback</button><button class="sg-react-btn sg-react-up" onclick="reactFB('+d.fbi+',\'up\',this)">👍</button><button class="sg-react-btn" onclick="reactFB('+d.fbi+',\'down\',this)">👎</button></div></div></div></div>';
   var overlay=document.createElement('div');
   overlay.id='stemOverlay';
   overlay.className='stem-overlay';
