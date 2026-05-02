@@ -302,11 +302,11 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 
 /* ===== Copilot teaching helper ===== */
 .sg-copilot{margin-top:16px;padding-top:14px;border-top:1px solid var(--bd)}
-.sg-copilot-btn{width:100%;display:flex;align-items:center;gap:12px;text-align:left;background:linear-gradient(135deg,rgba(56,189,248,.14),rgba(147,51,234,.10));border:1px solid rgba(56,189,248,.45);border-radius:14px;color:#EAF7FF;padding:13px 15px;font-family:inherit;cursor:pointer;transition:transform .15s,border-color .15s,background .15s;box-shadow:0 0 0 rgba(56,189,248,0)}
+.sg-copilot-btn{display:inline-flex;align-items:center;gap:9px;text-align:left;background:linear-gradient(135deg,rgba(56,189,248,.14),rgba(147,51,234,.10));border:1px solid rgba(56,189,248,.45);border-radius:999px;color:#EAF7FF;padding:10px 14px;font-family:inherit;cursor:pointer;transition:transform .15s,border-color .15s,background .15s;box-shadow:0 0 0 rgba(56,189,248,0)}
 .sg-copilot-btn:hover{transform:translateY(-1px);border-color:#38BDF8;background:linear-gradient(135deg,rgba(56,189,248,.22),rgba(147,51,234,.16));box-shadow:0 0 18px rgba(56,189,248,.10)}
-.sg-copilot-ico{width:34px;height:34px;border-radius:10px;background:#38BDF820;color:#38BDF8;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
-.sg-copilot-main{font-size:14px;font-weight:800;letter-spacing:-.2px;color:#FFF}
-.sg-copilot-sub{font-size:12px;color:#A7C7D9;line-height:1.35;margin-top:2px;font-weight:500}
+.sg-copilot-ico{width:24px;height:24px;border-radius:8px;background:#38BDF820;color:#38BDF8;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px}
+.sg-copilot-main{font-size:13px;font-weight:800;letter-spacing:-.2px;color:#FFF;white-space:nowrap}
+.sg-copilot-sub{display:none}
 .copilot-overlay{position:fixed;inset:0;background:rgba(0,0,0,.76);z-index:100000;display:flex;align-items:center;justify-content:center;padding:18px;opacity:0;pointer-events:none;transition:opacity .2s}
 .copilot-overlay.open{opacity:1;pointer-events:all}
 .copilot-modal{background:#1A1A1A;border:2px solid #38BDF8;border-radius:22px;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 80px rgba(0,0,0,.45)}
@@ -498,35 +498,30 @@ function openCopilotHelper(idx,btn){
   if(!d)return;
   var prompt=buildCopilotPrompt(d);
   if(btn){btn.disabled=true;btn.style.opacity='.75';}
-  var opened=null;
-  try{opened=window.open(COPILOT_CHAT_URL,'_blank'); if(opened) opened.opener=null;}catch(e){opened=null;}
   copyPromptToClipboard(prompt).then(function(copied){
-    showCopilotInstructions(prompt,copied,!!opened,d);
+    showCopilotInstructions(prompt,copied,d);
   }).finally(function(){
     if(btn){btn.disabled=false;btn.style.opacity='';}
   });
 }
-function showCopilotInstructions(prompt,copied,opened,d){
+function showCopilotInstructions(prompt,copied,d){
   var old=document.getElementById('copilotOverlay');if(old)old.remove();
   var status=copied
-    ? '✅ Copilot prompt copied. Nothing has been sent yet — you stay in control.'
+    ? '✅ Copilot prompt copied. Nothing has been sent yet — paste it into Copilot when you are ready.'
     : '⚠️ I could not copy automatically. Use the “Copy prompt again” button or select the prompt below manually.';
   var warnClass=copied?'':' warn';
-  var openLine=opened
-    ? '<li>Copilot has opened in a new tab. Switch to that tab.</li>'
-    : '<li>Your browser blocked the new tab. Click <b>Open Copilot</b> below.</li>';
   var html='<div class="copilot-modal"><div class="copilot-modal-head"><div class="copilot-modal-icon">🤖</div><div><div class="copilot-modal-title">How do I teach this?</div><div class="copilot-modal-sub">A ready-to-use prompt has been prepared for Microsoft 365 Copilot Chat.</div></div></div><div class="copilot-modal-body">'
     +'<div class="copilot-status'+warnClass+'">'+status+'</div>'
     +'<ol class="copilot-steps">'
-    +openLine
-    +'<li>Click inside the Copilot message box.</li>'
+    +'<li>Click <b>Open Copilot</b> below when you are ready.</li>'
+    +'<li>In Copilot, click inside the message box.</li>'
     +'<li>Paste the prompt using <b>Ctrl + V</b> on Windows or <b>Command + V</b> on Mac.</li>'
     +'<li>Read the prompt, adjust anything you want, then click send.</li>'
     +'</ol>'
     +'<div style="font-size:12px;color:#AAA;font-weight:700;text-transform:uppercase;letter-spacing:.6px">Prompt preview</div>'
     +'<textarea class="copilot-prompt-box" id="copilotPromptBox" readonly>'+escapeTextarea(prompt)+'</textarea>'
-    +'<div class="copilot-actions"><button class="copilot-primary" onclick="copyCopilotPromptAgain()">📋 Copy prompt again</button><a class="copilot-secondary" href="'+COPILOT_CHAT_URL+'" target="_blank" rel="noopener noreferrer">↗ Open Copilot</a><button class="copilot-secondary" onclick="closeCopilotInstructions()">Close</button></div>'
-    +'<div class="copilot-note">Tip: Copilot will not receive anything until you paste the prompt and press send. This lets you check the wording first.</div>'
+    +'<div class="copilot-actions"><a class="copilot-primary" href="'+COPILOT_CHAT_URL+'" target="_blank" rel="noopener noreferrer">↗ Open Copilot</a><button class="copilot-secondary" onclick="copyCopilotPromptAgain()">📋 Copy prompt again</button><button class="copilot-secondary" onclick="closeCopilotInstructions()">Close</button></div>'
+    +'<div class="copilot-note">Nothing opens automatically. Copilot will not receive anything until you open it, paste the prompt, review it and press send.</div>'
     +'</div></div>';
   var overlay=document.createElement('div');
   overlay.id='copilotOverlay';
@@ -1222,7 +1217,7 @@ if(s.ref||s.docKey){var _rl='<div class="sg-section sg-refs"><div class="sg-labe
 h+='<div class="sg-section"><div class="sg-label">'+I.s+' Value Add</div><div class="vb" style="border-left-color:'+tc+'">'+va+'</div></div>';
 var _cpResources=[];if(s.docKey&&window.DOCS&&DOCS[s.docKey]){_cpResources.push({label:DOCS[s.docKey].n,url:DOCS[s.docKey].url});}if(s.ref){s.ref.forEach(function(r){_cpResources.push({label:r.label,url:r.url});});}
 var _cpi=window._copilotData.length;window._copilotData.push({campus:CN[ca],year:yl,theme:u.th,centralIdea:u.ci,linesOfInquiry:lois.join('; '),tool:s.t,description:s.d,phase:'Idea #'+(si+1),resources:_cpResources});
-h+='<div class="sg-copilot"><button class="sg-copilot-btn" onclick="openCopilotHelper('+_cpi+',this)"><span class="sg-copilot-ico">🤖</span><span style="flex:1"><span class="sg-copilot-main">How do I teach this?</span><span class="sg-copilot-sub">Copies a practical prompt, opens Copilot, then you paste and send.</span></span></button></div>';
+h+='<div class="sg-copilot"><button class="sg-copilot-btn" onclick="openCopilotHelper('+_cpi+',this)"><span class="sg-copilot-ico">🤖</span><span class="sg-copilot-main">How do I teach this?</span></button></div>';
 
 h+='<div class="sg-extras">';
 var sid2='s'+window._sid++;
@@ -1469,7 +1464,7 @@ function tgSec(id){var el=document.getElementById('sc_'+id);var btn=document.get
 function openStem(){
   var d=window._stemData;if(!d)return;
   var old=document.getElementById('stemOverlay');if(old)old.remove();
-  var html='<div class="stem-modal"><div class="stem-modal-close" onclick="closeStem()">✕</div><div class="stem-modal-header"><div class="stem-modal-icon">🔬</div><div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ac);margin-bottom:4px">STEM Design Cycle</div><div style="font-size:18px;font-weight:700;color:#FFF;line-height:1.3">'+d.toolLabel+'</div></div></div><div class="stem-modal-body"><div class="stem-label" style="margin-bottom:12px">🔄 Empathise → Define → Ideate → Prototype → Test</div><div class="sg-desc" style="font-size:14px;line-height:1.55">'+linkifyDesc(d.desc)+'</div><div class="sg-copilot"><button class="sg-copilot-btn" onclick="openCopilotHelper('+d.cpi+',this)"><span class="sg-copilot-ico">🤖</span><span style="flex:1"><span class="sg-copilot-main">How do I teach this?</span><span class="sg-copilot-sub">Copies a practical prompt, opens Copilot, then you paste and send.</span></span></button></div><div class="sg-fb" style="margin-top:14px;padding-top:14px;border-top:1px solid #333"><button class="sg-used" onclick="markUsed('+d.usi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+d.fbi+')" class="sg-fb-btn">💬 Feedback</button><button class="sg-react-btn sg-react-up" onclick="reactFB('+d.fbi+',\'up\',this)">👍</button><button class="sg-react-btn" onclick="reactFB('+d.fbi+',\'down\',this)">👎</button></div></div></div></div>';
+  var html='<div class="stem-modal"><div class="stem-modal-close" onclick="closeStem()">✕</div><div class="stem-modal-header"><div class="stem-modal-icon">🔬</div><div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ac);margin-bottom:4px">STEM Design Cycle</div><div style="font-size:18px;font-weight:700;color:#FFF;line-height:1.3">'+d.toolLabel+'</div></div></div><div class="stem-modal-body"><div class="stem-label" style="margin-bottom:12px">🔄 Empathise → Define → Ideate → Prototype → Test</div><div class="sg-desc" style="font-size:14px;line-height:1.55">'+linkifyDesc(d.desc)+'</div><div class="sg-copilot"><button class="sg-copilot-btn" onclick="openCopilotHelper('+d.cpi+',this)"><span class="sg-copilot-ico">🤖</span><span class="sg-copilot-main">How do I teach this?</span></button></div><div class="sg-fb" style="margin-top:14px;padding-top:14px;border-top:1px solid #333"><button class="sg-used" onclick="markUsed('+d.usi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+d.fbi+')" class="sg-fb-btn">💬 Feedback</button><button class="sg-react-btn sg-react-up" onclick="reactFB('+d.fbi+',\'up\',this)">👍</button><button class="sg-react-btn" onclick="reactFB('+d.fbi+',\'down\',this)">👎</button></div></div></div></div>';
   var overlay=document.createElement('div');
   overlay.id='stemOverlay';
   overlay.className='stem-overlay';
