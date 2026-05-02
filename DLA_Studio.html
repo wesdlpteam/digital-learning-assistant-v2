@@ -9783,6 +9783,519 @@ setInterval(async()=>{
 })();
 /* ===== end DLA hotfix ===== */
 
+
+
+/* ===== DLA hotfix: Bulk AI Chat crash guard + safe apply =====
+   Prevents Bulk AI errors from taking down the Studio and makes approved changes apply defensively. */
+(function(){
+  const BULK_GUARD_VERSION = 'bulk-ai-chat-crash-guard-v1';
+  if(window.__DLA_BULK_CRASH_GUARD__ === BULK_GUARD_VERSION) return;
+  window.__DLA_BULK_CRASH_GUARD__ = BULK_GUARD_VERSION;
+
+  function bgEsc_(value){
+    try { if(typeof esc === 'function') return esc(value); } catch(e){}
+    return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+    });
+  }
+
+  function bgStopUi_(){
+    try { if(typeof hideReasoningSteps === 'function') hideReasoningSteps(); } catch(e){}
+    try { if(typeof stopProgress === 'function') stopProgress(); } catch(e){}
+    try {
+      const prog = document.getElementById('bulk-ai-progress');
+      if(prog) prog.style.display = 'none';
+    } catch(e){}
+    try {
+      const send = document.getElementById('btn-bulk-chat-send');
+      if(send){ send.disabled = false; send.textContent = 'Send →'; }
+    } catch(e){}
+    try {
+      const apply = document.getElementById('popup-apply-btn');
+      if(apply){ apply.disabled = false; apply.style.opacity = '1'; }
+    } catch(e){}
+  }
+
+  function bgReport_(err, where){
+    const msg = err && err.message ? err.message : String(err || 'Unknown error');
+    console.error('DLA Bulk AI Chat crash guard caught error' + (where ? ' in ' + where : '') + ':', err);
+    bgStopUi_();
+    try { if(typeof bulkChatState !== 'undefined') bulkChatState = 'idle'; } catch(e){}
+    const html = '❌ Bulk AI Chat stopped safely instead of crashing the Studio.' +
+      (where ? '<br><span style="font-size:11px;color:var(--dim)">Where: '+bgEsc_(where)+'</span>' : '') +
+      '<br><br><span style="font-size:12px;color:#f87171">' + bgEsc_(msg) + '</span>' +
+      '<br><br><span style="font-size:12px;color:var(--dim)">No further changes were applied after this error. Click ↻ to reset the Bulk AI Chat, then try a smaller or more specific request.</span>';
+    try {
+      if(typeof bulkChatAddMessage === 'function') bulkChatAddMessage('assistant', html);
+      else if(typeof setStatus === 'function') setStatus('Bulk AI Chat error: ' + msg, 'error');
+    } catch(e){
+      try { if(typeof setStatus === 'function') setStatus('Bulk AI Chat error: ' + msg, 'error'); } catch(_){}
+    }
+  }
+
+  function bgCleanText_(value){
+    try { if(typeof cleanSuggestionText_ === 'function') return cleanSuggestionText_(value); } catch(e){}
+    return String(value == null ? '' : value).replace(/\s+/g,' ').trim();
+  }
+
+  function bgCleanUrl_(value){
+    try { if(typeof cleanMinecraftLessonUrl_ === 'function') return cleanMinecraftLessonUrl_(value); } catch(e){}
+    return String(value == null ? '' : value).trim();
+  }
+
+  function bgNormaliseIndex_(value, fallback){
+    try { if(typeof normaliseChangeIndex === 'function') return normaliseChangeIndex(value, fallback); } catch(e){}
+    const n = Number(value);
+    return Number.isFinite(n) ? n : fallback;
+  }
+
+  function bgNormaliseChange_(raw){
+    const c = raw || {};
+    let out = c;
+    try { if(typeof normaliseMinecraftChangeForEntry_ === 'function') out = normaliseMinecraftChangeForEntry_(c); } catch(e){ out = c; }
+    return {
+      ...out,
+      entryIdx: bgNormaliseIndex_(out.entryIdx != null ? out.entryIdx : out.entry_idx, -1),
+      sugIdx: bgNormaliseIndex_(out.sugIdx != null ? out.sugIdx : out.sug_idx, 0),
+      t: bgCleanText_(out.t || out.tool || out.technology || out.name || ''),
+      d: bgCleanText_(out.d || out.desc || out.description || out.integration_idea || out.activity || out.suggestion || ''),
+      url: bgCleanUrl_(out.url || out.lessonUrl || ''),
+      auditReason: bgCleanText_(out.auditReason || out.reason || out.flagReason || out.reviewReason || out.problem || '')
+    };
+  }
+
+  function bgValidChange_(c){
+    if(!c || !Number.isFinite(Number(c.entryIdx)) || !Number.isFinite(Number(c.sugIdx))) return false;
+    if(typeof DATA === 'undefined' || !Array.isArray(DATA) || !DATA[c.entryIdx]) return false;
+    if(!String(c.t || '').trim() && !String(c.d || '').trim()) return false;
+    return true;
+  }
+
+  function bgSafeSave_(){
+    try{
+      if(typeof saveToDrive !== 'function') return;
+      const result = saveToDrive();
+      if(result && typeof result.catch === 'function'){
+        result.catch(function(err){ bgReport_(err, 'saveToDrive after Bulk AI changes'); });
+      }
+    }catch(err){
+      bgReport_(err, 'saveToDrive after Bulk AI changes');
+    }
+  }
+
+  // Catch unhandled errors while Bulk AI is active or while its review popup is open.
+  window.addEventListener('error', function(ev){
+    try{
+      const bulkActive = (typeof bulkChatState !== 'undefined' && bulkChatState && bulkChatState !== 'idle') || !!document.getElementById('changes-popup-overlay');
+      if(!bulkActive) return;
+      ev.preventDefault();
+      bgReport_(ev.error || ev.message, 'browser error');
+    }catch(e){}
+  });
+  window.addEventListener('unhandledrejection', function(ev){
+    try{
+      const bulkActive = (typeof bulkChatState !== 'undefined' && bulkChatState && bulkChatState !== 'idle') || !!document.getElementById('changes-popup-overlay');
+      if(!bulkActive) return;
+      ev.preventDefault();
+      bgReport_(ev.reason, 'unhandled promise');
+    }catch(e){}
+  });
+
+  if(typeof bulkChatSend === 'function'){
+    const oldBulkChatSend = bulkChatSend;
+    bulkChatSend = window.bulkChatSend = async function(){
+      try{
+        const btn = document.getElementById('btn-bulk-chat-send');
+        if(btn){ btn.disabled = true; btn.textContent = 'Working…'; }
+        await oldBulkChatSend.apply(this, arguments);
+      }catch(err){
+        bgReport_(err, 'bulkChatSend');
+      }finally{
+        try{
+          const btn = document.getElementById('btn-bulk-chat-send');
+          if(btn){ btn.disabled = false; btn.textContent = 'Send →'; }
+        }catch(e){}
+      }
+    };
+  }
+
+  if(typeof bulkChatSelectOption === 'function'){
+    const oldBulkChatSelectOption = bulkChatSelectOption;
+    bulkChatSelectOption = window.bulkChatSelectOption = function(){
+      try{
+        return oldBulkChatSelectOption.apply(this, arguments);
+      }catch(err){
+        bgReport_(err, 'bulkChatSelectOption');
+      }
+    };
+  }
+
+  if(typeof showChangesPopup === 'function'){
+    const oldShowChangesPopup = showChangesPopup;
+    showChangesPopup = window.showChangesPopup = function(changes){
+      try{
+        const cleaned = (changes || []).map(bgNormaliseChange_).filter(bgValidChange_);
+        if(!cleaned.length){
+          if(typeof bulkChatAddMessage === 'function'){
+            bulkChatAddMessage('assistant', '⚠️ I generated possible changes, but none were safe to show in the review popup. This usually means the AI returned invalid entry/slot numbers or empty suggestions. Try running the request again with a smaller scope.');
+          }
+          return;
+        }
+        return oldShowChangesPopup.call(this, cleaned);
+      }catch(err){
+        bgReport_(err, 'showChangesPopup');
+      }
+    };
+  }
+
+  // Replace the popup apply flow with a defensive version that cannot take the whole Studio down.
+  applyChangesFromPopup = window.applyChangesFromPopup = function(){
+    const overlay = document.getElementById('changes-popup-overlay');
+    if(!overlay) return;
+    const applyBtn = document.getElementById('popup-apply-btn');
+    try{
+      if(applyBtn){ applyBtn.disabled = true; applyBtn.textContent = 'Applying…'; applyBtn.style.opacity = '0.65'; }
+      const changes = (window._popupChanges || []).map(bgNormaliseChange_).filter(bgValidChange_);
+      const states = window._popupStates || [];
+      const approved = changes.filter(function(c, i){ return states[i] === 'approved'; });
+      let applied = 0;
+      let skippedDupes = 0;
+      let skippedInvalid = 0;
+      let appliedRealismFixes = false;
+
+      if(approved.length > 0 && typeof createSnapshot === 'function'){
+        try{
+          const snapName = window._snapshotReason || `Before applying ${approved.length} bulk change${approved.length!==1?'s':''}`;
+          createSnapshot(snapName);
+          delete window._snapshotReason;
+        }catch(e){ console.warn('Snapshot before bulk apply failed:', e); }
+      }
+
+      approved.forEach(function(c){
+        try{
+          const entryIdx = Number(c.entryIdx);
+          const sugIdx = Number(c.sugIdx);
+          const t = bgCleanText_(c.t || c.tool || c.technology || c.name || '');
+          const d = bgCleanText_(c.d || c.desc || c.description || c.integration_idea || c.activity || c.suggestion || '');
+          const url = bgCleanUrl_(c.url || c.lessonUrl || '');
+          if(!DATA[entryIdx]){ skippedInvalid++; return; }
+          if(!t || !d){ skippedInvalid++; return; }
+          if(typeof wouldDupeToolProposalInEntry === 'function' && wouldDupeToolProposalInEntry(DATA[entryIdx], t, sugIdx)){
+            skippedDupes++;
+            return;
+          }
+          const currentSugs = (typeof getSugs === 'function') ? getSugs(DATA[entryIdx]) : (Array.isArray(DATA[entryIdx].s) ? DATA[entryIdx].s : []);
+          if(!Array.isArray(DATA[entryIdx].s)){
+            DATA[entryIdx].s = currentSugs.map(function(s){
+              return {
+                t: (typeof sugTool === 'function') ? sugTool(s) : (s && (s.t || s.tool || s.technology || s.name) || ''),
+                d: (typeof sugDesc === 'function') ? sugDesc(s) : (s && (s.d || s.desc || s.description || s.integration_idea || s.activity) || ''),
+                ...(s && (s.url || s.lessonUrl) ? {url:s.url || s.lessonUrl} : {})
+              };
+            });
+          }
+          if(sugIdx < 0 || sugIdx >= DATA[entryIdx].s.length){ skippedInvalid++; return; }
+          DATA[entryIdx].s[sugIdx] = url ? {t:t, d:d, url:url} : {t:t, d:d};
+          DATA[entryIdx].audited = true;
+          applied++;
+          try { if(typeof isRealismAuditChange_ === 'function' && isRealismAuditChange_(c)) appliedRealismFixes = true; } catch(e){}
+          try { if(typeof markEntryNeedsHumanRecheck_ === 'function') markEntryNeedsHumanRecheck_(entryIdx, 'AI suggestion change applied after human verification'); } catch(e){}
+        }catch(oneErr){
+          skippedInvalid++;
+          console.warn('Skipped one Bulk AI change after apply error:', oneErr, c);
+        }
+      });
+
+      try { overlay.remove(); } catch(e){}
+      delete window._popupStates;
+      delete window._popupChanges;
+      delete window._popupUpdateCounter;
+
+      bgSafeSave_();
+
+      const bits = [];
+      if(skippedDupes) bits.push(`skipped ${skippedDupes} duplicate${skippedDupes!==1?'s':''}`);
+      if(skippedInvalid) bits.push(`skipped ${skippedInvalid} invalid change${skippedInvalid!==1?'s':''}`);
+      const note = bits.length ? ' (' + bits.join(', ') + ')' : '';
+
+      if(appliedRealismFixes && typeof rescanRealismAfterApprovedFixes_ === 'function'){
+        try { if(typeof setStatus === 'function') setStatus(`${applied} suggestion${applied!==1?'s':''} updated and saved${note} — rescanning realism audit…`, 'loading'); } catch(e){}
+        setTimeout(function(){
+          try { rescanRealismAfterApprovedFixes_(applied, skippedDupes); }
+          catch(err){ bgReport_(err, 'rescanRealismAfterApprovedFixes'); }
+        }, 250);
+      } else {
+        try { if(typeof setStatus === 'function') setStatus(`${applied} suggestion${applied!==1?'s':''} updated and saved${note}`); } catch(e){}
+      }
+
+      try { if(typeof renderAuditChart === 'function') renderAuditChart(); } catch(e){ console.warn('renderAuditChart after bulk apply failed:', e); }
+      try { if(typeof renderBrowse === 'function') renderBrowse(); } catch(e){ console.warn('renderBrowse after bulk apply failed:', e); }
+      try { if(typeof CURRENT_ENTRY_IDX !== 'undefined' && CURRENT_ENTRY_IDX !== null && typeof renderEntry === 'function') renderEntry(CURRENT_ENTRY_IDX); } catch(e){ console.warn('renderEntry after bulk apply failed:', e); }
+    }catch(err){
+      if(applyBtn){ applyBtn.disabled = false; applyBtn.textContent = '✓ Apply approved changes'; applyBtn.style.opacity = '1'; }
+      bgReport_(err, 'applyChangesFromPopup');
+    }
+  };
+})();
+/* ===== end DLA hotfix ===== */
+
+
+/* ===== DLA hotfix: prevent Page Unresponsive during Bulk/Realism apply =====
+   Moves heavy Bulk AI apply and Realism rescan work into small browser-yielding chunks,
+   and avoids expensive off-screen re-renders after applying changes. */
+(function(){
+  const PERF_YIELD_MS = 0;
+  const PERF_APPLY_CHUNK = 8;
+  const PERF_AUDIT_CHUNK = 6;
+
+  function perfYield_(){ return new Promise(function(resolve){ setTimeout(resolve, PERF_YIELD_MS); }); }
+
+  function perfPanelActive_(id){
+    try{ const el = document.getElementById(id); return !!(el && el.classList.contains('active')); }
+    catch(e){ return false; }
+  }
+
+  function perfSetStatus_(msg, type){
+    try{ if(typeof setStatus === 'function') setStatus(msg, type); } catch(e){}
+  }
+
+  function perfCleanText_(value){
+    try { if(typeof cleanSuggestionText_ === 'function') return cleanSuggestionText_(value); } catch(e){}
+    return String(value == null ? '' : value).replace(/\s+/g,' ').trim();
+  }
+
+  function perfCleanUrl_(value){
+    try { if(typeof cleanMinecraftLessonUrl_ === 'function') return cleanMinecraftLessonUrl_(value); } catch(e){}
+    return String(value == null ? '' : value).trim();
+  }
+
+  function perfNormIndex_(value, fallback){
+    try { if(typeof normaliseChangeIndex === 'function') return normaliseChangeIndex(value, fallback); } catch(e){}
+    const n = Number(value);
+    return Number.isFinite(n) ? n : fallback;
+  }
+
+  function perfNormChange_(raw){
+    const original = raw || {};
+    let c = original;
+    try { if(typeof normaliseMinecraftChangeForEntry_ === 'function') c = normaliseMinecraftChangeForEntry_(original); } catch(e){ c = original; }
+    return Object.assign({}, c, {
+      entryIdx: perfNormIndex_(c.entryIdx != null ? c.entryIdx : c.entry_idx, -1),
+      sugIdx: perfNormIndex_(c.sugIdx != null ? c.sugIdx : c.sug_idx, 0),
+      t: perfCleanText_(c.t || c.tool || c.technology || c.name || ''),
+      d: perfCleanText_(c.d || c.desc || c.description || c.integration_idea || c.activity || c.suggestion || ''),
+      url: perfCleanUrl_(c.url || c.lessonUrl || ''),
+      auditReason: perfCleanText_(c.auditReason || c.reason || c.flagReason || c.reviewReason || c.problem || '')
+    });
+  }
+
+  function perfValidChange_(c){
+    if(!c || !Number.isFinite(Number(c.entryIdx)) || !Number.isFinite(Number(c.sugIdx))) return false;
+    if(typeof DATA === 'undefined' || !Array.isArray(DATA) || !DATA[c.entryIdx]) return false;
+    return !!(String(c.t || '').trim() || String(c.d || '').trim());
+  }
+
+  function perfSafeSave_(){
+    try{
+      if(typeof saveToDrive !== 'function') return;
+      const result = saveToDrive();
+      if(result && typeof result.catch === 'function'){
+        result.catch(function(err){
+          console.warn('Drive save failed after Bulk/Realism apply:', err);
+          perfSetStatus_('Changes applied locally, but Drive save failed: ' + (err && err.message ? err.message : err), 'error');
+        });
+      }
+    }catch(err){
+      console.warn('Drive save failed after Bulk/Realism apply:', err);
+      perfSetStatus_('Changes applied locally, but Drive save failed: ' + (err && err.message ? err.message : err), 'error');
+    }
+  }
+
+  function perfRenderAfterApply_(changedIdxs){
+    const ids = Array.from(changedIdxs || []);
+    setTimeout(function(){
+      try{
+        // Do not rebuild every Browse row while the user is in Bulk/Realism. That large DOM rebuild was one source of freezes.
+        if(perfPanelActive_('panel-browse') && typeof renderBrowse === 'function') renderBrowse();
+      }catch(e){ console.warn('Deferred Browse render failed:', e); }
+    }, 80);
+    setTimeout(function(){
+      try{
+        // Audit chart is only visible in the Audit tab, not Bulk Tools.
+        if(perfPanelActive_('panel-audit') && typeof renderAuditChart === 'function') renderAuditChart();
+      }catch(e){ console.warn('Deferred Audit chart render failed:', e); }
+    }, 140);
+    setTimeout(function(){
+      try{
+        if(typeof CURRENT_ENTRY_IDX !== 'undefined' && CURRENT_ENTRY_IDX !== null && ids.indexOf(CURRENT_ENTRY_IDX) !== -1 && typeof renderEntry === 'function'){
+          renderEntry(CURRENT_ENTRY_IDX);
+        }
+      }catch(e){ console.warn('Deferred Entry render failed:', e); }
+    }, 180);
+  }
+
+  // Cooperative, non-blocking Realism scan.
+  if(typeof auditEntrySuggestions === 'function'){
+    runFullRealismAudit = window.runFullRealismAudit = async function(){
+      const btn = document.getElementById('btn-full-realism-audit');
+      if(btn){ btn.disabled = true; btn.textContent = 'Scanning…'; }
+      const all = [];
+      const total = (Array.isArray(DATA) ? DATA.length : 0);
+      try{
+        for(let i = 0; i < total; i++){
+          all.push(...auditEntrySuggestions(DATA[i], i));
+          if(i % PERF_AUDIT_CHUNK === PERF_AUDIT_CHUNK - 1){
+            if(btn) btn.textContent = `Scanning ${i + 1}/${total}…`;
+            perfSetStatus_(`Scanning suggestions ${i + 1}/${total}…`, 'loading');
+            await perfYield_();
+          }
+        }
+        all.sort(function(a,b){
+          const weight = {high:0, medium:1, low:2};
+          return (weight[resultHighestSeverity(a)] || 9) - (weight[resultHighestSeverity(b)] || 9)
+            || String(a.yl).localeCompare(String(b.yl))
+            || String(a.th).localeCompare(String(b.th));
+        });
+        REALISM_AUDIT_RESULTS = all;
+        await perfYield_();
+        if(typeof renderRealismResults === 'function'){
+          renderRealismResults(all, 'realism-audit-result', {maxHeight:'560px', limit:100});
+        }
+        perfSetStatus_(all.length ? `Realism audit complete — ${all.length} flagged` : 'Realism audit complete — no issues found');
+        return all;
+      }catch(err){
+        console.error('Realism audit failed:', err);
+        perfSetStatus_('Realism audit failed: ' + (err && err.message ? err.message : err), 'error');
+        return all;
+      }finally{
+        if(btn){ btn.disabled = false; btn.textContent = 'Scan all suggestions'; }
+      }
+    };
+  }
+
+  rescanRealismAfterApprovedFixes_ = window.rescanRealismAfterApprovedFixes_ = async function(appliedCount, skippedDupes){
+    try{
+      const before = (REALISM_AUDIT_RESULTS || []).length;
+      const results = await runFullRealismAudit();
+      const after = (results || REALISM_AUDIT_RESULTS || []).length;
+      const reduced = Math.max(0, before - after);
+      const host = document.getElementById('realism-audit-result');
+      if(host){
+        host.insertAdjacentHTML('afterbegin', `<div style="padding:12px 14px;background:rgba(197,232,74,.09);border:1px solid rgba(197,232,74,.32);border-left:4px solid var(--lime);border-radius:10px;margin-bottom:10px">
+          <div style="font-size:13px;font-weight:900;color:var(--lime);margin-bottom:4px">✓ Re-scanned after applying fixes</div>
+          <div style="font-size:12px;color:#ddd;line-height:1.55">Applied ${appliedCount} approved fix${appliedCount!==1?'es':''}${skippedDupes?` and skipped ${skippedDupes} duplicate${skippedDupes!==1?'s':''}`:''}. ${reduced ? `The audit now shows ${reduced} fewer flag${reduced!==1?'s':''}.` : 'The audit has refreshed below so remaining flags are current.'}</div>
+        </div>`);
+      }
+    }catch(e){
+      console.warn('Auto-rescan after approved fixes failed:', e);
+      perfSetStatus_('Fixes saved, but automatic rescan failed — run Scan all suggestions again.', 'error');
+    }
+  };
+
+  // Main fix: applying approved changes now yields between small batches so Chrome does not flag the page as unresponsive.
+  applyChangesFromPopup = window.applyChangesFromPopup = async function(){
+    const overlay = document.getElementById('changes-popup-overlay');
+    if(!overlay) return;
+    const applyBtn = document.getElementById('popup-apply-btn');
+    try{
+      if(applyBtn){ applyBtn.disabled = true; applyBtn.textContent = 'Applying…'; applyBtn.style.opacity = '0.65'; }
+      const rawChanges = window._popupChanges || [];
+      const states = window._popupStates || [];
+      const approved = [];
+      rawChanges.forEach(function(raw, i){
+        if(states[i] === 'approved'){
+          const c = perfNormChange_(raw);
+          if(perfValidChange_(c)) approved.push(c);
+        }
+      });
+
+      let applied = 0;
+      let skippedDupes = 0;
+      let skippedInvalid = 0;
+      let appliedRealismFixes = false;
+      const changedIdxs = new Set();
+
+      if(approved.length > 0 && typeof createSnapshot === 'function'){
+        try{
+          const snapName = window._snapshotReason || `Before applying ${approved.length} bulk change${approved.length!==1?'s':''}`;
+          createSnapshot(snapName);
+          delete window._snapshotReason;
+        }catch(e){ console.warn('Snapshot before apply failed:', e); }
+      }
+
+      for(let i = 0; i < approved.length; i++){
+        const c = approved[i];
+        try{
+          const entryIdx = Number(c.entryIdx);
+          const sugIdx = Number(c.sugIdx);
+          const t = perfCleanText_(c.t || c.tool || c.technology || c.name || '');
+          const d = perfCleanText_(c.d || c.desc || c.description || c.integration_idea || c.activity || c.suggestion || '');
+          const url = perfCleanUrl_(c.url || c.lessonUrl || '');
+          if(!DATA[entryIdx] || !t || !d){ skippedInvalid++; continue; }
+          if(typeof wouldDupeToolProposalInEntry === 'function' && wouldDupeToolProposalInEntry(DATA[entryIdx], t, sugIdx)){
+            skippedDupes++;
+            continue;
+          }
+          const currentSugs = (typeof getSugs === 'function') ? getSugs(DATA[entryIdx]) : (Array.isArray(DATA[entryIdx].s) ? DATA[entryIdx].s : []);
+          if(!Array.isArray(DATA[entryIdx].s)){
+            DATA[entryIdx].s = currentSugs.map(function(s){
+              const tool = (typeof sugTool === 'function') ? sugTool(s) : (s && (s.t || s.tool || s.technology || s.name) || '');
+              const desc = (typeof sugDesc === 'function') ? sugDesc(s) : (s && (s.d || s.desc || s.description || s.integration_idea || s.activity) || '');
+              const item = {t:tool, d:desc};
+              if(s && (s.url || s.lessonUrl)) item.url = s.url || s.lessonUrl;
+              return item;
+            });
+          }
+          if(sugIdx < 0 || sugIdx >= DATA[entryIdx].s.length){ skippedInvalid++; continue; }
+          DATA[entryIdx].s[sugIdx] = url ? {t:t, d:d, url:url} : {t:t, d:d};
+          DATA[entryIdx].audited = true;
+          applied++;
+          changedIdxs.add(entryIdx);
+          try { if(typeof isRealismAuditChange_ === 'function' && isRealismAuditChange_(c)) appliedRealismFixes = true; } catch(e){}
+          try { if(typeof markEntryNeedsHumanRecheck_ === 'function') markEntryNeedsHumanRecheck_(entryIdx, 'AI suggestion change applied after human verification'); } catch(e){}
+        }catch(oneErr){
+          skippedInvalid++;
+          console.warn('Skipped one approved change:', oneErr, c);
+        }
+
+        if(i % PERF_APPLY_CHUNK === PERF_APPLY_CHUNK - 1){
+          if(applyBtn) applyBtn.textContent = `Applying ${i + 1}/${approved.length}…`;
+          perfSetStatus_(`Applying approved changes ${i + 1}/${approved.length}…`, 'loading');
+          await perfYield_();
+        }
+      }
+
+      try { overlay.remove(); } catch(e){}
+      delete window._popupStates;
+      delete window._popupChanges;
+      delete window._popupUpdateCounter;
+
+      await perfYield_();
+      perfSafeSave_();
+
+      const bits = [];
+      if(skippedDupes) bits.push(`skipped ${skippedDupes} duplicate${skippedDupes!==1?'s':''}`);
+      if(skippedInvalid) bits.push(`skipped ${skippedInvalid} invalid change${skippedInvalid!==1?'s':''}`);
+      const note = bits.length ? ' (' + bits.join(', ') + ')' : '';
+
+      if(appliedRealismFixes){
+        perfSetStatus_(`${applied} suggestion${applied!==1?'s':''} updated${note} — rescanning realism audit…`, 'loading');
+        setTimeout(function(){ rescanRealismAfterApprovedFixes_(applied, skippedDupes); }, 120);
+      } else {
+        perfSetStatus_(`${applied} suggestion${applied!==1?'s':''} updated${note} — saving in background`);
+      }
+      perfRenderAfterApply_(changedIdxs);
+    }catch(err){
+      console.error('Apply approved changes failed:', err);
+      if(applyBtn){ applyBtn.disabled = false; applyBtn.textContent = '✓ Apply approved changes'; applyBtn.style.opacity = '1'; }
+      try{
+        if(typeof bulkChatAddMessage === 'function') bulkChatAddMessage('assistant', '⚠️ I could not apply those changes without freezing the page. Error: ' + (err && err.message ? err.message : err));
+      }catch(e){}
+      perfSetStatus_('Apply failed: ' + (err && err.message ? err.message : err), 'error');
+    }
+  };
+})();
+/* ===== end DLA hotfix ===== */
 </script>
 </body>
 </html>
