@@ -145,7 +145,7 @@
     </div>
     <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text)">Wesley College</div>
     <div style="font-size:9px;color:var(--dim);margin-bottom:6px">Melbourne</div>
-    <div style="font-size:9px;color:var(--mint)">● DLA Studio v5.16 · startup-safe patch</div>
+    <div style="font-size:9px;color:var(--mint)">● DLA Studio v5.16</div>
     <div id="sidebar-user-email" style="font-size:10px;color:var(--dim);margin-top:4px;word-break:break-all"></div>
     <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
       <a class="btn-sm dla-footer-back" href="index.html" title="Back to the teacher-facing DLA">← DLA</a>
@@ -174,7 +174,7 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
         Dashboard
       </div>
-      <div class="setup-version">v5.16 · startup-safe</div>
+      <div class="setup-version">v5.16</div>
       <div class="wesley-brand">
         <div class="wesley-w">W</div>
         <div class="wesley-text">Wesley<br>College</div>
@@ -1391,9 +1391,9 @@ async function loadFromDrive(){
     if(!d.files||!d.files.length) throw new Error('data.json not found on Drive');
     DRIVE_FILE_ID=d.files[0].id;
     const r2=await fetch(`https://www.googleapis.com/drive/v3/files/${DRIVE_FILE_ID}?alt=media`,{headers:{'Authorization':'Bearer '+tok}});
-    ingest(await r2.json(), true);
+    ingest(await r2.json());
     LIBRARIES_READY = false;
-    // Startup safety patch: libraries.json is loaded lazily when Bulk/Libraries sections need it.
+    ensureLibrariesLoaded().catch(e => console.warn('Libraries preload failed:', e)); // Load lesson libraries after Drive auth
   }catch(e){
     err.textContent=e.message; err.style.display='block';
     btn.disabled=false; btn.textContent='↑ Load from Google Drive';
@@ -1416,12 +1416,12 @@ function loadFromPaste(){
 
 function ingest(arr, skipCache){
   DATA=Array.isArray(arr)?arr:Object.values(arr);
-  // Startup safety patch: do not stringify/cache the full canonical data.json in localStorage.
-  // Large datasets can block or crash the browser during load. Drive remains the source of truth.
-  try{
-    localStorage.removeItem('dla_data');
-    if(DRIVE_FILE_ID) localStorage.setItem('dla_file_id', DRIVE_FILE_ID);
-  }catch(e){}
+  if(!skipCache){
+    try{
+      localStorage.setItem('dla_data', JSON.stringify(DATA));
+      if(DRIVE_FILE_ID) localStorage.setItem('dla_file_id', DRIVE_FILE_ID);
+    }catch(e){ /* storage full — skip cache */ }
+  }
   
   const campuses=[...new Set(DATA.map(e=>e.ca))].sort();
   const yrs=[...new Set(DATA.map(e=>e.yl))].sort((a,b)=>YR.indexOf(a)-YR.indexOf(b));
@@ -1506,7 +1506,7 @@ Save anyway?`);
     if(updated) LAST_KNOWN_MODIFIED=updated.modifiedTime;
     const now=new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
     setStatus(`Saved to Drive at ${now}`);
-    try{ localStorage.removeItem('dla_data'); }catch(e){}
+    try{ localStorage.setItem('dla_data', JSON.stringify(DATA)); }catch(e){}
     updateConflictBar(null);
   stopProgress();
   }catch(e){ stopProgress(); setStatus('Drive save failed: '+e.message,'error'); }
@@ -1764,110 +1764,85 @@ function getIssues(){
 }
 
 function filterIssueType(label){
-  const map={'banned tools':'banned','banned':'banned','off whitelist':'offwhitelist','duplicates':'duplicate','no planner':'incomplete','no planner summary':'missingplanner'};
+  
+  const map={'banned':'banned','off whitelist':'offwhitelist','duplicates':'duplicate','no planner':'incomplete','no planner summary':'missingplanner'};
   const type=map[label];
   const el=document.getElementById('issues-list');
   if(!el) return;
   const all=window._ALL_ISSUES||[];
   const filtered=type?all.filter(i=>i.type===type):all;
-  const cap = 160;
   el.innerHTML=filtered.length
-    ? `<div style="font-size:12px;color:var(--dim);margin-bottom:10px">Showing first ${Math.min(cap, filtered.length)} of ${filtered.length} issue${filtered.length!==1?'s':''}.</div>` + filtered.slice(0,cap).map(iss=>issueRowHTML(iss)).join('')
+    ?filtered.map(iss=>issueRowHTML(iss)).join('')
     :'<div style="padding:20px;color:var(--dim);text-align:center">No issues of this type ✓</div>';
   el.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 function renderDashboard(){
-  const campuses = [...new Set(DATA.map(e=>e.ca).filter(Boolean))];
-  const audited = DATA.filter(e => e && e.audited !== false).length;
-  const totalSuggestions = DATA.reduce((sum,e)=>sum + getSugs(e).filter(isRealSug).length, 0);
-  const verified = DATA.filter(e => typeof isHumanVerifiedEntry_ === 'function' && isHumanVerifiedEntry_(e)).length;
-  const dbSub = document.getElementById('db-sub');
-  if(dbSub) dbSub.textContent = `${DATA.length} entries across ${campuses.length} campuses — dashboard loaded in startup-safe mode`;
-
-  const statDefs=[
-    {label:'total entries',val:DATA.length,bg:'#C5E84A',col:'#111'},
-    {label:'campuses',val:campuses.length,bg:'#1a1a1a',col:'#888'},
-    {label:'audited',val:audited,bg:'#1a1a1a',col:'#888'},
-    {label:'suggestions',val:totalSuggestions,bg:'#1a1a1a',col:'#888'},
-    {label:'human verified',val:verified,bg:verified>0?'#D4A017':'#1a1a1a',col:verified>0?'#111':'#888'},
-    {label:'issue scan',val:'manual',bg:'#1a1a1a',col:'#888'},
-  ];
-  const cards = document.getElementById('stat-cards');
-  if(cards){
-    cards.innerHTML=statDefs.map(({label,val,bg,col})=>`<div class="stat-card" style="background:${bg};border-color:transparent"><div class="stat-num" style="color:${col};font-size:${String(val).length>5?'28px':''}">${val}</div><div class="stat-lbl" style="color:${col}">${label}</div></div>`).join('');
-  }
-
-  const fixBar = document.getElementById('fix-incomplete-bar');
-  if(fixBar) fixBar.innerHTML = '';
-  window._ALL_ISSUES = [];
-  const list = document.getElementById('issues-list');
-  if(list){
-    list.innerHTML = `<div style="padding:18px 20px;background:var(--card2);border:1px solid var(--border);border-radius:12px;color:var(--dim);font-size:13px;line-height:1.6">
-      <div style="color:var(--text);font-weight:800;margin-bottom:6px">Startup-safe dashboard</div>
-      The homepage no longer runs the full issue audit automatically. This prevents crashes while loading data.json.
-      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
-        <button class="btn-pri" onclick="runDashboardIssueScanChunked()" style="padding:10px 16px">Run issue scan</button>
-        <button class="btn-sm" onclick="switchTab('browse',document.querySelector('.nav-item[data-tab=&quot;browse&quot;]'))">Open Browse</button>
-      </div>
-      <div id="dashboard-scan-progress" style="font-size:12px;color:var(--lime);margin-top:10px"></div>
-    </div>`;
-  }
-}
-
-async function runDashboardIssueScanChunked(){
-  const progress = document.getElementById('dashboard-scan-progress');
-  const list = document.getElementById('issues-list');
-  const incomplete=[], banned=[], duplicates=[], offWhitelist=[], missingPlanner=[];
-  const totalEntries = DATA.length || 0;
-  const batchSize = 25;
-  for(let start=0; start<totalEntries; start += batchSize){
-    const end = Math.min(start + batchSize, totalEntries);
-    for(let idx=start; idx<end; idx++){
-      const e = DATA[idx];
-      if(!e) continue;
-      const sugs=getSugs(e);
-      const realSugs=sugs.filter(isRealSug);
-      if(realSugs.length<6) incomplete.push({e,idx,type:'incomplete',detail:`${realSugs.length}/6 — no planner uploaded`});
-      if(sugs.some(s=>sugTool(s).toLowerCase().includes('wevideo'))) banned.push({e,idx,type:'banned',detail:'WeVideo found'});
-      const tools=realSugs.map(s=>sugTool(s).toLowerCase().trim());
-      const seen=new Set();
-      tools.forEach((t, localIdx)=>{ if(seen.has(t)) duplicates.push({e,idx,type:'duplicate',detail:`"${sugTool(realSugs[localIdx])}" appears twice`}); seen.add(t); });
-      realSugs.forEach((s, slotIdx)=>{
-        if(slotIdx === 5) return;
-        const t=sugTool(s);
-        if(t&&!isWhitelisted(t)) offWhitelist.push({e,idx,type:'offwhitelist',detail:`"${t}" not in approved list`});
-      });
-      if(!e.plannerText || e.plannerText.trim().length < 20) missingPlanner.push({e,idx,type:'missingplanner',detail:'No planner summary'});
-    }
-    if(progress) progress.textContent = `Scanning issues… ${end}/${totalEntries}`;
-    await new Promise(resolve => setTimeout(resolve, 0));
-  }
-  const all=[...incomplete,...banned,...duplicates,...offWhitelist,...missingPlanner];
-  window._ALL_ISSUES = all;
-  const total=all.length;
-  const dbSub = document.getElementById('db-sub');
-  if(dbSub) dbSub.textContent=`${DATA.length} entries across ${[...new Set(DATA.map(e=>e.ca))].length} campuses — ${total} issue${total!==1?'s':''} found`;
+  const {incomplete,banned,duplicates,offWhitelist,missingPlanner}=getIssues();
+  const total=incomplete.length+banned.length+duplicates.length+offWhitelist.length+missingPlanner.length;
+  document.getElementById('db-sub').textContent=`${DATA.length} entries across ${[...new Set(DATA.map(e=>e.ca))].length} campuses — ${total} issue${total!==1?'s':''} found`;
   const statDefs=[
     {label:'total entries',val:DATA.length,bg:'#C5E84A',col:'#111'},
     {label:'no planner',val:incomplete.length,bg:incomplete.length>0?'#F5A623':'#1a1a1a',col:incomplete.length>0?'#111':'#888'},
     {label:'banned tools',val:banned.length,bg:banned.length>0?'#FF8080':'#1a1a1a',col:banned.length>0?'#111':'#888'},
     {label:'duplicates',val:duplicates.length,bg:duplicates.length>0?'#9B8BFF':'#1a1a1a',col:duplicates.length>0?'#fff':'#888'},
     {label:'off whitelist',val:offWhitelist.length,bg:offWhitelist.length>0?'#60B8F0':'#1a1a1a',col:offWhitelist.length>0?'#111':'#888'},
-    {label:'no planner summary',val:missingPlanner.length,bg:missingPlanner.length>0?'#D4A017':'#1a1a1a',col:missingPlanner.length>0?'#111':'#888'},
+    {label:'no planner',val:missingPlanner.length,bg:missingPlanner.length>0?'#D4A017':'#1a1a1a',col:missingPlanner.length>0?'#111':'#888'},
   ];
-  const cards = document.getElementById('stat-cards');
-  if(cards){
-    cards.innerHTML=statDefs.map(({label,val,bg,col})=>`<div class="stat-card" style="background:${bg};border-color:transparent;cursor:pointer" onclick="filterIssueType('${label}')"><div class="stat-num" style="color:${col}">${val}</div><div class="stat-lbl" style="color:${col}">${label}</div></div>`).join('');
-  }
-  if(list){
-    const cap = 120;
-    list.innerHTML = all.length
-      ? `<div style="font-size:12px;color:var(--dim);margin-bottom:10px">Showing first ${Math.min(cap, all.length)} of ${all.length} issues. Use stat cards to filter.</div>` + all.slice(0,cap).map(iss=>issueRowHTML(iss)).join('')
-      : '<div style="padding:20px;color:var(--lime);text-align:center">No issues found ✓</div>';
-  }
-}
+  document.getElementById('stat-cards').innerHTML=statDefs.map(({label,val,bg,col})=>`<div class="stat-card" style="background:${bg};border-color:transparent;cursor:pointer" onclick="filterIssueType('${label}')"><div class="stat-num" style="color:${col}">${val}</div><div class="stat-lbl" style="color:${col}">${label}</div></div>`).join('');
 
+  const all=[
+    ...banned,
+    ...offWhitelist,
+    ...duplicates,
+    ...incomplete,
+    ...missingPlanner,
+  ];
+  window._ALL_ISSUES = all;
+  
+  const fixBar = document.getElementById('fix-incomplete-bar');
+  if(fixBar){
+    const fixBtns = [];
+    if(incomplete.length>0) fixBtns.push({count:incomplete.length, label:'Fix no planner', color:'var(--orange)', type:'incomplete', fn:"fixAllOfType('incomplete')"});
+    if(duplicates.length>0) fixBtns.push({count:duplicates.length, label:'Fix duplicates', color:'#9B8BFF', type:'duplicate', fn:"fixAllOfType('duplicate')"});
+    if(banned.length>0) fixBtns.push({count:banned.length, label:'Fix banned tools', color:'#FF8080', type:'banned', fn:"fixAllOfType('banned')"});
+    if(offWhitelist.length>0) fixBtns.push({count:offWhitelist.length, label:'Fix off-list', color:'#60B8F0', type:'offwhitelist', fn:"fixAllOfType('offwhitelist')"});
+
+    if(fixBtns.length > 0){
+      fixBar.innerHTML=`
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px">
+          ${fixBtns.map(b=>`
+            <div style="flex:1;min-width:200px;display:flex;align-items:center;gap:12px;padding:12px 16px;background:rgba(255,255,255,0.04);border:1px solid ${b.color}44;border-radius:10px">
+              <div style="flex:1">
+                <div style="font-size:13px;font-weight:700;color:${b.color}">${b.count} ${b.label.toLowerCase().replace('fix ','')}</div>
+              </div>
+              <button onclick="${b.fn}" style="padding:7px 14px;background:${b.color};color:#111;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">${b.label}</button>
+            </div>`).join('')}
+        </div>
+        <div id="fix-all-progress" style="display:none;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:10px">
+          <div style="font-size:13px;color:var(--lime);font-weight:600;margin-bottom:8px" id="fix-all-label">Starting…</div>
+          <div style="height:5px;background:var(--card2);border-radius:3px"><div id="fix-all-bar" style="height:100%;border-radius:3px;background:var(--lime);width:0%;transition:width .4s"></div></div>
+        </div>`;
+    } else {
+      fixBar.innerHTML='<div style="padding:10px 14px;background:rgba(197,232,74,0.08);border:1px solid rgba(197,232,74,0.2);border-radius:8px;font-size:13px;color:var(--lime);font-weight:600">✓ No issues — all entries look good</div>';
+    }
+  }
+  document.getElementById('issues-list').innerHTML=all.length
+    ? all.map(({e,idx,type,detail})=>{
+        const badgeBg={'banned':'#FF8080','incomplete':'#F5A623','duplicate':'#9B8BFF','offwhitelist':'#60B8F0','missingplanner':'#D4A017'}[type]||'#888';
+        const badgeCol={'banned':'#111','incomplete':'#111','duplicate':'#fff','offwhitelist':'#111','missingplanner':'#111'}[type]||'#fff';
+        const label={'banned':'banned','incomplete':'no planner','duplicate':'duplicate','offwhitelist':'off-list','missingplanner':'no planner'}[type]||type;
+        return `<div class="row" onclick="openEntry(${idx})">
+          <span style="font-size:11px;padding:4px 11px;border-radius:20px;background:${badgeBg};color:${badgeCol};font-weight:800;letter-spacing:.3px;flex-shrink:0">${label}</span>
+          <span style="font-size:13px;color:#9ab89a;width:110px;flex-shrink:0">${esc(e.ca)}</span>
+          <span style="font-size:13px;color:var(--gold);font-weight:700;width:70px;flex-shrink:0">${esc(e.yl)}</span>
+          <span style="flex:1;font-size:14px;font-weight:600;color:var(--text)">${esc(e.th)}</span>
+          <span style="font-size:11px;color:var(--dim)">${detail}</span>
+          <span style="color:var(--dim)">›</span>
+        </div>`;
+      }).join('')
+    : '<div style="text-align:center;padding:24px;color:var(--dim);font-size:13px">No issues found ✓</div>';
+}
 
 
 // ========== HUMAN VERIFICATION + REALISM RESCAN HELPERS ==========
@@ -3546,9 +3521,49 @@ function showBeforeAfterPreview(){
 function checkKeyInput(){ /* legacy no-op: AI key is managed by GAS Script Properties. */ }
 
 function initNetworkCanvas(){
-  // Startup safety patch: the canvas is hidden in CSS, so do not start an infinite animation loop.
-  // This avoids a permanent requestAnimationFrame workload on the Studio home/load screen.
-  return;
+  const canvas=document.getElementById('bg-canvas');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  let W=0,H=0,nodes=[];
+  function resize(){
+    W=canvas.width=window.innerWidth;
+    H=canvas.height=window.innerHeight;
+    nodes=Array.from({length:55},()=>({
+      x:Math.random()*W, y:Math.random()*H,
+      vx:(Math.random()-.5)*.25, vy:(Math.random()-.5)*.25,
+      r:Math.random()*1.5+.5
+    }));
+  }
+  resize();
+  window.addEventListener('resize',resize);
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(let i=0;i<nodes.length;i++){
+      for(let j=i+1;j<nodes.length;j++){
+        const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<160){
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x,nodes[i].y);
+          ctx.lineTo(nodes[j].x,nodes[j].y);
+          ctx.strokeStyle=`rgba(52,211,153,${0.09*(1-d/160)})`;
+          ctx.lineWidth=.6;
+          ctx.stroke();
+        }
+      }
+    }
+    nodes.forEach(n=>{
+      ctx.beginPath();
+      ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(0,230,118,0.45)';
+      ctx.fill();
+      n.x+=n.vx; n.y+=n.vy;
+      if(n.x<0||n.x>W) n.vx*=-1;
+      if(n.y<0||n.y>H) n.vy*=-1;
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
 }
 
 async function addToGASQueue(){
@@ -9181,12 +9196,31 @@ setInterval(async()=>{
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('app-content').style.display='none';
   initNetworkCanvas();
-  // Startup safety patch: never auto-ingest cached data on page load.
-  // A stale or large cached data.json can crash before the Drive load screen appears.
   try{
-    localStorage.removeItem('dla_data');
-    localStorage.removeItem('dla_file_id');
+    const cached=localStorage.getItem('dla_data');
+    const cachedFileId=localStorage.getItem('dla_file_id');
+    if(cached){
+      const arr=JSON.parse(cached);
+      if(Array.isArray(arr)&&arr.length>0){
+        if(cachedFileId) DRIVE_FILE_ID=cachedFileId;
+        ingest(arr, true);
+        // Wait for GSI library to load before attempting silent re-auth
+        const waitForGSI = (resolve) => {
+          if(window.google && window.google.accounts) resolve();
+          else setTimeout(()=>waitForGSI(resolve), 200);
+        };
+        new Promise(waitForGSI).then(()=>getDriveToken()).then(tok=>{
+          DRIVE_TOKEN=tok;
+          getDriveFileModified().then(meta=>{ if(meta) LAST_KNOWN_MODIFIED=meta.modifiedTime; });
+          ensureLibrariesLoaded().catch(e => console.warn('Libraries preload failed:', e));
+          startConflictPolling();
+          setStatus('Session restored — connected to Drive');
+        }).catch(()=>{ setStatus('Session restored — <span onclick="reconnectDrive()" style="text-decoration:underline;cursor:pointer;font-weight:700">click here to reconnect Drive</span> to save changes','error',true); });
+        return;
+      }
+    }
   }catch(e){}
+
   showScreen('load');
   document.getElementById('chat-input')?.addEventListener('keydown',e=>{
     if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendChat(); }
@@ -11344,7 +11378,7 @@ setInterval(async()=>{
 
       DATA = Array.isArray(merged) ? merged : Object.values(merged || {});
       mergeCaptureBaseline_(DATA);
-      try{ localStorage.removeItem('dla_data'); }catch(e){}
+      try{ localStorage.setItem('dla_data', JSON.stringify(DATA)); }catch(e){}
 
       const updated = await getDriveFileModified();
       if(updated) LAST_KNOWN_MODIFIED = updated.modifiedTime;
@@ -11578,7 +11612,7 @@ setInterval(async()=>{
   function rtReplaceAll_(latest, currentKey){
     DATA = Array.isArray(latest) ? latest : Object.values(latest || {});
     rtSetBaseline_(DATA);
-    try { localStorage.removeItem('dla_data'); } catch(e){}
+    try { localStorage.setItem('dla_data', JSON.stringify(DATA)); } catch(e){}
     rtRenderAfterSync_(new Set(), currentKey);
   }
 
@@ -11613,7 +11647,7 @@ setInterval(async()=>{
     }
 
     rtSetBaseline_(baseline);
-    try { localStorage.removeItem('dla_data'); } catch(e){}
+    try { localStorage.setItem('dla_data', JSON.stringify(DATA)); } catch(e){}
     if(changedKeys.size) rtRenderAfterSync_(changedKeys, currentKey);
     return changedKeys.size;
   }
@@ -12896,540 +12930,6 @@ setInterval(async()=>{
 })();
 /* ===== end DLA hotfix ===== */
 
-
-/* ===== DLA hotfix: stronger St Kilda Road Year 6 regeneration quality ===== */
-(function(){
-  const STK_Y6_QUALITY_PATCH_VERSION = '2026-05-04-stk-y6-quality-v1';
-
-  function qText_(v){ return String(v == null ? '' : v).replace(/\s+/g,' ').trim(); }
-  function qEsc_(v){
-    if(typeof esc === 'function') return esc(v);
-    return qText_(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-  function qSleep_(ms){ return new Promise(resolve => setTimeout(resolve, ms)); }
-  function qCampusIsStKilda_(ca){ return /st\s*kilda/i.test(String(ca || '')); }
-  function qIsTargetEntry_(e){ return e && /^year\s*6$/i.test(qText_(e.yl)) && qCampusIsStKilda_(e.ca); }
-  function qTargetsStKildaYear6Quality_(instruction){
-    const t = String(instruction || '').toLowerCase();
-    return /st\s*kilda|skr|year\s*6|lines? of inquiry|loi/.test(t)
-      && /regenerate|repair|fix|quality|weak|detail|detailed|lesson|suggestion|planner|match|align/.test(t);
-  }
-  function qSplitLooseLoi_(lo){
-    let s = qText_(lo)
-      .replace(/\u00a0/g,' ')
-      .replace(/â\s*[€¢·]/gi, '; ')
-      .replace(/Â\s*[•·]/gi, '; ')
-      .replace(/ï\s*‚\s*·/gi, '; ')
-      .replace(/[\u2022\u2023\u25E6\u2043\u2219\u00B7\u25CF\u25AA\u25AB\u25A0\u25A1\u25C6\u25C7\u25B8\u25B6\uF0B7]+/g, '; ')
-      .replace(/\s*[|¦§]+\s*/g, '; ')
-      .replace(/\s*[ ]+\s*/g, '; ')
-      .replace(/\s+/g,' ')
-      .trim();
-    function cleanPart(x){
-      return qText_(x)
-        .replace(/^(?:\d+[.)]|LOI\s*\d+[:.)-]?|Line\s+of\s+Inquiry\s*\d+[:.)-]?)\s*/i,'')
-        .replace(/^[\-–—:;,.\s]+|[\-–—:;,.\s]+$/g,'')
-        .trim();
-    }
-    let parts = s.split(/\s*;\s*/).map(cleanPart).filter(Boolean);
-    if(parts.length <= 1){
-      parts = s.split(/\s+(?=(?:\d+[.)]|LOI\s*\d+|Line\s+of\s+Inquiry\s*\d+))/i).map(cleanPart).filter(Boolean);
-    }
-    if(parts.length <= 1){
-      parts = s.split(/\s+(?=(?:How|Why|The ways?|Ways?|Factors?|The impact|Impact|Connections?|Relationships?|Responsibilities?|Perspectives?|Systems?|Strategies?|Changes?|Different ways?|Our role|People can|People use|Communities?|Environments?)\b)/g).map(cleanPart).filter(Boolean);
-    }
-    const seen = new Set();
-    parts = parts.filter(p => {
-      const key = p.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
-      if(!key || seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-    return parts.length > 1 ? parts.slice(0,4).join('; ') : s;
-  }
-  function qLoiList_(lo){ return qSplitLooseLoi_(lo).split(/\s*;\s*/).map(qText_).filter(Boolean); }
-  function qEntryKey_(e){ return [qText_(e.ca).toLowerCase(), qText_(e.yl).toLowerCase(), qText_(e.th).toLowerCase()].join('|'); }
-  function qSuggestionTool_(s){ try{ return sugTool(s); }catch(e){ return s && (s.t || s.tool || s.name) || ''; } }
-  function qSuggestionDesc_(s){ try{ return sugDesc(s); }catch(e){ return s && (s.d || s.desc || s.description) || ''; } }
-  function qNormaliseSuggestion_(s){
-    const out = Object.assign({}, s || {});
-    let tool = qText_(qSuggestionTool_(out));
-    if(typeof normaliseToolName === 'function') tool = normaliseToolName(tool);
-    let desc = qText_(qSuggestionDesc_(out));
-    if(/cospaces/i.test(tool)) tool = 'Delightex';
-    desc = desc.replace(/CoSpaces/gi, 'Delightex');
-    if(/google maps/i.test(tool) && /annotat|pin|pins|label|layer|overlay|plot|custom map|map product|gis|route map|data map/i.test(desc)){
-      tool = 'National Geographic MapMaker';
-    }
-    out.t = tool;
-    out.d = desc;
-    if(out.url) out.url = qText_(out.url).replace(/watr-humans-and-elephants/gi, 'water-humans-and-elephants');
-    return out;
-  }
-  function qKeywordList_(entry, lo){
-    const stop = new Set('about above across after again against all also and any are around because been before being between both but can central class classroom could create created creates creating different each every from give given have having how inquiry into lesson lines make makes making more most other their them then there these they this those through unit using what when where which while with would year students student teacher teachers learning technology digital wesley st kilda road'.split(' '));
-    const text = [entry.th, entry.ci, lo, entry.plannerText].map(qText_).join(' ').toLowerCase();
-    const counts = new Map();
-    text.replace(/[^a-z0-9\s-]/g,' ').split(/\s+/).forEach(w => {
-      w = w.replace(/^-|-$/g,'');
-      if(w.length < 4 || stop.has(w)) return;
-      counts.set(w, (counts.get(w) || 0) + 1);
-    });
-    return Array.from(counts.entries()).sort((a,b)=>b[1]-a[1]).slice(0,18).map(([w])=>w);
-  }
-  function qSuggestionWeakReasons_(s, entry, lo){
-    const tool = qSuggestionTool_(s);
-    const desc = qSuggestionDesc_(s);
-    const reasons = [];
-    const words = desc.split(/\s+/).filter(Boolean).length;
-    if(words < 45) reasons.push('too brief');
-    if(words > 115 && !/minecraft/i.test(tool)) reasons.push('too long / unfocused');
-    if(!/students?\s+(use|create|build|design|record|investigate|compare|collect|map|model|prototype|interview|analyse|analyze|present|publish|film|code|program|survey|annotate|construct|test|capture|explain|curate|evaluate|develop|produce)/i.test(desc)) reasons.push('missing concrete student action');
-    if(!/brief|portfolio|map|model|prototype|presentation|report|reflection|video|podcast|poster|infographic|tour|dashboard|survey|graph|story|book|gallery|pitch|explanation|guide|timeline|checklist|recording|screenshot|screenshots|artefact|artifact|rubric|proposal|interview|animation|simulation|data display|field note|case study/i.test(desc)) reasons.push('missing concrete student product');
-    if(/deepen their understanding|explore the unit|engage with|use technology with purpose|students will learn about|relevant to the unit|meaningful way|digital tool to support learning|enhance their learning/i.test(desc)) reasons.push('generic wording');
-    const keys = qKeywordList_(entry, lo);
-    if(keys.length && !keys.some(k => new RegExp('\\b'+k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i').test(desc))) reasons.push('weak unit vocabulary connection');
-    if(/google maps/i.test(tool) && /annotat|pin|pins|label|layer|overlay|plot|custom map|map product|gis/i.test(desc)) reasons.push('Google Maps used for annotation instead of Street View');
-    if(/cospaces/i.test(tool + ' ' + desc)) reasons.push('old CoSpaces name');
-    return reasons;
-  }
-  function qAllSuggestionsPass_(sugs, entry, lo){
-    if(!Array.isArray(sugs) || sugs.length < 6) return false;
-    return sugs.slice(0,6).every(s => qSuggestionWeakReasons_(s, entry, lo).length === 0);
-  }
-  function qQualityReport_(sugs, entry, lo){
-    return sugs.slice(0,6).map((s,i)=>({
-      slot:i+1,
-      tool:qSuggestionTool_(s),
-      reasons:qSuggestionWeakReasons_(s, entry, lo)
-    })).filter(x => x.reasons.length);
-  }
-  function qBuildQualityRules_(entry, lo){
-    const loiLines = qLoiList_(lo);
-    return `QUALITY RULES FOR ST KILDA ROAD YEAR 6 (HARD):
-- These are final teacher-facing lesson suggestions, not placeholders.
-- Each description must be 2-3 substantial sentences, about 50-95 words, unless it is a verified Minecraft lesson where 2 concise practical sentences are enough.
-- Each suggestion must name exactly what students DO in class, what they CREATE/PRODUCE, and how it connects to the unit.
-- Use specific vocabulary from the central idea, lines of inquiry or planner summary. Do not write generic phrases such as "deepen their understanding" or "explore the unit".
-- Make these Year 6 appropriate: purposeful, independent, evidence-based and practical for a primary teacher.
-- Use 6 different tools. Suggestions 1-5 are normal classroom technology ideas. Suggestion 6 must be a hands-on STEM Design Cycle idea.
-- Do not use Seesaw as a default Year 6 tool unless it is clearly the best reflection/portfolio option.
-- Google Maps is Street View only: ground-level virtual observation, comparing places, gathering visual evidence. Do not use Google Maps for annotated maps, pins, labels, layers or plotted data.
-- For annotated maps, map layers or plotted data, use National Geographic MapMaker.
-- Use Delightex, not CoSpaces.
-- If Minecraft is used, use a verified curated Minecraft lesson and include its URL.
-
-Clean separated Lines of Inquiry:
-${loiLines.map((l,i)=>`${i+1}. ${l}`).join('\n')}`;
-  }
-  async function qCallJsonObject_(prompt, model){
-    const raw = await callAI([{role:'user', parts:[{text:prompt}]}], null, model || OPENAI_MODEL || OPENAI_FAST_MODEL);
-    const clean = String(raw || '').replace(/```json|```/g,'').trim();
-    const si = clean.indexOf('{'), ei = clean.lastIndexOf('}');
-    if(si === -1 || ei === -1) throw new Error('No JSON object returned');
-    return JSON.parse(clean.slice(si, ei + 1));
-  }
-  async function qRepairSuggestions_(entry, lo, sugs, qualityReport){
-    const constraints = (typeof buildToolConstraints === 'function') ? buildToolConstraints(entry.yl) : '';
-    const prompt = `You are improving weak Wesley DLA suggestions for a St Kilda Road Year 6 unit.
-
-Unit: ${entry.ca} | ${entry.yl} | ${entry.th}
-Central idea: ${entry.ci || ''}
-Lines of Inquiry: ${lo}
-Planner summary: ${entry.plannerText ? compactForPrompt(entry.plannerText, 1800) : ''}
-
-The previous suggestions were too weak. Fix them.
-
-Weakness report:
-${JSON.stringify(qualityReport, null, 2)}
-
-Current suggestions:
-${JSON.stringify(sugs.slice(0,6), null, 2)}
-
-${constraints}
-
-${qBuildQualityRules_(entry, lo)}
-
-Return ONLY JSON:
-{"s":[{"t":"Tool","d":"2-3 substantial practical sentences","url":"optional direct lesson URL"}]}`;
-    const parsed = await qCallJsonObject_(prompt, OPENAI_MODEL || OPENAI_FAST_MODEL);
-    return (Array.isArray(parsed.s) ? parsed.s : []).map(qNormaliseSuggestion_).filter(s => qSuggestionTool_(s));
-  }
-  async function qBuildHighQualityStKildaPatch_(entryIdx){
-    const entry = DATA[entryIdx];
-    const oldLo = qText_(entry.lo || '');
-    const cleanLo = qSplitLooseLoi_(oldLo);
-    const constraints = (typeof buildToolConstraints === 'function') ? buildToolConstraints(entry.yl) : '';
-    let libraryContext = '';
-    try{ libraryContext = (typeof buildLibraryContextCompact === 'function') ? buildLibraryContextCompact('minecraft') : ''; }catch(e){}
-    const prompt = `You are repairing one Wesley College Digital Learning Assistant unit record. The previous St Kilda Road Year 6 regenerated suggestions were too weak and lacked the level of detail used in other year levels.
-
-Unit: ${entry.ca} | ${entry.yl} | ${entry.th}
-Central idea: ${entry.ci || ''}
-Current grouped Lines of Inquiry: ${oldLo}
-Clean separated Lines of Inquiry to use: ${cleanLo}
-Planner summary: ${entry.plannerText ? compactForPrompt(entry.plannerText, 2200) : ''}
-
-Task:
-1. Return the cleaned Lines of Inquiry as 2-4 separate lines using semicolons between lines. Do not invent a new unit.
-2. Regenerate exactly 6 high-quality practical technology suggestions for this unit.
-
-${constraints}
-
-${libraryContext}
-
-${qBuildQualityRules_(entry, cleanLo)}
-
-Return ONLY JSON:
-{"lo":"Line 1; Line 2; Line 3","s":[{"t":"Tool","d":"2-3 substantial practical sentences","url":"optional direct lesson URL"}]}`;
-    let parsed = await qCallJsonObject_(prompt, OPENAI_MODEL || OPENAI_FAST_MODEL);
-    let newLo = qSplitLooseLoi_(parsed.lo || cleanLo);
-    let sugs = (Array.isArray(parsed.s) ? parsed.s : []).map(qNormaliseSuggestion_).filter(s => qSuggestionTool_(s));
-    if(sugs.length < 6) throw new Error('Only '+sugs.length+' suggestions returned');
-    sugs = sugs.slice(0,6);
-
-    for(let attempt=0; attempt<2; attempt++){
-      const report = qQualityReport_(sugs, entry, newLo);
-      if(!report.length) break;
-      sugs = await qRepairSuggestions_(entry, newLo, sugs, report);
-      if(sugs.length < 6) throw new Error('Repair returned only '+sugs.length+' suggestions');
-      sugs = sugs.slice(0,6);
-    }
-
-    if(typeof dqPatchMinecraftLink_ === 'function'){
-      try{ sugs = sugs.map(dqPatchMinecraftLink_); }catch(e){}
-    }
-    const remaining = qQualityReport_(sugs, entry, newLo);
-    return {
-      entryIdx,
-      oldLo,
-      newLo,
-      oldSugs:getSugs(entry),
-      newSugs:sugs,
-      qualityReport:remaining,
-      reason: remaining.length
-        ? 'St Kilda Road Year 6 LOI split + regenerated suggestions with quality boost. Some items may still need manual review.'
-        : 'St Kilda Road Year 6 LOI split + high-detail regenerated suggestions'
-    };
-  }
-  function qPatchSummary_(p){
-    const e = DATA[p.entryIdx] || {};
-    return `${e.ca || ''} · ${e.yl || ''} · ${e.th || ''}`;
-  }
-  function qShowQualityMaintenancePopup_(patches){
-    const existing = document.getElementById('stk-y6-quality-overlay');
-    if(existing) existing.remove();
-    const overlay = document.createElement('div');
-    overlay.id = 'stk-y6-quality-overlay';
-    overlay.style.cssText = 'position:fixed;inset:0;z-index:1300;background:rgba(0,0,0,.84);display:flex;align-items:center;justify-content:center;padding:20px';
-    const modal = document.createElement('div');
-    modal.style.cssText = 'width:min(1180px,96vw);max-height:92vh;overflow:auto;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;box-shadow:0 30px 80px rgba(0,0,0,.55)';
-    modal.innerHTML = `<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><div style="font-size:26px">✨</div><div><div style="font-size:20px;font-weight:900">Review high-detail St Kilda Road Year 6 fixes</div><div style="font-size:13px;color:var(--dim)">${patches.length} unit${patches.length!==1?'s':''} regenerated with stronger detail. Nothing applies until you click Apply.</div></div><button class="btn-sm" style="margin-left:auto" id="stkq-close">✕</button></div>`;
-    patches.forEach((p,idx) => {
-      const e = DATA[p.entryIdx] || {};
-      const oldSugs = p.oldSugs || [];
-      const newSugs = p.newSugs || [];
-      const qualityWarn = p.qualityReport && p.qualityReport.length
-        ? `<div style="padding:9px 12px;background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.35);border-radius:10px;color:#F8D28A;font-size:12px;margin:8px 0"><b>Manual review note:</b> ${qEsc_(p.qualityReport.map(x => `#${x.slot} ${x.tool}: ${x.reasons.join(', ')}`).join(' · '))}</div>`
-        : `<div style="padding:9px 12px;background:rgba(197,232,74,.08);border:1px solid rgba(197,232,74,.25);border-radius:10px;color:var(--lime);font-size:12px;margin:8px 0"><b>Quality check:</b> student action, product and unit vocabulary detected.</div>`;
-      modal.innerHTML += `<div style="background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:14px;margin:12px 0"><div style="font-size:14px;font-weight:900;color:var(--gold);margin-bottom:6px">${idx+1}. ${qEsc_(qPatchSummary_(p))}</div><div style="font-size:12px;color:var(--dim);margin-bottom:10px">${qEsc_(p.reason || '')}</div>${qualityWarn}<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px"><div style="padding:10px;background:#1a0808;border:1px solid #3a1818;border-radius:10px"><div style="font-size:10px;color:#ff9999;font-weight:800;text-transform:uppercase">Current Lines of Inquiry</div><div style="font-size:12px;line-height:1.55;color:#ddd">${qEsc_(p.oldLo || '(empty)')}</div></div><div style="padding:10px;background:#081808;border:1px solid #1e3a1e;border-radius:10px"><div style="font-size:10px;color:var(--lime);font-weight:800;text-transform:uppercase">Cleaned Lines of Inquiry</div><div style="font-size:12px;line-height:1.55;color:#ddd">${qEsc_(p.newLo || '(empty)').replace(/;\s*/g,'<br>')}</div></div></div><details open><summary style="cursor:pointer;font-size:12px;color:var(--lime);font-weight:800">Show regenerated suggestions</summary><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px"><div>${oldSugs.map(s=>`<div style="font-size:12px;color:#bbb;padding:7px 0;border-bottom:1px solid #333"><b style="color:#ff9999">${qEsc_(qSuggestionTool_(s))}</b><br>${qEsc_(qSuggestionDesc_(s)).slice(0,280)}</div>`).join('')}</div><div>${newSugs.map(s=>`<div style="font-size:12px;color:#bbb;padding:7px 0;border-bottom:1px solid #333"><b style="color:var(--lime)">${qEsc_(qSuggestionTool_(s))}</b><br>${qEsc_(qSuggestionDesc_(s)).slice(0,420)}${s.url?`<br><span style="color:var(--gold)">${qEsc_(s.url)}</span>`:''}</div>`).join('')}</div></div></details></div>`;
-    });
-    modal.innerHTML += `<div style="display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0;background:var(--card);padding-top:12px"><button class="btn-sm" id="stkq-cancel">Cancel</button><button class="btn-pri" id="stkq-apply">Apply ${patches.length} change${patches.length!==1?'s':''}</button></div>`;
-    overlay.appendChild(modal);
-    document.body.appendChild(overlay);
-    document.getElementById('stkq-close').onclick = document.getElementById('stkq-cancel').onclick = () => overlay.remove();
-    document.getElementById('stkq-apply').onclick = async function(){
-      this.disabled = true;
-      this.textContent = 'Applying…';
-      patches.forEach(p => {
-        const e = DATA[p.entryIdx];
-        if(!e) return;
-        e.lo = p.newLo;
-        e.s = p.newSugs.map(qNormaliseSuggestion_);
-        try{
-          if(typeof markHumanVerifyDirtyIfNeeded_ === 'function') markHumanVerifyDirtyIfNeeded_(p.entryIdx, 'St Kilda Year 6 lessons were regenerated after verification.');
-          else { e.humanVerified = false; e.verified = false; }
-        }catch(err){ e.humanVerified = false; e.verified = false; }
-      });
-      await saveToDrive();
-      overlay.remove();
-      try{ if(CURRENT_ENTRY_IDX != null) renderEntry(CURRENT_ENTRY_IDX); }catch(e){}
-      try{ renderBrowse?.(); renderDashboard?.(); }catch(e){}
-      setStatus('High-detail St Kilda Road Year 6 fixes applied ✓');
-    };
-  }
-  async function qRunStKildaYear6QualityFlow_(instruction){
-    if(typeof ensureLibrariesLoadedForAI === 'function') await ensureLibrariesLoadedForAI();
-    const targets = (DATA || []).map((e,i)=>({e,i})).filter(({e}) => qIsTargetEntry_(e));
-    if(!targets.length){
-      bulkChatAddMessage?.('assistant', 'I could not find any St Kilda Road Year 6 units in the currently loaded data.');
-      return true;
-    }
-    bulkChatAddMessage?.('assistant', `I found ${targets.length} St Kilda Road Year 6 unit${targets.length!==1?'s':''}. I’ll regenerate these with stronger Year 6 detail, concrete student products and clearer links to the separated Lines of Inquiry.`);
-    const patches = [];
-    for(let n=0; n<targets.length; n++){
-      setStatus(`Regenerating high-detail St Kilda Road Year 6 unit ${n+1}/${targets.length}…`, 'loading');
-      try{
-        patches.push(await qBuildHighQualityStKildaPatch_(targets[n].i));
-      }catch(err){
-        console.warn('High-detail STK Year 6 regeneration failed', targets[n].i, err);
-        bulkChatAddMessage?.('assistant', `⚠️ I could not regenerate one St Kilda Road Year 6 unit: ${err.message || err}`);
-      }
-      await qSleep_(250);
-    }
-    if(!patches.length){
-      setStatus('No St Kilda Road Year 6 fixes could be prepared', 'error');
-      return true;
-    }
-    bulkChatAddMessage?.('assistant', `✅ Prepared ${patches.length} high-detail St Kilda Road Year 6 fix${patches.length!==1?'es':''} for review.`);
-    qShowQualityMaintenancePopup_(patches);
-    setStatus('High-detail St Kilda Road Year 6 review ready');
-    return true;
-  }
-
-  if(typeof startBulkAnalysis === 'function' && !window.__DLA_STK_Y6_QUALITY_START_WRAPPED){
-    window.__DLA_STK_Y6_QUALITY_START_WRAPPED = true;
-    const oldStartBulkAnalysis = startBulkAnalysis;
-    startBulkAnalysis = window.startBulkAnalysis = async function(){
-      const instruction = (typeof bulkChatEffectiveInstruction_ === 'function') ? bulkChatEffectiveInstruction_(bulkChatContext.rawInstruction) : (bulkChatContext.rawInstruction || '');
-      if(qTargetsStKildaYear6Quality_(instruction)){
-        try{
-          bulkChatState = 'analysing';
-          showReasoningSteps?.([{text:'Finding St Kilda Road Year 6 units',status:'active'},{text:'Splitting Lines of Inquiry',status:'pending'},{text:'Regenerating high-detail suggestions',status:'pending'}]);
-          updateReasoningStep?.(0,'done'); updateReasoningStep?.(1,'active'); updateReasoningStep?.(1,'done'); updateReasoningStep?.(2,'active');
-          await qRunStKildaYear6QualityFlow_(instruction);
-          updateReasoningStep?.(2,'done');
-          setTimeout(function(){ hideReasoningSteps?.(); }, 800);
-          bulkChatState = 'done';
-          return;
-        }catch(err){
-          hideReasoningSteps?.();
-          bulkChatState = 'idle';
-          bulkChatAddMessage?.('assistant', '⚠️ I hit an error while regenerating St Kilda Road Year 6 with stronger detail: ' + (err.message || err));
-          setStatus('St Kilda Year 6 quality regeneration failed: ' + (err.message || err), 'error');
-          return;
-        }
-      }
-      return oldStartBulkAnalysis.apply(this, arguments);
-    };
-  }
-  console.log('[DLA PATCH] Stronger St Kilda Road Year 6 regeneration quality installed', STK_Y6_QUALITY_PATCH_VERSION);
-})();
-/* ===== end DLA hotfix ===== */
-
-
-/* ===== DLA hotfix: responsive St Kilda Road Year 6 regeneration ===== */
-(function(){
-  const STK_Y6_RESPONSIVE_PATCH_VERSION = '2026-05-04-stk-y6-responsive-v2';
-
-  function rText_(v){ return String(v == null ? '' : v).replace(/\s+/g,' ').trim(); }
-  function rEsc_(v){
-    if(typeof esc === 'function') return esc(v);
-    return rText_(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-  function rYield_(){ return new Promise(resolve => setTimeout(resolve, 0)); }
-  function rSleep_(ms){ return new Promise(resolve => setTimeout(resolve, ms)); }
-  function rCampusIsStKilda_(ca){ return /st\s*kilda/i.test(String(ca || '')); }
-  function rIsTargetEntry_(e){ return e && /^year\s*6$/i.test(rText_(e.yl)) && rCampusIsStKilda_(e.ca); }
-  function rTargetsStKildaYear6_(instruction){
-    const t = String(instruction || '').toLowerCase();
-    return /(st\s*kilda|skr)/.test(t) && /year\s*6/.test(t) && /(line|loi|inquiry|regenerate|lesson|suggestion|quality|weak|detail|planner|match|align|fix)/.test(t);
-  }
-  function rSplitLooseLoi_(lo){
-    let s = rText_(lo)
-      .replace(/\u00a0/g,' ')
-      .replace(/â\s*[€¢·]/gi, '; ')
-      .replace(/Â\s*[•·]/gi, '; ')
-      .replace(/ï\s*‚\s*·/gi, '; ')
-      .replace(/[\u2022\u2023\u25E6\u2043\u2219\u00B7\u25CF\u25AA\u25AB\u25A0\u25A1\u25C6\u25C7\u25B8\u25B6\uF0B7]+/g, '; ')
-      .replace(/\s*[|¦§]+\s*/g, '; ')
-      .replace(/\s*[ ]+\s*/g, '; ')
-      .replace(/\s+/g,' ')
-      .trim();
-    function cleanPart(x){
-      return rText_(x)
-        .replace(/^(?:\d+[.)]|LOI\s*\d+[:.)-]?|Line\s+of\s+Inquiry\s*\d+[:.)-]?)\s*/i,'')
-        .replace(/^[\-–—:;,.\s]+|[\-–—:;,.\s]+$/g,'')
-        .trim();
-    }
-    let parts = s.split(/\s*;\s*/).map(cleanPart).filter(Boolean);
-    if(parts.length <= 1){
-      parts = s.split(/\s+(?=(?:\d+[.)]|LOI\s*\d+|Line\s+of\s+Inquiry\s*\d+))/i).map(cleanPart).filter(Boolean);
-    }
-    if(parts.length <= 1){
-      parts = s.split(/\s+(?=(?:How|Why|The ways?|Ways?|Factors?|The impact|Impact|Connections?|Relationships?|Responsibilities?|Perspectives?|Systems?|Strategies?|Changes?|Different ways?|Our role|People can|People use|Communities?|Environments?)\b)/g).map(cleanPart).filter(Boolean);
-    }
-    const seen = new Set();
-    parts = parts.filter(p => {
-      const key = p.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
-      if(!key || seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-    return parts.length > 1 ? parts.slice(0,4).join('; ') : s;
-  }
-  function rSugTool_(s){ try{ return sugTool(s); }catch(e){ return s && (s.t || s.tool || s.name) || ''; } }
-  function rSugDesc_(s){ try{ return sugDesc(s); }catch(e){ return s && (s.d || s.desc || s.description) || ''; } }
-  function rNormaliseSug_(s){
-    const out = Object.assign({}, s || {});
-    let tool = rText_(rSugTool_(out));
-    let desc = rText_(rSugDesc_(out));
-    try{ if(typeof normaliseToolName === 'function') tool = normaliseToolName(tool); }catch(e){}
-    if(/cospaces/i.test(tool)) tool = 'Delightex';
-    desc = desc.replace(/CoSpaces/gi, 'Delightex');
-    if(/google maps/i.test(tool) && /annotat|pin|pins|label|layer|overlay|plot|custom map|map product|gis|route map|data map/i.test(desc)){
-      tool = 'National Geographic MapMaker';
-      desc = desc.replace(/Google Maps/gi, 'National Geographic MapMaker');
-    }
-    if(/google maps/i.test(tool) && !/street view|ground-level|ground level|virtual observation|360/i.test(desc)){
-      desc = desc.replace(/^Students\s+/i, 'Students use Street View in Google Maps to ');
-    }
-    out.t = tool;
-    out.d = desc;
-    if(out.url) out.url = rText_(out.url).replace(/watr-humans-and-elephants/gi, 'water-humans-and-elephants');
-    return out;
-  }
-  function rQualityRules_(entry, cleanLo){
-    return `Write practical, teacher-ready Year 6 suggestions.
-Each suggestion must include: what students do, what they make, and the unit link.
-Use vocabulary from these cleaned Lines of Inquiry: ${cleanLo}
-Avoid generic phrases like "deepen understanding", "explore the unit" or "use technology with purpose".
-Google Maps may ONLY be used for Street View / ground-level virtual observation.
-For annotated maps, labels, layers, plotted data or map products, use National Geographic MapMaker.
-Use Delightex, not CoSpaces.
-Suggestion 6 must be a hands-on STEM Design Cycle idea.`;
-  }
-  async function rCallJson_(prompt){
-    const raw = await callAI([{role:'user',parts:[{text:prompt}]}], null, OPENAI_MODEL || OPENAI_FAST_MODEL);
-    const clean = String(raw || '').replace(/```json|```/g,'').trim();
-    const si = clean.indexOf('{'), ei = clean.lastIndexOf('}');
-    if(si === -1 || ei === -1) throw new Error('No JSON object returned');
-    return JSON.parse(clean.slice(si, ei+1));
-  }
-  async function rBuildPatchForEntry_(entryIdx){
-    const entry = DATA[entryIdx];
-    const oldLo = rText_(entry.lo || '');
-    const cleanLo = rSplitLooseLoi_(oldLo);
-    const constraints = (typeof buildToolConstraints === 'function') ? buildToolConstraints(entry.yl) : '';
-    let libraryContext = '';
-    try{ libraryContext = (typeof buildLibraryContextCompact === 'function') ? buildLibraryContextCompact('minecraft') : ''; }catch(e){}
-    const prompt = `You are repairing one Wesley College DLA unit record.
-
-Unit: ${entry.ca} | ${entry.yl} | ${entry.th}
-Central idea: ${entry.ci || ''}
-Current Lines of Inquiry: ${oldLo}
-Clean separated Lines of Inquiry to use: ${cleanLo}
-Planner summary: ${entry.plannerText ? (typeof compactForPrompt === 'function' ? compactForPrompt(entry.plannerText, 1200) : String(entry.plannerText).slice(0,1200)) : ''}
-
-Task:
-1. Return the cleaned Lines of Inquiry as 2-4 separate lines, joined by semicolons.
-2. Regenerate exactly 6 practical, detailed technology suggestions for this unit.
-
-${constraints}
-${libraryContext}
-${rQualityRules_(entry, cleanLo)}
-
-Return ONLY JSON:
-{"lo":"Line 1; Line 2; Line 3","s":[{"t":"Tool","d":"2-3 practical sentences","url":"optional direct lesson URL"}]}`;
-    const parsed = await rCallJson_(prompt);
-    const newLo = rSplitLooseLoi_(parsed.lo || cleanLo);
-    let sugs = (Array.isArray(parsed.s) ? parsed.s : []).map(rNormaliseSug_).filter(s => rSugTool_(s));
-    if(sugs.length < 6) throw new Error('Only '+sugs.length+' suggestions returned');
-    sugs = sugs.slice(0,6);
-    try{ if(typeof dqPatchMinecraftLink_ === 'function') sugs = sugs.map(dqPatchMinecraftLink_); }catch(e){}
-    return {entryIdx, oldLo, newLo, oldSugs:getSugs(entry), newSugs:sugs};
-  }
-  function rShowCompactPopup_(patches){
-    const existing = document.getElementById('stk-y6-responsive-overlay');
-    if(existing) existing.remove();
-    const overlay = document.createElement('div');
-    overlay.id = 'stk-y6-responsive-overlay';
-    overlay.style.cssText = 'position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,.84);display:flex;align-items:center;justify-content:center;padding:20px';
-    const modal = document.createElement('div');
-    modal.style.cssText = 'width:min(980px,96vw);max-height:90vh;overflow:auto;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:0 30px 80px rgba(0,0,0,.55)';
-    modal.innerHTML = `<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div style="font-size:24px">⚡</div><div><div style="font-size:19px;font-weight:900">Review St Kilda Road Year 6 fixes</div><div style="font-size:13px;color:var(--dim)">${patches.length} unit${patches.length!==1?'s':''} prepared in responsive mode.</div></div><button class="btn-sm" id="stkyr-close" style="margin-left:auto">✕</button></div>`;
-    patches.forEach((p,idx)=>{
-      const e = DATA[p.entryIdx] || {};
-      modal.innerHTML += `<div style="background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:13px;margin:10px 0"><div style="font-size:14px;font-weight:900;color:var(--gold);margin-bottom:8px">${idx+1}. ${rEsc_(e.ca)} · ${rEsc_(e.yl)} · ${rEsc_(e.th)}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px"><div style="font-size:12px;color:#bbb;background:#1a0808;border-radius:8px;padding:8px"><b style="color:#ff9999">Current LOIs</b><br>${rEsc_(p.oldLo)}</div><div style="font-size:12px;color:#ddd;background:#081808;border-radius:8px;padding:8px"><b style="color:var(--lime)">Cleaned LOIs</b><br>${rEsc_(p.newLo).replace(/;\s*/g,'<br>')}</div></div><details><summary style="font-size:12px;color:var(--lime);font-weight:800;cursor:pointer">Preview six regenerated suggestions</summary><div style="margin-top:8px">${p.newSugs.map((s,i)=>`<div style="font-size:12px;color:#bbb;border-top:1px solid #333;padding:7px 0"><b style="color:var(--lime)">${i+1}. ${rEsc_(rSugTool_(s))}</b><br>${rEsc_(rSugDesc_(s)).slice(0,360)}${s.url?`<br><span style="color:var(--gold)">${rEsc_(s.url)}</span>`:''}</div>`).join('')}</div></details></div>`;
-    });
-    modal.innerHTML += `<div style="display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0;background:var(--card);padding-top:12px"><button class="btn-sm" id="stkyr-cancel">Cancel</button><button class="btn-pri" id="stkyr-apply">Apply ${patches.length} change${patches.length!==1?'s':''}</button></div>`;
-    overlay.appendChild(modal);
-    document.body.appendChild(overlay);
-    document.getElementById('stkyr-close').onclick = document.getElementById('stkyr-cancel').onclick = () => overlay.remove();
-    document.getElementById('stkyr-apply').onclick = async function(){
-      this.disabled = true;
-      this.textContent = 'Applying…';
-      for(let i=0;i<patches.length;i++){
-        const p = patches[i];
-        const e = DATA[p.entryIdx];
-        if(!e) continue;
-        e.lo = p.newLo;
-        e.s = p.newSugs.map(rNormaliseSug_);
-        try{
-          if(typeof markHumanVerifyDirtyIfNeeded_ === 'function') markHumanVerifyDirtyIfNeeded_(p.entryIdx, 'St Kilda Road Year 6 lessons were regenerated after verification.');
-          else { e.humanVerified = false; e.verified = false; }
-        }catch(err){ e.humanVerified = false; e.verified = false; }
-        if(i % 2 === 0) await rYield_();
-      }
-      try{ await saveToDrive(); }
-      catch(err){ setStatus('Save failed: '+(err.message || err), 'error'); return; }
-      overlay.remove();
-      try{ if(CURRENT_ENTRY_IDX != null) renderEntry(CURRENT_ENTRY_IDX); }catch(e){}
-      try{ if(PREV_TAB === 'browse') renderBrowse?.(); }catch(e){}
-      try{ renderDashboard?.(); }catch(e){}
-      setStatus('St Kilda Road Year 6 fixes applied ✓');
-    };
-  }
-  async function rRunResponsiveStKildaFlow_(instruction){
-    if(typeof ensureLibrariesLoadedForAI === 'function') await ensureLibrariesLoadedForAI();
-    const targets = (DATA || []).map((e,i)=>({e,i})).filter(({e}) => rIsTargetEntry_(e));
-    if(!targets.length){ bulkChatAddMessage?.('assistant', 'I could not find any St Kilda Road Year 6 units in the currently loaded data.'); return true; }
-    bulkChatAddMessage?.('assistant', `I found ${targets.length} St Kilda Road Year 6 unit${targets.length!==1?'s':''}. I’ll process them one at a time so the page stays responsive.`);
-    const patches = [];
-    for(let n=0; n<targets.length; n++){
-      setStatus(`Preparing St Kilda Road Year 6 ${n+1}/${targets.length}…`, 'loading');
-      bulkChatAddMessage?.('assistant', `Working on ${n+1}/${targets.length}: ${targets[n].e.th}`);
-      await rYield_();
-      try{ patches.push(await rBuildPatchForEntry_(targets[n].i)); }
-      catch(err){ bulkChatAddMessage?.('assistant', `⚠️ Could not prepare ${targets[n].e.th}: ${err.message || err}`); }
-      await rSleep_(200);
-    }
-    if(!patches.length){ setStatus('No St Kilda Road Year 6 fixes could be prepared', 'error'); return true; }
-    bulkChatAddMessage?.('assistant', `✅ Prepared ${patches.length} St Kilda Road Year 6 fix${patches.length!==1?'es':''} for review.`);
-    rShowCompactPopup_(patches);
-    setStatus('St Kilda Road Year 6 review ready');
-    return true;
-  }
-
-  // This wrapper is intentionally installed after the heavier quality wrapper.
-  // It intercepts the same request first, avoids the heavy second-pass repair loop,
-  // and keeps the browser responsive.
-  if(typeof startBulkAnalysis === 'function' && !window.__DLA_STK_Y6_RESPONSIVE_START_WRAPPED){
-    window.__DLA_STK_Y6_RESPONSIVE_START_WRAPPED = true;
-    const previousStartBulkAnalysis = startBulkAnalysis;
-    startBulkAnalysis = window.startBulkAnalysis = async function(){
-      const instruction = (typeof bulkChatEffectiveInstruction_ === 'function') ? bulkChatEffectiveInstruction_(bulkChatContext.rawInstruction) : (bulkChatContext.rawInstruction || '');
-      if(rTargetsStKildaYear6_(instruction)){
-        try{
-          bulkChatState = 'analysing';
-          hideReasoningSteps?.();
-          await rRunResponsiveStKildaFlow_(instruction);
-          bulkChatState = 'done';
-          return;
-        }catch(err){
-          hideReasoningSteps?.();
-          bulkChatState = 'idle';
-          bulkChatAddMessage?.('assistant', '⚠️ I hit an error while preparing the responsive St Kilda Road Year 6 fixes: ' + (err.message || err));
-          setStatus('St Kilda Road Year 6 responsive flow failed: ' + (err.message || err), 'error');
-          return;
-        }
-      }
-      return previousStartBulkAnalysis.apply(this, arguments);
-    };
-  }
-  console.log('[DLA PATCH] Responsive St Kilda Road Year 6 regeneration installed', STK_Y6_RESPONSIVE_PATCH_VERSION);
-})();
-/* ===== end DLA hotfix ===== */
 </script>
 </body>
 </html>
