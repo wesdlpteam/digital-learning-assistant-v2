@@ -95,38 +95,27 @@
   #chat-messages{height:430px}
 }
 
-/* Back-to-DLA button: fixed shortcut for admins.
-   Sits at the bottom-left of the main workspace, just outside the sidebar,
-   so it does not cover the JSON/export controls in the sidebar footer. */
-.dla-back-home-fixed{
-  position:fixed;
-  left:258px; /* 240px sidebar + 18px breathing room */
-  bottom:18px;
-  z-index:90;
-  margin:0;
-  padding:11px 14px;
-  display:none;
-  box-shadow:0 10px 30px rgba(0,0,0,.35),0 0 0 1px rgba(212,160,23,.18);
-  backdrop-filter:blur(8px);
+.dla-footer-back{
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  color:var(--gold)!important;
+  border-color:rgba(212,160,23,.55)!important;
+  background:rgba(212,160,23,.08)!important;
 }
-body.app-mode .dla-back-home-fixed{display:flex}
-.dla-back-home-fixed:hover{transform:translateY(-2px)}
-@media (min-width:1400px){.dla-back-home-fixed{left:298px}} /* 280px sidebar + 18px */
-@media (min-width:1900px){.dla-back-home-fixed{left:338px}} /* 320px sidebar + 18px */
-@media (min-width:2600px){.dla-back-home-fixed{left:378px}} /* 360px sidebar + 18px */
-@media (max-width:560px){
-  .dla-back-home-fixed{left:258px;bottom:12px;padding:10px 12px}
-  .dla-back-home-fixed .nav-label{display:none}
+.dla-footer-back:hover{
+  color:#111!important;
+  background:var(--gold)!important;
+  border-color:var(--gold)!important;
 }
+
 </style>
 </head>
 <body>
 <canvas id="bg-canvas"></canvas>
 <div id="global-progress"><div id="global-progress-bar"></div></div>
 
-<a class="dla-back-home dla-back-home-fixed" href="index.html" title="Return to the teacher-facing DLA">
-  <span>←</span><span class="nav-label">Back to DLA</span>
-</a>
 
 <!-- SIDEBAR -->
 <div id="sidebar">
@@ -158,7 +147,8 @@ body.app-mode .dla-back-home-fixed{display:flex}
     <div style="font-size:9px;color:var(--dim);margin-bottom:6px">Melbourne</div>
     <div style="font-size:9px;color:var(--mint)">● DLA Studio v5.16</div>
     <div id="sidebar-user-email" style="font-size:10px;color:var(--dim);margin-top:4px;word-break:break-all"></div>
-    <div style="margin-top:12px;display:flex;gap:8px">
+    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+      <a class="btn-sm dla-footer-back" href="index.html" title="Back to the teacher-facing DLA">← DLA</a>
       <button class="btn-sm" onclick="downloadJSON()">↓ JSON</button>
       <button class="btn-sm" onclick="showKeyboardHelp()" title="Keyboard shortcuts">⌨</button>
       <button class="btn-sm" onclick="clearSession()" title="Clear session & sign out" style="color:#FF8080">⏏</button>
@@ -4945,7 +4935,7 @@ const DEFAULT_TOOL_AGE_RANGES = {
   // Year 3+
   'Sphero BOLT': {min:3,max:6}, 'Lego Spike Essential': {min:3,max:6}, 'Micro:bit': {min:3,max:6},
   'Scratch': {min:3,max:6}, 'Stop Motion Studio': {min:3,max:6}, 'Adobe Express': {min:3,max:6},
-  'Canva': {min:3,max:6}, 'Book Creator': {min:3,max:6}, 'Padlet': {min:3,max:6},
+  'Canva': {min:3,max:6}, 'Book Creator': {min:0,max:6}, 'Padlet': {min:3,max:6},
   'Kahoot': {min:3,max:6}, 'Tinkercad': {min:3,max:6}, 'Explain Everything': {min:3,max:6},
   // Year 4+
   'Microsoft Teams': {min:4,max:6}, 'Microsoft Word': {min:4,max:6}, 'Microsoft PowerPoint': {min:4,max:6},
@@ -5025,6 +5015,16 @@ function seedDefaultInventoryIfEmpty(){
     if(typeof TOOL_INVENTORY_CLEANUP_PENDING !== 'undefined') TOOL_INVENTORY_CLEANUP_PENDING = true;
   }
 
+  // Migration: older Studio builds seeded Book Creator as Year 3+. Wesley uses
+  // Book Creator with younger learners too, so treat the old seeded range as stale
+  // and open it to Prep-Year 6. Coordinators can still narrow it again manually.
+  const bookCreatorKey = toolInventoryKey('Book Creator');
+  const bookCreatorRange = TOOL_INVENTORY.ageRanges && TOOL_INVENTORY.ageRanges[bookCreatorKey];
+  if(bookCreatorKey && (!bookCreatorRange || (Number(bookCreatorRange.min) === 3 && Number(bookCreatorRange.max) === 6))){
+    TOOL_INVENTORY.ageRanges[bookCreatorKey] = {min:0,max:6};
+    if(typeof TOOL_INVENTORY_CLEANUP_PENDING !== 'undefined') TOOL_INVENTORY_CLEANUP_PENDING = true;
+  }
+
   TOOL_INVENTORY.approved.forEach(tool => {
     const key = toolInventoryKey(tool);
     if(key && !TOOL_INVENTORY.ageRanges[key]) TOOL_INVENTORY.ageRanges[key] = getDefaultToolAgeRange(tool);
@@ -5042,10 +5042,10 @@ Object.defineProperty(window, 'NOT_AVAILABLE_AT_WESLEY', {
 const TOOL_AGE_GUIDE = `TOOL AGE GUIDE (HARD RULE — match Australian year levels):
 Prep = ages 5-6 | Year 1 = 6-7 | Year 2 = 7-8 | Year 3 = 8-9 | Year 4 = 9-10 | Year 5 = 10-11 | Year 6 = 11-12
 - Prep-Year 2 ONLY: Bee-Bots, ScratchJR, ChatterPix Kids, Puppet Pals, Sphero Indi
-- Year 3+: Sphero BOLT, Lego Spike Essential, Micro:bits, Scratch, Stop Motion Studio, Adobe Express, Canva, Book Creator, Padlet, Kahoot, Tinkercad, Explain Everything, Wise Discussion Chatbots
+- Year 3+: Sphero BOLT, Lego Spike Essential, Micro:bits, Scratch, Stop Motion Studio, Adobe Express, Canva, Padlet, Kahoot, Tinkercad, Explain Everything, Wise Discussion Chatbots
 - Year 4+: Microsoft Teams, Lego Spike Prime, CoDrone EDU, Minecraft Education (with scaffolding for Year 4)
 - Year 5+: 3D Printers, Python-based coding
-- All year levels: Seesaw, Epic, GarageBand, iMovie, PicCollage, Google Maps, Google Earth, Clickview, Green Screen, iPads, Laptops, Digital Cameras, Freeform, Sketchbook, Brushes Redux
+- All year levels: Seesaw, Epic, GarageBand, iMovie, PicCollage, Google Maps, Google Earth, Clickview, Green Screen, iPads, Laptops, Digital Cameras, Freeform, Sketchbook, Brushes Redux, Book Creator
 NEVER propose a tool for a year level below its minimum age.`;
 
 // Map year level string → numeric year for age filtering
@@ -5072,6 +5072,7 @@ function getAgeAppropriateTools(yearLevel){
     {n:'Makey Makey', min:0}, {n:'Word Clouds ABCya', min:0},
     {n:'Field Guide to Victoria', min:0}, {n:'Sky Map', min:0},
     {n:'Geoboard',    min:0}, {n:'Adobe Express Podcasting', min:0},
+    {n:'Book Creator', min:0},
     // Prep-Yr2 ONLY (max:2)
     {n:'Bee-Bots',      min:0, max:2},
     {n:'ScratchJR',     min:0, max:2},
@@ -5086,7 +5087,6 @@ function getAgeAppropriateTools(yearLevel){
     {n:'Stop Motion Studio', min:3},
     {n:'Adobe Express',    min:3},
     {n:'Canva',            min:3},
-    {n:'Book Creator',     min:3},
     {n:'Padlet',           min:3},
     {n:'Wise Discussion Chatbots', min:3},
     {n:'Kahoot',           min:3},
@@ -5746,6 +5746,79 @@ function getBulkPlatformToolName(platform){
   if(/micro.?bit/i.test(name)) return 'Micro:bit';
   if(/minecraft/i.test(name)) return 'Minecraft Education';
   return name;
+}
+
+function bulkUniqueToolsForDetection_(){
+  normaliseToolInventory();
+  const all = [
+    ...(DEFAULT_APPROVED_TOOLS || []),
+    ...((TOOL_INVENTORY && TOOL_INVENTORY.approved) || []),
+    'Bee-Bots','ScratchJR','Sphero Indi','Sphero BOLT','Lego Spike Essential','Lego Spike Prime',
+    'Book Creator','Canva','Padlet','Seesaw','Microsoft Forms','Microsoft Sway','Microsoft PowerPoint',
+    'Microsoft Word','Microsoft Excel','Microsoft Teams','Microsoft OneNote','Wise Discussion Chatbots',
+    'Micro:bit','Minecraft Education','GarageBand','iMovie','Adobe Express','Stop Motion Studio','Tinkercad'
+  ];
+  const seen = new Set();
+  return all.map(t => normaliseToolName(String(t || '').trim())).filter(t => {
+    const k = toolInventoryKey(t);
+    if(!k || seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  }).sort((a,b) => b.length - a.length);
+}
+
+function bulkEscapeRegExp_(value){
+  return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function bulkDetectNamedToolOpportunity_(instruction){
+  const text = String(instruction || '').toLowerCase().replace(/[’']/g, '');
+  if(!bulkInstructionLooksLikeOpportunity(text)) return '';
+  const aliases = {
+    'book creator':'Book Creator',
+    'bookcreator':'Book Creator',
+    'beebot':'Bee-Bots',
+    'bee bot':'Bee-Bots',
+    'bee-bot':'Bee-Bots',
+    'bee bots':'Bee-Bots',
+    'bee-bots':'Bee-Bots',
+    'scratch jr':'ScratchJR',
+    'scratchjr':'ScratchJR',
+    'microbit':'Micro:bit',
+    'micro bit':'Micro:bit',
+    'micro:bit':'Micro:bit',
+    'lego spike prime':'Lego Spike Prime',
+    'lego spike essential':'Lego Spike Essential',
+    'sphero bolt':'Sphero BOLT',
+    'sphero indi':'Sphero Indi',
+    'wise chatbots':'Wise Discussion Chatbots',
+    'wise discussion chatbots':'Wise Discussion Chatbots',
+    'schoolbox discussion chatbots':'Wise Discussion Chatbots'
+  };
+  for(const [alias, tool] of Object.entries(aliases)){
+    const pattern = bulkEscapeRegExp_(alias).replace(/\s+/g, '\\s+');
+    const re = new RegExp('(^|[^a-z0-9])' + pattern + '([^a-z0-9]|$)', 'i');
+    if(re.test(text)) return tool;
+  }
+  const tools = bulkUniqueToolsForDetection_();
+  for(const tool of tools){
+    const phrase = tool.toLowerCase().replace(/[’']/g, '');
+    if(!phrase || phrase.length < 4) continue;
+    const pattern = bulkEscapeRegExp_(phrase).replace(/\s+/g, '\\s+');
+    const re = new RegExp('(^|[^a-z0-9])' + pattern + '([^a-z0-9]|$)', 'i');
+    if(re.test(text)) return tool;
+  }
+  return '';
+}
+
+function bulkExtractTargetYears_(instruction){
+  const t = String(instruction || '').toLowerCase();
+  const out = new Set();
+  if(/\b(prep|foundation)\b/.test(t)) out.add('Prep');
+  const re = /\b(?:year|yr|y)\s*([1-6])\b/g;
+  let m;
+  while((m = re.exec(t)) !== null){ out.add('Year ' + m[1]); }
+  return [...out];
 }
 
 // Backward-compatible alias
@@ -7440,21 +7513,34 @@ async function startBulkAnalysis(){
     || platforms.find(p=>p.match.test(enrichedInstruction))
     || null;
   const isOpportunityStyle = bulkInstructionLooksLikeOpportunity(enrichedInstruction);
-  const platformToolName = getBulkPlatformToolName(platform);
+  const namedOpportunityTool = (!platform && isOpportunityStyle) ? bulkDetectNamedToolOpportunity_(enrichedInstruction) : '';
+  const platformToolName = getBulkPlatformToolName(platform) || namedOpportunityTool;
+  const targetYears = bulkExtractTargetYears_(enrichedInstruction);
 
-  // If this is a platform opportunity search (e.g. "find Micro:bit opportunities"),
+  // If this is a specific-tool/platform opportunity search (e.g. "find Prep Book Creator opportunities"),
   // pre-filter locally before GPT sees the data. This keeps prompts under token limits and
-  // removes entries that would be rejected anyway because of age rules or duplicates.
+  // removes entries that would be rejected anyway because of year, age rules or duplicates.
   let analysisData = completeData;
   let filteredForPlatformOpportunity = false;
-  if(platform && isOpportunityStyle && platformToolName){
-    const filtered = completeData.filter(({e}) =>
+  if(targetYears.length){
+    analysisData = analysisData.filter(({e}) => targetYears.includes(e.yl));
+  }
+  if(isOpportunityStyle && platformToolName){
+    const filtered = analysisData.filter(({e}) =>
       isAiToolSafeForEntry(platformToolName, e) &&
       !wouldDupeToolProposalInEntry(e, platformToolName, -1)
     );
     if(filtered.length){
       analysisData = filtered;
       filteredForPlatformOpportunity = true;
+    } else {
+      if(prog) prog.style.display = 'none';
+      hideReasoningSteps();
+      const yearText = targetYears.length ? ` in ${targetYears.join(', ')}` : '';
+      bulkChatAddMessage('assistant', `⚠️ I understood this as a request to find more opportunities${yearText} for <strong>${esc(platformToolName)}</strong>, but I couldn't find eligible units that do not already use it and where it is inside the current Tool Inventory age range. Check the Tool Inventory age range for ${esc(platformToolName)}, or ask for a different year level/tool.`);
+      bulkChatState = 'idle';
+      stopProgress();
+      return;
     }
   }
   analysisData = analysisData.slice(0, 140); // defensive cap; current library is ~127 entries
@@ -7525,6 +7611,18 @@ ${platformMatchingRule}
 QUANTITY CAP: Propose a maximum of ${maxCap} changes total. If you find more than ${maxCap} genuine matches, select only the ${maxCap} strongest connections.
 ` : '';
 
+  const namedToolSection = (!platform && namedOpportunityTool) ? `
+
+SPECIFIC TOOL OPPORTUNITY MODE:
+The coordinator explicitly named the tool "${namedOpportunityTool}". This is already specific enough — do NOT ask for a named lesson library and do NOT switch to other tools.
+- Every proposal MUST use exactly this tool name in the "t" field: "${namedOpportunityTool}".
+- Scan every candidate entry below${targetYears.length ? ` (${targetYears.join(', ')} only)` : ''} and find genuine unit fits.
+- SKIP entries that already contain ${namedOpportunityTool}; the candidate list has already been pre-filtered for this.
+- Replace the weakest non-STEM suggestion slot only: sugIdx 0, 1, 2, 3 or 4. Never target sugIdx 5.
+- Write a practical classroom description that says what students do, what they make, and why it connects to the unit.
+- If the tool is a familiar creation tool such as Book Creator, Canva, Seesaw or Padlet, treat it as a classroom tool, not as a curated lesson library.
+- ${explicitCount ? `TARGET: The coordinator asked for ${explicitCount}. Aim for at least ${explicitCount} proposals if there are enough genuine matches.` : 'Aim for 6-12 strong proposals if there are enough genuine matches.'}` : '';
+
   const isOpportunitySearch = isOpportunityStyle && !platform;
   const opportunitySection = isOpportunitySearch ? `
 
@@ -7537,8 +7635,8 @@ The coordinator is asking you to scan the library for places where a specific to
 - For each proposal, briefly explain the specific curriculum connection in the description
 - Still respect the TOOL AGE GUIDE and duplicate prevention rules` : '';
 
-  const compactOpportunityMode = isOpportunityStyle || (platformSection + opportunitySection).length > 3000;
-  const libraryContextLen = (platformSection + opportunitySection).length;
+  const compactOpportunityMode = isOpportunityStyle || (platformSection + namedToolSection + opportunitySection).length > 3000;
+  const libraryContextLen = (platformSection + namedToolSection + opportunitySection).length;
   const plannerLimit = compactOpportunityMode ? 0 : (libraryContextLen > 1500 ? 120 : 180);
   const descLimit = compactOpportunityMode ? 0 : (libraryContextLen > 1500 ? 70 : 110);
   const fullContext = analysisData.map(({e,i})=>{
@@ -7595,7 +7693,7 @@ PROTECTED SLOT — STEM DESIGN CYCLE (HARD RULE — ABSOLUTE, NO EXCEPTIONS):
 - If the only good fit in an entry is slot 5, SKIP that entry entirely — do NOT propose a change to slot 5.
 - Any proposal with "sugIdx":5 will be hard-rejected by the coordinator and counted as a violation.
 - Per entry, you have FIVE eligible slots (s0, s1, s2, s3, s4). Slot 5 is invisible for replacement purposes.
-${platformSection}${opportunitySection}
+${platformSection}${namedToolSection}${opportunitySection}
 TOOL INDEX:
 ${toolIndexStr}
 
@@ -7886,6 +7984,8 @@ ${fullContext}`;
         ? `All ${skippedDupes} proposal${skippedDupes!==1?'s':''} would have created duplicates${stemBlockNote}. Try a different instruction.`
         : filteredStem > 0
         ? `GPT proposed ${rawAiCount} changes but all targeted the STEM Design Cycle suggestion (Suggestion 6 / sugIdx:5), which is protected. Try rephrasing — e.g. "replace one of the other 5 suggestions with Micro:bit".`
+        : namedOpportunityTool
+        ? `I understood the requested tool as ${namedOpportunityTool}, but GPT did not return any usable non-duplicate proposals after filtering. Try "find at least 10 ${namedOpportunityTool} opportunities in ${targetYears.length ? targetYears.join(', ') : 'all year levels'} and replace the weakest non-STEM suggestion".`
         : 'No changes proposed for this instruction. Try rephrasing — for example, name a specific tool or lesson library.';
       bulkChatAddMessage('assistant', `⚠️ ${msg}`);
       bulkChatMemory.push({ role: 'assistant', content: `No changes found. ${msg}` });
