@@ -120,14 +120,14 @@
         },
         "seesaw": {
           "min": 0,
-          "max": 6
+          "max": 4
         },
         "canva": {
           "min": 3,
           "max": 6
         },
         "book creator": {
-          "min": 0,
+          "min": 2,
           "max": 6
         },
         "padlet": {
