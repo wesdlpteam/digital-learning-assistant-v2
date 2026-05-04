@@ -12930,6 +12930,327 @@ setInterval(async()=>{
 })();
 /* ===== end DLA hotfix ===== */
 
+
+/* ===== DLA hotfix: stronger St Kilda Road Year 6 regeneration quality ===== */
+(function(){
+  const STK_Y6_QUALITY_PATCH_VERSION = '2026-05-04-stk-y6-quality-v1';
+
+  function qText_(v){ return String(v == null ? '' : v).replace(/\s+/g,' ').trim(); }
+  function qEsc_(v){
+    if(typeof esc === 'function') return esc(v);
+    return qText_(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function qSleep_(ms){ return new Promise(resolve => setTimeout(resolve, ms)); }
+  function qCampusIsStKilda_(ca){ return /st\s*kilda/i.test(String(ca || '')); }
+  function qIsTargetEntry_(e){ return e && /^year\s*6$/i.test(qText_(e.yl)) && qCampusIsStKilda_(e.ca); }
+  function qTargetsStKildaYear6Quality_(instruction){
+    const t = String(instruction || '').toLowerCase();
+    return /st\s*kilda|skr|year\s*6|lines? of inquiry|loi/.test(t)
+      && /regenerate|repair|fix|quality|weak|detail|detailed|lesson|suggestion|planner|match|align/.test(t);
+  }
+  function qSplitLooseLoi_(lo){
+    let s = qText_(lo)
+      .replace(/\u00a0/g,' ')
+      .replace(/â\s*[€¢·]/gi, '; ')
+      .replace(/Â\s*[•·]/gi, '; ')
+      .replace(/ï\s*‚\s*·/gi, '; ')
+      .replace(/[\u2022\u2023\u25E6\u2043\u2219\u00B7\u25CF\u25AA\u25AB\u25A0\u25A1\u25C6\u25C7\u25B8\u25B6\uF0B7]+/g, '; ')
+      .replace(/\s*[|¦§]+\s*/g, '; ')
+      .replace(/\s*[ ]+\s*/g, '; ')
+      .replace(/\s+/g,' ')
+      .trim();
+    function cleanPart(x){
+      return qText_(x)
+        .replace(/^(?:\d+[.)]|LOI\s*\d+[:.)-]?|Line\s+of\s+Inquiry\s*\d+[:.)-]?)\s*/i,'')
+        .replace(/^[\-–—:;,.\s]+|[\-–—:;,.\s]+$/g,'')
+        .trim();
+    }
+    let parts = s.split(/\s*;\s*/).map(cleanPart).filter(Boolean);
+    if(parts.length <= 1){
+      parts = s.split(/\s+(?=(?:\d+[.)]|LOI\s*\d+|Line\s+of\s+Inquiry\s*\d+))/i).map(cleanPart).filter(Boolean);
+    }
+    if(parts.length <= 1){
+      parts = s.split(/\s+(?=(?:How|Why|The ways?|Ways?|Factors?|The impact|Impact|Connections?|Relationships?|Responsibilities?|Perspectives?|Systems?|Strategies?|Changes?|Different ways?|Our role|People can|People use|Communities?|Environments?)\b)/g).map(cleanPart).filter(Boolean);
+    }
+    const seen = new Set();
+    parts = parts.filter(p => {
+      const key = p.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+      if(!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    return parts.length > 1 ? parts.slice(0,4).join('; ') : s;
+  }
+  function qLoiList_(lo){ return qSplitLooseLoi_(lo).split(/\s*;\s*/).map(qText_).filter(Boolean); }
+  function qEntryKey_(e){ return [qText_(e.ca).toLowerCase(), qText_(e.yl).toLowerCase(), qText_(e.th).toLowerCase()].join('|'); }
+  function qSuggestionTool_(s){ try{ return sugTool(s); }catch(e){ return s && (s.t || s.tool || s.name) || ''; } }
+  function qSuggestionDesc_(s){ try{ return sugDesc(s); }catch(e){ return s && (s.d || s.desc || s.description) || ''; } }
+  function qNormaliseSuggestion_(s){
+    const out = Object.assign({}, s || {});
+    let tool = qText_(qSuggestionTool_(out));
+    if(typeof normaliseToolName === 'function') tool = normaliseToolName(tool);
+    let desc = qText_(qSuggestionDesc_(out));
+    if(/cospaces/i.test(tool)) tool = 'Delightex';
+    desc = desc.replace(/CoSpaces/gi, 'Delightex');
+    if(/google maps/i.test(tool) && /annotat|pin|pins|label|layer|overlay|plot|custom map|map product|gis|route map|data map/i.test(desc)){
+      tool = 'National Geographic MapMaker';
+    }
+    out.t = tool;
+    out.d = desc;
+    if(out.url) out.url = qText_(out.url).replace(/watr-humans-and-elephants/gi, 'water-humans-and-elephants');
+    return out;
+  }
+  function qKeywordList_(entry, lo){
+    const stop = new Set('about above across after again against all also and any are around because been before being between both but can central class classroom could create created creates creating different each every from give given have having how inquiry into lesson lines make makes making more most other their them then there these they this those through unit using what when where which while with would year students student teacher teachers learning technology digital wesley st kilda road'.split(' '));
+    const text = [entry.th, entry.ci, lo, entry.plannerText].map(qText_).join(' ').toLowerCase();
+    const counts = new Map();
+    text.replace(/[^a-z0-9\s-]/g,' ').split(/\s+/).forEach(w => {
+      w = w.replace(/^-|-$/g,'');
+      if(w.length < 4 || stop.has(w)) return;
+      counts.set(w, (counts.get(w) || 0) + 1);
+    });
+    return Array.from(counts.entries()).sort((a,b)=>b[1]-a[1]).slice(0,18).map(([w])=>w);
+  }
+  function qSuggestionWeakReasons_(s, entry, lo){
+    const tool = qSuggestionTool_(s);
+    const desc = qSuggestionDesc_(s);
+    const reasons = [];
+    const words = desc.split(/\s+/).filter(Boolean).length;
+    if(words < 45) reasons.push('too brief');
+    if(words > 115 && !/minecraft/i.test(tool)) reasons.push('too long / unfocused');
+    if(!/students?\s+(use|create|build|design|record|investigate|compare|collect|map|model|prototype|interview|analyse|analyze|present|publish|film|code|program|survey|annotate|construct|test|capture|explain|curate|evaluate|develop|produce)/i.test(desc)) reasons.push('missing concrete student action');
+    if(!/brief|portfolio|map|model|prototype|presentation|report|reflection|video|podcast|poster|infographic|tour|dashboard|survey|graph|story|book|gallery|pitch|explanation|guide|timeline|checklist|recording|screenshot|screenshots|artefact|artifact|rubric|proposal|interview|animation|simulation|data display|field note|case study/i.test(desc)) reasons.push('missing concrete student product');
+    if(/deepen their understanding|explore the unit|engage with|use technology with purpose|students will learn about|relevant to the unit|meaningful way|digital tool to support learning|enhance their learning/i.test(desc)) reasons.push('generic wording');
+    const keys = qKeywordList_(entry, lo);
+    if(keys.length && !keys.some(k => new RegExp('\\b'+k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i').test(desc))) reasons.push('weak unit vocabulary connection');
+    if(/google maps/i.test(tool) && /annotat|pin|pins|label|layer|overlay|plot|custom map|map product|gis/i.test(desc)) reasons.push('Google Maps used for annotation instead of Street View');
+    if(/cospaces/i.test(tool + ' ' + desc)) reasons.push('old CoSpaces name');
+    return reasons;
+  }
+  function qAllSuggestionsPass_(sugs, entry, lo){
+    if(!Array.isArray(sugs) || sugs.length < 6) return false;
+    return sugs.slice(0,6).every(s => qSuggestionWeakReasons_(s, entry, lo).length === 0);
+  }
+  function qQualityReport_(sugs, entry, lo){
+    return sugs.slice(0,6).map((s,i)=>({
+      slot:i+1,
+      tool:qSuggestionTool_(s),
+      reasons:qSuggestionWeakReasons_(s, entry, lo)
+    })).filter(x => x.reasons.length);
+  }
+  function qBuildQualityRules_(entry, lo){
+    const loiLines = qLoiList_(lo);
+    return `QUALITY RULES FOR ST KILDA ROAD YEAR 6 (HARD):
+- These are final teacher-facing lesson suggestions, not placeholders.
+- Each description must be 2-3 substantial sentences, about 50-95 words, unless it is a verified Minecraft lesson where 2 concise practical sentences are enough.
+- Each suggestion must name exactly what students DO in class, what they CREATE/PRODUCE, and how it connects to the unit.
+- Use specific vocabulary from the central idea, lines of inquiry or planner summary. Do not write generic phrases such as "deepen their understanding" or "explore the unit".
+- Make these Year 6 appropriate: purposeful, independent, evidence-based and practical for a primary teacher.
+- Use 6 different tools. Suggestions 1-5 are normal classroom technology ideas. Suggestion 6 must be a hands-on STEM Design Cycle idea.
+- Do not use Seesaw as a default Year 6 tool unless it is clearly the best reflection/portfolio option.
+- Google Maps is Street View only: ground-level virtual observation, comparing places, gathering visual evidence. Do not use Google Maps for annotated maps, pins, labels, layers or plotted data.
+- For annotated maps, map layers or plotted data, use National Geographic MapMaker.
+- Use Delightex, not CoSpaces.
+- If Minecraft is used, use a verified curated Minecraft lesson and include its URL.
+
+Clean separated Lines of Inquiry:
+${loiLines.map((l,i)=>`${i+1}. ${l}`).join('\n')}`;
+  }
+  async function qCallJsonObject_(prompt, model){
+    const raw = await callAI([{role:'user', parts:[{text:prompt}]}], null, model || OPENAI_MODEL || OPENAI_FAST_MODEL);
+    const clean = String(raw || '').replace(/```json|```/g,'').trim();
+    const si = clean.indexOf('{'), ei = clean.lastIndexOf('}');
+    if(si === -1 || ei === -1) throw new Error('No JSON object returned');
+    return JSON.parse(clean.slice(si, ei + 1));
+  }
+  async function qRepairSuggestions_(entry, lo, sugs, qualityReport){
+    const constraints = (typeof buildToolConstraints === 'function') ? buildToolConstraints(entry.yl) : '';
+    const prompt = `You are improving weak Wesley DLA suggestions for a St Kilda Road Year 6 unit.
+
+Unit: ${entry.ca} | ${entry.yl} | ${entry.th}
+Central idea: ${entry.ci || ''}
+Lines of Inquiry: ${lo}
+Planner summary: ${entry.plannerText ? compactForPrompt(entry.plannerText, 1800) : ''}
+
+The previous suggestions were too weak. Fix them.
+
+Weakness report:
+${JSON.stringify(qualityReport, null, 2)}
+
+Current suggestions:
+${JSON.stringify(sugs.slice(0,6), null, 2)}
+
+${constraints}
+
+${qBuildQualityRules_(entry, lo)}
+
+Return ONLY JSON:
+{"s":[{"t":"Tool","d":"2-3 substantial practical sentences","url":"optional direct lesson URL"}]}`;
+    const parsed = await qCallJsonObject_(prompt, OPENAI_MODEL || OPENAI_FAST_MODEL);
+    return (Array.isArray(parsed.s) ? parsed.s : []).map(qNormaliseSuggestion_).filter(s => qSuggestionTool_(s));
+  }
+  async function qBuildHighQualityStKildaPatch_(entryIdx){
+    const entry = DATA[entryIdx];
+    const oldLo = qText_(entry.lo || '');
+    const cleanLo = qSplitLooseLoi_(oldLo);
+    const constraints = (typeof buildToolConstraints === 'function') ? buildToolConstraints(entry.yl) : '';
+    let libraryContext = '';
+    try{ libraryContext = (typeof buildLibraryContextCompact === 'function') ? buildLibraryContextCompact('minecraft') : ''; }catch(e){}
+    const prompt = `You are repairing one Wesley College Digital Learning Assistant unit record. The previous St Kilda Road Year 6 regenerated suggestions were too weak and lacked the level of detail used in other year levels.
+
+Unit: ${entry.ca} | ${entry.yl} | ${entry.th}
+Central idea: ${entry.ci || ''}
+Current grouped Lines of Inquiry: ${oldLo}
+Clean separated Lines of Inquiry to use: ${cleanLo}
+Planner summary: ${entry.plannerText ? compactForPrompt(entry.plannerText, 2200) : ''}
+
+Task:
+1. Return the cleaned Lines of Inquiry as 2-4 separate lines using semicolons between lines. Do not invent a new unit.
+2. Regenerate exactly 6 high-quality practical technology suggestions for this unit.
+
+${constraints}
+
+${libraryContext}
+
+${qBuildQualityRules_(entry, cleanLo)}
+
+Return ONLY JSON:
+{"lo":"Line 1; Line 2; Line 3","s":[{"t":"Tool","d":"2-3 substantial practical sentences","url":"optional direct lesson URL"}]}`;
+    let parsed = await qCallJsonObject_(prompt, OPENAI_MODEL || OPENAI_FAST_MODEL);
+    let newLo = qSplitLooseLoi_(parsed.lo || cleanLo);
+    let sugs = (Array.isArray(parsed.s) ? parsed.s : []).map(qNormaliseSuggestion_).filter(s => qSuggestionTool_(s));
+    if(sugs.length < 6) throw new Error('Only '+sugs.length+' suggestions returned');
+    sugs = sugs.slice(0,6);
+
+    for(let attempt=0; attempt<2; attempt++){
+      const report = qQualityReport_(sugs, entry, newLo);
+      if(!report.length) break;
+      sugs = await qRepairSuggestions_(entry, newLo, sugs, report);
+      if(sugs.length < 6) throw new Error('Repair returned only '+sugs.length+' suggestions');
+      sugs = sugs.slice(0,6);
+    }
+
+    if(typeof dqPatchMinecraftLink_ === 'function'){
+      try{ sugs = sugs.map(dqPatchMinecraftLink_); }catch(e){}
+    }
+    const remaining = qQualityReport_(sugs, entry, newLo);
+    return {
+      entryIdx,
+      oldLo,
+      newLo,
+      oldSugs:getSugs(entry),
+      newSugs:sugs,
+      qualityReport:remaining,
+      reason: remaining.length
+        ? 'St Kilda Road Year 6 LOI split + regenerated suggestions with quality boost. Some items may still need manual review.'
+        : 'St Kilda Road Year 6 LOI split + high-detail regenerated suggestions'
+    };
+  }
+  function qPatchSummary_(p){
+    const e = DATA[p.entryIdx] || {};
+    return `${e.ca || ''} · ${e.yl || ''} · ${e.th || ''}`;
+  }
+  function qShowQualityMaintenancePopup_(patches){
+    const existing = document.getElementById('stk-y6-quality-overlay');
+    if(existing) existing.remove();
+    const overlay = document.createElement('div');
+    overlay.id = 'stk-y6-quality-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:1300;background:rgba(0,0,0,.84);display:flex;align-items:center;justify-content:center;padding:20px';
+    const modal = document.createElement('div');
+    modal.style.cssText = 'width:min(1180px,96vw);max-height:92vh;overflow:auto;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;box-shadow:0 30px 80px rgba(0,0,0,.55)';
+    modal.innerHTML = `<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><div style="font-size:26px">✨</div><div><div style="font-size:20px;font-weight:900">Review high-detail St Kilda Road Year 6 fixes</div><div style="font-size:13px;color:var(--dim)">${patches.length} unit${patches.length!==1?'s':''} regenerated with stronger detail. Nothing applies until you click Apply.</div></div><button class="btn-sm" style="margin-left:auto" id="stkq-close">✕</button></div>`;
+    patches.forEach((p,idx) => {
+      const e = DATA[p.entryIdx] || {};
+      const oldSugs = p.oldSugs || [];
+      const newSugs = p.newSugs || [];
+      const qualityWarn = p.qualityReport && p.qualityReport.length
+        ? `<div style="padding:9px 12px;background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.35);border-radius:10px;color:#F8D28A;font-size:12px;margin:8px 0"><b>Manual review note:</b> ${qEsc_(p.qualityReport.map(x => `#${x.slot} ${x.tool}: ${x.reasons.join(', ')}`).join(' · '))}</div>`
+        : `<div style="padding:9px 12px;background:rgba(197,232,74,.08);border:1px solid rgba(197,232,74,.25);border-radius:10px;color:var(--lime);font-size:12px;margin:8px 0"><b>Quality check:</b> student action, product and unit vocabulary detected.</div>`;
+      modal.innerHTML += `<div style="background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:14px;margin:12px 0"><div style="font-size:14px;font-weight:900;color:var(--gold);margin-bottom:6px">${idx+1}. ${qEsc_(qPatchSummary_(p))}</div><div style="font-size:12px;color:var(--dim);margin-bottom:10px">${qEsc_(p.reason || '')}</div>${qualityWarn}<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px"><div style="padding:10px;background:#1a0808;border:1px solid #3a1818;border-radius:10px"><div style="font-size:10px;color:#ff9999;font-weight:800;text-transform:uppercase">Current Lines of Inquiry</div><div style="font-size:12px;line-height:1.55;color:#ddd">${qEsc_(p.oldLo || '(empty)')}</div></div><div style="padding:10px;background:#081808;border:1px solid #1e3a1e;border-radius:10px"><div style="font-size:10px;color:var(--lime);font-weight:800;text-transform:uppercase">Cleaned Lines of Inquiry</div><div style="font-size:12px;line-height:1.55;color:#ddd">${qEsc_(p.newLo || '(empty)').replace(/;\s*/g,'<br>')}</div></div></div><details open><summary style="cursor:pointer;font-size:12px;color:var(--lime);font-weight:800">Show regenerated suggestions</summary><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px"><div>${oldSugs.map(s=>`<div style="font-size:12px;color:#bbb;padding:7px 0;border-bottom:1px solid #333"><b style="color:#ff9999">${qEsc_(qSuggestionTool_(s))}</b><br>${qEsc_(qSuggestionDesc_(s)).slice(0,280)}</div>`).join('')}</div><div>${newSugs.map(s=>`<div style="font-size:12px;color:#bbb;padding:7px 0;border-bottom:1px solid #333"><b style="color:var(--lime)">${qEsc_(qSuggestionTool_(s))}</b><br>${qEsc_(qSuggestionDesc_(s)).slice(0,420)}${s.url?`<br><span style="color:var(--gold)">${qEsc_(s.url)}</span>`:''}</div>`).join('')}</div></div></details></div>`;
+    });
+    modal.innerHTML += `<div style="display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0;background:var(--card);padding-top:12px"><button class="btn-sm" id="stkq-cancel">Cancel</button><button class="btn-pri" id="stkq-apply">Apply ${patches.length} change${patches.length!==1?'s':''}</button></div>`;
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    document.getElementById('stkq-close').onclick = document.getElementById('stkq-cancel').onclick = () => overlay.remove();
+    document.getElementById('stkq-apply').onclick = async function(){
+      this.disabled = true;
+      this.textContent = 'Applying…';
+      patches.forEach(p => {
+        const e = DATA[p.entryIdx];
+        if(!e) return;
+        e.lo = p.newLo;
+        e.s = p.newSugs.map(qNormaliseSuggestion_);
+        try{
+          if(typeof markHumanVerifyDirtyIfNeeded_ === 'function') markHumanVerifyDirtyIfNeeded_(p.entryIdx, 'St Kilda Year 6 lessons were regenerated after verification.');
+          else { e.humanVerified = false; e.verified = false; }
+        }catch(err){ e.humanVerified = false; e.verified = false; }
+      });
+      await saveToDrive();
+      overlay.remove();
+      try{ if(CURRENT_ENTRY_IDX != null) renderEntry(CURRENT_ENTRY_IDX); }catch(e){}
+      try{ renderBrowse?.(); renderDashboard?.(); }catch(e){}
+      setStatus('High-detail St Kilda Road Year 6 fixes applied ✓');
+    };
+  }
+  async function qRunStKildaYear6QualityFlow_(instruction){
+    if(typeof ensureLibrariesLoadedForAI === 'function') await ensureLibrariesLoadedForAI();
+    const targets = (DATA || []).map((e,i)=>({e,i})).filter(({e}) => qIsTargetEntry_(e));
+    if(!targets.length){
+      bulkChatAddMessage?.('assistant', 'I could not find any St Kilda Road Year 6 units in the currently loaded data.');
+      return true;
+    }
+    bulkChatAddMessage?.('assistant', `I found ${targets.length} St Kilda Road Year 6 unit${targets.length!==1?'s':''}. I’ll regenerate these with stronger Year 6 detail, concrete student products and clearer links to the separated Lines of Inquiry.`);
+    const patches = [];
+    for(let n=0; n<targets.length; n++){
+      setStatus(`Regenerating high-detail St Kilda Road Year 6 unit ${n+1}/${targets.length}…`, 'loading');
+      try{
+        patches.push(await qBuildHighQualityStKildaPatch_(targets[n].i));
+      }catch(err){
+        console.warn('High-detail STK Year 6 regeneration failed', targets[n].i, err);
+        bulkChatAddMessage?.('assistant', `⚠️ I could not regenerate one St Kilda Road Year 6 unit: ${err.message || err}`);
+      }
+      await qSleep_(250);
+    }
+    if(!patches.length){
+      setStatus('No St Kilda Road Year 6 fixes could be prepared', 'error');
+      return true;
+    }
+    bulkChatAddMessage?.('assistant', `✅ Prepared ${patches.length} high-detail St Kilda Road Year 6 fix${patches.length!==1?'es':''} for review.`);
+    qShowQualityMaintenancePopup_(patches);
+    setStatus('High-detail St Kilda Road Year 6 review ready');
+    return true;
+  }
+
+  if(typeof startBulkAnalysis === 'function' && !window.__DLA_STK_Y6_QUALITY_START_WRAPPED){
+    window.__DLA_STK_Y6_QUALITY_START_WRAPPED = true;
+    const oldStartBulkAnalysis = startBulkAnalysis;
+    startBulkAnalysis = window.startBulkAnalysis = async function(){
+      const instruction = (typeof bulkChatEffectiveInstruction_ === 'function') ? bulkChatEffectiveInstruction_(bulkChatContext.rawInstruction) : (bulkChatContext.rawInstruction || '');
+      if(qTargetsStKildaYear6Quality_(instruction)){
+        try{
+          bulkChatState = 'analysing';
+          showReasoningSteps?.([{text:'Finding St Kilda Road Year 6 units',status:'active'},{text:'Splitting Lines of Inquiry',status:'pending'},{text:'Regenerating high-detail suggestions',status:'pending'}]);
+          updateReasoningStep?.(0,'done'); updateReasoningStep?.(1,'active'); updateReasoningStep?.(1,'done'); updateReasoningStep?.(2,'active');
+          await qRunStKildaYear6QualityFlow_(instruction);
+          updateReasoningStep?.(2,'done');
+          setTimeout(function(){ hideReasoningSteps?.(); }, 800);
+          bulkChatState = 'done';
+          return;
+        }catch(err){
+          hideReasoningSteps?.();
+          bulkChatState = 'idle';
+          bulkChatAddMessage?.('assistant', '⚠️ I hit an error while regenerating St Kilda Road Year 6 with stronger detail: ' + (err.message || err));
+          setStatus('St Kilda Year 6 quality regeneration failed: ' + (err.message || err), 'error');
+          return;
+        }
+      }
+      return oldStartBulkAnalysis.apply(this, arguments);
+    };
+  }
+  console.log('[DLA PATCH] Stronger St Kilda Road Year 6 regeneration quality installed', STK_Y6_QUALITY_PATCH_VERSION);
+})();
+/* ===== end DLA hotfix ===== */
+
 </script>
 </body>
 </html>
