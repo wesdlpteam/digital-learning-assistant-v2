@@ -3679,12 +3679,13 @@
         "d": "Students use Adobe Express to create short animated videos or GIFs demonstrating how a single message can be interpreted in multiple ways depending on the mode (text, emoji, tone of voice, visual art), directly linking to the unit's inquiry into perspective and interpretation."
       },
       {
-        "t": "Makey Makey",
-        "d": "STEM Design Cycle Project: Students prototype and build interactive 'Communication Boards' using Makey Makey and everyday materials. Each board must allow users to send a message in at least three different ways (e.g., sound, light, movement), then test and iterate to maximise clarity and effectiveness, reflecting on which features make communication most successful."
+        "t": "Secret Message Machines: Invent Your Own Code Communicator",
+        "d": "Students work in teams to invent a unique system for sending secret messages, inspired by historical and modern codes. Using recycled materials, cardboard, popsticks, string, and craft supplies, each group designs and builds a physical 'communicator'?such as a spinning cipher wheel, sliding symbol box, or pop-up signal flag device. They integrate simple tech by attaching a BBC micro:bit (or similar age-appropriate microcontroller) programmed to display or transmit coded clues (e.g., scrolling LED messages or sound patterns) that correspond to their physical device. Students use the Design Cycle to ideate, prototype, test, and refine both the tangible communicator and its digital component. Finally, groups exchange devices and attempt to decode each other's messages using context clues, reflecting on how audience and medium affect communication."
       }
     ],
     "audited": true,
-    "plannerText": "This unit immerses Year 3 students in exploring the diverse forms and features of communication, from verbal and non-verbal to visual and digital. Through hands-on activities, silent movie creation, and inquiry into signs, symbols, and music, students critically examine how methods of communication have evolved and how their effectiveness is shaped by context and audience."
+    "plannerText": "This unit immerses Year 3 students in exploring the diverse forms and features of communication, from verbal and non-verbal to visual and digital. Through hands-on activities, silent movie creation, and inquiry into signs, symbols, and music, students critically examine how methods of communication have evolved and how their effectiveness is shaped by context and audience.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3714,12 +3715,13 @@
         "d": "Students co-create a Kahoot quiz on ethical online choices, using real scenarios from their own digital lives. They then run the quiz for another class, sparking discussion and peer teaching about responsible online behaviour."
       },
       {
-        "t": "Makey Makey",
-        "d": "Using the Design Cycle, students prototype a physical 'Ethical Decision Buzzer' with Makey Makey and everyday materials. They design and code a simple digital flowchart (using Scratch or a Makey Makey-compatible app) that lights up or buzzes when ethical or unethical online choices are made, allowing for hands-on exploration of digital citizenship concepts."
+        "t": "Digital Dilemmas Escape Room",
+        "d": "Students work in teams to design and build a physical escape room experience themed around ethical online choices and cyber safety. Using large cardboard boxes, recycled materials, and craft supplies, students construct interactive puzzle stations (e.g., locked boxes, secret compartments, clue trails) that represent different online dilemmas (like password safety, digital footprints, or cyberbullying). Each puzzle integrates a simple tech element: for example, a Bee-Bot programmed to reveal a code when it reaches the correct 'safe' digital behavior, or an iPad displaying an augmented reality clue when a QR code is found. Students prototype, test, and refine their stations using the Design Cycle, then invite peers to solve their escape room, reflecting on ethical decisions at each stage."
       }
     ],
     "audited": true,
-    "plannerText": "This unit focuses on ethical decision making to support safe and responsible online choices. Students investigate their own digital media use, co-create an online essential agreement, and engage in cyber safety projects and reflections, with strong emphasis on student agency and real-world application."
+    "plannerText": "This unit focuses on ethical decision making to support safe and responsible online choices. Students investigate their own digital media use, co-create an online essential agreement, and engage in cyber safety projects and reflections, with strong emphasis on student agency and real-world application.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3749,12 +3751,13 @@
         "d": "Students create dynamic presentations or infographics to explain the responsible and ethical use of materials like glass and plastic, highlighting both the science and the environmental impact. They can use the 'Remove Background' feature to create visually striking images without needing a green screen."
       },
       {
-        "t": "Designing a Material Change Model",
-        "d": "Students empathise by exploring everyday problems involving materials changing state (like ice melting or water evaporating). They define a specific challenge, such as slowing down ice melting or capturing evaporated water. Then, they ideate and sketch simple solutions using accessible materials like plastic wrap, foil, paper cups, and cotton. Students prototype their models (e.g., insulated containers or mini condensation collectors), test how well their designs demonstrate or control the change of state, and refine their prototypes based on observations and measurements (like timing melting or collecting water droplets)."
+        "t": "Matter Morphing Mini-Golf",
+        "d": "Students work in teams to design and build a mini-golf course where each hole creatively demonstrates a different state of matter or a change between them. Using recycled materials, cardboard, clay, and craft supplies, students construct physical obstacles and features that represent solids, liquids, and gases (e.g., a tunnel that 'melts' open, a vapor-themed spinning windmill, or a squishy, gel-filled ramp). Teams then use Sphero Indi robots as the golf balls, programming them on iPads to navigate the course and interact with the matter-themed challenges. Throughout the Design Cycle, students prototype, test, and refine their course, documenting how their obstacles model real scientific concepts (like melting, freezing, or evaporation), and reflecting on responsible material choices."
       }
     ],
     "audited": true,
-    "plannerText": "This unit engages students in exploring the different states of matter, how and why matter changes, and the responsible use of materials. Activities include hands-on experiments, multimedia documentation, and real-world problem solving, with a strong focus on scientific inquiry and environmental responsibility."
+    "plannerText": "This unit engages students in exploring the different states of matter, how and why matter changes, and the responsible use of materials. Activities include hands-on experiments, multimedia documentation, and real-world problem solving, with a strong focus on scientific inquiry and environmental responsibility.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3784,12 +3787,13 @@
         "d": "Students create short, impactful video PSAs in Adobe Express, educating their community about disaster preparedness and the importance of resilience, using a mix of student voice, animation, and real footage."
       },
       {
-        "t": "Earthquake-Resistant Model Buildings",
-        "d": "Students empathise by exploring how people feel and stay safe during earthquakes, then define the problem of building structures that withstand shaking. They ideate by sketching simple building designs, prototype using craft materials like straws, popsicle sticks, and clay to build small-scale models, and test their buildings on a homemade shake table (a tray or board that can be gently shaken). After testing, they improve their designs based on which structures remained standing best."
+        "t": "Disaster Response Rescue Maze",
+        "d": "Students work in teams to design and build a large-scale, physical maze representing a community impacted by a natural disaster (e.g., earthquake, flood, bushfire) using recycled cardboard, blocks, craft sticks, and everyday materials. Within the maze, they create zones showing damaged buildings, blocked roads, and safe shelters. Students then program Sphero Indi robots (or similar age-appropriate robots) to act as 'rescue vehicles' that must navigate the maze, delivering supplies or rescuing 'citizens' (represented by small figures or tokens). Teams iterate on both their physical maze designs and robot coding, using the Design Cycle to test, refine, and improve their solutions for speed, safety, and efficiency. The project culminates in a showcase where students explain their design thinking, disaster resilience strategies, and demonstrate their rescue robots in action."
       }
     ],
     "audited": true,
-    "plannerText": "This unit immerses students in understanding natural disasters, their causes, and impacts, with a strong focus on how people and communities respond with resilience. Students research different disaster types, analyze real-world case studies (such as Japan's earthquake preparedness), and engage in hands-on design challenges to create disaster-resistant solutions, culminating in creative projects that showcase their learning and action."
+    "plannerText": "This unit immerses students in understanding natural disasters, their causes, and impacts, with a strong focus on how people and communities respond with resilience. Students research different disaster types, analyze real-world case studies (such as Japan's earthquake preparedness), and engage in hands-on design challenges to create disaster-resistant solutions, culminating in creative projects that showcase their learning and action.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
