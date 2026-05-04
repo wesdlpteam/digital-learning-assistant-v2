@@ -5899,12 +5899,29 @@ function bulkExtractTargetYears_(instruction){
   const t = String(instruction || '').toLowerCase();
   const out = new Set();
   if(/\b(prep|foundation)\b/.test(t)) out.add('Prep');
+
+  // Direct forms: Year 5, yr 6, y4
   const re = /\b(?:year|yr|y)\s*([1-6])\b/g;
   let m;
   while((m = re.exec(t)) !== null){ out.add('Year ' + m[1]); }
-  return [...out];
-}
 
+  // Compact or grouped forms: Years 5 and 6, Year 5/6, yrs 3-4, y5 & y6
+  const groupRe = /\b(?:years?|yrs?|y)\s*([1-6])(?:\s*(?:and|&|,|\/|-)\s*([1-6]))?(?:\s*(?:and|&|,|\/)\s*([1-6]))?/g;
+  while((m = groupRe.exec(t)) !== null){
+    [m[1], m[2], m[3]].filter(Boolean).forEach(n => out.add('Year ' + n));
+    if(m[1] && m[2] && t.slice(m.index, groupRe.lastIndex).includes('-')){
+      const a = Number(m[1]), b = Number(m[2]);
+      for(let n=Math.min(a,b); n<=Math.max(a,b); n++) out.add('Year ' + n);
+    }
+  }
+
+  // Contextual shorthand after a year mention: "year 5 and 6" only gives the
+  // first number to the simple regex above, so explicitly capture the trailing number.
+  const trailing = t.match(/\b(?:year|yr|y)\s*([1-6])\s*(?:and|&|\/)\s*([1-6])\b/);
+  if(trailing){ out.add('Year ' + trailing[1]); out.add('Year ' + trailing[2]); }
+
+  return [...out].sort((a,b) => YR.indexOf(a) - YR.indexOf(b));
+}
 // Backward-compatible alias
 function buildMinecraftContext(){ return buildLibraryContext('minecraft'); }
 
@@ -7106,6 +7123,289 @@ async function runBulkSameToolDescriptionRewrite_(enrichedInstruction, completeD
 
 
 
+
+// ========== TARGETED TOOL REMOVAL / REPLACEMENT FLOW ==========
+// Handles requests such as "replace Seesaw in Year 5 and 6" or
+// "remove all Seesaw suggestions from Years 5/6". The generic Bulk AI flow
+// was too conservative for this because it scanned the whole library and often
+// returned only a few replacements. This flow first finds every matching slot
+// locally, then drafts one replacement per matching slot.
+function bulkInstructionLooksLikeToolRemoval_(instruction){
+  const t = String(instruction || '').toLowerCase();
+  return /\b(replace|replaced|replacing|swap\s*out|swap|swapped|remove|removed|removing|get\s+rid\s+of|phase\s*out|stop\s+using|no\s+more|instead\s+of|change\s+all|change\s+the)\b/i.test(t);
+}
+
+function bulkDetectRemovalTool_(instruction){
+  const text = String(instruction || '').toLowerCase().replace(/[’']/g, '');
+  if(!bulkInstructionLooksLikeToolRemoval_(text)) return '';
+  const aliases = {
+    'seesaw':'Seesaw',
+    'book creator':'Book Creator',
+    'bookcreator':'Book Creator',
+    'canva':'Canva',
+    'padlet':'Padlet',
+    'adobe express podcasting':'Adobe Express Podcasting',
+    'adobe podcast':'Adobe Express Podcasting',
+    'podcasting':'Adobe Express Podcasting',
+    'microbit':'Micro:bit',
+    'micro bit':'Micro:bit',
+    'micro:bit':'Micro:bit',
+    'minecraft':'Minecraft Education',
+    'minecraft education':'Minecraft Education',
+    'lego spike prime':'Lego Spike Prime',
+    'lego spike essential':'Lego Spike Essential',
+    'sphero bolt':'Sphero BOLT',
+    'sphero indi':'Sphero Indi',
+    'wise chatbots':'Wise Discussion Chatbots',
+    'wise discussion chatbots':'Wise Discussion Chatbots',
+    'schoolbox discussion chatbots':'Wise Discussion Chatbots'
+  };
+  for(const [alias, tool] of Object.entries(aliases)){
+    const pattern = bulkEscapeRegExp_(alias).replace(/\s+/g, '\\s+');
+    const re = new RegExp('(^|[^a-z0-9])' + pattern + '([^a-z0-9]|$)', 'i');
+    if(re.test(text)) return tool;
+  }
+  const tools = bulkUniqueToolsForDetection_();
+  for(const tool of tools){
+    const phrase = tool.toLowerCase().replace(/[’']/g, '');
+    if(!phrase || phrase.length < 4) continue;
+    const pattern = bulkEscapeRegExp_(phrase).replace(/\s+/g, '\\s+');
+    const re = new RegExp('(^|[^a-z0-9])' + pattern + '([^a-z0-9]|$)', 'i');
+    if(re.test(text)) return tool;
+  }
+  return '';
+}
+
+function bulkSuggestionUsesTool_(sug, toolName){
+  const wanted = toolInventoryKey(toolName);
+  if(!wanted) return false;
+  const raw = sugTool(sug);
+  if(toolInventoryKey(raw) === wanted) return true;
+  return proposalToolParts(raw).some(part => toolInventoryKey(part) === wanted);
+}
+
+function bulkInstructionTargetsToolRemoval_(instruction){
+  return !!bulkDetectRemovalTool_(instruction);
+}
+
+function bulkReplacementToolContext_(toolName){
+  const t = toolInventoryKey(toolName);
+  if(t === toolInventoryKey('Seesaw')){
+    return 'The existing suggestion uses Seesaw. Replace it with a different tool that creates a richer Year 5/6 learning product. Do not use Seesaw again.';
+  }
+  return `The existing suggestion uses ${toolName}. Replace it with a different age-appropriate tool that better fits the unit. Do not use ${toolName} again.`;
+}
+
+function fallbackReplacementDescription_(entry, newTool, oldTool){
+  const unit = cleanSuggestionText_(entry?.th || 'this unit');
+  const ci = cleanSuggestionText_(entry?.ci || 'the central idea');
+  const tool = cleanSuggestionText_(newTool || 'the selected tool');
+  if(/book creator/i.test(tool)) return `Students use ${tool} to create a short multimodal book that explains one key idea from “${unit}” using text, images and voice recording. They include a page that connects their evidence back to the central idea: ${ci}.`;
+  if(/canva|adobe express/i.test(tool)) return `Students use ${tool} to design a clear visual explanation connected to “${unit}”, combining concise text, images and labelled evidence. They share the finished design with a partner and explain how it connects to the central idea: ${ci}.`;
+  if(/padlet|freeform/i.test(tool)) return `Students use ${tool} to collect, sort and connect examples from “${unit}” on a shared digital board. They add short notes explaining the pattern they notice and how it links to the central idea: ${ci}.`;
+  if(/wise/i.test(tool)) return `Students use ${tool} to question a named virtual expert connected to “${unit}”, testing their thinking with prompts about evidence, perspectives and possible action. They turn the strongest ideas from the conversation into a short exit ticket or claim-evidence-reasoning response linked to ${ci}.`;
+  if(/microsoft forms|forms/i.test(tool)) return `Students use ${tool} to design a short class survey connected to “${unit}” and collect responses from peers. They analyse the results and write a brief finding that explains what the data suggests about the central idea: ${ci}.`;
+  if(/excel/i.test(tool)) return `Students use ${tool} to organise class data connected to “${unit}” in a simple table and chart. They interpret the chart by writing one evidence-based conclusion linked to the central idea: ${ci}.`;
+  if(/google earth|google maps/i.test(tool)) return `Students use ${tool} to map places or examples connected to “${unit}” and add short annotations explaining each connection. They present the map as a guided tour that shows how location, evidence or perspective supports the central idea: ${ci}.`;
+  return `Students use ${tool} to create a practical learning artefact connected to “${unit}” instead of using ${oldTool}. They include evidence from the unit and a short explanation of how their product connects to the central idea: ${ci}.`;
+}
+
+async function buildToolReplacementChange_(entryIdx, sugIdx, targetTool, instruction, freq){
+  const entry = DATA[entryIdx];
+  const currentSug = getSugs(entry)[sugIdx];
+  const oldTool = sugTool(currentSug);
+  const oldDesc = sugDesc(currentSug);
+  let candidateTools = getRegenerateCandidateTools_(entry, currentSug, sugIdx, freq)
+    .filter(t => toolInventoryKey(t) !== toolInventoryKey(targetTool))
+    .filter(t => isAiToolSafeForEntry(t, entry))
+    .filter(t => !wouldDupeToolProposalInEntry(entry, t, sugIdx));
+
+  // Extra guard: when replacing Seesaw in upper primary, avoid swapping to another
+  // low-value portfolio/capture tool unless the unit clearly calls for that format.
+  if(toolInventoryKey(targetTool) === toolInventoryKey('Seesaw')){
+    candidateTools = candidateTools.filter(t => !/seesaw/i.test(t));
+  }
+
+  candidateTools = candidateTools.slice(0, 16);
+  if(!candidateTools.length) throw new Error(`No age-appropriate non-duplicate replacement tools available for ${entry.yl} ${entry.th}.`);
+
+  const existingTools = getSugs(entry).map((s,i)=>i===sugIdx?null:sugTool(s)).filter(Boolean).join(', ');
+  const candidatesKey = new Set(candidateTools.map(toolInventoryKey));
+  let lastIssue = '';
+
+  const promptBase = `You are a Digital Learning Coach at Wesley College.
+
+Task: replace an existing ${targetTool} suggestion with a DIFFERENT tool.
+${bulkReplacementToolContext_(targetTool)}
+
+Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"
+Central Idea: ${entry.ci || ''}
+Lines of Inquiry: ${entry.lo || ''}
+Planner summary: ${entry.plannerText ? compactForPrompt(entry.plannerText, 900) : ''}
+
+Current slot being replaced:
+Tool: ${oldTool}
+Description: ${oldDesc}
+
+Other tools already in this unit, do not duplicate: ${existingTools || 'none'}
+
+Allowed replacement tools for this exact slot:
+${candidateTools.map(t => '- ' + t).join('\n')}
+
+Hard rules:
+- Choose exactly ONE tool from the allowed replacement tools list above.
+- Do NOT use ${targetTool}, ${oldTool}, Seesaw, or any existing tool already in this unit.
+- Do NOT target the STEM Design Cycle slot; this current slot is safe and already selected.
+- Write 2-3 practical classroom sentences.
+- Say exactly what students do, what students create/produce, and how it connects to the unit.
+- Keep the wording clear for a primary teacher.
+${SUGGESTION_STYLE}
+
+Return ONLY JSON: {"t":"Tool Name from allowed list","d":"2-3 vivid practical sentences."}`;
+
+  for(let attempt=0; attempt<3; attempt++){
+    try{
+      const retry = lastIssue ? `\n\nRETRY because the previous answer was rejected: ${lastIssue}\nPick a DIFFERENT valid tool from this list only: ${candidateTools.join(', ')}` : '';
+      const raw = await callAI([{role:'user', parts:[{text:promptBase + retry}]}], null, OPENAI_FAST_MODEL || OPENAI_MODEL);
+      const clean = raw.replace(/```json|```/g,'').trim();
+      const si = clean.indexOf('{'), ei = clean.lastIndexOf('}');
+      if(si === -1 || ei === -1) throw new Error('AI did not return JSON.');
+      const parsed = JSON.parse(clean.slice(si, ei + 1));
+      const newTool = normaliseToolName(cleanSuggestionText_(parsed.t || parsed.tool || parsed.technology || ''));
+      const newDesc = cleanSuggestionText_(parsed.d || parsed.desc || parsed.description || '');
+      if(!newTool || !newDesc){ lastIssue = 'missing tool or description'; continue; }
+      if(toolInventoryKey(newTool) === toolInventoryKey(targetTool) || toolInventoryKey(newTool) === toolInventoryKey(oldTool)){ lastIssue = `it reused ${targetTool}`; continue; }
+      if(!candidatesKey.has(toolInventoryKey(newTool))){ lastIssue = `${newTool} was not in the allowed replacement list`; continue; }
+      if(wouldDupeToolProposalInEntry(entry, newTool, sugIdx)){ lastIssue = `${newTool} already exists in this unit`; continue; }
+      if(!isAiToolSafeForEntry(newTool, entry)){ lastIssue = `${newTool} is not age-appropriate or safe for ${entry.yl}`; continue; }
+      const realism = checkRealisticToolUse(newTool, newDesc, entry);
+      if(!realism.ok){ lastIssue = `${newTool} description failed realism check: ${realism.reason}`; continue; }
+      return {
+        entryIdx,
+        sugIdx,
+        t: newTool,
+        d: newDesc,
+        auditReason: `Targeted replacement: ${oldTool} removed from ${entry.yl}.`,
+        auditSource: 'bulk-targeted-tool-replacement',
+        improvementConfidence: 'Targeted replacement',
+        improvementScore: 4,
+        whyBetter: `Removes ${oldTool} from the selected year level and replaces it with a different age-appropriate tool connected to the unit.`,
+        remainingConcern: ''
+      };
+    }catch(err){
+      lastIssue = err.message || String(err);
+    }
+  }
+
+  // Deterministic fallback: still produce a reviewable change rather than silently
+  // offering only 1-2 replacements from a larger targeted set.
+  const fallbackTool = candidateTools.find(t => !wouldDupeToolProposalInEntry(entry, t, sugIdx)) || candidateTools[0];
+  return {
+    entryIdx,
+    sugIdx,
+    t: fallbackTool,
+    d: fallbackReplacementDescription_(entry, fallbackTool, oldTool),
+    auditReason: `Targeted replacement: ${oldTool} removed from ${entry.yl}. Fallback drafted after AI retries.`,
+    auditSource: 'bulk-targeted-tool-replacement-fallback',
+    improvementConfidence: 'Needs human review',
+    improvementScore: 3,
+    whyBetter: `Removes ${oldTool} and gives the reviewer a concrete replacement to assess.`,
+    remainingConcern: 'Fallback wording should be checked by a human before applying.'
+  };
+}
+
+async function runBulkToolReplacementFlow_(enrichedInstruction, completeData, prog, lbl, bar){
+  const targetTool = bulkDetectRemovalTool_(enrichedInstruction);
+  if(!targetTool) return false;
+
+  updateReasoningStep(0, 'done');
+  updateReasoningStep(1, 'done');
+  updateReasoningStep(2, 'done');
+  updateReasoningStep(3, 'active', `Finding ${targetTool} suggestions to replace`);
+  if(lbl) lbl.textContent = `Finding ${targetTool} suggestions to replace…`;
+  if(bar) bar.style.width = '20%';
+
+  const targetYears = bulkExtractTargetYears_(enrichedInstruction);
+  const targets = [];
+  let skippedYear = 0, skippedStem = 0;
+
+  completeData.forEach(({e,i}) => {
+    if(targetYears.length && !targetYears.includes(e.yl)){ skippedYear++; return; }
+    getSugs(e).forEach((sug, sugIdx) => {
+      if(!bulkSuggestionUsesTool_(sug, targetTool)) return;
+      if(Number(sugIdx) === 5){ skippedStem++; return; }
+      targets.push({entryIdx:i, sugIdx});
+    });
+  });
+
+  const explicitCount = getBulkExplicitCount_(enrichedInstruction, null);
+  const cap = explicitCount ? Math.min(explicitCount, targets.length, 45) : Math.min(targets.length, 45);
+  const selected = targets.slice(0, cap);
+
+  if(!selected.length){
+    if(prog) prog.style.display = 'none';
+    updateReasoningStep(3, 'done');
+    setTimeout(hideReasoningSteps, 800);
+    if(bulkChatHistory.length && bulkChatHistory[bulkChatHistory.length-1].content.includes('Analysing all entries')) bulkChatHistory.pop();
+    const yearText = targetYears.length ? ` in ${targetYears.join(', ')}` : '';
+    const stemNote = skippedStem ? ` ${skippedStem} match${skippedStem!==1?'es were':' was'} in the protected STEM slot and was skipped.` : '';
+    bulkChatAddMessage('assistant', `⚠️ I found no non-STEM ${esc(targetTool)} suggestions to replace${yearText}.${stemNote}`);
+    bulkChatState = 'idle';
+    stopProgress();
+    return true;
+  }
+
+  const freq = {};
+  DATA.forEach(e => getSugs(e).forEach(s => {
+    const t = normaliseToolName((s && s.t ? s.t.trim() : sugTool(s)) || '');
+    if(t) freq[t] = (freq[t] || 0) + 1;
+  }));
+
+  updateReasoningStep(3, 'done');
+  updateReasoningStep(4, 'active', `Drafting ${selected.length} ${targetTool} replacement${selected.length!==1?'s':''}`);
+
+  const changes = [];
+  const failures = [];
+  for(let idx=0; idx<selected.length; idx++){
+    const t = selected[idx];
+    if(bar) bar.style.width = `${25 + Math.round(((idx+1)/selected.length)*65)}%`;
+    if(lbl) lbl.textContent = `${idx+1}/${selected.length}: drafting ${targetTool} replacement…`;
+    try{
+      const change = await buildToolReplacementChange_(t.entryIdx, t.sugIdx, targetTool, enrichedInstruction, freq);
+      changes.push(change);
+    }catch(err){
+      failures.push({target:t, error:err.message || String(err)});
+    }
+    if(idx < selected.length - 1) await sleep(220);
+  }
+
+  if(bar) bar.style.width = '100%';
+  if(prog) prog.style.display = 'none';
+  updateReasoningStep(4, 'done');
+  updateReasoningStep(5, 'done');
+  setTimeout(hideReasoningSteps, 1200);
+  if(bulkChatHistory.length && bulkChatHistory[bulkChatHistory.length-1].content.includes('Analysing all entries')) bulkChatHistory.pop();
+
+  if(changes.length){
+    const yearText = targetYears.length ? ` in ${targetYears.join(', ')}` : '';
+    const cappedNote = targets.length > selected.length ? `<br><span style="font-size:12px;color:var(--orange)">I found ${targets.length} matching ${targetTool} suggestions${yearText}, but drafted ${selected.length} this run to stay responsive. Apply these, then run again for the rest.</span>` : '';
+    const stemNote = skippedStem ? `<br><span style="font-size:12px;color:var(--purple)">${skippedStem} ${targetTool} match${skippedStem!==1?'es were':' was'} in protected STEM Suggestion 6 and was left unchanged.</span>` : '';
+    const failNote = failures.length ? `<br><span style="font-size:12px;color:#F5A623">${failures.length} replacement draft${failures.length!==1?'s':''} failed and were skipped.</span>` : '';
+    const sample = changes.slice(0,5).map(c => { const e = DATA[c.entryIdx]; const old = getSugs(e)[c.sugIdx] ? sugTool(getSugs(e)[c.sugIdx]) : targetTool; return `• ${esc(e.yl)} ${esc(e.th)} — ${esc(old)} → ${esc(c.t)}`; }).join('<br>');
+    bulkChatAddMessage('assistant', `✅ <strong>${changes.length} ${esc(targetTool)} replacement${changes.length!==1?'s':''}</strong> ready for review${yearText}.<br><br><span style="font-size:12px;color:var(--lime)">This targeted flow found the matching slots locally first, so it should not stop at 2 when there are more.</span>${cappedNote}${stemNote}${failNote}<br><br><span style="font-size:12px;color:var(--lime)">Sample:</span><br>${sample}${changes.length>5?'<br>• …':''}`);
+    bulkChatMemory.push({ role:'assistant', content:`Proposed ${changes.length} targeted replacements for ${targetTool}.` });
+    window._snapshotReason = `Before replacing ${targetTool}`;
+    showChangesPopup(changes);
+    bulkChatState = 'done';
+  } else {
+    const first = failures[0]?.error || 'No usable drafts were returned.';
+    bulkChatAddMessage('assistant', `⚠️ I found ${selected.length} ${esc(targetTool)} target${selected.length!==1?'s':''}, but could not draft usable replacements. First issue: ${esc(first)}`);
+    bulkChatState = 'idle';
+  }
+  stopProgress();
+  return true;
+}
+
 function bulkInstructionTargetsWiseOpportunities_(instruction){
   const t = String(instruction || '').toLowerCase();
   const namesWise = /(wise\s+discussion|wise\s+chatbot|wise\s+chatbots|schoolbox.*(?:discussion|chatbot)|ai\s+discussion\s+chatbot|discussion\s+chatbot)/i.test(t);
@@ -7113,12 +7413,20 @@ function bulkInstructionTargetsWiseOpportunities_(instruction){
 }
 
 function getBulkExplicitCount_(instruction, fallback){
-  const m = String(instruction || '').match(/\b(?:find|add|propose|suggest|need|want|get|give\s+me|identify|locate|spot|show\s+me)\s+(?:at\s+least\s+|about\s+|around\s+|approximately\s+|up\s+to\s+|some\s+|more\s+|additional\s+|me\s+)?(\d{1,3})\b/i);
-  if(!m) return fallback;
-  const n = Number(m[1]);
-  return Number.isFinite(n) ? Math.max(1, Math.min(n, 40)) : fallback;
+  const text = String(instruction || '');
+  const patterns = [
+    /\b(?:find|add|propose|suggest|need|want|get|give\s+me|identify|locate|spot|show\s+me|replace|remove|swap|change)\s+(?:at\s+least\s+|about\s+|around\s+|approximately\s+|up\s+to\s+|some\s+|more\s+|additional\s+|me\s+)?(\d{1,3})\b/i,
+    /\b(\d{1,3})\s+(?:suggestions?|ideas?|lessons?|matches?|opportunities?)\b/i
+  ];
+  for(const re of patterns){
+    const m = text.match(re);
+    if(m){
+      const n = Number(m[1]);
+      if(Number.isFinite(n)) return Math.max(1, Math.min(n, 60));
+    }
+  }
+  return fallback;
 }
-
 function instructionProtectsExistingTool_(instruction, toolName){
   const t = String(instruction || '').toLowerCase();
   const key = toolInventoryKey(toolName || '').toLowerCase();
@@ -7573,6 +7881,14 @@ async function startBulkAnalysis(){
   // and bulk up the detail/action/product/unit connection for that exact suggestion.
   if(bulkInstructionIsDescriptionOnly_(enrichedInstruction)){
     await runBulkSameToolDescriptionRewrite_(enrichedInstruction, completeData, prog, lbl, bar);
+    return;
+  }
+
+  // Targeted removal/replacement requests should be handled locally first.
+  // Example: “replace all Seesaw suggestions in Year 5 and 6”. The generic GPT
+  // flow can be too conservative and return only a couple of changes.
+  if(bulkInstructionTargetsToolRemoval_(enrichedInstruction)){
+    await runBulkToolReplacementFlow_(enrichedInstruction, completeData, prog, lbl, bar);
     return;
   }
 
