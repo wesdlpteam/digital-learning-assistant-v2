@@ -3823,12 +3823,13 @@
         "d": "Students investigate the essential features and innovations that shape cities by designing their own 3D models of city infrastructure elements such as bridges, buildings, or transport hubs in Tinkercad. They apply their understanding of how cities develop and adapt over time by creating functional, age-appropriate inventions that reflect real-world urban challenges and solutions. This hands-on digital design activity deepens their inquiry into the central idea by combining creativity with problem-solving in a safe, accessible platform."
       },
       {
-        "t": "Earthquake-Resistant Building Challenge",
-        "d": "Students empathise by learning how earthquakes affect buildings, then define the problem of making structures that stay standing during shaking. They ideate by sketching simple building designs, prototype by constructing models using craft sticks, clay, and cardboard, and test their buildings on a homemade shaking platform (e.g., a tray moved side to side). After testing, they improve their designs to better withstand the simulated earthquake and reflect on how their choices impact building resilience."
+        "t": "Smart City Time-Travel Tramways",
+        "d": "Students work in teams to design and build a hands-on city model that showcases how urban transport and infrastructure have changed over time. Using recycled materials, cardboard, and craft supplies, they construct three distinct city zones: past, present, and future. Each zone features unique buildings, roads, and disaster-resilient features (e.g., flood barriers, earthquake-proof bridges). Students then program a Sphero Indi or Bee-Bot as a 'time-travel tram' to journey through the zones, triggering interactive elements (like pop-up info cards, sound buttons, or moving parts powered by simple circuits). The design cycle guides students through researching real cities, ideating features, prototyping, testing the tram's route, and refining their models to creatively demonstrate how cities adapt and evolve over time."
       }
     ],
     "audited": true,
-    "plannerText": "Students investigate how cities adapt and change over time, focusing on infrastructure, transport, and disaster resilience. They research global cities, compare features, design and build their own city models, create soundscapes, and reflect on the factors that shape urban development."
+    "plannerText": "Students investigate how cities adapt and change over time, focusing on infrastructure, transport, and disaster resilience. They research global cities, compare features, design and build their own city models, create soundscapes, and reflect on the factors that shape urban development.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3858,12 +3859,13 @@
         "d": "Create a 'Mind-Body Connection' multimedia poster in Adobe Express, combining student voice recordings, photos, and graphics to illustrate how exercise, nutrition, and friendships influence their wellbeing. Posters can be shared digitally with families to promote home-school connection."
       },
       {
-        "t": "Healthy Habit Reminder Prototype",
-        "d": "Students empathise by interviewing peers about daily healthy habits they sometimes forget. They define a common problem, such as remembering to drink water or stretch. Then, they ideate simple reminder tools using craft materials like cardboard, paper, string, and stickers. Students prototype a tangible reminder device?such as a spinning wheel, flip chart, or pull-tab calendar?that prompts healthy actions. Finally, they test their prototypes with classmates, gather feedback, and improve the design for clarity and ease of use."
+        "t": "Body Systems Adventure Quest: Interactive Marble Run",
+        "d": "Students work in teams to design and construct a large-scale, multi-stage marble run representing different body systems (e.g., circulatory, digestive, respiratory) using cardboard, tubes, recycled materials, and craft supplies. Along the path, marbles (representing nutrients or oxygen) travel through custom-built 'body system stations' with interactive elements (e.g., spinning lungs, pumping heart levers). Teams use iPads to document their design process, create QR codes with voice explanations for each station, and program simple triggers (using Makey Makey or similar tech) so that when marbles reach checkpoints, digital sounds or messages about health choices and wellbeing play. This hybrid project combines hands-on engineering with digital storytelling, reinforcing understanding of how choices impact body systems and overall wellbeing."
       }
     ],
     "audited": true,
-    "plannerText": "This unit explores how health and wellbeing are impacted by the choices students make, focusing on body systems, fitness, cyber safety, and personal responsibility. Students research and report on body systems, set and track fitness goals, and reflect on strategies for maintaining balanced wellbeing through collaborative and individual activities."
+    "plannerText": "This unit explores how health and wellbeing are impacted by the choices students make, focusing on body systems, fitness, cyber safety, and personal responsibility. Students research and report on body systems, set and track fitness goals, and reflect on strategies for maintaining balanced wellbeing through collaborative and individual activities.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3893,12 +3895,13 @@
         "d": "The teacher creates a Wise Discussion Chatbot using the Character Interview scenario and sets the bot's role as Ava, a community celebration organiser explaining why particular traditions matter to different families. The topic is ?How We Express Ourselves: The creative process involves understanding and applying artistic elements to communicate ideas and emotions across disciplines?. Students chat with the bot to explore a named perspective through guided questioning rather than general research; for example, they ask ?How does this celebration show what your community values?? and ?What might outsiders misunderstand about this tradition??. After the chat, students produce a question bank plus a short perspective-and-evidence summary that compares the chatbot responses with unit sources linked explicitly to How We Express Ourselves."
       },
       {
-        "t": "Makey Makey",
-        "d": "Using the Design Cycle, students prototype interactive character masks or props that trigger sound effects or music when touched, integrating Makey Makey with conductive materials to physically express character traits and emotions in a live performance context."
+        "t": "Opera Automata: Expressive Puppet Machines",
+        "d": "Students use the Design Cycle to invent and build mechanical puppet automata inspired by Beijing Opera. They design and craft expressive opera characters from recycled materials, cardboard, fabric, and clay, focusing on colour, costume, and facial features to convey emotion. Each puppet is mounted on a simple hand-cranked or motorized automaton base (using gears, cams, or levers made from popsicle sticks, dowels, and recycled parts). Students embed a micro:bit or Makey Makey to add digital sound effects or trigger LED lights that match the character's mood or scene. The project blends physical engineering with digital interactivity, culminating in a class showcase where students demonstrate their automata and explain how movement, sound, and visual design express ideas and feelings."
       }
     ],
     "audited": true,
-    "plannerText": "This unit immerses students in the creative process across drama, music, visual arts, and Chinese, focusing on how artistic elements like colour, movement, and sound communicate ideas and emotions. Students design and perform original Beijing Opera-inspired vignettes, create expressive masks, compose music, and reflect on their creative choices through digital portfolios and collaborative projects."
+    "plannerText": "This unit immerses students in the creative process across drama, music, visual arts, and Chinese, focusing on how artistic elements like colour, movement, and sound communicate ideas and emotions. Students design and perform original Beijing Opera-inspired vignettes, create expressive masks, compose music, and reflect on their creative choices through digital portfolios and collaborative projects.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3928,12 +3931,13 @@
         "d": "Students explore 'The Hall of Inventions' in Minecraft Education, then collaboratively design and build a virtual exhibit for a not-for-profit innovation that addresses a community need. They justify their invention's impact and connect it to real-world organisations. https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
       },
       {
-        "t": "Makey Makey",
-        "d": "Using the Design Cycle, students prototype interactive donation boxes or awareness stations for their chosen not-for-profit using Makey Makey and everyday materials. They design, test, and refine their creations, ensuring the device provides feedback (lights, sounds, or digital messages) when someone 'donates' or interacts, then showcase these at a school action fair."
+        "t": "Mission Impact: Community Action Board Game",
+        "d": "Students work in teams to research not-for-profit organisations and then use the Design Cycle to invent a collaborative, hands-on board game that simulates the journey of creating positive change in a community. They craft the game board and pieces using cardboard, recycled materials, and art supplies, physically building spaces representing local challenges and opportunities. Integrated tech: Students embed simple interactive elements using Makey Makey kits and conductive materials (like foil or graphite), so landing on certain spaces triggers digital facts, sounds, or videos about real non-profits via connected iPads or laptops. The final game is play-tested with peers and shared at a school expo to educate and inspire action, blending creative making with digital interactivity."
       }
     ],
     "audited": true,
-    "plannerText": "Students investigate not-for-profit organisations, research their functions and community impact, and collaborate to design and promote action projects such as fundraising drives and awareness campaigns. They create digital flyers, posters, and presentations to inform and inspire the school community, culminating in student-led initiatives that support local and national causes."
+    "plannerText": "Students investigate not-for-profit organisations, research their functions and community impact, and collaborate to design and promote action projects such as fundraising drives and awareness campaigns. They create digital flyers, posters, and presentations to inform and inspire the school community, culminating in student-led initiatives that support local and national causes.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
