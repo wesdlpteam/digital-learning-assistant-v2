@@ -11461,6 +11461,542 @@ setInterval(async()=>{
 })();
 /* ===== end DLA hotfix ===== */
 
+
+
+/* ===== DLA hotfix: map tools, Delightex naming, Year 6 maintenance, Minecraft links ===== */
+(function(){
+  const NATGEO_TOOL = 'National Geographic MapMaker';
+  const NATGEO_URL = 'https://education.nationalgeographic.org/resource/mapmaker/';
+
+  function dqText_(value){
+    let s = String(value || '');
+    if(typeof cleanSuggestionText_ === 'function') s = cleanSuggestionText_(s);
+    s = s
+      .replace(/\bDelightex\s*\(\s*CoSpaces\s*\)/gi, 'Delightex')
+      .replace(/\bCoSpaces\s*\(\s*Delightex\s*\)/gi, 'Delightex')
+      .replace(/\bCoSpaces\b/gi, 'Delightex')
+      .replace(/\bCoSpace\b/gi, 'Delightex');
+    return s.trim();
+  }
+
+  function dqKey_(tool){
+    try { return toolInventoryKey(tool); }
+    catch(e){ return String(tool || '').toLowerCase().trim(); }
+  }
+
+  function dqTool_(tool){
+    const raw = dqText_(tool);
+    const k = raw.toLowerCase().replace(/[’']/g,'').trim();
+    if(/^(nat\s*geo|national geographic)\s*map\s*maker$/.test(k) || k === 'national geographic mapmaker' || k === 'mapmaker') return NATGEO_TOOL;
+    if(/^(delightex|cospaces|cospaces edu|cospaces edu pro|delightex cospaces|delightex \(cospaces\))$/i.test(raw)) return 'Delightex';
+    if(typeof normaliseToolName === 'function'){
+      const n = normaliseToolName(raw);
+      if(/cospaces/i.test(n)) return 'Delightex';
+      return dqText_(n);
+    }
+    return raw;
+  }
+
+  function dqDescriptionSuggestsAnnotatedMap_(desc){
+    const s = String(desc || '').toLowerCase();
+    return /\b(annotat|label|layer|data layer|custom map|map maker|mapmaker|gis|heat ?map|choropleth|measure distance|measure area|plot data|plot points|overlay|spatial data|thematic map)\b/.test(s)
+      && !/\bstreet\s*view\b/.test(s);
+  }
+
+  function dqDescriptionSuggestsStreetView_(desc){
+    return /\bstreet\s*view\b|\b360\b|\bvirtual walk\b|\bwalk through\b|\bground[- ]level\b/i.test(String(desc || ''));
+  }
+
+  function dqRewriteMapDescription_(tool, desc){
+    let d = dqText_(desc);
+    if(dqKey_(tool) === dqKey_(NATGEO_TOOL)){
+      d = d
+        .replace(/\bGoogle Maps\b/gi, NATGEO_TOOL)
+        .replace(/\bStreet View\b/gi, 'map layers')
+        .replace(/\bannotate in maps\b/gi, 'add labels and data layers in MapMaker');
+      if(!/mapmaker|map maker|data layer|layer|annotat|label|gis/i.test(d)){
+        d += ' Students add labels, map layers or simple spatial evidence so their map becomes an explanation rather than just a location search.';
+      }
+    }
+    if(dqKey_(tool) === dqKey_('Google Maps')){
+      d = d.replace(/\bannotat(e|ed|ing|ions?)\b/gi, 'observe').replace(/\blayer(s|ed)?\b/gi, 'Street View evidence');
+      if(!dqDescriptionSuggestsStreetView_(d)){
+        d += ' Students use Street View to observe ground-level evidence, compare places and capture notes that connect directly to the unit.';
+      }
+    }
+    return d.replace(/\s{2,}/g,' ').trim();
+  }
+
+  function dqSanitiseSuggestion_(sug){
+    if(!sug) return sug;
+    const out = Object.assign({}, sug);
+    const originalTool = (typeof sugTool === 'function') ? sugTool(out) : (out.t || out.tool || out.name || '');
+    const originalDesc = (typeof sugDesc === 'function') ? sugDesc(out) : (out.d || out.desc || out.description || '');
+    let tool = dqTool_(originalTool);
+    let desc = dqText_(originalDesc);
+
+    if(dqKey_(tool) === dqKey_('Google Maps') && dqDescriptionSuggestsAnnotatedMap_(desc)){
+      tool = NATGEO_TOOL;
+    }
+    if(dqKey_(tool) === dqKey_('Google Maps')) desc = dqRewriteMapDescription_(tool, desc);
+    if(dqKey_(tool) === dqKey_(NATGEO_TOOL)) desc = dqRewriteMapDescription_(tool, desc);
+
+    out.t = tool;
+    out.d = desc;
+    if(out.tool != null) out.tool = tool;
+    if(out.technology != null) out.technology = tool;
+    if(out.name != null) out.name = tool;
+    if(out.desc != null) out.desc = desc;
+    if(out.description != null) out.description = desc;
+    if(out.integration_idea != null) out.integration_idea = desc;
+    if(out.activity != null) out.activity = desc;
+    if(out.url != null) out.url = dqText_(out.url);
+    return out;
+  }
+
+  function dqSanitiseDataSet_(data){
+    if(!Array.isArray(data)) return data;
+    data.forEach(entry => {
+      if(!entry) return;
+      if(Array.isArray(entry.s)) entry.s = entry.s.map(dqSanitiseSuggestion_);
+      else if(entry.s && typeof entry.s === 'object') Object.keys(entry.s).forEach(k => { entry.s[k] = dqSanitiseSuggestion_(entry.s[k]); });
+    });
+    return data;
+  }
+
+  function dqAddNatGeoToInventory_(){
+    try{
+      if(Array.isArray(DEFAULT_APPROVED_TOOLS) && !DEFAULT_APPROVED_TOOLS.some(t => dqKey_(t) === dqKey_(NATGEO_TOOL))){
+        DEFAULT_APPROVED_TOOLS.push(NATGEO_TOOL);
+      }
+      if(typeof DEFAULT_TOOL_AGE_RANGES === 'object' && DEFAULT_TOOL_AGE_RANGES){
+        DEFAULT_TOOL_AGE_RANGES[NATGEO_TOOL] = {min:3,max:6};
+      }
+      if(typeof TOOL_WHITELIST !== 'undefined' && Array.isArray(TOOL_WHITELIST)){
+        ['national geographic mapmaker','national geographic map maker','nat geo mapmaker','mapmaker','delightex'].forEach(v => { if(!TOOL_WHITELIST.includes(v)) TOOL_WHITELIST.push(v); });
+      }
+      if(typeof TOOL_INVENTORY !== 'undefined'){
+        normaliseToolInventory?.();
+        TOOL_INVENTORY.approved = TOOL_INVENTORY.approved || [];
+        TOOL_INVENTORY.ageRanges = TOOL_INVENTORY.ageRanges || {};
+        const banned = (TOOL_INVENTORY.banned || []).some(t => dqKey_(t) === dqKey_(NATGEO_TOOL));
+        const already = TOOL_INVENTORY.approved.some(t => dqKey_(t) === dqKey_(NATGEO_TOOL));
+        if(!banned && !already){
+          TOOL_INVENTORY.approved.push(NATGEO_TOOL);
+          TOOL_INVENTORY.ageRanges[dqKey_(NATGEO_TOOL)] = {min:3,max:6};
+        }
+      }
+    }catch(e){ console.warn('NatGeo inventory seed failed:', e); }
+  }
+
+  dqAddNatGeoToInventory_();
+
+  if(typeof normaliseToolName === 'function'){
+    const oldNormaliseToolName = normaliseToolName;
+    normaliseToolName = window.normaliseToolName = function(t){
+      const raw = dqText_(t);
+      const k = raw.toLowerCase().replace(/[’']/g,'').trim();
+      if(/^(nat\s*geo|national geographic)\s*map\s*maker$/.test(k) || k === 'national geographic mapmaker' || k === 'mapmaker') return NATGEO_TOOL;
+      if(/cospaces/i.test(raw)) return 'Delightex';
+      return dqText_(oldNormaliseToolName.call(this, raw));
+    };
+  }
+
+  if(typeof getDefaultToolAgeRange === 'function'){
+    const oldGetDefaultToolAgeRange = getDefaultToolAgeRange;
+    getDefaultToolAgeRange = window.getDefaultToolAgeRange = function(toolName){
+      if(dqKey_(toolName) === dqKey_(NATGEO_TOOL)) return {min:3,max:6};
+      return oldGetDefaultToolAgeRange.apply(this, arguments);
+    };
+  }
+
+  if(typeof getAgeAppropriateTools === 'function'){
+    const oldGetAgeAppropriateTools = getAgeAppropriateTools;
+    getAgeAppropriateTools = window.getAgeAppropriateTools = function(yearLevel){
+      const list = oldGetAgeAppropriateTools.apply(this, arguments) || [];
+      const yr = (typeof getYearNumber === 'function') ? getYearNumber(yearLevel) : 0;
+      const banned = (typeof TOOL_INVENTORY !== 'undefined' && (TOOL_INVENTORY.banned || []).some(t => dqKey_(t) === dqKey_(NATGEO_TOOL)));
+      if(yr >= 3 && !banned && !list.some(t => dqKey_(t) === dqKey_(NATGEO_TOOL))) list.push(NATGEO_TOOL);
+      return list.map(dqTool_).filter((t,i,a) => a.findIndex(x => dqKey_(x) === dqKey_(t)) === i);
+    };
+  }
+
+  if(typeof buildToolConstraints === 'function'){
+    const oldBuildToolConstraints = buildToolConstraints;
+    buildToolConstraints = window.buildToolConstraints = function(yearLevel){
+      return oldBuildToolConstraints.apply(this, arguments) + `\n\nMAP TOOL RULES (HARD):\n- Google Maps is for Street View only: virtual walks, ground-level observation, comparing places through Street View, and gathering visual evidence.\n- Do NOT use Google Maps for annotated maps, custom maps, layers, data overlays or GIS-style mapping.\n- For annotated maps, labels, layers, plotted data or GIS-style map products, use ${NATGEO_TOOL}.\n- If a prompt asks for an annotated map, choose ${NATGEO_TOOL}, not Google Maps.\n\nNAMING RULE (HARD):\n- Do not write CoSpaces. The current tool name is Delightex. Use tool name \"Delightex\" only.`;
+    };
+  }
+
+  if(typeof seedDefaultInventoryIfEmpty === 'function'){
+    const oldSeedDefaultInventoryIfEmpty = seedDefaultInventoryIfEmpty;
+    seedDefaultInventoryIfEmpty = window.seedDefaultInventoryIfEmpty = function(){
+      const out = oldSeedDefaultInventoryIfEmpty.apply(this, arguments);
+      dqAddNatGeoToInventory_();
+      return out;
+    };
+  }
+
+  if(typeof buildApprovedToolsList === 'function'){
+    const oldBuildApprovedToolsList = buildApprovedToolsList;
+    buildApprovedToolsList = window.buildApprovedToolsList = function(){
+      dqAddNatGeoToInventory_();
+      return oldBuildApprovedToolsList.apply(this, arguments).replace(/CoSpaces/gi, 'Delightex');
+    };
+  }
+
+  if(typeof buildDynamicToolAgeGuide === 'function'){
+    const oldBuildDynamicToolAgeGuide = buildDynamicToolAgeGuide;
+    buildDynamicToolAgeGuide = window.buildDynamicToolAgeGuide = function(){
+      dqAddNatGeoToInventory_();
+      let out = oldBuildDynamicToolAgeGuide.apply(this, arguments).replace(/CoSpaces/gi, 'Delightex');
+      if(!/National Geographic MapMaker/.test(out)) out += `\n- ${NATGEO_TOOL}: Year 3–Year 6`;
+      out += `\nGoogle Maps: Street View only. ${NATGEO_TOOL}: annotated maps, map layers, plotted data and GIS-style map products.`;
+      return out;
+    };
+  }
+
+  if(typeof cleanSuggestionObject_ === 'function'){
+    const oldCleanSuggestionObject = cleanSuggestionObject_;
+    cleanSuggestionObject_ = window.cleanSuggestionObject_ = function(s){ return dqSanitiseSuggestion_(oldCleanSuggestionObject.apply(this, arguments)); };
+  }
+
+  if(typeof normaliseChanges === 'function'){
+    const oldNormaliseChanges = normaliseChanges;
+    normaliseChanges = window.normaliseChanges = function(raw){
+      return (oldNormaliseChanges.apply(this, arguments) || []).map(c => {
+        const fixed = dqSanitiseSuggestion_(c);
+        return Object.assign(c, fixed, { t: fixed.t || c.t, d: fixed.d || c.d });
+      });
+    };
+  }
+
+  if(typeof showChangesPopup === 'function'){
+    const oldShowChangesPopup = showChangesPopup;
+    showChangesPopup = window.showChangesPopup = function(changes){
+      return oldShowChangesPopup.call(this, (changes || []).map(c => Object.assign(c, dqSanitiseSuggestion_(c))));
+    };
+  }
+
+  // Lesson-library matching helpers for missing Minecraft links.
+  function dqLessonTitleFromSuggestion_(sug){
+    const tool = (typeof sugTool === 'function') ? sugTool(sug) : (sug.t || '');
+    const desc = (typeof sugDesc === 'function') ? sugDesc(sug) : (sug.d || '');
+    const text = dqText_(tool + ' ' + desc);
+    const patterns = [
+      /lesson\s+[“\"]([^”\"]+)[”\"]/i,
+      /verified\s+Minecraft\s+Education\s+lesson\s+[“\"]([^”\"]+)[”\"]/i,
+      /Minecraft\s*(?:Education)?\s*[:—-]\s*([^\n.()]+)/i
+    ];
+    for(const re of patterns){ const m = text.match(re); if(m && m[1]) return dqText_(m[1]); }
+    return '';
+  }
+
+  function dqFindMinecraftLesson_(sug){
+    try{
+      const lessons = (typeof LIBRARIES !== 'undefined' && Array.isArray(LIBRARIES.minecraft)) ? LIBRARIES.minecraft : [];
+      if(!lessons.length) return null;
+      const desc = dqText_(((typeof sugDesc === 'function') ? sugDesc(sug) : (sug.d || '')) + ' ' + ((typeof sugTool === 'function') ? sugTool(sug) : (sug.t || '')));
+      const wanted = dqLessonTitleFromSuggestion_(sug).toLowerCase();
+      if(wanted){
+        const exact = lessons.find(l => dqText_(l.title || '').toLowerCase() === wanted);
+        if(exact) return exact;
+        const loose = lessons.find(l => dqText_(l.title || '').toLowerCase().includes(wanted) || wanted.includes(dqText_(l.title || '').toLowerCase()));
+        if(loose) return loose;
+      }
+      const inText = lessons.find(l => l.title && desc.toLowerCase().includes(dqText_(l.title).toLowerCase()));
+      return inText || null;
+    }catch(e){ return null; }
+  }
+
+  function dqPatchMinecraftLink_(sug){
+    const out = dqSanitiseSuggestion_(sug);
+    const tool = (typeof sugTool === 'function') ? sugTool(out) : (out.t || '');
+    const desc = (typeof sugDesc === 'function') ? sugDesc(out) : (out.d || '');
+    if(!/minecraft/i.test(tool + ' ' + desc)) return out;
+    if(out.url || /https?:\/\//i.test(desc)) return out;
+    const lesson = dqFindMinecraftLesson_(out);
+    if(lesson && lesson.url){
+      out.t = 'Minecraft Education';
+      out.url = lesson.url;
+      const cleanDesc = dqText_(desc);
+      out.d = /verified lesson link/i.test(cleanDesc) ? cleanDesc : cleanDesc + ' Verified lesson link: ' + lesson.url;
+      if(out.desc != null) out.desc = out.d;
+      if(out.description != null) out.description = out.d;
+    }
+    return out;
+  }
+
+  function dqSanitiseDataWithLinks_(data){
+    dqSanitiseDataSet_(data);
+    if(!Array.isArray(data)) return data;
+    data.forEach(entry => {
+      if(!entry || !entry.s) return;
+      if(Array.isArray(entry.s)) entry.s = entry.s.map(dqPatchMinecraftLink_);
+      else if(typeof entry.s === 'object') Object.keys(entry.s).forEach(k => { entry.s[k] = dqPatchMinecraftLink_(entry.s[k]); });
+    });
+    return data;
+  }
+
+  if(typeof saveToDrive === 'function'){
+    const oldSaveToDrive = saveToDrive;
+    saveToDrive = window.saveToDrive = async function(){
+      dqSanitiseDataWithLinks_(DATA);
+      return oldSaveToDrive.apply(this, arguments);
+    };
+  }
+
+  if(typeof ingest === 'function'){
+    const oldIngest = ingest;
+    ingest = window.ingest = function(arr){
+      dqSanitiseDataSet_(arr);
+      const out = oldIngest.apply(this, arguments);
+      dqAddNatGeoToInventory_();
+      return out;
+    };
+  }
+
+  function dqIsStKildaYear6_(e){
+    return e && /^year\s*6$/i.test(String(e.yl || '').trim()) && /st\s*kilda/i.test(String(e.ca || ''));
+  }
+
+  function dqSplitLooseLoi_(lo){
+    // Robustly split LOIs that were pasted/exported with corrupted bullet symbols.
+    // St Kilda Road Year 6 had separators such as �, â€¢, Â•, ï‚· and other odd glyphs,
+    // so this recognises far more than just semicolons and normal bullets.
+    let s = dqText_(lo)
+      .replace(/\u00a0/g, ' ')
+      .replace(/â\s*[€¢·]/gi, '; ')
+      .replace(/Â\s*[•·]/gi, '; ')
+      .replace(/ï\s*‚\s*·/gi, '; ')
+      .replace(/[\u2022\u2023\u25E6\u2043\u2219\u00B7\u25CF\u25AA\u25AB\u25A0\u25A1\u25C6\u25C7\u25B8\u25B6\uF0B7]+/g, '; ')
+      .replace(/\s*[|¦§]+\s*/g, '; ')
+      .replace(/\s*[�]+\s*/g, '; ')
+      .replace(/\s+/g,' ')
+      .trim();
+    if(!s) return '';
+
+    function cleanPart_(x){
+      return dqText_(x)
+        .replace(/^(?:\d+[.)]|LOI\s*\d+[:.)-]?|Line\s+of\s+Inquiry\s*\d+[:.)-]?)\s*/i,'')
+        .replace(/^[\-–—:;,.\s]+|[\-–—:;,.\s]+$/g,'')
+        .trim();
+    }
+
+    let parts = s.split(/\s*;\s*/).map(cleanPart_).filter(Boolean);
+    if(parts.length <= 1){
+      parts = s.split(/\s+(?=(?:\d+[.)]|LOI\s*\d+|Line\s+of\s+Inquiry\s*\d+))/i).map(cleanPart_).filter(Boolean);
+    }
+    if(parts.length <= 1){
+      // Split common planner phrasing only when it appears to mark a new LOI.
+      parts = s.split(/\s+(?=(?:How|Why|The ways?|Ways?|Factors?|The impact|Impact|Connections?|Relationships?|Responsibilities?|Perspectives?|Systems?|Strategies?|Changes?|Different ways?|Our role|People can|People use|Communities?|Environments?)\b)/g).map(cleanPart_).filter(Boolean);
+    }
+    // Remove accidental duplicates while keeping original order.
+    const seen = new Set();
+    parts = parts.filter(p => {
+      const key = p.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+      if(!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    if(parts.length > 1) return parts.slice(0,4).join('; ');
+    return s;
+  }
+
+  async function dqBuildYear6StKildaPatch_(entryIdx){
+    const entry = DATA[entryIdx];
+    const oldLo = dqText_(entry.lo || '');
+    const roughLo = dqSplitLooseLoi_(oldLo);
+    const libraryContext = (typeof buildLibraryContextCompact === 'function') ? buildLibraryContextCompact('minecraft') : '';
+    const constraints = (typeof buildToolConstraints === 'function') ? buildToolConstraints(entry.yl) : '';
+    const prompt = `You are repairing one Wesley College DLA unit record.\n\nUnit: ${entry.ca} | ${entry.yl} | ${entry.th}\nCentral idea: ${entry.ci || ''}\nCurrent grouped Lines of Inquiry: ${oldLo}\nPlanner summary: ${entry.plannerText ? compactForPrompt(entry.plannerText, 1200) : ''}\n\nTask:\n1. Split the grouped Lines of Inquiry into 2-4 clear, separate lines. Use semicolons between lines. Do not invent a completely new unit.\n2. Regenerate exactly 6 practical technology suggestions for this unit. Suggestions 1-5 are normal classroom technology ideas. Suggestion 6 must be a STEM Design Cycle idea.\n\n${constraints}\n\n${libraryContext}\n\nExtra hard rules:\n- Google Maps = Street View only. If students annotate maps or use data layers, use National Geographic MapMaker.\n- Use Delightex, not CoSpaces.\n- If Minecraft is used, use a verified lesson from the library and include the direct lesson URL.\n- Keep wording practical for a Year 6 teacher.\n${typeof SUGGESTION_STYLE !== 'undefined' ? SUGGESTION_STYLE : ''}\n\nReturn ONLY JSON:\n{"lo":"Line 1; Line 2; Line 3","s":[{"t":"Tool","d":"Description","url":"optional direct lesson URL"}]}`;
+    const raw = await callAI([{role:'user', parts:[{text:prompt}]}], null, OPENAI_MODEL || OPENAI_FAST_MODEL);
+    const clean = raw.replace(/```json|```/g,'').trim();
+    const si = clean.indexOf('{'), ei = clean.lastIndexOf('}');
+    if(si === -1 || ei === -1) throw new Error('No JSON object returned');
+    const parsed = JSON.parse(clean.slice(si, ei + 1));
+    let newLo = dqSplitLooseLoi_(parsed.lo || roughLo);
+    let sugs = Array.isArray(parsed.s) ? parsed.s : [];
+    sugs = sugs.map(dqPatchMinecraftLink_).filter(s => s && (s.t || s.tool));
+    if(!newLo || newLo === oldLo) newLo = roughLo;
+    if(!sugs.length) throw new Error('No suggestions returned');
+    if(sugs.length < 6) throw new Error('Only '+sugs.length+' suggestions returned');
+    return {entryIdx, oldLo, newLo, oldSugs:getSugs(entry), newSugs:sugs.slice(0,6), reason:'St Kilda Road Year 6 LOI split + regenerated suggestions'};
+  }
+
+  function dqPatchSummary_(p){
+    const e = DATA[p.entryIdx] || {};
+    return `${e.ca || ''} · ${e.yl || ''} · ${e.th || ''}`;
+  }
+
+  function dqShowMaintenancePopup_(patches, title){
+    const existing = document.getElementById('dq-maint-overlay');
+    if(existing) existing.remove();
+    const overlay = document.createElement('div');
+    overlay.id = 'dq-maint-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:1200;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;padding:20px';
+    const modal = document.createElement('div');
+    modal.style.cssText = 'width:min(1160px,96vw);max-height:92vh;overflow:auto;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;box-shadow:0 30px 80px rgba(0,0,0,.45)';
+    modal.innerHTML = `<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><div style="font-size:24px">🛠️</div><div><div style="font-size:20px;font-weight:900">${esc(title || 'Review data maintenance fixes')}</div><div style="font-size:13px;color:var(--dim)">${patches.length} change${patches.length!==1?'s':''} ready for review. Nothing applies until you click Apply.</div></div><button class="btn-sm" style="margin-left:auto" id="dq-maint-close">✕</button></div>`;
+    patches.forEach((p,idx) => {
+      const e = DATA[p.entryIdx] || {};
+      const oldSugs = p.oldSugs || getSugs(e);
+      const newSugs = p.newSugs || oldSugs;
+      modal.innerHTML += `<div style="background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:14px;margin:12px 0"><div style="font-size:14px;font-weight:900;color:var(--gold);margin-bottom:6px">${idx+1}. ${esc(dqPatchSummary_(p))}</div>${p.reason?`<div style="font-size:12px;color:var(--dim);margin-bottom:10px">${esc(p.reason)}</div>`:''}${p.oldLo!=null?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px"><div style="padding:10px;background:#1a0808;border:1px solid #3a1818;border-radius:10px"><div style="font-size:10px;color:#ff9999;font-weight:800;text-transform:uppercase">Current Lines of Inquiry</div><div style="font-size:12px;line-height:1.55;color:#ddd">${esc(p.oldLo || '(empty)')}</div></div><div style="padding:10px;background:#081808;border:1px solid #1e3a1e;border-radius:10px"><div style="font-size:10px;color:var(--lime);font-weight:800;text-transform:uppercase">Proposed Lines of Inquiry</div><div style="font-size:12px;line-height:1.55;color:#ddd">${esc(p.newLo || '(empty)').replace(/;\s*/g,'<br>')}</div></div></div>`:''}<details><summary style="cursor:pointer;font-size:12px;color:var(--lime);font-weight:800">Show suggestion changes</summary><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px"><div>${oldSugs.map(s=>`<div style="font-size:12px;color:#bbb;padding:7px 0;border-bottom:1px solid #333"><b style="color:#ff9999">${esc(sugTool(s))}</b><br>${esc(sugDesc(s)).slice(0,260)}</div>`).join('')}</div><div>${newSugs.map(s=>`<div style="font-size:12px;color:#bbb;padding:7px 0;border-bottom:1px solid #333"><b style="color:var(--lime)">${esc(sugTool(s))}</b><br>${esc(sugDesc(s)).slice(0,260)}${s.url?`<br><span style="color:var(--gold)">${esc(s.url)}</span>`:''}</div>`).join('')}</div></div></details></div>`;
+    });
+    modal.innerHTML += `<div style="display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0;background:var(--card);padding-top:12px"><button class="btn-sm" id="dq-maint-cancel">Cancel</button><button class="btn-pri" id="dq-maint-apply">Apply ${patches.length} change${patches.length!==1?'s':''}</button></div>`;
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    document.getElementById('dq-maint-close').onclick = document.getElementById('dq-maint-cancel').onclick = () => overlay.remove();
+    document.getElementById('dq-maint-apply').onclick = async function(){
+      this.disabled = true;
+      this.textContent = 'Applying…';
+      const changed = [];
+      patches.forEach(p => {
+        const e = DATA[p.entryIdx];
+        if(!e) return;
+        if(p.newLo != null) e.lo = p.newLo;
+        if(p.newSugs) e.s = p.newSugs.map(dqPatchMinecraftLink_);
+        if(typeof markHumanVerifyDirtyIfNeeded_ === 'function') markHumanVerifyDirtyIfNeeded_(p.entryIdx, 'Data maintenance changed this unit after verification.');
+        else { e.humanVerified = false; e.verified = false; }
+        changed.push(p.entryIdx);
+      });
+      await saveToDrive();
+      overlay.remove();
+      try{ if(CURRENT_ENTRY_IDX != null) renderEntry(CURRENT_ENTRY_IDX); }catch(e){}
+      try{ renderBrowse?.(); renderDashboard?.(); }catch(e){}
+      setStatus('Data maintenance applied ✓');
+    };
+  }
+
+  function dqBuildSimpleSuggestionPatch_(entryIdx, sugIdx, newSug, reason){
+    const e = DATA[entryIdx];
+    const oldSugs = getSugs(e);
+    const newSugs = oldSugs.map((s,i) => i === sugIdx ? dqPatchMinecraftLink_(newSug) : dqPatchMinecraftLink_(s));
+    return {entryIdx, oldSugs, newSugs, reason};
+  }
+
+  function dqFindGoogleMapsAnnotationPatches_(){
+    const patches = [];
+    (DATA || []).forEach((e,entryIdx) => getSugs(e).forEach((s,sugIdx) => {
+      const tool = sugTool(s), desc = sugDesc(s);
+      if(dqKey_(tool) === dqKey_('Google Maps') && dqDescriptionSuggestsAnnotatedMap_(desc)){
+        const newSug = dqSanitiseSuggestion_(Object.assign({}, s, {t:NATGEO_TOOL, d:desc}));
+        patches.push(dqBuildSimpleSuggestionPatch_(entryIdx, sugIdx, newSug, 'Google Maps annotation task moved to National Geographic MapMaker'));
+      }
+    }));
+    return patches;
+  }
+
+  function dqFindCospacesPatches_(){
+    const patches = [];
+    (DATA || []).forEach((e,entryIdx) => getSugs(e).forEach((s,sugIdx) => {
+      const tool = sugTool(s), desc = sugDesc(s);
+      if(/cospaces/i.test(tool + ' ' + desc)){
+        const newSug = dqSanitiseSuggestion_(s);
+        patches.push(dqBuildSimpleSuggestionPatch_(entryIdx, sugIdx, newSug, 'Renamed CoSpaces reference to Delightex'));
+      }
+    }));
+    return patches;
+  }
+
+  function dqFindMinecraftMissingLinkPatches_(){
+    const patches = [];
+    (DATA || []).forEach((e,entryIdx) => getSugs(e).forEach((s,sugIdx) => {
+      const tool = sugTool(s), desc = sugDesc(s);
+      if(!/minecraft/i.test(tool + ' ' + desc)) return;
+      if(s.url || /https?:\/\//i.test(desc)) return;
+      const linked = dqPatchMinecraftLink_(s);
+      if(linked.url || /https?:\/\//i.test(sugDesc(linked))){
+        patches.push(dqBuildSimpleSuggestionPatch_(entryIdx, sugIdx, linked, 'Added missing verified Minecraft lesson URL from the Minecraft library'));
+      }
+    }));
+    return patches;
+  }
+
+  async function runDlaDataQualityMaintenanceFlow_(instruction){
+    if(typeof ensureLibrariesLoadedForAI === 'function') await ensureLibrariesLoadedForAI();
+    const t = String(instruction || '').toLowerCase();
+    const allMode = /all|maintenance|everything|these changes|data quality|google maps|cospaces|minecraft.*link|missing.*link|st kilda/.test(t);
+    let patches = [];
+    if(/google maps|mapmaker|map maker|annotat|maintenance|all|these changes/.test(t)) patches = patches.concat(dqFindGoogleMapsAnnotationPatches_());
+    if(/cospaces|co spaces|delightex|maintenance|all|these changes/.test(t)) patches = patches.concat(dqFindCospacesPatches_());
+    if(/minecraft|missing.*link|lesson link|maintenance|all|these changes/.test(t)) patches = patches.concat(dqFindMinecraftMissingLinkPatches_());
+
+    if(/st\s*kilda|skr|year\s*6|lines? of inquiry|loi|regenerate|maintenance|all|these changes/.test(t)){
+      const targets = (DATA || []).map((e,i)=>({e,i})).filter(({e}) => dqIsStKildaYear6_(e));
+      for(let n=0; n<targets.length; n++){
+        try{
+          setStatus(`Regenerating St Kilda Road Year 6 unit ${n+1}/${targets.length}…`, 'loading');
+          const p = await dqBuildYear6StKildaPatch_(targets[n].i);
+          patches.push(p);
+        }catch(err){
+          console.warn('St Kilda Year 6 repair failed for entry', targets[n].i, err);
+        }
+        if(typeof sleep === 'function') await sleep(220);
+      }
+    }
+
+    // Deduplicate exact same entry/slot simple patches by retaining latest newSugs for entry.
+    const byEntry = new Map();
+    patches.forEach(p => {
+      if(!byEntry.has(p.entryIdx)) byEntry.set(p.entryIdx, p);
+      else {
+        const prev = byEntry.get(p.entryIdx);
+        const merged = Object.assign({}, prev, p, { oldSugs: prev.oldSugs || p.oldSugs, reason: [prev.reason, p.reason].filter(Boolean).join(' | ') });
+        byEntry.set(p.entryIdx, merged);
+      }
+    });
+    patches = Array.from(byEntry.values());
+
+    if(!patches.length){
+      bulkChatAddMessage?.('assistant', 'I checked for Google Maps annotation tasks, CoSpaces naming, missing Minecraft links and St Kilda Road Year 6 LOI issues, but I could not find any reviewable fixes in the currently loaded data.');
+      setStatus('No maintenance fixes found');
+      return true;
+    }
+    bulkChatAddMessage?.('assistant', `✅ I found ${patches.length} data-quality maintenance change${patches.length!==1?'s':''} ready for review.`);
+    dqShowMaintenancePopup_(patches, 'Review DLA data-quality maintenance fixes');
+    return true;
+  }
+
+  function dqInstructionTargetsMaintenance_(instruction){
+    const t = String(instruction || '').toLowerCase();
+    return /(google maps.*street view|national geographic map\s*maker|mapmaker|st\s*kilda.*year\s*6|year\s*6.*st\s*kilda|lines? of inquiry|minecraft.*missing.*link|missing.*minecraft.*link|cospaces|co spaces|delightex)/i.test(t)
+      && /(fix|replace|change|regenerate|repair|update|move|rename|missing|link|street view|annotat|grouped|maintenance)/i.test(t);
+  }
+
+  if(typeof startBulkAnalysis === 'function'){
+    const oldStartBulkAnalysis = startBulkAnalysis;
+    startBulkAnalysis = window.startBulkAnalysis = async function(){
+      const instruction = (typeof bulkChatEffectiveInstruction_ === 'function') ? bulkChatEffectiveInstruction_(bulkChatContext.rawInstruction) : (bulkChatContext.rawInstruction || '');
+      if(dqInstructionTargetsMaintenance_(instruction)){
+        bulkChatState = 'analysing';
+        showReasoningSteps?.([{text:'Scanning for data-quality maintenance targets',status:'active'},{text:'Preparing reviewable fixes',status:'pending'}]);
+        try{
+          updateReasoningStep?.(0,'done'); updateReasoningStep?.(1,'active');
+          await runDlaDataQualityMaintenanceFlow_(instruction);
+          updateReasoningStep?.(1,'done'); setTimeout(function(){ hideReasoningSteps?.(); }, 800);
+          bulkChatState = 'done';
+        }catch(err){
+          handleBulkAnalysisError_ ? handleBulkAnalysisError_(err) : console.error(err);
+        }finally{ stopProgress?.(); }
+        return;
+      }
+      return oldStartBulkAnalysis.apply(this, arguments);
+    };
+  }
+
+  // Expose helpers for console/manual testing.
+  window.runDlaDataQualityMaintenanceFlow_ = runDlaDataQualityMaintenanceFlow_;
+  window.dlaSanitiseSuggestionsForMapAndDelightex_ = function(){ dqSanitiseDataWithLinks_(DATA); renderBrowse?.(); if(CURRENT_ENTRY_IDX!=null) renderEntry(CURRENT_ENTRY_IDX); };
+
+  setTimeout(function(){
+    try{ dqAddNatGeoToInventory_(); if(Array.isArray(DATA) && DATA.length) dqSanitiseDataSet_(DATA); }
+    catch(e){}
+  },0);
+})();
+/* ===== end DLA hotfix ===== */
+
 </script>
 </body>
 </html>
