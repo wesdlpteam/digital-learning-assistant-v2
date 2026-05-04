@@ -4492,15 +4492,15 @@
         "d": "Students will collaboratively build a digital migration map by pinning stories, photos, and facts about different migration journeys to an interactive world map. This will help visualise the global scale of migration and allow students to compare reasons for migration and its effects across different regions."
       },
       {
-        "t": "Makerspace Migration Suitcase Project",
-        "d": "Students will design and build a physical 'Migration Suitcase' using recycled materials, cardboard, and craft supplies. Inside, they will include tangible representations (mini artefacts, letters, photos, maps) of what a migrant might bring on their journey. Students will present their suitcase and explain the significance of each item, connecting personal stories to the broader migration theme."
+        "t": "Migration Pathways: Interactive Map & Story Circuit",
+        "d": "Students work in teams to design and construct a large-scale, 3D topographical world map using cardboard, clay, and recycled materials. On this map, they physically build key migration routes (past and present) as raised paths, bridges, or tunnels. Along each route, students create mini 'story stations'?handmade dioramas or models representing significant moments, challenges, or cultural exchanges encountered by migrants. Each station is embedded with a simple circuit using Makey Makey or micro:bit, connected to conductive touchpoints (e.g., copper tape, foil, or conductive paint). When touched, these activate pre-recorded audio clips or digital stories (created by students on iPads) that share personal narratives, interviews, or historical facts about migration. The project merges hands-on map-building, storytelling, and basic coding, allowing students to physically and digitally guide peers through the lived experiences of migration, highlighting empathy, diversity, and the push-pull factors behind each journey."
       }
     ],
     "audited": true,
     "plannerText": "Students explore the causes, experiences, and impacts of migration through personal narratives, interviews, and historical case studies. They engage in activities such as storyboarding, biography writing, oral history interviews, and presenting migration stories, with a strong focus on empathy, diversity, and understanding the push and pull factors behind human migration.",
     "humanVerified": false,
     "verified": false,
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -4530,15 +4530,15 @@
         "d": "Students engage with the 'Minecraft: The Investigators' lesson (https://education.minecraft.net/en-us/lessons/the-investigators) to explore digital citizenship and information reliability. They become school reporters, investigate stories, evaluate sources, and discuss how trustworthy information and positive relationships contribute to wellbeing."
       },
       {
-        "t": "Makerspace Wellbeing Toolkit",
-        "d": "Students design and build a tangible 'Wellbeing Toolkit' using recycled materials, cardboard, fabric, and popsticks. Each toolkit contains physical reminders or tools (e.g., a stress ball, affirmation cards, a gratitude jar) that support self-regulation and positive relationships. Students prototype, test, and present their toolkits, explaining how each item supports wellbeing."
+        "t": "Wellbeing Interactive Habits Garden",
+        "d": "Students work in teams to design and build a large-scale, physical 'Wellbeing Garden' installation using recycled cardboard, fabric, clay, and craft materials. Each garden plot represents a healthy habit, emotional strategy, or positive online behaviour. Students design and physically construct interactive garden elements (e.g., flowers, trees, stepping stones) that visually represent wellbeing strategies. Using Sphero Indi robots, students code simple journeys through the garden?each colour tile triggers a different digital message or sound (recorded on iPads and uploaded to Indi), sharing tips for safe interactions, emotional regulation, or positive relationships. The project follows the Design Cycle: empathise by interviewing peers about wellbeing needs, define key habits, ideate creative garden features, prototype with materials, test robot pathways and digital triggers, and reflect on how their garden helps the community thrive. The final garden is exhibited for the school, with students guiding visitors through both the physical and digital wellbeing journey."
       }
     ],
     "audited": true,
     "plannerText": "The unit focuses on developing students' understanding of safe and healthy interactions both online and in person, strategies for managing emotions and relationships, and the importance of wellbeing. Activities include cyber safety lessons, wellbeing poster creation, learner profile reflections, executive functioning goal setting, and ongoing self and peer assessment through Seesaw and class discussions.",
     "humanVerified": false,
     "verified": false,
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "Elsternwick",
