@@ -4508,9 +4508,34 @@
     "th": "Who We Are",
     "ci": "Understanding ourselves, our relationships and our wellbeing empowers us to thrive.",
     "lo": "The features of safe and healthy interactions; The connections between emotions, behaviour, learning, interactions and goals; Strategies and tools to achieve and maintain wellbeing and positive relationships both online and in person",
-    "s": [],
-    "audited": false,
-    "plannerText": "This unit focuses on understanding safe and healthy interactions both online and in real life, strategies for managing friendships and emotions, and the importance of wellbeing and growth mindset. Students engage in activities such as cyber safety lessons, wellbeing poster creation, learner profile self-portraits, goal setting, and reflective Seesaw tasks to build self-awareness and positive relationships.",
+    "s": [
+      {
+        "t": "ClassVR",
+        "d": "Students create immersive 360-degree 'wellbeing journeys' using iPad cameras and Canva's 'Remove Background' feature, then upload these to ClassVR headsets. Each journey could guide peers through scenarios about making safe choices, managing emotions, or building positive relationships, allowing students to experience and reflect on wellbeing strategies in a virtual environment."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students document and reflect on their personal wellbeing strategies by creating digital journals in Seesaw. They can record audio reflections, upload photos of their wellbeing routines, and share short videos demonstrating strategies for managing stress or building positive relationships, fostering self-awareness and peer learning."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students collaboratively author a digital book titled 'Our Wellbeing Toolbox' in Book Creator. Each student contributes a page with a strategy, story, or tip for thriving at school, including drawings, voice recordings, and photos. The final book is published and shared with the school community."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design a series of digital posters or infographics in Canva that promote healthy relationships, online safety, and wellbeing. They use Canva's templates and graphic elements to visually communicate key messages, then display these around the school or on digital noticeboards."
+      },
+      {
+        "t": "Minecraft: The Investigators",
+        "d": "Students engage with the 'Minecraft: The Investigators' lesson (https://education.minecraft.net/en-us/lessons/the-investigators) to explore digital citizenship and information reliability. They become school reporters, investigate stories, evaluate sources, and discuss how trustworthy information and positive relationships contribute to wellbeing."
+      },
+      {
+        "t": "Makerspace Wellbeing Toolkit",
+        "d": "Students design and build a tangible 'Wellbeing Toolkit' using recycled materials, cardboard, fabric, and popsticks. Each toolkit contains physical reminders or tools (e.g., a stress ball, affirmation cards, a gratitude jar) that support self-regulation and positive relationships. Students prototype, test, and present their toolkits, explaining how each item supports wellbeing."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The unit focuses on developing students' understanding of safe and healthy interactions both online and in person, strategies for managing emotions and relationships, and the importance of wellbeing. Activities include cyber safety lessons, wellbeing poster creation, learner profile reflections, executive functioning goal setting, and ongoing self and peer assessment through Seesaw and class discussions.",
     "humanVerified": false,
     "verified": false,
     "stemRebooted": false
