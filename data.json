@@ -4263,12 +4263,13 @@
         "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
       },
       {
-        "t": "3D Printers",
-        "d": "Using the Design Cycle, students design and 3D print artefacts that represent both Indigenous cultures and colonising societies. They prototype, test, and refine objects such as tools, symbols, or monuments, then present their creations alongside a reflection on how these objects tell the story of colonisation's impact."
+        "t": "Colonisation Encounters: Interactive Encounter Dioramas",
+        "d": "Students will work in groups to design and build large, immersive dioramas depicting a key moment of first contact between colonisers and Indigenous peoples (e.g., arrival, trade, negotiation, or resistance). Using recycled materials, cardboard, clay, and craft supplies, they will physically construct detailed scenes. To integrate technology, students will embed programmable micro:bit sound modules or Makey Makey touchpads into their dioramas, triggering recorded oral histories, soundscapes, or dialogue when visitors interact with specific objects or characters (e.g., touching a canoe plays an Indigenous perspective; touching a flag plays the colonisers' viewpoint). Students will follow the Design Cycle: investigate multiple perspectives, plan the scene and tech integration, create prototypes, test interactive elements, and reflect on how their diorama conveys empathy and the impacts of colonisation. This hands-on project fuses creative making with digital storytelling to deepen understanding of historical encounters."
       }
     ],
     "audited": true,
-    "plannerText": "Students explore the reasons, methods, and impacts of colonisation through activities such as perspective-taking with 'The Rabbits', research projects on British and global colonisation, and oral presentations. The unit emphasises empathy, critical thinking, and student agency as learners investigate historical and contemporary effects of colonisation on societies and cultures."
+    "plannerText": "Students explore the reasons, methods, and impacts of colonisation through activities such as perspective-taking with 'The Rabbits', research projects on British and global colonisation, and oral presentations. The unit emphasises empathy, critical thinking, and student agency as learners investigate historical and contemporary effects of colonisation on societies and cultures.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -4298,12 +4299,13 @@
         "d": "Students design visually striking digital posters or infographics that showcase the importance of respect, inclusion, and understanding in a diverse society, using Adobe Express's templates and 'Remove Background' feature for creative self-portraits."
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "Using the Design Cycle, students work in teams to prototype a 'Respect Robot' with Lego Spike Prime. The robot must perform a task that symbolically represents inclusion or empathy (e.g., delivering messages of kindness or bridging two groups), requiring students to ideate, build, test, and refine their solution while reflecting on how technology can promote positive actions in a diverse community."
+        "t": "Belief Bridges: Interactive Diversity Pavilion",
+        "d": "Students work in teams to design and build a physical 'pavilion' structure using recycled cardboard, fabric, and craft materials, with each section representing a different value, belief, or cultural identity found in their class or community. Inside each section, students embed simple interactive elements using Makey Makey kits and conductive materials (foil, graphite, etc.): when touched, these trigger digital stories, audio interviews, or animations about that value or belief, created by students on iPads. The project follows the Design Cycle: students empathise by interviewing classmates about their identities, define key values, ideate pavilion designs, prototype and physically construct the space, integrate the tech, and test by guiding peers through the interactive experience. The finished Diversity Pavilion becomes a walk-through exhibit celebrating and connecting the many identities and values that make up 'Who We Are'."
       }
     ],
     "audited": true,
-    "plannerText": "The unit 'Who We Are' explores how values, beliefs, and actions contribute to a diverse society. Students engage in lessons on empathy, respect, cyber safety, and self-management, using collaborative activities, digital reflections, and real-world scenarios to deepen their understanding of identity, relationships, and responsible citizenship."
+    "plannerText": "The unit 'Who We Are' explores how values, beliefs, and actions contribute to a diverse society. Students engage in lessons on empathy, respect, cyber safety, and self-management, using collaborative activities, digital reflections, and real-world scenarios to deepen their understanding of identity, relationships, and responsible citizenship.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -4333,13 +4335,17 @@
       {
         "t": "Padlet",
         "d": "Students build an interactive Padlet wall to curate examples of media coverage on their chosen global issue, tagging posts with perspective, bias, and reliability. The class discusses how different presentations shape public opinion and what makes a source trustworthy."
+      },
+      {
+        "t": "Global Voices Interactive Story Pathways",
+        "d": "Students work in teams to identify a global issue they are passionate about (e.g., climate action, equality, mental health). Using the Design Cycle, they storyboard and script branching narrative scenarios that explore different perspectives and solutions around their chosen issue. Students physically construct a large-scale, walkable 'story pathway' in the Makerspace using cardboard, fabric, recycled materials, and craft supplies. Each pathway features interactive stations?such as pop-up models, tactile elements, and QR codes. At each station, visitors make choices that influence the direction of the story, scanning QR codes to trigger student-created digital content (e.g., short videos, AR experiences, or robot interactions using Sphero Indi or Dash robots programmed to respond to story decisions). The result is a hybrid, immersive advocacy experience where physical craftsmanship and digital storytelling combine to inspire empathy, awareness, and action."
       }
     ],
     "audited": true,
     "plannerText": "The Year 6 'How We Express Ourselves' unit at St Kilda focuses on empowering students to understand global issues and use effective communication to raise awareness and inspire action. Students engage in inquiry cycles, develop vision statements, create media campaigns, design logos, and present live performances, all while leveraging digital tools and collaborative research to drive meaningful advocacy.",
     "humanVerified": false,
     "verified": false,
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -4367,13 +4373,17 @@
       {
         "t": "Canva",
         "d": "Learners design persuasive infographics advocating for a new law or policy, clearly outlining the roles of different government levels and the potential impact on citizens. They use Canva?s collaboration tools to peer-review and refine their visual arguments before presenting to the class."
+      },
+      {
+        "t": "Civic Systems Arcade: Build & Code a Government Decision Simulator",
+        "d": "Students collaborate to design and construct a large, interactive tabletop arcade game that simulates how decisions are made at different levels of Australian government. Using recycled cardboard, foam board, craft sticks, and hot glue, students physically build a multi-level 'government machine' with pathways and stations representing local, state, and federal branches. Each station features physical levers, dials, or buttons crafted from everyday materials. Integrating Makey Makey kits and micro:bit controllers, students code simple cause-and-effect circuits so that when a lever or button is activated, digital feedback (lights, sounds, or messages on a connected laptop/tablet) shows how a decision at one level impacts others and citizens (e.g., funding, laws, services). Students prototype, test, and iterate their arcade machine, ensuring all parts work together, and finish by inviting peers to 'play government'?making decisions and seeing real-time, tangible consequences unfold through their hybrid creation."
       }
     ],
     "audited": true,
     "plannerText": "In this unit, students investigate how different systems of government function, the roles and responsibilities at each level in Australia, and how government decisions impact citizens' lives. They engage in inquiry-based activities such as mapping government structures, simulating law-making, reflecting on citizenship, and proposing their own bills, culminating in creative reflections and real-world connections.",
     "humanVerified": false,
     "verified": false,
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
