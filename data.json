@@ -3968,12 +3968,13 @@
         "d": "Students create a digital book chronicling the history of famous bridges, the science behind their construction, and their own design journey. They include interactive diagrams, voice recordings, and video reflections to demonstrate their understanding of engineering principles."
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "Using the Design Cycle, students work in teams to prototype, test, and refine a physical bridge using Lego Spike Prime. They document each iteration, collect data on load-bearing capacity, and present their final design with a focus on how engineering choices made their structure strong, stable, and fit for purpose."
+        "t": "Smart Bridge Builders: Sensor-Strength Challenge",
+        "d": "Students work in teams to design and construct physical model bridges using materials like popsticks, cardboard, string, and recycled plastics. They embed simple circuits with Makey Makey or micro:bit sensors within their bridges to digitally monitor and display real-time data (e.g., weight load, tilt, or vibration) during strength testing. Using tablets or laptops, students code basic programs to visualize this data as the bridges are physically tested with weights. The project follows the Design Cycle: students research real-world bridges, plan and sketch their ideas, build and wire their models, test and collect sensor data, reflect on performance, and redesign for improvement. This hybrid approach empowers students to merge hands-on engineering with digital feedback, deepening their understanding of structural strength and iterative design."
       }
     ],
     "audited": true,
-    "plannerText": "Students inquire into the engineering of bridges, exploring different types, features, and materials that contribute to strength and stability. They research, design, build, and test bridges, reflecting on their process and making improvements based on real-world examples and peer feedback."
+    "plannerText": "Students inquire into the engineering of bridges, exploring different types, features, and materials that contribute to strength and stability. They research, design, build, and test bridges, reflecting on their process and making improvements based on real-world examples and peer feedback.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -4003,12 +4004,13 @@
         "d": "Students build a collaborative digital map on Padlet, pinning locations of different First Nations countries, adding student-created videos, soundscapes, and artwork to each region to showcase the diversity and connection to Country."
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "Using the Design Cycle, students prototype and build a 'sustainable gathering tool' inspired by First Nations ingenuity, then document their process and test their designs for environmental impact and efficiency, reflecting on how traditional knowledge can inform modern STEM solutions."
+        "t": "Living Country: Interactive Biome Dioramas",
+        "d": "Students will work in teams to research and select a specific Australian biome (e.g., desert, rainforest, wetlands) significant to First Nations communities. Using recycled materials, natural objects, cardboard, and clay, they will collaboratively construct a detailed 3D diorama representing their chosen environment, incorporating native flora, fauna, and cultural features (such as shelters, tools, or art) based on their research. To bring their diorama to life, students will embed simple circuits (LEDs, copper tape, coin cell batteries) to highlight key features (e.g., glowing campfires, illuminated waterholes) and use programmable microcontrollers like Micro:bit or Makey Makey to add interactive elements?such as touch-activated sound recordings of Indigenous language words, stories, or animal calls, which they record themselves. The project follows the Design Cycle: empathize (learn from Indigenous perspectives), define (choose biome and features), ideate (sketch diorama and plan tech integration), prototype (build and wire up), test (demonstrate interactivity), and reflect (share learning and improvements). This immersive, hands-on Makerspace experience deepens understanding of Country, culture, and environmental responsibility through creative making and digital storytelling."
       }
     ],
     "audited": true,
-    "plannerText": "This unit explores First Nations Australians' deep connection to Country, language, and culture. Students engage in activities such as creating soundscapes, researching cultural diversity, visiting the Melbourne Museum, and producing artworks and digital reflections that highlight Indigenous perspectives, environmental responsibility, and the importance of tradition and identity."
+    "plannerText": "This unit explores First Nations Australians' deep connection to Country, language, and culture. Students engage in activities such as creating soundscapes, researching cultural diversity, visiting the Melbourne Museum, and producing artworks and digital reflections that highlight Indigenous perspectives, environmental responsibility, and the importance of tradition and identity.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -4039,12 +4041,13 @@
         "d": "Students create short documentary-style videos or animated explainers about a chosen explorer, using Adobe Express to combine historical images, maps, and their own voiceovers to communicate the positive and negative consequences of exploration."
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "Using the Design Cycle, students prototype and test a 'navigation robot' inspired by historical exploration tools. They design, build, and program a Lego Spike Prime robot to follow a mapped route representing an explorer's journey, iterating on their design to overcome obstacles and simulate real-world exploration challenges."
+        "t": "Explorers' Navigation Challenge: Augmented Reality Map Maze",
+        "d": "Students work in teams to research a historical explorer relevant to Australian history. Using large sheets of cardboard, recycled materials, and art supplies, they construct a 3D topographic map featuring key landmarks, obstacles, and routes from their explorer's journey. Teams embed QR codes or simple AR markers (created with a free iPad AR app like AR Makr) at significant points, linking to their own short audio narrations or digital clues about the journey's challenges and encounters. Next, students design and build simple wheeled explorers' 'vessels' (using popsticks, bottle caps, etc.) and program a Sphero Indi or similar robot to navigate the physical map, stopping at each AR marker to trigger the digital content. The project blends physical model-making, creative storytelling, and basic robotics/programming, culminating in a hands-on, interactive journey through history that highlights both European and Indigenous perspectives."
       }
     ],
     "audited": true,
-    "plannerText": "Students investigate the concept of exploration and discovery, focusing on the Age of Exploration and Australian history. They research explorers, map their journeys, present findings, and reflect on the impact of European arrival from multiple perspectives, using a range of inquiry-based and creative activities."
+    "plannerText": "Students investigate the concept of exploration and discovery, focusing on the Age of Exploration and Australian history. They research explorers, map their journeys, present findings, and reflect on the impact of European arrival from multiple perspectives, using a range of inquiry-based and creative activities.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -4075,12 +4078,13 @@
         "url": "https://podcast.adobe.com"
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "Design Cycle STEM Project: Students work in teams to design, build, and program a 'Leadership Robot' using Lego Spike Prime. Each robot must demonstrate a leadership quality (e.g., guiding others, making decisions, solving problems) through its programmed actions. Teams document their process and reflect on how collaboration and leadership were essential to their success."
+        "t": "Leadership Labyrinth: Collaborative Maze Builders",
+        "d": "Students work in teams to design and construct a large-scale, tabletop leadership-themed maze using cardboard, recycled materials, and craft supplies. Each team creates maze sections that represent different leadership qualities (e.g., courage, empathy, responsibility), incorporating physical obstacles and creative decorations. Using Sphero Indi robots, students program pathways through their maze, demonstrating how leaders navigate challenges and make decisions. Teams iterate on their designs based on peer feedback, then connect all sections to form a collaborative Leadership Labyrinth. The final showcase invites classmates and visitors to guide the Sphero Indi through the maze, reflecting on the leadership journey and discussing the qualities represented at each stage."
       }
     ],
     "audited": true,
-    "plannerText": "This unit explores the qualities and responsibilities of effective leaders, with students brainstorming attributes, researching role models, and reflecting on their own leadership potential. Activities include collaborative discussions, creative presentations, and opportunities for students to apply and demonstrate leadership skills in real-world and classroom contexts."
+    "plannerText": "This unit explores the qualities and responsibilities of effective leaders, with students brainstorming attributes, researching role models, and reflecting on their own leadership potential. Activities include collaborative discussions, creative presentations, and opportunities for students to apply and demonstrate leadership skills in real-world and classroom contexts.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
