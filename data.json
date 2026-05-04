@@ -4313,9 +4313,34 @@
     "th": "How We Express Ourselves",
     "ci": "Understanding global issues and using effective communication empowers us to raise awareness and inspire action.",
     "lo": "Global issues are caused by interconnected factors that require collective solutions; Media presentations can reflect the perspective of the author rather than the truth; We must make responsible choices when responding to and creating media",
-    "s": [],
-    "audited": false,
-    "plannerText": "The Year 6 'How We Express Ourselves' unit at St Kilda focuses on empowering students to understand global issues and use effective communication to raise awareness and inspire action. Students engage in inquiry cycles, develop vision statements, create media campaigns, design logos, and present live performances, all while leveraging digital tools and collaborative research to drive meaningful advocacy.",
+    "s": [
+      {
+        "t": "Delightex (VR/AR Scenario Creation)",
+        "d": "Students design immersive VR/AR experiences that place users inside a global issue (e.g., climate change, poverty, or inequality). They script scenarios where users must make choices, encounter real-world data, and see the consequences of their actions, then share these interactive stories to inspire empathy and action among peers."
+      },
+      {
+        "t": "Canva",
+        "d": "Students collaboratively create a digital media campaign (posters, infographics, social media posts) to raise awareness about their chosen global issue, using Canva's design tools and 'Remove Background' feature to enhance visual impact and message clarity."
+      },
+      {
+        "t": "Podcast Equipment + GarageBand",
+        "d": "Students script, record, and edit a podcast episode that explores a global issue, interviews an expert or community member, and proposes actionable solutions. They publish their episodes to share with the school community, practicing persuasive communication and digital storytelling."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students author and publish interactive digital books that combine research, personal reflections, images, and multimedia elements to explain a global issue and advocate for specific actions. Books can include embedded audio, video, and links to further resources."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students curate a collaborative Padlet wall where they collect, critique, and respond to real-world media examples (articles, videos, campaigns) related to their global issue, analyzing persuasive techniques and discussing the reliability and impact of different communication methods."
+      },
+      {
+        "t": "Makerspace: Physical Protest Art Installation",
+        "d": "Students design and build a large-scale, interactive protest art installation using recycled materials, cardboard, popsticks, and paint. The installation visually represents their chosen global issue and includes QR codes linking to their digital campaigns or podcasts, inviting the school community to engage, reflect, and take action."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This Year 6 HWEO unit at St Kilda focuses on empowering students to understand global issues and use effective communication to raise awareness and inspire action. Students engage in collaborative inquiry, media creation, campaign design, and live performance, culminating in an Exhibition where they present their advocacy projects to the community.",
     "humanVerified": false,
     "verified": false,
     "stemRebooted": false
@@ -4326,9 +4351,35 @@
     "th": "How We Organise Ourselves",
     "ci": "The way a country is governed impacts the lives of citizens.",
     "lo": "The key institutions and functions of Australia's democratic system of government; How government decisions impact citizens at federal, state and local levels; The rights and responsibilities of Australian citizens and their obligations as global citizens",
-    "s": [],
-    "audited": false,
-    "plannerText": "In this unit, students investigate how different systems of government function, the roles and responsibilities at each level in Australia, and how government decisions impact citizens' lives. They engage in inquiry-based activities such as mapping government structures, simulating law-making, reflecting on citizenship, and proposing their own bills, culminating in creative reflections and real-world connections.",
+    "s": [
+      {
+        "t": "Minecraft: Revamp Melbourne",
+        "d": "Students use Minecraft Education to collaboratively redesign a section of Melbourne, proposing innovative government systems or public services that address real-world issues (e.g., transport, sustainability, digital voting). They must justify how their changes would impact citizens, linking directly to the central idea about governance and its effects. This immersive simulation allows students to test, present, and reflect on the consequences of their civic decisions in a dynamic, 3D environment.",
+        "url": "https://education.minecraft.net/en-us/lessons/revamp-melbourne"
+      },
+      {
+        "t": "Canva",
+        "d": "Students design persuasive infographics or campaign posters advocating for a new law or policy, using real data and arguments. They must consider how visual communication can influence public opinion and government decisions, directly connecting to the unit's focus on governance and citizenship."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Students create and distribute a digital survey to gather opinions from peers or family about a current government policy or proposed law. They analyse the results in Excel, discussing how citizen feedback can influence government decisions and reflecting on the democratic process."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students record video reflections or debates on controversial government decisions, sharing their perspectives and responding to classmates. This fosters critical thinking about the impact of governance on citizens and encourages respectful civic discourse."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students collaboratively build a digital wall mapping different government systems around the world, posting examples, key features, and citizen impacts. They compare and contrast these systems, deepening their understanding of how governance structures affect daily life."
+      },
+      {
+        "t": "Makerspace: Build a Model Parliament",
+        "d": "In groups, students construct a physical model of the Australian Parliament (or another government system) using cardboard, recycled materials, and craft supplies. They simulate the process of passing a bill, assigning roles (Speaker, MPs, Senators, etc.), and physically moving 'bills' through the chambers. This hands-on project helps students internalise the structures and functions of government and see the tangible impact of governance on citizens."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students explore the Australian system of government and compare it to others worldwide. They investigate the roles and responsibilities of different government levels, how laws are made, and the rights and responsibilities of citizens. Activities include mapping, research, debates, proposing bills, and reflecting on real-world government impacts through digital and hands-on projects.",
     "humanVerified": false,
     "verified": false,
     "stemRebooted": false
@@ -4339,9 +4390,35 @@
     "th": "How the World Works",
     "ci": "The relationships between the Earth, Moon and Sun create predictable patterns that shape life on our planet and are understood through both scientific and cultural perspectives.",
     "lo": "The movement and positions of the Earth, Moon and Sun create predictable patterns such as day/night, moon phases, tides and seasons; The Earth, Moon and Sun have specific structures and relationships that can be represented through models and simulations; Different cultures, including Indigenous knowledge systems, interpret and understand the night sky in unique and meaningful ways.",
-    "s": [],
-    "audited": false,
-    "plannerText": "Students explore the relationships between the Earth, Moon, and Sun through hands-on models, time-lapse videos, moon diaries, and cultural stories. They investigate scientific concepts like rotation, tides, and seasons, compare Indigenous and scientific perspectives, and synthesize their learning through creative projects such as podcasts, diagrams, and choice-board activities.",
+    "s": [
+      {
+        "t": "ClassVR",
+        "d": "Students embark on a fully immersive virtual reality journey to experience the Earth, Moon, and Sun from space. They can observe planetary orbits, lunar phases, and solar/lunar eclipses in real time, then record their own voiceovers explaining the scientific and cultural significance of what they see."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design interactive infographics or digital posters comparing scientific and Indigenous perspectives on the night sky, moon phases, and seasons. They use Canva's 'Remove Background' feature to create layered visuals, integrating student photos as 'space explorers' in their designs."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students author a multimedia eBook that tracks their Moon Diary, sunrise/sunset observations, and cultural stories about the sky. They embed photos (using the iPad Camera app), diagrams, and audio reflections to document their learning journey."
+      },
+      {
+        "t": "Podcast Equipment",
+        "d": "Students script, record, and edit a podcast episode exploring how different cultures interpret the sky. They interview family members or community guests, then mix in sound effects (e.g., sunrise, tides, night sounds) using GarageBand before publishing to the class."
+      },
+      {
+        "t": "Minecraft: James Webb Space Telescope Challenge",
+        "d": "Students use Minecraft Education to explore the universe through the James Webb Space Telescope map. They craft constellations, create a model solar system, and reflect on how scientific discoveries and cultural stories both shape our understanding of the cosmos.",
+        "url": "https://education.minecraft.net/en-us/lessons/james-webb-space-telescope-challenge"
+      },
+      {
+        "t": "Makerspace: Earth-Moon-Sun System Automata",
+        "d": "Students build a physical automata model using cardboard, skewers, bottle caps, and recycled materials to represent the Earth, Moon, and Sun. By turning a crank, the model demonstrates rotation, orbit, and moon phases. Students label parts and present how their mechanism models both scientific patterns and cultural interpretations."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students explore the relationships between the Earth, Moon, and Sun, investigating how their movements create predictable patterns such as day/night, moon phases, tides, and seasons. The unit integrates both scientific and cultural perspectives, including Indigenous astronomy, and features hands-on modeling, moon diaries, podcasts, and creative student agency through choice boards and presentations.",
     "humanVerified": false,
     "verified": false,
     "stemRebooted": false
@@ -4352,9 +4429,36 @@
     "th": "Sharing the Planet",
     "ci": "Peoples' actions affect the balance of nature.",
     "lo": "What the environment is comprised of and how ecosystems function; The interdependence between humans, animals and the environment; The consequences of human actions on the balance of nature",
-    "s": [],
-    "audited": false,
-    "plannerText": "The Year 6 Sharing the Planet unit focuses on how people's actions affect the balance of nature, with students investigating endangered species, conservation technologies, and Indigenous perspectives. Key activities include a STEM design project to help threatened species, excursions to zoos and natural sites, and the use of digital tools to research, design, and communicate solutions for environmental challenges.",
+    "s": [
+      {
+        "t": "ClassVR & Merge Cubes",
+        "d": "Students design and create immersive AR/VR experiences to simulate the habitats of endangered Australian species. Using Merge Cubes, they can build interactive 3D models of animal tracking devices or habitats, then use ClassVR headsets to 'step inside' and evaluate the effectiveness of their designs from the animal's perspective."
+      },
+      {
+        "t": "Micro:bit: Protecting Animals",
+        "d": "Students use Micro:bits to prototype and code simple animal tracking or alert systems, such as a temperature or movement sensor for monitoring endangered species in their habitats. They test and debug their devices, simulating real-world conservation technology.",
+        "url": "https://microbit.org/teach/lessons/?selected=protecting-animals"
+      },
+      {
+        "t": "Canva",
+        "d": "Students create persuasive digital campaigns or infographics to raise awareness about the impact of human actions on the balance of nature, focusing on a chosen threatened species. They use Canva's design tools and 'Remove Background' feature to enhance their visuals with real animal photos and data."
+      },
+      {
+        "t": "Minecraft: Build With Bees Habitat",
+        "d": "Students explore the concept of interdependence by building 'beetopias' in Minecraft Education, applying their knowledge of animal needs and environmental balance to design thriving habitats for bees and other pollinators. They reflect on how human actions can support or disrupt these ecosystems.",
+        "url": "https://education.minecraft.net/en-us/lessons/build-with-bees-habitat"
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students document their STEM design process by uploading photos, videos, and reflections on their animal conservation prototypes. They receive peer feedback and iterate on their designs, building a digital portfolio that tracks their learning journey and impact."
+      },
+      {
+        "t": "Physical Makerspace Project",
+        "d": "Students work in teams to design and build a physical prototype of a wildlife monitoring device using recycled materials, cardboard, popsticks, and simple electronics (e.g., LED lights, buzzers). They create a model that could help track, protect, or provide shelter for a threatened Australian species, presenting their solution at a gallery walk for peer review."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The unit 'Sharing the Planet' in Year 6 focuses on how peoples' actions affect the balance of nature, with a strong emphasis on endangered species, conservation technology, and STEM design. Students research, design, and prototype technologies to help threatened animals, drawing inspiration from zoo excursions and real-world conservation efforts. The unit integrates hands-on making, digital documentation, and reflection on the impact of human behavior on the environment.",
     "humanVerified": false,
     "verified": false,
     "stemRebooted": false
@@ -4365,9 +4469,35 @@
     "th": "Where We Are in Place and Time",
     "ci": "Human migration is a response to challenges, risks and opportunities.",
     "lo": "The causes and consequences of migration; How migration changes societies; The impact of migration on individuals, both positive and negative",
-    "s": [],
-    "audited": false,
-    "plannerText": "Students explore the causes, impacts, and personal stories of migration through interviews, storyboarding, and digital presentations. They investigate historical and contemporary migration events, conduct oral histories, and present their findings using multimedia tools, with a strong focus on empathy, diversity, and the lived experiences of migrants.",
+    "s": [
+      {
+        "t": "Minecraft: Peter Is Here Ai For Cultural Heritage",
+        "d": "Students will use Minecraft Education to explore, protect, and celebrate cultural heritage sites, connecting directly to the migration unit by investigating how migration shapes cultural identity and heritage. They will build a virtual representation of a heritage site from a migration story studied in class, then use Minecraft's collaborative features to reflect on why preserving these sites matters for migrant communities.",
+        "url": "https://education.minecraft.net/en-us/lessons/peter-is-here-ai-for-cultural-heritage"
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students will interview a migrant (family member or community guest), record their migration story, and create a digital book that combines audio, images, and text. This book will document the causes, challenges, and impacts of migration, allowing students to publish and share diverse migration narratives with the school community."
+      },
+      {
+        "t": "Canva",
+        "d": "Students will design an infographic or timeline visualising key migration events in Australian history (e.g., First Fleet, gold rush, post-war migration, refugee arrivals). They will use Canva's 'Remove Background' feature to incorporate historical photos and create visually engaging, informative posters for a class exhibition."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students will create and upload video reflections or oral histories about their own family's migration story or a researched migration case study. They will respond to teacher prompts about push/pull factors, challenges faced, and the impact of migration on identity, fostering empathy and global citizenship."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students will collaboratively build a digital migration map by pinning stories, photos, and facts about different migration journeys to an interactive world map. This will help visualise the global scale of migration and allow students to compare reasons for migration and its effects across different regions."
+      },
+      {
+        "t": "Makerspace Migration Suitcase Project",
+        "d": "Students will design and build a physical 'Migration Suitcase' using recycled materials, cardboard, and craft supplies. Inside, they will include tangible representations (mini artefacts, letters, photos, maps) of what a migrant might bring on their journey. Students will present their suitcase and explain the significance of each item, connecting personal stories to the broader migration theme."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students explore the causes, experiences, and impacts of migration through personal narratives, interviews, and historical case studies. They engage in activities such as storyboarding, biography writing, oral history interviews, and presenting migration stories, with a strong focus on empathy, diversity, and understanding the push and pull factors behind human migration.",
     "humanVerified": false,
     "verified": false,
     "stemRebooted": false
