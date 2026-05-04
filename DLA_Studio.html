@@ -1718,7 +1718,7 @@ const TOOL_WHITELIST = [
   'chatterpix','imovie','puppet pals',
   'adobe express','adobe express podcasting',
   
-  'google maps','google earth','field guide to victoria','field guide','sky map',
+  'google maps','google earth','national geographic mapmaker','national geographic map maker','nat geo mapmaker','nat geo map maker','mapmaker','map maker','field guide to victoria','field guide','sky map',
   'geoboard',
   
   'clickview','epic','piccollage','brushes redux','word clouds','abcya',
@@ -1730,9 +1730,31 @@ const TOOL_WHITELIST = [
 ];
 
 function isWhitelisted(toolName){
-  if(!toolName) return true; 
-  const t = toolName.toLowerCase();
-  return TOOL_WHITELIST.some(w => t.includes(w));
+  if(!toolName) return true;
+  const raw = String(toolName || '').trim();
+  const t = raw.toLowerCase();
+  let key = t;
+  try { key = toolInventoryKey(raw); } catch(e) {}
+
+  // Dashboard issue checks used to read only the old static TOOL_WHITELIST.
+  // That meant tools added through Tool Inventory, such as National Geographic MapMaker,
+  // could still be flagged as "not in approved list". Keep this lightweight:
+  // no inventory repairs, no autocomplete hooks, no startup data rewriting.
+  try{
+    if(typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY){
+      const banned = Array.isArray(TOOL_INVENTORY.banned) && TOOL_INVENTORY.banned.some(x => toolInventoryKey(x) === key);
+      if(banned) return false;
+      const approved = Array.isArray(TOOL_INVENTORY.approved) ? TOOL_INVENTORY.approved : [];
+      if(approved.some(x => toolInventoryKey(x) === key)) return true;
+    }
+  }catch(e){}
+
+  return TOOL_WHITELIST.some(w => {
+    const wk = String(w || '').toLowerCase().trim();
+    let iwk = wk;
+    try { iwk = toolInventoryKey(w); } catch(e) {}
+    return t.includes(wk) || key === iwk || key.includes(iwk);
+  });
 }
 
 function getIssues(){
@@ -2846,6 +2868,7 @@ function normaliseToolName(t){
     'word':'Microsoft Word','ms word':'Microsoft Word','office word':'Microsoft Word',
     'teams':'Microsoft Teams','ms teams':'Microsoft Teams','office teams':'Microsoft Teams',
     'google earth':'Google Earth','google maps':'Google Maps',
+    'national geographic mapmaker':'National Geographic MapMaker','national geographic map maker':'National Geographic MapMaker','nat geo mapmaker':'National Geographic MapMaker','nat geo map maker':'National Geographic MapMaker','mapmaker':'National Geographic MapMaker','map maker':'National Geographic MapMaker',
     'book creator':'Book Creator','garageband':'GarageBand',
     'imovie':'iMovie','piccollage':'PicCollage','tinkercad':'Tinkercad',
     'minecraft education':'Minecraft Education',
@@ -2877,6 +2900,7 @@ function normaliseToolName(t){
   if(key.startsWith('merge cube')) return 'Merge Cubes';
   if(key.startsWith('classvr')) return 'ClassVR';
   if(key.startsWith('delightex') || key.startsWith('cospaces')) return 'Delightex';
+  if(key.startsWith('national geographic mapmaker') || key.startsWith('national geographic map maker') || key.startsWith('nat geo mapmaker') || key.startsWith('nat geo map maker') || key === 'mapmaker' || key === 'map maker') return 'National Geographic MapMaker';
   if(key.startsWith('google earth')) return 'Google Earth';
   if(key.startsWith('google maps')) return 'Google Maps';
   if(key.startsWith('makey makey') || key.startsWith('makeymakey')) return 'Makey Makey';
@@ -11762,7 +11786,7 @@ setInterval(async()=>{
 
   function dqSplitLooseLoi_(lo){
     // Robustly split LOIs that were pasted/exported with corrupted bullet symbols.
-    // St Kilda Road Year 6 had separators such as �, â€¢, Â•, ï‚· and other odd glyphs,
+    // St Kilda Road Year 6 had separators such as  , â€¢, Â•, ï‚· and other odd glyphs,
     // so this recognises far more than just semicolons and normal bullets.
     let s = dqText_(lo)
       .replace(/\u00a0/g, ' ')
@@ -11771,7 +11795,7 @@ setInterval(async()=>{
       .replace(/ï\s*‚\s*·/gi, '; ')
       .replace(/[\u2022\u2023\u25E6\u2043\u2219\u00B7\u25CF\u25AA\u25AB\u25A0\u25A1\u25C6\u25C7\u25B8\u25B6\uF0B7]+/g, '; ')
       .replace(/\s*[|¦§]+\s*/g, '; ')
-      .replace(/\s*[�]+\s*/g, '; ')
+      .replace(/\s*[ ]+\s*/g, '; ')
       .replace(/\s+/g,' ')
       .trim();
     if(!s) return '';
