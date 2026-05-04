@@ -1827,8 +1827,11 @@ function renderDashboard(){
       fixBar.innerHTML='<div style="padding:10px 14px;background:rgba(197,232,74,0.08);border:1px solid rgba(197,232,74,0.2);border-radius:8px;font-size:13px;color:var(--lime);font-weight:600">✓ No issues — all entries look good</div>';
     }
   }
-  document.getElementById('issues-list').innerHTML=all.length
-    ? all.map(({e,idx,type,detail})=>{
+  const DASHBOARD_ISSUE_RENDER_LIMIT = 80;
+  const visibleIssues = all.slice(0, DASHBOARD_ISSUE_RENDER_LIMIT);
+  const hiddenIssueCount = Math.max(0, all.length - visibleIssues.length);
+  document.getElementById('issues-list').innerHTML=visibleIssues.length
+    ? visibleIssues.map(({e,idx,type,detail})=>{
         const badgeBg={'banned':'#FF8080','incomplete':'#F5A623','duplicate':'#9B8BFF','offwhitelist':'#60B8F0','missingplanner':'#D4A017'}[type]||'#888';
         const badgeCol={'banned':'#111','incomplete':'#111','duplicate':'#fff','offwhitelist':'#111','missingplanner':'#111'}[type]||'#fff';
         const label={'banned':'banned','incomplete':'no planner','duplicate':'duplicate','offwhitelist':'off-list','missingplanner':'no planner'}[type]||type;
@@ -1840,7 +1843,7 @@ function renderDashboard(){
           <span style="font-size:11px;color:var(--dim)">${detail}</span>
           <span style="color:var(--dim)">›</span>
         </div>`;
-      }).join('')
+      }).join('') + (hiddenIssueCount ? `<div style="padding:14px 18px;margin-top:8px;background:var(--card2);border:1px solid var(--border);border-radius:10px;color:var(--dim);font-size:12px;text-align:center">Showing first ${DASHBOARD_ISSUE_RENDER_LIMIT} issues for performance. Use the Audit filters or Browse search to inspect the remaining ${hiddenIssueCount}.</div>` : '')
     : '<div style="text-align:center;padding:24px;color:var(--dim);font-size:13px">No issues found ✓</div>';
 }
 
@@ -3521,6 +3524,10 @@ function showBeforeAfterPreview(){
 function checkKeyInput(){ /* legacy no-op: AI key is managed by GAS Script Properties. */ }
 
 function initNetworkCanvas(){
+  // Performance hotfix: this canvas is hidden in CSS but the old code still
+  // ran an infinite requestAnimationFrame loop on every Studio load.
+  // Keep it disabled so startup, Drive sync and large reviews stay responsive.
+  return;
   const canvas=document.getElementById('bg-canvas');
   if(!canvas) return;
   const ctx=canvas.getContext('2d');
@@ -13464,6 +13471,78 @@ Return ONLY JSON:
   console.log('[DLA PATCH] Responsive St Kilda Road Year 6 regeneration installed', STK_Y6_RESPONSIVE_PATCH_VERSION);
 })();
 /* ===== end DLA hotfix ===== */
+
+/* ===== DLA hotfix: responsiveness guardrails v3 =====
+   Purpose: keep Studio usable with large Drive data, frequent multi-admin syncs,
+   and St Kilda Year 6 maintenance. This does not auto-apply AI changes. */
+(function(){
+  const PATCH_ID = '2026-05-04-responsive-guardrails-v3';
+  if(window.__DLA_RESPONSIVE_GUARDRAILS_V3 === PATCH_ID) return;
+  window.__DLA_RESPONSIVE_GUARDRAILS_V3 = PATCH_ID;
+
+  function activePanelId_(){
+    try { return document.querySelector('.panel.active')?.id || ''; }
+    catch(e){ return ''; }
+  }
+  function debounce_(fn, wait){
+    let timer = null;
+    return function(){
+      const args = arguments, ctx = this;
+      clearTimeout(timer);
+      timer = setTimeout(function(){ fn.apply(ctx, args); }, wait);
+    };
+  }
+
+  // Search typing previously called renderBrowse on every keypress. Debounce it.
+  setTimeout(function(){
+    try{
+      const search = document.getElementById('f-search');
+      if(search && !search.__dlaDebouncedBrowse){
+        search.__dlaDebouncedBrowse = true;
+        search.oninput = debounce_(function(){ if(typeof renderBrowse === 'function') renderBrowse(); }, 180);
+      }
+    }catch(e){}
+  }, 0);
+
+  // Prevent noisy background render cascades from repeated patches/syncs.
+  if(typeof renderBrowse === 'function' && !window.__DLA_RENDER_BROWSE_GUARDED){
+    window.__DLA_RENDER_BROWSE_GUARDED = true;
+    const oldRenderBrowse = renderBrowse;
+    let browseRendering = false;
+    renderBrowse = window.renderBrowse = function(){
+      if(browseRendering) return;
+      browseRendering = true;
+      try { return oldRenderBrowse.apply(this, arguments); }
+      finally { setTimeout(function(){ browseRendering = false; }, 0); }
+    };
+  }
+
+  if(typeof renderDashboard === 'function' && !window.__DLA_RENDER_DASHBOARD_GUARDED){
+    window.__DLA_RENDER_DASHBOARD_GUARDED = true;
+    const oldRenderDashboard = renderDashboard;
+    let dashRendering = false;
+    renderDashboard = window.renderDashboard = function(){
+      if(dashRendering) return;
+      dashRendering = true;
+      try { return oldRenderDashboard.apply(this, arguments); }
+      finally { setTimeout(function(){ dashRendering = false; }, 0); }
+    };
+  }
+
+  // Avoid recomputing Bulk welcome insights more than needed while the Tools panel is closed.
+  if(typeof renderBulkWelcome === 'function' && !window.__DLA_BULK_WELCOME_LAZY_GUARDED){
+    window.__DLA_BULK_WELCOME_LAZY_GUARDED = true;
+    const oldRenderBulkWelcome = renderBulkWelcome;
+    renderBulkWelcome = window.renderBulkWelcome = function(){
+      if(activePanelId_() !== 'panel-tools') return;
+      return oldRenderBulkWelcome.apply(this, arguments);
+    };
+  }
+
+  console.log('[DLA PATCH] Responsive guardrails installed', PATCH_ID);
+})();
+/* ===== end DLA hotfix ===== */
+
 </script>
 </body>
 </html>
