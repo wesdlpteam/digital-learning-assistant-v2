@@ -4411,13 +4411,17 @@
       {
         "t": "Padlet",
         "d": "Teams collaborate on a Padlet wall to curate cultural stories, scientific diagrams, moon diaries and time-lapse videos, creating a multimedia resource that showcases diverse perspectives on the night sky. Each group is responsible for contributing both scientific and cultural artefacts, fostering a holistic understanding of the central idea."
+      },
+      {
+        "t": "Lunar Light Show: Build & Code a Shadow Theatre",
+        "d": "Students work in teams to design and construct a large shadow theatre box using cardboard, fabric, recycled materials, and craft supplies. They create movable physical models of the Earth, Moon, and Sun, attaching them to rods or sliders for manual manipulation. Integrating tech, students use micro:bit or Makey Makey boards to add programmable LED lighting that simulates sunlight at different angles and intensities. By coding light sequences and moving their crafted models, students physically demonstrate phases of the Moon, eclipses, and the effect of the Sun's position on shadows and seasons. The final performance is a hands-on, interactive shadow play that visually explains key astronomical concepts, blending storytelling, engineering, and coding."
       }
     ],
     "audited": true,
     "plannerText": "Students explore the relationships between the Earth, Moon, and Sun through hands-on models, time-lapse videos, moon diaries, and cultural stories. They investigate scientific concepts like rotation, tides, and seasons, compare Indigenous and scientific perspectives, and synthesize their learning through creative projects such as podcasts, diagrams, and choice-board activities.",
     "humanVerified": false,
     "verified": false,
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -4445,13 +4449,17 @@
       {
         "t": "Canva",
         "d": "Teams design persuasive infographics that illustrate the interdependence between humans, animals, and the environment, using Canva?s collaborative tools to peer-review and refine their messages. Their final visuals are shared in a digital gallery to spark whole-school conversations."
+      },
+      {
+        "t": "Wildlife Rescue Habitat: Build & Code an Endangered Species Sanctuary",
+        "d": "Students work in teams to design, build, and code interactive models of sanctuaries for endangered Australian species. Using recycled cardboard, natural materials, clay, and craft supplies, students construct detailed 3D habitats with features such as shelters, water sources, and food stations. They embed simple robotics (e.g., Bee-Bots or Sphero Indi) as 'rescue animals' or 'rangers' that navigate the sanctuary, following paths coded on iPads to simulate animal movement, migration, or caretaker routines. Students integrate sensors (e.g., basic light sensors or sound modules) to trigger habitat features?like opening shelters or playing animal sounds?demonstrating how technology can support conservation. The project follows the Design Cycle: students research endangered species, ideate and sketch sanctuary layouts, prototype with physical materials, code and test interactive elements, and present their working models, explaining how their design supports both animal needs and conservation efforts, including Indigenous perspectives on caring for Country."
       }
     ],
     "audited": true,
     "plannerText": "The Year 6 Sharing the Planet unit focuses on how people's actions affect the balance of nature, with students investigating endangered species, conservation technologies, and Indigenous perspectives. Key activities include a STEM design project to help threatened species, excursions to zoos and natural sites, and the use of digital tools to research, design, and communicate solutions for environmental challenges.",
     "humanVerified": false,
     "verified": false,
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -4484,13 +4492,17 @@
         "t": "Explain Everything",
         "d": "Learners storyboard and narrate digital migration journeys, combining maps, images, and voiceover to show the challenges and opportunities migrants face. Their multimedia presentations are shared with peers for feedback and empathy-building.",
         "url": ""
+      },
+      {
+        "t": "Migration Story Automata Gallery",
+        "d": "Students will each select a real migrant's journey (historical or contemporary) and design a mechanical automaton that tells part of their story. Using cardboard, recycled materials, skewers, cams, and gears, students physically build a moving diorama or scene (e.g., a boat crossing, a family reunion, or a border crossing moment). They integrate a micro:bit or Makey Makey to trigger sound effects or short recorded oral histories via conductive touchpoints or motion sensors. The design cycle guides students through researching their chosen story, sketching mechanisms, prototyping automata, iterating on movement and narrative clarity, and finally presenting their automaton in a class gallery walk, where viewers interact with both the mechanical and digital storytelling elements."
       }
     ],
     "audited": true,
     "plannerText": "Students explore the causes, impacts, and personal stories of migration through interviews, storyboarding, and digital presentations. They investigate historical and contemporary migration events, conduct oral histories, and present their findings using multimedia tools, with a strong focus on empathy, diversity, and the lived experiences of migrants.",
     "humanVerified": false,
     "verified": false,
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -4518,13 +4530,17 @@
       {
         "t": "Canva",
         "d": "Learners use Canva to create vibrant infographics or digital posters illustrating the connections between emotions, behaviour, and learning. They present their designs to the class, explaining the strategies they use to maintain their own wellbeing and positive relationships."
+      },
+      {
+        "t": "Friendship Fort: Build & Code Your Safe Space",
+        "d": "Students work in teams to design and construct a physical 'Friendship Fort' using large cardboard boxes, fabric, popsticks, recycled materials, and LED lights. Inside, they embed simple programmable tech (e.g., Makey Makey or micro:bit) to create interactive wellbeing features: a 'Mood Door' that lights up in different colours based on how students feel (coded with micro:bit mood selectors), a 'Kindness Button' that plays recorded affirmations or calming sounds, and a 'Friendship Wall' where students display hand-crafted tokens or messages. The project follows the Design Cycle: inquiry into what makes a safe, inclusive space; ideation and prototyping with sketches and models; building and coding the interactive features; testing and refining; and reflecting on how their fort supports healthy, positive interactions both online and offline. This hands-on, hybrid project empowers students to creatively express, build, and share strategies for wellbeing and safe relationships."
       }
     ],
     "audited": true,
     "plannerText": "This unit focuses on understanding safe and healthy interactions both online and in real life, strategies for managing friendships and emotions, and the importance of wellbeing and growth mindset. Students engage in activities such as cyber safety lessons, wellbeing poster creation, learner profile self-portraits, goal setting, and reflective Seesaw tasks to build self-awareness and positive relationships.",
     "humanVerified": false,
     "verified": false,
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "Elsternwick",
