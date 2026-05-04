@@ -643,6 +643,7 @@
 </div><!-- end main -->
 
 <script>
+console.log("[DLA-DIAG] === Script tag starts ===", new Date().toISOString());
 
 let DATA = [];
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzIoUL_vbTaH4P7PXuX8HeU9Xh6HuiEWJ05k7q50aJjCg7oeF-ELrlLuPx8uxPFHmE-eA/exec';
@@ -9198,6 +9199,7 @@ setInterval(async()=>{
    DLA Studio Patch — Tool Inventory click + alias hardening
    Fixes remove X/add buttons and treats equivalent names as one tool.
    ========================================================= */
+console.log("[DLA-DIAG] >>> START IIFE #1 at line 9201");
 (function(){
   const PATCH_ID = 'inventory-click-alias-hardening-v2';
   if(window.__DLA_INVENTORY_PATCH_ID === PATCH_ID) return;
@@ -9453,6 +9455,7 @@ setInterval(async()=>{
 /* ===== DLA hotfix: audit section consistency patch =====
    Makes counts, drilldowns, campus view and year view use the same tool-indexing logic.
    Fixes the Lego Spike Prime issue where the headline count excluded STEM slot #6 but the drilldown included it. */
+console.log("[DLA-DIAG] >>> START IIFE #2 at line 9456");
 (function(){
   var AUDIT_INCLUDE_STEM_LOCAL = false;
 
@@ -9759,6 +9762,7 @@ setInterval(async()=>{
    - Adds an explicit Save changes button for Tool Inventory edits.
    - Suppresses Tool Inventory auto-save so edits are clearly saved on demand.
    ========================================================= */
+console.log("[DLA-DIAG] >>> START IIFE #3 at line 9762");
 (function(){
   const PATCH_ID = 'bulk-collapsible-inventory-save-v1';
   if(window.__DLA_BULK_COLLAPSE_SAVE_PATCH_ID === PATCH_ID) return;
@@ -10055,6 +10059,7 @@ setInterval(async()=>{
 /* ===== DLA hotfix: auto-remove Human Verified when suggestions change =====
    Keeps the gold tick as a true human-audit marker. Any edit/swap/regeneration
    to a verified unit's suggestions removes the tick so the unit must be checked again. */
+console.log("[DLA-DIAG] >>> START IIFE #4 at line 10058");
 (function(){
   const SIG_FIELD = 'humanVerifiedSuggestionSignature';
 
@@ -10198,6 +10203,7 @@ setInterval(async()=>{
 
 /* ===== DLA hotfix: make Human Verified gold glow immediate and obvious =====
    Fixes cases where the tick saved but the Browse row did not visibly glow. */
+console.log("[DLA-DIAG] >>> START IIFE #5 at line 10201");
 (function(){
   const SIG_FIELD = 'humanVerifiedSuggestionSignature';
 
@@ -10388,6 +10394,7 @@ setInterval(async()=>{
 
 /* ===== DLA hotfix: Human Verify glows all entry suggestion cards + quiet background save =====
    Makes verification feel instant in the unit detail view and removes the top loading bar. */
+console.log("[DLA-DIAG] >>> START IIFE #6 at line 10391");
 (function(){
   const SIG_FIELD = 'humanVerifiedSuggestionSignature';
 
@@ -10583,6 +10590,7 @@ setInterval(async()=>{
 
 /* ===== DLA hotfix: Bulk AI Chat crash guard + safe apply =====
    Prevents Bulk AI errors from taking down the Studio and makes approved changes apply defensively. */
+console.log("[DLA-DIAG] >>> START IIFE #7 at line 10586");
 (function(){
   const BULK_GUARD_VERSION = 'bulk-ai-chat-crash-guard-v1';
   if(window.__DLA_BULK_CRASH_GUARD__ === BULK_GUARD_VERSION) return;
@@ -10839,6 +10847,7 @@ setInterval(async()=>{
 /* ===== DLA hotfix: prevent Page Unresponsive during Bulk/Realism apply =====
    Moves heavy Bulk AI apply and Realism rescan work into small browser-yielding chunks,
    and avoids expensive off-screen re-renders after applying changes. */
+console.log("[DLA-DIAG] >>> START IIFE #8 at line 10842");
 (function(){
   const PERF_YIELD_MS = 0;
   const PERF_APPLY_CHUNK = 8;
@@ -11097,6 +11106,7 @@ setInterval(async()=>{
 /* ===== DLA hotfix: concurrent admin merge-save protection =====
    Allows Nathan/Andrew to work at the same time by saving changed entries into
    the latest Drive data.json instead of overwriting the whole file from a stale tab. */
+console.log("[DLA-DIAG] >>> START IIFE #9 at line 11100");
 (function(){
   const BASELINE_FIELD = '__dlaMergeBaseline_v1';
   const SIG_FIELD = 'humanVerifiedSuggestionSignature';
@@ -11432,6 +11442,7 @@ setInterval(async()=>{
 /* ===== DLA hotfix: live multi-admin sync from Drive =====
    Keeps Nathan/Andrew tabs in sync after Human Verify or other saves.
    Polls Drive, fetches latest data.json, and merges remote changes for units this tab has not edited locally. */
+console.log("[DLA-DIAG] >>> START IIFE #10 at line 11435");
 (function(){
   const RT_BASELINE_FIELD = '__dlaRealtimeSyncBaseline_v1';
   const MERGE_BASELINE_FIELD = '__dlaMergeBaseline_v1';
@@ -11731,6 +11742,7 @@ setInterval(async()=>{
 
 
 /* ===== DLA hotfix: map tools, Delightex naming, Year 6 maintenance, Minecraft links ===== */
+console.log("[DLA-DIAG] >>> START IIFE #11 at line 11734");
 (function(){
   const NATGEO_TOOL = 'National Geographic MapMaker';
   const NATGEO_URL = 'https://education.nationalgeographic.org/resource/mapmaker/';
@@ -12029,7 +12041,7 @@ setInterval(async()=>{
 
   function dqSplitLooseLoi_(lo){
     // Robustly split LOIs that were pasted/exported with corrupted bullet symbols.
-    // St Kilda Road Year 6 had separators such as  , â€¢, Â•, ï‚· and other odd glyphs,
+    // St Kilda Road Year 6 had separators such as �, â€¢, Â•, ï‚· and other odd glyphs,
     // so this recognises far more than just semicolons and normal bullets.
     let s = dqText_(lo)
       .replace(/\u00a0/g, ' ')
@@ -12038,7 +12050,7 @@ setInterval(async()=>{
       .replace(/ï\s*‚\s*·/gi, '; ')
       .replace(/[\u2022\u2023\u25E6\u2043\u2219\u00B7\u25CF\u25AA\u25AB\u25A0\u25A1\u25C6\u25C7\u25B8\u25B6\uF0B7]+/g, '; ')
       .replace(/\s*[|¦§]+\s*/g, '; ')
-      .replace(/\s*[ ]+\s*/g, '; ')
+      .replace(/\s*[�]+\s*/g, '; ')
       .replace(/\s+/g,' ')
       .trim();
     if(!s) return '';
@@ -12272,6 +12284,7 @@ setInterval(async()=>{
    - Ensures National Geographic MapMaker appears in Tool Inventory as a real canonical app.
    - Adds click-to-insert canonical tool-name suggestions for whitelist/banned inputs.
 */
+console.log("[DLA-DIAG] >>> START IIFE #12 at line 12275");
 (function(){
   const PATCH_ID = 'mapmaker-inventory-autocomplete-v2';
   if(window.__DLA_MAPMAKER_INVENTORY_AUTOCOMPLETE_PATCH === PATCH_ID) return;
@@ -12789,6 +12802,7 @@ setInterval(async()=>{
 
 
 /* ===== DLA hotfix: robust St Kilda Road Year 6 LOI separator cleanup ===== */
+console.log("[DLA-DIAG] >>> START IIFE #13 at line 12792");
 (function(){
   const SEP_PATTERNS_ = [
     /â\s*[€¢·]/gi,
@@ -12796,7 +12810,7 @@ setInterval(async()=>{
     /ï\s*‚\s*·/gi,
     /[\u2022\u2023\u25E6\u2043\u2219\u00B7\u25CF\u25AA\u25AB\u25A0\u25A1\u25C6\u25C7\u25B8\u25B6\uF0B7]+/g,
     /\s*[|¦§]+\s*/g,
-    /\s*[ ]+\s*/g
+    /\s*[�]+\s*/g
   ];
   function text_(value){
     try{ return cleanSuggestionText_ ? cleanSuggestionText_(value) : String(value || ''); }
@@ -12898,6 +12912,7 @@ setInterval(async()=>{
 
 
 /* ===== DLA hotfix: stronger St Kilda Road Year 6 regeneration quality ===== */
+console.log("[DLA-DIAG] >>> START IIFE #14 at line 12901");
 (function(){
   const STK_Y6_QUALITY_PATCH_VERSION = '2026-05-04-stk-y6-quality-v1';
 
@@ -12922,7 +12937,7 @@ setInterval(async()=>{
       .replace(/ï\s*‚\s*·/gi, '; ')
       .replace(/[\u2022\u2023\u25E6\u2043\u2219\u00B7\u25CF\u25AA\u25AB\u25A0\u25A1\u25C6\u25C7\u25B8\u25B6\uF0B7]+/g, '; ')
       .replace(/\s*[|¦§]+\s*/g, '; ')
-      .replace(/\s*[ ]+\s*/g, '; ')
+      .replace(/\s*[�]+\s*/g, '; ')
       .replace(/\s+/g,' ')
       .trim();
     function cleanPart(x){
@@ -13219,6 +13234,7 @@ Return ONLY JSON:
 
 
 /* ===== DLA hotfix: responsive St Kilda Road Year 6 regeneration ===== */
+console.log("[DLA-DIAG] >>> START IIFE #15 at line 13222");
 (function(){
   const STK_Y6_RESPONSIVE_PATCH_VERSION = '2026-05-04-stk-y6-responsive-v2';
 
@@ -13243,7 +13259,7 @@ Return ONLY JSON:
       .replace(/ï\s*‚\s*·/gi, '; ')
       .replace(/[\u2022\u2023\u25E6\u2043\u2219\u00B7\u25CF\u25AA\u25AB\u25A0\u25A1\u25C6\u25C7\u25B8\u25B6\uF0B7]+/g, '; ')
       .replace(/\s*[|¦§]+\s*/g, '; ')
-      .replace(/\s*[ ]+\s*/g, '; ')
+      .replace(/\s*[�]+\s*/g, '; ')
       .replace(/\s+/g,' ')
       .trim();
     function cleanPart(x){
@@ -13436,6 +13452,7 @@ Return ONLY JSON:
    Purpose: prevent crashes immediately after clicking "Load from Google Drive".
    This override fetches Drive data as text, validates/parses it, installs DATA,
    and renders only a tiny dashboard first. Full scans/rendering remain manual. */
+console.log("[DLA-DIAG] >>> START IIFE #16 at line 13439");
 (function(){
   const PATCH = 'emergency-drive-load-safe-v1';
   window.__DLA_EMERGENCY_DRIVE_LOAD_SAFE_PATCH = PATCH;
@@ -13649,6 +13666,7 @@ Return ONLY JSON:
 })();
 /* ===== end DLA emergency Drive-load safe patch ===== */
 
+console.log("[DLA-DIAG] === Script tag finished without crashing ===", new Date().toISOString());
 </script>
 </body>
 </html>
