@@ -4335,15 +4335,15 @@
         "d": "Students curate a collaborative Padlet wall where they collect, critique, and respond to real-world media examples (articles, videos, campaigns) related to their global issue, analyzing persuasive techniques and discussing the reliability and impact of different communication methods."
       },
       {
-        "t": "Makerspace: Physical Protest Art Installation",
-        "d": "Students design and build a large-scale, interactive protest art installation using recycled materials, cardboard, popsticks, and paint. The installation visually represents their chosen global issue and includes QR codes linking to their digital campaigns or podcasts, inviting the school community to engage, reflect, and take action."
+        "t": "Global Voices Automata Parade",
+        "d": "Students use the Design Cycle to create a series of hand-crafted automata (mechanical moving models) that visually and kinetically express key messages about their chosen global issue. Each group designs and builds a physical automaton using cardboard, wood, recycled materials, dowels, cams, and levers?integrating micro:bit controllers and servos to add programmable movement, sound, or light effects. The automata must incorporate both a clear visual metaphor (e.g., rising sea levels, breaking barriers, spreading hope) and an interactive component: pressing a button or turning a crank triggers both mechanical and digital responses. Students document their design process digitally, then present their automata as part of a 'Parade of Global Voices' at the Exhibition, inviting the community to activate and interpret each message."
       }
     ],
     "audited": true,
     "plannerText": "This Year 6 HWEO unit at St Kilda focuses on empowering students to understand global issues and use effective communication to raise awareness and inspire action. Students engage in collaborative inquiry, media creation, campaign design, and live performance, culminating in an Exhibition where they present their advocacy projects to the community.",
     "humanVerified": false,
     "verified": false,
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -4374,15 +4374,15 @@
         "d": "Students collaboratively build a digital wall mapping different government systems around the world, posting examples, key features, and citizen impacts. They compare and contrast these systems, deepening their understanding of how governance structures affect daily life."
       },
       {
-        "t": "Makerspace: Build a Model Parliament",
-        "d": "In groups, students construct a physical model of the Australian Parliament (or another government system) using cardboard, recycled materials, and craft supplies. They simulate the process of passing a bill, assigning roles (Speaker, MPs, Senators, etc.), and physically moving 'bills' through the chambers. This hands-on project helps students internalise the structures and functions of government and see the tangible impact of governance on citizens."
+        "t": "Civic Bots: Build Your Own Government in Action",
+        "d": "Students work in teams to design and build a physical model of an Australian community using recycled materials (cardboard, popsticks, clay, etc.), representing different government zones (local, state, federal) with landmarks and key services. They then integrate programmable robots (e.g., Sphero Indi or Bee-Bots) as 'citizen bots' or 'law bots' that physically travel through their model. Students code the robots to complete tasks that represent real civic processes: e.g., delivering a 'bill' from local to federal parliament, collecting votes from citizens, or responding to community needs. Each zone features interactive elements (e.g., gates, levers, pop-up signs) that the bots trigger to simulate how laws are passed, services delivered, or rights protected. The project follows the Design Cycle: students research government functions, plan their city layout and civic journeys, prototype physical structures, program the bots, test and iterate, and finally present their working models, reflecting on how government actions impact daily life."
       }
     ],
     "audited": true,
     "plannerText": "Students explore the Australian system of government and compare it to others worldwide. They investigate the roles and responsibilities of different government levels, how laws are made, and the rights and responsibilities of citizens. Activities include mapping, research, debates, proposing bills, and reflecting on real-world government impacts through digital and hands-on projects.",
     "humanVerified": false,
     "verified": false,
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -4413,15 +4413,15 @@
         "url": "https://education.minecraft.net/en-us/lessons/james-webb-space-telescope-challenge"
       },
       {
-        "t": "Makerspace: Earth-Moon-Sun System Automata",
-        "d": "Students build a physical automata model using cardboard, skewers, bottle caps, and recycled materials to represent the Earth, Moon, and Sun. By turning a crank, the model demonstrates rotation, orbit, and moon phases. Students label parts and present how their mechanism models both scientific patterns and cultural interpretations."
+        "t": "Sun, Moon & Earth: Augmented Reality Shadow Theatre",
+        "d": "Students work in teams to design and build a large-scale, multi-layered shadow theatre using cardboard, recycled plastics, and translucent materials to physically model the Earth, Moon, and Sun. They craft movable components to demonstrate orbits, moon phases, and eclipses. Using iPads with an AR app (e.g., AR Makr), students overlay digital animations or Indigenous star stories onto their physical theatre, syncing real shadows and projected AR visuals. The project follows the Design Cycle: students investigate celestial movements, plan theatre mechanics and AR elements, create and test their hybrid model, and refine based on peer feedback. The final showcase blends tactile shadow play, moving models, and interactive AR storytelling to illuminate both scientific and cultural perspectives on celestial patterns."
       }
     ],
     "audited": true,
     "plannerText": "Students explore the relationships between the Earth, Moon, and Sun, investigating how their movements create predictable patterns such as day/night, moon phases, tides, and seasons. The unit integrates both scientific and cultural perspectives, including Indigenous astronomy, and features hands-on modeling, moon diaries, podcasts, and creative student agency through choice boards and presentations.",
     "humanVerified": false,
     "verified": false,
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -4453,15 +4453,15 @@
         "d": "Students document their STEM design process by uploading photos, videos, and reflections on their animal conservation prototypes. They receive peer feedback and iterate on their designs, building a digital portfolio that tracks their learning journey and impact."
       },
       {
-        "t": "Physical Makerspace Project",
-        "d": "Students work in teams to design and build a physical prototype of a wildlife monitoring device using recycled materials, cardboard, popsticks, and simple electronics (e.g., LED lights, buzzers). They create a model that could help track, protect, or provide shelter for a threatened Australian species, presenting their solution at a gallery walk for peer review."
+        "t": "Wildlife Rescue Wearables",
+        "d": "Students use the Design Cycle to invent and prototype wearable tech solutions for endangered animals, blending digital and physical making. First, they research a local threatened species and identify a real-world challenge (e.g., overheating, habitat encroachment, poaching). Next, students design and build animal-sized wearable prototypes using recycled fabrics, felt, cardboard, and eco-friendly materials?such as collars, vests, or shell attachments. They embed simple electronics like LED lights, buzzers, or temperature sensors (using Makey Makey or Circuit Playground Express) to simulate real conservation tech (e.g., warning lights for road crossings, temperature monitors for nests, or anti-poaching alarms). Students test and iterate their designs on animal models (clay, plush toys, or cardboard cutouts), document the process with photos and video using iPads, and reflect on the impact of their inventions. The final showcase invites peers to interact with the wearables and learn about each animal's needs, highlighting how creative tech and hands-on making can support wildlife conservation."
       }
     ],
     "audited": true,
     "plannerText": "The unit 'Sharing the Planet' in Year 6 focuses on how peoples' actions affect the balance of nature, with a strong emphasis on endangered species, conservation technology, and STEM design. Students research, design, and prototype technologies to help threatened animals, drawing inspiration from zoo excursions and real-world conservation efforts. The unit integrates hands-on making, digital documentation, and reflection on the impact of human behavior on the environment.",
     "humanVerified": false,
     "verified": false,
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
