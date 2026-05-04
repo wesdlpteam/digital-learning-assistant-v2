@@ -10424,6 +10424,342 @@ setInterval(async()=>{
   };
 })();
 /* ===== end DLA hotfix ===== */
+
+
+/* ===== DLA hotfix: concurrent admin merge-save protection =====
+   Allows Nathan/Andrew to work at the same time by saving changed entries into
+   the latest Drive data.json instead of overwriting the whole file from a stale tab. */
+(function(){
+  const BASELINE_FIELD = '__dlaMergeBaseline_v1';
+  const SIG_FIELD = 'humanVerifiedSuggestionSignature';
+  const VOLATILE_ENTRY_FIELDS = new Set([
+    '_locks', '_mergeLocalTouchedAt', '_mergeLocalTouchedBy'
+  ]);
+
+  function mergeDeepClone_(value){
+    try { return JSON.parse(JSON.stringify(value)); }
+    catch(e){ return value; }
+  }
+
+  function mergeEntryKey_(entry){
+    if(!entry) return '';
+    const ca = String(entry.ca || entry.campus || '').trim().toLowerCase();
+    const yl = String(entry.yl || entry.year || entry.yearLevel || '').trim().toLowerCase();
+    const th = String(entry.th || entry.theme || entry.unit || entry.title || '').trim().toLowerCase();
+    return [ca, yl, th].join('||');
+  }
+
+  function mergeOrdered_(value){
+    if(Array.isArray(value)) return value.map(mergeOrdered_);
+    if(value && typeof value === 'object'){
+      const out = {};
+      Object.keys(value).filter(k => !VOLATILE_ENTRY_FIELDS.has(k)).sort().forEach(k => out[k] = mergeOrdered_(value[k]));
+      return out;
+    }
+    return value;
+  }
+
+  function mergeEntrySig_(entry){
+    try { return JSON.stringify(mergeOrdered_(entry || {})); }
+    catch(e){ return String(Date.now()) + Math.random(); }
+  }
+
+  function mergeSuggestionSig_(entry){
+    try{
+      const sugs = (typeof getSugs === 'function') ? getSugs(entry) : (Array.isArray(entry && entry.s) ? entry.s : []);
+      const clean = function(v){
+        try { if(typeof cleanSuggestionText_ === 'function') return cleanSuggestionText_(v); } catch(e){}
+        return String(v == null ? '' : v).replace(/\s+/g, ' ').trim();
+      };
+      return JSON.stringify(sugs.map(function(s){
+        const tool = (typeof sugTool === 'function') ? sugTool(s) : (s && (s.t || s.tool || s.technology || s.name) || '');
+        const desc = (typeof sugDesc === 'function') ? sugDesc(s) : (s && (s.d || s.desc || s.description || s.integration_idea || s.activity) || '');
+        return { t: clean(tool), d: clean(desc), url: clean(s && (s.url || s.lessonUrl || '')) };
+      }));
+    }catch(e){ return ''; }
+  }
+
+  function mergeIsHumanVerified_(entry){
+    try { if(typeof isHumanVerifiedEntry_ === 'function') return isHumanVerifiedEntry_(entry); } catch(e){}
+    return !!(entry && (entry.humanVerified === true || entry.humanVerifiedAt || entry.human_verified === true));
+  }
+
+  function mergeClearHumanVerified_(entry, reason){
+    if(!entry) return;
+    entry.humanVerified = false;
+    delete entry.human_verified;
+    delete entry.humanVerifiedAt;
+    delete entry.humanVerifiedBy;
+    delete entry.humanVerifiedReason;
+    delete entry[SIG_FIELD];
+    entry.humanVerifiedResetAt = new Date().toISOString();
+    entry.humanVerifiedResetReason = reason || 'Suggestion changed after human verification';
+  }
+
+  function mergeDirtyCheckChangedEntries_(entries){
+    let removed = 0;
+    try{
+      (entries || []).forEach(function(entry){
+        if(!mergeIsHumanVerified_(entry)) return;
+        const current = mergeSuggestionSig_(entry);
+        if(!entry[SIG_FIELD]){
+          entry[SIG_FIELD] = current;
+          return;
+        }
+        if(entry[SIG_FIELD] !== current){
+          mergeClearHumanVerified_(entry, 'Suggestion edited, swapped, regenerated or changed after human verification');
+          removed++;
+        }
+      });
+    }catch(e){ console.warn('Concurrent merge dirty human-check failed:', e); }
+    return removed;
+  }
+
+  function mergeMakeBaselineFromData_(arr){
+    const map = {};
+    (Array.isArray(arr) ? arr : []).forEach(function(entry){
+      const key = mergeEntryKey_(entry);
+      if(key) map[key] = mergeEntrySig_(entry);
+    });
+    return map;
+  }
+
+  function mergeCaptureBaseline_(arr){
+    try{
+      window[BASELINE_FIELD] = mergeMakeBaselineFromData_(Array.isArray(arr) ? arr : DATA);
+      window.__dlaMergeBaselineCapturedAt = Date.now();
+    }catch(e){ window[BASELINE_FIELD] = {}; }
+  }
+
+  function mergeLocalMap_(){
+    const map = new Map();
+    (Array.isArray(DATA) ? DATA : []).forEach(function(entry, idx){
+      const key = mergeEntryKey_(entry);
+      if(key) map.set(key, { entry, idx });
+    });
+    return map;
+  }
+
+  function mergeLatestMap_(latest){
+    const map = new Map();
+    (Array.isArray(latest) ? latest : []).forEach(function(entry, idx){
+      const key = mergeEntryKey_(entry);
+      if(key) map.set(key, { entry, idx });
+    });
+    return map;
+  }
+
+  function mergeChangedLocalEntries_(){
+    const baseline = window[BASELINE_FIELD] || {};
+    const changed = [];
+    const currentKeys = new Set();
+    const local = mergeLocalMap_();
+    local.forEach(function(info, key){
+      currentKeys.add(key);
+      if(!baseline[key] || baseline[key] !== mergeEntrySig_(info.entry)){
+        changed.push({ key, type:'upsert', idx: info.idx, entry: info.entry, baselineSig: baseline[key] || '' });
+      }
+    });
+    Object.keys(baseline).forEach(function(key){
+      if(!currentKeys.has(key)) changed.push({ key, type:'delete', baselineSig: baseline[key] });
+    });
+    return changed;
+  }
+
+  async function mergeFetchLatestData_(){
+    if(!DRIVE_FILE_ID || !DRIVE_TOKEN) throw new Error('Drive is not connected');
+    const r = await fetch(`https://www.googleapis.com/drive/v3/files/${DRIVE_FILE_ID}?alt=media&cacheBust=${Date.now()}`, {
+      headers: { 'Authorization': 'Bearer ' + DRIVE_TOKEN, 'Cache-Control': 'no-cache' }
+    });
+    if(!r.ok) throw new Error('Could not read latest data.json from Drive before saving');
+    const d = await r.json();
+    return Array.isArray(d) ? d : Object.values(d || {});
+  }
+
+  async function mergeUploadData_(arr){
+    const r = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${DRIVE_FILE_ID}?uploadType=media`,{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+DRIVE_TOKEN},
+      body:JSON.stringify(arr,null,2)
+    });
+    if(!r.ok) throw new Error('Drive save failed while uploading merged data.json');
+  }
+
+  function mergeConflictLabel_(entry, key){
+    if(entry) return [entry.ca, entry.yl, entry.th].filter(Boolean).join(' · ');
+    return key.replace(/\|\|/g, ' · ');
+  }
+
+  function mergeApplyLocalChangesToLatest_(latest, changes){
+    const latestMap = mergeLatestMap_(latest);
+    const conflicts = [];
+    const changedEntriesForDirtyCheck = [];
+
+    changes.forEach(function(change){
+      if(change.type !== 'upsert') return;
+      changedEntriesForDirtyCheck.push(change.entry);
+    });
+    mergeDirtyCheckChangedEntries_(changedEntriesForDirtyCheck);
+
+    // Recompute local changes after possible human-verified reset fields were changed.
+    changes = mergeChangedLocalEntries_();
+
+    changes.forEach(function(change){
+      const latestInfo = latestMap.get(change.key);
+      const latestSig = latestInfo ? mergeEntrySig_(latestInfo.entry) : '';
+      const latestMoved = !!(change.baselineSig && latestInfo && latestSig !== change.baselineSig);
+      const sameAsLocal = latestInfo && latestSig === mergeEntrySig_(change.entry);
+      if(latestMoved && !sameAsLocal){
+        conflicts.push({ change, latestInfo, label: mergeConflictLabel_(latestInfo.entry, change.key) });
+      }
+    });
+
+    let overwriteConflicts = true;
+    if(conflicts.length){
+      const names = conflicts.slice(0,8).map(c => '• ' + c.label).join('\n');
+      const more = conflicts.length > 8 ? `\n…and ${conflicts.length - 8} more` : '';
+      overwriteConflicts = confirm(`⚠ Same-unit conflict detected\n\nSomeone else has changed ${conflicts.length} unit${conflicts.length!==1?'s':''} you also changed since you loaded Studio.\n\n${names}${more}\n\nClick OK to overwrite those same units with your changes.\nClick Cancel to keep their latest version for those conflicted units and save only your non-conflicting changes.`);
+    }
+
+    const conflictKeys = new Set(conflicts.map(c => c.change.key));
+    let applied = 0, skipped = 0, deleted = 0;
+
+    changes.forEach(function(change){
+      if(conflictKeys.has(change.key) && !overwriteConflicts){ skipped++; return; }
+      const latestInfo = latestMap.get(change.key);
+      if(change.type === 'delete'){
+        if(latestInfo){
+          const latestSig = mergeEntrySig_(latestInfo.entry);
+          if(change.baselineSig && latestSig !== change.baselineSig && !overwriteConflicts){ skipped++; return; }
+          latest.splice(latestInfo.idx, 1);
+          deleted++;
+          // Rebuild map indexes after splice.
+          latestMap.clear();
+          latest.forEach(function(entry, idx){ const key = mergeEntryKey_(entry); if(key) latestMap.set(key, {entry, idx}); });
+        }
+        return;
+      }
+      const cloned = mergeDeepClone_(change.entry);
+      if(latestInfo){ latest[latestInfo.idx] = cloned; }
+      else { latest.push(cloned); }
+      applied++;
+    });
+
+    return { latest, applied, skipped, deleted, conflicts: conflicts.length };
+  }
+
+  async function saveToDriveConcurrentMerge_(){
+    if(!DRIVE_FILE_ID || !DRIVE_TOKEN) return;
+
+    if(!window[BASELINE_FIELD]) mergeCaptureBaseline_(DATA);
+
+    try { if(typeof cleanAllDataSuggestionsHotfix_ === 'function') cleanAllDataSuggestionsHotfix_(); } catch(e){}
+
+    const localChanges = mergeChangedLocalEntries_();
+    const oldStart = window.startProgress || function(){};
+    const oldStop = window.stopProgress || function(){};
+    const quietMode = oldStart && String(oldStart).indexOf('function(){}') !== -1;
+
+    if(!quietMode) startProgress();
+    try{
+      const latest = await mergeFetchLatestData_();
+      let merged = latest;
+      let summary = { applied:0, skipped:0, deleted:0, conflicts:0 };
+
+      if(localChanges.length){
+        summary = mergeApplyLocalChangesToLatest_(latest, localChanges);
+        merged = summary.latest;
+        await mergeUploadData_(merged);
+      } else {
+        // No local content changes: refresh this tab to the latest Drive copy without writing over anyone.
+      }
+
+      DATA = Array.isArray(merged) ? merged : Object.values(merged || {});
+      mergeCaptureBaseline_(DATA);
+      try{ localStorage.setItem('dla_data', JSON.stringify(DATA)); }catch(e){}
+
+      const updated = await getDriveFileModified();
+      if(updated) LAST_KNOWN_MODIFIED = updated.modifiedTime;
+
+      const now = new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
+      let msg = localChanges.length
+        ? `Merged save at ${now}: ${summary.applied} unit${summary.applied!==1?'s':''} updated${summary.deleted?`, ${summary.deleted} deleted`:''}`
+        : `Already up to date at ${now}`;
+      if(summary.skipped) msg += ` · ${summary.skipped} same-unit conflict${summary.skipped!==1?'s':''} kept from Drive`;
+      if(typeof setStatus === 'function') setStatus(msg, summary.skipped ? 'loading' : undefined);
+
+      try{
+        if(typeof CURRENT_ENTRY_IDX !== 'undefined' && CURRENT_ENTRY_IDX !== null && typeof renderEntry === 'function') renderEntry(CURRENT_ENTRY_IDX);
+      }catch(e){}
+      return summary;
+    }catch(e){
+      if(typeof setStatus === 'function') setStatus('Merged Drive save failed: ' + (e.message || e), 'error');
+      console.error('DLA concurrent merge save failed:', e);
+      throw e;
+    }finally{
+      if(!quietMode) stopProgress();
+    }
+  }
+
+  // Replace full-file saves with merge saves.
+  saveToDrive = window.saveToDrive = saveToDriveConcurrentMerge_;
+
+  // Important: the old lock heartbeat wrote the whole stale DATA array to Drive.
+  // Disable Drive lock saves so opening/releasing an entry cannot overwrite Andrew's work.
+  saveLocks = window.saveLocks = async function(){ return; };
+
+  // Baseline the exact Drive version whenever data is loaded or reloaded.
+  if(typeof ingest === 'function'){
+    const oldIngest = ingest;
+    ingest = window.ingest = function(){
+      const out = oldIngest.apply(this, arguments);
+      mergeCaptureBaseline_(DATA);
+      return out;
+    };
+  }
+
+  if(typeof reloadFromDrive === 'function'){
+    const oldReloadFromDrive = reloadFromDrive;
+    reloadFromDrive = window.reloadFromDrive = async function(){
+      const out = await oldReloadFromDrive.apply(this, arguments);
+      mergeCaptureBaseline_(DATA);
+      return out;
+    };
+  }
+
+  // Make the existing conflict banner less scary now that save is merge-safe.
+  if(typeof updateConflictBar === 'function'){
+    const oldUpdateConflictBar = updateConflictBar;
+    updateConflictBar = window.updateConflictBar = function(msg){
+      if(!msg) return oldUpdateConflictBar.apply(this, arguments);
+      try{
+        setStatus('⚠ ' + msg + ' Merge-save is on: your next save will fetch the latest Drive file and only merge your changed units. — ', 'loading', true);
+        const el=document.getElementById('status-bar');
+        if(el){
+          const link=document.createElement('span');
+          link.textContent='Reload latest now';
+          link.style.cssText='text-decoration:underline;cursor:pointer;font-weight:700';
+          link.onclick=reloadFromDrive;
+          el.appendChild(link);
+        }
+      }catch(e){ oldUpdateConflictBar.apply(this, arguments); }
+    };
+  }
+
+  // Initial baseline if this patch loads after DATA is already present.
+  setTimeout(function(){
+    try{ if(Array.isArray(DATA) && DATA.length && !window[BASELINE_FIELD]) mergeCaptureBaseline_(DATA); }catch(e){}
+  }, 0);
+
+  window.dlaConcurrentMergeDebug = function(){
+    return {
+      baselineEntries: Object.keys(window[BASELINE_FIELD] || {}).length,
+      localChanges: mergeChangedLocalEntries_().map(c => ({ type:c.type, key:c.key, idx:c.idx }))
+    };
+  };
+})();
+/* ===== end DLA hotfix ===== */
+
 </script>
 </body>
 </html>
