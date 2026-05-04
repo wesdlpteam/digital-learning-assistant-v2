@@ -127,7 +127,7 @@
           "max": 6
         },
         "book creator": {
-          "min": 3,
+          "min": 0,
           "max": 6
         },
         "padlet": {
@@ -235,6 +235,25 @@
           "max": 6
         }
       }
+    },
+    "adobe_express": {
+      "name": "Adobe Express",
+      "icon": "?",
+      "urlPattern": "",
+      "urlPrefix": "",
+      "urlHint": "Paste a lesson URL",
+      "subjects": [
+        "MATHEMATICS",
+        "SCIENCE",
+        "LANGUAGE & LITERACY",
+        "SOCIAL STUDIES & HISTORY",
+        "CODING & COMPUTER SCIENCE",
+        "ARTS & DESIGN",
+        "SEL & LIFE SKILLS",
+        "BUILD CHALLENGES",
+        "DIGITAL CITIZENSHIP",
+        "OTHER"
+      ]
     }
   },
   "minecraft": [
@@ -850,6 +869,15 @@
       "ages": "8+",
       "subject": "SCIENCE",
       "url": "https://microbit.org/teach/lessons/?selected=sea-creatures"
+    }
+  ],
+  "adobe_express": [
+    {
+      "title": "Newspaper Template",
+      "desc": "Students use the newspaper template to create their own published newspaper.",
+      "ages": "8+",
+      "subject": "OTHER",
+      "url": "https://adobesparkpost.app.link/pdXWGIMORUb?category=templates&referrer=https%3A%2F%2Fwww.adobe.com%2Fexpress%2Ftemplates%2Freport&url=%2Fexpress%2Ftemplates%2Freport&placement=template-x&locale=en-US&contentRegion=us"
     }
   ]
 }
