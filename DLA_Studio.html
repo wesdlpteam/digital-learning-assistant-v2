@@ -145,7 +145,7 @@
     </div>
     <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text)">Wesley College</div>
     <div style="font-size:9px;color:var(--dim);margin-bottom:6px">Melbourne</div>
-    <div style="font-size:9px;color:var(--mint)">● DLA Studio v5.16</div>
+    <div style="font-size:9px;color:var(--mint)">● DLA Studio v5.16 · startup-safe patch</div>
     <div id="sidebar-user-email" style="font-size:10px;color:var(--dim);margin-top:4px;word-break:break-all"></div>
     <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
       <a class="btn-sm dla-footer-back" href="index.html" title="Back to the teacher-facing DLA">← DLA</a>
@@ -174,7 +174,7 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
         Dashboard
       </div>
-      <div class="setup-version">v5.16</div>
+      <div class="setup-version">v5.16 · startup-safe</div>
       <div class="wesley-brand">
         <div class="wesley-w">W</div>
         <div class="wesley-text">Wesley<br>College</div>
@@ -1391,9 +1391,9 @@ async function loadFromDrive(){
     if(!d.files||!d.files.length) throw new Error('data.json not found on Drive');
     DRIVE_FILE_ID=d.files[0].id;
     const r2=await fetch(`https://www.googleapis.com/drive/v3/files/${DRIVE_FILE_ID}?alt=media`,{headers:{'Authorization':'Bearer '+tok}});
-    ingest(await r2.json());
+    ingest(await r2.json(), true);
     LIBRARIES_READY = false;
-    ensureLibrariesLoaded().catch(e => console.warn('Libraries preload failed:', e)); // Load lesson libraries after Drive auth
+    // Startup safety patch: libraries.json is loaded lazily when Bulk/Libraries sections need it.
   }catch(e){
     err.textContent=e.message; err.style.display='block';
     btn.disabled=false; btn.textContent='↑ Load from Google Drive';
@@ -1416,12 +1416,12 @@ function loadFromPaste(){
 
 function ingest(arr, skipCache){
   DATA=Array.isArray(arr)?arr:Object.values(arr);
-  if(!skipCache){
-    try{
-      localStorage.setItem('dla_data', JSON.stringify(DATA));
-      if(DRIVE_FILE_ID) localStorage.setItem('dla_file_id', DRIVE_FILE_ID);
-    }catch(e){ /* storage full — skip cache */ }
-  }
+  // Startup safety patch: do not stringify/cache the full canonical data.json in localStorage.
+  // Large datasets can block or crash the browser during load. Drive remains the source of truth.
+  try{
+    localStorage.removeItem('dla_data');
+    if(DRIVE_FILE_ID) localStorage.setItem('dla_file_id', DRIVE_FILE_ID);
+  }catch(e){}
   
   const campuses=[...new Set(DATA.map(e=>e.ca))].sort();
   const yrs=[...new Set(DATA.map(e=>e.yl))].sort((a,b)=>YR.indexOf(a)-YR.indexOf(b));
@@ -1506,7 +1506,7 @@ Save anyway?`);
     if(updated) LAST_KNOWN_MODIFIED=updated.modifiedTime;
     const now=new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
     setStatus(`Saved to Drive at ${now}`);
-    try{ localStorage.setItem('dla_data', JSON.stringify(DATA)); }catch(e){}
+    try{ localStorage.removeItem('dla_data'); }catch(e){}
     updateConflictBar(null);
   stopProgress();
   }catch(e){ stopProgress(); setStatus('Drive save failed: '+e.message,'error'); }
@@ -1764,88 +1764,110 @@ function getIssues(){
 }
 
 function filterIssueType(label){
-  
-  const map={'banned':'banned','off whitelist':'offwhitelist','duplicates':'duplicate','no planner':'incomplete','no planner summary':'missingplanner'};
+  const map={'banned tools':'banned','banned':'banned','off whitelist':'offwhitelist','duplicates':'duplicate','no planner':'incomplete','no planner summary':'missingplanner'};
   const type=map[label];
   const el=document.getElementById('issues-list');
   if(!el) return;
   const all=window._ALL_ISSUES||[];
   const filtered=type?all.filter(i=>i.type===type):all;
+  const cap = 160;
   el.innerHTML=filtered.length
-    ?filtered.map(iss=>issueRowHTML(iss)).join('')
+    ? `<div style="font-size:12px;color:var(--dim);margin-bottom:10px">Showing first ${Math.min(cap, filtered.length)} of ${filtered.length} issue${filtered.length!==1?'s':''}.</div>` + filtered.slice(0,cap).map(iss=>issueRowHTML(iss)).join('')
     :'<div style="padding:20px;color:var(--dim);text-align:center">No issues of this type ✓</div>';
   el.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 function renderDashboard(){
-  const {incomplete,banned,duplicates,offWhitelist,missingPlanner}=getIssues();
-  const total=incomplete.length+banned.length+duplicates.length+offWhitelist.length+missingPlanner.length;
-  document.getElementById('db-sub').textContent=`${DATA.length} entries across ${[...new Set(DATA.map(e=>e.ca))].length} campuses — ${total} issue${total!==1?'s':''} found`;
+  const campuses = [...new Set(DATA.map(e=>e.ca).filter(Boolean))];
+  const audited = DATA.filter(e => e && e.audited !== false).length;
+  const totalSuggestions = DATA.reduce((sum,e)=>sum + getSugs(e).filter(isRealSug).length, 0);
+  const verified = DATA.filter(e => typeof isHumanVerifiedEntry_ === 'function' && isHumanVerifiedEntry_(e)).length;
+  const dbSub = document.getElementById('db-sub');
+  if(dbSub) dbSub.textContent = `${DATA.length} entries across ${campuses.length} campuses — dashboard loaded in startup-safe mode`;
+
+  const statDefs=[
+    {label:'total entries',val:DATA.length,bg:'#C5E84A',col:'#111'},
+    {label:'campuses',val:campuses.length,bg:'#1a1a1a',col:'#888'},
+    {label:'audited',val:audited,bg:'#1a1a1a',col:'#888'},
+    {label:'suggestions',val:totalSuggestions,bg:'#1a1a1a',col:'#888'},
+    {label:'human verified',val:verified,bg:verified>0?'#D4A017':'#1a1a1a',col:verified>0?'#111':'#888'},
+    {label:'issue scan',val:'manual',bg:'#1a1a1a',col:'#888'},
+  ];
+  const cards = document.getElementById('stat-cards');
+  if(cards){
+    cards.innerHTML=statDefs.map(({label,val,bg,col})=>`<div class="stat-card" style="background:${bg};border-color:transparent"><div class="stat-num" style="color:${col};font-size:${String(val).length>5?'28px':''}">${val}</div><div class="stat-lbl" style="color:${col}">${label}</div></div>`).join('');
+  }
+
+  const fixBar = document.getElementById('fix-incomplete-bar');
+  if(fixBar) fixBar.innerHTML = '';
+  window._ALL_ISSUES = [];
+  const list = document.getElementById('issues-list');
+  if(list){
+    list.innerHTML = `<div style="padding:18px 20px;background:var(--card2);border:1px solid var(--border);border-radius:12px;color:var(--dim);font-size:13px;line-height:1.6">
+      <div style="color:var(--text);font-weight:800;margin-bottom:6px">Startup-safe dashboard</div>
+      The homepage no longer runs the full issue audit automatically. This prevents crashes while loading data.json.
+      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn-pri" onclick="runDashboardIssueScanChunked()" style="padding:10px 16px">Run issue scan</button>
+        <button class="btn-sm" onclick="switchTab('browse',document.querySelector('.nav-item[data-tab=&quot;browse&quot;]'))">Open Browse</button>
+      </div>
+      <div id="dashboard-scan-progress" style="font-size:12px;color:var(--lime);margin-top:10px"></div>
+    </div>`;
+  }
+}
+
+async function runDashboardIssueScanChunked(){
+  const progress = document.getElementById('dashboard-scan-progress');
+  const list = document.getElementById('issues-list');
+  const incomplete=[], banned=[], duplicates=[], offWhitelist=[], missingPlanner=[];
+  const totalEntries = DATA.length || 0;
+  const batchSize = 25;
+  for(let start=0; start<totalEntries; start += batchSize){
+    const end = Math.min(start + batchSize, totalEntries);
+    for(let idx=start; idx<end; idx++){
+      const e = DATA[idx];
+      if(!e) continue;
+      const sugs=getSugs(e);
+      const realSugs=sugs.filter(isRealSug);
+      if(realSugs.length<6) incomplete.push({e,idx,type:'incomplete',detail:`${realSugs.length}/6 — no planner uploaded`});
+      if(sugs.some(s=>sugTool(s).toLowerCase().includes('wevideo'))) banned.push({e,idx,type:'banned',detail:'WeVideo found'});
+      const tools=realSugs.map(s=>sugTool(s).toLowerCase().trim());
+      const seen=new Set();
+      tools.forEach((t, localIdx)=>{ if(seen.has(t)) duplicates.push({e,idx,type:'duplicate',detail:`"${sugTool(realSugs[localIdx])}" appears twice`}); seen.add(t); });
+      realSugs.forEach((s, slotIdx)=>{
+        if(slotIdx === 5) return;
+        const t=sugTool(s);
+        if(t&&!isWhitelisted(t)) offWhitelist.push({e,idx,type:'offwhitelist',detail:`"${t}" not in approved list`});
+      });
+      if(!e.plannerText || e.plannerText.trim().length < 20) missingPlanner.push({e,idx,type:'missingplanner',detail:'No planner summary'});
+    }
+    if(progress) progress.textContent = `Scanning issues… ${end}/${totalEntries}`;
+    await new Promise(resolve => setTimeout(resolve, 0));
+  }
+  const all=[...incomplete,...banned,...duplicates,...offWhitelist,...missingPlanner];
+  window._ALL_ISSUES = all;
+  const total=all.length;
+  const dbSub = document.getElementById('db-sub');
+  if(dbSub) dbSub.textContent=`${DATA.length} entries across ${[...new Set(DATA.map(e=>e.ca))].length} campuses — ${total} issue${total!==1?'s':''} found`;
   const statDefs=[
     {label:'total entries',val:DATA.length,bg:'#C5E84A',col:'#111'},
     {label:'no planner',val:incomplete.length,bg:incomplete.length>0?'#F5A623':'#1a1a1a',col:incomplete.length>0?'#111':'#888'},
     {label:'banned tools',val:banned.length,bg:banned.length>0?'#FF8080':'#1a1a1a',col:banned.length>0?'#111':'#888'},
     {label:'duplicates',val:duplicates.length,bg:duplicates.length>0?'#9B8BFF':'#1a1a1a',col:duplicates.length>0?'#fff':'#888'},
     {label:'off whitelist',val:offWhitelist.length,bg:offWhitelist.length>0?'#60B8F0':'#1a1a1a',col:offWhitelist.length>0?'#111':'#888'},
-    {label:'no planner',val:missingPlanner.length,bg:missingPlanner.length>0?'#D4A017':'#1a1a1a',col:missingPlanner.length>0?'#111':'#888'},
+    {label:'no planner summary',val:missingPlanner.length,bg:missingPlanner.length>0?'#D4A017':'#1a1a1a',col:missingPlanner.length>0?'#111':'#888'},
   ];
-  document.getElementById('stat-cards').innerHTML=statDefs.map(({label,val,bg,col})=>`<div class="stat-card" style="background:${bg};border-color:transparent;cursor:pointer" onclick="filterIssueType('${label}')"><div class="stat-num" style="color:${col}">${val}</div><div class="stat-lbl" style="color:${col}">${label}</div></div>`).join('');
-
-  const all=[
-    ...banned,
-    ...offWhitelist,
-    ...duplicates,
-    ...incomplete,
-    ...missingPlanner,
-  ];
-  window._ALL_ISSUES = all;
-  
-  const fixBar = document.getElementById('fix-incomplete-bar');
-  if(fixBar){
-    const fixBtns = [];
-    if(incomplete.length>0) fixBtns.push({count:incomplete.length, label:'Fix no planner', color:'var(--orange)', type:'incomplete', fn:"fixAllOfType('incomplete')"});
-    if(duplicates.length>0) fixBtns.push({count:duplicates.length, label:'Fix duplicates', color:'#9B8BFF', type:'duplicate', fn:"fixAllOfType('duplicate')"});
-    if(banned.length>0) fixBtns.push({count:banned.length, label:'Fix banned tools', color:'#FF8080', type:'banned', fn:"fixAllOfType('banned')"});
-    if(offWhitelist.length>0) fixBtns.push({count:offWhitelist.length, label:'Fix off-list', color:'#60B8F0', type:'offwhitelist', fn:"fixAllOfType('offwhitelist')"});
-
-    if(fixBtns.length > 0){
-      fixBar.innerHTML=`
-        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px">
-          ${fixBtns.map(b=>`
-            <div style="flex:1;min-width:200px;display:flex;align-items:center;gap:12px;padding:12px 16px;background:rgba(255,255,255,0.04);border:1px solid ${b.color}44;border-radius:10px">
-              <div style="flex:1">
-                <div style="font-size:13px;font-weight:700;color:${b.color}">${b.count} ${b.label.toLowerCase().replace('fix ','')}</div>
-              </div>
-              <button onclick="${b.fn}" style="padding:7px 14px;background:${b.color};color:#111;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">${b.label}</button>
-            </div>`).join('')}
-        </div>
-        <div id="fix-all-progress" style="display:none;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:10px">
-          <div style="font-size:13px;color:var(--lime);font-weight:600;margin-bottom:8px" id="fix-all-label">Starting…</div>
-          <div style="height:5px;background:var(--card2);border-radius:3px"><div id="fix-all-bar" style="height:100%;border-radius:3px;background:var(--lime);width:0%;transition:width .4s"></div></div>
-        </div>`;
-    } else {
-      fixBar.innerHTML='<div style="padding:10px 14px;background:rgba(197,232,74,0.08);border:1px solid rgba(197,232,74,0.2);border-radius:8px;font-size:13px;color:var(--lime);font-weight:600">✓ No issues — all entries look good</div>';
-    }
+  const cards = document.getElementById('stat-cards');
+  if(cards){
+    cards.innerHTML=statDefs.map(({label,val,bg,col})=>`<div class="stat-card" style="background:${bg};border-color:transparent;cursor:pointer" onclick="filterIssueType('${label}')"><div class="stat-num" style="color:${col}">${val}</div><div class="stat-lbl" style="color:${col}">${label}</div></div>`).join('');
   }
-  const DASHBOARD_ISSUE_RENDER_LIMIT = 80;
-  const visibleIssues = all.slice(0, DASHBOARD_ISSUE_RENDER_LIMIT);
-  const hiddenIssueCount = Math.max(0, all.length - visibleIssues.length);
-  document.getElementById('issues-list').innerHTML=visibleIssues.length
-    ? visibleIssues.map(({e,idx,type,detail})=>{
-        const badgeBg={'banned':'#FF8080','incomplete':'#F5A623','duplicate':'#9B8BFF','offwhitelist':'#60B8F0','missingplanner':'#D4A017'}[type]||'#888';
-        const badgeCol={'banned':'#111','incomplete':'#111','duplicate':'#fff','offwhitelist':'#111','missingplanner':'#111'}[type]||'#fff';
-        const label={'banned':'banned','incomplete':'no planner','duplicate':'duplicate','offwhitelist':'off-list','missingplanner':'no planner'}[type]||type;
-        return `<div class="row" onclick="openEntry(${idx})">
-          <span style="font-size:11px;padding:4px 11px;border-radius:20px;background:${badgeBg};color:${badgeCol};font-weight:800;letter-spacing:.3px;flex-shrink:0">${label}</span>
-          <span style="font-size:13px;color:#9ab89a;width:110px;flex-shrink:0">${esc(e.ca)}</span>
-          <span style="font-size:13px;color:var(--gold);font-weight:700;width:70px;flex-shrink:0">${esc(e.yl)}</span>
-          <span style="flex:1;font-size:14px;font-weight:600;color:var(--text)">${esc(e.th)}</span>
-          <span style="font-size:11px;color:var(--dim)">${detail}</span>
-          <span style="color:var(--dim)">›</span>
-        </div>`;
-      }).join('') + (hiddenIssueCount ? `<div style="padding:14px 18px;margin-top:8px;background:var(--card2);border:1px solid var(--border);border-radius:10px;color:var(--dim);font-size:12px;text-align:center">Showing first ${DASHBOARD_ISSUE_RENDER_LIMIT} issues for performance. Use the Audit filters or Browse search to inspect the remaining ${hiddenIssueCount}.</div>` : '')
-    : '<div style="text-align:center;padding:24px;color:var(--dim);font-size:13px">No issues found ✓</div>';
+  if(list){
+    const cap = 120;
+    list.innerHTML = all.length
+      ? `<div style="font-size:12px;color:var(--dim);margin-bottom:10px">Showing first ${Math.min(cap, all.length)} of ${all.length} issues. Use stat cards to filter.</div>` + all.slice(0,cap).map(iss=>issueRowHTML(iss)).join('')
+      : '<div style="padding:20px;color:var(--lime);text-align:center">No issues found ✓</div>';
+  }
 }
+
 
 
 // ========== HUMAN VERIFICATION + REALISM RESCAN HELPERS ==========
@@ -3524,53 +3546,9 @@ function showBeforeAfterPreview(){
 function checkKeyInput(){ /* legacy no-op: AI key is managed by GAS Script Properties. */ }
 
 function initNetworkCanvas(){
-  // Performance hotfix: this canvas is hidden in CSS but the old code still
-  // ran an infinite requestAnimationFrame loop on every Studio load.
-  // Keep it disabled so startup, Drive sync and large reviews stay responsive.
+  // Startup safety patch: the canvas is hidden in CSS, so do not start an infinite animation loop.
+  // This avoids a permanent requestAnimationFrame workload on the Studio home/load screen.
   return;
-  const canvas=document.getElementById('bg-canvas');
-  if(!canvas) return;
-  const ctx=canvas.getContext('2d');
-  let W=0,H=0,nodes=[];
-  function resize(){
-    W=canvas.width=window.innerWidth;
-    H=canvas.height=window.innerHeight;
-    nodes=Array.from({length:55},()=>({
-      x:Math.random()*W, y:Math.random()*H,
-      vx:(Math.random()-.5)*.25, vy:(Math.random()-.5)*.25,
-      r:Math.random()*1.5+.5
-    }));
-  }
-  resize();
-  window.addEventListener('resize',resize);
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-    for(let i=0;i<nodes.length;i++){
-      for(let j=i+1;j<nodes.length;j++){
-        const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y;
-        const d=Math.sqrt(dx*dx+dy*dy);
-        if(d<160){
-          ctx.beginPath();
-          ctx.moveTo(nodes[i].x,nodes[i].y);
-          ctx.lineTo(nodes[j].x,nodes[j].y);
-          ctx.strokeStyle=`rgba(52,211,153,${0.09*(1-d/160)})`;
-          ctx.lineWidth=.6;
-          ctx.stroke();
-        }
-      }
-    }
-    nodes.forEach(n=>{
-      ctx.beginPath();
-      ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
-      ctx.fillStyle='rgba(0,230,118,0.45)';
-      ctx.fill();
-      n.x+=n.vx; n.y+=n.vy;
-      if(n.x<0||n.x>W) n.vx*=-1;
-      if(n.y<0||n.y>H) n.vy*=-1;
-    });
-    requestAnimationFrame(draw);
-  }
-  draw();
 }
 
 async function addToGASQueue(){
@@ -9203,31 +9181,12 @@ setInterval(async()=>{
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('app-content').style.display='none';
   initNetworkCanvas();
+  // Startup safety patch: never auto-ingest cached data on page load.
+  // A stale or large cached data.json can crash before the Drive load screen appears.
   try{
-    const cached=localStorage.getItem('dla_data');
-    const cachedFileId=localStorage.getItem('dla_file_id');
-    if(cached){
-      const arr=JSON.parse(cached);
-      if(Array.isArray(arr)&&arr.length>0){
-        if(cachedFileId) DRIVE_FILE_ID=cachedFileId;
-        ingest(arr, true);
-        // Wait for GSI library to load before attempting silent re-auth
-        const waitForGSI = (resolve) => {
-          if(window.google && window.google.accounts) resolve();
-          else setTimeout(()=>waitForGSI(resolve), 200);
-        };
-        new Promise(waitForGSI).then(()=>getDriveToken()).then(tok=>{
-          DRIVE_TOKEN=tok;
-          getDriveFileModified().then(meta=>{ if(meta) LAST_KNOWN_MODIFIED=meta.modifiedTime; });
-          ensureLibrariesLoaded().catch(e => console.warn('Libraries preload failed:', e));
-          startConflictPolling();
-          setStatus('Session restored — connected to Drive');
-        }).catch(()=>{ setStatus('Session restored — <span onclick="reconnectDrive()" style="text-decoration:underline;cursor:pointer;font-weight:700">click here to reconnect Drive</span> to save changes','error',true); });
-        return;
-      }
-    }
+    localStorage.removeItem('dla_data');
+    localStorage.removeItem('dla_file_id');
   }catch(e){}
-
   showScreen('load');
   document.getElementById('chat-input')?.addEventListener('keydown',e=>{
     if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendChat(); }
@@ -11385,7 +11344,7 @@ setInterval(async()=>{
 
       DATA = Array.isArray(merged) ? merged : Object.values(merged || {});
       mergeCaptureBaseline_(DATA);
-      try{ localStorage.setItem('dla_data', JSON.stringify(DATA)); }catch(e){}
+      try{ localStorage.removeItem('dla_data'); }catch(e){}
 
       const updated = await getDriveFileModified();
       if(updated) LAST_KNOWN_MODIFIED = updated.modifiedTime;
@@ -11619,7 +11578,7 @@ setInterval(async()=>{
   function rtReplaceAll_(latest, currentKey){
     DATA = Array.isArray(latest) ? latest : Object.values(latest || {});
     rtSetBaseline_(DATA);
-    try { localStorage.setItem('dla_data', JSON.stringify(DATA)); } catch(e){}
+    try { localStorage.removeItem('dla_data'); } catch(e){}
     rtRenderAfterSync_(new Set(), currentKey);
   }
 
@@ -11654,7 +11613,7 @@ setInterval(async()=>{
     }
 
     rtSetBaseline_(baseline);
-    try { localStorage.setItem('dla_data', JSON.stringify(DATA)); } catch(e){}
+    try { localStorage.removeItem('dla_data'); } catch(e){}
     if(changedKeys.size) rtRenderAfterSync_(changedKeys, currentKey);
     return changedKeys.size;
   }
@@ -13471,78 +13430,6 @@ Return ONLY JSON:
   console.log('[DLA PATCH] Responsive St Kilda Road Year 6 regeneration installed', STK_Y6_RESPONSIVE_PATCH_VERSION);
 })();
 /* ===== end DLA hotfix ===== */
-
-/* ===== DLA hotfix: responsiveness guardrails v3 =====
-   Purpose: keep Studio usable with large Drive data, frequent multi-admin syncs,
-   and St Kilda Year 6 maintenance. This does not auto-apply AI changes. */
-(function(){
-  const PATCH_ID = '2026-05-04-responsive-guardrails-v3';
-  if(window.__DLA_RESPONSIVE_GUARDRAILS_V3 === PATCH_ID) return;
-  window.__DLA_RESPONSIVE_GUARDRAILS_V3 = PATCH_ID;
-
-  function activePanelId_(){
-    try { return document.querySelector('.panel.active')?.id || ''; }
-    catch(e){ return ''; }
-  }
-  function debounce_(fn, wait){
-    let timer = null;
-    return function(){
-      const args = arguments, ctx = this;
-      clearTimeout(timer);
-      timer = setTimeout(function(){ fn.apply(ctx, args); }, wait);
-    };
-  }
-
-  // Search typing previously called renderBrowse on every keypress. Debounce it.
-  setTimeout(function(){
-    try{
-      const search = document.getElementById('f-search');
-      if(search && !search.__dlaDebouncedBrowse){
-        search.__dlaDebouncedBrowse = true;
-        search.oninput = debounce_(function(){ if(typeof renderBrowse === 'function') renderBrowse(); }, 180);
-      }
-    }catch(e){}
-  }, 0);
-
-  // Prevent noisy background render cascades from repeated patches/syncs.
-  if(typeof renderBrowse === 'function' && !window.__DLA_RENDER_BROWSE_GUARDED){
-    window.__DLA_RENDER_BROWSE_GUARDED = true;
-    const oldRenderBrowse = renderBrowse;
-    let browseRendering = false;
-    renderBrowse = window.renderBrowse = function(){
-      if(browseRendering) return;
-      browseRendering = true;
-      try { return oldRenderBrowse.apply(this, arguments); }
-      finally { setTimeout(function(){ browseRendering = false; }, 0); }
-    };
-  }
-
-  if(typeof renderDashboard === 'function' && !window.__DLA_RENDER_DASHBOARD_GUARDED){
-    window.__DLA_RENDER_DASHBOARD_GUARDED = true;
-    const oldRenderDashboard = renderDashboard;
-    let dashRendering = false;
-    renderDashboard = window.renderDashboard = function(){
-      if(dashRendering) return;
-      dashRendering = true;
-      try { return oldRenderDashboard.apply(this, arguments); }
-      finally { setTimeout(function(){ dashRendering = false; }, 0); }
-    };
-  }
-
-  // Avoid recomputing Bulk welcome insights more than needed while the Tools panel is closed.
-  if(typeof renderBulkWelcome === 'function' && !window.__DLA_BULK_WELCOME_LAZY_GUARDED){
-    window.__DLA_BULK_WELCOME_LAZY_GUARDED = true;
-    const oldRenderBulkWelcome = renderBulkWelcome;
-    renderBulkWelcome = window.renderBulkWelcome = function(){
-      if(activePanelId_() !== 'panel-tools') return;
-      return oldRenderBulkWelcome.apply(this, arguments);
-    };
-  }
-
-  console.log('[DLA PATCH] Responsive guardrails installed', PATCH_ID);
-})();
-/* ===== end DLA hotfix ===== */
-
 </script>
 </body>
 </html>
