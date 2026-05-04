@@ -11160,6 +11160,307 @@ setInterval(async()=>{
 })();
 /* ===== end DLA hotfix ===== */
 
+
+
+/* ===== DLA hotfix: live multi-admin sync from Drive =====
+   Keeps Nathan/Andrew tabs in sync after Human Verify or other saves.
+   Polls Drive, fetches latest data.json, and merges remote changes for units this tab has not edited locally. */
+(function(){
+  const RT_BASELINE_FIELD = '__dlaRealtimeSyncBaseline_v1';
+  const MERGE_BASELINE_FIELD = '__dlaMergeBaseline_v1';
+  const RT_INTERVAL_MS = 12000;
+  const VOLATILE_FIELDS = new Set(['_locks','_mergeLocalTouchedAt','_mergeLocalTouchedBy']);
+  let rtTimer = null;
+  let rtBusy = false;
+  let rtLastSeenModified = null;
+  let rtLastStatusAt = 0;
+
+  function rtClone_(value){
+    try { return JSON.parse(JSON.stringify(value)); }
+    catch(e){ return value; }
+  }
+
+  function rtKey_(entry){
+    if(!entry) return '';
+    const ca = String(entry.ca || entry.campus || '').trim().toLowerCase();
+    const yl = String(entry.yl || entry.year || entry.yearLevel || '').trim().toLowerCase();
+    const th = String(entry.th || entry.theme || entry.unit || entry.title || '').trim().toLowerCase();
+    return [ca, yl, th].join('||');
+  }
+
+  function rtOrdered_(value){
+    if(Array.isArray(value)) return value.map(rtOrdered_);
+    if(value && typeof value === 'object'){
+      const out = {};
+      Object.keys(value).filter(k => !VOLATILE_FIELDS.has(k)).sort().forEach(k => out[k] = rtOrdered_(value[k]));
+      return out;
+    }
+    return value;
+  }
+
+  function rtSig_(entry){
+    try { return JSON.stringify(rtOrdered_(entry || {})); }
+    catch(e){ return String(Date.now()) + Math.random(); }
+  }
+
+  function rtMakeBaseline_(arr){
+    const out = {};
+    (Array.isArray(arr) ? arr : []).forEach(function(entry){
+      const key = rtKey_(entry);
+      if(key) out[key] = rtSig_(entry);
+    });
+    return out;
+  }
+
+  function rtGetBaseline_(){
+    const mergeBase = window[MERGE_BASELINE_FIELD];
+    if(mergeBase && typeof mergeBase === 'object') return mergeBase;
+    if(window[RT_BASELINE_FIELD] && typeof window[RT_BASELINE_FIELD] === 'object') return window[RT_BASELINE_FIELD];
+    const fresh = rtMakeBaseline_(DATA);
+    window[RT_BASELINE_FIELD] = fresh;
+    return fresh;
+  }
+
+  function rtSetBaseline_(arrOrMap){
+    const map = Array.isArray(arrOrMap) ? rtMakeBaseline_(arrOrMap) : (arrOrMap || {});
+    window[RT_BASELINE_FIELD] = map;
+    // Keep the concurrent merge-save patch aligned so later saves only contain genuine local changes.
+    window[MERGE_BASELINE_FIELD] = rtClone_(map);
+    return map;
+  }
+
+  function rtMap_(arr){
+    const map = new Map();
+    (Array.isArray(arr) ? arr : []).forEach(function(entry, idx){
+      const key = rtKey_(entry);
+      if(key) map.set(key, {entry, idx});
+    });
+    return map;
+  }
+
+  function rtLocalChangedKeys_(){
+    const baseline = rtGetBaseline_();
+    const localMap = rtMap_(DATA);
+    const changed = new Set();
+    localMap.forEach(function(info, key){
+      if(!baseline[key] || baseline[key] !== rtSig_(info.entry)) changed.add(key);
+    });
+    Object.keys(baseline).forEach(function(key){
+      if(!localMap.has(key)) changed.add(key);
+    });
+    return changed;
+  }
+
+  async function rtFetchLatestData_(){
+    if(!DRIVE_FILE_ID || !DRIVE_TOKEN) throw new Error('Drive is not connected');
+    const r = await fetch(`https://www.googleapis.com/drive/v3/files/${DRIVE_FILE_ID}?alt=media&cacheBust=${Date.now()}`, {
+      headers: { 'Authorization':'Bearer ' + DRIVE_TOKEN, 'Cache-Control':'no-cache' }
+    });
+    if(!r.ok) throw new Error('Could not fetch latest data.json from Drive');
+    const d = await r.json();
+    return Array.isArray(d) ? d : Object.values(d || {});
+  }
+
+  function rtActivePanelId_(){
+    try { return document.querySelector('.panel.active')?.id || ''; }
+    catch(e){ return ''; }
+  }
+
+  function rtHasReviewPopup_(){
+    return !!document.getElementById('changes-popup-overlay');
+  }
+
+  function rtRememberCurrentEntryKey_(){
+    try{
+      if(typeof CURRENT_ENTRY_IDX !== 'undefined' && CURRENT_ENTRY_IDX !== null && DATA && DATA[CURRENT_ENTRY_IDX]) return rtKey_(DATA[CURRENT_ENTRY_IDX]);
+    }catch(e){}
+    return '';
+  }
+
+  function rtRestoreCurrentEntryIdx_(key){
+    if(!key) return;
+    try{
+      const found = (DATA || []).findIndex(e => rtKey_(e) === key);
+      if(found >= 0) CURRENT_ENTRY_IDX = found;
+    }catch(e){}
+  }
+
+  function rtRenderAfterSync_(changedKeys, currentKey){
+    try { rtRestoreCurrentEntryIdx_(currentKey); } catch(e){}
+    const active = rtActivePanelId_();
+    try{
+      if(typeof CURRENT_ENTRY_IDX !== 'undefined' && CURRENT_ENTRY_IDX !== null && typeof renderEntry === 'function'){
+        renderEntry(CURRENT_ENTRY_IDX);
+      } else if(active === 'panel-browse' && typeof renderBrowse === 'function') renderBrowse();
+      else if(active === 'panel-dashboard' && typeof renderDashboard === 'function') renderDashboard();
+      else if(active === 'panel-audit' && typeof renderAuditChart === 'function') renderAuditChart();
+      else if(active === 'panel-tools'){
+        if(typeof renderBulkWelcome === 'function') renderBulkWelcome();
+        if(typeof renderToolInventory === 'function') renderToolInventory();
+      }
+    }catch(e){ console.warn('Realtime sync render failed:', e); }
+  }
+
+  function rtStatus_(msg, type){
+    // Avoid spamming the status bar while Andrew/Nathan are saving frequently.
+    if(Date.now() - rtLastStatusAt < 3500) return;
+    rtLastStatusAt = Date.now();
+    try { if(typeof setStatus === 'function') setStatus(msg, type); } catch(e){}
+  }
+
+  function rtReplaceAll_(latest, currentKey){
+    DATA = Array.isArray(latest) ? latest : Object.values(latest || {});
+    rtSetBaseline_(DATA);
+    try { localStorage.removeItem('dla_data'); } catch(e){}
+    rtRenderAfterSync_(new Set(), currentKey);
+  }
+
+  function rtMergeUntouched_(latest, localChangedKeys, currentKey){
+    const latestMap = rtMap_(latest);
+    const localMap = rtMap_(DATA);
+    const baseline = rtClone_(rtGetBaseline_());
+    const changedKeys = new Set();
+
+    latestMap.forEach(function(info, key){
+      if(localChangedKeys.has(key)) return; // preserve this tab's unsaved local work
+      const localInfo = localMap.get(key);
+      const latestSig = rtSig_(info.entry);
+      if(!localInfo){
+        DATA.push(rtClone_(info.entry));
+        changedKeys.add(key);
+      } else if(rtSig_(localInfo.entry) !== latestSig){
+        DATA[localInfo.idx] = rtClone_(info.entry);
+        changedKeys.add(key);
+      }
+      baseline[key] = latestSig;
+    });
+
+    // Remove entries deleted remotely only if this tab has not changed them locally.
+    const remoteKeys = new Set(latestMap.keys());
+    for(let i = DATA.length - 1; i >= 0; i--){
+      const key = rtKey_(DATA[i]);
+      if(!key || remoteKeys.has(key) || localChangedKeys.has(key)) continue;
+      DATA.splice(i, 1);
+      delete baseline[key];
+      changedKeys.add(key);
+    }
+
+    rtSetBaseline_(baseline);
+    try { localStorage.removeItem('dla_data'); } catch(e){}
+    if(changedKeys.size) rtRenderAfterSync_(changedKeys, currentKey);
+    return changedKeys.size;
+  }
+
+  async function syncFromDriveNow_(reason){
+    if(rtBusy || !DRIVE_FILE_ID || !DRIVE_TOKEN) return {synced:false, reason:'busy-or-disconnected'};
+    if(document.hidden && reason !== 'manual' && reason !== 'visible') return {synced:false, reason:'hidden'};
+    rtBusy = true;
+    try{
+      const meta = await getDriveFileModified();
+      if(!meta || !meta.modifiedTime) return {synced:false, reason:'no-meta'};
+      const remoteModified = meta.modifiedTime;
+      const known = rtLastSeenModified || LAST_KNOWN_MODIFIED;
+      if(reason !== 'manual' && known && remoteModified === known) return {synced:false, reason:'same-modified'};
+
+      rtLastSeenModified = remoteModified;
+      LAST_KNOWN_MODIFIED = remoteModified;
+
+      // Do not disrupt the review popup while someone is approving a batch. The next poll will sync.
+      if(rtHasReviewPopup_() && reason !== 'manual') return {synced:false, reason:'review-popup-open'};
+
+      const currentKey = rtRememberCurrentEntryKey_();
+      const latest = await rtFetchLatestData_();
+      const localChanged = rtLocalChangedKeys_();
+
+      if(!localChanged.size){
+        rtReplaceAll_(latest, currentKey);
+        const who = meta.lastModifyingUser?.displayName || 'another admin';
+        rtStatus_('Synced latest Drive changes from ' + who + ' ✓');
+        return {synced:true, full:true};
+      }
+
+      const count = rtMergeUntouched_(latest, localChanged, currentKey);
+      if(count){
+        const who = meta.lastModifyingUser?.displayName || 'another admin';
+        rtStatus_('Synced ' + count + ' update' + (count!==1?'s':'') + ' from ' + who + ' · your local edits were preserved', 'loading');
+      }
+      return {synced:!!count, partial:true, count};
+    }catch(e){
+      console.warn('DLA realtime sync failed:', e);
+      if(reason === 'manual') rtStatus_('Sync failed: ' + (e.message || e), 'error');
+      return {synced:false, error:e};
+    }finally{
+      rtBusy = false;
+    }
+  }
+
+  function startRealtimeSync_(){
+    try{
+      if(typeof CONFLICT_POLL_INTERVAL !== 'undefined' && CONFLICT_POLL_INTERVAL){
+        clearInterval(CONFLICT_POLL_INTERVAL);
+        CONFLICT_POLL_INTERVAL = null;
+      }
+    }catch(e){}
+    if(rtTimer) return;
+    rtLastSeenModified = LAST_KNOWN_MODIFIED || rtLastSeenModified;
+    rtSetBaseline_(DATA || []);
+    rtTimer = setInterval(function(){ syncFromDriveNow_('poll'); }, RT_INTERVAL_MS);
+  }
+
+  // Replace the old conflict-only polling with live sync polling.
+  startConflictPolling = window.startConflictPolling = startRealtimeSync_;
+
+  // Keep baselines aligned after initial load/reload/save.
+  if(typeof ingest === 'function'){
+    const oldIngest = ingest;
+    ingest = window.ingest = function(){
+      const out = oldIngest.apply(this, arguments);
+      rtSetBaseline_(DATA || []);
+      rtLastSeenModified = LAST_KNOWN_MODIFIED || rtLastSeenModified;
+      startRealtimeSync_();
+      return out;
+    };
+  }
+
+  if(typeof reloadFromDrive === 'function'){
+    const oldReloadFromDrive = reloadFromDrive;
+    reloadFromDrive = window.reloadFromDrive = async function(){
+      const out = await oldReloadFromDrive.apply(this, arguments);
+      rtSetBaseline_(DATA || []);
+      rtLastSeenModified = LAST_KNOWN_MODIFIED || rtLastSeenModified;
+      return out;
+    };
+  }
+
+  if(typeof saveToDrive === 'function'){
+    const oldSaveToDrive = saveToDrive;
+    saveToDrive = window.saveToDrive = async function(){
+      const out = await oldSaveToDrive.apply(this, arguments);
+      rtSetBaseline_(DATA || []);
+      rtLastSeenModified = LAST_KNOWN_MODIFIED || rtLastSeenModified;
+      return out;
+    };
+  }
+
+  document.addEventListener('visibilitychange', function(){
+    if(!document.hidden) syncFromDriveNow_('visible');
+  });
+
+  // Expose a small manual helper for testing with Andrew.
+  window.syncLatestDLAChangesNow = function(){ return syncFromDriveNow_('manual'); };
+
+  setTimeout(function(){
+    try{
+      if(Array.isArray(DATA) && DATA.length){
+        rtSetBaseline_(DATA);
+        startRealtimeSync_();
+        syncFromDriveNow_('initial');
+      }
+    }catch(e){}
+  }, 0);
+})();
+/* ===== end DLA hotfix ===== */
+
 </script>
 </body>
 </html>
