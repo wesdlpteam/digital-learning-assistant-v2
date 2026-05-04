@@ -1443,32 +1443,33 @@
     "lo": "What is a significant event; Why these events occurred; Impact of significant events",
     "s": [
       {
-        "t": "Merge Cubes + Delightex",
-        "d": "Students reconstruct significant historical events as interactive 3D scenes on Merge Cube, then use Delightex to add narration, animations, and primary source overlays. This app smash allows learners to step inside moments that shaped places and societies, fostering empathy and critical thinking as they explore cause and effect. The resulting digital artefacts serve as powerful conversation starters for class discussions and personal inquiries."
+        "t": "Minecraft: The Hall of Inventions",
+        "d": "Students will explore the impact of significant events by building a virtual museum in Minecraft Education, showcasing inventions or innovations that have shaped places throughout history. Each student or group selects a significant event, researches its impact, and then creates a 3D exhibit with interactive signs and artifacts to explain how that event transformed a community or location. This immersive digital curation fosters deep engagement with the central idea and allows for creative, student-driven storytelling.",
+        "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
       },
       {
-        "t": "Wise Discussion Chatbots",
-        "d": "Learners engage with a teacher-created Wise Discussion Chatbot using the 'Character Interview' scenario, where the chatbot takes on the persona of Mary Reibey, a transported convict who became a pioneering businesswoman in colonial Australia. Students ask questions such as 'What challenges did you face during your journey and settlement?' and 'How did your actions influence the community around you?' After the chat, students produce a perspective summary comparing Mary?s experiences to those of other historical figures studied in the unit."
-      },
-      {
-        "t": "Adobe Express Podcasting",
-        "d": "Students script and record a podcast episode at https://podcast.adobe.com, sharing the story of a migration, discovery, or milestone event that shaped a place or society. Working in pairs, they blend narration, sound effects, and interview snippets to bring personal and global histories to life, then publish their episodes for a class listening showcase and reflection."
+        "t": "Canva",
+        "d": "Students design visually engaging digital timelines or infographics that map out significant events which have shaped their local area or another place of interest. They incorporate images, icons, and concise text to communicate the causes, impacts, and connections between events, then publish and present their work to the class for peer feedback."
       },
       {
         "t": "Book Creator",
-        "d": "Students author and publish interactive eBooks documenting the story of a significant event, combining text, images, audio interviews, and video clips. These digital books can be shared with the school community or used as resources for younger students."
+        "d": "Learners create interactive digital books documenting a significant event of their choice. Each book includes primary and secondary sources, student-written narratives, embedded audio interviews (using iPad microphones), and maps or diagrams to illustrate the event's impact on a place. Books are shared on Seesaw for family and community engagement."
       },
       {
-        "t": "Minecraft Education",
-        "d": "Students explore the 'The Hall of Inventions' world and select a significant invention or event that shaped a place. They research its context and impact, then build their own exhibit in Minecraft, explaining how this event or invention changed the course of history. https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
+        "t": "Padlet",
+        "d": "The class collaborates on a shared Padlet wall where students post multimedia research findings about significant events from around the world. Each post includes a summary, images, and a short video or audio reflection explaining why the event was significant and how it shaped a particular place. This builds a living, interactive resource for inquiry and discussion."
       },
       {
-        "t": "Sphero BOLT + iPads (STEM Design Cycle)",
-        "d": "Teams design and code a Sphero BOLT-powered interactive map on the classroom floor, simulating the journey of a group or individual during a significant migration or discovery. Using iPads, students program Sphero BOLTs to navigate routes, encounter obstacles, and trigger audio or visual facts at key locations, iterating their designs through the STEM Design Cycle to create an engaging, hands-on demonstration of how events shape places and societies."
+        "t": "Microsoft Forms",
+        "d": "Students design and distribute a digital survey to peers, teachers, or family members to collect data on which events people believe have most shaped their community. They analyse the results in Excel, create data visualizations, and present their findings, reflecting on how collective memory and perspective influence our understanding of significance."
+      },
+      {
+        "t": "Makerspace: Cardboard Diorama Timeline",
+        "d": "In the Makerspace, students physically construct a 3D diorama timeline using cardboard, recycled materials, popsticks, and craft supplies. Each group selects a significant event and builds a scene that visually represents its impact on a place (e.g., migration, natural disaster, invention). QR codes are attached to each scene, linking to student-created digital explanations or audio narrations recorded on iPads."
       }
     ],
-    "audited": false,
-    "plannerText": "In this unit, students investigate how significant events?such as migrations, discoveries, or historical milestones?shape places and societies. They explore personal and global histories, analyse the causes and impacts of these events, and conduct personal inquiries into events of interest, culminating in informative reports and creative presentations that demonstrate their understanding of the interconnectedness of individuals, groups, and significant events.",
+    "audited": true,
+    "plannerText": "Students investigate the concept of significant events and how they shape places, with a focus on migration, historical developments, and the interconnectedness of groups. They engage in research, mapping, timelines, and personal inquiry projects, culminating in informative presentations and reports that connect personal, local, and global perspectives.",
     "stemRebooted": true
   },
   {
@@ -2107,32 +2108,32 @@
     "lo": "Evidence and its significance in a place; Connections between the past and present within a place; Personal history shapes the present",
     "s": [
       {
-        "t": "Delightex + iPad",
-        "d": "Students launch an immersive 'Past vs Present' AR museum: they use iPads to photograph Wesley artefacts and campus sites, then app smash with Delightex to create interactive augmented reality scenes. These scenes overlay historical facts, student voice recordings, and digital drawings directly onto real-world locations, letting peers 'step into history' as they explore the campus."
-      },
-      {
-        "t": "Google Maps + iPad",
-        "d": "Learners embark on a digital campus exploration by mapping Wesley College?s Glen Waverley site in Google Maps, dropping pins at locations where they discover historical artefacts or evidence during their walks. Each pin includes a student-taken photo, a short written or audio description, and a reflection on how that spot has changed over time, creating a living map of Wesley?s evolving story."
-      },
-      {
-        "t": "Adobe Express Podcasting",
-        "d": "Students interview family members or classmates about personal histories and significant Wesley artefacts, then record and edit their stories using Adobe Express Podcasting (https://podcast.adobe.com). They create a class podcast series that connects past and present through authentic voices, helping them explore how personal and community history shapes the present."
+        "t": "ClassVR",
+        "d": "Students embark on a virtual time-travel experience using ClassVR headsets to 'walk through' historical versions of their school or local Melbourne landmarks. They compare past and present environments, collecting virtual 'evidence' to discuss how places and daily life have changed over time."
       },
       {
         "t": "Seesaw",
-        "d": "Run a 'Wonder Walk' reflection: after the campus history walk, students upload photos and audio reflections to Seesaw, tagging evidence of the past and explaining its significance. Families can comment, adding their own memories or connections."
+        "d": "Students create a digital timeline of their own family or school history by uploading photos, drawings, and voice recordings. They annotate each entry with reflections on how the past event connects to their present life, fostering personal connections to historical inquiry."
       },
       {
-        "t": "PicCollage",
-        "d": "Students create a 'Then & Now' digital collage by combining photos taken during their Wesley College campus walk with scanned or photographed historical images. They use PicCollage?s simple drag-and-drop tools to arrange pictures, add labels, and draw connections between past and present, visually showcasing how the campus has changed over time."
+        "t": "Canva",
+        "d": "Using Canva, students design digital posters that showcase artefacts or traditions from Wesley College's past. They use the 'Remove Background' feature to highlight historical objects and add speech bubbles or labels to explain their significance."
       },
       {
-        "t": "Makey Makey + Sphero Indi",
-        "d": "Students work in teams through the Design Cycle to build a miniature 'museum exhibit' inside a shoebox or recycled container, representing a significant Wesley artefact or event. By integrating Makey Makey or Sphero Indi, they add interactive elements?such as triggering a sound, light, or movement when a visitor presses a button or places a figure?bringing their time capsule stories to life for a hands-on 'Museum Walk' showcase."
+        "t": "Book Creator",
+        "d": "Students collaborate to make an interactive digital book documenting their 'Wonder Walk' around campus. Each page features a photo of a plaque or artefact, student-drawn illustrations, and audio reflections comparing past and present."
+      },
+      {
+        "t": "iPad Camera app",
+        "d": "During the Wonder Walk, students use the iPad Camera app to capture images of plaques, statues, and artefacts. They then sequence these images in a digital timeline, adding voice notes to describe what each item reveals about Wesley's history."
+      },
+      {
+        "t": "Makerspace: Artefact Timeline Diorama",
+        "d": "Students build a physical timeline diorama using cardboard, recycled materials, and craft supplies. Each group selects a key artefact or event from Wesley's history, constructs a 3D model, and attaches a QR code linking to a student-created audio or video explanation."
       }
     ],
-    "audited": false,
-    "plannerText": "Students investigate the significance of evidence and artefacts at Wesley College, making connections between past and present through campus walks, guest speakers, excursions, and interviews. They document and reflect on changes over time, culminating in creative projects that showcase how personal and community history shapes the present.",
+    "audited": true,
+    "plannerText": "Students investigate the central idea 'Exploring the past helps us to understand the present' by engaging in activities such as a Wonder Walk to document historical artefacts around Wesley College, excursions to Como House, interviews with community members, and creating artefact-based projects. They compare past and present, sequence events, and reflect on how personal and local history shapes their current experiences.",
     "stemRebooted": true
   },
   {
@@ -2324,32 +2325,33 @@
     "lo": "How Australia and neighbouring regions define places; Australia's states/territories have unique identities; First Nations connections to Country",
     "s": [
       {
-        "t": "Merge Cubes + Book Creator",
-        "d": "Students create interactive 3D 'place cubes' using Merge Cubes to represent different Australian states, First Nations Countries, or neighbouring regions. Each face of the cube features student-created digital artefacts (photos, drawings, audio reflections) about how land and place are valued. Students then app smash by embedding their Merge Cube experiences into a Book Creator digital journal, adding reflections and poetry inspired by their explorations."
+        "t": "ClassVR & Merge Cubes",
+        "d": "Students use ClassVR headsets and Merge Cubes to explore interactive 3D maps of Australia, its states and territories, and significant First Nations sites. They can virtually 'hold' and examine artefacts or landscapes, then record short reflections on how different groups represent and value these places."
       },
       {
-        "t": "Wise Discussion Chatbots",
-        "d": "Learners engage with a teacher-created Wise Discussion Chatbot using the 'Character Interview' scenario, where the chatbot takes on the role of Uncle Archie, a First Nations Elder from the Kulin Nation. Students ask questions such as 'How do you feel connected to Country?' or 'Why are certain places sacred?' and record their insights. After the chat, students create a perspective summary comparing Uncle Archie's views with their own understanding of place."
+        "t": "Canva Digital Poetry Posters",
+        "d": "Students create visually striking digital posters in Canva that combine poetry, images, and maps to express how land and place are valued from different cultural perspectives. They can include lines about First Nations connections to Country and the unique identities of Australian states and territories."
       },
       {
-        "t": "Google Maps + Word Clouds ABCya",
-        "d": "Students investigate how different places are represented by exploring satellite and map views in Google Maps, zooming in on Australian states, territories, and First Nations Countries. They collect descriptive words and phrases about each region?s features, then use Word Clouds ABCya to visually represent the most significant ideas, creating vibrant word clouds that capture diverse perspectives on land and place."
+        "t": "Book Creator Interactive Atlases",
+        "d": "Using Book Creator, students design interactive digital atlases that showcase Australia's states, territories, and neighbouring countries. Each page can feature student-written facts, embedded audio reflections, and images comparing colonial and First Nations representations of place."
       },
       {
-        "t": "Adobe Express Podcasting",
-        "d": "Students script and record short audio interviews or poetry performances reflecting on how land and place are valued in their family, community, or a chosen region, using Adobe Express Podcasting (https://podcast.adobe.com). They can blend personal stories with researched facts, then share their podcasts with the class to spark discussion about cultural and historical perspectives."
+        "t": "Padlet Collaborative Map Wall",
+        "d": "Students contribute to a shared Padlet wall by pinning digital notes, photos, and links about places that are important to them or their families. They can annotate maps with personal stories, cultural connections, or historical facts, building a living digital tapestry of diverse perspectives on land and place."
       },
       {
-        "t": "Canva",
-        "d": "Students design visually rich digital posters or infographics in Canva that compare how land and place are represented in First Nations Australian perspectives versus contemporary state/territory boundaries. They can use Canva's 'Remove Background' feature to layer images, maps, and student artwork, making cultural and historical perspectives visible."
+        "t": "Minecraft: The Hall of Inventions",
+        "d": "Students explore the Hall of Inventions world and build digital representations of important Australian or First Nations inventions, landmarks, or cultural artefacts. They reflect on how these creations express the value and identity of different places. URL: https://education.minecraft.net/en-us/challenges/the-hall-of-inventions",
+        "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
       },
       {
-        "t": "Country Connections Interactive Story Path (iPads + Adobe Express Podcasting)",
-        "d": "Students work in teams to design and build a large, walkable floor map of Australia and its neighbouring regions using cardboard, fabric, recycled materials, and natural elements. On each state, territory, and First Nations Country, students craft physical landmarks and icons, then use iPads and Adobe Express Podcasting (https://podcast.adobe.com) to record short audio stories or poems reflecting the significance of each place. This hands-on, interactive project follows the Design Cycle: students inquire, ideate, create, test their interactive path, and reflect on how their work deepens understanding of land and place from multiple viewpoints."
+        "t": "Makerspace: Cardboard Topographic Maps",
+        "d": "In the Makerspace, students build layered cardboard topographic maps of Australia or a chosen region. Using recycled materials, they add features such as rivers, mountains, and significant cultural sites, then label and decorate to represent how different groups value and interpret the land."
       }
     ],
-    "audited": false,
-    "plannerText": "This unit explores how land and place are represented and valued in different ways, focusing on Australia's states, territories, First Nations Countries, and neighbouring regions. Students investigate cultural, historical, and geographical perspectives through mapping, poetry, research, and creative digital projects, with a strong emphasis on First Nations connections to Country and diverse ways of understanding place.",
+    "audited": true,
+    "plannerText": "Students investigate how land and place are represented and valued in different ways, focusing on Australia's states, territories, and neighbouring regions. They explore First Nations connections to Country, compare cultural and historical perspectives, and use maps, poetry, and artefacts to express diverse identities and relationships to place.",
     "stemRebooted": true
   },
   {
@@ -2544,32 +2546,33 @@
     "lo": "Reasons for exploration; How people have explored over time; Consequences of exploration",
     "s": [
       {
-        "t": "Sphero BOLT + Canva",
-        "d": "Transform your Year 4 explorers into robotic navigators! Students will program Sphero BOLT robots to retrace the journeys of famous explorers, navigating custom obstacle courses that represent real-world terrains?mountains, rivers, and deserts. They'll use coding to simulate challenges faced by explorers, such as changing directions to avoid 'storms' or 'discovering' new lands. After their robotic expeditions, students will use Canva to create dynamic digital presentations, showcasing their explorer's route, the obstacles overcome, and the impact of their journey on history. This hands-on, tech-powered adventure brings the spirit of exploration to life and deepens understanding of how exploration has evolved over time."
+        "t": "ClassVR & Merge Cubes",
+        "d": "Students use ClassVR headsets and Merge Cubes to virtually 'handle' historical artefacts, ancient navigation tools, or famous exploration sites. They can rotate, inspect, and annotate these objects, then record a short video reflection on how these discoveries changed our understanding of the world."
       },
       {
-        "t": "Merge Cubes + Book Creator",
-        "d": "Students create interactive 3D exploration artefacts using Merge Cubes, embedding digital content (audio, video, text) about famous explorers or key discoveries. They then app smash by documenting their process and reflections in a multimedia Book Creator journal, allowing peers to 'hold' and explore their artefacts virtually."
+        "t": "Minecraft: The Hall of Inventions",
+        "d": "Students research key inventions that enabled exploration (like the compass, sextant, or steam engine), then build their own 'missing' invention in Minecraft. They present their creation and explain how it could have changed the course of history.",
+        "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
       },
       {
-        "t": "Minecraft Education",
-        "d": "Students use the Minecraft Hall of Inventions lesson to investigate key innovations from history and how exploration led to new opportunities. They design and build their own invention inspired by a historical explorer or era, capturing screenshots and a short written explanation to reflect on their learning. https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
+        "t": "Canva Timelines",
+        "d": "Students collaboratively create interactive digital timelines in Canva, mapping out major global and Australian explorations. They embed images, short videos, and student voice recordings to bring each event to life."
       },
       {
-        "t": "Wise Discussion Chatbots",
-        "d": "Teachers create a Wise Discussion Chatbot using the Character Interview scenario, with the chatbot role as 'Captain James Cook, British navigator and explorer.' Students ask questions such as 'What motivated you to embark on your voyages?' and 'How did you overcome challenges at sea?' After the chat, students produce a perspective summary comparing Cook?s motivations and challenges to those of modern explorers."
+        "t": "Book Creator Digital Journals",
+        "d": "Each student maintains a digital 'Explorer's Journal' in Book Creator, documenting their research, reflections, and creative writing (such as historical narratives from a convict's perspective). They can include maps, photos, and voice notes."
       },
       {
-        "t": "Padlet",
-        "d": "Classes collaborate on a live Padlet 'Exploration Wall', where students post research, questions, and multimedia findings about different explorers, mapping connections between historical events, motivations, and outcomes in real time."
+        "t": "Google Maps Story Mapping",
+        "d": "Students use Google Maps to plot the journeys of famous explorers, adding custom pins with text, images, and links to student-created content. They compare historical routes with modern geography to understand changes over time."
       },
       {
-        "t": "Sphero Indi + STEM Design Cycle",
-        "d": "Students work in teams to design and build a 'Time Traveler's Exploration Pod'?a creative, transportable model vehicle inspired by both historical and futuristic exploration methods. They integrate programmable Sphero Indi robots as the 'engine', coding routes that represent a famous explorer's journey mapped out on a large collaborative floor map. Throughout the Design Cycle, students ideate, sketch, prototype, test, and refine both their vehicle and code, reflecting on how exploration tools have evolved and the obstacles faced across time."
+        "t": "Physical Makerspace: Explorer Navigation Tools",
+        "d": "In the Makerspace, students design and build physical models of historical navigation tools (such as compasses, sextants, or telescopes) using cardboard, recycled materials, string, and bottle caps. They test their creations by simulating navigation challenges around the school grounds, reflecting on the challenges faced by early explorers."
       }
     ],
-    "audited": false,
-    "plannerText": "This unit immerses students in the concept of exploration, focusing on why people explore, how exploration has changed over time, and the consequences of these journeys. Students investigate historical and modern explorers, engage in mapping and narrative writing, and present their findings through a variety of digital and creative formats.",
+    "audited": true,
+    "plannerText": "This unit explores the reasons for exploration, how people have explored over time, and the consequences of exploration. Students investigate historical and modern explorations, map journeys, research explorers, and create historical narratives, with a strong focus on inquiry, mapping, and presenting research findings.",
     "stemRebooted": true
   },
   {
@@ -3366,32 +3369,32 @@
     "lo": "How technology has changed over time; The purpose and significance of artefacts; How the past connects to the present and future",
     "s": [
       {
-        "t": "Delightex + Adobe Express Podcasting",
-        "d": "Students co-create a vibrant virtual 'Museum of Time' in Delightex, uploading photos of family artefacts and arranging them on a collaborative digital timeline. Each student records a short audio story about their artefact?s significance using Adobe Express Podcasting (https://podcast.adobe.com), then embeds the podcast clips alongside their images, bringing personal and cultural histories to life with voice and visuals."
-      },
-      {
-        "t": "ChatterPix Kids",
-        "d": "Learners snap photos of old and new artefacts?like rotary phones, favourite toys, or dance shoes?and use ChatterPix Kids to animate them, giving each object a playful voice. The artefacts 'speak' about their past, present, or imagined future, sparking laughter and deepening understanding of how everyday items connect generations."
-      },
-      {
-        "t": "Google Maps + Field Guide to Victoria",
-        "d": "Students plot their family origins and local St Kilda landmarks on Google Maps, then use Field Guide to Victoria to research and add fun facts or stories about each location. Together, they create a living map that traces family journeys, highlights cultural traditions, and predicts how their neighbourhood might change in the future."
+        "t": "Canva",
+        "d": "Students design a 'Future Family Artefact' by combining photos of their own family with imaginative digital drawings of what family life or technology might look like in the future. They use Canva's remove background feature to blend old and new, then present their artefact to the class, explaining its significance and connection to their own heritage."
       },
       {
         "t": "Seesaw",
-        "d": "Students document their learning journey by uploading photos of timelines, artefacts, and family trees, and record voice memos reflecting on how their family and technology have changed over time. The class can comment on each other's posts, building a shared digital archive of personal and community history."
+        "d": "Students create a digital timeline by uploading photos of family artefacts, old technology, and their own drawings, then record voice explanations about how each item connects the past, present, and future. This allows for visual, low-text storytelling and personal reflection."
       },
       {
-        "t": "PicCollage",
-        "d": "Students create a colourful digital timeline in PicCollage by arranging photos of artefacts, family tradition drawings, and images of evolving technology. They add simple captions and stickers to show how history and culture connect the past, present, and future, making their timelines visually engaging and easy to share with the class."
+        "t": "Book Creator",
+        "d": "Each student makes a digital 'My Family Through Time' book, adding photos, drawings, and voice recordings to document family traditions, artefacts, and predictions for the future. The book can include a page for each generation, supporting multimodal expression."
       },
       {
-        "t": "iPad (App Smash with Freeform)",
-        "d": "Students use the Design Cycle to create a 'Family Time Capsule Museum' exhibit: they sketch their chosen artefact or tradition in Freeform, then build a 3D model using craft materials. Using iPads, they record a short video explanation about their artefact?s history, generate a QR code linking to the video, and attach it to their model?culminating in a collaborative museum timeline that blends hands-on making, digital storytelling, and creative future predictions."
+        "t": "iPad Camera app",
+        "d": "Students use the iPad Camera app to photograph artefacts or family items brought from home, then use the markup tool to annotate and highlight features that show change over time. They can share their annotated images in a class Padlet or Seesaw journal."
+      },
+      {
+        "t": "Padlet",
+        "d": "The class collaborates on a visual Padlet timeline, pinning images and short audio clips about artefacts, dances, or technologies from different eras. Students sort and group items by decade or theme, visually mapping connections between history, culture, and their own lives."
+      },
+      {
+        "t": "Physical Makerspace Project",
+        "d": "Students build a 'Time Capsule' using recycled materials, cardboard, and craft supplies. Each child selects or creates a small artefact (e.g., a drawing, a model of a family item, or a written memory) to include. The class discusses what future students might learn about their lives from these objects, then seals the capsule for a future opening."
       }
     ],
-    "audited": false,
-    "plannerText": "Students explore how history and culture connect the past, present, and future by investigating artefacts, creating timelines, comparing family traditions, and predicting future changes. Activities include sorting photos, discussing technological evolution, and designing future devices, with strong emphasis on visual, hands-on, and collaborative learning.",
+    "audited": true,
+    "plannerText": "Students explore how history and culture connect the past, present, and future by investigating family artefacts, timelines, and traditions. Activities include sorting photos and objects on timelines, comparing dances and technologies from different eras, and predicting future changes. Students share personal stories, create visual displays, and reflect on how their own heritage shapes their identity.",
     "stemRebooted": true
   },
   {
