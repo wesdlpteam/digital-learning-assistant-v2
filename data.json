@@ -4115,12 +4115,13 @@
         "d": "Guide students to create dynamic infographics or short video stories that visually unpack a stereotype or social norm, using Adobe Express's animation and design features to communicate powerful messages about overcoming prejudice."
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "STEM Design Cycle Challenge: Students use the Design Cycle to prototype a robotic 'Expression Machine' with Lego Spike Prime that visually represents breaking free from a chosen stereotype (e.g., a robot that changes its appearance or movement to symbolize self-expression beyond social norms). They document their process and present their design thinking journey to the class."
+        "t": "Identity Automata: Expressive Self-Bots",
+        "d": "Students will use the Design Cycle to create 'Expressive Self-Bots': small, motorized automata that physically represent aspects of their identities and challenge social stereotypes. First, students brainstorm and sketch symbols, movements, or features that reflect their unique personalities and how they defy or reinterpret social norms. Next, they prototype automata using cardboard, recycled materials, craft sticks, and simple mechanisms (cams, levers, pulleys). Students then integrate micro:bit or Hummingbird Bit controllers and basic servo motors to animate their creations (e.g., waving arms, rotating faces, changing expressions). They program the micro:bit to trigger different movements or LED colors that symbolize self-expression or breaking a stereotype. Each automaton includes a 'story tag'?a QR code linking to a short video (recorded on iPads) where the student explains the meaning behind their design. The final gallery features a vibrant, moving collection of self-bots, each a tangible, tech-enhanced reflection on identity and expression."
       }
     ],
     "audited": true,
-    "plannerText": "This unit engages Year 5 students in understanding how social norms and stereotypes influence self-expression. Through activities such as gallery walks, scenario analysis, research on famous figures, and multimedia presentations, students critically examine and creatively respond to issues of prejudice and identity, culminating in both digital and physical expressions of learning."
+    "plannerText": "This unit engages Year 5 students in understanding how social norms and stereotypes influence self-expression. Through activities such as gallery walks, scenario analysis, research on famous figures, and multimedia presentations, students critically examine and creatively respond to issues of prejudice and identity, culminating in both digital and physical expressions of learning.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -4151,12 +4152,13 @@
         "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
       },
       {
-        "t": "Makey Makey",
-        "d": "Using the Design Cycle, students prototype and build interactive, physical 'point of sale' systems for their classroom businesses with Makey Makey and everyday materials. They design, test, and refine their devices to simulate real-world transactions, integrating digital and physical elements for a STEM-rich marketplace experience."
+        "t": "Market Movers: Automated Pop-Up Shop Challenge",
+        "d": "Students work in teams to design, build, and prototype a miniature pop-up shop that physically opens, displays products, and 'interacts' with customers using both crafted materials and basic robotics. Using cardboard, recycled packaging, fabric scraps, and art supplies, students construct the shop structure and product displays. They then integrate programmable microcontrollers (e.g., Micro:bit or Makey Makey) and simple motors or servos to automate features such as opening doors, moving shelves, or activating a spinning sign when a button or sensor is triggered. Students must apply the Design Cycle: empathize with customers by researching real-world shop designs, define their shop's purpose, ideate unique interactive features, prototype with both physical and digital elements, test for reliability and appeal, and iterate based on peer feedback. Each team presents their pop-up shop in a simulated class marketplace, demonstrating both the physical build and the tech-powered customer experience."
       }
     ],
     "audited": true,
-    "plannerText": "Students investigate how goods and services are exchanged within a marketplace by simulating a class economy, creating their own businesses, applying for jobs, managing budgets with spreadsheets, and engaging in trading sessions. They explore concepts such as supply and demand, ethics, and consumer rights through collaborative projects, role play, and digital tools, culminating in a hands-on, student-driven marketplace experience."
+    "plannerText": "Students investigate how goods and services are exchanged within a marketplace by simulating a class economy, creating their own businesses, applying for jobs, managing budgets with spreadsheets, and engaging in trading sessions. They explore concepts such as supply and demand, ethics, and consumer rights through collaborative projects, role play, and digital tools, culminating in a hands-on, student-driven marketplace experience.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -4187,12 +4189,13 @@
         "d": "Students use Forms to gather feedback from peers, teachers, and families on their invention prototypes, analysing the data to refine their designs and better meet the needs of their target audience."
       },
       {
-        "t": "3D Printers",
-        "d": "Using the Design Cycle, students physically prototype their SDG-inspired invention with 3D printers. They iterate based on feedback, present their models at the Future Thinkers' Forum, and reflect on how their design process mirrors real-world innovation responding to societal needs."
+        "t": "SDG Smart Playground Prototypes",
+        "d": "Students work in teams to design and build scale-model playgrounds that creatively solve a current societal challenge linked to a chosen Sustainable Development Goal (SDG)?for example, accessibility, clean energy, or water conservation. Using recycled cardboard, wood, fabric, and crafting supplies, each group physically constructs their playground model. They deeply integrate tech by embedding simple programmable elements using micro:bit controllers (or similar age-appropriate tech) to power features such as solar-powered swings, water-saving fountains, or interactive accessibility ramps. Students code these features to demonstrate real-world problem-solving (e.g., a micro:bit sensor that counts playground visitors to trigger a recycling game). The project follows the full Design Cycle: empathising with users, ideating, prototyping, testing, and refining. Teams present their playgrounds and explain how their tech-physical integration addresses their selected SDG at the Future Thinkers' Forum."
       }
     ],
     "audited": true,
-    "plannerText": "Students investigate how inventions and initiatives are responses to changing societal needs, exploring past and present innovations, analysing how inventions evolve, and using the design process to create their own SDG-inspired prototypes. Activities include research, science lab experiments, collaborative design thinking, and presenting inventions at the Future Thinkers' Forum."
+    "plannerText": "Students investigate how inventions and initiatives are responses to changing societal needs, exploring past and present innovations, analysing how inventions evolve, and using the design process to create their own SDG-inspired prototypes. Activities include research, science lab experiments, collaborative design thinking, and presenting inventions at the Future Thinkers' Forum.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -4223,12 +4226,13 @@
         "d": "Students design visually impactful conservation campaign posters or infographics, using Canva's templates and 'Remove Background' tool to highlight local stewardship efforts and Indigenous perspectives. These can be shared digitally or displayed around the school to inspire action."
       },
       {
-        "t": "3D Printers",
-        "d": "Using the Design Cycle, students prototype and 3D print models of sustainable garden beds or habitat features for the school grounds. They research native species, design for biodiversity, and present their prototypes as part of a stewardship action plan, connecting digital design with real-world environmental impact."
+        "t": "Guardians of the Grove: Interactive Habitat Guardians",
+        "d": "Students work in teams to design and build a large, collaborative 3D model of a local ecosystem (such as a bushland, wetland, or coastal area) using recycled materials, cardboard, natural objects, and clay. Each team chooses a native species (plant or animal) as their 'guardian' and researches its role in the ecosystem and connections to Indigenous land management. Using Sphero Indi robots, students craft custom, removable 'guardian shells' (decorated with natural and cultural symbols) to place atop the robots. They program the Indis to patrol or interact with their habitats, simulating stewardship actions (e.g., dispersing seeds, removing invasive species, activating 'rain' with water droppers). The project culminates in an interactive showcase where visitors can trigger stewardship actions by moving the robots through the model, with student-designed info cards and QR codes linking to digital reflections and research."
       }
     ],
     "audited": true,
-    "plannerText": "This unit immerses students in the concept of stewardship, exploring both Indigenous and non-Indigenous connections to land, conservation, and environmental responsibility. Activities include mapping world biomes, writing emails to local trees, investigating land management practices, and hands-on stewardship projects in the school garden, all with a strong focus on action and student agency."
+    "plannerText": "This unit immerses students in the concept of stewardship, exploring both Indigenous and non-Indigenous connections to land, conservation, and environmental responsibility. Activities include mapping world biomes, writing emails to local trees, investigating land management practices, and hands-on stewardship projects in the school garden, all with a strong focus on action and student agency.",
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
