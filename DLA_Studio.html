@@ -13251,6 +13251,219 @@ Return ONLY JSON:
 })();
 /* ===== end DLA hotfix ===== */
 
+
+/* ===== DLA hotfix: responsive St Kilda Road Year 6 regeneration ===== */
+(function(){
+  const STK_Y6_RESPONSIVE_PATCH_VERSION = '2026-05-04-stk-y6-responsive-v2';
+
+  function rText_(v){ return String(v == null ? '' : v).replace(/\s+/g,' ').trim(); }
+  function rEsc_(v){
+    if(typeof esc === 'function') return esc(v);
+    return rText_(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function rYield_(){ return new Promise(resolve => setTimeout(resolve, 0)); }
+  function rSleep_(ms){ return new Promise(resolve => setTimeout(resolve, ms)); }
+  function rCampusIsStKilda_(ca){ return /st\s*kilda/i.test(String(ca || '')); }
+  function rIsTargetEntry_(e){ return e && /^year\s*6$/i.test(rText_(e.yl)) && rCampusIsStKilda_(e.ca); }
+  function rTargetsStKildaYear6_(instruction){
+    const t = String(instruction || '').toLowerCase();
+    return /(st\s*kilda|skr)/.test(t) && /year\s*6/.test(t) && /(line|loi|inquiry|regenerate|lesson|suggestion|quality|weak|detail|planner|match|align|fix)/.test(t);
+  }
+  function rSplitLooseLoi_(lo){
+    let s = rText_(lo)
+      .replace(/\u00a0/g,' ')
+      .replace(/â\s*[€¢·]/gi, '; ')
+      .replace(/Â\s*[•·]/gi, '; ')
+      .replace(/ï\s*‚\s*·/gi, '; ')
+      .replace(/[\u2022\u2023\u25E6\u2043\u2219\u00B7\u25CF\u25AA\u25AB\u25A0\u25A1\u25C6\u25C7\u25B8\u25B6\uF0B7]+/g, '; ')
+      .replace(/\s*[|¦§]+\s*/g, '; ')
+      .replace(/\s*[ ]+\s*/g, '; ')
+      .replace(/\s+/g,' ')
+      .trim();
+    function cleanPart(x){
+      return rText_(x)
+        .replace(/^(?:\d+[.)]|LOI\s*\d+[:.)-]?|Line\s+of\s+Inquiry\s*\d+[:.)-]?)\s*/i,'')
+        .replace(/^[\-–—:;,.\s]+|[\-–—:;,.\s]+$/g,'')
+        .trim();
+    }
+    let parts = s.split(/\s*;\s*/).map(cleanPart).filter(Boolean);
+    if(parts.length <= 1){
+      parts = s.split(/\s+(?=(?:\d+[.)]|LOI\s*\d+|Line\s+of\s+Inquiry\s*\d+))/i).map(cleanPart).filter(Boolean);
+    }
+    if(parts.length <= 1){
+      parts = s.split(/\s+(?=(?:How|Why|The ways?|Ways?|Factors?|The impact|Impact|Connections?|Relationships?|Responsibilities?|Perspectives?|Systems?|Strategies?|Changes?|Different ways?|Our role|People can|People use|Communities?|Environments?)\b)/g).map(cleanPart).filter(Boolean);
+    }
+    const seen = new Set();
+    parts = parts.filter(p => {
+      const key = p.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+      if(!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    return parts.length > 1 ? parts.slice(0,4).join('; ') : s;
+  }
+  function rSugTool_(s){ try{ return sugTool(s); }catch(e){ return s && (s.t || s.tool || s.name) || ''; } }
+  function rSugDesc_(s){ try{ return sugDesc(s); }catch(e){ return s && (s.d || s.desc || s.description) || ''; } }
+  function rNormaliseSug_(s){
+    const out = Object.assign({}, s || {});
+    let tool = rText_(rSugTool_(out));
+    let desc = rText_(rSugDesc_(out));
+    try{ if(typeof normaliseToolName === 'function') tool = normaliseToolName(tool); }catch(e){}
+    if(/cospaces/i.test(tool)) tool = 'Delightex';
+    desc = desc.replace(/CoSpaces/gi, 'Delightex');
+    if(/google maps/i.test(tool) && /annotat|pin|pins|label|layer|overlay|plot|custom map|map product|gis|route map|data map/i.test(desc)){
+      tool = 'National Geographic MapMaker';
+      desc = desc.replace(/Google Maps/gi, 'National Geographic MapMaker');
+    }
+    if(/google maps/i.test(tool) && !/street view|ground-level|ground level|virtual observation|360/i.test(desc)){
+      desc = desc.replace(/^Students\s+/i, 'Students use Street View in Google Maps to ');
+    }
+    out.t = tool;
+    out.d = desc;
+    if(out.url) out.url = rText_(out.url).replace(/watr-humans-and-elephants/gi, 'water-humans-and-elephants');
+    return out;
+  }
+  function rQualityRules_(entry, cleanLo){
+    return `Write practical, teacher-ready Year 6 suggestions.
+Each suggestion must include: what students do, what they make, and the unit link.
+Use vocabulary from these cleaned Lines of Inquiry: ${cleanLo}
+Avoid generic phrases like "deepen understanding", "explore the unit" or "use technology with purpose".
+Google Maps may ONLY be used for Street View / ground-level virtual observation.
+For annotated maps, labels, layers, plotted data or map products, use National Geographic MapMaker.
+Use Delightex, not CoSpaces.
+Suggestion 6 must be a hands-on STEM Design Cycle idea.`;
+  }
+  async function rCallJson_(prompt){
+    const raw = await callAI([{role:'user',parts:[{text:prompt}]}], null, OPENAI_MODEL || OPENAI_FAST_MODEL);
+    const clean = String(raw || '').replace(/```json|```/g,'').trim();
+    const si = clean.indexOf('{'), ei = clean.lastIndexOf('}');
+    if(si === -1 || ei === -1) throw new Error('No JSON object returned');
+    return JSON.parse(clean.slice(si, ei+1));
+  }
+  async function rBuildPatchForEntry_(entryIdx){
+    const entry = DATA[entryIdx];
+    const oldLo = rText_(entry.lo || '');
+    const cleanLo = rSplitLooseLoi_(oldLo);
+    const constraints = (typeof buildToolConstraints === 'function') ? buildToolConstraints(entry.yl) : '';
+    let libraryContext = '';
+    try{ libraryContext = (typeof buildLibraryContextCompact === 'function') ? buildLibraryContextCompact('minecraft') : ''; }catch(e){}
+    const prompt = `You are repairing one Wesley College DLA unit record.
+
+Unit: ${entry.ca} | ${entry.yl} | ${entry.th}
+Central idea: ${entry.ci || ''}
+Current Lines of Inquiry: ${oldLo}
+Clean separated Lines of Inquiry to use: ${cleanLo}
+Planner summary: ${entry.plannerText ? (typeof compactForPrompt === 'function' ? compactForPrompt(entry.plannerText, 1200) : String(entry.plannerText).slice(0,1200)) : ''}
+
+Task:
+1. Return the cleaned Lines of Inquiry as 2-4 separate lines, joined by semicolons.
+2. Regenerate exactly 6 practical, detailed technology suggestions for this unit.
+
+${constraints}
+${libraryContext}
+${rQualityRules_(entry, cleanLo)}
+
+Return ONLY JSON:
+{"lo":"Line 1; Line 2; Line 3","s":[{"t":"Tool","d":"2-3 practical sentences","url":"optional direct lesson URL"}]}`;
+    const parsed = await rCallJson_(prompt);
+    const newLo = rSplitLooseLoi_(parsed.lo || cleanLo);
+    let sugs = (Array.isArray(parsed.s) ? parsed.s : []).map(rNormaliseSug_).filter(s => rSugTool_(s));
+    if(sugs.length < 6) throw new Error('Only '+sugs.length+' suggestions returned');
+    sugs = sugs.slice(0,6);
+    try{ if(typeof dqPatchMinecraftLink_ === 'function') sugs = sugs.map(dqPatchMinecraftLink_); }catch(e){}
+    return {entryIdx, oldLo, newLo, oldSugs:getSugs(entry), newSugs:sugs};
+  }
+  function rShowCompactPopup_(patches){
+    const existing = document.getElementById('stk-y6-responsive-overlay');
+    if(existing) existing.remove();
+    const overlay = document.createElement('div');
+    overlay.id = 'stk-y6-responsive-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,.84);display:flex;align-items:center;justify-content:center;padding:20px';
+    const modal = document.createElement('div');
+    modal.style.cssText = 'width:min(980px,96vw);max-height:90vh;overflow:auto;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:0 30px 80px rgba(0,0,0,.55)';
+    modal.innerHTML = `<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div style="font-size:24px">⚡</div><div><div style="font-size:19px;font-weight:900">Review St Kilda Road Year 6 fixes</div><div style="font-size:13px;color:var(--dim)">${patches.length} unit${patches.length!==1?'s':''} prepared in responsive mode.</div></div><button class="btn-sm" id="stkyr-close" style="margin-left:auto">✕</button></div>`;
+    patches.forEach((p,idx)=>{
+      const e = DATA[p.entryIdx] || {};
+      modal.innerHTML += `<div style="background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:13px;margin:10px 0"><div style="font-size:14px;font-weight:900;color:var(--gold);margin-bottom:8px">${idx+1}. ${rEsc_(e.ca)} · ${rEsc_(e.yl)} · ${rEsc_(e.th)}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px"><div style="font-size:12px;color:#bbb;background:#1a0808;border-radius:8px;padding:8px"><b style="color:#ff9999">Current LOIs</b><br>${rEsc_(p.oldLo)}</div><div style="font-size:12px;color:#ddd;background:#081808;border-radius:8px;padding:8px"><b style="color:var(--lime)">Cleaned LOIs</b><br>${rEsc_(p.newLo).replace(/;\s*/g,'<br>')}</div></div><details><summary style="font-size:12px;color:var(--lime);font-weight:800;cursor:pointer">Preview six regenerated suggestions</summary><div style="margin-top:8px">${p.newSugs.map((s,i)=>`<div style="font-size:12px;color:#bbb;border-top:1px solid #333;padding:7px 0"><b style="color:var(--lime)">${i+1}. ${rEsc_(rSugTool_(s))}</b><br>${rEsc_(rSugDesc_(s)).slice(0,360)}${s.url?`<br><span style="color:var(--gold)">${rEsc_(s.url)}</span>`:''}</div>`).join('')}</div></details></div>`;
+    });
+    modal.innerHTML += `<div style="display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0;background:var(--card);padding-top:12px"><button class="btn-sm" id="stkyr-cancel">Cancel</button><button class="btn-pri" id="stkyr-apply">Apply ${patches.length} change${patches.length!==1?'s':''}</button></div>`;
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    document.getElementById('stkyr-close').onclick = document.getElementById('stkyr-cancel').onclick = () => overlay.remove();
+    document.getElementById('stkyr-apply').onclick = async function(){
+      this.disabled = true;
+      this.textContent = 'Applying…';
+      for(let i=0;i<patches.length;i++){
+        const p = patches[i];
+        const e = DATA[p.entryIdx];
+        if(!e) continue;
+        e.lo = p.newLo;
+        e.s = p.newSugs.map(rNormaliseSug_);
+        try{
+          if(typeof markHumanVerifyDirtyIfNeeded_ === 'function') markHumanVerifyDirtyIfNeeded_(p.entryIdx, 'St Kilda Road Year 6 lessons were regenerated after verification.');
+          else { e.humanVerified = false; e.verified = false; }
+        }catch(err){ e.humanVerified = false; e.verified = false; }
+        if(i % 2 === 0) await rYield_();
+      }
+      try{ await saveToDrive(); }
+      catch(err){ setStatus('Save failed: '+(err.message || err), 'error'); return; }
+      overlay.remove();
+      try{ if(CURRENT_ENTRY_IDX != null) renderEntry(CURRENT_ENTRY_IDX); }catch(e){}
+      try{ if(PREV_TAB === 'browse') renderBrowse?.(); }catch(e){}
+      try{ renderDashboard?.(); }catch(e){}
+      setStatus('St Kilda Road Year 6 fixes applied ✓');
+    };
+  }
+  async function rRunResponsiveStKildaFlow_(instruction){
+    if(typeof ensureLibrariesLoadedForAI === 'function') await ensureLibrariesLoadedForAI();
+    const targets = (DATA || []).map((e,i)=>({e,i})).filter(({e}) => rIsTargetEntry_(e));
+    if(!targets.length){ bulkChatAddMessage?.('assistant', 'I could not find any St Kilda Road Year 6 units in the currently loaded data.'); return true; }
+    bulkChatAddMessage?.('assistant', `I found ${targets.length} St Kilda Road Year 6 unit${targets.length!==1?'s':''}. I’ll process them one at a time so the page stays responsive.`);
+    const patches = [];
+    for(let n=0; n<targets.length; n++){
+      setStatus(`Preparing St Kilda Road Year 6 ${n+1}/${targets.length}…`, 'loading');
+      bulkChatAddMessage?.('assistant', `Working on ${n+1}/${targets.length}: ${targets[n].e.th}`);
+      await rYield_();
+      try{ patches.push(await rBuildPatchForEntry_(targets[n].i)); }
+      catch(err){ bulkChatAddMessage?.('assistant', `⚠️ Could not prepare ${targets[n].e.th}: ${err.message || err}`); }
+      await rSleep_(200);
+    }
+    if(!patches.length){ setStatus('No St Kilda Road Year 6 fixes could be prepared', 'error'); return true; }
+    bulkChatAddMessage?.('assistant', `✅ Prepared ${patches.length} St Kilda Road Year 6 fix${patches.length!==1?'es':''} for review.`);
+    rShowCompactPopup_(patches);
+    setStatus('St Kilda Road Year 6 review ready');
+    return true;
+  }
+
+  // This wrapper is intentionally installed after the heavier quality wrapper.
+  // It intercepts the same request first, avoids the heavy second-pass repair loop,
+  // and keeps the browser responsive.
+  if(typeof startBulkAnalysis === 'function' && !window.__DLA_STK_Y6_RESPONSIVE_START_WRAPPED){
+    window.__DLA_STK_Y6_RESPONSIVE_START_WRAPPED = true;
+    const previousStartBulkAnalysis = startBulkAnalysis;
+    startBulkAnalysis = window.startBulkAnalysis = async function(){
+      const instruction = (typeof bulkChatEffectiveInstruction_ === 'function') ? bulkChatEffectiveInstruction_(bulkChatContext.rawInstruction) : (bulkChatContext.rawInstruction || '');
+      if(rTargetsStKildaYear6_(instruction)){
+        try{
+          bulkChatState = 'analysing';
+          hideReasoningSteps?.();
+          await rRunResponsiveStKildaFlow_(instruction);
+          bulkChatState = 'done';
+          return;
+        }catch(err){
+          hideReasoningSteps?.();
+          bulkChatState = 'idle';
+          bulkChatAddMessage?.('assistant', '⚠️ I hit an error while preparing the responsive St Kilda Road Year 6 fixes: ' + (err.message || err));
+          setStatus('St Kilda Road Year 6 responsive flow failed: ' + (err.message || err), 'error');
+          return;
+        }
+      }
+      return previousStartBulkAnalysis.apply(this, arguments);
+    };
+  }
+  console.log('[DLA PATCH] Responsive St Kilda Road Year 6 regeneration installed', STK_Y6_RESPONSIVE_PATCH_VERSION);
+})();
+/* ===== end DLA hotfix ===== */
 </script>
 </body>
 </html>
