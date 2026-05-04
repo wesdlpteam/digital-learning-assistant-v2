@@ -1574,4 +1574,85 @@ btn.classList.add('voted');
 var DOCS={};
 DOCS["doc_cser_microbit"]={"n":"CSER Lesson Plan — Build a Sensor(y) Smart Garden.pdf","m":"application/pdf","url":"doc_cser_microbit.pdf"};
 DOCS["doc_rubbish_audit"]={"n":"DT Hub — Rubbish Recording and Reduction Lesson Plan.docx","m":"application/vnd.openxmlformats-officedocument.wordprocessingml.document","url":"doc_rubbish_audit.docx"};
+
+
+/* ===== DLA teacher hotfix: Street View, MapMaker and Delightex naming ===== */
+(function(){
+  const NATGEO_TOOL = 'National Geographic MapMaker';
+  const NATGEO_URL = 'https://education.nationalgeographic.org/resource/mapmaker/';
+  function k_(s){return String(s||'').toLowerCase().replace(/[’']/g,'').trim();}
+  function isGoogleMaps_(t){return /^google maps$/i.test(String(t||'').trim());}
+  function isMapMaker_(t){const k=k_(t); return k==='national geographic mapmaker'||k==='national geographic map maker'||k==='nat geo mapmaker'||k==='nat geo map maker'||k==='mapmaker'||k==='map maker';}
+  function text_(s){return String(s||'').replace(/\bDelightex\s*\(\s*CoSpaces\s*\)/gi,'Delightex').replace(/\bCoSpaces\s*\(\s*Delightex\s*\)/gi,'Delightex').replace(/\bCoSpaces\b/gi,'Delightex').replace(/\bCoSpace\b/gi,'Delightex').trim();}
+  function annotatedMap_(d){return /\b(annotat|label|layer|data layer|custom map|map maker|mapmaker|gis|plot data|overlay|thematic map|spatial data)\b/i.test(String(d||'')) && !/street\s*view/i.test(String(d||''));}
+  function sanitiseSug_(s){
+    if(!s) return s;
+    const out=Object.assign({},s);
+    let tool=text_(out.t||out.tool||out.name||'');
+    let desc=text_(out.d||out.desc||out.description||'');
+    if(isMapMaker_(tool)) tool=NATGEO_TOOL;
+    if(/cospaces/i.test(tool)) tool='Delightex';
+    if(isGoogleMaps_(tool) && annotatedMap_(desc)) tool=NATGEO_TOOL;
+    if(isGoogleMaps_(tool) && !/street\s*view/i.test(desc)) desc += ' Students use Street View to observe ground-level evidence, compare places and gather notes that connect to the unit.';
+    if(tool===NATGEO_TOOL){
+      desc=desc.replace(/\bGoogle Maps\b/gi,NATGEO_TOOL).replace(/\bStreet View\b/gi,'map layers');
+      if(!/mapmaker|map maker|layer|annotat|label|gis/i.test(desc)) desc += ' Students add labels, layers or spatial evidence to communicate their thinking clearly.';
+    }
+    out.t=tool; out.d=desc;
+    return out;
+  }
+  function sanitiseData_(){
+    try{ if(!Array.isArray(D)) return; D.forEach(u=>{ if(Array.isArray(u.s)) u.s=u.s.map(sanitiseSug_); }); }catch(e){}
+  }
+
+  // Add launch links if the live file has the TU lookup table.
+  try{
+    if(typeof TU==='object'){
+      TU[NATGEO_TOOL]=NATGEO_URL;
+      TU['National Geographic Map maker']=NATGEO_URL;
+      TU['National Geographic Map Maker']=NATGEO_URL;
+      TU['Delightex']='https://www.delightex.com/';
+      TU['Delightex (CoSpaces)']='https://www.delightex.com/';
+    }
+  }catch(e){}
+
+  // Add clear teacher how-to support for the new/renamed tools.
+  try{
+    if(typeof HT==='object'){
+      HT[NATGEO_TOOL]='<ol><li>Open <b>National Geographic MapMaker</b>.</li><li>Choose a base map or starter map that matches the inquiry.</li><li>Turn on relevant <b>map layers</b> such as places, environments, data or human features.</li><li>Students add labels, notes or map evidence to show what they notice.</li><li>They compare patterns and explain how the map evidence connects to the unit.</li><li>Share the map link or capture screenshots for the final explanation.</li></ol><div class="sg-howto-tip">Tip: Use MapMaker when students need annotated maps, layers or mapped evidence. Use Google Maps only for Street View observation.</div>';
+      HT['Google Maps']='<ol><li>Open <b>Google Maps</b> and search for the place you want students to explore.</li><li>Drag the yellow <b>Street View</b> person onto a road or blue-highlighted path.</li><li>Students move through the location at ground level and observe visible evidence.</li><li>Ask students to capture notes about what they see, such as land use, buildings, transport, environment or community features.</li><li>Students compare two places using Street View evidence.</li><li>They use their observations in a short explanation, discussion or reflection.</li></ol><div class="sg-howto-tip">Tip: For annotated maps or data layers, use National Geographic MapMaker instead.</div>';
+      HT['Delightex']='<ol><li>Open <b>Delightex</b> and create a new 3D or VR scene.</li><li>Choose an environment that suits the unit context.</li><li>Add objects, characters, labels and narration to build the scene.</li><li>Use visual coding to animate objects or create simple interactions.</li><li>Preview the scene and refine it based on peer feedback.</li><li>Share the finished world as a link or view it in VR with teacher guidance.</li></ol><div class="sg-howto-tip">Tip: Delightex is the current name for what many teachers used to know as CoSpaces.</div>';
+      HT['Delightex (CoSpaces)']=HT['Delightex'];
+    }
+  }catch(e){}
+
+  if(typeof gA==='function'){
+    const oldGA=gA;
+    gA=function(t,d){
+      t=text_(t); d=text_(d);
+      if(isGoogleMaps_(t)) return 'Students use Street View to make careful ground-level observations and compare real places connected to the unit.';
+      if(isMapMaker_(t) || t===NATGEO_TOOL) return 'Students use map layers, labels and spatial evidence to explain patterns and connections in the world.';
+      if(/cospaces/i.test(t)) t='Delightex';
+      return oldGA.call(this,t,d);
+    };
+  }
+  if(typeof gHow==='function'){
+    const oldGHow=gHow;
+    gHow=function(t,d){
+      t=text_(t); d=text_(d);
+      if(isGoogleMaps_(t)) return {steps:['Open Google Maps and search for the location.','Drag the yellow Street View person onto a street or blue-highlighted path.','Students move through the place at ground level and record what they notice.','Compare two places using visible evidence from Street View.','Use screenshots or notes in a short class explanation.'],tip:'For annotated maps, layers or plotted data, use National Geographic MapMaker instead.'};
+      if(isMapMaker_(t)||t===NATGEO_TOOL) return {steps:['Open National Geographic MapMaker.','Choose a relevant base map or starter map.','Turn on useful layers connected to the inquiry.','Students add labels, notes or spatial evidence.','Students explain the patterns or connections their map shows.','Share the map link or use screenshots in the final product.'],tip:'MapMaker is best for annotated maps, map layers and GIS-style evidence.'};
+      if(/cospaces/i.test(t)) t='Delightex';
+      return oldGHow.call(this,t,d);
+    };
+  }
+  if(typeof R==='function'){
+    const oldR=R;
+    R=function(){ sanitiseData_(); return oldR.apply(this,arguments); };
+  }
+  setTimeout(sanitiseData_,0);
+})();
+/* ===== end DLA teacher hotfix ===== */
+
+
 </script>
