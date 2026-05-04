@@ -4313,39 +4313,12 @@
     "th": "How We Express Ourselves",
     "ci": "Understanding global issues and using effective communication empowers us to raise awareness and inspire action.",
     "lo": "Global issues are caused by interconnected factors that require collective solutions; Media presentations can reflect the perspective of the author rather than the truth; We must make responsible choices when responding to and creating media",
-    "s": [
-      {
-        "t": "Adobe Express Podcasting",
-        "d": "Students produce a podcast series using https://podcast.adobe.com, interviewing classmates and experts about global issues and how media shapes public perception. Each episode features student-edited segments that highlight responsible communication and the power of advocacy.",
-        "url": "https://podcast.adobe.com"
-      },
-      {
-        "t": "Minecraft Education",
-        "d": "Learners use the verified lesson 'The Investigators' (https://education.minecraft.net/en-us/lessons/the-investigators) to explore how information sources can be trusted or manipulated. Students document their findings with in-game screenshots and a short reflection on how media perspectives influence understanding of global issues.",
-        "url": "https://education.minecraft.net/en-us/lessons/the-investigators"
-      },
-      {
-        "t": "Canva",
-        "d": "Teams collaborate to design digital media campaigns in Canva, crafting infographics and social media posts that raise awareness about a chosen global issue. Students peer-review each other's work, focusing on how design choices and messaging influence audience understanding and inspire action."
-      },
-      {
-        "t": "National Geographic MapMaker",
-        "d": "Learners investigate the global reach of an issue by creating annotated maps with National Geographic MapMaker, layering data such as affected regions, contributing factors, and potential solutions. Students present their maps to the class, explaining how interconnected factors drive collective action."
-      },
-      {
-        "t": "Padlet",
-        "d": "Students build an interactive Padlet wall to curate examples of media coverage on their chosen global issue, tagging posts with perspective, bias, and reliability. The class discusses how different presentations shape public opinion and what makes a source trustworthy."
-      },
-      {
-        "t": "Global Voices Interactive Story Pathways",
-        "d": "Students work in teams to identify a global issue they are passionate about (e.g., climate action, equality, mental health). Using the Design Cycle, they storyboard and script branching narrative scenarios that explore different perspectives and solutions around their chosen issue. Students physically construct a large-scale, walkable 'story pathway' in the Makerspace using cardboard, fabric, recycled materials, and craft supplies. Each pathway features interactive stations?such as pop-up models, tactile elements, and QR codes. At each station, visitors make choices that influence the direction of the story, scanning QR codes to trigger student-created digital content (e.g., short videos, AR experiences, or robot interactions using Sphero Indi or Dash robots programmed to respond to story decisions). The result is a hybrid, immersive advocacy experience where physical craftsmanship and digital storytelling combine to inspire empathy, awareness, and action."
-      }
-    ],
-    "audited": true,
+    "s": [],
+    "audited": false,
     "plannerText": "The Year 6 'How We Express Ourselves' unit at St Kilda focuses on empowering students to understand global issues and use effective communication to raise awareness and inspire action. Students engage in inquiry cycles, develop vision statements, create media campaigns, design logos, and present live performances, all while leveraging digital tools and collaborative research to drive meaningful advocacy.",
     "humanVerified": false,
     "verified": false,
-    "stemRebooted": true
+    "stemRebooted": false
   },
   {
     "ca": "St Kilda",
@@ -4353,37 +4326,12 @@
     "th": "How We Organise Ourselves",
     "ci": "The way a country is governed impacts the lives of citizens.",
     "lo": "The key institutions and functions of Australia's democratic system of government; How government decisions impact citizens at federal, state and local levels; The rights and responsibilities of Australian citizens and their obligations as global citizens",
-    "s": [
-      {
-        "t": "Wise Discussion Chatbots",
-        "d": "Students engage in simulated debates with AI-powered chatbots representing different government roles, challenging their understanding of how decisions at various levels impact citizens. They reflect on the chatbot responses and use evidence from the unit to justify their own positions."
-      },
-      {
-        "t": "Adobe Express Podcasting",
-        "d": "Learners produce a podcast episode interviewing each other as 'citizens' and 'government officials', exploring how government decisions shape daily life and what it means to be an active citizen. They publish their episodes to https://podcast.adobe.com and share them with the class for feedback."
-      },
-      {
-        "t": "National Geographic MapMaker",
-        "d": "Teams create annotated digital maps showing the locations and responsibilities of federal, state, and local government institutions across Australia. Students layer in real-world examples of government decisions and their effects on local communities."
-      },
-      {
-        "t": "Kahoot",
-        "d": "Students design and host interactive quizzes testing their peers on the functions of government, rights and responsibilities, and real-life scenarios involving government decisions. The competitive format sparks lively discussion and reinforces key concepts from the unit."
-      },
-      {
-        "t": "Canva",
-        "d": "Learners design persuasive infographics advocating for a new law or policy, clearly outlining the roles of different government levels and the potential impact on citizens. They use Canva?s collaboration tools to peer-review and refine their visual arguments before presenting to the class."
-      },
-      {
-        "t": "Civic Systems Arcade: Build & Code a Government Decision Simulator",
-        "d": "Students collaborate to design and construct a large, interactive tabletop arcade game that simulates how decisions are made at different levels of Australian government. Using recycled cardboard, foam board, craft sticks, and hot glue, students physically build a multi-level 'government machine' with pathways and stations representing local, state, and federal branches. Each station features physical levers, dials, or buttons crafted from everyday materials. Integrating Makey Makey kits and micro:bit controllers, students code simple cause-and-effect circuits so that when a lever or button is activated, digital feedback (lights, sounds, or messages on a connected laptop/tablet) shows how a decision at one level impacts others and citizens (e.g., funding, laws, services). Students prototype, test, and iterate their arcade machine, ensuring all parts work together, and finish by inviting peers to 'play government'?making decisions and seeing real-time, tangible consequences unfold through their hybrid creation."
-      }
-    ],
-    "audited": true,
+    "s": [],
+    "audited": false,
     "plannerText": "In this unit, students investigate how different systems of government function, the roles and responsibilities at each level in Australia, and how government decisions impact citizens' lives. They engage in inquiry-based activities such as mapping government structures, simulating law-making, reflecting on citizenship, and proposing their own bills, culminating in creative reflections and real-world connections.",
     "humanVerified": false,
     "verified": false,
-    "stemRebooted": true
+    "stemRebooted": false
   },
   {
     "ca": "St Kilda",
@@ -4391,37 +4339,12 @@
     "th": "How the World Works",
     "ci": "The relationships between the Earth, Moon and Sun create predictable patterns that shape life on our planet and are understood through both scientific and cultural perspectives.",
     "lo": "The movement and positions of the Earth, Moon and Sun create predictable patterns such as day/night, moon phases, tides and seasons; The Earth, Moon and Sun have specific structures and relationships that can be represented through models and simulations; Different cultures, including Indigenous knowledge systems, interpret and understand the night sky in unique and meaningful ways.",
-    "s": [
-      {
-        "t": "Merge Cubes",
-        "d": "Students use Merge Cubes to explore interactive 3D models of the Earth, Moon and Sun, manipulating their positions to observe how different alignments cause phenomena like eclipses, tides and moon phases. Learners capture screenshots and record short video explanations to demonstrate their understanding of these celestial relationships."
-      },
-      {
-        "t": "Adobe Express Podcasting",
-        "d": "Students create a podcast series using https://podcast.adobe.com, interviewing classmates or community members about cultural stories and scientific perspectives on the night sky. Their episodes blend Indigenous knowledge, scientific facts and personal reflections, resulting in a rich audio archive that celebrates multiple ways of understanding celestial patterns."
-      },
-      {
-        "t": "Stop Motion Studio",
-        "d": "Learners design and film stop-motion animations that model the movement of the Earth, Moon and Sun, visually explaining concepts such as lunar phases or seasonal changes. Finished videos are shared with peers and annotated to highlight key scientific ideas and cultural interpretations."
-      },
-      {
-        "t": "Sky Map",
-        "d": "Students use Sky Map on their iPads to identify constellations and track the movement of celestial bodies over several weeks, keeping a digital diary of their observations. They compare their findings with Indigenous star stories and scientific explanations, presenting their insights in a class discussion."
-      },
-      {
-        "t": "Padlet",
-        "d": "Teams collaborate on a Padlet wall to curate cultural stories, scientific diagrams, moon diaries and time-lapse videos, creating a multimedia resource that showcases diverse perspectives on the night sky. Each group is responsible for contributing both scientific and cultural artefacts, fostering a holistic understanding of the central idea."
-      },
-      {
-        "t": "Lunar Light Show: Build & Code a Shadow Theatre",
-        "d": "Students work in teams to design and construct a large shadow theatre box using cardboard, fabric, recycled materials, and craft supplies. They create movable physical models of the Earth, Moon, and Sun, attaching them to rods or sliders for manual manipulation. Integrating tech, students use micro:bit or Makey Makey boards to add programmable LED lighting that simulates sunlight at different angles and intensities. By coding light sequences and moving their crafted models, students physically demonstrate phases of the Moon, eclipses, and the effect of the Sun's position on shadows and seasons. The final performance is a hands-on, interactive shadow play that visually explains key astronomical concepts, blending storytelling, engineering, and coding."
-      }
-    ],
-    "audited": true,
+    "s": [],
+    "audited": false,
     "plannerText": "Students explore the relationships between the Earth, Moon, and Sun through hands-on models, time-lapse videos, moon diaries, and cultural stories. They investigate scientific concepts like rotation, tides, and seasons, compare Indigenous and scientific perspectives, and synthesize their learning through creative projects such as podcasts, diagrams, and choice-board activities.",
     "humanVerified": false,
     "verified": false,
-    "stemRebooted": true
+    "stemRebooted": false
   },
   {
     "ca": "St Kilda",
@@ -4429,37 +4352,12 @@
     "th": "Sharing the Planet",
     "ci": "Peoples' actions affect the balance of nature.",
     "lo": "What the environment is comprised of and how ecosystems function; The interdependence between humans, animals and the environment; The consequences of human actions on the balance of nature",
-    "s": [
-      {
-        "t": "Sphero BOLT",
-        "d": "Students program Sphero BOLT robots to simulate the movement of animals within a local ecosystem, exploring how changes in the environment or human intervention disrupt natural balance. They collect data on 'population' changes and present their findings as a digital ecosystem model."
-      },
-      {
-        "t": "Adobe Express Podcasting",
-        "d": "Learners produce a podcast series (https://podcast.adobe.com) interviewing local conservationists or Indigenous Elders, sharing diverse perspectives on our responsibility to care for the natural world. Their episodes highlight real-world actions and consequences, fostering empathy and advocacy among peers."
-      },
-      {
-        "t": "National Geographic MapMaker",
-        "d": "Students investigate endangered species by creating annotated digital maps that layer habitats, threats, and conservation efforts across Australia. Their interactive maps visually communicate the impact of human actions and inspire informed discussion on environmental responsibility."
-      },
-      {
-        "t": "Minecraft Education",
-        "d": "Students use the 'An Ecosystem Jigsaw' lesson (https://education.minecraft.net/en-us/lessons/an-ecosystem-jigsaw) to explore how habitat loss affects animal relationships. They document their ecosystem builds with screenshots and a short written reflection on the consequences of human actions."
-      },
-      {
-        "t": "Canva",
-        "d": "Teams design persuasive infographics that illustrate the interdependence between humans, animals, and the environment, using Canva?s collaborative tools to peer-review and refine their messages. Their final visuals are shared in a digital gallery to spark whole-school conversations."
-      },
-      {
-        "t": "Wildlife Rescue Habitat: Build & Code an Endangered Species Sanctuary",
-        "d": "Students work in teams to design, build, and code interactive models of sanctuaries for endangered Australian species. Using recycled cardboard, natural materials, clay, and craft supplies, students construct detailed 3D habitats with features such as shelters, water sources, and food stations. They embed simple robotics (e.g., Bee-Bots or Sphero Indi) as 'rescue animals' or 'rangers' that navigate the sanctuary, following paths coded on iPads to simulate animal movement, migration, or caretaker routines. Students integrate sensors (e.g., basic light sensors or sound modules) to trigger habitat features?like opening shelters or playing animal sounds?demonstrating how technology can support conservation. The project follows the Design Cycle: students research endangered species, ideate and sketch sanctuary layouts, prototype with physical materials, code and test interactive elements, and present their working models, explaining how their design supports both animal needs and conservation efforts, including Indigenous perspectives on caring for Country."
-      }
-    ],
-    "audited": true,
+    "s": [],
+    "audited": false,
     "plannerText": "The Year 6 Sharing the Planet unit focuses on how people's actions affect the balance of nature, with students investigating endangered species, conservation technologies, and Indigenous perspectives. Key activities include a STEM design project to help threatened species, excursions to zoos and natural sites, and the use of digital tools to research, design, and communicate solutions for environmental challenges.",
     "humanVerified": false,
     "verified": false,
-    "stemRebooted": true
+    "stemRebooted": false
   },
   {
     "ca": "St Kilda",
@@ -4467,42 +4365,12 @@
     "th": "Where We Are in Place and Time",
     "ci": "Human migration is a response to challenges, risks and opportunities.",
     "lo": "The causes and consequences of migration; How migration changes societies; The impact of migration on individuals, both positive and negative",
-    "s": [
-      {
-        "t": "Adobe Express Podcasting",
-        "d": "Students produce a podcast series featuring interviews with migrants from the local community, capturing personal migration stories and exploring the challenges, risks, and opportunities faced. They publish their episodes on https://podcast.adobe.com, fostering empathy and understanding of diverse lived experiences.",
-        "url": "https://podcast.adobe.com"
-      },
-      {
-        "t": "National Geographic MapMaker",
-        "d": "Learners create annotated digital maps to trace historical and contemporary migration routes, adding layers to show causes, consequences, and societal changes. Their interactive maps visually represent how migration shapes communities and cultures over time.",
-        "url": ""
-      },
-      {
-        "t": "Padlet",
-        "d": "Teams collaborate on a digital Padlet wall to collect and share migration stories, images, and reflections, building a living archive of diverse perspectives. Students comment on each other's posts, deepening their understanding of migration?s impact on individuals and societies.",
-        "url": ""
-      },
-      {
-        "t": "Canva",
-        "d": "Students design infographics that illustrate the push and pull factors of migration, using Canva?s templates to visualise data and personal stories. Finished infographics are displayed in a class gallery to spark discussion about the diversity and complexity of migration experiences.",
-        "url": ""
-      },
-      {
-        "t": "Explain Everything",
-        "d": "Learners storyboard and narrate digital migration journeys, combining maps, images, and voiceover to show the challenges and opportunities migrants face. Their multimedia presentations are shared with peers for feedback and empathy-building.",
-        "url": ""
-      },
-      {
-        "t": "Migration Story Automata Gallery",
-        "d": "Students will each select a real migrant's journey (historical or contemporary) and design a mechanical automaton that tells part of their story. Using cardboard, recycled materials, skewers, cams, and gears, students physically build a moving diorama or scene (e.g., a boat crossing, a family reunion, or a border crossing moment). They integrate a micro:bit or Makey Makey to trigger sound effects or short recorded oral histories via conductive touchpoints or motion sensors. The design cycle guides students through researching their chosen story, sketching mechanisms, prototyping automata, iterating on movement and narrative clarity, and finally presenting their automaton in a class gallery walk, where viewers interact with both the mechanical and digital storytelling elements."
-      }
-    ],
-    "audited": true,
+    "s": [],
+    "audited": false,
     "plannerText": "Students explore the causes, impacts, and personal stories of migration through interviews, storyboarding, and digital presentations. They investigate historical and contemporary migration events, conduct oral histories, and present their findings using multimedia tools, with a strong focus on empathy, diversity, and the lived experiences of migrants.",
     "humanVerified": false,
     "verified": false,
-    "stemRebooted": true
+    "stemRebooted": false
   },
   {
     "ca": "St Kilda",
@@ -4510,37 +4378,12 @@
     "th": "Who We Are",
     "ci": "Understanding ourselves, our relationships and our wellbeing empowers us to thrive.",
     "lo": "The features of safe and healthy interactions; The connections between emotions, behaviour, learning, interactions and goals; Strategies and tools to achieve and maintain wellbeing and positive relationships both online and in person",
-    "s": [
-      {
-        "t": "Wise Discussion Chatbots",
-        "d": "Students engage in simulated conversations with Wise Discussion Chatbots to practise responding to challenging social scenarios and reflect on their choices. They analyse how their words and actions impact relationships, then share insights on strategies for maintaining healthy interactions."
-      },
-      {
-        "t": "Adobe Express Podcasting",
-        "d": "Learners script and record a podcast episode using https://podcast.adobe.com, sharing personal stories about overcoming challenges, building positive relationships, or strategies for wellbeing. Episodes are published for classmates to listen and respond, fostering empathy and a sense of community."
-      },
-      {
-        "t": "Kahoot",
-        "d": "Students design and host interactive Kahoot quizzes on cyber safety, emotional wellbeing, and healthy friendships. The class competes in real time, sparking discussion and reinforcing key concepts from the unit in a fun, collaborative way."
-      },
-      {
-        "t": "Padlet",
-        "d": "Teams collaborate on a shared Padlet wall to post digital wellbeing posters, tips for safe online behaviour, and reflections on positive relationship strategies. Students comment on each other's posts, building a supportive digital community and practising respectful online interactions."
-      },
-      {
-        "t": "Canva",
-        "d": "Learners use Canva to create vibrant infographics or digital posters illustrating the connections between emotions, behaviour, and learning. They present their designs to the class, explaining the strategies they use to maintain their own wellbeing and positive relationships."
-      },
-      {
-        "t": "Friendship Fort: Build & Code Your Safe Space",
-        "d": "Students work in teams to design and construct a physical 'Friendship Fort' using large cardboard boxes, fabric, popsticks, recycled materials, and LED lights. Inside, they embed simple programmable tech (e.g., Makey Makey or micro:bit) to create interactive wellbeing features: a 'Mood Door' that lights up in different colours based on how students feel (coded with micro:bit mood selectors), a 'Kindness Button' that plays recorded affirmations or calming sounds, and a 'Friendship Wall' where students display hand-crafted tokens or messages. The project follows the Design Cycle: inquiry into what makes a safe, inclusive space; ideation and prototyping with sketches and models; building and coding the interactive features; testing and refining; and reflecting on how their fort supports healthy, positive interactions both online and offline. This hands-on, hybrid project empowers students to creatively express, build, and share strategies for wellbeing and safe relationships."
-      }
-    ],
-    "audited": true,
+    "s": [],
+    "audited": false,
     "plannerText": "This unit focuses on understanding safe and healthy interactions both online and in real life, strategies for managing friendships and emotions, and the importance of wellbeing and growth mindset. Students engage in activities such as cyber safety lessons, wellbeing poster creation, learner profile self-portraits, goal setting, and reflective Seesaw tasks to build self-awareness and positive relationships.",
     "humanVerified": false,
     "verified": false,
-    "stemRebooted": true
+    "stemRebooted": false
   },
   {
     "ca": "Elsternwick",
