@@ -2093,6 +2093,69 @@ function buildSugRow(sug, entryIdx, sugIdx){
   </div>`;
 }
 
+function regenAllowsPodcastTool_(entry, currentSug){
+  const text = [
+    entry?.th, entry?.ci, entry?.lo, entry?.plannerText,
+    sugTool(currentSug), sugDesc(currentSug)
+  ].filter(Boolean).join(' ').toLowerCase();
+  return /podcast|audio|voice|voiceover|voice-over|oral history|interview|narrat|spoken|speaking|listening|soundscape|sound track|soundtrack|radio|recording|record\b|music|garageband/.test(text);
+}
+
+function shuffleRegenTools_(arr, seedText){
+  const out = [...arr];
+  let seed = 0;
+  const seedSource = String(seedText || '') + '|' + Date.now() + '|' + Math.random();
+  for(let i=0;i<seedSource.length;i++) seed = ((seed << 5) - seed + seedSource.charCodeAt(i)) >>> 0;
+  function rand(){ seed = (1664525 * seed + 1013904223) >>> 0; return seed / 4294967296; }
+  for(let i=out.length-1;i>0;i--){
+    const j = Math.floor(rand() * (i+1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+function regenToolPriorityScore_(tool, entry, freq, isStem){
+  const t = normaliseToolName(tool || '');
+  const key = t.toLowerCase();
+  const unit = [entry?.th, entry?.ci, entry?.lo, entry?.plannerText].filter(Boolean).join(' ').toLowerCase();
+  let score = 40;
+  const count = freq[t] || 0;
+  score -= Math.min(count, 18); // underused tools rise naturally, but not by hard-forcing one platform
+  if(isStem){
+    if(/sphero|lego spike|micro:bit|codrone|makey makey|3d printer|tinkercad|bee-bot|beebot|indi|minecraft/.test(key)) score += 20;
+    if(/adobe express podcasting|seesaw|book creator|padlet|canva/.test(key)) score -= 18;
+  }
+  if(/where we are|place|time|migration|journey|map|geography|settlement|country|local|community/.test(unit) && /google earth|google maps|minecraft|padlet|canva|book creator/.test(key)) score += 10;
+  if(/sharing the planet|sustain|habitat|ecosystem|environment|water|waste|climate|biodiversity|conservation|animal|plant/.test(unit) && /field guide|google earth|micro:bit|minecraft|book creator|canva|padlet|microsoft forms|excel/.test(key)) score += 10;
+  if(/how the world works|force|motion|energy|material|machine|system|science|experiment|investig/.test(unit) && /sphero|lego spike|micro:bit|tinkercad|minecraft|makey makey|microsoft excel|forms/.test(key)) score += 10;
+  if(/express|identity|culture|story|belief|perspective|communication|arts|celebration/.test(unit) && /book creator|canva|imovie|adobe express|garageband|green screen|puppet pals|chatterpix|wise/.test(key)) score += 10;
+  if(/organise|government|economy|market|systems|community services|civics|rules|decision/.test(unit) && /microsoft forms|microsoft excel|canva|padlet|book creator|google maps|wise/.test(key)) score += 8;
+  return score;
+}
+
+function getRegenerateCandidateTools_(entry, currentSug, sugIdx, freq){
+  const currentTool = sugTool(currentSug);
+  const isStem = sugIdx === 5;
+  const podcastAllowed = regenAllowsPodcastTool_(entry, currentSug);
+  const usedKeys = new Set(getSugs(entry).map(s => toolKey(sugTool(s))).filter(Boolean));
+  usedKeys.delete(toolKey(currentTool));
+
+  let candidates = getAgeAppropriateTools(entry.yl).filter(t => {
+    const k = toolKey(t);
+    if(!k || k === toolKey(currentTool)) return false;
+    if(usedKeys.has(k)) return false;
+    if(toolContainsForbiddenKeyword(t) || toolViolatesInventoryBan(t)) return false;
+    if(!podcastAllowed && /adobe express podcasting|podcast equipment/i.test(normaliseToolName(t))) return false;
+    return true;
+  });
+
+  candidates = candidates.sort((a,b) => regenToolPriorityScore_(b, entry, freq, isStem) - regenToolPriorityScore_(a, entry, freq, isStem));
+  const top = candidates.slice(0, 18);
+  const rest = shuffleRegenTools_(candidates.slice(18), `${entry?.ca}|${entry?.yl}|${entry?.th}|${sugIdx}`);
+  const mixedTop = shuffleRegenTools_(top, `${entry?.ca}|${entry?.yl}|${entry?.th}|${sugIdx}|top`);
+  return [...mixedTop.slice(0, 12), ...rest.slice(0, 4)];
+}
+
 async function regenSingleSug(entryIdx, sugIdx){
   const uid = `s${entryIdx}_${sugIdx}`;
   const btn = document.getElementById(uid+'-regen');
@@ -2105,10 +2168,6 @@ async function regenSingleSug(entryIdx, sugIdx){
   const others = getSugs(entry).filter((_,i)=>i!==sugIdx).map(s=>sugTool(s)).join(', ');
   const isStem = sugIdx === 5;
 
-  // Age-appropriate tools for this unit's year level. Exclude the current tool so regenerate is actually fresh.
-  const ageAppropriate = getAgeAppropriateTools(entry.yl).filter(t => toolKey(t) !== toolKey(currentTool));
-  const constraintBlock = buildToolConstraints(entry.yl);
-
   const freq = {};
   DATA.forEach(e => {
     getSugs(e).forEach(s => {
@@ -2116,17 +2175,23 @@ async function regenSingleSug(entryIdx, sugIdx){
       if(t) freq[t] = (freq[t] || 0) + 1;
     });
   });
+
+  // Age-appropriate tools for this unit's year level. Exclude the current tool and other tools already used in this unit.
+  const ageAppropriate = getAgeAppropriateTools(entry.yl).filter(t => toolKey(t) !== toolKey(currentTool));
+  const candidateTools = getRegenerateCandidateTools_(entry, currentSug, sugIdx, freq);
+  const candidateKeys = new Set(candidateTools.map(toolKey).filter(Boolean));
+  const podcastAllowed = regenAllowsPodcastTool_(entry, currentSug);
+  const constraintBlock = buildToolConstraints(entry.yl);
+
   const overused = Object.entries(freq).filter(([t,c]) => c > 13).map(([t])=>t);
-  const ageAppropriateLower = ageAppropriate.map(t=>t.toLowerCase());
-  const underused = Object.entries(freq)
-    .filter(([t,c]) => c <= 2 && ageAppropriateLower.includes(t.toLowerCase()))
-    .sort((a,b)=>a[1]-b[1])
-    .slice(0, 8)
-    .map(([t,c])=>`${t} (${c}x)`);
-  const neverUsed = ageAppropriate.filter(t => !freq[t]).slice(0, 6);
+  const neverUsed = candidateTools.filter(t => !freq[normaliseToolName(t)]).slice(0, 6);
 
   const stemInstruction = isStem ? `
 THIS IS SUGGESTION #6 — IT MUST BE A STEM DESIGN CYCLE ACTIVITY using the cycle: Empathise → Define → Ideate → Prototype → Test. Use a hands-on maker/robotics tool that is age-appropriate.` : '';
+
+  const podcastGuard = podcastAllowed ? `
+Podcast/audio tools are allowed for this regeneration because the current unit or activity includes audio, speaking, interview, narration or sound.` : `
+PODCAST GUARD: Do NOT choose Adobe Express Podcasting or Podcast Equipment for this regeneration. The current unit/activity does not specifically call for podcasting, interviews, audio storytelling, narration or sound work.`;
 
   const prompt = `You are a Digital Learning Coach at Wesley College generating a fresh technology suggestion for an IB PYP unit.
 
@@ -2138,16 +2203,18 @@ Tools already used in this unit (do not repeat): ${others||'none'}
 
 ${constraintBlock}
 ${stemInstruction}
+${podcastGuard}
 
 HARD RULES:
 - This is a regeneration, not a wording tweak.
 - Do NOT use the current tool again: ${currentTool || '(none)'}.
-- Pick a DIFFERENT age-appropriate Wesley-approved tool.
 - Do NOT duplicate any other tool already used in this unit.
+- Choose exactly ONE tool from this candidate list: ${candidateTools.length ? candidateTools.join(', ') : '(no available candidates)'}.
+- Do NOT choose a tool outside the candidate list.
+- Do NOT default to Adobe Express Podcasting. Only use it when podcast/audio work is explicitly central to the activity.
 
 OVERUSED TOOLS (avoid unless perfect fit — already appears 14+ times across library): ${overused.length ? overused.join(', ') : '(none)'}
-UNDERUSED TOOLS for this year level (PREFER one of these if it fits): ${underused.length ? underused.join(', ') : '(none below threshold)'}
-NEVER-USED age-appropriate tools (fresh ideas): ${neverUsed.length ? neverUsed.join(', ') : '(all in use)'}
+NEVER-USED candidate tools (fresh ideas): ${neverUsed.length ? neverUsed.join(', ') : '(none)'}
 
 Generate ONE fresh suggestion that is genuinely age-appropriate for ${entry.yl} and connects to this unit's theme.
 ${SUGGESTION_STYLE}
@@ -2155,22 +2222,29 @@ ${SUGGESTION_STYLE}
 Return ONLY JSON: {"t":"Tool Name","d":"2-3 vivid sentences connecting to this unit."}`;
 
   try{
+    if(!candidateTools.length) throw new Error('No available age-appropriate tools left for this unit after excluding repeats and banned tools');
     let newSug = null;
     let lastIssue = null;
-    for(let attempt=0; attempt<4; attempt++){
+    for(let attempt=0; attempt<5; attempt++){
       let retryNote = '';
       if(lastIssue === 'same') retryNote = `
 
-RETRY: You used the same tool (${currentTool}). You MUST choose a DIFFERENT tool.`;
+RETRY: You used the same tool (${currentTool}). You MUST choose a DIFFERENT tool from this candidate list only: ${candidateTools.join(', ')}.`;
       else if(lastIssue === 'dupe') retryNote = `
 
-RETRY: Previous response used a tool already in this unit. Pick DIFFERENT tool NOT in: ${others}.`;
+RETRY: Previous response used a tool already in this unit. Pick a DIFFERENT tool from this candidate list only: ${candidateTools.join(', ')}.`;
       else if(lastIssue === 'age') retryNote = `
 
-RETRY: Previous response proposed a tool NOT age-appropriate for ${entry.yl}. You MUST pick from: ${ageAppropriate.join(', ')}.`;
+RETRY: Previous response proposed a tool NOT age-appropriate for ${entry.yl}. You MUST pick from: ${candidateTools.join(', ')}.`;
       else if(lastIssue === 'unavailable') retryNote = `
 
-RETRY: Previous response proposed a tool Wesley does NOT have. Pick a different tool.`;
+RETRY: Previous response proposed a tool Wesley does NOT have. Pick from this candidate list only: ${candidateTools.join(', ')}.`;
+      else if(lastIssue === 'candidate') retryNote = `
+
+RETRY: Previous response chose a tool outside the candidate list. Pick exactly ONE of these tools and no others: ${candidateTools.join(', ')}.`;
+      else if(lastIssue === 'podcast') retryNote = `
+
+RETRY: Do NOT choose Adobe Express Podcasting. This regeneration is not for a podcast, audio interview, narration or sound activity. Pick a different candidate tool: ${candidateTools.join(', ')}.`;
 
       const raw = await callAI([{role:'user',parts:[{text:prompt+retryNote}]}], null, OPENAI_FAST_MODEL);
       const clean = raw.replace(/```json|```/g,'').trim();
@@ -2196,6 +2270,14 @@ RETRY: Previous response proposed a tool Wesley does NOT have. Pick a different 
         lastIssue = 'age';
         continue;
       }
+      if(!candidateKeys.has(toolKey(parsed.t))){
+        lastIssue = 'candidate';
+        continue;
+      }
+      if(!podcastAllowed && /adobe express podcasting|podcast equipment/i.test(normaliseToolName(parsed.t))){
+        lastIssue = 'podcast';
+        continue;
+      }
       newSug = parsed;
       break;
     }
@@ -2204,7 +2286,9 @@ RETRY: Previous response proposed a tool Wesley does NOT have. Pick a different 
                       lastIssue === 'age' ? 'AI kept proposing tools not age-appropriate' :
                       lastIssue === 'dupe' ? 'AI kept proposing tools already in this unit' :
                       lastIssue === 'unavailable' ? 'AI kept proposing tools Wesley does not have' :
-                      'AI failed after 4 attempts';
+                      lastIssue === 'candidate' ? 'AI kept choosing tools outside the candidate list' :
+                      lastIssue === 'podcast' ? 'AI kept defaulting to Adobe Express Podcasting for a non-audio activity' :
+                      'AI failed after 5 attempts';
       throw new Error(`${problem} — try 💬 feedback with a specific tool name`);
     }
 
