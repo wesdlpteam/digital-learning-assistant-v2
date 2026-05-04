@@ -4570,14 +4570,15 @@
         "d": "Students create simple digital puppet shows to share their personal timelines by selecting characters and backgrounds that represent key moments from their past. They narrate their stories aloud while animating their puppets to sequence events, helping them express how their history shapes who they are today in a fun, age-appropriate way."
       },
       {
-        "t": "Beebots",
-        "d": "Design Cycle Project: Students design and build a large floor timeline using paper and images (baby, little, now). They then program Bee-Bots to travel along the timeline, stopping at each stage to trigger a student-recorded message about that life stage. This hands-on STEM project reinforces sequencing, storytelling, and the concept of change over time."
+        "t": "Memory Museum Maze",
+        "d": "Students work in teams to design and build a mini 'museum' maze using cardboard, recycled boxes, fabric scraps, and craft materials, representing different rooms or exhibits from their family's past (e.g., a kitchen from grandma's childhood, a traditional celebration, a favorite toy from long ago). Each team physically constructs their maze sections and crafts small artefacts or figures to display inside. Then, using Bee-Bots, students code simple routes through the maze to 'visit' each exhibit in sequence, narrating the story behind each stop as the Bee-Bot arrives. The project follows the Design Cycle: students inquire about family stories, plan their museum layout, create and decorate their rooms, test and refine the Bee-Bot's path, and finally share their Memory Museum Maze with classmates, reflecting on how these memories connect to who they are today."
       }
     ],
     "audited": true,
     "plannerText": "Prep students explore the central idea 'Discovering our past helps us know more about ourselves today' by sharing family stories, creating personal timelines, comparing past and present, and reflecting on personal artefacts and memories through drawing, oral storytelling, and sequencing activities.",
     "humanVerified": false,
     "humanVerifiedResetAt": "2026-05-04T02:54:04.029Z",
-    "humanVerifiedResetReason": "Suggestion edited, swapped, regenerated or changed after human verification"
+    "humanVerifiedResetReason": "Suggestion edited, swapped, regenerated or changed after human verification",
+    "stemRebooted": true
   }
 ]
