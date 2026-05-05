@@ -521,13 +521,145 @@ function bulkRunSafeReplacementDraftOnly_(text){
   showChangesPopup(changes);
   bulkChatState = 'done';
 }
+
+
+// ========== MINECRAFT EXACT LESSON DIAGNOSTICS ==========
+function bulkMinecraftNorm_(value){
+  return String(value || '').toLowerCase().replace(/[’']/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+}
+function bulkDetectMinecraftLessonTitle_(instruction){
+  const t = bulkMinecraftNorm_(instruction);
+  if(/revamp\s+melbourne/.test(t)) return 'Revamp Melbourne';
+  // Conservative: only auto-detect exact curated titles in the Minecraft library.
+  try {
+    const lessons = (typeof LIBRARIES !== 'undefined' && LIBRARIES && Array.isArray(LIBRARIES.minecraft)) ? LIBRARIES.minecraft : [];
+    for(const l of lessons){
+      const title = String(l && l.title || '').trim();
+      if(title && bulkMinecraftNorm_(title) && t.includes(bulkMinecraftNorm_(title))) return title;
+    }
+  } catch(e){}
+  return '';
+}
+function bulkFindMinecraftLesson_(title){
+  const wanted = bulkMinecraftNorm_(title);
+  const lessons = (typeof LIBRARIES !== 'undefined' && LIBRARIES && Array.isArray(LIBRARIES.minecraft)) ? LIBRARIES.minecraft : [];
+  if(!wanted || !lessons.length) return null;
+  return lessons.find(l => bulkMinecraftNorm_(l && l.title) === wanted) ||
+         lessons.find(l => bulkMinecraftNorm_(l && l.title).includes(wanted) || wanted.includes(bulkMinecraftNorm_(l && l.title))) ||
+         null;
+}
+function bulkMinecraftYearAgeOk_(lesson, yearLabel){
+  const ages = String((lesson && (lesson.ages || lesson.age || lesson.ageRange)) || '').toLowerCase();
+  if(!ages) return true;
+  const yi = YR.indexOf(yearLabel);
+  if(yi < 0) return true;
+  const approxAge = yi === 0 ? 5 : yi + 5;
+  const m = ages.match(/(\d+)\s*\+/);
+  if(m) return approxAge >= Number(m[1]);
+  const nums = ages.match(/\d+/g);
+  if(nums && nums.length) return approxAge >= Number(nums[0]);
+  return true;
+}
+function bulkScanMinecraftExactLessonFit_(lesson, maxResults){
+  const title = String(lesson && lesson.title || '');
+  const titleKey = bulkMinecraftNorm_(title);
+  const results = [];
+  const skipped = { age:0, alreadyHasMinecraft:0, noNonStemSlot:0 };
+  const isRevamp = /revamp\s+melbourne/.test(titleKey);
+  if(!lesson || !Array.isArray(DATA)) return { results, skipped };
+
+  DATA.forEach((e, entryIdx) => {
+    if(!e) return;
+    const yl = e.yl || '';
+    if(!bulkMinecraftYearAgeOk_(lesson, yl)){ skipped.age++; return; }
+    const sugs = getSugs(e).filter(isRealSug);
+    let hasMinecraft = false;
+    let firstReplaceableSlot = -1;
+    sugs.forEach((s, sugIdx) => {
+      if(/minecraft/i.test(String(sugTool(s) || ''))) hasMinecraft = true;
+      if(firstReplaceableSlot < 0 && sugIdx !== 5) firstReplaceableSlot = sugIdx;
+    });
+    if(hasMinecraft){ skipped.alreadyHasMinecraft++; return; }
+    if(firstReplaceableSlot < 0){ skipped.noNonStemSlot++; return; }
+
+    const text = bulkMinecraftNorm_([
+      e.ca, e.yl, e.th || e.theme, e.ci || e.centralIdea, e.loi || e.linesOfInquiry,
+      (Array.isArray(e.lois) ? e.lois.join(' ') : '')
+    ].filter(Boolean).join(' '));
+    let score = 0;
+    const reasons = [];
+    function hit(words, reason, weight){
+      if(words.some(w => text.includes(w))){ score += weight || 1; reasons.push(reason); }
+    }
+    if(isRevamp){
+      hit(['melbourne','city','cities','urban','suburb','neighbourhood','neighborhood'], 'city/place context', 3);
+      hit(['sustainab','liveab','livability','environment','sharing the planet'], 'sustainability or liveability connection', 2);
+      hit(['community','communities','citizen','civic','people'], 'community/citizenship connection', 1);
+      hit(['design','redesign','revamp','built','building','architecture','space','place','map','mapping'], 'design or built-environment connection', 2);
+      hit(['change','future','innovation','systems','interdepend'], 'change/systems connection', 1);
+    } else {
+      const lessonWords = bulkMinecraftNorm_([lesson.title, lesson.desc, lesson.subject].filter(Boolean).join(' ')).split(' ').filter(w => w.length > 4);
+      const unique = [...new Set(lessonWords)].slice(0, 20);
+      unique.forEach(w => { if(text.includes(w)) score += 1; });
+      if(score) reasons.push('unit wording overlaps with curated lesson metadata');
+    }
+    if(score > 0){
+      results.push({
+        entryIdx, slotIdx:firstReplaceableSlot,
+        campus:e.ca || 'Campus?', year:yl || 'Year?', theme:e.th || e.theme || 'Untitled unit',
+        centralIdea:e.ci || e.centralIdea || '', score, reasons:[...new Set(reasons)].slice(0,3)
+      });
+    }
+  });
+  results.sort((a,b) => b.score - a.score || (a.year||'').localeCompare(b.year||''));
+  return { results: results.slice(0, maxResults || 10), skipped };
+}
+function bulkMinecraftDiagnosticHtml_(instruction){
+  const lessonTitle = bulkDetectMinecraftLessonTitle_(instruction);
+  const lesson = bulkFindMinecraftLesson_(lessonTitle);
+  const lessons = (typeof LIBRARIES !== 'undefined' && LIBRARIES && Array.isArray(LIBRARIES.minecraft)) ? LIBRARIES.minecraft : [];
+  if(!lessonTitle){
+    return `<div style="margin-top:10px;padding:10px 12px;background:rgba(96,184,240,.06);border:1px solid rgba(96,184,240,.25);border-radius:10px">
+      <div style="font-size:11px;color:var(--blue);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Minecraft exact-lesson scan</div>
+      <div>I detected a Minecraft placement request, but not a specific curated lesson title.</div>
+      <div style="margin-top:8px;color:var(--dim);font-size:12px">Try: <strong>Where can the Revamp Melbourne Minecraft lesson fit?</strong></div>
+    </div>`;
+  }
+  if(!lesson){
+    const available = lessons.slice(0, 12).map(l => l.title).filter(Boolean).map(bulkDiagnosticEscape_).join('<br>');
+    return `<div style="margin-top:10px;padding:10px 12px;background:rgba(255,128,128,.06);border:1px solid rgba(255,128,128,.25);border-radius:10px">
+      <div style="font-size:11px;color:#FF8080;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Minecraft exact-lesson scan</div>
+      <div>Lesson requested: <strong>${bulkDiagnosticEscape_(lessonTitle)}</strong></div>
+      <div>Curated lesson found in libraries.json: <strong>No</strong></div>
+      <div style="margin-top:8px;color:var(--dim);font-size:12px">Minecraft library lessons loaded: ${lessons.length}</div>
+      ${available ? `<div style="margin-top:8px;color:var(--dim);font-size:12px">First available lessons:<br>${available}</div>` : ''}
+    </div>`;
+  }
+  const scan = bulkScanMinecraftExactLessonFit_(lesson, 10);
+  const examples = scan.results.map(r => `${r.campus} · ${r.year} · ${r.theme} — ${r.reasons.join(', ')}`);
+  return `<div style="margin-top:10px;padding:10px 12px;background:rgba(96,184,240,.06);border:1px solid rgba(96,184,240,.25);border-radius:10px">
+    <div style="font-size:11px;color:var(--blue);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Minecraft exact-lesson scan</div>
+    <div>Lesson requested: <strong>${bulkDiagnosticEscape_(lessonTitle)}</strong></div>
+    <div>Curated lesson found in libraries.json: <strong>Yes</strong></div>
+    <div>Actual curated title: <strong>${bulkDiagnosticEscape_(lesson.title)}</strong></div>
+    <div>Real URL: <strong>${bulkDiagnosticEscape_(lesson.url || 'No URL recorded')}</strong></div>
+    <div>Library lessons considered: <strong>1 exact lesson only</strong> <span style="color:var(--dim)">(no other Minecraft lessons)</span></div>
+    <div>Likely unit matches: <strong>${scan.results.length}</strong></div>
+    <div>Skipped because unit already has Minecraft: <strong>${scan.skipped.alreadyHasMinecraft}</strong></div>
+    <div>Skipped by lesson age range: <strong>${scan.skipped.age}</strong></div>
+    ${examples.length ? `<div style="margin-top:8px;color:var(--dim);font-size:12px">Likely matches:<br>${examples.map(bulkDiagnosticEscape_).join('<br>')}</div>` : `<div style="margin-top:8px;color:var(--dim);font-size:12px">No strong local matches found. That is acceptable; this route should return fewer results rather than forcing unrelated Minecraft lessons.</div>`}
+  </div>`;
+}
+
 function bulkRunDiagnosticOnly_(text){
   const cleanText = String(text || '').replace(/^\s*(diagnose|debug|route)\s*:?\s*/i, '').trim();
   const info = bulkDiagnosticDetectRoute_(cleanText);
   const years = info.targetYears && info.targetYears.length ? info.targetYears.join(', ') : 'All years';
   let scanHtml = '';
 
-  if(info.replacementTool){
+  if(info.route === 'specific Minecraft lesson placement'){
+    scanHtml = bulkMinecraftDiagnosticHtml_(cleanText);
+  } else if(info.replacementTool){
     const scan = bulkDiagnosticScanReplacementTool_(info.replacementTool, info.targetYears || []);
     const examples = (scan.matches || []).slice(0, 10).map(m => {
       return `${m.campus} · ${m.year} · slot ${m.sugIdx + 1} · ${m.theme}`;
@@ -1737,6 +1869,9 @@ async function bulkChatSend(){
       return;
     }
     bulkChatAddMessage('user', text);
+    if(/minecraft/i.test(text) && typeof ensureLibrariesLoadedForAI === 'function'){
+      try { await ensureLibrariesLoadedForAI(); } catch(e){}
+    }
     bulkRunWithTopProgress_('Checking Bulk AI route…', 'Diagnostic ready ✓', function(){
       bulkRunDiagnosticOnly_(text);
     }, function(e){
