@@ -292,6 +292,148 @@ function bulkRunSafePreviewOnly_(text){
     </div>`);
 }
 
+
+// ========== BULK AI SAFE DRAFT MODE ==========
+// Draft-only command. It finds a small batch locally and opens the existing review popup.
+// It does not call AI and it does not save unless a human approves in the popup.
+// Use: draft: Find more opportunities to use Makey Makey
+function bulkSafeDraftCleanUnitText_(value){
+  return String(value || '').replace(/\s+/g, ' ').trim();
+}
+
+function bulkSafeDraftShortContext_(e){
+  const theme = bulkSafeDraftCleanUnitText_(e && (e.th || e.theme)) || 'this unit';
+  const ci = bulkSafeDraftCleanUnitText_(e && (e.ci || e.centralIdea));
+  let loi = e && (e.loi || e.linesOfInquiry || '');
+  if(Array.isArray(loi)) loi = loi.join('; ');
+  loi = bulkSafeDraftCleanUnitText_(loi);
+  const connection = loi || ci || theme;
+  return { theme, ci, loi, connection };
+}
+
+function bulkSafeDraftDescriptionForTool_(toolName, e){
+  const tool = normaliseToolName(toolName || '');
+  const ctx = bulkSafeDraftShortContext_(e || {});
+  const theme = ctx.theme;
+  const connection = ctx.connection;
+
+  if(bulkDiagnosticToolKey_(tool) === bulkDiagnosticToolKey_('Makey Makey')){
+    return `Students use Makey Makey to turn a simple cardboard, foil or playdough model connected to ${theme} into an interactive input device. They create a Scratch explanation or quiz so classmates can press parts of the model to reveal key ideas about ${connection}.`;
+  }
+  if(bulkDiagnosticToolKey_(tool) === bulkDiagnosticToolKey_('Book Creator')){
+    return `Students use Book Creator to build a short multimodal book about ${theme}. They combine drawings, photos, captions and voice recordings to explain what they have learned about ${connection}.`;
+  }
+  if(bulkDiagnosticToolKey_(tool) === bulkDiagnosticToolKey_('Lego Spike Prime')){
+    return `Students use Lego Spike Prime to design and code a working prototype that models an idea from ${theme}. They test, improve and explain how their build demonstrates ${connection}.`;
+  }
+  if(bulkDiagnosticToolKey_(tool) === bulkDiagnosticToolKey_('Lego Spike Essential')){
+    return `Students use Lego Spike Essential to build and code a simple moving model linked to ${theme}. They create a short demonstration explaining how the model helps show ${connection}.`;
+  }
+  if(bulkDiagnosticToolKey_(tool) === bulkDiagnosticToolKey_('Wise Discussion Chatbots')){
+    return `Students question a Wise Discussion Chatbot acting as a unit expert connected to ${theme}. They ask prepared questions, compare the responses with class evidence, then produce a short reflection explaining what they now understand about ${connection}.`;
+  }
+  return `Students use ${tool} to create a practical digital product connected to ${theme}. They make, test and share their work to explain what they have learned about ${connection}.`;
+}
+
+function bulkSafeDraftSlotScore_(s, idx){
+  // Higher score = safer/better candidate to replace in a draft-only opportunity flow.
+  if(idx === 5) return -9999; // protected STEM slot #6
+  if(!s || !isRealSug(s)) return 80;
+  const tool = sugTool(s);
+  const desc = sugDesc(s);
+  let score = 0;
+  const len = String(desc || '').length;
+  if(len < 90) score += 25;
+  if(len < 150) score += 10;
+  if(/\b(students will|students use|explore|create|make|investigate)\b/i.test(desc || '')) score += 2;
+  if(!/\b(create|produce|build|record|design|publish|explain|share)\b/i.test(desc || '')) score += 12;
+  if(!/\b(unit|inquiry|because|connect|theme|central idea|line of inquiry)\b/i.test(desc || '')) score += 12;
+  if(/\b(minecraft education|minecraft)\b/i.test(tool || '')) score -= 50; // curated lessons should not be casually replaced
+  if(/\b(stem|lego spike|sphero|bee-bot|bee bots|makey makey)\b/i.test(tool || '')) score -= 10;
+  return score;
+}
+
+function bulkSafeDraftPickSlot_(e, toolName){
+  const targetKey = bulkDiagnosticToolKey_(toolName);
+  const sugs = getSugs(e);
+  let bestIdx = -1;
+  let bestScore = -9999;
+  for(let i=0; i<sugs.length; i++){
+    if(i === 5) continue;
+    const s = sugs[i];
+    if(s && isRealSug(s) && bulkDiagnosticToolKey_(sugTool(s)) === targetKey) continue;
+    const score = bulkSafeDraftSlotScore_(s, i);
+    if(score > bestScore){ bestScore = score; bestIdx = i; }
+  }
+  return bestIdx;
+}
+
+function bulkSafeDraftScanNamedTool_(toolName, targetYears){
+  const base = bulkSafePreviewScanNamedTool_(toolName, targetYears);
+  const candidates = [];
+  (base.candidates || []).forEach(c => {
+    const e = DATA[c.entryIdx];
+    const slotIdx = bulkSafeDraftPickSlot_(e, toolName);
+    if(slotIdx < 0) return;
+    candidates.push(Object.assign({}, c, { slotIdx }));
+  });
+  return Object.assign({}, base, { candidates });
+}
+
+function bulkRunSafeDraftOnly_(text){
+  const cleanText = String(text || '').replace(/^\s*(draft|draft-safe|safe-draft)\s*:?\s*/i, '').trim();
+  const info = bulkDiagnosticDetectRoute_(cleanText);
+  const years = info.targetYears && info.targetYears.length ? info.targetYears : [];
+  const yearsLabel = years.length ? years.join(', ') : 'All years';
+
+  if(!info.namedTool){
+    bulkChatAddMessage('assistant', `
+      <div style="padding:2px 0">
+        <div style="font-size:10px;color:var(--purple);font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">🧪 Safe draft mode</div>
+        <div>I could not confidently detect a named tool in that request.</div>
+        <div style="margin-top:8px;color:var(--dim);font-size:12px">Try: <strong>draft: Find more opportunities to use Makey Makey</strong></div>
+        <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No changes were drafted or saved.</div>
+      </div>`);
+    return;
+  }
+
+  const scan = bulkSafeDraftScanNamedTool_(info.namedTool, years);
+  const maxDrafts = 5;
+  const selected = scan.candidates.slice(0, maxDrafts);
+
+  if(!selected.length){
+    bulkChatAddMessage('assistant', `
+      <div style="padding:2px 0">
+        <div style="font-size:10px;color:var(--purple);font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">🧪 Safe draft mode</div>
+        <div>I found no safe candidate units for <strong>${bulkDiagnosticEscape_(info.namedTool)}</strong>${years.length?' in '+bulkDiagnosticEscape_(yearsLabel):''}.</div>
+        <div style="margin-top:8px;color:var(--dim);font-size:12px">Existing slots: ${scan.existingSlots || 0} · skipped already using tool: ${scan.skipped?.alreadyHasTool || 0} · skipped by age range: ${scan.skipped?.age || 0}</div>
+        <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No changes were drafted or saved.</div>
+      </div>`);
+    return;
+  }
+
+  const changes = selected.map(c => {
+    const e = DATA[c.entryIdx] || {};
+    return {
+      entryIdx: c.entryIdx,
+      sugIdx: c.slotIdx,
+      t: info.namedTool,
+      d: bulkSafeDraftDescriptionForTool_(info.namedTool, e),
+      reason: `Safe named-tool opportunity draft for ${info.namedTool}. This unit does not already use the tool. Slot #6/STEM is protected. Review before applying.`,
+      improvementConfidence: 'Draft-only',
+      whyBetter: 'Adds a concrete student action, student-created product and unit connection without calling AI or changing anything automatically.'
+    };
+  });
+
+  const sample = selected.slice(0,5).map((c, i) => `• ${bulkDiagnosticEscape_(c.campus)} · ${bulkDiagnosticEscape_(c.year)} · ${bulkDiagnosticEscape_(c.theme)}`).join('<br>');
+  const capped = scan.candidates.length > selected.length ? `<br><span style="font-size:12px;color:var(--dim)">I drafted the first ${selected.length} of ${scan.candidates.length} candidate units to keep this safe. Run again after reviewing if you want more.</span>` : '';
+  bulkChatAddMessage('assistant', `✅ <strong>${changes.length} ${bulkDiagnosticEscape_(info.namedTool)} opportunit${changes.length!==1?'ies':'y'}</strong> ready for review.<br><br><span style="font-size:12px;color:var(--lime)">Safe draft mode:</span> found candidates locally, skipped units already using the tool, avoided STEM slot #6, made no AI calls and saved nothing automatically.${capped}<br><br><span style="font-size:12px;color:var(--lime)">Sample targets:</span><br>${sample}`);
+  bulkChatMemory.push({ role:'assistant', content:`Safe-drafted ${changes.length} ${info.namedTool} opportunities.` });
+  window._snapshotReason = `Before safe ${info.namedTool} opportunity drafts`;
+  showChangesPopup(changes);
+  bulkChatState = 'done';
+}
+
 function bulkExtractTargetYears_(instruction){
   const t = String(instruction || '').toLowerCase();
   const out = new Set();
@@ -1168,6 +1310,18 @@ async function bulkChatSend(){
   const text = input.value.trim();
   if(!text) return;
   input.value = '';
+
+  // Safe-draft mode: locally draft a small batch and open review popup only. No AI calls, no auto-save.
+  // Type: draft: Find more opportunities to use Makey Makey
+  if(/^\s*(draft|draft-safe|safe-draft)\s*:?\s*/i.test(text)){
+    if(bulkChatState === 'analysing'){
+      bulkChatAddMessage('assistant', '⏳ Still analysing entries — wait for the current analysis to complete before running a safe draft.');
+      return;
+    }
+    bulkChatAddMessage('user', text);
+    try { bulkRunSafeDraftOnly_(text); } catch(e){ bulkChatAddMessage('assistant', '❌ Safe draft failed without changing anything: ' + bulkDiagnosticEscape_(e.message || e)); }
+    return;
+  }
 
   // Safe-preview mode: find candidate units locally without calling AI, opening a review popup, or saving.
   // Type: safe: Find more opportunities to use Makey Makey
