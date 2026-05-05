@@ -154,7 +154,7 @@ function bulkDiagnosticDetectRoute_(instruction){
   if(/\b(where can|fit|place|places? for|opportunit)/i.test(raw) && /minecraft/i.test(raw) && /lesson/i.test(raw)){
     route = 'specific Minecraft lesson placement'; confidence = 'medium';
     notes.push('Minecraft + lesson-placement wording detected.');
-  } else if(/\b(replace|remove|swap|change out|stop using|get rid of)\b/i.test(raw)){
+  } else if(/\b(replace|remove|swap|change out|stop using|get rid of|delete|retire|phase out|stop suggesting)\b/i.test(raw)){
     route = 'targeted replacement'; confidence = replacementTool ? 'high' : 'medium';
     notes.push('Replacement wording detected.');
     if(replacementTool) notes.push('Tool to remove detected locally.');
@@ -216,18 +216,45 @@ function bulkDiagnosticScanNamedTool_(toolName, targetYears){
 }
 
 
+function bulkReplacementCanonicalToolName_(value){
+  const raw = String(value || '').trim();
+  if(!raw) return '';
+  const lower = raw.toLowerCase().replace(/[’']/g,'').replace(/[^a-z0-9+& ]+/g,' ').replace(/\s+/g,' ').trim();
+  if(/^(see\s*saw|seesaw)(\s+learning\s+journal)?$/.test(lower)) return 'Seesaw';
+  if(/^(co\s*drone|codrone)(\s+edu)?$/.test(lower)) return 'CoDrone EDU';
+  if(/^podcast\s+equipment(?:\s*(?:\+|&|and)\s*garageband)?$/.test(lower)) return 'Podcast Equipment + GarageBand';
+  if(/^(national\s+geographic\s+map\s*maker|national\s+geographic\s+mapmaker|nat\s+geo\s+mapmaker|mapmaker)$/.test(lower)) return 'National Geographic MapMaker';
+  if(/^google\s+maps?$/.test(lower)) return 'Google Maps';
+  if(/^minecraft(\s+education)?$/.test(lower)) return 'Minecraft Education';
+  try { return normaliseToolName(raw); } catch(e){ return raw; }
+}
+
 function bulkDiagnosticAllKnownTools_(){
-  const extras = ['Seesaw','Google Maps','National Geographic MapMaker','Makey Makey','Book Creator','Lego Spike Prime','Lego Spike Essential','Minecraft Education','Canva','Padlet','ScratchJR','Scratch','Adobe Express','Microsoft Forms','Microsoft Sway','GarageBand','iMovie'];
+  const extras = ['Seesaw','Google Maps','National Geographic MapMaker','Makey Makey','Book Creator','Lego Spike Prime','Lego Spike Essential','Minecraft Education','Canva','Padlet','ScratchJR','Scratch','Adobe Express','Adobe Express Podcasting','Microsoft Forms','Microsoft Sway','GarageBand','iMovie','CoDrone EDU','Podcast Equipment + GarageBand'];
+  const dataTools = [];
+  try{
+    if(Array.isArray(DATA)){
+      DATA.forEach(e => getSugs(e).forEach((s, idx) => {
+        if(idx === 5) return; // avoid STEM/activity titles in replacement detection
+        const t = sugTool(s);
+        if(t) dataTools.push(t);
+      }));
+    }
+  }catch(e){}
   const all = [
     ...extras,
     ...(typeof DEFAULT_APPROVED_TOOLS !== 'undefined' ? (DEFAULT_APPROVED_TOOLS || []) : []),
     ...((typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY && TOOL_INVENTORY.approved) ? TOOL_INVENTORY.approved : []),
-    ...((typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY && TOOL_INVENTORY.banned) ? TOOL_INVENTORY.banned : [])
+    ...((typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY && TOOL_INVENTORY.banned) ? TOOL_INVENTORY.banned : []),
+    ...dataTools
   ];
   const seen = new Set();
-  return all.map(t => normaliseToolName(String(t || '').trim())).filter(t => {
+  return all.map(t => bulkReplacementCanonicalToolName_(String(t || '').trim())).filter(t => {
     const k = bulkDiagnosticToolKey_(t);
     if(!k || seen.has(k)) return false;
+    // Filter out likely lesson/activity titles that are not technology tools.
+    if(/[:]/.test(t) && !/^(Minecraft|Micro:bit)/i.test(t)) return false;
+    if(/\b(quest|maze|challenge|campaign|companion|trail|exhibition|prototype model)\b/i.test(t) && t.length > 35) return false;
     seen.add(k);
     return true;
   }).sort((a,b) => b.length - a.length);
@@ -235,20 +262,29 @@ function bulkDiagnosticAllKnownTools_(){
 
 function bulkDiagnosticDetectReplacementTool_(instruction){
   const raw = String(instruction || '').trim();
-  if(!/\b(replace|remove|swap|change out|stop using|get rid of)\b/i.test(raw)) return '';
+  if(!/\b(replace|remove|swap|change out|stop using|get rid of|delete|retire|phase out|stop suggesting)\b/i.test(raw)) return '';
   const lower = raw.toLowerCase().replace(/[’']/g, '');
   const aliases = {
     'seesaw':'Seesaw',
     'see saw':'Seesaw',
+    'seesaw learning journal':'Seesaw',
     'google maps':'Google Maps',
     'mapmaker':'National Geographic MapMaker',
     'national geographic mapmaker':'National Geographic MapMaker',
+    'national geographic map maker':'National Geographic MapMaker',
     'makey makey':'Makey Makey',
     'book creator':'Book Creator',
     'lego spike prime':'Lego Spike Prime',
     'lego spike essential':'Lego Spike Essential',
     'minecraft':'Minecraft Education',
     'minecraft education':'Minecraft Education',
+    'codrone':'CoDrone EDU',
+    'codrone edu':'CoDrone EDU',
+    'codroneedu':'CoDrone EDU',
+    'co drone':'CoDrone EDU',
+    'co-drone':'CoDrone EDU',
+    'co drone edu':'CoDrone EDU',
+    'co-drone edu':'CoDrone EDU',
     'podcast equipment':'Podcast Equipment + GarageBand',
     'podcast equipment garageband':'Podcast Equipment + GarageBand',
     'podcast equipment and garageband':'Podcast Equipment + GarageBand',
@@ -260,13 +296,42 @@ function bulkDiagnosticDetectReplacementTool_(instruction){
     const re = new RegExp('(^|[^a-z0-9])' + pattern + '([^a-z0-9]|$)', 'i');
     if(re.test(lower)) return tool;
   }
+
   const tools = bulkDiagnosticAllKnownTools_();
+  // Prefer longest known tool names first so Adobe Express Podcasting wins over Adobe Express.
   for(const tool of tools){
     const phrase = String(tool || '').toLowerCase().replace(/[’']/g, '');
     if(!phrase || phrase.length < 4) continue;
     const pattern = bulkEscapeRegExp_(phrase).replace(/\s+/g, '\s+');
     const re = new RegExp('(^|[^a-z0-9])' + pattern + '([^a-z0-9]|$)', 'i');
     if(re.test(lower)) return tool;
+  }
+
+  // Fallback: parse the words after the replacement verb, then compare that phrase
+  // against the known tools. This catches natural requests such as
+  // “get rid of all Adobe Express Podcasting” or “stop using Podcast Equipment and GarageBand”.
+  let phrase = lower
+    .replace(/^.*?\b(?:replace|remove|swap|change out|stop using|get rid of|delete|retire|phase out|stop suggesting)\b\s*/i, '')
+    .replace(/^all\s+/, '')
+    .replace(/\b(in|from|across|for)\b.*$/i, '')
+    .replace(/\b(years?|yr|y)\s*[1-6].*$/i, '')
+    .replace(/\b(all planners|all units|everywhere|everything)\b.*$/i, '')
+    .replace(/[^a-z0-9+& ]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if(phrase){
+    const phraseKey = bulkDiagnosticToolKey_(bulkReplacementCanonicalToolName_(phrase));
+    let best = '';
+    let bestScore = 0;
+    tools.forEach(tool => {
+      const tk = bulkDiagnosticToolKey_(tool);
+      if(!tk) return;
+      let score = 0;
+      if(tk === phraseKey) score = 1000;
+      else if(phraseKey && (tk.includes(phraseKey) || phraseKey.includes(tk))) score = Math.min(tk.length, phraseKey.length);
+      if(score > bestScore){ bestScore = score; best = tool; }
+    });
+    if(best && bestScore >= 4) return best;
   }
   return '';
 }
@@ -289,18 +354,22 @@ function bulkReplacementCandidateText_(s){
 }
 
 function bulkReplacementLabelMatches_(s, toolName){
+  toolName = bulkReplacementCanonicalToolName_(toolName);
   const wantedKey = bulkDiagnosticToolKey_(toolName);
   const toolText = String(sugTool(s) || '').trim();
-  const toolKey = bulkDiagnosticToolKey_(toolText);
+  const canonicalTool = bulkReplacementCanonicalToolName_(toolText);
+  const toolKey = bulkDiagnosticToolKey_(canonicalTool);
   if(wantedKey && toolKey && toolKey === wantedKey) return true;
   if(wantedKey === 'seesaw') return /(^|[^a-z0-9])see\s*saw([^a-z0-9]|$)|(^|[^a-z0-9])seesaw([^a-z0-9]|$)/i.test(toolText);
   if(wantedKey === 'googlemaps') return /google\s+maps?/i.test(toolText);
   if(wantedKey === 'nationalgeographicmapmaker') return /mapmaker|national\s+geographic\s+mapmaker/i.test(toolText);
   if(wantedKey === 'podcastequipmentgarageband') return /podcast\s+equipment(?:\s*(?:\+|&|and)\s*garageband)?/i.test(toolText);
+  if(wantedKey === 'codroneedu') return /co[\s-]*drone(?:\s*edu)?|codrone(?:\s*edu)?/i.test(toolText);
   return false;
 }
 
 function bulkReplacementToolMatches_(s, toolName){
+  toolName = bulkReplacementCanonicalToolName_(toolName);
   const wantedKey = bulkDiagnosticToolKey_(toolName);
   if(bulkReplacementLabelMatches_(s, toolName)) return true;
 
@@ -316,6 +385,7 @@ function bulkReplacementToolMatches_(s, toolName){
   if(wantedKey === 'googlemaps') return /google\s+maps?/i.test(haystack);
   if(wantedKey === 'nationalgeographicmapmaker') return /mapmaker|national\s+geographic\s+mapmaker/i.test(haystack);
   if(wantedKey === 'podcastequipmentgarageband') return /podcast\s+equipment(?:\s*(?:\+|&|and)\s*garageband)?/i.test(haystack);
+  if(wantedKey === 'codroneedu') return /co[\s-]*drone(?:\s*edu)?|codrone(?:\s*edu)?/i.test(haystack);
 
   const phrase = String(toolName || '').toLowerCase().replace(/[’']/g, '').trim();
   if(phrase && phrase.length >= 4){
