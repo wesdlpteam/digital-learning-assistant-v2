@@ -3002,11 +3002,13 @@ setInterval(async()=>{
       if(!meta || !meta.modifiedTime) return {synced:false, reason:'no-meta'};
       const remoteModified = meta.modifiedTime;
       const known = rtLastSeenModified || LAST_KNOWN_MODIFIED;
-      if(reason !== 'manual' && known && remoteModified === known) return {synced:false, reason:'same-modified'};
+      if(!['manual','force','after-save','human-verify'].includes(reason) && known && remoteModified === known) return {synced:false, reason:'same-modified'};
       if(reason === 'manual' && known && remoteModified === known){
         rtStatus_('Already up to date with Drive ✓');
         return {synced:false, reason:'same-modified'};
       }
+      // force/after-save/human-verify deliberately bypass the modified-time shortcut so
+      // the tab can pull any merge-preserved edits immediately after a local save.
 
       rtLastSeenModified = remoteModified;
       LAST_KNOWN_MODIFIED = remoteModified;
@@ -3096,6 +3098,9 @@ setInterval(async()=>{
 
   // Expose a small manual helper for testing with Andrew.
   window.syncLatestDLAChangesNow = function(){ return syncFromDriveNow_('manual'); };
+  window.syncLatestDLAChangesNowForced = function(reason){ return syncFromDriveNow_(reason || 'force'); };
+  window.ensureDLASyncControls = rtInstallManualSyncButton_;
+  window.updateDLASyncChip = rtUpdateSyncChip_;
 
   setTimeout(function(){
     try{
@@ -3642,5 +3647,120 @@ setInterval(async()=>{
     try{ dqAddNatGeoToInventory_(); if(Array.isArray(DATA) && DATA.length) dqSanitiseDataSet_(DATA); }
     catch(e){}
   },0);
+})();
+/* ===== end DLA hotfix ===== */
+
+
+/* ===== DLA hotfix: persistent Sync Now button + immediate post-verify sync =====
+   Keeps the manual sync controls visible even when the status bar is re-rendered,
+   and triggers one forced Drive pull after Human Verify / save completes. */
+(function(){
+  const BTN_ID = 'dla-manual-sync-btn';
+  const CHIP_ID = 'dla-sync-status-chip';
+  let postSaveTimer = null;
+
+  function installPersistentSyncControls_(){
+    try{
+      if(typeof window.ensureDLASyncControls === 'function'){
+        window.ensureDLASyncControls();
+      }
+      const status = document.getElementById('status-bar');
+      if(!status || document.getElementById(BTN_ID)) return;
+
+      const wrap = document.createElement('span');
+      wrap.style.cssText = 'display:inline-flex;align-items:center;gap:8px;margin-left:10px;vertical-align:middle';
+
+      const chip = document.createElement('span');
+      chip.id = CHIP_ID;
+      chip.textContent = 'Sync every 5s';
+      chip.style.cssText = 'font-size:10px;color:var(--dim);font-weight:700;border:1px solid var(--border);border-radius:999px;padding:3px 8px;background:rgba(255,255,255,.03)';
+
+      const btn = document.createElement('button');
+      btn.id = BTN_ID;
+      btn.type = 'button';
+      btn.textContent = '↻ Sync now';
+      btn.title = 'Pull the latest data.json changes from Drive now.';
+      btn.className = 'btn-sm';
+      btn.style.cssText = 'font-size:10px;padding:3px 8px;border-radius:999px';
+      btn.onclick = async function(){
+        btn.disabled = true;
+        const old = btn.textContent;
+        btn.textContent = 'Syncing…';
+        try{
+          if(typeof window.syncLatestDLAChangesNowForced === 'function') await window.syncLatestDLAChangesNowForced('force');
+          else if(typeof window.syncLatestDLAChangesNow === 'function') await window.syncLatestDLAChangesNow();
+          if(typeof window.updateDLASyncChip === 'function') window.updateDLASyncChip('Manual sync complete');
+        }catch(e){
+          try{ if(typeof setStatus === 'function') setStatus('Sync failed: ' + (e.message || e), 'error'); }catch(_e){}
+        }finally{
+          btn.disabled = false;
+          btn.textContent = old;
+          setTimeout(installPersistentSyncControls_, 0);
+        }
+      };
+
+      wrap.appendChild(chip);
+      wrap.appendChild(btn);
+      status.appendChild(wrap);
+    }catch(e){ console.warn('Persistent sync controls failed:', e); }
+  }
+
+  function schedulePostSaveSync_(reason){
+    clearTimeout(postSaveTimer);
+    postSaveTimer = setTimeout(async function(){
+      try{
+        installPersistentSyncControls_();
+        if(typeof window.syncLatestDLAChangesNowForced === 'function'){
+          await window.syncLatestDLAChangesNowForced(reason || 'after-save');
+        }
+      }catch(e){ console.warn('Post-save sync failed:', e); }
+      finally{ installPersistentSyncControls_(); }
+    }, 1200);
+  }
+
+  // Wrap the final saveToDrive function after all earlier hotfix wrappers have loaded.
+  setTimeout(function(){
+    try{
+      if(typeof saveToDrive === 'function' && !saveToDrive.__dlaPostSaveSyncWrapped){
+        const oldSave = saveToDrive;
+        const wrapped = async function(){
+          const out = await oldSave.apply(this, arguments);
+          schedulePostSaveSync_('after-save');
+          return out;
+        };
+        wrapped.__dlaPostSaveSyncWrapped = true;
+        saveToDrive = window.saveToDrive = wrapped;
+      }
+    }catch(e){ console.warn('Could not wrap saveToDrive for post-save sync:', e); }
+
+    try{
+      if(typeof toggleHumanVerified === 'function' && !toggleHumanVerified.__dlaImmediateSyncWrapped){
+        const oldToggle = toggleHumanVerified;
+        const wrappedToggle = function(){
+          const out = oldToggle.apply(this, arguments);
+          schedulePostSaveSync_('human-verify');
+          setTimeout(installPersistentSyncControls_, 0);
+          setTimeout(installPersistentSyncControls_, 800);
+          return out;
+        };
+        wrappedToggle.__dlaImmediateSyncWrapped = true;
+        toggleHumanVerified = window.toggleHumanVerified = wrappedToggle;
+      }
+    }catch(e){ console.warn('Could not wrap Human Verify for immediate sync:', e); }
+
+    installPersistentSyncControls_();
+  }, 0);
+
+  // Some render/status calls replace status-bar contents. Re-install the controls when needed.
+  const mo = new MutationObserver(function(){ installPersistentSyncControls_(); });
+  setTimeout(function(){
+    try{
+      const status = document.getElementById('status-bar');
+      if(status) mo.observe(status, {childList:true, subtree:true});
+    }catch(e){}
+  }, 500);
+  setInterval(installPersistentSyncControls_, 2500);
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden) setTimeout(installPersistentSyncControls_, 0); });
+  document.addEventListener('DOMContentLoaded', installPersistentSyncControls_);
 })();
 /* ===== end DLA hotfix ===== */
