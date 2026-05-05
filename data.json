@@ -565,32 +565,33 @@
     "lo": "The significance of places to different people and cultures; The connection between landmarks and identity; How landmarks and symbols represent our history",
     "s": [
       {
-        "t": "ClassVR",
-        "d": "Students embark on a virtual reality journey to explore famous Australian and global landmarks, immersing themselves in 360-degree environments. They can 'stand' at Uluru, the Sydney Opera House, or the Great Wall of China, then record their observations and feelings using Seesaw. This direct experience helps them understand the significance and stories behind these places in a way that feels real and memorable."
+        "t": "ClassVR & Merge Cubes",
+        "d": "Students use ClassVR headsets and Merge Cubes to virtually explore famous Australian and global landmarks, then create their own 3D annotated models of a local place of significance using the Merge Cube. They record a short audio story explaining the landmark's importance, directly connecting to the unit's focus on how places tell stories about our history."
       },
       {
-        "t": "Canva",
-        "d": "Students use Canva's 'Remove Background' feature to create digital collages of landmarks. They layer themselves into historical or cultural sites, then add speech bubbles or text labels to tell the story of the place. This visual storytelling task helps them connect personally to the history and significance of each landmark."
+        "t": "Canva (Remove Background & Collage)",
+        "d": "Students take photos of local landmarks using the iPad Camera app, then use Canva's 'Remove Background' feature to create digital collages. They layer their own drawings and symbols over the landmarks to represent the stories and cultural significance, making connections between place, story, and symbolism."
       },
       {
         "t": "Book Creator",
-        "d": "Students create interactive digital books documenting their learning about significant places. Each page features a photo or drawing of a landmark, a voice recording explaining its story, and simple map annotations. This multimodal approach supports visual and oral literacy while deepening understanding of place and history."
+        "d": "Students create a digital class book documenting significant places in their community. Each student authors a page with a photo, drawing, and voice recording explaining why their chosen place is important, linking directly to the central idea of landmarks telling stories about history."
       },
       {
-        "t": "Seesaw",
-        "d": "Students go on a campus or local walking tour, using the iPad Camera app to photograph school or community landmarks. They upload images to Seesaw, then record voice notes explaining why each place is significant and what stories it holds. This activity builds mapping, observation, and oral communication skills."
+        "t": "Padlet Interactive Map",
+        "d": "Students collaboratively build an interactive Padlet map, pinning photos, drawings, and short audio clips about significant places in their lives or community. They use Padlet's map feature to visually connect locations and stories, reinforcing the connection between place and personal/cultural history."
       },
       {
-        "t": "Padlet",
-        "d": "The class collaborates on a Padlet 'Landmarks Around the World' wall. Each student posts an image or drawing of a landmark, pins it to a map, and adds a short audio description of its importance. This shared digital map builds global awareness and a sense of collective inquiry."
+        "t": "Minecraft: Historical Homes",
+        "d": "Students explore the 'Historical Homes' Minecraft Education lesson (https://education.minecraft.net/en-us/challenges/historical-homes), travelling through time to build and compare different types of homes from various periods and cultures. They reflect on how these places tell stories about the people who lived there, directly supporting the unit's inquiry into landmarks and history.",
+        "url": "https://education.minecraft.net/en-us/challenges/historical-homes"
       },
       {
-        "t": "Physical Makerspace Project",
-        "d": "Students design and build 3D models of a chosen landmark or place of significance using recycled materials, cardboard, popsticks, and bottle caps. They create a display plaque with a simple symbol or drawing to represent the story or cultural meaning of the place. The models are displayed in a 'Landmarks Museum' in the classroom, and students give short oral tours to peers and families."
+        "t": "Physical Makerspace: Landmark Diorama Challenge",
+        "d": "In the Makerspace, students work in teams to design and build a 3D diorama of a local or Australian landmark using cardboard, recycled materials, popsticks, and craft supplies. They add small illustrated story panels or QR codes linking to student-recorded audio stories, showing how the landmark tells a story about history and culture. This hands-on project reinforces spatial thinking, storytelling, and the tangible connection between place and narrative."
       }
     ],
     "audited": true,
-    "plannerText": "This unit engages Year 2 students in exploring how landmarks and places of significance tell stories about our history. Activities include mapping, storytelling, researching Indigenous and local sites, creating Dreaming story artworks, and designing monuments or memorials. Students connect to place through excursions, digital mapping, and collaborative inquiry.",
+    "plannerText": "The unit 'Where We Are in Place and Time' explores how landmarks and places of significance tell stories about our history. Students investigate the significance of places to different people and cultures, the connection between place and story, and ways we preserve and remember historical sites. Activities include mapping, storytelling, Indigenous perspectives, and creative projects linking geography, art, and history.",
     "stemRebooted": true
   },
   {
@@ -856,7 +857,7 @@
     "lo": "How technology expands creative possibilities; The evolution of communication tools; The impact of technology on expression",
     "s": [
       {
-        "t": "Minecraft: Shipwreck Narrative",
+        "t": "Minecraft Education",
         "d": "Students use 'Minecraft: Shipwreck Narrative' to collaboratively design a mysterious shipwreck scene, then write and record a digital narrative from multiple perspectives (e.g., survivor, rescuer, historian). They can embed clues, hidden messages, or QR codes in the Minecraft world, transforming storytelling into an immersive, interactive digital experience that blurs the line between author and audience.",
         "url": "https://education.minecraft.net/en-us/lessons/shipwreck-narrative"
       },
@@ -1455,7 +1456,7 @@
     "lo": "What is a significant event; Why these events occurred; Impact of significant events",
     "s": [
       {
-        "t": "Minecraft: The Hall of Inventions",
+        "t": "Minecraft Education",
         "d": "Students research a significant event that shaped a place (locally or globally), then design and build a 3D model of an invention or structure that emerged from or influenced that event. They must justify their build with historical evidence and present their creation in Minecraft, explaining its impact on the place and its people. This leverages the unit's focus on how significant events shape places and encourages deep historical inquiry and creative digital construction.",
         "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
       },
@@ -2132,31 +2133,31 @@
     "s": [
       {
         "t": "ClassVR & Merge Cubes",
-        "d": "Students use ClassVR headsets and Merge Cubes to virtually explore historical artefacts and environments from different eras. They can manipulate 3D models of objects found on their Wonder Walk or from the Como House excursion, making direct comparisons between past and present. This immersive experience allows students to 'hold' history in their hands and reflect on how evidence from the past shapes our understanding today."
+        "d": "Students use ClassVR headsets and Merge Cubes to virtually explore historical artefacts and environments from different eras. They can interact with 3D models of objects found on their Wonder Walk or from Como House, comparing them to present-day items and recording their observations using the iPad camera. This immersive experience deepens understanding of how evidence from the past informs our present."
       },
       {
         "t": "Seesaw",
-        "d": "Students document their Wonder Walk by taking photos with iPads and uploading them to Seesaw. They record voice reflections describing the evidence they found (plaques, artefacts, buildings) and explain what these reveal about Wesley's history. This creates a digital portfolio connecting personal observations to historical inquiry."
+        "d": "Students create digital portfolios documenting their Wonder Walk, uploading annotated photos of plaques, artefacts, and buildings around Wesley College. They record voice reflections explaining how each piece of evidence connects to the school's history and their own experiences, making learning visible and accessible for sharing with families."
       },
       {
         "t": "Book Creator",
-        "d": "Students create a digital 'Past and Present' book using Book Creator. They combine photos from their campus walk, images of Wesley artefacts, and their own drawings. Each page pairs a historical item with a modern equivalent, with students narrating how things have changed or stayed the same over time."
+        "d": "Students design a multimedia timeline book, combining photos from their campus Wonder Walk, images from the Como House excursion, and interviews with guest speakers. They sequence events and artefacts, adding audio narration to explain changes over time and the significance of each item."
       },
       {
         "t": "Canva",
-        "d": "Using Canva's visual templates and 'Remove Background' feature, students design posters comparing Wesley College's past and present. They can layer historical photos with current images, add speech bubbles for imagined interviews with historical figures, and use icons to highlight key changes in the school environment."
+        "d": "Using Canva's visual tools, students design then/now comparison posters of Wesley artefacts or buildings. They use the 'Remove Background' feature to layer historical and current images, adding labels and short captions to highlight changes and continuities in the school environment."
       },
       {
         "t": "Padlet",
-        "d": "Students collaboratively build a Padlet timeline, uploading images, short videos, and voice notes about significant Wesley artefacts and events. Each post includes a reflection on why the item is important and how it connects to their own experiences at school, fostering a sense of personal history."
+        "d": "Students collaboratively build a digital evidence wall on Padlet, uploading photos, short videos, and voice notes from their interviews with Campbell Place residents and guest speakers. They sort evidence into categories (e.g., artefacts, stories, music) and discuss how each piece helps us understand the past."
       },
       {
         "t": "Physical Makerspace Project: Artefact Timeline Diorama",
-        "d": "Students work in groups to build a physical timeline diorama of Wesley College using cardboard, recycled materials, popsticks, and clay. Each group creates a model of a key artefact or building (e.g., the lion statue, old uniforms, time capsule) and places it on the timeline. Students write or draw a short explanation of its historical significance and how it connects to the present, then present their diorama to the class."
+        "d": "Students work in small groups to create a 3D timeline diorama of Wesley College history using cardboard, recycled materials, popsticks, and clay. Each group selects a key artefact or event (e.g., the school lion, a time capsule, old uniforms) to research and physically build. They add labels and QR codes linking to their digital reflections or interviews, connecting tangible making with digital storytelling."
       }
     ],
     "audited": true,
-    "plannerText": "Students investigate the significance of evidence in a place by exploring Wesley College's history through Wonder Walks, excursions (Como House), guest speakers, and artefact analysis. They compare past and present using photos, interviews, and timelines, culminating in creative projects that connect personal and school history to the central idea: exploring the past helps us to understand the present.",
+    "plannerText": "Students investigate how exploring evidence from the past helps us understand the present, focusing on Wesley College's history and identity. Key activities include a Wonder Walk to document artefacts and plaques, excursions to Como House, interviews with guest speakers and aged care residents, and a culminating artefact project that combines research, reflection, and creative expression.",
     "stemRebooted": true
   },
   {
@@ -2584,38 +2585,37 @@
     "lo": "Reasons for exploration; How people have explored over time; Consequences of exploration",
     "s": [
       {
+        "t": "ClassVR",
+        "d": "Students embark on a virtual reality journey retracing the routes of famous explorers, comparing the environments, challenges, and discoveries they encountered. They document their observations in a digital journal, making connections to how exploration has changed over time."
+      },
+      {
         "t": "Minecraft: The Hall of Inventions",
-        "d": "Students research a historical or contemporary explorer, then use Minecraft: The Hall of Inventions to design and build a 3D model of an invention or tool that enabled exploration (e.g., compass, sextant, telescope, or even a Mars rover). They must justify how their chosen invention led to new discoveries and opportunities, presenting their build and rationale to the class.",
+        "d": "Students explore a virtual museum of historical innovations, then select a key invention related to exploration (such as the compass or telescope). They research its impact and build their own version in Minecraft, presenting how it enabled new discoveries and opportunities.",
         "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
       },
       {
-        "t": "ClassVR",
-        "d": "Students embark on virtual field trips to significant exploration sites (such as the First Fleet landing, Antarctic expeditions, or ancient trade routes) using ClassVR headsets. After the experience, they document their observations and new understandings in a digital science journal on Book Creator, directly linking virtual exploration to real-world discoveries."
+        "t": "Book Creator",
+        "d": "Students create interactive digital books documenting the journey of an explorer, integrating maps, timelines, and multimedia reflections. They include primary and secondary sources, and publish their books for peer review."
       },
       {
-        "t": "Book Creator",
-        "d": "Students create interactive digital journals chronicling the journey of a famous explorer or their own imagined expedition. They include maps, timelines, diary entries, and multimedia reflections, demonstrating how exploration leads to discoveries and new understandings."
+        "t": "Padlet",
+        "d": "Students collaboratively build a digital timeline of major explorations throughout history, posting images, facts, and short video reflections. They comment on each other's posts to discuss the consequences and opportunities arising from each exploration."
       },
       {
         "t": "Canva",
-        "d": "Students design infographics or digital posters that compare exploration methods and motivations across different time periods (e.g., sea exploration vs. space exploration), highlighting the consequences and opportunities that arose from each era."
-      },
-      {
-        "t": "Google Maps",
-        "d": "Students plot the routes of historical explorers on Google Maps, annotating key discoveries, challenges, and turning points along the journey. They reflect on how geography and technology shaped the outcomes of these explorations."
+        "d": "Students design infographics or digital posters highlighting the reasons for exploration and the impact of key discoveries. They use Canva's 'Remove Background' feature to create layered visuals comparing past and present explorers."
       },
       {
         "t": "Makerspace: Exploration Tools Prototype",
-        "d": "Students work in teams to design and physically build a prototype of an exploration tool or artifact (such as a sextant, telescope, or navigation device) using recycled materials, cardboard, string, and bottle caps. They test their prototypes in simulated exploration scenarios (e.g., navigating a classroom obstacle course) and present how their tool would have enabled new discoveries."
+        "d": "Students work in teams to design and physically build a model of an exploration tool (such as a sextant, compass, or telescope) using recycled materials, cardboard, popsticks, and hot glue. They test their prototypes in a classroom 'exploration challenge' and reflect on how these tools enabled new discoveries."
       }
     ],
     "audited": true,
-    "plannerText": "This unit engages Year 4 students in investigating the reasons for exploration, how people have explored over time, and the consequences of exploration. Activities include mapping, historical research, narrative writing, and hands-on projects that connect past and present discoveries, with a strong focus on inquiry, research, and presenting findings.",
+    "plannerText": "Students investigate the reasons for exploration, how people have explored over time, and the consequences of exploration. Activities include mapping, historical research, writing historical narratives, and presenting findings through digital and physical projects.",
     "stemRebooted": true,
-    "humanVerified": true,
-    "humanVerifiedAt": "2026-05-05T04:28:37.396Z",
-    "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
-    "humanVerifiedSuggestionSignature": "[{\"t\":\"Merge Cubes\",\"d\":\"Students bring the journeys of famous explorers to life by designing interactive 3D artefacts with Delightex and projecting them onto Merge Cubes. As classmates rotate the cubes, they uncover hidden diary entries, navigation tools, and pivotal moments from each expedition, transforming historical research into an immersive, hands-on storytelling experience.\",\"url\":\"\"},{\"t\":\"Minecraft Education\",\"d\":\"Students use the verified lesson 'Exploration and Trade' (https://education.minecraft.net/en-us/lessons/exploration-and-trade) to investigate how exploration shaped global connections. They create a digital map and build models of key inventions, then document their learning with in-game signs and screenshots for class discussion.\",\"url\":\"\"},{\"t\":\"Wise Discussion Chatbots\",\"d\":\"Learners engage in a Socratic Tutor scenario with 'Captain Isabella Torres, 16th-century navigator', asking questions like 'What motivated you to risk unknown seas?' or 'How did your discoveries affect the people you encountered?' After the chat, students summarise the explorer?s perspective and reflect on the consequences of exploration in a short written response.\",\"url\":\"\"},{\"t\":\"Book Creator\",\"d\":\"Students craft interactive digital journals chronicling the journeys of historical or fictional explorers, weaving together maps, timelines, audio diary entries, and images. Their published journals showcase discoveries, challenges, and the lasting consequences of exploration, inviting peer review and feedback.\",\"url\":\"\"},{\"t\":\"Google Maps\",\"d\":\"Learners plot the routes of famous explorers on Google Maps, adding custom pins with research notes, images, and reflections about key events and discoveries. Using Street View, they observe ground-level evidence, compare places, and capture notes that connect directly to the unit?s inquiry into the impact of exploration.\",\"url\":\"\"},{\"t\":\"Tinkercad\",\"d\":\"Students follow the STEM Design Cycle to prototype a navigation tool?such as a compass or sextant?by first modelling their design in Tinkercad, then building and coding a functional version with Lego Spike Prime. Teams test their inventions in a classroom 'exploration course', iterating on their designs to overcome real-world navigation challenges faced by explorers.\",\"url\":\"\"}]"
+    "humanVerified": false,
+    "humanVerifiedResetAt": "2026-05-05T04:39:56.962Z",
+    "humanVerifiedResetReason": "Suggestion edited, swapped, regenerated or changed after human verification"
   },
   {
     "ca": "Glen Waverley",
@@ -2908,35 +2908,14 @@
     "th": "How We Express Ourselves",
     "ci": "The media engages its audience and invites a response",
     "lo": "How media targets audiences; Techniques used to engage and persuade; Critical evaluation of media messages",
-    "s": [
-      {
-        "t": "Delightex",
-        "d": "Students design immersive 3D virtual 'advertising worlds' in Delightex, then embed a teacher-created Wise Discussion Chatbot (Socratic Tutor scenario) as 'Alexis Kim, an ethical marketing consultant' to challenge visitors with dilemmas about persuasive techniques and sustainability. After exploring the world and chatting with Alexis, students summarise their new insights in a reflection, deepening their understanding of how media shapes consumer choices and ethical decision-making."
-      },
-      {
-        "t": "Padlet",
-        "d": "Students use Padlet to collaboratively brainstorm and map out the influences on their chosen product, then design and distribute a Microsoft Forms survey to gather real data on peer influences and advertising effectiveness. This workflow mirrors the unit's research and analysis tasks, making student inquiry visible and actionable as they interpret survey results and update their Padlet with evidence-based conclusions."
-      },
-      {
-        "t": "Adobe Express Podcasting",
-        "d": "Learners script and record persuasive audio advertisements or slam poems critiquing media influence and ethical consumerism using Adobe Express Podcasting (https://podcast.adobe.com). Their podcasts are published as part of a class 'Media Gallery', sparking discussion about the power of audio storytelling to shape opinions and drive action."
-      },
-      {
-        "t": "Canva",
-        "d": "Students create dynamic, data-driven infographics and digital posters that visually communicate the impact of advertising strategies, peer influence, and environmental consequences of consumer choices. Canva's 'Remove Background' feature can be used to remix product images, allowing students to reimagine familiar ads and highlight ethical alternatives."
-      },
-      {
-        "t": "Minecraft Education",
-        "d": "Students use the verified lesson 'Media Literacy: News and Bias' (https://education.minecraft.net/en-us/lessons/media-literacy-news-and-bias) to investigate how media sources use persuasive techniques and bias to influence audiences. They present their findings by building in-game newsrooms and posting screenshots with critical reflections on advertising claims."
-      },
-      {
-        "t": "Makey Makey",
-        "d": "Persuasion Arcade: Build & Code an Interactive Ethical Shopping Game?students work in teams to design and construct a physical 'arcade booth' using recycled materials, LED lights, and simple circuits. Using Makey Makey or Micro:bit, they program interactive buttons that trigger digital media (audio jingles, persuasive slogans, or ethical dilemma videos) on an iPad, following the Design Cycle to prototype, test, and refine their booth, then reflect on how their arcade influences thinking about ethical consumerism."
-      }
-    ],
-    "audited": false,
-    "plannerText": "Students collaboratively investigate how media and advertising influence consumer choices, conduct surveys and interviews to analyse peer and social influences, and research the ethical and environmental impacts of products. They present findings through multimodal texts (including songs, advertisements, and slam poems) and take action by creating persuasive media or advocating for more ethical consumer practices.",
-    "stemRebooted": true
+    "s": [],
+    "audited": true,
+    "plannerText": "Not yet documented in PDF.",
+    "stemRebooted": true,
+    "humanVerified": true,
+    "humanVerifiedAt": "2026-05-05T04:39:55.223Z",
+    "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
+    "humanVerifiedSuggestionSignature": "[{\"t\":\"Delightex\",\"d\":\"Students design immersive 3D virtual 'advertising worlds' in Delightex, then embed a teacher-created Wise Discussion Chatbot (Socratic Tutor scenario) as 'Alexis Kim, an ethical marketing consultant' to challenge visitors with dilemmas about persuasive techniques and sustainability. After exploring the world and chatting with Alexis, students summarise their new insights in a reflection, deepening their understanding of how media shapes consumer choices and ethical decision-making.\",\"url\":\"\"},{\"t\":\"Padlet\",\"d\":\"Students use Padlet to collaboratively brainstorm and map out the influences on their chosen product, then design and distribute a Microsoft Forms survey to gather real data on peer influences and advertising effectiveness. This workflow mirrors the unit's research and analysis tasks, making student inquiry visible and actionable as they interpret survey results and update their Padlet with evidence-based conclusions.\",\"url\":\"\"},{\"t\":\"Adobe Express Podcasting\",\"d\":\"Learners script and record persuasive audio advertisements or slam poems critiquing media influence and ethical consumerism using Adobe Express Podcasting (https://podcast.adobe.com). Their podcasts are published as part of a class 'Media Gallery', sparking discussion about the power of audio storytelling to shape opinions and drive action.\",\"url\":\"\"},{\"t\":\"Canva\",\"d\":\"Students create dynamic, data-driven infographics and digital posters that visually communicate the impact of advertising strategies, peer influence, and environmental consequences of consumer choices. Canva's 'Remove Background' feature can be used to remix product images, allowing students to reimagine familiar ads and highlight ethical alternatives.\",\"url\":\"\"},{\"t\":\"Minecraft Education\",\"d\":\"Students use the verified lesson 'Media Literacy: News and Bias' (https://education.minecraft.net/en-us/lessons/media-literacy-news-and-bias) to investigate how media sources use persuasive techniques and bias to influence audiences. They present their findings by building in-game newsrooms and posting screenshots with critical reflections on advertising claims.\",\"url\":\"\"},{\"t\":\"Makey Makey\",\"d\":\"Persuasion Arcade: Build & Code an Interactive Ethical Shopping Game?students work in teams to design and construct a physical 'arcade booth' using recycled materials, LED lights, and simple circuits. Using Makey Makey or Micro:bit, they program interactive buttons that trigger digital media (audio jingles, persuasive slogans, or ethical dilemma videos) on an iPad, following the Design Cycle to prototype, test, and refine their booth, then reflect on how their arcade influences thinking about ethical consumerism.\",\"url\":\"\"}]"
   },
   {
     "ca": "Glen Waverley",
@@ -2972,7 +2951,11 @@
     ],
     "audited": true,
     "plannerText": "This unit engages Year 6 students in an inquiry into the interconnectedness of human-made systems and communities, focusing on how advertising, peer influence, and ethical considerations shape consumer choices. Students collaboratively research, analyse, and present findings on selected products, create persuasive multimodal texts, and explore alternative models of consumerism that honour fairness and sustainability.",
-    "stemRebooted": true
+    "stemRebooted": true,
+    "humanVerified": true,
+    "humanVerifiedAt": "2026-05-05T04:40:11.693Z",
+    "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
+    "humanVerifiedSuggestionSignature": "[{\"t\":\"Merge Cubes\",\"d\":\"Students create 3D models of interconnected human-made systems?like supply chains or transportation networks?on Merge Cube, then use Delightex to animate the flow of goods, information, and influence. This app smash brings abstract systems thinking to life, allowing learners to manipulate variables and observe ripple effects in real time. The activity supports inquiry into how advertising, peer influence, and ethical choices shape communities and consumer behaviour.\",\"url\":\"\"},{\"t\":\"Microsoft Forms\",\"d\":\"Groups create and distribute digital surveys to the school community to gather authentic data on peer influences, advertising effectiveness, and ethical considerations in consumer choices. Students then analyse the results in Excel to identify trends and present their findings as part of their inquiry into how organisations shape consumer behaviour.\",\"url\":\"\"},{\"t\":\"Micro:bit\",\"d\":\"Students design and code ethical pop-up market systems using Micro:bit, inspired by the 'Data Handling' lesson (https://microbit.org/teach/lessons/?selected=data-handling-unit-summary). They gather and analyse data on consumer choices, simulate transactions, and reflect on the impact of their decisions. This project fuses economics, ethics, and digital innovation.\",\"url\":\"\"},{\"t\":\"Padlet\",\"d\":\"Classes use Padlet to crowdsource and visually map the production, marketing, and disposal journeys of selected products. Each group posts images, research, and ethical/environmental findings, allowing for a collaborative, interactive exploration of the structure and function of organisations within global systems.\",\"url\":\"\"},{\"t\":\"Google Maps\",\"d\":\"Students use Google Maps to trace and visualise the global journey of a product, identifying key locations such as production sites, shipping routes, and retail outlets. They create interactive maps that highlight ethical and sustainable choices within supply chains, deepening their understanding of interconnected human-made systems and the impact of consumer decisions. Students use Street View to observe ground-level evidence, compare places and capture notes that connect directly to the unit.\",\"url\":\"\"},{\"t\":\"Ethical Pop-Up Market: Build & Code Smart Stalls\",\"d\":\"Students work in teams to design, build, and code a physical 'pop-up market' stall that showcases a product with ethical and sustainable features. Using recycled materials, cardboard, and craft supplies, each group constructs a stall with interactive elements (e.g., spinning wheels, product displays, moving signs). They embed simple programmable electronics (such as micro:bit or Makey Makey) to add digital features like sound effects, scrolling LED messages, or touch-activated info panels that communicate the ethical story behind their product. The design cycle guides students through empathising with ethical consumers, ideating fair trade or eco-friendly product concepts, prototyping their stall, testing interactive features, and refining their presentation. The final market is set up in the Makerspace, where peers and visitors can 'shop', interact with the stalls, and reflect on how advertising, peer influence, and ethical considerations shape consumer choices.\",\"url\":\"\"}]"
   },
   {
     "ca": "Glen Waverley",
@@ -3009,7 +2992,11 @@
     ],
     "audited": true,
     "plannerText": "This unit immerses students in scientific inquiry through hands-on experiments in physical science, chemistry, and earth/space science. Students follow the scientific method to investigate energy transfer, chemical changes, and planetary movement, culminating in a science fair where they present their own experiments and reflect on how scientists confirm, contest, and create new theories.",
-    "stemRebooted": true
+    "stemRebooted": true,
+    "humanVerified": true,
+    "humanVerifiedAt": "2026-05-05T04:40:38.497Z",
+    "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
+    "humanVerifiedSuggestionSignature": "[{\"t\":\"Micro:bit\",\"d\":\"Students use Micro:bit to collect and analyse data from scientific experiments, bringing the scientific method to life as they investigate planetary motion or energy transfer. They visualise their findings and draw conclusions, deepening their understanding of how experimentation leads to new theories. (https://microbit.org/teach/lessons/?selected=data-handling-unit-summary)\",\"url\":\"\"},{\"t\":\"Merge Cubes\",\"d\":\"Students create augmented reality models of electrical circuits, reversible/irreversible changes, or planetary systems using Merge Cubes and the Merge Explorer app. They can record short video explanations overlaying their AR models, demonstrating their understanding of scientific concepts and inquiry methods.\",\"url\":\"\"},{\"t\":\"Sphero BOLT\",\"d\":\"Students program and control Sphero BOLT robots to simulate planetary orbits and energy transfer in circuits, applying the scientific method to test hypotheses about motion and forces. They collect data from their robot?s sensors to analyse variables such as speed and distance, creating visual representations of their findings. This hands-on exploration deepens understanding of how experiments confirm and contest scientific theories in physical science and earth science.\",\"url\":\"\"},{\"t\":\"Microsoft Forms\",\"d\":\"Students design and distribute digital surveys using Microsoft Forms to collect data on classmates' hypotheses, experiment results, or scientific misconceptions. They analyze the data in Excel, drawing evidence-based conclusions and reflecting on the importance of data in scientific inquiry.\",\"url\":\"\"},{\"t\":\"Minecraft Education\",\"d\":\"Students engage with the 'Minecraft: The Scientific Method' lesson (https://education.minecraft.net/en-us/lessons/the-scientific-method), where they plan and conduct experiments in a virtual world, practicing variables, fair testing, and data collection, directly linking to the unit's focus on how scientists experiment to build knowledge.\",\"url\":\"https://education.minecraft.net/en-us/lessons/the-scientific-method\"},{\"t\":\"Planetary Motion Marble Run: Code & Construct\",\"d\":\"Students work in teams to design and build a large-scale, multi-level marble run that models planetary movement and energy transfer. Using recycled materials (cardboard, tubes, tape, popsticks), they physically construct tracks that represent orbits, inclines for gravitational slingshots, and obstacles for celestial events. Teams integrate micro:bit sensors (or similar age-appropriate microcontrollers) to digitally track marbles (planets) as they travel, displaying data (speed, distance, 'orbital period') on a connected tablet. Students program the micro:bit to trigger lights or sounds at key events (e.g., 'eclipse' zones, energy transfers). The project culminates in a science fair demonstration where students explain how their hybrid creation models scientific concepts of motion, energy, and planetary systems, and reflect on how scientists use both physical models and digital tools to test and refine theories.\",\"url\":\"\"}]"
   },
   {
     "ca": "Glen Waverley",
@@ -3046,7 +3033,11 @@
     ],
     "audited": true,
     "plannerText": "Year 6 students investigate how influences shape consumer choices and the resulting impact on the world's sustainable future. They analyze advertising, peer influence, and environmental consequences through research, surveys, and case studies, culminating in collaborative presentations and creative action projects that advocate for just and sustainable consumer models.",
-    "stemRebooted": true
+    "stemRebooted": true,
+    "humanVerified": true,
+    "humanVerifiedAt": "2026-05-05T04:40:59.541Z",
+    "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
+    "humanVerifiedSuggestionSignature": "[{\"t\":\"Delightex\",\"d\":\"Students collaboratively design immersive 3D virtual worlds in Delightex to visualize the entire lifecycle of a consumer product, from resource extraction to disposal. They then embed Padlet boards within their worlds for peers to leave critical feedback, questions, and alternative sustainable ideas, creating a dynamic, interactive exhibition that brings the complexities of consumer choices and sustainability to life.\",\"url\":\"\"},{\"t\":\"Microsoft Forms\",\"d\":\"Students create and distribute digital surveys using Microsoft Forms to gather real data from their peers and families about consumer habits, influences, and attitudes toward sustainability. They analyze the results to identify trends and present their findings as evidence in their group investigations.\",\"url\":\"\"},{\"t\":\"Micro:bit\",\"d\":\"Students use Micro:bit to collect and visualise data about their own consumer choices, exploring the interdependence between humans and natural systems. They analyse patterns and propose actions for more sustainable living, making data-driven decisions for real-world impact. (https://microbit.org/teach/lessons/?selected=data-handling-unit-summary)\",\"url\":\"\"},{\"t\":\"GarageBand\",\"d\":\"Students compose and record original slam poems, raps, or jingles in GarageBand, using literary devices and sound design to creatively persuade listeners to reflect on their consumer habits and consider alternative, sustainable models.\",\"url\":\"\"},{\"t\":\"Minecraft Education\",\"d\":\"Students explore the concept of recycling and sustainability in the 'Radical Recycling' Minecraft Education lesson, gaining hands-on experience with recycling systems and then reflecting on how these models could be adapted or improved in their own communities.\",\"url\":\"https://education.minecraft.net/en-us/lessons/radical-recycling\"},{\"t\":\"Sustainable Product Pitch: Smart Packaging Prototypes\",\"d\":\"Students work in teams to design, build, and prototype an innovative, eco-friendly product package that addresses an environmental issue caused by consumer choices (e.g., single-use plastics, food waste, over-packaging). Using recycled materials (cardboard, bottles, fabric, etc.), they construct a physical prototype of their packaging solution, integrating a micro:bit or Makey Makey to add an interactive digital feature (such as a touch sensor that plays a persuasive audio message, or a display showing the environmental impact of their design). Students use the Design Cycle: researching existing packaging, brainstorming and sketching solutions, building prototypes, testing with peers, and refining based on feedback. Each team creates a short video pitch using iPads, showcasing their prototype's features and sustainability benefits to a mock 'eco-investor' panel.\",\"url\":\"\"}]"
   },
   {
     "ca": "Glen Waverley",
@@ -3082,7 +3073,11 @@
     ],
     "audited": true,
     "plannerText": "This unit explores how human needs drive the development of nations by comparing pre- and post-colonised Australia, examining the relationship between migration and needs, and analysing the influence of systems on citizens. Students engage in historical inquiry, personal narrative, museum excursions, and creative projects to understand migration, citizenship, and the shaping of Australian identity.",
-    "stemRebooted": true
+    "stemRebooted": true,
+    "humanVerified": true,
+    "humanVerifiedAt": "2026-05-05T04:41:11.892Z",
+    "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
+    "humanVerifiedSuggestionSignature": "[{\"t\":\"Merge Cubes\",\"d\":\"Students build 3D migration journeys or nation-building timelines on Merge Cube, then use Delightex to animate key events, push-pull factors, and personal stories. This app smash helps learners visualise the forces that drive the development of nations and the lived experiences of migration, deepening empathy and historical understanding. The interactive models serve as powerful tools for sharing research and sparking discussion.\",\"url\":\"\"},{\"t\":\"Canva\",\"d\":\"Create a digital timeline in Canva that visually compares pre- and post-colonised Australia, layering key events, migration waves, and changes in citizenship rights. Students can app smash by incorporating iPad camera photos from their Melbourne Museum excursion and use Canva's 'Remove Background' feature for artefact images.\",\"url\":\"\"},{\"t\":\"Padlet\",\"d\":\"Facilitate a collaborative Padlet where students post and respond to migration stories, personal family histories, and reflections on citizenship. They can link to research, videos, and maps, fostering a living digital archive that connects classroom learning to real-world experiences.\",\"url\":\"\"},{\"t\":\"Book Creator\",\"d\":\"Students author a multimedia eBook in Book Creator, weaving together first-person migration narratives, maps, and primary source analysis. They can include voice recordings, scanned artefacts, and interactive quizzes about the influence of systems on citizens.\",\"url\":\"\"},{\"t\":\"Microsoft Forms\",\"d\":\"Design and distribute a Microsoft Forms survey to the school community, gathering data on migration backgrounds, reasons for moving, and perceptions of Australian identity. Students analyse the results in Excel, then present their findings on how needs and systems influence migration and citizenship.\",\"url\":\"\"},{\"t\":\"Migration Memory Machines\",\"d\":\"Students will research the journeys and experiences of diverse migrants to Australia, both pre- and post-colonisation. Using the Design Cycle, they will select a real or imagined migration story, then design and build a tangible, interactive 'memory machine'?a physical artifact that tells the story through movement, sound, and light. Students will craft the base using recycled materials, cardboard, and clay, constructing elements like turning wheels, pop-up scenes, or sliding panels. They will integrate simple programmable electronics (e.g., BBC micro:bit or Makey Makey) to trigger recorded oral histories, ambient sounds, or LED lights when parts are moved or touched. Each machine must physically embody key moments or challenges from the migration narrative, allowing viewers to 'travel' through the story by interacting with the device. This hands-on project encourages empathy, creativity, and a deep understanding of how migration shapes identity and nationhood.\",\"url\":\"\"}]"
   },
   {
     "ca": "Glen Waverley",
@@ -3119,7 +3114,11 @@
     ],
     "audited": true,
     "plannerText": "This unit explores identities as individuals and collectives through physical, emotional, social, and spiritual health and wellbeing, with a focus on the physiology and function of the brain, the impact of mindset and experiences on learning, and strategies to support health, safety, and wellbeing. Students engage in reflective, creative, and collaborative activities to deepen their understanding of neurodiversity, self-regulation, and personal growth.",
-    "stemRebooted": true
+    "stemRebooted": true,
+    "humanVerified": true,
+    "humanVerifiedAt": "2026-05-05T04:41:25.144Z",
+    "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
+    "humanVerifiedSuggestionSignature": "[{\"t\":\"Merge Cubes\",\"d\":\"Learners create interactive 3D brain models or wellbeing maps on Merge Cube, then use Delightex to animate neural pathways, zones of regulation, or growth mindset strategies. This app smash makes neurodiversity and self-regulation visible, empowering students to explore how their brains work and how experiences shape learning and wellbeing. The activity supports reflection and collaborative discussion about personal growth and health.\",\"url\":\"\"},{\"t\":\"Padlet\",\"d\":\"Students create a collaborative digital wellbeing journal on Padlet, where they post daily reflections, strategies, and creative responses related to their personal health and mindset. This interactive space encourages peer feedback and shared learning about emotional regulation and neurodiversity, deepening their understanding of the central idea through ongoing dialogue and visual storytelling.\",\"url\":\"\"},{\"t\":\"Micro:bit\",\"d\":\"Students program their Micro:bit to build a step counter that tracks their daily physical activity by coding the accelerometer sensor to detect movement. They test and refine their code to ensure accurate step counts, then analyse their data to reflect on how physical activity supports their wellbeing, linking to the central idea of personal health and self-awareness.\",\"url\":\"https://microbit.org/projects/make-it-code-it/step-counter/\"},{\"t\":\"Book Creator\",\"d\":\"Students create a digital 'Neurodiversity Storybook' in Book Creator, illustrating how different brains learn and thrive. Each page can feature a unique learning profile, myth-busting facts, and student-generated wellbeing tips, integrating research, creativity, and empathy.\",\"url\":\"\"},{\"t\":\"Canva\",\"d\":\"Using Canva, students design vibrant infographics or posters that visually map the parts of the brain, their functions, and links to wellbeing strategies. They can use Canva's 'Remove Background' feature to personalize their posters with their own photos, making neuroscience relevant to their own identities.\",\"url\":\"\"},{\"t\":\"Neurodiversity Quest: Build & Code Your Brain Adventure\",\"d\":\"Students work in teams to design and build a large, interactive 3D 'brain map' maze using cardboard, recycled materials, and craft supplies. Each section of the maze physically represents a different brain region or function (e.g., memory, emotion, creativity, self-regulation), decorated with symbols and textures. Students embed simple electronics (e.g., Makey Makey, LED circuits) to trigger sounds, lights, or digital messages when touched. Using Sphero Indi robots or similar, students code a 'neurodiverse explorer' to navigate the maze, encountering hands-on challenges and reflection prompts at each station (e.g., a puzzle about growth mindset, a sensory task for emotional regulation). The project culminates in a showcase where teams guide others through their custom brain adventure, explaining the links between physical structures, mental health, and personal identity.\",\"url\":\"\"}]"
   },
   {
     "ca": "St Kilda",
@@ -3798,32 +3797,34 @@
     "lo": "The three states of matter and their properties; How matter changes states depending on particles, temperature and energy; Responsible and ethical use of materials like glass and plastic",
     "s": [
       {
-        "t": "Merge Cubes",
-        "d": "Students design interactive 3D models of different states of matter using Canva, then bring these models to life with Merge Cubes. For example, students can create a layered animation showing how a solid turns into a liquid and then a gas, which can be explored in augmented reality?making abstract concepts about materials and their changes tangible and memorable."
+        "t": "Merge Cubes + ClassVR",
+        "d": "Students create 3D models of different materials (solid, liquid, gas) and their particle arrangements using Tinkercad, then upload these to Merge Cubes and explore them in ClassVR. This allows students to 'hold' and manipulate states of matter in mixed reality, deepening their understanding of how materials behave and interact."
       },
       {
-        "t": "Wise Discussion Chatbots",
-        "d": "Learners engage with a teacher-created Wise Discussion Chatbot using the Socratic Tutor scenario, where the chatbot takes on the persona of Dr Maya Chen, a materials scientist. Students ask questions like 'Why does ice melt faster on metal than on plastic?' or 'How do scientists decide which materials are best for recycling?' and then summarise their new understandings in a claim-evidence-reasoning response."
+        "t": "Seesaw Digital Science Journals",
+        "d": "Students document their experiments on changing states of matter (e.g., melting ice, making oobleck) by recording videos, taking photos, and annotating their observations directly in Seesaw. They can use the microphone to explain their thinking and compare results with peers."
       },
       {
-        "t": "Micro:bit",
-        "d": "Students program Micro:bit sensors to measure temperature changes as they experiment with heating and cooling different materials, observing how matter changes state. They collect data from their devices to investigate the relationship between particle movement, temperature, and energy, then present their findings using simple graphs and explanations."
+        "t": "Canva Animated Infographics",
+        "d": "Students use Canva to design animated infographics that explain the journey of a material (e.g., chocolate or glass) as it changes state. They can add moving arrows, labels, and voiceovers to clearly communicate the science behind each transformation."
       },
       {
-        "t": "Book Creator",
-        "d": "Students document their own science experiments on changing states of matter by creating multimedia digital books. They can include photos, voice recordings, and videos of their experiments, as well as reflections on what they observed about how materials behave and interact."
+        "t": "Minecraft: Filtering Water On The ISS",
+        "d": "Students explore how water is filtered on the International Space Station by experimenting with creating a water filtering system in Minecraft Education. They learn about the properties of materials and how their interactions can solve real-world challenges.",
+        "url": "https://education.minecraft.net/en-us/lessons/filtering-water-on-the-iss"
       },
       {
-        "t": "Adobe Express",
-        "d": "Students create dynamic presentations or infographics to explain the responsible and ethical use of materials like glass and plastic, highlighting both the science and the environmental impact. They can use the 'Remove Background' feature to create visually striking images without needing a green screen."
+        "t": "Micro:bit: Electrical Conductors",
+        "d": "Students use Micro:bits to investigate which classroom materials conduct electricity. They code the Micro:bit to display a happy face when a conductor is detected and a sad face for an insulator, directly linking digital technology to material properties.",
+        "url": "https://microbit.org/teach/lessons/?selected=electrical-conductors-unit-of-work"
       },
       {
-        "t": "Freeform",
-        "d": "Students empathise by exploring everyday problems involving materials changing state (like ice melting or water evaporating). They define a specific challenge, ideate and sketch simple solutions using Freeform?s collaborative whiteboard, then prototype their models with accessible materials, test how well their designs demonstrate or control the change of state, and refine their prototypes based on observations and measurements."
+        "t": "Makerspace: Material Challenge Towers",
+        "d": "In the Makerspace, students are challenged to build the tallest tower possible using a mix of recycled materials (cardboard, plastic bottles, foil, popsticks, rubber bands). They must test and document how different materials behave under stress (weight, bending, twisting) and reflect on which combinations provide the best solutions for height and stability."
       }
     ],
-    "audited": false,
-    "plannerText": "This unit engages students in exploring the different states of matter, how and why matter changes, and the responsible use of materials. Activities include hands-on experiments, multimedia documentation, and real-world problem solving, with a strong focus on scientific inquiry and environmental responsibility."
+    "audited": true,
+    "plannerText": "The unit focuses on understanding the different states of matter, how and why matter changes, and the responsible use and adaptation of materials. Students conduct hands-on experiments, observe and document changes, and explore the impact of materials on the environment through inquiry-based activities and digital documentation."
   },
   {
     "ca": "St Kilda",
@@ -3964,7 +3965,11 @@
       }
     ],
     "audited": true,
-    "plannerText": "This unit immerses students in the creative process across drama, music, visual arts, and Chinese, focusing on how artistic elements like colour, movement, and sound communicate ideas and emotions. Students design and perform original Beijing Opera-inspired vignettes, create expressive masks, compose music, and reflect on their creative choices through digital portfolios and collaborative projects."
+    "plannerText": "This unit immerses students in the creative process across drama, music, visual arts, and Chinese, focusing on how artistic elements like colour, movement, and sound communicate ideas and emotions. Students design and perform original Beijing Opera-inspired vignettes, create expressive masks, compose music, and reflect on their creative choices through digital portfolios and collaborative projects.",
+    "humanVerified": true,
+    "humanVerifiedAt": "2026-05-05T04:50:01.981Z",
+    "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
+    "humanVerifiedSuggestionSignature": "[{\"t\":\"Merge Cubes\",\"d\":\"Students design and create interactive 3D Beijing Opera masks or character artefacts using Merge Cube and the Merge Explorer app, then use the iPad camera to record themselves performing a short vignette in character. The 3D artefact becomes a digital prop, allowing students to blend physical movement, digital art, and AR storytelling in a single workflow.\",\"url\":\"\"},{\"t\":\"Canva\",\"d\":\"Students create a digital portfolio showcasing their character mask designs, script excerpts, and reflections on how colour and artistic elements communicate emotion and personality, using Canva's visual storytelling tools and 'Remove Background' feature for mask photos.\",\"url\":\"\"},{\"t\":\"Book Creator\",\"d\":\"Students collaboratively author a multimedia eBook documenting the creative process behind their Beijing Opera-inspired performances, including audio recordings, video snippets, and annotated images of their masks and poses.\",\"url\":\"\"},{\"t\":\"GarageBand\",\"d\":\"Students compose original soundtracks for their character vignettes, experimenting with tempo, dynamics, and instrument selection to evoke mood and support the narrative, then sync their music to performance videos.\",\"url\":\"\"},{\"t\":\"Wise Discussion Chatbots\",\"d\":\"The teacher creates a Wise Discussion Chatbot using the Character Interview scenario and sets the bot's role as Ava, a community celebration organiser explaining why particular traditions matter to different families. The topic is ?How We Express Ourselves: The creative process involves understanding and applying artistic elements to communicate ideas and emotions across disciplines?. Students chat with the bot to explore a named perspective through guided questioning rather than general research; for example, they ask ?How does this celebration show what your community values?? and ?What might outsiders misunderstand about this tradition??. After the chat, students produce a question bank plus a short perspective-and-evidence summary that compares the chatbot responses with unit sources linked explicitly to How We Express Ourselves.\",\"url\":\"\"},{\"t\":\"Makey Makey\",\"d\":\"Using the Design Cycle, students prototype interactive character masks or props that trigger sound effects or music when touched, integrating Makey Makey with conductive materials to physically express character traits and emotions in a live performance context.\",\"url\":\"\"}]"
   },
   {
     "ca": "St Kilda",
@@ -3999,7 +4004,11 @@
       }
     ],
     "audited": true,
-    "plannerText": "Students investigate not-for-profit organisations, research their functions and community impact, and collaborate to design and promote action projects such as fundraising drives and awareness campaigns. They create digital flyers, posters, and presentations to inform and inspire the school community, culminating in student-led initiatives that support local and national causes."
+    "plannerText": "Students investigate not-for-profit organisations, research their functions and community impact, and collaborate to design and promote action projects such as fundraising drives and awareness campaigns. They create digital flyers, posters, and presentations to inform and inspire the school community, culminating in student-led initiatives that support local and national causes.",
+    "humanVerified": true,
+    "humanVerifiedAt": "2026-05-05T04:50:36.569Z",
+    "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
+    "humanVerifiedSuggestionSignature": "[{\"t\":\"Merge Cubes\",\"d\":\"Students create interactive 3D models of not-for-profit organisations using Merge Cubes and the Merge Explorer app. Each group designs a virtual 'cube exhibit' that visually explains the mission, impact, and structure of their chosen organisation, then shares these cubes with peers for an immersive, hands-on learning experience.\",\"url\":\"\"},{\"t\":\"Padlet\",\"d\":\"Launch a collaborative digital 'Action Wall' on Padlet where students post and comment on real-world examples of not-for-profit actions, fundraising ideas, and community needs. This living wall can include embedded videos, links, and student-created flyers, fostering ongoing discussion and idea sharing throughout the unit.\",\"url\":\"\"},{\"t\":\"Canva\",\"d\":\"Students design professional-quality digital flyers and infographics in Canva to promote their chosen not-for-profit actions. They use Canva's 'Remove Background' feature to create eye-catching visuals and then distribute these digitally within the school community to raise awareness and encourage participation.\",\"url\":\"\"},{\"t\":\"Seesaw\",\"d\":\"Document the entire inquiry process on Seesaw by having students record video reflections, upload research snapshots, and share progress on their action projects. Families and peers can comment, providing authentic feedback and celebrating student agency in real time.\",\"url\":\"\"},{\"t\":\"Minecraft Education\",\"d\":\"Students explore 'The Hall of Inventions' in Minecraft Education, then collaboratively design and build a virtual exhibit for a not-for-profit innovation that addresses a community need. They justify their invention's impact and connect it to real-world organisations. https://education.minecraft.net/en-us/challenges/the-hall-of-inventions\",\"url\":\"\"},{\"t\":\"Makey Makey\",\"d\":\"Using the Design Cycle, students prototype interactive donation boxes or awareness stations for their chosen not-for-profit using Makey Makey and everyday materials. They design, test, and refine their creations, ensuring the device provides feedback (lights, sounds, or digital messages) when someone 'donates' or interacts, then showcase these at a school action fair.\",\"url\":\"\"}]"
   },
   {
     "ca": "St Kilda",
@@ -4035,7 +4044,11 @@
       }
     ],
     "audited": true,
-    "plannerText": "Students inquire into the engineering of bridges, exploring different types, features, and materials that contribute to strength and stability. They research, design, build, and test bridges, reflecting on their process and making improvements based on real-world examples and peer feedback."
+    "plannerText": "Students inquire into the engineering of bridges, exploring different types, features, and materials that contribute to strength and stability. They research, design, build, and test bridges, reflecting on their process and making improvements based on real-world examples and peer feedback.",
+    "humanVerified": true,
+    "humanVerifiedAt": "2026-05-05T04:51:28.755Z",
+    "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
+    "humanVerifiedSuggestionSignature": "[{\"t\":\"Merge Cubes\",\"d\":\"Students design a 3D interactive model of their bridge using Tinkercad, then export and visualize it on Merge Cubes using the Merge Explorer app on iPads. This allows students to 'hold' and inspect their bridge designs in augmented reality, testing stability and features virtually before building physically.\",\"url\":\"\"},{\"t\":\"Seesaw\",\"d\":\"Students document their bridge design process by capturing photos and videos at each stage using the iPad camera, then create a digital portfolio in Seesaw. For presentations, they use Canva to create visually engaging posters explaining the engineering choices behind their bridge's strength and stability.\",\"url\":\"\"},{\"t\":\"Minecraft Education\",\"d\":\"Students use Minecraft Education's 'Area and Volume' lesson to design and solve real-world area and volume problems related to bridge building, experimenting with different shapes and materials to understand how these factors impact structural integrity.\",\"url\":\"https://education.minecraft.net/en-us/lessons/area-and-volume-2\"},{\"t\":\"Sphero BOLT\",\"d\":\"Students program Sphero BOLT robots to simulate 'stress tests' on their bridge prototypes. By driving the Sphero across different bridge models, students collect data on which designs withstand movement and weight, linking digital coding with hands-on engineering.\",\"url\":\"\"},{\"t\":\"Book Creator\",\"d\":\"Students create a digital book chronicling the history of famous bridges, the science behind their construction, and their own design journey. They include interactive diagrams, voice recordings, and video reflections to demonstrate their understanding of engineering principles.\",\"url\":\"\"},{\"t\":\"Lego Spike Prime\",\"d\":\"Using the Design Cycle, students work in teams to prototype, test, and refine a physical bridge using Lego Spike Prime. They document each iteration, collect data on load-bearing capacity, and present their final design with a focus on how engineering choices made their structure strong, stable, and fit for purpose.\",\"url\":\"\"}]"
   },
   {
     "ca": "St Kilda",
@@ -4070,7 +4083,11 @@
       }
     ],
     "audited": true,
-    "plannerText": "This unit explores First Nations Australians' deep connection to Country, language, and culture. Students engage in activities such as creating soundscapes, researching cultural diversity, visiting the Melbourne Museum, and producing artworks and digital reflections that highlight Indigenous perspectives, environmental responsibility, and the importance of tradition and identity."
+    "plannerText": "This unit explores First Nations Australians' deep connection to Country, language, and culture. Students engage in activities such as creating soundscapes, researching cultural diversity, visiting the Melbourne Museum, and producing artworks and digital reflections that highlight Indigenous perspectives, environmental responsibility, and the importance of tradition and identity.",
+    "humanVerified": true,
+    "humanVerifiedAt": "2026-05-05T04:51:48.139Z",
+    "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
+    "humanVerifiedSuggestionSignature": "[{\"t\":\"Merge Cubes\",\"d\":\"Students create interactive 3D artefacts using Merge Cubes and the iPad camera, overlaying their own First Nations-inspired symbols and stories. They record oral storytelling in their own voices, then use the Merge Explorer app to bring their artefacts to life, allowing peers to 'hold' and explore each other's stories in augmented reality.\",\"url\":\"\"},{\"t\":\"Canva\",\"d\":\"Students design digital posters or infographics that compare and contrast different First Nations countries, languages, and cultural practices across Australia, using Canva's 'Remove Background' feature to integrate their own artwork or photos of their paintings.\",\"url\":\"\"},{\"t\":\"iMovie\",\"d\":\"Students produce short documentaries or creative retellings of Dreamtime stories, combining footage from their Melbourne Museum excursion, voiceovers, and digital artwork to reflect on the importance of Country and cultural diversity.\",\"url\":\"\"},{\"t\":\"Book Creator\",\"d\":\"Students collaboratively author a digital book that weaves together personal reflections, research, and original artwork about First Nations perspectives on Country, language, and sustainability, embedding audio explanations and music soundscapes they have created.\",\"url\":\"\"},{\"t\":\"Padlet\",\"d\":\"Students build a collaborative digital map on Padlet, pinning locations of different First Nations countries, adding student-created videos, soundscapes, and artwork to each region to showcase the diversity and connection to Country.\",\"url\":\"\"},{\"t\":\"Lego Spike Prime\",\"d\":\"Using the Design Cycle, students prototype and build a 'sustainable gathering tool' inspired by First Nations ingenuity, then document their process and test their designs for environmental impact and efficiency, reflecting on how traditional knowledge can inform modern STEM solutions.\",\"url\":\"\"}]"
   },
   {
     "ca": "St Kilda",
@@ -4106,7 +4123,11 @@
       }
     ],
     "audited": true,
-    "plannerText": "Students investigate the concept of exploration and discovery, focusing on the Age of Exploration and Australian history. They research explorers, map their journeys, present findings, and reflect on the impact of European arrival from multiple perspectives, using a range of inquiry-based and creative activities."
+    "plannerText": "Students investigate the concept of exploration and discovery, focusing on the Age of Exploration and Australian history. They research explorers, map their journeys, present findings, and reflect on the impact of European arrival from multiple perspectives, using a range of inquiry-based and creative activities.",
+    "humanVerified": true,
+    "humanVerifiedAt": "2026-05-05T04:52:12.214Z",
+    "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
+    "humanVerifiedSuggestionSignature": "[{\"t\":\"Merge Cubes\",\"d\":\"Students create interactive 3D explorer journals using Merge Cubes and the iPad camera. They film themselves as 'time-traveling explorers', overlaying their video narrations onto 3D models of ships, maps, or artifacts they design in Tinkercad, then use the Merge Cube to present their discoveries in augmented reality to the class.\",\"url\":\"\"},{\"t\":\"Seesaw\",\"d\":\"Students document their explorer research by creating multimedia portfolios, combining voice recordings, annotated maps, and digital drawings to show the journeys, discoveries, and impacts of different explorers on Australia and the world.\",\"url\":\"\"},{\"t\":\"Canva\",\"d\":\"Students design visually engaging digital timelines or infographics that compare pre- and post-European arrival in Australia, highlighting key explorers, their routes, and the resulting changes in landscape, demographics, and identity.\",\"url\":\"\"},{\"t\":\"Minecraft Education\",\"d\":\"Students explore the museum of key innovations from history, then build their own 'explorer-inspired' inventions or landmarks in Minecraft, reflecting on how exploration and discovery have shaped the modern world.\",\"url\":\"https://education.minecraft.net/en-us/challenges/the-hall-of-inventions\"},{\"t\":\"Adobe Express\",\"d\":\"Students create short documentary-style videos or animated explainers about a chosen explorer, using Adobe Express to combine historical images, maps, and their own voiceovers to communicate the positive and negative consequences of exploration.\",\"url\":\"\"},{\"t\":\"Lego Spike Prime\",\"d\":\"Using the Design Cycle, students prototype and test a 'navigation robot' inspired by historical exploration tools. They design, build, and program a Lego Spike Prime robot to follow a mapped route representing an explorer's journey, iterating on their design to overcome obstacles and simulate real-world exploration challenges.\",\"url\":\"\"}]"
   },
   {
     "ca": "St Kilda",
