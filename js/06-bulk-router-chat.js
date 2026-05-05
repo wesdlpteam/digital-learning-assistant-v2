@@ -3461,13 +3461,45 @@ function bulkRunLibraryLessonDraftSafe_(text){
     const n = /prep|foundation/.test(raw) ? 0 : (m ? Number(m[1]) : 3);
     return n <= 2 ? 'early' : n <= 4 ? 'middle' : 'upper';
   }
-  function qgIsWeak_(desc){
+  function qgSignificantWords_(value){
+    const stop = new Set(['about','after','again','also','because','being','between','central','class','classmates','connected','create','creates','different','explain','explains','idea','inquiry','learning','lesson','their','there','these','thing','things','through','understand','understanding','using','where','which','while','with','within','would','year','students','student','unit','theme','line']);
+    return qgClean_(value).toLowerCase()
+      .replace(/[^a-z0-9\s]/g,' ')
+      .split(/\s+/)
+      .filter(w => w.length >= 5 && !stop.has(w));
+  }
+  function qgHasUnitOverlap_(desc, entry){
+    if(!entry) return false;
+    const d = ' ' + qgClean_(desc).toLowerCase().replace(/[^a-z0-9\s]/g,' ') + ' ';
+    const words = Array.from(new Set(qgSignificantWords_([entry.th, entry.ci, entry.lo, entry.loi, entry.plannerText].filter(Boolean).join(' '))));
+    return words.slice(0, 40).some(w => d.includes(' ' + w + ' '));
+  }
+  function qgHasAction_(desc){
+    return /\b(build|design|create|record|film|code|prototype|map|interview|collect|analyse|analyze|test|debug|publish|present|explain|compare|sequence|model|survey|curate|annotate|compose|narrate|simulate|reflect|post|respond|critique|justify|classify|sort|tag|script|draft|edit|evaluate|synthesise|synthesize)\b/i.test(desc);
+  }
+  function qgHasProduct_(desc){
+    return /\b(video|podcast|book|quiz|map|model|prototype|gallery|report|infographic|interview|timeline|soundboard|simulation|exhibition|museum|tour|poster|dashboard|data display|storyboard|animation|presentation|guide|campaign|artefact|artifact|portfolio|reflection|field report|debate wall|evidence wall|wall|board|post|posts|argument|arguments|counterargument|counterarguments|caption|captions|hotspot|hotspots|walkthrough)\b/i.test(desc);
+  }
+  function qgHasConnection_(desc, entry){
+    return /\b(central idea|line of inquiry|unit theme|inquiry|because|reveals|shows|connects|linked to|demonstrates|explains why|evidence|real-world|government|citizen|culture|community|tradition|decision|system|perspective|impact|change|responsibility)\b/i.test(desc) || qgHasUnitOverlap_(desc, entry);
+  }
+  function qgIsStrongExisting_(desc, entry){
+    const d = qgClean_(desc);
+    if(d.length < 165) return false;
+    const hasAction = qgHasAction_(d);
+    const hasProduct = qgHasProduct_(d);
+    const hasConnection = qgHasConnection_(d, entry);
+    const hasProcess = /\b(evidence|counterarguments?|peer feedback|feedback|critique|justify|compare|analyse|analyze|synthesise|synthesize|evaluate|patterns?|tensions?|claim|claims?|decision|decisions|perspective|reflection|reflect|argument|arguments?)\b/i.test(d);
+    return hasAction && hasProduct && hasConnection && (hasProcess || d.length >= 240);
+  }
+  function qgIsWeak_(desc, entry){
     const d = qgText_(desc).toLowerCase();
+    if(qgIsStrongExisting_(desc, entry)) return false;
     if(d.length < 135) return true;
     if(/\b(simple product|share what they made|explore the topic|learn about|show their learning|connects? to|use the app|make a presentation|create a resource|research online|record their ideas)\b/i.test(desc)) return true;
-    const hasAction = /\b(build|design|create|record|film|code|prototype|map|interview|collect|analyse|test|debug|publish|present|explain|compare|sequence|model|survey|curate|annotate|compose|narrate|simulate|reflect)\b/i.test(desc);
-    const hasProduct = /\b(video|podcast|book|quiz|map|model|prototype|gallery|report|infographic|interview|timeline|soundboard|simulation|exhibition|museum|tour|poster|dashboard|data display|storyboard|animation|presentation|guide|campaign|artefact|portfolio|reflection|field report)\b/i.test(desc);
-    const hasConnection = /\b(central idea|line of inquiry|unit theme|inquiry|because|reveals|shows|connects|linked to|demonstrates|explains why|evidence)\b/i.test(desc);
+    const hasAction = qgHasAction_(desc);
+    const hasProduct = qgHasProduct_(desc);
+    const hasConnection = qgHasConnection_(desc, entry);
     return !(hasAction && hasProduct && hasConnection);
   }
   function qgAgePhrase_(entry){
@@ -3566,8 +3598,27 @@ function bulkRunLibraryLessonDraftSafe_(text){
     const tool = qgClean_(out.t || out.tool || out.technology || out.name || '');
     let desc = qgClean_(out.d || out.desc || out.description || out.integration_idea || out.activity || out.suggestion || '');
     const originalDesc = desc;
+    let currentDesc = '';
+    let currentTool = '';
+    try{
+      if(entry && Number.isInteger(out.sugIdx) && typeof getSugs === 'function'){
+        const oldSug = getSugs(entry)[out.sugIdx];
+        if(oldSug){
+          currentDesc = qgClean_(typeof sugDesc === 'function' ? sugDesc(oldSug) : (oldSug.d || oldSug.desc || ''));
+          currentTool = qgClean_(typeof sugTool === 'function' ? sugTool(oldSug) : (oldSug.t || oldSug.tool || ''));
+        }
+      }
+    }catch(e){}
 
-    if(tool && qgIsWeak_(desc)){
+    const sameTool = currentTool && tool && qgKey_(currentTool) === qgKey_(tool);
+    // Do not downgrade an already useful suggestion. If the existing suggestion has a
+    // concrete task, product and unit connection, and the proposed rewrite is weaker,
+    // drop it from the review popup rather than replacing it with a flatter template.
+    if(sameTool && qgIsStrongExisting_(currentDesc, entry) && qgIsWeak_(desc, entry)){
+      return null;
+    }
+
+    if(tool && qgIsWeak_(desc, entry)){
       desc = qgTemplate_(tool, entry, originalDesc);
     }
     desc = qgClean_(desc);
@@ -3588,7 +3639,7 @@ function bulkRunLibraryLessonDraftSafe_(text){
     else if(out.activity != null) out.activity = desc;
     else if(out.suggestion != null) out.suggestion = desc;
 
-    const note = 'Universal quality guard: checked for concrete student action, product/output and unit connection.';
+    const note = 'Universal quality guard: checked for concrete student action, product/output and unit connection. Strong existing suggestions are skipped rather than flattened.';
     out.qualityGuard = true;
     if(!out.whyBetter && !out.improvementRationale) out.whyBetter = note;
     if(!out.improvementConfidence) out.improvementConfidence = 'Draft-only';
@@ -3600,7 +3651,17 @@ function bulkRunLibraryLessonDraftSafe_(text){
     const original = window.showChangesPopup;
     const wrapped = function(changes){
       try{
-        if(Array.isArray(changes)) changes = changes.map(qgEnhanceChange_);
+        if(Array.isArray(changes)){
+          const before = changes.length;
+          changes = changes.map(qgEnhanceChange_).filter(Boolean);
+          if(before && !changes.length){
+            try{
+              if(typeof bulkChatAddMessage === 'function'){
+                bulkChatAddMessage('assistant', '✅ The quality guard skipped this batch because the existing suggestions were already stronger than the proposed rewrites. No changes were drafted or saved.');
+              }
+            }catch(e){}
+          }
+        }
       }catch(e){ console.warn('DLA quality guard skipped:', e); }
       return original.call(this, changes);
     };
