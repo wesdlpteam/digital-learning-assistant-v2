@@ -49,10 +49,6 @@ function bulkDetectNamedToolOpportunity_(instruction){
     'microbit':'Micro:bit',
     'micro bit':'Micro:bit',
     'micro:bit':'Micro:bit',
-    'makey makey':'Makey Makey',
-    'makeymakey':'Makey Makey',
-    'make makey':'Makey Makey',
-    'makey':'Makey Makey',
     'lego spike prime':'Lego Spike Prime',
     'lego spike essential':'Lego Spike Essential',
     'sphero bolt':'Sphero BOLT',
@@ -1002,22 +998,6 @@ async function bulkChatSend(){
   bulkChatContext.platform = platform;
   bulkChatContext.clarifyRound = 0;
   bulkChatContext.isFollowUp = isFollowUp;
-
-  // Phase 2 modular safety: clear named-tool opportunity requests should not go
-  // through the generic clarification/GPT router. Route them straight to the
-  // local deterministic analysis in js/07 so prompts such as “Find more
-  // opportunities to use Makey Makey” cannot be misread as a replacement of the
-  // one existing Makey Makey suggestion.
-  const earlyNamedTool = bulkDetectNamedToolOpportunity_(text);
-  if(earlyNamedTool && bulkInstructionLooksLikeOpportunity(text) &&
-     typeof bulkInstructionTargetsNamedToolOpportunity_ === 'function' &&
-     bulkInstructionTargetsNamedToolOpportunity_(text)){
-    bulkChatAddMessage('assistant', `Got it — I’ll look for new <strong>${esc(earlyNamedTool)}</strong> opportunities, skip units that already use it, avoid the STEM slot, and prepare review drafts only.`);
-    bulkChatMemory.push({ role: 'assistant', content: `Looking for new ${earlyNamedTool} opportunities.` });
-    bulkChatState = 'analysing';
-    runStartBulkAnalysisSafely_();
-    return;
-  }
 
   // Show reasoning stream
   showReasoningSteps([
