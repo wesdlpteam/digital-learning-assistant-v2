@@ -270,18 +270,28 @@ function bulkReplacementCandidateText_(s){
   return parts.join(' | ');
 }
 
-function bulkReplacementToolMatches_(s, toolName){
+function bulkReplacementLabelMatches_(s, toolName){
   const wantedKey = bulkDiagnosticToolKey_(toolName);
   const toolText = String(sugTool(s) || '').trim();
   const toolKey = bulkDiagnosticToolKey_(toolText);
   if(wantedKey && toolKey && toolKey === wantedKey) return true;
+  if(wantedKey === 'seesaw') return /(^|[^a-z0-9])see\s*saw([^a-z0-9]|$)|(^|[^a-z0-9])seesaw([^a-z0-9]|$)/i.test(toolText);
+  if(wantedKey === 'googlemaps') return /google\s+maps?/i.test(toolText);
+  if(wantedKey === 'nationalgeographicmapmaker') return /mapmaker|national\s+geographic\s+mapmaker/i.test(toolText);
+  return false;
+}
+
+function bulkReplacementToolMatches_(s, toolName){
+  const wantedKey = bulkDiagnosticToolKey_(toolName);
+  if(bulkReplacementLabelMatches_(s, toolName)) return true;
 
   const haystack = bulkReplacementCandidateText_(s).toLowerCase().replace(/[’']/g, '');
   if(!haystack) return false;
 
   if(wantedKey === 'seesaw'){
-    // Some entries use labels such as "Seesaw Learning Journal", "See Saw", or put
-    // the tool name in a description field rather than the compact tool field.
+    // Some legacy entries keep an approved tool such as Padlet in the label, but
+    // still tell students to use Seesaw inside the description. Match those too,
+    // then decide later whether to replace the tool or only rewrite the wording.
     return /(^|[^a-z0-9])see\s*saw([^a-z0-9]|$)/i.test(haystack) || /(^|[^a-z0-9])seesaw([^a-z0-9]|$)/i.test(haystack);
   }
   if(wantedKey === 'googlemaps') return /google\s+maps?/i.test(haystack);
@@ -317,10 +327,12 @@ function bulkDiagnosticScanReplacementTool_(toolName, targetYears){
       if(!bulkReplacementToolMatches_(s, toolName)) return;
       totalMatchingSlots++;
       entriesSeen.add(entryIdx);
+      const labelMatch = bulkReplacementLabelMatches_(s, toolName);
       const record = {
         entryIdx,
         sugIdx,
         isStemSlot: sugIdx === 5,
+        matchKind: labelMatch ? 'tool-label' : 'description-reference',
         campus: e.ca || e.campus || 'Campus?',
         year: yl || e.yl || 'Year?',
         theme: e.th || e.theme || 'Untitled unit',
@@ -476,22 +488,34 @@ function bulkRunSafeReplacementDraftOnly_(text){
   }
 
   const usedCounts = {};
+  let labelReplacementCount = 0;
+  let hiddenRewriteCount = 0;
   const changes = matches.map(m => {
     const e = DATA[m.entryIdx] || {};
-    const newTool = bulkReplacementPickTool_(m, usedCounts, info.replacementTool);
+    const currentTool = normaliseToolName(String(m.currentTool || '').replace(/^\(tool label missing.*$/i, '').trim());
+    const isHiddenReference = m.matchKind === 'description-reference' && currentTool && bulkDiagnosticToolKey_(currentTool) !== bulkDiagnosticToolKey_(info.replacementTool);
+    const newTool = isHiddenReference ? currentTool : bulkReplacementPickTool_(m, usedCounts, info.replacementTool);
+    if(isHiddenReference) hiddenRewriteCount++; else labelReplacementCount++;
     return {
       entryIdx: m.entryIdx,
       sugIdx: m.sugIdx,
       t: newTool,
       d: bulkReplacementDescriptionForTool_(newTool, e, info.replacementTool),
-      reason: `Safe targeted replacement draft: replaces ${info.replacementTool} in ${m.year}. Slot #6/STEM is protected. Review before applying.`,
+      reason: isHiddenReference
+        ? `Safe targeted rewrite: keeps ${newTool} but removes a hidden ${info.replacementTool} reference from the description. Slot #6/STEM is protected. Review before applying.`
+        : `Safe targeted replacement draft: replaces ${info.replacementTool} in ${m.year}. Slot #6/STEM is protected. Review before applying.`,
       improvementConfidence: 'Draft-only',
-      whyBetter: `Replaces ${info.replacementTool} with an approved, age-appropriate tool while keeping a clear student action, product and unit connection.`
+      whyBetter: isHiddenReference
+        ? `Keeps the approved original tool (${newTool}) and removes the legacy ${info.replacementTool} instruction from the wording while preserving a clear student action, product and unit connection.`
+        : `Replaces ${info.replacementTool} with an approved, age-appropriate tool while keeping a clear student action, product and unit connection.`
     };
   });
 
-  const sample = matches.slice(0,8).map((m, i) => `• ${bulkDiagnosticEscape_(m.campus)} · ${bulkDiagnosticEscape_(m.year)} · slot ${m.sugIdx + 1} · ${bulkDiagnosticEscape_(m.theme)} → ${bulkDiagnosticEscape_(changes[i].t)}`).join('<br>');
-  bulkChatAddMessage('assistant', `✅ <strong>${changes.length} ${bulkDiagnosticEscape_(info.replacementTool)} replacement draft${changes.length!==1?'s':''}</strong> ready for review.<br><br><span style="font-size:12px;color:var(--lime)">Safe replacement mode:</span> found targets locally, skipped STEM slot #6, used approved tools, made no AI calls and saved nothing automatically.<br><br><span style="font-size:12px;color:var(--lime)">Targets:</span><br>${sample}`);
+  const sample = matches.slice(0,8).map((m, i) => {
+    const action = m.matchKind === 'description-reference' ? 'rewrite wording only' : 'replace tool';
+    return `• ${bulkDiagnosticEscape_(m.campus)} · ${bulkDiagnosticEscape_(m.year)} · slot ${m.sugIdx + 1} · ${bulkDiagnosticEscape_(m.theme)} → ${bulkDiagnosticEscape_(changes[i].t)} <span style="color:var(--dim)">(${action})</span>`;
+  }).join('<br>');
+  bulkChatAddMessage('assistant', `✅ <strong>${changes.length} ${bulkDiagnosticEscape_(info.replacementTool)} cleanup draft${changes.length!==1?'s':''}</strong> ready for review.<br><br><span style="font-size:12px;color:var(--lime)">Safe replacement mode:</span> found targets locally, skipped STEM slot #6, used approved tools, made no AI calls and saved nothing automatically.<br><br><span style="font-size:12px;color:var(--lime)">Planned actions:</span> ${labelReplacementCount} tool replacement${labelReplacementCount!==1?'s':''}; ${hiddenRewriteCount} wording-only rewrite${hiddenRewriteCount!==1?'s':''}.<br><br><span style="font-size:12px;color:var(--lime)">Targets:</span><br>${sample}`);
   bulkChatMemory.push({ role:'assistant', content:`Safe-drafted ${changes.length} ${info.replacementTool} replacements.` });
   window._snapshotReason = `Before safe ${info.replacementTool} replacement drafts`;
   showChangesPopup(changes);
