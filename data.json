@@ -1456,7 +1456,7 @@
     "lo": "What is a significant event; Why these events occurred; Impact of significant events",
     "s": [
       {
-        "t": "Minecraft: The Hall of Inventions",
+        "t": "Minecraft Education",
         "d": "Students research a significant event that shaped a place (locally or globally), then design and build a 3D model of a key invention or structure related to that event in Minecraft. They must justify their choice and present how this innovation transformed the community or landscape. This leverages creative digital world-building to make historical impact visible and interactive.",
         "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
       },
@@ -1484,10 +1484,9 @@
     "audited": true,
     "plannerText": "Students explore how significant events shape places by researching, mapping, and presenting on events of local and global importance. They engage in personal inquiry, create timelines, compare migration stories, and produce informative reports or presentations, culminating in a student-driven project that demonstrates their understanding of how places are transformed by historical events.",
     "stemRebooted": true,
-    "humanVerified": true,
-    "humanVerifiedAt": "2026-05-05T03:58:43.957Z",
-    "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
-    "humanVerifiedSuggestionSignature": "[{\"t\":\"Merge Cubes\",\"d\":\"Students reconstruct significant historical events as interactive 3D scenes on Merge Cube, then use Delightex to add narration, animations, and primary source overlays. This app smash allows learners to step inside moments that shaped places and societies, fostering empathy and critical thinking as they explore cause and effect. The resulting digital artefacts serve as powerful conversation starters for class discussions and personal inquiries.\",\"url\":\"\"},{\"t\":\"Wise Discussion Chatbots\",\"d\":\"Learners engage with a teacher-created Wise Discussion Chatbot using the 'Character Interview' scenario, where the chatbot takes on the persona of Mary Reibey, a transported convict who became a pioneering businesswoman in colonial Australia. Students ask questions such as 'What challenges did you face during your journey and settlement?' and 'How did your actions influence the community around you?' After the chat, students produce a perspective summary comparing Mary?s experiences to those of other historical figures studied in the unit.\",\"url\":\"\"},{\"t\":\"Adobe Express Podcasting\",\"d\":\"Students script and record a podcast episode at https://podcast.adobe.com, sharing the story of a migration, discovery, or milestone event that shaped a place or society. Working in pairs, they blend narration, sound effects, and interview snippets to bring personal and global histories to life, then publish their episodes for a class listening showcase and reflection.\",\"url\":\"\"},{\"t\":\"Book Creator\",\"d\":\"Students author and publish interactive eBooks documenting the story of a significant event, combining text, images, audio interviews, and video clips. These digital books can be shared with the school community or used as resources for younger students.\",\"url\":\"\"},{\"t\":\"Minecraft Education\",\"d\":\"Students explore the 'The Hall of Inventions' world and select a significant invention or event that shaped a place. They research its context and impact, then build their own exhibit in Minecraft, explaining how this event or invention changed the course of history. https://education.minecraft.net/en-us/challenges/the-hall-of-inventions\",\"url\":\"\"},{\"t\":\"Sphero BOLT\",\"d\":\"Teams design and code a Sphero BOLT-powered interactive map on the classroom floor, simulating the journey of a group or individual during a significant migration or discovery. Using iPads, students program Sphero BOLTs to navigate routes, encounter obstacles, and trigger audio or visual facts at key locations, iterating their designs through the STEM Design Cycle to create an engaging, hands-on demonstration of how events shape places and societies.\",\"url\":\"\"}]"
+    "humanVerified": false,
+    "humanVerifiedResetAt": "2026-05-05T04:14:21.905Z",
+    "humanVerifiedResetReason": "Suggestion edited, swapped, regenerated or changed after human verification"
   },
   {
     "ca": "Elsternwick",
@@ -2149,7 +2148,7 @@
         "d": "Students interview a family member or community elder about their childhood, then create a multimedia eBook combining photos, drawings, audio clips, and simple text to document how life has changed over time. This eBook is shared with the class to highlight connections between past and present."
       },
       {
-        "t": "Minecraft: The Hall of Inventions",
+        "t": "Minecraft Education",
         "d": "Students explore the Minecraft Hall of Inventions world, learning about key innovations from history. They then select an invention that has impacted their community or school, research its history, and build their own version in a dedicated plot, explaining how it connects the past to the present.",
         "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
       },
@@ -2351,7 +2350,7 @@
     "lo": "How Australia and neighbouring regions define places; Australia's states/territories have unique identities; First Nations connections to Country",
     "s": [
       {
-        "t": "Minecraft: The Hall of Inventions",
+        "t": "Minecraft Education",
         "d": "Students will explore the museum of inventions in Minecraft Education, then select a key invention or cultural artefact that represents how land and place are valued in Australia or a neighbouring country. They will build their own exhibit in the virtual museum, justifying their choice and explaining its significance from a cultural or historical perspective. This task directly supports the unit's focus on representation and valuing of place, and encourages students to think innovatively about how identity and heritage are expressed through objects and inventions.",
         "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
       },
@@ -2369,7 +2368,7 @@
       },
       {
         "t": "Google Maps",
-        "d": "Students use Google Maps to plot significant places in Australia and neighbouring countries, including First Nations Countries/Places, state capitals, and cultural landmarks. They add notes or images to each location, explaining its significance and how it is valued or represented by different communities."
+        "d": "Students use Google Maps to plot significant places in Australia and neighbouring countries, including First Nations Countries/Places, state capitals, and cultural landmarks. They add notes or images to each location, explaining its significance and how it is valued or represented by different communities. Students use Street View to observe ground-level evidence, compare places and capture notes that connect directly to the unit."
       },
       {
         "t": "Makerspace Mapping Project",
@@ -2432,12 +2431,12 @@
         "d": "Students create digital artist statements and visual reflections using Canva, combining images of their own artwork, poetry, and excursion photos with layered text and design elements to communicate the mood, message, and inspiration behind their creative pieces."
       },
       {
-        "t": "Book Creator",
-        "d": "Students create multimedia poetry anthologies that showcase their responses to diverse artistic expressions explored in the unit, including poems inspired by Yayoi Kusama and artworks viewed during the NGV excursion. They record audio readings of their poems, insert photos from the excursion, and annotate images with their interpretations, producing an interactive eBook that demonstrates their understanding of how forms of expression convey messages and promote creative and critical thinking. This eBook becomes a key part of their student-led art show, reflecting the unit?s central idea and lines of inquiry."
+        "t": "Adobe Express Podcasting",
+        "d": "Students compose and record their own audio reflections responding to diverse artistic expressions encountered during the NGV and State Theatre excursions. They script and produce short podcasts that explore how different art forms convey messages and stimulate creative and critical thinking, sharing their insights through engaging storytelling on Adobe Express Podcasting (https://podcast.adobe.com). These podcasts become a dynamic part of the student-led art show, amplifying the unit?s central idea through voice and sound."
       },
       {
-        "t": "CoDrone EDU",
-        "d": "Students use CoDrone EDU drones to create aerial art performances, choreographing flight paths that respond to music or visual art themes. By programming drones to move in patterns inspired by artists like Yayoi Kusama, learners experience the intersection of technology and artistic expression. This immersive activity sparks creativity and critical thinking."
+        "t": "Brushes Redux",
+        "d": "Students create vibrant digital paintings inspired by Yayoi Kusama?s signature patterns and colours, experimenting with layering and brush effects to express emotions linked to poetry and music studied in the unit. They then share their artworks in a virtual gallery walk, reflecting on how different artistic choices influence viewers? thinking and feelings."
       },
       {
         "t": "Micro:bit",
@@ -2451,7 +2450,10 @@
     "audited": true,
     "plannerText": "This unit immerses students in diverse artistic expressions, including poetry, visual art inspired by Yayoi Kusama, music composition, and excursions to the NGV and State Theatre. Students analyse, create, and respond to art forms, culminating in a student-led art show where they display and reflect on their own creative works.",
     "stemRebooted": true,
-    "humanVerified": false
+    "humanVerified": true,
+    "humanVerifiedAt": "2026-05-05T04:14:50.098Z",
+    "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
+    "humanVerifiedSuggestionSignature": "[{\"t\":\"Delightex\",\"d\":\"Students create immersive 3D art installations in Delightex that express ideas inspired by their poetry, music, or visual artworks, applying creative and critical thinking skills from the unit. They then publish their interactive installations on a Padlet board, where peers explore and leave reflective comments using the language of artistic response, deepening their understanding of how different forms of expression convey messages. This collaborative digital gallery connects directly to the unit?s central idea by promoting thoughtful engagement with diverse artistic expressions and preparing students for their student-led art show.\",\"url\":\"\"},{\"t\":\"Canva\",\"d\":\"Students create digital artist statements and visual reflections using Canva, combining images of their own artwork, poetry, and excursion photos with layered text and design elements to communicate the mood, message, and inspiration behind their creative pieces.\",\"url\":\"\"},{\"t\":\"Adobe Express Podcasting\",\"d\":\"Students compose and record their own audio reflections responding to diverse artistic expressions encountered during the NGV and State Theatre excursions. They script and produce short podcasts that explore how different art forms convey messages and stimulate creative and critical thinking, sharing their insights through engaging storytelling on Adobe Express Podcasting (https://podcast.adobe.com). These podcasts become a dynamic part of the student-led art show, amplifying the unit?s central idea through voice and sound.\",\"url\":\"\"},{\"t\":\"Brushes Redux\",\"d\":\"Students create vibrant digital paintings inspired by Yayoi Kusama?s signature patterns and colours, experimenting with layering and brush effects to express emotions linked to poetry and music studied in the unit. They then share their artworks in a virtual gallery walk, reflecting on how different artistic choices influence viewers? thinking and feelings.\",\"url\":\"\"},{\"t\":\"Micro:bit\",\"d\":\"Students use Micro:bit to compose and perform digital music that expresses their responses to different artworks, blending technology and the arts. They experiment with sound, rhythm, and code to communicate emotions and ideas, deepening their creative and critical thinking. (https://microbit.org/teach/lessons/?selected=musical-microbit-unit-overview)\",\"url\":\"\"},{\"t\":\"Emotion Mirrors: Interactive Self-Portraits\",\"d\":\"Students explore self-expression by designing and building interactive self-portraits that respond to touch or movement. Using Makey Makey kits (or micro:bit touch sensors), students craft physical portraits from recycled cardboard, fabric, yarn, and mixed media. They embed conductive materials (aluminum foil, copper tape) into their art, connecting facial features or accessories. When touched, these trigger digital soundscapes, short poems, or light patterns (programmed on Scratch or micro:bit) that express different emotions or moods. Students follow the Design Cycle: empathise (explore feelings and artistic styles), define (choose emotions to express), ideate (sketch interactive features), prototype (build and wire up the portraits), test (share and refine), and reflect. The final gallery lets visitors interact with each portrait, experiencing the creator's unique artistic and emotional expression through both physical art and digital response.\",\"url\":\"\"}]"
   },
   {
     "ca": "Glen Waverley",
@@ -2469,8 +2471,8 @@
         "d": "Students collaboratively design and distribute a digital survey to gather data from peers and families about which community rules and services are most valued, then analyse the results to inform a class debate on effective community organisation."
       },
       {
-        "t": "CoDrone EDU",
-        "d": "Learners program CoDrone EDU drones to simulate emergency response scenarios, exploring how rules, laws, and services help communities live together safely. Teams design drone missions that deliver aid or enforce safety protocols, connecting robotics to civic responsibility. This engaging challenge brings abstract concepts of governance to life."
+        "t": "Sphero BOLT",
+        "d": "Students program Sphero BOLT robots to simulate emergency response missions, navigating obstacle courses that represent community challenges. They design routes that reflect how rules and services help keep people safe, collaborating to demonstrate leadership and problem-solving in real-world scenarios. This hands-on activity brings the unit?s focus on community organisation and safety to life through engaging robotics."
       },
       {
         "t": "Canva",
@@ -2488,7 +2490,11 @@
     ],
     "audited": true,
     "plannerText": "This unit explores how communities create rules, laws, and services to help people live together fairly and safely. Students investigate effective leadership, strengths, and actions, engage in scenarios and debates about community organisation, and take action through persuasive speeches and collaborative projects.",
-    "stemRebooted": true
+    "stemRebooted": true,
+    "humanVerified": true,
+    "humanVerifiedAt": "2026-05-05T04:19:59.644Z",
+    "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
+    "humanVerifiedSuggestionSignature": "[{\"t\":\"Merge Cubes\",\"d\":\"Students design interactive 3D models of community spaces (like a council chamber or emergency services hub) using Merge Cubes, then create an augmented reality 'choose your own adventure' story in Book Creator where users make decisions as community leaders, exploring the impact of different rules and services on fairness and safety.\",\"url\":\"\"},{\"t\":\"Microsoft Forms\",\"d\":\"Students collaboratively design and distribute a digital survey to gather data from peers and families about which community rules and services are most valued, then analyse the results to inform a class debate on effective community organisation.\",\"url\":\"\"},{\"t\":\"Sphero BOLT\",\"d\":\"Students program Sphero BOLT robots to simulate emergency response missions, navigating obstacle courses that represent community challenges. They design routes that reflect how rules and services help keep people safe, collaborating to demonstrate leadership and problem-solving in real-world scenarios. This hands-on activity brings the unit?s focus on community organisation and safety to life through engaging robotics.\",\"url\":\"\"},{\"t\":\"Canva\",\"d\":\"Students work in teams to design persuasive digital posters or infographics advocating for a new community service or law, using Canva's design tools and 'Remove Background' feature to create visually compelling arguments.\",\"url\":\"\"},{\"t\":\"Minecraft Education\",\"d\":\"Students explore the stories of Nobel Peace Laureates and build their own virtual community in Minecraft Education, making decisions about rules, laws, and services to ensure fairness and safety for all citizens.\",\"url\":\"https://education.minecraft.net/en-us/lessons/active-citizen\"},{\"t\":\"Justice in Action: Community Courtroom Makerspace\",\"d\":\"Students work in teams to design, build, and role-play a miniature courtroom and town square using cardboard, recycled materials, and craft supplies. Each team creates physical models of key community buildings (court, council, police station, etc.), then codes a Sphero Indi or Bee-Bot as the 'citizen' navigating real-life rule or law scenarios (e.g., resolving a dispute, reporting a problem). Teams use iPads to document their process and record mock 'court cases' where they debate and enact fair solutions, integrating digital storytelling with hands-on construction and collaborative problem-solving.\",\"url\":\"\"}]"
   },
   {
     "ca": "Glen Waverley",
@@ -2515,9 +2521,8 @@
         "d": "Students program Sphero BOLT robots to simulate animal movement and interaction with different enrichment toy prototypes. This hands-on coding activity helps them test and iterate their designs for functionality and animal engagement."
       },
       {
-        "t": "CoDrone EDU",
-        "d": "Elevate your Year 4 'How the World Works' unit by integrating CoDrone EDU! Students will design and prototype animal enrichment devices, then program CoDrone EDU to simulate animal interactions with their creations. For example, students can code the drone to mimic the movement patterns of different animals, testing how their enrichment toys respond to various approaches and behaviors. This hands-on, tech-powered experimentation deepens understanding of material properties, product design, and sustainability, while fostering creativity and computational thinking. Students will document their process and findings in digital science journals, and present their innovative solutions using Canva or Adobe Express.",
-        "url": ""
+        "t": "Lego Spike Prime",
+        "d": "Students design and build animal enrichment devices using Lego Spike Prime, exploring how different material properties affect their creations? functionality and sustainability. They program their models to simulate animal interactions, testing how their designs respond to movement and behaviour patterns. This hands-on activity deepens understanding of product design impact on the natural world while fostering creativity and computational thinking."
       },
       {
         "t": "Eco Enrichment Arcade",
@@ -2526,7 +2531,11 @@
     ],
     "audited": true,
     "plannerText": "Students investigate how material properties influence product design, research sustainable solutions, and document their learning in digital science journals. They experiment with different materials, compare animal enrichment toys, and ultimately design and prototype their own enrichment device for animals, considering both functionality and environmental impact.",
-    "stemRebooted": true
+    "stemRebooted": true,
+    "humanVerified": true,
+    "humanVerifiedAt": "2026-05-05T04:22:03.530Z",
+    "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
+    "humanVerifiedSuggestionSignature": "[{\"t\":\"Merge Cubes\",\"d\":\"Students design interactive 3D models of their animal enrichment prototypes using Merge Cubes, then document the design process, material choices, and environmental impact in a digital science journal on Book Creator. This app smash allows students to virtually 'hold' and explore their creations while reflecting on sustainable design choices.\",\"url\":\"\"},{\"t\":\"Minecraft Education\",\"d\":\"Students explore a sustainable building in Minecraft Education, analyzing how material choices and design decisions impact the environment. They can then reflect on how these principles could be applied to their own enrichment toy prototypes.\",\"url\":\"https://education.minecraft.net/en-us/lessons/its-good-to-be-green\"},{\"t\":\"Micro:bit\",\"d\":\"Students investigate sustainable product design by building and testing prototypes with Micro:bit, using the 'Electrical Conductors' lesson (https://microbit.org/teach/lessons/?selected=electrical-conductors-unit-of-work). They explore how material properties affect conductivity and product function, linking science, design, and environmental impact. This hands-on challenge makes STEM learning relevant and exciting.\",\"url\":\"\"},{\"t\":\"Sphero BOLT\",\"d\":\"Students program Sphero BOLT robots to simulate animal movement and interaction with different enrichment toy prototypes. This hands-on coding activity helps them test and iterate their designs for functionality and animal engagement.\",\"url\":\"\"},{\"t\":\"Lego Spike Prime\",\"d\":\"Students design and build animal enrichment devices using Lego Spike Prime, exploring how different material properties affect their creations? functionality and sustainability. They program their models to simulate animal interactions, testing how their designs respond to movement and behaviour patterns. This hands-on activity deepens understanding of product design impact on the natural world while fostering creativity and computational thinking.\",\"url\":\"\"},{\"t\":\"Eco Enrichment Arcade\",\"d\":\"Students use the Design Cycle to invent and build interactive animal enrichment games inspired by arcade machines, focusing on sustainability and animal wellbeing. Working in teams, students brainstorm animal needs, sketch ideas, and prototype enrichment devices using recycled cardboard, plastic bottles, fabric, string, and natural materials. They integrate programmable Bee-Bots or Sphero Indi robots as 'moving parts'?for example, a Bee-Bot could trigger a treat dispenser or reveal a hidden toy when an animal interacts with the device. Teams test and refine their creations, documenting iterations in their digital science journals, and reflect on how their material choices impact both function and environmental footprint.\",\"url\":\"\"}]"
   },
   {
     "ca": "Glen Waverley",
@@ -2573,11 +2582,11 @@
     "lo": "Reasons for exploration; How people have explored over time; Consequences of exploration",
     "s": [
       {
-        "t": "ClassVR & Merge Cubes",
+        "t": "ClassVR",
         "d": "Students use ClassVR headsets and Merge Cubes to virtually explore historical sites, ancient navigation tools, and environments that famous explorers encountered. They can interact with 3D artefacts, such as compasses or ships, and create their own digital artefact models to upload and share, deepening their understanding of how exploration has changed over time."
       },
       {
-        "t": "Minecraft: The Hall of Inventions",
+        "t": "Minecraft Education",
         "d": "Students research key inventions that enabled exploration (e.g., compass, sextant, ships), then build these inventions in Minecraft Education. They fill the virtual museum with their own builds and write digital plaques explaining the significance of each invention to exploration.",
         "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
       },
@@ -2587,7 +2596,7 @@
       },
       {
         "t": "Google Maps",
-        "d": "Students plot the routes of famous explorers on Google Maps, adding custom pins with research notes, images, and reflections about key events, discoveries, and the impact on communities encountered along the way."
+        "d": "Students plot the routes of famous explorers on Google Maps, adding custom pins with research notes, images, and reflections about key events, discoveries, and the impact on communities encountered along the way. Students use Street View to observe ground-level evidence, compare places and capture notes that connect directly to the unit."
       },
       {
         "t": "Seesaw",
@@ -2663,8 +2672,8 @@
         "d": "Teams publish interactive digital journals in Book Creator, combining photos, videos, voice recordings, and diagrams to document each stage of the design thinking process. This supports reflection, self-assessment, and sharing with the wider school community."
       },
       {
-        "t": "CoDrone EDU",
-        "d": "Students collaborate to design, code, and pilot CoDrone EDU drones in simulated rescue missions, responding to natural hazards and community needs. By iterating on drone designs and flight plans, learners apply the design thinking process and problem-solving skills to real-world challenges. This hands-on robotics experience brings the unit's focus on purposeful design and innovation to life."
+        "t": "Lego Spike Prime",
+        "d": "Students collaborate in teams to design and program Lego Spike Prime robots that simulate emergency response tasks related to natural hazards. They create functional prototypes that demonstrate purposeful design and problem-solving, applying the design thinking process to meet community needs. This hands-on activity brings the unit?s central idea to life by combining creativity, coding, and teamwork in authentic scenarios."
       },
       {
         "t": "Hazard Heroes: Rescue Robotics Challenge",
@@ -2737,8 +2746,8 @@
         "d": "Students collaboratively create a digital 'Wonder Wall' on Padlet by posting questions, research findings, and Clickview video clips about natural hazards such as bushfires, earthquakes, and floods. They use Padlet?s mapping feature to build a labelled visual map that tracks the locations and impacts of these disasters across Australia, connecting directly to the unit?s central idea about interactions between living things, materials, and light. This activity supports inquiry into how natural forces cause change to Earth's surface and helps students analyse data to make informed decisions about protecting communities."
       },
       {
-        "t": "CoDrone EDU",
-        "d": "Students code CoDrone EDU drones to simulate early warning systems for natural disasters, such as bushfires or floods. By programming drones to detect and respond to environmental cues, learners explore the intersection of technology, science, and community safety. This real-world challenge empowers students to innovate for disaster resilience."
+        "t": "Microsoft Excel",
+        "d": "Students collect and organise data on natural disasters such as bushfires, floods, and earthquakes using Microsoft Excel. They create dynamic charts and graphs to visualise patterns and trends, helping them analyse risks and make informed decisions about community safety. This hands-on activity connects the central idea by exploring how data-driven insights support disaster preparedness and resilience."
       },
       {
         "t": "Disaster Early Warning Wearables",
@@ -2774,8 +2783,8 @@
         "url": "https://education.minecraft.net/en-us/lessons/build-with-bees-habitat"
       },
       {
-        "t": "CoDrone EDU",
-        "d": "Learners design and code CoDrone EDU drones to monitor and map local waterways, simulating how technology supports environmental conservation. Teams collect data, navigate obstacles, and propose solutions for protecting river ecosystems, directly linking to the unit's focus on community-environment interactions. This hands-on robotics project inspires stewardship and scientific inquiry."
+        "t": "Micro:bit",
+        "d": "Students program Micro:bit devices to collect and display real-time environmental data, such as temperature or moisture levels, simulating how communities monitor local ecosystems. They create interactive models that demonstrate the impact of conservation efforts on their local environment, linking directly to the unit?s focus on stewardship and community values. This hands-on coding activity encourages scientific inquiry and environmental responsibility."
       },
       {
         "t": "Living Waterways: Interactive River Ecosystem",
@@ -2811,8 +2820,8 @@
         "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
       },
       {
-        "t": "CoDrone EDU",
-        "d": "Students program CoDrone EDU drones to simulate gold rush prospecting missions, navigating obstacle courses that represent historical challenges. Teams iterate on drone designs to transport 'resources' efficiently, connecting technological innovation to the growth and development of nations. This engaging activity brings history and STEM together in an unforgettable way."
+        "t": "Micro:bit",
+        "d": "Students program Micro:bit devices to simulate communication methods used during the Gold Rush, creating interactive messages that represent how prospectors and settlers shared information about resources and migration. They design simple code to send alerts or directions, connecting technological innovation to the social and economic growth of nations. This hands-on activity brings history and coding together, deepening understanding of the unit?s central idea."
       },
       {
         "t": "Gold Rush Innovation Trail: Interactive Prospecting Adventure",
@@ -2920,8 +2929,8 @@
         "d": "Classes use Padlet to crowdsource and visually map the production, marketing, and disposal journeys of selected products. Each group posts images, research, and ethical/environmental findings, allowing for a collaborative, interactive exploration of the structure and function of organisations within global systems."
       },
       {
-        "t": "CoDrone EDU",
-        "d": "Students design and code CoDrone EDU drones to model ethical supply chains, simulating the journey of goods from production to consumer. By programming drones to make decisions at each stage, learners explore the interconnectedness of systems and the impact of ethical choices. This interactive experience deepens understanding of responsible action in global markets."
+        "t": "Google Maps",
+        "d": "Students use Google Maps to trace and visualise the global journey of a product, identifying key locations such as production sites, shipping routes, and retail outlets. They create interactive maps that highlight ethical and sustainable choices within supply chains, deepening their understanding of interconnected human-made systems and the impact of consumer decisions. Students use Street View to observe ground-level evidence, compare places and capture notes that connect directly to the unit."
       },
       {
         "t": "Ethical Pop-Up Market: Build & Code Smart Stalls",
@@ -2948,8 +2957,8 @@
         "d": "Students create augmented reality models of electrical circuits, reversible/irreversible changes, or planetary systems using Merge Cubes and the Merge Explorer app. They can record short video explanations overlaying their AR models, demonstrating their understanding of scientific concepts and inquiry methods."
       },
       {
-        "t": "CoDrone EDU",
-        "d": "Students use CoDrone EDU drones to conduct scientific experiments, such as measuring distances, simulating planetary motion, or testing variables in controlled trials. By collecting and analysing data from drone flights, learners experience the scientific method in action. This hands-on approach fosters curiosity and critical thinking in physical science."
+        "t": "Sphero BOLT",
+        "d": "Students program and control Sphero BOLT robots to simulate planetary orbits and energy transfer in circuits, applying the scientific method to test hypotheses about motion and forces. They collect data from their robot?s sensors to analyse variables such as speed and distance, creating visual representations of their findings. This hands-on exploration deepens understanding of how experiments confirm and contest scientific theories in physical science and earth science."
       },
       {
         "t": "Microsoft Forms",
@@ -4468,32 +4477,33 @@
     "lo": "The causes for and consequences of migration (Causation) ??? The changes in societies as a result of migration (Change) ??? The impact of migration on the individual, both positive and negative (Impact) ??? Migration results in a more diverse society (Diversity)",
     "s": [
       {
-        "t": "Merge Cubes",
-        "d": "Students create interactive 3D migration stories using Merge Cubes, where each face of the cube represents a different stage or perspective of a migration journey. These are then app smashed with Book Creator to embed videos, audio interviews, and digital artefacts, allowing students to 'hold' and explore migration narratives in their hands?making the abstract concept of migration tangible and immersive."
+        "t": "Minecraft: Peter Is Here Ai For Cultural Heritage",
+        "d": "Students will use Minecraft Education to explore, protect, and celebrate cultural heritage sites connected to migration stories. They can research a migration event or community, then collaboratively build a digital representation of a significant site or journey, reflecting on why it is important to preserve these stories and places. This connects directly to the unit's focus on migration, diversity, and impact on society.",
+        "url": "https://education.minecraft.net/en-us/lessons/peter-is-here-ai-for-cultural-heritage"
       },
       {
-        "t": "Wise Discussion Chatbots",
-        "d": "Learners engage with a teacher-created Wise Discussion Chatbot using the Character Interview scenario, where the chatbot takes on the persona of 'Amina, a Sudanese refugee who resettled in Melbourne'. Students ask questions like 'What was the hardest part about leaving your home?' or 'How did you feel when you arrived in Australia?' and record key insights. After the chat, students produce a perspective summary comparing Amina?s experiences to those from their oral history interviews."
+        "t": "Book Creator",
+        "d": "Students create interactive digital books documenting personal or family migration stories, or those of guest speakers. They can combine text, images, audio interviews, and maps to illustrate push/pull factors, challenges, and opportunities experienced during migration, making the learning personal and multimodal."
       },
       {
-        "t": "Padlet",
-        "d": "Students collaboratively build a global migration timeline on Padlet, pinning historical events, personal stories, and key migration waves. Each post can include multimedia elements such as maps, videos, and primary source documents, fostering a shared digital inquiry space."
-      },
-      {
-        "t": "Adobe Express Podcasting",
-        "d": "Students conduct and record oral history interviews with migrants in their community using Adobe Express Podcasting (https://podcast.adobe.com), focusing on personal stories, challenges, and hopes. They edit and publish a class podcast series that amplifies diverse voices and deepens empathy by sharing authentic migration experiences with the school community."
+        "t": "Seesaw",
+        "d": "Students conduct and record interviews with migrants or refugees (family, staff, or community members), then upload their audio/video stories to Seesaw. They can annotate with reflections on causes, impacts, and changes resulting from migration, supporting peer feedback and empathy-building."
       },
       {
         "t": "Canva",
-        "d": "Using Canva, students design visually compelling infographics or digital posters that illustrate the push and pull factors of migration, integrating real-world data and personal stories to highlight the diversity and impact of migration on Australian society."
+        "d": "Students design infographics or timelines visualising key migration events in Australian or world history (e.g., Gold Rush, post-war migration, refugee arrivals). They can use Canva's templates and 'Remove Background' feature to create visually compelling, evidence-based presentations for class display."
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "Design Cycle STEM Project: Students use the Design Cycle to prototype a 'Migration Journey Simulator' with Lego Spike Prime. They design and code a robotic model that simulates the obstacles, decisions, and opportunities faced during migration (e.g., crossing borders, adapting to new environments), then present their process and learning in a digital journal."
+        "t": "Padlet",
+        "d": "Students collaboratively build a digital migration map using Padlet, pinning stories, photos, and facts about different migration journeys (historical or contemporary). This allows the class to visualise global migration patterns and the diversity of experiences, directly linking to the unit's central idea."
+      },
+      {
+        "t": "Makerspace Migration Suitcase Project",
+        "d": "Students design and build a physical 'Migration Suitcase' using cardboard, recycled materials, and craft supplies. Inside, they place handmade artifacts, letters, or objects representing what a migrant might bring, lose, or gain on their journey. Students present their suitcase and story to the class, connecting tangible making with empathy and historical understanding."
       }
     ],
-    "audited": false,
-    "plannerText": "Students explore the causes, impacts, and personal stories of migration through interviews, storyboarding, and digital presentations. They investigate historical and contemporary migration events, conduct oral histories, and present their findings using multimedia tools, with a strong focus on empathy, diversity, and the lived experiences of migrants."
+    "audited": true,
+    "plannerText": "Students explore the causes and impacts of migration through personal narratives, interviews, and historical case studies. They create storyboards, conduct interviews, and present migration stories using a variety of media, with a strong focus on empathy, diversity, and the consequences of migration for individuals and societies."
   },
   {
     "ca": "St Kilda",
