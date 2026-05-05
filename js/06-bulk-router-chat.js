@@ -1253,8 +1253,24 @@ function bulkRunSafePreviewOnly_(text){
 // Draft-only command. It finds a small batch locally and opens the existing review popup.
 // It does not call AI and it does not save unless a human approves in the popup.
 // Use: draft: Find more opportunities to use Makey Makey
+function bulkSafeDraftCleanMojibake_(value){
+  let s = String(value || '');
+  return s
+    .replace(/\uFFFD/g, '')
+    .replace(/â€“|â€”|â€"|â€•/g, ' — ')
+    .replace(/â€¢|Â•|ï‚·| |•/g, '; ')
+    .replace(/â€˜|â€™|â€š|â€›/g, '’')
+    .replace(/â€œ|â€|â€ž|â€Ÿ/g, '“')
+    .replace(/Â/g, '')
+    .replace(/\s*[|]\s*/g, '; ')
+    .replace(/\s*[;]+\s*/g, '; ')
+    .replace(/\s+—\s+/g, ' — ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function bulkSafeDraftCleanUnitText_(value){
-  return String(value || '').replace(/\s+/g, ' ').trim();
+  return bulkSafeDraftCleanMojibake_(value);
 }
 
 function bulkSafeDraftShortContext_(e){
@@ -1295,11 +1311,19 @@ function bulkSafeDraftUnitFocus_(e){
   const theme = bulkSafeDraftTrimEndPunctuation_(ctx.theme) || 'this unit';
   const ci = bulkSafeDraftTrimEndPunctuation_(ctx.ci || '');
   const loi = bulkSafeDraftTrimEndPunctuation_(ctx.loi || '');
-  const connection = bulkSafeDraftTrimEndPunctuation_(loi || ci || theme) || theme;
+  const rawConnection = loi || ci || theme;
   // Keep templates practical and readable in the review popup. Very long LOI strings
   // make drafts feel vague, so shorten the inserted connection without changing data.
-  const shortConnection = connection.length > 150 ? connection.slice(0, 147).replace(/\s+\S*$/, '') + '…' : connection;
-  return { theme, ci, loi, connection: shortConnection };
+  const shortRaw = rawConnection.length > 150 ? rawConnection.slice(0, 147).replace(/\s+\S*$/, '') + '…' : rawConnection;
+  let connection = shortRaw;
+  if(loi){
+    connection = `the line of inquiry “${shortRaw}”`;
+  } else if(ci){
+    connection = `the central idea “${shortRaw}”`;
+  } else {
+    connection = `the unit theme “${shortRaw}”`;
+  }
+  return { theme, ci, loi, connection };
 }
 
 function bulkSafeDraftDescriptionForTool_(toolName, e){
