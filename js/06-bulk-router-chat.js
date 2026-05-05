@@ -2444,11 +2444,16 @@ async function bulkChatSend(){
       return;
     }
     bulkChatAddMessage('user', text);
-    if(/minecraft/i.test(text) && typeof ensureLibrariesLoadedForAI === 'function'){
+    if(/lesson\s+from\s+.+library/i.test(text) && typeof ensureLibrariesLoadedForAI === 'function'){
+      try { await ensureLibrariesLoadedForAI(); } catch(e){}
+    } else if(/minecraft/i.test(text) && typeof ensureLibrariesLoadedForAI === 'function'){
       try { await ensureLibrariesLoadedForAI(); } catch(e){}
     }
-    bulkRunWithTopProgress_(/minecraft/i.test(text) ? 'Finding exact Minecraft lesson fits…' : 'Finding safe named-tool opportunities…', /minecraft/i.test(text) ? 'Minecraft placement draft ready for review ✓' : 'Safe draft ready for review ✓', function(){
-      bulkRunSafeDraftOnly_(text);
+    const draftPlainText = String(text||'').replace(/^\s*(draft|draft-safe|safe-draft)\s*:?\s*/i,'');
+    const libPlacement = bulkDetectLibraryLessonPlacement_(draftPlainText);
+    bulkRunWithTopProgress_(libPlacement ? 'Finding curated lesson fits…' : (/minecraft/i.test(text) ? 'Finding exact Minecraft lesson fits…' : 'Finding safe named-tool opportunities…'), libPlacement ? 'Curated lesson draft ready for review ✓' : (/minecraft/i.test(text) ? 'Minecraft placement draft ready for review ✓' : 'Safe draft ready for review ✓'), function(){
+      if(libPlacement) bulkRunLibraryLessonDraftSafe_(draftPlainText);
+      else bulkRunSafeDraftOnly_(text);
     }, function(e){
       bulkChatAddMessage('assistant', '❌ Safe draft failed without changing anything: ' + bulkDiagnosticEscape_(e.message || e));
     });
@@ -2503,6 +2508,20 @@ async function bulkChatSend(){
         bulkRunStkY6DraftOnly_('draft: ' + text);
       }, function(e){
         bulkChatAddMessage('assistant', '❌ Safe St Kilda Road Year 6 draft failed without changing anything: ' + bulkDiagnosticEscape_(e.message || e));
+      });
+      return;
+    }
+    const libraryPlacementInfo = bulkDetectLibraryLessonPlacement_(text);
+    if(libraryPlacementInfo){
+      bulkChatAddMessage('user', text);
+      bulkSafeRouteNotice_('Curated lesson placement', 'Studio will use the selected library and exact lesson title, draft a small review batch, and save nothing unless approved.');
+      if(typeof ensureLibrariesLoadedForAI === 'function'){
+        try { await ensureLibrariesLoadedForAI(); } catch(e){}
+      }
+      bulkRunWithTopProgress_('Finding curated lesson fits…', 'Curated lesson draft ready for review ✓', function(){
+        bulkRunLibraryLessonDraftSafe_(text);
+      }, function(e){
+        bulkChatAddMessage('assistant', '❌ Safe curated lesson placement failed without changing anything: ' + bulkDiagnosticEscape_(e.message || e));
       });
       return;
     }
@@ -2724,6 +2743,134 @@ function showNextQuestion(parsed){
 }
 
 
+
+
+// ========== GENERIC CURATED LESSON PLACEMENT ==========
+// Safe route for quick-action lesson placement from any curated library.
+// Minecraft still uses the stricter existing exact Minecraft lesson route.
+function bulkLibraryKeysSafe_(){
+  if(typeof LIBRARIES === 'undefined' || !LIBRARIES) return [];
+  return Object.keys(LIBRARIES).filter(k => k !== '_meta' && Array.isArray(LIBRARIES[k]));
+}
+function bulkLibraryLabelSafe_(key){
+  const k = String(key || '').trim();
+  try {
+    if(typeof LIBRARIES_META !== 'undefined' && LIBRARIES_META && LIBRARIES_META[k] && LIBRARIES_META[k].name) return bulkSafeDraftCleanPlannerText_(LIBRARIES_META[k].name);
+    if(typeof LIBRARIES !== 'undefined' && LIBRARIES && LIBRARIES._meta && LIBRARIES._meta[k] && LIBRARIES._meta[k].name) return bulkSafeDraftCleanPlannerText_(LIBRARIES._meta[k].name);
+  } catch(e){}
+  return k.replace(/[_-]+/g,' ').replace(/\b\w/g, m => m.toUpperCase());
+}
+function bulkLibraryKeyFromLabelSafe_(label){
+  const raw = String(label || '').trim();
+  const n = bulkDiagnosticToolKey_(raw);
+  const keys = bulkLibraryKeysSafe_();
+  return keys.find(k => bulkDiagnosticToolKey_(k) === n || bulkDiagnosticToolKey_(bulkLibraryLabelSafe_(k)) === n) || '';
+}
+function bulkToolForLibrarySafe_(key){
+  const label = bulkLibraryLabelSafe_(key);
+  const lk = String(key || '').toLowerCase();
+  const ll = String(label || '').toLowerCase();
+  if(lk === 'minecraft' || /minecraft/.test(ll)) return 'Minecraft Education';
+  if(/micro\s*:?bit|microbit/.test(lk + ' ' + ll)) return 'Micro:bit';
+  if(/scratch\s*jr|scratchjr/.test(lk + ' ' + ll)) return 'ScratchJR';
+  if(/scratch/.test(lk + ' ' + ll)) return 'Scratch';
+  return label || 'Curated Lesson';
+}
+function bulkDetectLibraryLessonPlacement_(text){
+  const raw = String(text || '').trim();
+  let m = raw.match(/where\s+can\s+(?:the\s+)?["“]?(.+?)["”]?\s+lesson\s+from\s+(?:the\s+)?["“]?(.+?)["”]?\s+library\s+fit\??\s*$/i);
+  if(!m) m = raw.match(/place\s+(?:the\s+)?["“]?(.+?)["”]?\s+lesson\s+from\s+(?:the\s+)?["“]?(.+?)["”]?\s+library/i);
+  if(!m) return null;
+  const lessonTitle = bulkSafeDraftCleanPlannerText_(m[1]).replace(/^the\s+/i,'').trim();
+  const libLabel = bulkSafeDraftCleanPlannerText_(m[2]).trim();
+  const libraryKey = bulkLibraryKeyFromLabelSafe_(libLabel);
+  if(!lessonTitle || !libraryKey) return { lessonTitle, libLabel, libraryKey:'', lesson:null };
+  const lesson = bulkFindLibraryLessonSafe_(libraryKey, lessonTitle);
+  return { lessonTitle, libLabel:bulkLibraryLabelSafe_(libraryKey), libraryKey, lesson };
+}
+function bulkFindLibraryLessonSafe_(libraryKey, title){
+  const lessons = (typeof LIBRARIES !== 'undefined' && LIBRARIES && Array.isArray(LIBRARIES[libraryKey])) ? LIBRARIES[libraryKey] : [];
+  const wanted = bulkMinecraftNorm_(title || '');
+  if(!wanted) return null;
+  return lessons.find(l => bulkMinecraftNorm_(l && l.title) === wanted) ||
+         lessons.find(l => bulkMinecraftNorm_(l && l.title).includes(wanted) || wanted.includes(bulkMinecraftNorm_(l && l.title))) ||
+         null;
+}
+function bulkLibraryLessonWordsSafe_(lesson){
+  const text = bulkMinecraftNorm_([lesson && lesson.title, lesson && lesson.desc, lesson && lesson.description, lesson && lesson.subject, lesson && lesson.tags].filter(Boolean).join(' '));
+  return Array.from(new Set(text.split(/\s+/).filter(w => w.length > 4 && !/^(lesson|students|student|teacher|teachers|learning|activity|activities)$/.test(w))));
+}
+function bulkScanLibraryLessonFitSafe_(libraryKey, lesson, maxResults){
+  const rows = [];
+  const skipped = { alreadyHasTool:0, noNonStemSlot:0 };
+  if(!lesson || !Array.isArray(DATA)) return { rows, skipped };
+  const toolName = bulkToolForLibrarySafe_(libraryKey);
+  const toolKey = bulkDiagnosticToolKey_(toolName);
+  const titleKey = bulkMinecraftNorm_(lesson.title || '');
+  const lessonWords = bulkLibraryLessonWordsSafe_(lesson);
+  DATA.forEach((e, entryIdx) => {
+    const sugs = getSugs(e) || [];
+    let hasTool = false;
+    let firstSlot = -1;
+    sugs.forEach((s, sugIdx) => {
+      if(bulkDiagnosticToolKey_(sugTool(s)) === toolKey) hasTool = true;
+      if(firstSlot < 0 && sugIdx !== 5 && isRealSug(s)) firstSlot = sugIdx;
+    });
+    if(hasTool){ skipped.alreadyHasTool++; return; }
+    if(firstSlot < 0){ skipped.noNonStemSlot++; return; }
+    const unitText = bulkMinecraftNorm_([e.th,e.theme,e.ci,e.centralIdea,e.loi,e.linesOfInquiry].filter(Boolean).join(' '));
+    let score = 0;
+    if(titleKey && unitText.includes(titleKey)) score += 10;
+    lessonWords.forEach(w => { if(unitText.includes(w)) score += 2; });
+    if(score <= 0) score = 1; // review-only; do not force application
+    rows.push({ entryIdx, slotIdx:firstSlot, entry:e, score, campus:e.ca||e.campus||'', year:e.yl||e.year||'', theme:e.th||e.theme||'Untitled unit' });
+  });
+  rows.sort((a,b) => b.score - a.score || a.entryIdx - b.entryIdx);
+  return { rows: rows.slice(0, maxResults || 6), skipped };
+}
+function bulkLibraryLessonConnectionSafe_(e){
+  const f = bulkSafeDraftUnitFocus_(e || {});
+  return f.connection || f.loi || f.ci || f.theme || 'this unit';
+}
+function bulkLibraryLessonDraftDescriptionSafe_(libraryKey, lesson, e){
+  const label = bulkLibraryLabelSafe_(libraryKey);
+  const title = bulkSafeDraftCleanPlannerText_(lesson && lesson.title || 'the selected lesson');
+  const connection = bulkLibraryLessonConnectionSafe_(e);
+  const theme = (bulkSafeDraftUnitFocus_(e || {}).theme || 'this unit');
+  const product = /micro\s*:?bit|microbit/i.test(label) ? 'a working coded prototype and short explanation' : 'a short digital product, reflection or explanation';
+  return bulkSafeDraftFinalClean_(`Students use the curated ${label} lesson “${title}” as a starting point for ${theme}. They complete the lesson activity, create ${product}, and explain how their work connects to ${connection}.`);
+}
+function bulkRunLibraryLessonDraftSafe_(text){
+  const info = bulkDetectLibraryLessonPlacement_(text);
+  if(!info || !info.libraryKey){
+    bulkChatAddMessage('assistant', `I could not match that library. Use the quick action selector, or try: <strong>Where can the Revamp Melbourne lesson from the Minecraft library fit?</strong>`);
+    return;
+  }
+  if(!info.lesson){
+    const count = (typeof LIBRARIES !== 'undefined' && LIBRARIES && Array.isArray(LIBRARIES[info.libraryKey])) ? LIBRARIES[info.libraryKey].length : 0;
+    bulkChatAddMessage('assistant', `I could not find the exact lesson <strong>${bulkDiagnosticEscape_(info.lessonTitle)}</strong> in the <strong>${bulkDiagnosticEscape_(info.libLabel)}</strong> library. Lessons available in that library: <strong>${count}</strong>. No changes were drafted.`);
+    return;
+  }
+  const scan = bulkScanLibraryLessonFitSafe_(info.libraryKey, info.lesson, 6);
+  if(!scan.rows.length){
+    bulkChatAddMessage('assistant', `I found the curated lesson, but there were no draftable non-STEM slots for it. No changes were made.`);
+    return;
+  }
+  const toolName = bulkToolForLibrarySafe_(info.libraryKey);
+  const changes = scan.rows.map(row => ({
+    entryIdx: row.entryIdx,
+    sugIdx: row.slotIdx,
+    oldTool: sugTool(getSugs(row.entry)[row.slotIdx]),
+    oldDesc: sugDesc(getSugs(row.entry)[row.slotIdx]),
+    tool: toolName,
+    desc: bulkLibraryLessonDraftDescriptionSafe_(info.libraryKey, info.lesson, row.entry),
+    reason: `Safe curated lesson placement from the ${info.libLabel} library. Review-only; no changes are saved until approved.`,
+    sourceUrl: info.lesson.url || info.lesson.link || info.lesson.lessonUrl || ''
+  }));
+  bulkChatAddMessage('assistant', `🛡️ Safe routed: curated lesson placement. I found <strong>${changes.length}</strong> possible fit${changes.length!==1?'s':''} for <strong>${bulkDiagnosticEscape_(info.lesson.title || info.lessonTitle)}</strong> from <strong>${bulkDiagnosticEscape_(info.libLabel)}</strong>. Review the drafts before applying.`);
+  openBulkReviewPopup(changes, `Safe curated lesson placement: ${info.libLabel} · ${info.lesson.title || info.lessonTitle}`);
+}
+
 // ========== BULK AI QUICK ACTIONS UI ==========
 // Injects a small prompt-builder panel into the Bulk AI card. Buttons fill the chat input only;
 // admins still press Send and review changes before anything is saved.
@@ -2742,6 +2889,14 @@ function showNextQuestion(parsed){
   }
   function bulkQANormaliseScope_(scope){
     return String(scope || '').trim().replace(/\s+/g, ' ');
+  }
+  function bulkQALibraryOptions_(){
+    let keys = [];
+    try { keys = bulkLibraryKeysSafe_(); } catch(e){ keys = []; }
+    if(!keys.length) keys = ['minecraft'];
+    keys.sort((a,b) => bulkLibraryLabelSafe_(a).localeCompare(bulkLibraryLabelSafe_(b)));
+    if(keys.includes('minecraft')) keys = ['minecraft'].concat(keys.filter(k => k !== 'minecraft'));
+    return keys.map(k => `<option value="${bulkDiagnosticEscape_(k)}">${bulkDiagnosticEscape_(bulkLibraryLabelSafe_(k))}</option>`).join('');
   }
   window.bulkQuickActionFill = function(kind){
     const type = String(kind || '').toLowerCase();
@@ -2763,11 +2918,17 @@ function showNextQuestion(parsed){
       bulkQASetInput_(prompt);
       return;
     }
-    if(type === 'minecraft'){
-      const lesson = bulkQAGet_('bulk-qa-minecraft-lesson');
-      if(!lesson){ alert('Enter the exact curated Minecraft lesson title first, e.g. Revamp Melbourne.'); return; }
+    if(type === 'lesson' || type === 'minecraft'){
+      const libraryKey = bulkQAGet_('bulk-qa-lesson-library') || 'minecraft';
+      const lesson = bulkQAGet_('bulk-qa-lesson-title') || bulkQAGet_('bulk-qa-minecraft-lesson');
+      if(!lesson){ alert('Enter the exact curated lesson title first, e.g. Revamp Melbourne.'); return; }
       const cleanLesson = lesson.replace(/\s+Minecraft\s+lesson\s*$/i, '').replace(/\s+Minecraft\s*$/i, '').trim();
-      bulkQASetInput_(`Where can the ${cleanLesson} Minecraft lesson fit?`);
+      const libraryLabel = bulkLibraryLabelSafe_(libraryKey || 'minecraft');
+      if(String(libraryKey).toLowerCase() === 'minecraft' || /minecraft/i.test(libraryLabel)){
+        bulkQASetInput_(`Where can the ${cleanLesson} Minecraft lesson fit?`);
+      } else {
+        bulkQASetInput_(`Where can the ${cleanLesson} lesson from the ${libraryLabel} library fit?`);
+      }
       return;
     }
     if(type === 'improve'){
@@ -2819,11 +2980,14 @@ function showNextQuestion(parsed){
             </div>
           </div>
           <div style="border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--card2)">
-            <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:6px">🎮 Place Minecraft lesson</div>
-            <input id="bulk-qa-minecraft-lesson" class="inp" placeholder="Exact lesson, e.g. Revamp Melbourne" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
+            <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:6px">📚 Place lesson</div>
+            <select id="bulk-qa-lesson-library" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:6px">
+              ${bulkQALibraryOptions_()}
+            </select>
+            <input id="bulk-qa-lesson-title" class="inp" placeholder="Exact lesson title, e.g. Revamp Melbourne" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
             <div style="display:flex;gap:6px;flex-wrap:wrap">
-              <button type="button" class="btn-sm" onclick="bulkQuickActionFill('minecraft')">Fill prompt</button>
-              <button type="button" class="btn-sm" onclick="bulkQuickActionSend('minecraft')" style="color:var(--lime);border-color:var(--lime)">Draft now</button>
+              <button type="button" class="btn-sm" onclick="bulkQuickActionFill('lesson')">Fill prompt</button>
+              <button type="button" class="btn-sm" onclick="bulkQuickActionSend('lesson')" style="color:var(--lime);border-color:var(--lime)">Draft now</button>
             </div>
           </div>
           <div style="border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--card2)">
