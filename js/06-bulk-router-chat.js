@@ -1303,6 +1303,7 @@ function bulkSafeDraftFinaliseDescription_(value){
   // Final pass for all safe Bulk draft routes so planner punctuation or
   // mojibake cannot leak into the review popup from any template.
   let s = bulkSafeDraftCleanMojibake_(value);
+
   s = s
     .replace(/How;\s*We;\s*Organise;\s*Ourselves/gi, 'How We Organise Ourselves')
     .replace(/How;\s*The;\s*World;\s*Works/gi, 'How The World Works')
@@ -1310,8 +1311,26 @@ function bulkSafeDraftFinaliseDescription_(value){
     .replace(/Who;\s*We;\s*Are/gi, 'Who We Are')
     .replace(/How;\s*We;\s*Express;\s*Ourselves/gi, 'How We Express Ourselves')
     .replace(/Sharing;\s*The;\s*Planet/gi, 'Sharing The Planet')
-    .replace(/Student-led;\s*exhibition;\s*\(PYPEX\);\s*—;\s*Students;\s*develop;\s*and;\s*present;\s*their;\s*own;\s*units;\s*of;\s*inquiry/gi, 'Student-led exhibition (PYPEX): Students develop and present their own units of inquiry')
-    .replace(/;\s*—\s*;?/g, ' — ')
+    .replace(/Student-led;\s*exhibition;\s*\(PYPEX\);\s*—;?\s*Students;\s*develop;\s*and;\s*present;\s*their;\s*own;\s*units;\s*of;\s*inquiry/gi, 'Student-led exhibition (PYPEX): Students develop and present their own units of inquiry')
+    .replace(/;\s*—\s*;?/g, ' — ');
+
+  // If planner text has leaked in with semicolons between most words, do a
+  // sentence-level cleanup. This is intentionally density-based so normal
+  // occasional semicolons are left alone, but strings like
+  // "Students; use; Makey; Makey; ..." become readable again.
+  const semicolonCount = (s.match(/;/g) || []).length;
+  const wordCount = (s.match(/[A-Za-z0-9’'-]+/g) || []).length || 1;
+  if(semicolonCount >= 6 && semicolonCount / wordCount > 0.12){
+    s = s
+      .replace(/;\s*/g, ' ')
+      .replace(/\s+([,.:!?])/g, '$1')
+      .replace(/\(\s+/g, '(')
+      .replace(/\s+\)/g, ')')
+      .replace(/“\s+/g, '“')
+      .replace(/\s+”/g, '”');
+  }
+
+  s = s
     .replace(/\s+([,.;:!?])/g, '$1')
     .replace(/([.!?]){2,}/g, '$1')
     .replace(/\s+/g, ' ')
