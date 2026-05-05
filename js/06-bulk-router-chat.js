@@ -133,6 +133,7 @@ function bulkDiagnosticDetectRoute_(instruction){
   const lower = raw.toLowerCase();
   const namedTool = bulkDetectNamedToolOpportunity_(raw);
   const targetYears = bulkExtractTargetYears_(raw);
+  const replacementTool = bulkDiagnosticDetectReplacementTool_(raw);
   let route = 'generic bulk edit';
   let confidence = 'low';
   let notes = [];
@@ -141,8 +142,10 @@ function bulkDiagnosticDetectRoute_(instruction){
     route = 'specific Minecraft lesson placement'; confidence = 'medium';
     notes.push('Minecraft + lesson-placement wording detected.');
   } else if(/\b(replace|remove|swap|change out|stop using|get rid of)\b/i.test(raw)){
-    route = 'targeted replacement'; confidence = 'medium';
+    route = 'targeted replacement'; confidence = replacementTool ? 'high' : 'medium';
     notes.push('Replacement wording detected.');
+    if(replacementTool) notes.push('Tool to remove detected locally.');
+    else notes.push('Could not confidently detect which tool should be removed.');
   } else if(namedTool && bulkInstructionLooksLikeOpportunity(raw)){
     route = 'named-tool opportunity search'; confidence = 'high';
     notes.push('Opportunity wording plus a named tool detected.');
@@ -151,7 +154,7 @@ function bulkDiagnosticDetectRoute_(instruction){
     notes.push('Opportunity wording detected, but no known tool was confidently matched.');
   }
 
-  return { route, confidence, namedTool, targetYears, notes };
+  return { route, confidence, namedTool, replacementTool, targetYears, notes };
 }
 
 function bulkDiagnosticScanNamedTool_(toolName, targetYears){
@@ -199,13 +202,119 @@ function bulkDiagnosticScanNamedTool_(toolName, targetYears){
   return { existingEntries, existingSlots, eligibleEntriesWithoutTool, skippedAlreadyHasTool, skippedYear, skippedNoNonStemSlot, examples };
 }
 
+
+function bulkDiagnosticAllKnownTools_(){
+  const extras = ['Seesaw','Google Maps','National Geographic MapMaker','Makey Makey','Book Creator','Lego Spike Prime','Lego Spike Essential','Minecraft Education','Canva','Padlet','ScratchJR','Scratch','Adobe Express','Microsoft Forms','Microsoft Sway','GarageBand','iMovie'];
+  const all = [
+    ...extras,
+    ...(typeof DEFAULT_APPROVED_TOOLS !== 'undefined' ? (DEFAULT_APPROVED_TOOLS || []) : []),
+    ...((typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY && TOOL_INVENTORY.approved) ? TOOL_INVENTORY.approved : []),
+    ...((typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY && TOOL_INVENTORY.banned) ? TOOL_INVENTORY.banned : [])
+  ];
+  const seen = new Set();
+  return all.map(t => normaliseToolName(String(t || '').trim())).filter(t => {
+    const k = bulkDiagnosticToolKey_(t);
+    if(!k || seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  }).sort((a,b) => b.length - a.length);
+}
+
+function bulkDiagnosticDetectReplacementTool_(instruction){
+  const raw = String(instruction || '').trim();
+  if(!/(replace|remove|swap|change out|stop using|get rid of)/i.test(raw)) return '';
+  const lower = raw.toLowerCase().replace(/[’']/g, '');
+  const aliases = {
+    'seesaw':'Seesaw',
+    'see saw':'Seesaw',
+    'google maps':'Google Maps',
+    'mapmaker':'National Geographic MapMaker',
+    'national geographic mapmaker':'National Geographic MapMaker',
+    'makey makey':'Makey Makey',
+    'book creator':'Book Creator',
+    'lego spike prime':'Lego Spike Prime',
+    'lego spike essential':'Lego Spike Essential',
+    'minecraft':'Minecraft Education',
+    'minecraft education':'Minecraft Education'
+  };
+  for(const [alias, tool] of Object.entries(aliases)){
+    const pattern = bulkEscapeRegExp_(alias).replace(/\s+/g, '\s+');
+    const re = new RegExp('(^|[^a-z0-9])' + pattern + '([^a-z0-9]|$)', 'i');
+    if(re.test(lower)) return tool;
+  }
+  const tools = bulkDiagnosticAllKnownTools_();
+  for(const tool of tools){
+    const phrase = String(tool || '').toLowerCase().replace(/[’']/g, '');
+    if(!phrase || phrase.length < 4) continue;
+    const pattern = bulkEscapeRegExp_(phrase).replace(/\s+/g, '\s+');
+    const re = new RegExp('(^|[^a-z0-9])' + pattern + '([^a-z0-9]|$)', 'i');
+    if(re.test(lower)) return tool;
+  }
+  return '';
+}
+
+function bulkDiagnosticScanReplacementTool_(toolName, targetYears){
+  const key = bulkDiagnosticToolKey_(toolName);
+  const matches = [];
+  let skippedYear = 0;
+  let skippedStemSlot = 0;
+  let totalMatchingSlots = 0;
+  let matchingEntries = 0;
+  const entriesSeen = new Set();
+
+  if(!key || !Array.isArray(DATA)) return { matches, skippedYear, skippedStemSlot, totalMatchingSlots, matchingEntries };
+
+  DATA.forEach((e, entryIdx) => {
+    if(!e) return;
+    const yl = e.yl || '';
+    if(targetYears && targetYears.length && !targetYears.includes(yl)){ skippedYear++; return; }
+    const sugs = getSugs(e);
+    sugs.forEach((s, sugIdx) => {
+      if(!s || !isRealSug(s)) return;
+      if(bulkDiagnosticToolKey_(sugTool(s)) !== key) return;
+      totalMatchingSlots++;
+      entriesSeen.add(entryIdx);
+      const record = {
+        entryIdx,
+        sugIdx,
+        isStemSlot: sugIdx === 5,
+        campus: e.ca || 'Campus?',
+        year: yl || 'Year?',
+        theme: e.th || e.theme || 'Untitled unit',
+        currentTool: sugTool(s),
+        currentDesc: sugDesc(s)
+      };
+      if(record.isStemSlot) skippedStemSlot++;
+      else matches.push(record);
+    });
+  });
+  matchingEntries = entriesSeen.size;
+  return { matches, skippedYear, skippedStemSlot, totalMatchingSlots, matchingEntries };
+}
+
 function bulkRunDiagnosticOnly_(text){
   const cleanText = String(text || '').replace(/^\s*(diagnose|debug|route)\s*:?\s*/i, '').trim();
   const info = bulkDiagnosticDetectRoute_(cleanText);
   const years = info.targetYears && info.targetYears.length ? info.targetYears.join(', ') : 'All years';
   let scanHtml = '';
 
-  if(info.namedTool){
+  if(info.replacementTool){
+    const scan = bulkDiagnosticScanReplacementTool_(info.replacementTool, info.targetYears || []);
+    const examples = (scan.matches || []).slice(0, 10).map(m => {
+      return `${m.campus} · ${m.year} · slot ${m.sugIdx + 1} · ${m.theme}`;
+    });
+    scanHtml = `
+      <div style="margin-top:10px;padding:10px 12px;background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.25);border-radius:10px">
+        <div style="font-size:11px;color:#F5A623;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Targeted replacement scan</div>
+        <div>Tool to remove: <strong>${bulkDiagnosticEscape_(info.replacementTool)}</strong></div>
+        <div>Total matching slots in scope: <strong>${scan.totalMatchingSlots}</strong></div>
+        <div>Matching entries: <strong>${scan.matchingEntries}</strong></div>
+        <div>Draftable non-STEM slots: <strong>${scan.matches.length}</strong></div>
+        <div>Protected STEM slot #6 matches skipped: <strong>${scan.skippedStemSlot}</strong></div>
+        <div>Skipped by year filter: <strong>${scan.skippedYear}</strong></div>
+        ${examples.length ? `<div style="margin-top:8px;color:var(--dim);font-size:12px">First draftable matches:<br>${examples.map(bulkDiagnosticEscape_).join('<br>')}</div>` : ''}
+      </div>`;
+  } else if(info.namedTool){
     const scan = bulkDiagnosticScanNamedTool_(info.namedTool, info.targetYears || []);
     scanHtml = `
       <div style="margin-top:10px;padding:10px 12px;background:rgba(197,232,74,.06);border:1px solid rgba(197,232,74,.2);border-radius:10px">
@@ -225,6 +334,7 @@ function bulkRunDiagnosticOnly_(text){
       <div>Route detected: <strong>${bulkDiagnosticEscape_(info.route)}</strong></div>
       <div>Confidence: <strong>${bulkDiagnosticEscape_(info.confidence)}</strong></div>
       <div>Named tool: <strong>${bulkDiagnosticEscape_(info.namedTool || 'None detected')}</strong></div>
+      <div>Tool to remove: <strong>${bulkDiagnosticEscape_(info.replacementTool || 'None detected')}</strong></div>
       <div>Year scope: <strong>${bulkDiagnosticEscape_(years)}</strong></div>
       <div style="margin-top:8px;color:var(--dim);font-size:12px">${notes}</div>
       ${scanHtml}
