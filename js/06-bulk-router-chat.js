@@ -248,7 +248,12 @@ function bulkDiagnosticDetectReplacementTool_(instruction){
     'lego spike prime':'Lego Spike Prime',
     'lego spike essential':'Lego Spike Essential',
     'minecraft':'Minecraft Education',
-    'minecraft education':'Minecraft Education'
+    'minecraft education':'Minecraft Education',
+    'podcast equipment':'Podcast Equipment + GarageBand',
+    'podcast equipment garageband':'Podcast Equipment + GarageBand',
+    'podcast equipment and garageband':'Podcast Equipment + GarageBand',
+    'podcast equipment + garageband':'Podcast Equipment + GarageBand',
+    'podcast equipment & garageband':'Podcast Equipment + GarageBand'
   };
   for(const [alias, tool] of Object.entries(aliases)){
     const pattern = bulkEscapeRegExp_(alias).replace(/\s+/g, '\s+');
@@ -291,6 +296,7 @@ function bulkReplacementLabelMatches_(s, toolName){
   if(wantedKey === 'seesaw') return /(^|[^a-z0-9])see\s*saw([^a-z0-9]|$)|(^|[^a-z0-9])seesaw([^a-z0-9]|$)/i.test(toolText);
   if(wantedKey === 'googlemaps') return /google\s+maps?/i.test(toolText);
   if(wantedKey === 'nationalgeographicmapmaker') return /mapmaker|national\s+geographic\s+mapmaker/i.test(toolText);
+  if(wantedKey === 'podcastequipmentgarageband') return /podcast\s+equipment(?:\s*(?:\+|&|and)\s*garageband)?/i.test(toolText);
   return false;
 }
 
@@ -309,6 +315,7 @@ function bulkReplacementToolMatches_(s, toolName){
   }
   if(wantedKey === 'googlemaps') return /google\s+maps?/i.test(haystack);
   if(wantedKey === 'nationalgeographicmapmaker') return /mapmaker|national\s+geographic\s+mapmaker/i.test(haystack);
+  if(wantedKey === 'podcastequipmentgarageband') return /podcast\s+equipment(?:\s*(?:\+|&|and)\s*garageband)?/i.test(haystack);
 
   const phrase = String(toolName || '').toLowerCase().replace(/[’']/g, '').trim();
   if(phrase && phrase.length >= 4){
@@ -1008,36 +1015,40 @@ function bulkStkY6RewriteDescription_(toolName, e, row){
   const ctx = bulkStkY6UnitFocus_(e || {});
   const theme = ctx.theme;
   const connection = ctx.connection;
-  const band = bulkSafeDraftYearBand_(e || {});
+  const plannerSource = ctx.plannerSource || (ctx.loi ? 'line of inquiry' : ctx.ci ? 'central idea' : 'unit theme');
 
+  // Year 6 quality drafts should feel more like authentic inquiry work than a
+  // generic app substitution. Keep the same tool where possible, but make the
+  // learning product more innovative, audience-facing and explicitly tied to
+  // the planner reference available from data.json.
   if(k === bulkDiagnosticToolKey_('National Geographic MapMaker')){
-    return `Students use National Geographic MapMaker to create an annotated evidence map connected to ${theme}. They add carefully chosen labels, source notes and visual markers, then justify how the spatial patterns on their map help classmates understand ${connection}.`;
+    return `Students use National Geographic MapMaker to build a spatial inquiry map for ${theme}, using locations, labels and source notes as evidence rather than decoration. They add a short curator note explaining how the mapped patterns connect to ${connection}, then use the map to lead a peer discussion about what the planner evidence reveals.`;
   }
   if(/googlemaps/i.test(k)){
-    return `Students use Google Maps Street View to make ground-level observations connected to ${theme}. They capture notes or screenshots of real places, compare what they notice, and explain how those observations support their understanding of ${connection}.`;
+    return `Students use Google Maps Street View as a virtual fieldwork tool connected to ${theme}. They collect ground-level observations, compare what different places reveal, and create a short evidence board explaining how these observations support ${connection}.`;
   }
   if(k === bulkDiagnosticToolKey_('Book Creator')){
-    return `Students use Book Creator to publish a multimodal explanation book connected to ${theme}. They combine diagrams, evidence captions, images and optional voice recordings to explain examples and reflect on what they understand about ${connection}.`;
+    return `Students use Book Creator to publish an exhibition-style digital companion for ${theme}. Each page combines student-curated evidence, diagrams, captions, voice reflection and a “so what?” note that explains how the artefact connects to ${connection}.`;
   }
   if(k === bulkDiagnosticToolKey_('Canva')){
-    return `Students use Canva to design a visual explanation or advocacy piece connected to ${theme}. They combine evidence, concise captions and deliberate visual choices, then explain how the final design helps an audience understand ${connection}.`;
+    return `Students use Canva to design an audience-facing campaign, visual explainer or exhibition panel connected to ${theme}. They combine evidence, concise copy and deliberate design choices, then justify how the final piece helps an audience understand ${connection}.`;
   }
   if(k === bulkDiagnosticToolKey_('Padlet')){
-    return `Students use Padlet to collect, organise and critique evidence connected to ${theme}. They add posts with images, explanations and questions, then identify patterns or tensions that help explain ${connection}.`;
+    return `Students use Padlet as a collaborative evidence wall for ${theme}. They post examples, questions and counterpoints, tag them by theme, then synthesise the strongest patterns into a short group claim about ${connection}.`;
   }
   if(k === bulkDiagnosticToolKey_('Microsoft PowerPoint')){
-    return `Students use Microsoft PowerPoint to build a short evidence-based explanation deck connected to ${theme}. Each slide presents one key idea with visuals, speaker notes and a reflection so students can clearly explain ${connection}.`;
+    return `Students use Microsoft PowerPoint to create a concise exhibition pitch connected to ${theme}. They build a claim-evidence-reflection sequence, rehearse it for an audience, and explain how their selected evidence links back to ${connection}.`;
   }
   if(k === bulkDiagnosticToolKey_('Microsoft Sway')){
-    return `Students use Microsoft Sway to create an interactive digital report connected to ${theme}. They sequence images, text, evidence and reflections to explain examples and show how their understanding of ${connection} has developed.`;
+    return `Students use Microsoft Sway to build an interactive inquiry trail for ${theme}. They sequence evidence, images, short explanations and reflection checkpoints so viewers can follow how their thinking developed in relation to ${connection}.`;
   }
   if(k === bulkDiagnosticToolKey_('Wise Discussion Chatbots')){
-    return `Students question a Wise Discussion Chatbot in a named expert role connected to ${theme}. They ask prepared questions, check the responses against class evidence, and produce a short claim-evidence-reasoning reflection about ${connection}.`;
+    return `Students question a Wise Discussion Chatbot in a named expert or stakeholder role connected to ${theme}. They prepare prompts, fact-check the chatbot against class evidence, and create a claim-evidence-reasoning reflection that responds to ${connection}.`;
   }
   if(k === bulkDiagnosticToolKey_('Delightex')){
-    return `Students use Delightex to design an interactive 3D scene connected to ${theme}. They add labels, narration or hotspots so viewers can explore the scene and understand how it represents ${connection}.`;
+    return `Students use Delightex to design an interactive 3D provocation or mini-exhibition connected to ${theme}. They add narration, hotspots and evidence labels so visitors can explore different perspectives and understand how the scene represents ${connection}.`;
   }
-  return `Students use ${tool} to create a clear digital product connected to ${theme}. They make, share and explain their product, showing how their choices communicate key ideas about ${connection}.`;
+  return `Students use ${tool} to create an audience-facing digital artefact connected to ${theme}. They include evidence from the planner focus, make deliberate design choices, and explain how their final product demonstrates understanding of ${connection}.`;
 }
 
 function bulkRunStkY6DraftOnly_(text){
@@ -1371,24 +1382,59 @@ function bulkSafeDraftYearBand_(e){
   return 'upper';
 }
 
+function bulkSafeDraftSplitPlannerPhrases_(value){
+  const clean = bulkSafeDraftCleanUnitText_(value || '');
+  if(!clean) return [];
+  return clean
+    .replace(/\s+—\s+/g, ': ')
+    .split(/(?:\s*;\s*|\s*\|\s*|\s*•\s*|\n+|\s+\/\s+)/)
+    .map(x => bulkSafeDraftTrimEndPunctuation_(bulkSafeDraftCleanUnitText_(x)))
+    .filter(Boolean)
+    .filter(x => x.length >= 8)
+    .filter(x => !/^(how|who|where|sharing|the|we|are|in|and|of|our|ourselves)$/i.test(x));
+}
+
+function bulkSafeDraftBestPlannerPhrase_(value){
+  const parts = bulkSafeDraftSplitPlannerPhrases_(value);
+  if(!parts.length) return bulkSafeDraftTrimEndPunctuation_(bulkSafeDraftCleanUnitText_(value || ''));
+  const scored = parts.map(part => {
+    let score = 0;
+    const words = (part.match(/[A-Za-z0-9’'-]+/g) || []).length;
+    if(words >= 5 && words <= 24) score += 20;
+    if(words > 24) score -= Math.min(18, words - 24);
+    if(/(student|students|inquiry|develop|present|create|action|impact|community|systems?|change|perspective|responsib|evidence|audience)/i.test(part)) score += 8;
+    if(/(how we|who we|where we|sharing the planet)/i.test(part)) score -= 5;
+    if(part.length > 170) score -= 20;
+    return { part, score };
+  }).sort((a,b) => b.score - a.score);
+  let chosen = scored[0].part;
+  // Do not put ellipses into drafts. If the planner phrase is too long,
+  // use a complete clause before a comma/colon/dash where possible.
+  if(chosen.length > 170){
+    const shorter = chosen.split(/[,.:]\s+/).find(x => x.length >= 30 && x.length <= 150);
+    if(shorter) chosen = shorter;
+  }
+  return bulkSafeDraftTrimEndPunctuation_(chosen);
+}
+
 function bulkSafeDraftUnitFocus_(e){
   const ctx = bulkSafeDraftShortContext_(e || {});
   const theme = bulkSafeDraftTrimEndPunctuation_(ctx.theme) || 'this unit';
-  const ci = bulkSafeDraftTrimEndPunctuation_(ctx.ci || '');
-  const loi = bulkSafeDraftTrimEndPunctuation_(ctx.loi || '');
-  const rawConnection = loi || ci || theme;
-  // Keep templates practical and readable in the review popup. Very long LOI strings
-  // make drafts feel vague, so shorten the inserted connection without changing data.
-  const shortRaw = rawConnection.length > 150 ? rawConnection.slice(0, 147).replace(/\s+\S*$/, '') + '…' : rawConnection;
-  let connection = shortRaw;
+  const ci = bulkSafeDraftBestPlannerPhrase_(ctx.ci || '');
+  const loi = bulkSafeDraftBestPlannerPhrase_(ctx.loi || '');
+  let connection = '';
+  let plannerSource = '';
   if(loi){
-    connection = `the line of inquiry “${shortRaw}”`;
+    connection = `the line of inquiry “${loi}”`;
+    plannerSource = 'line of inquiry';
   } else if(ci){
-    connection = `the central idea “${shortRaw}”`;
+    connection = `the central idea “${ci}”`;
+    plannerSource = 'central idea';
   } else {
-    connection = `the unit theme “${shortRaw}”`;
+    connection = `the unit theme “${theme}”`;
+    plannerSource = 'unit theme';
   }
-  return { theme, ci, loi, connection };
+  return { theme, ci, loi, connection, plannerSource };
 }
 
 function bulkSafeDraftDescriptionForTool_(toolName, e){
@@ -2925,12 +2971,27 @@ function bulkRunLibraryLessonDraftSafe_(text){
     const l = bulkDiagnosticEscape_(label || value);
     return `<option value="${v}">${l}</option>`;
   }
+  function bulkQACanonicalQuickToolLabel_(value){
+    let label = normaliseToolName ? normaliseToolName(String(value||'').trim()) : String(value||'').trim();
+    if(!label) return '';
+    const key = bulkDiagnosticToolKey_(label);
+    // The library has historically stored this as several labels. Show it once
+    // in quick-action dropdowns, but keep scanner aliases broad enough to find
+    // all variants when replacing.
+    if(key === 'podcastequipment' || key === 'podcastequipmentgarageband' || key === 'podcastequipmentandgarageband'){
+      return 'Podcast Equipment + GarageBand';
+    }
+    if(/^podcast\s+equipment(?:\s*(?:\+|&|and)\s*garageband)?$/i.test(label)){
+      return 'Podcast Equipment + GarageBand';
+    }
+    return label;
+  }
   function bulkQACollectApprovedTools_(){
     const fallback = ['Book Creator','Makey Makey','Lego Spike Prime','Lego Spike Essential','Adobe Express','Padlet','Minecraft Education','National Geographic MapMaker','Delightex','Scratch','ScratchJR','Sphero BOLT','Micro:bit','Tinkercad','Canva','Wise Discussion Chatbots'];
     const seen = new Set();
     const out = [];
     function add(v){
-      const label = normaliseToolName ? normaliseToolName(String(v||'').trim()) : String(v||'').trim();
+      const label = bulkQACanonicalQuickToolLabel_(v);
       if(!label) return;
       const k = bulkDiagnosticToolKey_(label);
       if(!k || seen.has(k)) return;
@@ -2961,7 +3022,7 @@ function bulkRunLibraryLessonDraftSafe_(text){
     const out = [];
     const knownKeys = new Set();
     function canonical(v){
-      return normaliseToolName ? normaliseToolName(String(v||'').trim()) : String(v||'').trim();
+      return bulkQACanonicalQuickToolLabel_(v);
     }
     function rememberKnown(v){
       const label = canonical(v);
