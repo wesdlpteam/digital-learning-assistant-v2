@@ -2760,7 +2760,9 @@ setInterval(async()=>{
 (function(){
   const RT_BASELINE_FIELD = '__dlaRealtimeSyncBaseline_v1';
   const MERGE_BASELINE_FIELD = '__dlaMergeBaseline_v1';
-  const RT_INTERVAL_MS = 12000;
+  const RT_INTERVAL_MS = 5000;
+  const RT_SYNC_BUTTON_ID = 'dla-manual-sync-btn';
+  const RT_SYNC_LABEL_ID = 'dla-sync-status-chip';
   const VOLATILE_FIELDS = new Set(['_locks','_mergeLocalTouchedAt','_mergeLocalTouchedBy']);
   let rtTimer = null;
   let rtBusy = false;
@@ -2898,6 +2900,54 @@ setInterval(async()=>{
     if(Date.now() - rtLastStatusAt < 3500) return;
     rtLastStatusAt = Date.now();
     try { if(typeof setStatus === 'function') setStatus(msg, type); } catch(e){}
+    rtUpdateSyncChip_(msg);
+  }
+
+  function rtUpdateSyncChip_(msg){
+    try{
+      const chip = document.getElementById(RT_SYNC_LABEL_ID);
+      if(!chip) return;
+      const now = new Date();
+      const time = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+      chip.textContent = msg ? ('Last sync: ' + time) : ('Sync every 5s');
+      chip.title = msg || 'Drive sync checks every 5 seconds while this tab is visible.';
+    }catch(e){}
+  }
+
+  function rtInstallManualSyncButton_(){
+    try{
+      if(document.getElementById(RT_SYNC_BUTTON_ID)) return;
+      const status = document.getElementById('status-bar');
+      if(!status) return;
+      const wrap = document.createElement('span');
+      wrap.style.cssText = 'display:inline-flex;align-items:center;gap:8px;margin-left:10px;vertical-align:middle';
+      const chip = document.createElement('span');
+      chip.id = RT_SYNC_LABEL_ID;
+      chip.textContent = 'Sync every 5s';
+      chip.style.cssText = 'font-size:10px;color:var(--dim);font-weight:700;border:1px solid var(--border);border-radius:999px;padding:3px 8px;background:rgba(255,255,255,.03)';
+      const btn = document.createElement('button');
+      btn.id = RT_SYNC_BUTTON_ID;
+      btn.type = 'button';
+      btn.textContent = '↻ Sync now';
+      btn.title = 'Pull the latest data.json changes from Drive now.';
+      btn.className = 'btn-sm';
+      btn.style.cssText = 'font-size:10px;padding:3px 8px;border-radius:999px';
+      btn.onclick = async function(){
+        btn.disabled = true;
+        const old = btn.textContent;
+        btn.textContent = 'Syncing…';
+        try{
+          await syncFromDriveNow_('manual');
+          rtUpdateSyncChip_('Manual sync complete');
+        }finally{
+          btn.disabled = false;
+          btn.textContent = old;
+        }
+      };
+      wrap.appendChild(chip);
+      wrap.appendChild(btn);
+      status.appendChild(wrap);
+    }catch(e){ console.warn('Could not install sync button', e); }
   }
 
   function rtReplaceAll_(latest, currentKey){
@@ -2953,6 +3003,10 @@ setInterval(async()=>{
       const remoteModified = meta.modifiedTime;
       const known = rtLastSeenModified || LAST_KNOWN_MODIFIED;
       if(reason !== 'manual' && known && remoteModified === known) return {synced:false, reason:'same-modified'};
+      if(reason === 'manual' && known && remoteModified === known){
+        rtStatus_('Already up to date with Drive ✓');
+        return {synced:false, reason:'same-modified'};
+      }
 
       rtLastSeenModified = remoteModified;
       LAST_KNOWN_MODIFIED = remoteModified;
@@ -2993,10 +3047,12 @@ setInterval(async()=>{
         CONFLICT_POLL_INTERVAL = null;
       }
     }catch(e){}
+    rtInstallManualSyncButton_();
     if(rtTimer) return;
     rtLastSeenModified = LAST_KNOWN_MODIFIED || rtLastSeenModified;
     rtSetBaseline_(DATA || []);
     rtTimer = setInterval(function(){ syncFromDriveNow_('poll'); }, RT_INTERVAL_MS);
+    rtUpdateSyncChip_('Drive sync checks every 5 seconds');
   }
 
   // Replace the old conflict-only polling with live sync polling.
@@ -3354,7 +3410,7 @@ setInterval(async()=>{
 
   function dqSplitLooseLoi_(lo){
     // Robustly split LOIs that were pasted/exported with corrupted bullet symbols.
-    // St Kilda Road Year 6 had separators such as �, â€¢, Â•, ï‚· and other odd glyphs,
+    // St Kilda Road Year 6 had separators such as  , â€¢, Â•, ï‚· and other odd glyphs,
     // so this recognises far more than just semicolons and normal bullets.
     let s = dqText_(lo)
       .replace(/\u00a0/g, ' ')
@@ -3363,7 +3419,7 @@ setInterval(async()=>{
       .replace(/ï\s*‚\s*·/gi, '; ')
       .replace(/[\u2022\u2023\u25E6\u2043\u2219\u00B7\u25CF\u25AA\u25AB\u25A0\u25A1\u25C6\u25C7\u25B8\u25B6\uF0B7]+/g, '; ')
       .replace(/\s*[|¦§]+\s*/g, '; ')
-      .replace(/\s*[�]+\s*/g, '; ')
+      .replace(/\s*[ ]+\s*/g, '; ')
       .replace(/\s+/g,' ')
       .trim();
     if(!s) return '';
