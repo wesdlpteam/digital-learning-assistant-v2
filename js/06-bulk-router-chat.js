@@ -911,6 +911,145 @@ function bulkRunStkY6PreviewOnly_(text){
       <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No changes were drafted or saved.</div>
     </div>`);
 }
+
+
+// Consolidated safe St Kilda Road Year 6 draft flow.
+// This deliberately avoids AI calls and heavy repair loops. It drafts a tiny batch into
+// the normal review popup only. Nothing saves unless a human approves.
+function bulkStkY6CollectFlagged_(limit){
+  const rows = [];
+  if(!Array.isArray(DATA)) return rows;
+  DATA.forEach((e, entryIdx) => {
+    if(!bulkStkY6LooksStKilda_(e) || !bulkStkY6LooksYear6_(e)) return;
+    const sugs = getSugs(e) || [];
+    sugs.forEach((s, sugIdx) => {
+      if(sugIdx === 5) return; // protect STEM slot #6
+      if(!isRealSug(s)) return;
+      const tool = normaliseToolName(sugTool(s) || '');
+      // Do not auto-rewrite curated Minecraft suggestions in a broad quality pass.
+      // Minecraft changes must go through exact curated lesson flows only.
+      if(/minecraft/i.test(tool)) return;
+      const issues = bulkStkY6IssueList_(e, s);
+      if(!issues.length) return;
+      rows.push({
+        entryIdx,
+        sugIdx,
+        entry:e,
+        suggestion:s,
+        campus:e.ca || e.campus || 'St Kilda Road',
+        year:e.yl || e.year || 'Year 6',
+        theme:e.th || e.theme || 'Untitled unit',
+        tool:tool || 'Untitled tool',
+        desc:bulkStkY6Desc_(s),
+        issues,
+        score:(issues.length * 10) + (bulkStkY6HasCorruptLoi_(e) ? 5 : 0) + (String(bulkStkY6Desc_(s)||'').length < 110 ? 8 : 0)
+      });
+    });
+  });
+  rows.sort((a,b) => b.score - a.score || a.entryIdx - b.entryIdx || a.sugIdx - b.sugIdx);
+  return typeof limit === 'number' ? rows.slice(0, limit) : rows;
+}
+
+function bulkStkY6UnitFocus_(e){
+  const theme = bulkSafeDraftTrimEndPunctuation_(bulkStkY6Text_(e && (e.th || e.theme))) || 'this Year 6 unit';
+  const ci = bulkSafeDraftTrimEndPunctuation_(bulkStkY6Text_(e && (e.ci || e.centralIdea)));
+  let loi = e && (e.loi || e.linesOfInquiry || e.lines_of_inquiry || '');
+  if(Array.isArray(loi)) loi = loi.join('; ');
+  loi = bulkStkY6Text_(loi)
+    .replace(/ |â€¢|Â•|ï‚·|\uFFFD/g, '; ')
+    .replace(/\s*[|•·]+\s*/g, '; ')
+    .replace(/\s*;\s*/g, '; ')
+    .replace(/;{2,}/g, ';')
+    .trim();
+  loi = bulkSafeDraftTrimEndPunctuation_(loi);
+  const connection = bulkSafeDraftTrimEndPunctuation_(loi || ci || theme) || theme;
+  const shortConnection = connection.length > 150 ? connection.slice(0,147).replace(/\s+\S*$/, '') + '…' : connection;
+  return { theme, ci, loi, connection: shortConnection };
+}
+
+function bulkStkY6RewriteTool_(row){
+  const tool = normaliseToolName(row.tool || '');
+  const text = `${tool} ${row.desc || ''}`;
+  if(/google maps/i.test(text) && /\b(pin|pins|label|labels|annotat|layer|route|custom map|plot|overlay)\b/i.test(text)){
+    return 'National Geographic MapMaker';
+  }
+  if(/co\s*spaces|delightex/i.test(tool)) return 'Delightex';
+  return tool || 'Book Creator';
+}
+
+function bulkStkY6RewriteDescription_(toolName, e, row){
+  const tool = normaliseToolName(toolName || row.tool || '');
+  const k = bulkDiagnosticToolKey_(tool);
+  const ctx = bulkStkY6UnitFocus_(e || {});
+  const theme = ctx.theme;
+  const connection = ctx.connection;
+
+  if(k === bulkDiagnosticToolKey_('National Geographic MapMaker')){
+    return `Students use National Geographic MapMaker to create an annotated map connected to ${theme}. They add carefully chosen labels, evidence notes and visual markers, then explain how their map helps classmates understand ${connection}.`;
+  }
+  if(/googlemaps/i.test(k)){
+    return `Students use Google Maps Street View to make ground-level observations connected to ${theme}. They capture notes or screenshots of real places, compare what they notice, and explain how those observations support their understanding of ${connection}.`;
+  }
+  if(k === bulkDiagnosticToolKey_('Book Creator')){
+    return `Students use Book Creator to publish a multimodal explanation book connected to ${theme}. They combine images, captions, diagrams and optional voice recordings to show what they understand about ${connection}.`;
+  }
+  if(k === bulkDiagnosticToolKey_('Canva')){
+    return `Students use Canva to design a clear visual explanation connected to ${theme}. They create an infographic, poster or slide that combines key vocabulary, evidence and visuals to explain ${connection}.`;
+  }
+  if(k === bulkDiagnosticToolKey_('Padlet')){
+    return `Students use Padlet to collect, organise and compare evidence connected to ${theme}. They add posts with images, short explanations and questions, then use the shared board to identify patterns and explain ${connection}.`;
+  }
+  if(k === bulkDiagnosticToolKey_('Microsoft PowerPoint')){
+    return `Students use Microsoft PowerPoint to build a short explanation deck connected to ${theme}. Each slide presents one key idea with evidence, visuals and speaker notes so students can clearly explain ${connection}.`;
+  }
+  if(k === bulkDiagnosticToolKey_('Microsoft Sway')){
+    return `Students use Microsoft Sway to create an interactive digital report connected to ${theme}. They sequence images, text and reflections to explain examples and evidence that show their understanding of ${connection}.`;
+  }
+  if(k === bulkDiagnosticToolKey_('Wise Discussion Chatbots')){
+    return `Students question a Wise Discussion Chatbot in a named expert role connected to ${theme}. They ask prepared questions, check the responses against class evidence, and produce a short claim-evidence-reasoning reflection about ${connection}.`;
+  }
+  if(k === bulkDiagnosticToolKey_('Delightex')){
+    return `Students use Delightex to design an interactive 3D scene connected to ${theme}. They add labels, narration or hotspots so viewers can explore the scene and understand how it represents ${connection}.`;
+  }
+  return `Students use ${tool} to create a clear digital product connected to ${theme}. They make, share and explain their product, showing how their choices communicate key ideas about ${connection}.`;
+}
+
+function bulkRunStkY6DraftOnly_(text){
+  const cleanText = String(text || '').replace(/^\s*(draft|draft-safe|safe-draft)\s*:?\s*/i, '').trim();
+  if(!bulkLooksLikeStkY6Diagnostic_(cleanText)){
+    bulkChatAddMessage('assistant', 'I only understand St Kilda Road Year 6 draft requests in this safe draft mode. Try: <strong>draft: Improve 3 St Kilda Road Year 6 suggestions</strong>');
+    return;
+  }
+  const requested = (String(text||'').match(/\b(\d{1,2})\b/) || [])[1];
+  const limit = Math.max(1, Math.min(Number(requested || 3), 6));
+  const rows = bulkStkY6CollectFlagged_(limit);
+  if(!rows.length){
+    bulkChatAddMessage('assistant', `✅ I did not find any draftable St Kilda Road Year 6 suggestions in this safe pass. Minecraft and STEM slot #6 were protected. No changes were made.`);
+    return;
+  }
+  const changes = rows.map(row => {
+    const newTool = bulkStkY6RewriteTool_(row);
+    const oldToolKey = bulkDiagnosticToolKey_(row.tool || '');
+    const newToolKey = bulkDiagnosticToolKey_(newTool || '');
+    return {
+      entryIdx: row.entryIdx,
+      sugIdx: row.sugIdx,
+      t: newTool,
+      d: bulkStkY6RewriteDescription_(newTool, row.entry, row),
+      reason: `Safe St Kilda Road Year 6 quality draft: ${row.issues.slice(0,3).join(', ')}. Keeps the same tool unless a local rule requires a safer tool correction. STEM slot #6 and Minecraft are protected. Review before applying.`,
+      improvementConfidence: 'Draft-only',
+      whyBetter: oldToolKey !== newToolKey
+        ? `Corrects the tool use from ${row.tool} to ${newTool} and gives students a clearer task, product and unit connection.`
+        : `Keeps ${newTool} and rewrites the description so it more clearly states what students do, what they create and why it connects to the unit.`
+    };
+  });
+  const sample = rows.map((r, i) => `• ${bulkDiagnosticEscape_(r.campus)} · ${bulkDiagnosticEscape_(r.year)} · slot ${r.sugIdx + 1} · ${bulkDiagnosticEscape_(r.theme)} → ${bulkDiagnosticEscape_(changes[i].t)} <span style="color:var(--dim)">(${bulkDiagnosticEscape_(r.issues.slice(0,2).join(', '))})</span>`).join('<br>');
+  bulkChatAddMessage('assistant', `✅ <strong>${changes.length} St Kilda Road Year 6 quality draft${changes.length!==1?'s':''}</strong> ready for review.<br><br><span style="font-size:12px;color:var(--lime)">Safe Year 6 mode:</span> scanned only St Kilda Road Year 6, used lightweight local rules, protected STEM slot #6 and Minecraft, made no AI calls and saved nothing automatically.<br><br><span style="font-size:12px;color:var(--lime)">Targets:</span><br>${sample}`);
+  bulkChatMemory.push({ role:'assistant', content:`Safe-drafted ${changes.length} St Kilda Road Year 6 quality rewrites.` });
+  window._snapshotReason = 'Before safe St Kilda Road Year 6 quality drafts';
+  showChangesPopup(changes);
+  bulkChatState = 'done';
+}
 function bulkLooksLikeStkY6Diagnostic_(text){
   const t = String(text || '').toLowerCase();
   return /st\s*kilda|stk/.test(t) && /year\s*6|yr\s*6|y6/.test(t) && /suggestion|quality|diagnos|audit|weak|improve|review/.test(t);
@@ -1184,6 +1323,10 @@ function bulkSafeDraftScanNamedTool_(toolName, targetYears){
 
 function bulkRunSafeDraftOnly_(text){
   const cleanText = String(text || '').replace(/^\s*(draft|draft-safe|safe-draft)\s*:?\s*/i, '').trim();
+  if(bulkLooksLikeStkY6Diagnostic_(cleanText)){
+    bulkRunStkY6DraftOnly_(text);
+    return;
+  }
   const info = bulkDiagnosticDetectRoute_(cleanText);
   const years = info.targetYears && info.targetYears.length ? info.targetYears : [];
   const yearsLabel = years.length ? years.join(', ') : 'All years';
@@ -2200,6 +2343,15 @@ async function bulkChatSend(){
   if(bulkChatState !== 'clarifying' && bulkChatState !== 'analysing'){
     let autoInfo = null;
     try { autoInfo = bulkDiagnosticDetectRoute_(text); } catch(e){ autoInfo = null; }
+    if(bulkLooksLikeStkY6Diagnostic_(text)){
+      bulkChatAddMessage('user', text);
+      bulkRunWithTopProgress_('Drafting safe St Kilda Road Year 6 quality fixes…', 'St Kilda Road Year 6 draft ready for review ✓', function(){
+        bulkRunStkY6DraftOnly_('draft: ' + text);
+      }, function(e){
+        bulkChatAddMessage('assistant', '❌ Safe St Kilda Road Year 6 draft failed without changing anything: ' + bulkDiagnosticEscape_(e.message || e));
+      });
+      return;
+    }
     if(autoInfo && autoInfo.route === 'specific Minecraft lesson placement'){
       bulkChatAddMessage('user', text);
       if(typeof ensureLibrariesLoadedForAI === 'function'){
