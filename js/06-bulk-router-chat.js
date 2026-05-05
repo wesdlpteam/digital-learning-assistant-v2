@@ -73,6 +73,126 @@ function bulkDetectNamedToolOpportunity_(instruction){
   return '';
 }
 
+
+// ========== BULK AI DIAGNOSTIC MODE ==========
+// Diagnostic-only command. It does not call AI, does not draft changes, and does not save.
+// Use: diagnose: Find more opportunities to use Makey Makey
+function bulkDiagnosticEscape_(value){
+  if(typeof esc === 'function') return esc(value);
+  return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+  });
+}
+
+function bulkDiagnosticToolKey_(value){
+  try { return toolInventoryKey(normaliseToolName(value)); }
+  catch(e){ return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim(); }
+}
+
+function bulkDiagnosticDetectRoute_(instruction){
+  const raw = String(instruction || '').trim();
+  const lower = raw.toLowerCase();
+  const namedTool = bulkDetectNamedToolOpportunity_(raw);
+  const targetYears = bulkExtractTargetYears_(raw);
+  let route = 'generic bulk edit';
+  let confidence = 'low';
+  let notes = [];
+
+  if(/\b(where can|fit|place|places? for|opportunit)/i.test(raw) && /minecraft/i.test(raw) && /lesson/i.test(raw)){
+    route = 'specific Minecraft lesson placement'; confidence = 'medium';
+    notes.push('Minecraft + lesson-placement wording detected.');
+  } else if(/\b(replace|remove|swap|change out|stop using|get rid of)\b/i.test(raw)){
+    route = 'targeted replacement'; confidence = 'medium';
+    notes.push('Replacement wording detected.');
+  } else if(namedTool && bulkInstructionLooksLikeOpportunity(raw)){
+    route = 'named-tool opportunity search'; confidence = 'high';
+    notes.push('Opportunity wording plus a named tool detected.');
+  } else if(bulkInstructionLooksLikeOpportunity(raw)){
+    route = 'opportunity search, tool unclear'; confidence = 'medium';
+    notes.push('Opportunity wording detected, but no known tool was confidently matched.');
+  }
+
+  return { route, confidence, namedTool, targetYears, notes };
+}
+
+function bulkDiagnosticScanNamedTool_(toolName, targetYears){
+  const key = bulkDiagnosticToolKey_(toolName);
+  let existingEntries = 0;
+  let existingSlots = 0;
+  let eligibleEntriesWithoutTool = 0;
+  let skippedAlreadyHasTool = 0;
+  let skippedYear = 0;
+  let skippedNoNonStemSlot = 0;
+  const examples = [];
+
+  if(!key || !Array.isArray(DATA)) return { existingEntries, existingSlots, eligibleEntriesWithoutTool, skippedAlreadyHasTool, skippedYear, skippedNoNonStemSlot, examples };
+
+  DATA.forEach((e, entryIdx) => {
+    if(!e) return;
+    const yl = e.yl || '';
+    if(targetYears && targetYears.length && !targetYears.includes(yl)){ skippedYear++; return; }
+    const sugs = getSugs(e).filter(isRealSug);
+    let hasTool = false;
+    let nonStemSlots = 0;
+    sugs.forEach((s, sugIdx) => {
+      if(sugIdx !== 5) nonStemSlots++;
+      if(bulkDiagnosticToolKey_(sugTool(s)) === key){ hasTool = true; existingSlots++; }
+    });
+    if(hasTool){ existingEntries++; skippedAlreadyHasTool++; return; }
+    if(!nonStemSlots){ skippedNoNonStemSlot++; return; }
+
+    // Use the app's age helper if available. Diagnostics do not enforce; they report likely eligibility.
+    let ageOk = true;
+    try {
+      if(typeof getAgeAppropriateTools === 'function'){
+        const allowed = getAgeAppropriateTools(yl).map(t => bulkDiagnosticToolKey_(t));
+        ageOk = !allowed.length || allowed.includes(key);
+      }
+    } catch(e){ ageOk = true; }
+    if(!ageOk) return;
+
+    eligibleEntriesWithoutTool++;
+    if(examples.length < 8){
+      examples.push(`${e.ca || 'Campus?'} · ${yl || 'Year?'} · ${e.th || e.theme || 'Untitled unit'}`);
+    }
+  });
+
+  return { existingEntries, existingSlots, eligibleEntriesWithoutTool, skippedAlreadyHasTool, skippedYear, skippedNoNonStemSlot, examples };
+}
+
+function bulkRunDiagnosticOnly_(text){
+  const cleanText = String(text || '').replace(/^\s*(diagnose|debug|route)\s*:?\s*/i, '').trim();
+  const info = bulkDiagnosticDetectRoute_(cleanText);
+  const years = info.targetYears && info.targetYears.length ? info.targetYears.join(', ') : 'All years';
+  let scanHtml = '';
+
+  if(info.namedTool){
+    const scan = bulkDiagnosticScanNamedTool_(info.namedTool, info.targetYears || []);
+    scanHtml = `
+      <div style="margin-top:10px;padding:10px 12px;background:rgba(197,232,74,.06);border:1px solid rgba(197,232,74,.2);border-radius:10px">
+        <div style="font-size:11px;color:var(--lime);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Named-tool scan</div>
+        <div>Existing ${bulkDiagnosticEscape_(info.namedTool)} slots: <strong>${scan.existingSlots}</strong></div>
+        <div>Units already using it: <strong>${scan.existingEntries}</strong></div>
+        <div>Likely eligible units without it: <strong>${scan.eligibleEntriesWithoutTool}</strong></div>
+        <div>Skipped by year filter: <strong>${scan.skippedYear}</strong></div>
+        ${scan.examples.length ? `<div style="margin-top:8px;color:var(--dim);font-size:12px">First examples:<br>${scan.examples.map(bulkDiagnosticEscape_).join('<br>')}</div>` : ''}
+      </div>`;
+  }
+
+  const notes = (info.notes || []).map(bulkDiagnosticEscape_).join('<br>') || 'No special route hints detected.';
+  bulkChatAddMessage('assistant', `
+    <div style="padding:2px 0">
+      <div style="font-size:10px;color:var(--purple);font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">🧭 Bulk AI diagnostic only</div>
+      <div>Route detected: <strong>${bulkDiagnosticEscape_(info.route)}</strong></div>
+      <div>Confidence: <strong>${bulkDiagnosticEscape_(info.confidence)}</strong></div>
+      <div>Named tool: <strong>${bulkDiagnosticEscape_(info.namedTool || 'None detected')}</strong></div>
+      <div>Year scope: <strong>${bulkDiagnosticEscape_(years)}</strong></div>
+      <div style="margin-top:8px;color:var(--dim);font-size:12px">${notes}</div>
+      ${scanHtml}
+      <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No changes were drafted or saved.</div>
+    </div>`);
+}
+
 function bulkExtractTargetYears_(instruction){
   const t = String(instruction || '').toLowerCase();
   const out = new Set();
@@ -949,6 +1069,19 @@ async function bulkChatSend(){
   const text = input.value.trim();
   if(!text) return;
   input.value = '';
+
+  // Diagnostic-only mode: classify a Bulk AI prompt without calling AI or drafting changes.
+  // Type: diagnose: Find more opportunities to use Makey Makey
+  if(/^\s*(diagnose|debug|route)\s*:?\s*/i.test(text)){
+    if(bulkChatState === 'analysing'){
+      bulkChatAddMessage('assistant', '⏳ Still analysing entries — wait for the current analysis to complete before running diagnostics.');
+      return;
+    }
+    bulkChatAddMessage('user', text);
+    try { bulkRunDiagnosticOnly_(text); } catch(e){ bulkChatAddMessage('assistant', '❌ Diagnostic failed safely: ' + bulkDiagnosticEscape_(e.message || e)); }
+    return;
+  }
+
   if(typeof ensureLibrariesLoadedForAI === 'function') await ensureLibrariesLoadedForAI();
 
   if(bulkChatState === 'analysing'){
