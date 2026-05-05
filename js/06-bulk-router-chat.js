@@ -1347,6 +1347,19 @@ async function bulkChatSend(){
     return;
   }
 
+  // Normal named-tool opportunity prompts now use the tested safe draft route automatically.
+  // Example: Find more opportunities to use Makey Makey
+  // This avoids the old generic clarification path that asked about all 121 units.
+  if(bulkChatState !== 'clarifying' && bulkChatState !== 'analysing'){
+    let autoInfo = null;
+    try { autoInfo = bulkDiagnosticDetectRoute_(text); } catch(e){ autoInfo = null; }
+    if(autoInfo && autoInfo.route === 'named-tool opportunity search' && autoInfo.namedTool){
+      bulkChatAddMessage('user', text);
+      try { bulkRunSafeDraftOnly_(text); } catch(e){ bulkChatAddMessage('assistant', '❌ Safe named-tool draft failed without changing anything: ' + bulkDiagnosticEscape_(e.message || e)); }
+      return;
+    }
+  }
+
   if(typeof ensureLibrariesLoadedForAI === 'function') await ensureLibrariesLoadedForAI();
 
   if(bulkChatState === 'analysing'){
