@@ -338,11 +338,18 @@ function bulkSafeDraftShortContext_(e){
   return { theme, ci, loi, connection };
 }
 
+function bulkSafeDraftTrimEndPunctuation_(value){
+  return String(value || '')
+    .replace(/\s+/g, ' ')
+    .replace(/[\s.。!?！？;；:：,，]+$/g, '')
+    .trim();
+}
+
 function bulkSafeDraftDescriptionForTool_(toolName, e){
   const tool = normaliseToolName(toolName || '');
   const ctx = bulkSafeDraftShortContext_(e || {});
-  const theme = ctx.theme;
-  const connection = ctx.connection;
+  const theme = bulkSafeDraftTrimEndPunctuation_(ctx.theme) || 'this unit';
+  const connection = bulkSafeDraftTrimEndPunctuation_(ctx.connection) || theme;
 
   if(bulkDiagnosticToolKey_(tool) === bulkDiagnosticToolKey_('Makey Makey')){
     return `Students use Makey Makey to turn a simple cardboard, foil or playdough model into an interactive input device connected to ${theme}. They then create a short quiz in Scratch so classmates can press parts of the model to reveal key ideas about ${connection}.`;
