@@ -2943,30 +2943,69 @@ function bulkRunLibraryLessonDraftSafe_(text){
     if(!out.length) fallback.forEach(add);
     return out.sort((a,b)=>a.localeCompare(b));
   }
+  function bulkQALooksLikeToolName_(label, knownKeys){
+    const raw = String(label || '').trim();
+    if(!raw) return false;
+    const key = bulkDiagnosticToolKey_(raw);
+    if(knownKeys && knownKeys.has(key)) return true;
+    // STEM/unit suggestion titles often look like “Calm Quest: personalized wellbeing maze”.
+    // Keep the replace list focused on actual technology tools, not lesson/activity titles.
+    if(/[:;]/.test(raw)) return false;
+    const words = raw.split(/\s+/).filter(Boolean);
+    if(words.length > 5) return false;
+    if(/\b(quest|maze|challenge|lesson|activity|project|poster|presentation|reflection|exhibition|community|wellbeing)\b/i.test(raw) && !(knownKeys && knownKeys.has(key))) return false;
+    return true;
+  }
   function bulkQACollectReplaceTools_(){
     const seen = new Set();
     const out = [];
-    function add(v){
-      const label = normaliseToolName ? normaliseToolName(String(v||'').trim()) : String(v||'').trim();
+    const knownKeys = new Set();
+    function canonical(v){
+      return normaliseToolName ? normaliseToolName(String(v||'').trim()) : String(v||'').trim();
+    }
+    function rememberKnown(v){
+      const label = canonical(v);
+      const k = bulkDiagnosticToolKey_(label);
+      if(k) knownKeys.add(k);
+    }
+    function add(v, forceKnown){
+      const label = canonical(v);
       if(!label) return;
       const k = bulkDiagnosticToolKey_(label);
       if(!k || seen.has(k)) return;
+      if(forceKnown) knownKeys.add(k);
+      if(!forceKnown && !bulkQALooksLikeToolName_(label, knownKeys)) return;
       seen.add(k); out.push(label);
     }
     try {
-      if(Array.isArray(DATA)){
-        DATA.forEach(e => (getSugs(e)||[]).forEach(s => { if(isRealSug(s)) add(sugTool(s)); }));
-      }
       if(typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY){
-        (TOOL_INVENTORY.banned || []).forEach(add);
-        (TOOL_INVENTORY.approved || []).forEach(add);
+        (TOOL_INVENTORY.banned || []).forEach(rememberKnown);
+        (TOOL_INVENTORY.approved || []).forEach(rememberKnown);
       }
       if(typeof LIBRARIES !== 'undefined' && LIBRARIES && LIBRARIES._meta && LIBRARIES._meta._inventory){
-        (LIBRARIES._meta._inventory.banned || []).forEach(add);
-        (LIBRARIES._meta._inventory.approved || []).forEach(add);
+        (LIBRARIES._meta._inventory.banned || []).forEach(rememberKnown);
+        (LIBRARIES._meta._inventory.approved || []).forEach(rememberKnown);
+      }
+      // Always include inventory/legacy tools first. These may include tools no longer used
+      // in current suggestions but still need a removal workflow.
+      if(typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY){
+        (TOOL_INVENTORY.banned || []).forEach(v => add(v, true));
+        (TOOL_INVENTORY.approved || []).forEach(v => add(v, true));
+      }
+      if(typeof LIBRARIES !== 'undefined' && LIBRARIES && LIBRARIES._meta && LIBRARIES._meta._inventory){
+        (LIBRARIES._meta._inventory.banned || []).forEach(v => add(v, true));
+        (LIBRARIES._meta._inventory.approved || []).forEach(v => add(v, true));
+      }
+      if(Array.isArray(DATA)){
+        DATA.forEach(e => (getSugs(e)||[]).forEach((s, idx) => {
+          // Slot #6 / STEM extension often stores a lesson/activity title rather than a tool.
+          // Do not let those titles flood the “tool to remove” dropdown.
+          if(idx >= 5) return;
+          if(isRealSug(s)) add(sugTool(s), false);
+        }));
       }
     } catch(e){}
-    ['Seesaw','ClassVR','Flip','Google Maps','Adobe Spark'].forEach(add);
+    ['Seesaw','ClassVR','Flip','Google Maps','Adobe Spark','CoSpaces','Delightex (CoSpaces)'].forEach(v => add(v, true));
     return out.sort((a,b)=>a.localeCompare(b));
   }
   function bulkQAToolOptions_(){
@@ -2975,11 +3014,15 @@ function bulkRunLibraryLessonDraftSafe_(text){
   function bulkQAReplaceToolOptions_(){
     return '<option value="">Select tool to remove…</option>' + bulkQACollectReplaceTools_().map(t => bulkQAOptionTag_(t)).join('');
   }
+  function bulkQAYearScopeOptions_(){
+    return [
+      ['Prep','Prep'],['Year 1','Year 1'],['Year 2','Year 2'],['Year 3','Year 3'],['Year 4','Year 4'],['Year 5','Year 5'],['Year 6','Year 6']
+    ].map(x => bulkQAOptionTag_(x[0], x[1])).join('');
+  }
   function bulkQAReplaceScopeOptions_(){
     return [
-      ['Year 5 and 6','Year 5 and 6'],
-      ['Year 6','Year 6'],['Year 5','Year 5'],['Year 4','Year 4'],['Year 3','Year 3'],['Year 2','Year 2'],['Year 1','Year 1'],['Prep','Prep'],
-      ['All planners','All planners (Surgeon-style)']
+      ['All planners','All planners (Surgeon-style)'],
+      ['Prep','Prep'],['Year 1','Year 1'],['Year 2','Year 2'],['Year 3','Year 3'],['Year 4','Year 4'],['Year 5','Year 5'],['Year 6','Year 6']
     ].map(x => bulkQAOptionTag_(x[0], x[1])).join('');
   }
 
@@ -3121,7 +3164,7 @@ function bulkRunLibraryLessonDraftSafe_(text){
             <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:6px">➕ Find opportunities</div>
             <select id="bulk-qa-tool" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:6px">${bulkQAToolOptions_()}</select>
             <select id="bulk-qa-scope" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
-              <option value="">All eligible years</option>${bulkQAReplaceScopeOptions_()}
+              <option value="">All eligible years</option>${bulkQAYearScopeOptions_()}
             </select>
             <div style="display:flex;gap:6px;flex-wrap:wrap">
               <button type="button" class="btn-sm" onclick="bulkQuickActionFill('opportunity')">Fill prompt</button>
@@ -3132,7 +3175,7 @@ function bulkRunLibraryLessonDraftSafe_(text){
             <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:6px">🔁 Replace a tool</div>
             <select id="bulk-qa-replace-tool" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:6px">${bulkQAReplaceToolOptions_()}</select>
             <select id="bulk-qa-replace-scope" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
-              <option value="Year 5 and 6">Year 5 and 6</option>${bulkQAReplaceScopeOptions_()}
+              ${bulkQAReplaceScopeOptions_()}
             </select>
             <div style="font-size:10px;color:var(--dim);margin:-3px 0 7px;line-height:1.35">Choose <strong>All planners</strong> for the old Surgeon-style remove-everywhere workflow.</div>
             <div style="display:flex;gap:6px;flex-wrap:wrap">
