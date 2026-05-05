@@ -2748,23 +2748,36 @@ function showNextQuestion(parsed){
 // ========== GENERIC CURATED LESSON PLACEMENT ==========
 // Safe route for quick-action lesson placement from any curated library.
 // Minecraft still uses the stricter existing exact Minecraft lesson route.
+function bulkLibraryKeyLooksReal_(key, metaValue){
+  const k = String(key || '').trim();
+  if(!k) return false;
+  if(/^_/.test(k)) return false;
+  if(/^(inventory|_inventory|approved|banned|ageRanges|age_ranges|tools|toolInventory|tool_inventory)$/i.test(k)) return false;
+  if(metaValue && typeof metaValue === 'object'){
+    const label = String(metaValue.name || metaValue.title || '').trim();
+    if(/^(inventory|tool inventory)$/i.test(label)) return false;
+  }
+  return true;
+}
 function bulkLibraryKeysSafe_(){
   if(typeof LIBRARIES === 'undefined' || !LIBRARIES) return [];
   const keys = new Set();
   try {
     Object.keys(LIBRARIES).forEach(k => {
-      if(k !== '_meta' && Array.isArray(LIBRARIES[k])) keys.add(k);
+      if(bulkLibraryKeyLooksReal_(k, LIBRARIES[k]) && Array.isArray(LIBRARIES[k])) keys.add(k);
     });
     // Include library keys that exist in metadata as well. This catches newly-created
     // libraries such as Adobe Express even when the quick-actions panel was drawn
-    // before the library array finished loading from Drive.
+    // before the library array finished loading from Drive. Ignore inventory metadata.
     if(LIBRARIES._meta && typeof LIBRARIES._meta === 'object'){
       Object.keys(LIBRARIES._meta).forEach(k => {
-        if(k && k !== '_inventory') keys.add(k);
+        if(bulkLibraryKeyLooksReal_(k, LIBRARIES._meta[k])) keys.add(k);
       });
     }
     if(typeof LIBRARIES_META !== 'undefined' && LIBRARIES_META && typeof LIBRARIES_META === 'object'){
-      Object.keys(LIBRARIES_META).forEach(k => { if(k) keys.add(k); });
+      Object.keys(LIBRARIES_META).forEach(k => {
+        if(bulkLibraryKeyLooksReal_(k, LIBRARIES_META[k])) keys.add(k);
+      });
     }
   } catch(e){}
   return Array.from(keys);
@@ -2907,21 +2920,67 @@ function bulkRunLibraryLessonDraftSafe_(text){
   function bulkQANormaliseScope_(scope){
     return String(scope || '').trim().replace(/\s+/g, ' ');
   }
-  function bulkQAToolOptions_(){
-    const builtIns = ['Book Creator','Makey Makey','Lego Spike Prime','Lego Spike Essential','Adobe Express','Padlet','Minecraft Education','National Geographic MapMaker','Delightex','Scratch','ScratchJR','Sphero BOLT','Micro:bit','Tinkercad','Canva','Wise Discussion Chatbots'];
+  function bulkQAOptionTag_(value, label){
+    const v = bulkDiagnosticEscape_(value);
+    const l = bulkDiagnosticEscape_(label || value);
+    return `<option value="${v}">${l}</option>`;
+  }
+  function bulkQACollectApprovedTools_(){
+    const fallback = ['Book Creator','Makey Makey','Lego Spike Prime','Lego Spike Essential','Adobe Express','Padlet','Minecraft Education','National Geographic MapMaker','Delightex','Scratch','ScratchJR','Sphero BOLT','Micro:bit','Tinkercad','Canva','Wise Discussion Chatbots'];
     const seen = new Set();
-    const options = [];
-    function add(v){ const label = String(v||'').trim(); if(!label) return; const k = label.toLowerCase(); if(seen.has(k)) return; seen.add(k); options.push(label); }
-    builtIns.forEach(add);
+    const out = [];
+    function add(v){
+      const label = normaliseToolName ? normaliseToolName(String(v||'').trim()) : String(v||'').trim();
+      if(!label) return;
+      const k = bulkDiagnosticToolKey_(label);
+      if(!k || seen.has(k)) return;
+      seen.add(k); out.push(label);
+    }
     try {
       if(typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY && Array.isArray(TOOL_INVENTORY.approved)){ TOOL_INVENTORY.approved.forEach(add); }
       if(typeof LIBRARIES !== 'undefined' && LIBRARIES && LIBRARIES._meta && LIBRARIES._meta._inventory && Array.isArray(LIBRARIES._meta._inventory.approved)){ LIBRARIES._meta._inventory.approved.forEach(add); }
     } catch(e){}
-    return options.sort((a,b)=>a.localeCompare(b)).map(t => `<option value="${bulkDiagnosticEscape_(t)}"></option>`).join('');
+    if(!out.length) fallback.forEach(add);
+    return out.sort((a,b)=>a.localeCompare(b));
   }
-
+  function bulkQACollectReplaceTools_(){
+    const seen = new Set();
+    const out = [];
+    function add(v){
+      const label = normaliseToolName ? normaliseToolName(String(v||'').trim()) : String(v||'').trim();
+      if(!label) return;
+      const k = bulkDiagnosticToolKey_(label);
+      if(!k || seen.has(k)) return;
+      seen.add(k); out.push(label);
+    }
+    try {
+      if(Array.isArray(DATA)){
+        DATA.forEach(e => (getSugs(e)||[]).forEach(s => { if(isRealSug(s)) add(sugTool(s)); }));
+      }
+      if(typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY){
+        (TOOL_INVENTORY.banned || []).forEach(add);
+        (TOOL_INVENTORY.approved || []).forEach(add);
+      }
+      if(typeof LIBRARIES !== 'undefined' && LIBRARIES && LIBRARIES._meta && LIBRARIES._meta._inventory){
+        (LIBRARIES._meta._inventory.banned || []).forEach(add);
+        (LIBRARIES._meta._inventory.approved || []).forEach(add);
+      }
+    } catch(e){}
+    ['Seesaw','ClassVR','Flip','Google Maps','Adobe Spark'].forEach(add);
+    return out.sort((a,b)=>a.localeCompare(b));
+  }
+  function bulkQAToolOptions_(){
+    return '<option value="">Select approved tool…</option>' + bulkQACollectApprovedTools_().map(t => bulkQAOptionTag_(t)).join('');
+  }
+  function bulkQAReplaceToolOptions_(){
+    return '<option value="">Select tool to remove…</option>' + bulkQACollectReplaceTools_().map(t => bulkQAOptionTag_(t)).join('');
+  }
   function bulkQAReplaceScopeOptions_(){
-    return ['Year 5 and 6','Year 6','Year 5','Year 4','Year 3','Year 2','Year 1','Prep','All years'].map(v => `<option value="${bulkDiagnosticEscape_(v)}"></option>`).join('');
+    return [
+      ['Year 5 and 6','Year 5 and 6'],
+      ['Year 6','Year 6'],['Year 5','Year 5'],['Year 4','Year 4'],['Year 3','Year 3'],['Year 2','Year 2'],['Year 1','Year 1'],['Prep','Prep'],
+      ['All planners','All planners (Surgeon-style)']
+    ].map(x => bulkQAOptionTag_(x[0], x[1])).join('');
   }
 
   window.bulkQARefreshLibrarySelect_ = function bulkQARefreshLibrarySelect_(){
@@ -2935,6 +2994,26 @@ function bulkRunLibraryLessonDraftSafe_(text){
       if(before && Array.from(sel.options).some(o => o.value === before)) sel.value = before;
     }
     return true;
+  }
+
+  window.bulkQARefreshToolSelects_ = function bulkQARefreshToolSelects_(){
+    const opp = bulkQAEl_('bulk-qa-tool');
+    if(opp){ const before = opp.value; opp.innerHTML = bulkQAToolOptions_(); if(before && Array.from(opp.options).some(o => o.value === before)) opp.value = before; }
+    const rep = bulkQAEl_('bulk-qa-replace-tool');
+    if(rep){ const before = rep.value; rep.innerHTML = bulkQAReplaceToolOptions_(); if(before && Array.from(rep.options).some(o => o.value === before)) rep.value = before; }
+    return true;
+  };
+  function bulkQAHideLegacyBulkCards_(){
+    const panel = document.getElementById('panel-tools');
+    if(!panel) return;
+    Array.from(panel.querySelectorAll('.card')).forEach(card => {
+      if(card.id === 'realism-audit-card') return;
+      const txt = (card.textContent || '').toLowerCase().replace(/\s+/g,' ');
+      if(txt.includes('snapshots & undo') || txt.includes('playbooks') || txt.includes('side-by-side campus comparison') || txt.includes('run surgeon')){
+        card.style.display = 'none';
+        card.setAttribute('data-bulk-quick-actions-hidden','true');
+      }
+    });
   }
 
   function bulkQASetAdvancedOpen_(open){
@@ -2982,7 +3061,9 @@ function bulkRunLibraryLessonDraftSafe_(text){
       const tool = bulkQAGet_('bulk-qa-replace-tool');
       const scope = bulkQANormaliseScope_(bulkQAGet_('bulk-qa-replace-scope'));
       if(!tool){ alert('Enter the tool to replace first, e.g. Seesaw.'); return; }
-      const prompt = scope ? `Replace ${tool} in ${scope}` : `Replace ${tool}`;
+      const prompt = /all\s+planners|all\s+years/i.test(scope)
+        ? `Replace ${tool} across all planners`
+        : (scope ? `Replace ${tool} in ${scope}` : `Replace ${tool}`);
       bulkQASetInput_(prompt);
       bulkQASetAdvancedOpen_(true);
       return;
@@ -3034,13 +3115,14 @@ function bulkRunLibraryLessonDraftSafe_(text){
           <button type="button" id="bulk-qa-advanced-toggle" class="btn-sm" onclick="bulkQuickActionToggleAdvanced()">Show advanced custom chat</button>
         </div>
         <div id="bulk-qa-advanced-hint" style="font-size:11px;color:var(--dim);padding:8px 10px;margin-bottom:10px;background:rgba(197,232,74,.05);border:1px solid rgba(197,232,74,.15);border-radius:9px">Advanced chat is collapsed. Use quick actions for common review-only workflows, or open custom chat for unusual requests.</div>
-        <datalist id="bulk-qa-tool-options">${bulkQAToolOptions_()}</datalist>
-        <datalist id="bulk-qa-scope-options">${bulkQAReplaceScopeOptions_()}</datalist>
+        <!-- Tool selectors are populated from the live Tool Inventory / current data. -->
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px">
           <div style="border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--card2)">
             <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:6px">➕ Find opportunities</div>
-            <input id="bulk-qa-tool" class="inp" list="bulk-qa-tool-options" placeholder="Tool, e.g. Book Creator" style="font-size:12px;padding:8px 10px;margin-bottom:6px">
-            <input id="bulk-qa-scope" class="inp" list="bulk-qa-scope-options" placeholder="Optional scope, e.g. Prep or Year 6" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
+            <select id="bulk-qa-tool" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:6px">${bulkQAToolOptions_()}</select>
+            <select id="bulk-qa-scope" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
+              <option value="">All eligible years</option>${bulkQAReplaceScopeOptions_()}
+            </select>
             <div style="display:flex;gap:6px;flex-wrap:wrap">
               <button type="button" class="btn-sm" onclick="bulkQuickActionFill('opportunity')">Fill prompt</button>
               <button type="button" class="btn-sm" onclick="bulkQuickActionSend('opportunity')" style="color:var(--lime);border-color:var(--lime)">Draft now</button>
@@ -3048,8 +3130,11 @@ function bulkRunLibraryLessonDraftSafe_(text){
           </div>
           <div style="border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--card2)">
             <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:6px">🔁 Replace a tool</div>
-            <input id="bulk-qa-replace-tool" class="inp" list="bulk-qa-tool-options" placeholder="Tool to remove, e.g. Seesaw" style="font-size:12px;padding:8px 10px;margin-bottom:6px">
-            <input id="bulk-qa-replace-scope" class="inp" list="bulk-qa-scope-options" placeholder="Scope, e.g. Year 5 and 6" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
+            <select id="bulk-qa-replace-tool" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:6px">${bulkQAReplaceToolOptions_()}</select>
+            <select id="bulk-qa-replace-scope" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
+              <option value="Year 5 and 6">Year 5 and 6</option>${bulkQAReplaceScopeOptions_()}
+            </select>
+            <div style="font-size:10px;color:var(--dim);margin:-3px 0 7px;line-height:1.35">Choose <strong>All planners</strong> for the old Surgeon-style remove-everywhere workflow.</div>
             <div style="display:flex;gap:6px;flex-wrap:wrap">
               <button type="button" class="btn-sm" onclick="bulkQuickActionFill('replace')">Fill prompt</button>
               <button type="button" class="btn-sm" onclick="bulkQuickActionSend('replace')" style="color:var(--lime);border-color:var(--lime)">Draft now</button>
@@ -3090,6 +3175,8 @@ function bulkRunLibraryLessonDraftSafe_(text){
       </div>`;
     chat.parentNode.insertBefore(panel, chat);
     bulkQARefreshLibrarySelect_();
+    bulkQARefreshToolSelects_();
+    bulkQAHideLegacyBulkCards_();
     bulkQASetAdvancedOpen_(false);
     // Libraries may load after this panel is injected. Refresh the selector for a short
     // window so newly-added libraries such as Adobe Express appear without reload.
@@ -3097,6 +3184,8 @@ function bulkRunLibraryLessonDraftSafe_(text){
     const refreshTimer = setInterval(function(){
       refreshTries++;
       bulkQARefreshLibrarySelect_();
+      bulkQARefreshToolSelects_();
+      bulkQAHideLegacyBulkCards_();
       if(refreshTries > 30) clearInterval(refreshTimer);
     }, 1000);
     return true;
