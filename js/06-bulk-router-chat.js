@@ -2750,7 +2750,24 @@ function showNextQuestion(parsed){
 // Minecraft still uses the stricter existing exact Minecraft lesson route.
 function bulkLibraryKeysSafe_(){
   if(typeof LIBRARIES === 'undefined' || !LIBRARIES) return [];
-  return Object.keys(LIBRARIES).filter(k => k !== '_meta' && Array.isArray(LIBRARIES[k]));
+  const keys = new Set();
+  try {
+    Object.keys(LIBRARIES).forEach(k => {
+      if(k !== '_meta' && Array.isArray(LIBRARIES[k])) keys.add(k);
+    });
+    // Include library keys that exist in metadata as well. This catches newly-created
+    // libraries such as Adobe Express even when the quick-actions panel was drawn
+    // before the library array finished loading from Drive.
+    if(LIBRARIES._meta && typeof LIBRARIES._meta === 'object'){
+      Object.keys(LIBRARIES._meta).forEach(k => {
+        if(k && k !== '_inventory') keys.add(k);
+      });
+    }
+    if(typeof LIBRARIES_META !== 'undefined' && LIBRARIES_META && typeof LIBRARIES_META === 'object'){
+      Object.keys(LIBRARIES_META).forEach(k => { if(k) keys.add(k); });
+    }
+  } catch(e){}
+  return Array.from(keys);
 }
 function bulkLibraryLabelSafe_(key){
   const k = String(key || '').trim();
@@ -2890,6 +2907,56 @@ function bulkRunLibraryLessonDraftSafe_(text){
   function bulkQANormaliseScope_(scope){
     return String(scope || '').trim().replace(/\s+/g, ' ');
   }
+  function bulkQAToolOptions_(){
+    const builtIns = ['Book Creator','Makey Makey','Lego Spike Prime','Lego Spike Essential','Adobe Express','Padlet','Minecraft Education','National Geographic MapMaker','Delightex','Scratch','ScratchJR','Sphero BOLT','Micro:bit','Tinkercad','Canva','Wise Discussion Chatbots'];
+    const seen = new Set();
+    const options = [];
+    function add(v){ const label = String(v||'').trim(); if(!label) return; const k = label.toLowerCase(); if(seen.has(k)) return; seen.add(k); options.push(label); }
+    builtIns.forEach(add);
+    try {
+      if(typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY && Array.isArray(TOOL_INVENTORY.approved)){ TOOL_INVENTORY.approved.forEach(add); }
+      if(typeof LIBRARIES !== 'undefined' && LIBRARIES && LIBRARIES._meta && LIBRARIES._meta._inventory && Array.isArray(LIBRARIES._meta._inventory.approved)){ LIBRARIES._meta._inventory.approved.forEach(add); }
+    } catch(e){}
+    return options.sort((a,b)=>a.localeCompare(b)).map(t => `<option value="${bulkDiagnosticEscape_(t)}"></option>`).join('');
+  }
+
+  function bulkQAReplaceScopeOptions_(){
+    return ['Year 5 and 6','Year 6','Year 5','Year 4','Year 3','Year 2','Year 1','Prep','All years'].map(v => `<option value="${bulkDiagnosticEscape_(v)}"></option>`).join('');
+  }
+
+  window.bulkQARefreshLibrarySelect_ = function bulkQARefreshLibrarySelect_(){
+    const sel = bulkQAEl_('bulk-qa-lesson-library');
+    if(!sel) return false;
+    const before = sel.value;
+    const html = bulkQALibraryOptions_();
+    if(html && sel.getAttribute('data-options-html') !== html){
+      sel.innerHTML = html;
+      sel.setAttribute('data-options-html', html);
+      if(before && Array.from(sel.options).some(o => o.value === before)) sel.value = before;
+    }
+    return true;
+  }
+
+  function bulkQASetAdvancedOpen_(open){
+    const chat = bulkQAEl_('bulk-chat-messages');
+    if(!chat) return;
+    const reasoning = bulkQAEl_('bulk-reasoning');
+    const inputRow = bulkQAEl_('bulk-chat-input') ? bulkQAEl_('bulk-chat-input').parentNode : null;
+    const btn = bulkQAEl_('bulk-qa-advanced-toggle');
+    const show = !!open;
+    chat.style.display = show ? '' : 'none';
+    if(reasoning) reasoning.style.display = show ? (reasoning.getAttribute('data-was-open') === '1' ? '' : reasoning.style.display) : 'none';
+    if(inputRow) inputRow.style.display = show ? 'flex' : 'none';
+    if(btn) btn.textContent = show ? 'Hide advanced custom chat' : 'Show advanced custom chat';
+    const hint = bulkQAEl_('bulk-qa-advanced-hint');
+    if(hint) hint.style.display = show ? 'none' : 'block';
+  }
+  window.bulkQuickActionToggleAdvanced = function(){
+    const chat = bulkQAEl_('bulk-chat-messages');
+    const currentlyOpen = chat && chat.style.display !== 'none';
+    bulkQASetAdvancedOpen_(!currentlyOpen);
+  };
+
   function bulkQALibraryOptions_(){
     let keys = [];
     try { keys = bulkLibraryKeysSafe_(); } catch(e){ keys = []; }
@@ -2908,6 +2975,7 @@ function bulkRunLibraryLessonDraftSafe_(text){
         ? `Find more opportunities in ${scope} to use ${tool}`
         : `Find more opportunities to use ${tool}`;
       bulkQASetInput_(prompt);
+      bulkQASetAdvancedOpen_(true);
       return;
     }
     if(type === 'replace'){
@@ -2916,6 +2984,7 @@ function bulkRunLibraryLessonDraftSafe_(text){
       if(!tool){ alert('Enter the tool to replace first, e.g. Seesaw.'); return; }
       const prompt = scope ? `Replace ${tool} in ${scope}` : `Replace ${tool}`;
       bulkQASetInput_(prompt);
+      bulkQASetAdvancedOpen_(true);
       return;
     }
     if(type === 'lesson' || type === 'minecraft'){
@@ -2929,6 +2998,7 @@ function bulkRunLibraryLessonDraftSafe_(text){
       } else {
         bulkQASetInput_(`Where can the ${cleanLesson} lesson from the ${libraryLabel} library fit?`);
       }
+      bulkQASetAdvancedOpen_(true);
       return;
     }
     if(type === 'improve'){
@@ -2936,6 +3006,7 @@ function bulkRunLibraryLessonDraftSafe_(text){
       const year = bulkQANormaliseScope_(bulkQAGet_('bulk-qa-improve-year'));
       if(!campus || !year){ alert('Enter both a campus and year level, e.g. Glen Waverley and Year 6.'); return; }
       bulkQASetInput_(`Improve ${campus} ${year} suggestions`);
+      bulkQASetAdvancedOpen_(true);
       return;
     }
   };
@@ -2958,13 +3029,18 @@ function bulkRunLibraryLessonDraftSafe_(text){
       <div style="padding:14px 20px;background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
           <div style="font-size:11px;font-weight:900;color:var(--lime);letter-spacing:1px;text-transform:uppercase">⚡ Bulk quick actions</div>
-          <div style="font-size:11px;color:var(--dim);line-height:1.45">Builds a safe prompt. Nothing is saved until the review popup is approved.</div>
+          <div style="font-size:11px;color:var(--dim);line-height:1.45">Use these safe workflows first. Nothing is saved until the review popup is approved.</div>
+          <div style="flex:1"></div>
+          <button type="button" id="bulk-qa-advanced-toggle" class="btn-sm" onclick="bulkQuickActionToggleAdvanced()">Show advanced custom chat</button>
         </div>
+        <div id="bulk-qa-advanced-hint" style="font-size:11px;color:var(--dim);padding:8px 10px;margin-bottom:10px;background:rgba(197,232,74,.05);border:1px solid rgba(197,232,74,.15);border-radius:9px">Advanced chat is collapsed. Use quick actions for common review-only workflows, or open custom chat for unusual requests.</div>
+        <datalist id="bulk-qa-tool-options">${bulkQAToolOptions_()}</datalist>
+        <datalist id="bulk-qa-scope-options">${bulkQAReplaceScopeOptions_()}</datalist>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px">
           <div style="border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--card2)">
             <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:6px">➕ Find opportunities</div>
-            <input id="bulk-qa-tool" class="inp" placeholder="Tool, e.g. Book Creator" style="font-size:12px;padding:8px 10px;margin-bottom:6px">
-            <input id="bulk-qa-scope" class="inp" placeholder="Optional scope, e.g. Prep or Year 6" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
+            <input id="bulk-qa-tool" class="inp" list="bulk-qa-tool-options" placeholder="Tool, e.g. Book Creator" style="font-size:12px;padding:8px 10px;margin-bottom:6px">
+            <input id="bulk-qa-scope" class="inp" list="bulk-qa-scope-options" placeholder="Optional scope, e.g. Prep or Year 6" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
             <div style="display:flex;gap:6px;flex-wrap:wrap">
               <button type="button" class="btn-sm" onclick="bulkQuickActionFill('opportunity')">Fill prompt</button>
               <button type="button" class="btn-sm" onclick="bulkQuickActionSend('opportunity')" style="color:var(--lime);border-color:var(--lime)">Draft now</button>
@@ -2972,8 +3048,8 @@ function bulkRunLibraryLessonDraftSafe_(text){
           </div>
           <div style="border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--card2)">
             <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:6px">🔁 Replace a tool</div>
-            <input id="bulk-qa-replace-tool" class="inp" placeholder="Tool to remove, e.g. Seesaw" style="font-size:12px;padding:8px 10px;margin-bottom:6px">
-            <input id="bulk-qa-replace-scope" class="inp" placeholder="Scope, e.g. Year 5 and 6" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
+            <input id="bulk-qa-replace-tool" class="inp" list="bulk-qa-tool-options" placeholder="Tool to remove, e.g. Seesaw" style="font-size:12px;padding:8px 10px;margin-bottom:6px">
+            <input id="bulk-qa-replace-scope" class="inp" list="bulk-qa-scope-options" placeholder="Scope, e.g. Year 5 and 6" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
             <div style="display:flex;gap:6px;flex-wrap:wrap">
               <button type="button" class="btn-sm" onclick="bulkQuickActionFill('replace')">Fill prompt</button>
               <button type="button" class="btn-sm" onclick="bulkQuickActionSend('replace')" style="color:var(--lime);border-color:var(--lime)">Draft now</button>
@@ -2981,9 +3057,12 @@ function bulkRunLibraryLessonDraftSafe_(text){
           </div>
           <div style="border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--card2)">
             <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:6px">📚 Place lesson</div>
-            <select id="bulk-qa-lesson-library" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:6px">
-              ${bulkQALibraryOptions_()}
-            </select>
+            <div style="display:flex;gap:6px;margin-bottom:6px">
+              <select id="bulk-qa-lesson-library" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:0;flex:1">
+                ${bulkQALibraryOptions_()}
+              </select>
+              <button type="button" class="btn-sm" onclick="bulkQARefreshLibrarySelect_()" title="Refresh library list from loaded libraries.json">↻</button>
+            </div>
             <input id="bulk-qa-lesson-title" class="inp" placeholder="Exact lesson title, e.g. Revamp Melbourne" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
             <div style="display:flex;gap:6px;flex-wrap:wrap">
               <button type="button" class="btn-sm" onclick="bulkQuickActionFill('lesson')">Fill prompt</button>
@@ -2992,8 +3071,16 @@ function bulkRunLibraryLessonDraftSafe_(text){
           </div>
           <div style="border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--card2)">
             <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:6px">✨ Improve suggestions</div>
-            <input id="bulk-qa-improve-campus" class="inp" placeholder="Campus, e.g. Glen Waverley" style="font-size:12px;padding:8px 10px;margin-bottom:6px">
-            <input id="bulk-qa-improve-year" class="inp" placeholder="Year, e.g. Year 6" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
+            <select id="bulk-qa-improve-campus" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:6px">
+              <option value="">Select campus…</option>
+              <option>Elsternwick</option>
+              <option>Glen Waverley</option>
+              <option>St Kilda Road</option>
+            </select>
+            <select id="bulk-qa-improve-year" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
+              <option value="">Select year…</option>
+              <option>Prep</option><option>Year 1</option><option>Year 2</option><option>Year 3</option><option>Year 4</option><option>Year 5</option><option>Year 6</option>
+            </select>
             <div style="display:flex;gap:6px;flex-wrap:wrap">
               <button type="button" class="btn-sm" onclick="bulkQuickActionFill('improve')">Fill prompt</button>
               <button type="button" class="btn-sm" onclick="bulkQuickActionSend('improve')" style="color:var(--lime);border-color:var(--lime)">Draft now</button>
@@ -3002,6 +3089,16 @@ function bulkRunLibraryLessonDraftSafe_(text){
         </div>
       </div>`;
     chat.parentNode.insertBefore(panel, chat);
+    bulkQARefreshLibrarySelect_();
+    bulkQASetAdvancedOpen_(false);
+    // Libraries may load after this panel is injected. Refresh the selector for a short
+    // window so newly-added libraries such as Adobe Express appear without reload.
+    let refreshTries = 0;
+    const refreshTimer = setInterval(function(){
+      refreshTries++;
+      bulkQARefreshLibrarySelect_();
+      if(refreshTries > 30) clearInterval(refreshTimer);
+    }, 1000);
     return true;
   }
 
