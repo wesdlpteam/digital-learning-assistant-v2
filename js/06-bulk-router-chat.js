@@ -35,29 +35,37 @@ function bulkEscapeRegExp_(value){
 
 
 
-function bulkTopProgressStart_(label){
-  try { if(typeof startProgress === 'function') startProgress(); } catch(e){}
-  try { if(typeof setStatus === 'function') setStatus(label || 'Working…', 'loading'); } catch(e){}
+function bulkTopProgressStep_(pct, label){
+  try { if(typeof showProgress === 'function') showProgress(pct); } catch(e){}
+  try { if(label && typeof setStatus === 'function') setStatus(label, 'loading'); } catch(e){}
 }
 function bulkTopProgressStop_(label){
+  try { bulkTopProgressStep_(90, label || 'Almost ready…'); } catch(e){}
   setTimeout(function(){
-    try { if(typeof stopProgress === 'function') stopProgress(); } catch(e){}
+    try { if(typeof stopProgress === 'function') stopProgress(); else if(typeof showProgress === 'function') showProgress(null); } catch(e){}
     try { if(typeof setStatus === 'function') setStatus(label || 'Ready ✓'); } catch(e){}
-  }, 450);
+  }, 350);
 }
 function bulkRunWithTopProgress_(label, doneLabel, work, onError){
-  bulkTopProgressStart_(label);
-  // Yield briefly so the browser can paint the top loading bar before local scans/drafting begin.
+  // Local Bulk routes can finish quickly, so use explicit staged progress updates
+  // instead of the old timer-only bar. This gives visible feedback without changing logic.
+  bulkTopProgressStep_(12, label || 'Starting…');
   setTimeout(function(){
-    try {
-      work();
-      bulkTopProgressStop_(doneLabel);
-    } catch(e){
-      bulkTopProgressStop_('Stopped safely');
-      if(typeof onError === 'function') onError(e);
-      else throw e;
-    }
-  }, 80);
+    bulkTopProgressStep_(35, 'Finding candidate units…');
+    setTimeout(function(){
+      bulkTopProgressStep_(65, 'Preparing safe review drafts…');
+      setTimeout(function(){
+        try {
+          work();
+          bulkTopProgressStop_(doneLabel || 'Ready ✓');
+        } catch(e){
+          bulkTopProgressStop_('Stopped safely');
+          if(typeof onError === 'function') onError(e);
+          else throw e;
+        }
+      }, 90);
+    }, 120);
+  }, 120);
 }
 
 function bulkDetectNamedToolOpportunity_(instruction){
