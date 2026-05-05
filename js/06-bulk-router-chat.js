@@ -1751,6 +1751,15 @@ async function bulkChatSend(){
   if(bulkChatState !== 'clarifying' && bulkChatState !== 'analysing'){
     let autoInfo = null;
     try { autoInfo = bulkDiagnosticDetectRoute_(text); } catch(e){ autoInfo = null; }
+    if(autoInfo && autoInfo.route === 'targeted replacement' && autoInfo.replacementTool){
+      bulkChatAddMessage('user', text);
+      bulkRunWithTopProgress_('Finding safe ' + bulkDiagnosticEscape_(autoInfo.replacementTool) + ' replacements…', 'Safe replacement draft ready for review ✓', function(){
+        bulkRunSafeDraftOnly_(text);
+      }, function(e){
+        bulkChatAddMessage('assistant', '❌ Safe targeted replacement draft failed without changing anything: ' + bulkDiagnosticEscape_(e.message || e));
+      });
+      return;
+    }
     if(autoInfo && autoInfo.route === 'named-tool opportunity search' && autoInfo.namedTool){
       bulkChatAddMessage('user', text);
       bulkRunWithTopProgress_('Finding safe ' + bulkDiagnosticEscape_(autoInfo.namedTool) + ' opportunities…', 'Safe draft ready for review ✓', function(){
