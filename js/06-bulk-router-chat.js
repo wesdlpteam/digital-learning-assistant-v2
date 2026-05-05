@@ -445,28 +445,45 @@ function bulkReplacementDescriptionForTool_(toolName, entry, removeTool){
   const ctx = bulkReplacementUnitContext_(entry || {});
   const theme = ctx.theme;
   const connection = ctx.connection;
+  const band = bulkSafeDraftYearBand_(entry || {});
 
   if(k === bulkDiagnosticToolKey_('Book Creator')){
+    if(band === 'early') return `Students use Book Creator to make a simple picture-and-voice book connected to ${theme}. They add drawings or photos, short captions and a recorded sentence on each page to show what they understand about ${connection}, giving teachers a clearer student-created product than a simple ${removeTool} response.`;
+    if(band === 'upper') return `Students use Book Creator to publish a multimodal explanation book connected to ${theme}. They combine diagrams, evidence captions and recorded reflections to explain examples, vocabulary and design choices from ${connection}, giving teachers a richer student-created product than a simple ${removeTool} response.`;
     return `Students use Book Creator to publish a short multimodal book connected to ${theme}. They combine images, captions and recorded reflections to explain examples and key vocabulary from ${connection}, giving teachers a clearer student-created product than a simple ${removeTool} response.`;
   }
   if(k === bulkDiagnosticToolKey_('Canva')){
+    if(band === 'early') return `Students use Canva to make a simple labelled poster connected to ${theme}. They choose images, add short labels and explain one important idea about ${connection} to a partner or small group.`;
+    if(band === 'upper') return `Students use Canva to design an infographic or short visual campaign connected to ${theme}. They select evidence, organise claims and captions, and explain how their visual choices help an audience understand ${connection}.`;
     return `Students use Canva to design a visual explanation, infographic or short presentation connected to ${theme}. They select evidence, images and concise captions to teach classmates an important idea from ${connection}.`;
   }
   if(k === bulkDiagnosticToolKey_('Padlet')){
+    if(band === 'early') return `Students add pictures, short notes or voice comments to a shared Padlet board connected to ${theme}. They sort examples together and talk about what the board shows about ${connection}.`;
+    if(band === 'upper') return `Students use Padlet to collect, organise and critique evidence connected to ${theme}. They group posts, respond to peers and identify patterns or tensions that help explain ${connection}.`;
     return `Students contribute evidence, images, questions and short explanations to a shared Padlet board connected to ${theme}. They group related posts and respond to classmates so the board becomes a collaborative record of thinking about ${connection}.`;
   }
   if(k === bulkDiagnosticToolKey_('Microsoft Forms')){
+    if(band === 'early') return `Students answer or help build a short Microsoft Forms class survey connected to ${theme}. They look at the results together and describe one pattern they notice about ${connection}.`;
+    if(band === 'upper') return `Students create a Microsoft Forms survey or quiz connected to ${theme}. They analyse response data, identify a pattern or misconception, and use the evidence to explain something important about ${connection}.`;
     return `Students create a short Microsoft Forms quiz or survey connected to ${theme}. They collect responses, identify one pattern or misconception, and explain what the class data suggests about ${connection}.`;
   }
   if(k === bulkDiagnosticToolKey_('Microsoft Sway')){
+    if(band === 'early') return `Students use Microsoft Sway to make a short class-supported digital story connected to ${theme}. They add images, simple sentences and a reflection that shows one thing they learned about ${connection}.`;
+    if(band === 'upper') return `Students use Microsoft Sway to build an interactive digital report connected to ${theme}. They sequence evidence, images, explanations and reflections to show how their thinking about ${connection} has developed.`;
     return `Students use Microsoft Sway to build a simple interactive report connected to ${theme}. They sequence images, headings, short explanations and reflections to show how their understanding of ${connection} has developed.`;
   }
   if(k === bulkDiagnosticToolKey_('Microsoft PowerPoint')){
+    if(band === 'early') return `Students create a short PowerPoint with images, labels and one recorded explanation connected to ${theme}. They share it to show a key idea they understand about ${connection}.`;
+    if(band === 'upper') return `Students create a concise PowerPoint explanation connected to ${theme}. They use evidence, visuals, speaker notes and a short recorded or live presentation to teach classmates key ideas from ${connection}.`;
     return `Students create a concise PowerPoint explanation connected to ${theme}. They use slides, images and speaker notes to teach classmates key ideas from ${connection}, then present or record their explanation.`;
   }
   if(k === bulkDiagnosticToolKey_('Wise Discussion Chatbots')){
+    if(band === 'early') return `Students question a teacher-selected Wise Discussion Chatbot persona connected to ${theme}. They ask simple prepared questions, record useful ideas and share one thing the chatbot helped them understand about ${connection}.`;
+    if(band === 'upper') return `Students question a Wise Discussion Chatbot acting as a named expert or stakeholder connected to ${theme}. They ask prepared questions, compare responses with class evidence, and produce a claim-evidence-reflection about ${connection}.`;
     return `Students question a Wise Discussion Chatbot acting as a named expert or stakeholder connected to ${theme}. They ask prepared questions, compare responses with class evidence, and produce a short reflection about ${connection}.`;
   }
+  if(band === 'early') return `Students use ${tool} to make a simple digital product connected to ${theme}. They share what they made and explain one thing it shows about ${connection}.`;
+  if(band === 'upper') return `Students use ${tool} to create a purposeful digital product connected to ${theme}. They make design choices for a real audience, share their artefact, and justify how it demonstrates their understanding of ${connection}.`;
   return `Students use ${tool} to create a practical digital product connected to ${theme}. They make a clear artefact, share it with classmates, and explain how it demonstrates their understanding of ${connection}.`;
 }
 
@@ -674,9 +691,13 @@ function bulkMinecraftConnectionText_(entry){
 function bulkMinecraftDescriptionForLesson_(lesson, entry){
   const title = String((lesson && lesson.title) || 'the curated Minecraft lesson').trim();
   const connection = bulkMinecraftConnectionText_(entry || {});
+  const band = bulkSafeDraftYearBand_(entry || {});
   if(/revamp\s+melbourne/i.test(title)){
+    if(band === 'early') return `Students use the curated Minecraft Education lesson “${title}” to explore how a familiar place could be improved for people and the environment. They build one simple improved space, then explain their design choices with labels or a short teacher-guided reflection connected to ${connection}.`;
     return `Students use the curated Minecraft Education lesson “${title}” to investigate how city spaces can be redesigned for people, movement and the environment. They plan and build one improved Melbourne space, then annotate or present their design choices to explain how the build connects to ${connection}.`;
   }
+  if(band === 'early') return `Students use the curated Minecraft Education lesson “${title}” as a guided build challenge connected to ${connection}. They create a simple Minecraft model and explain one design choice that shows their understanding of the unit.`;
+  if(band === 'upper') return `Students use the curated Minecraft Education lesson “${title}” as a structured design challenge connected to ${connection}. They create a Minecraft model, test or refine a design choice, and justify how the final build shows their understanding of the unit.`;
   return `Students use the curated Minecraft Education lesson “${title}” as a structured build challenge connected to ${connection}. They create a Minecraft model, test or refine one design choice, and explain how the final build shows their understanding of the unit.`;
 }
 function bulkRunMinecraftExactLessonDraftOnly_(text){
@@ -996,27 +1017,28 @@ function bulkStkY6RewriteDescription_(toolName, e, row){
   const ctx = bulkStkY6UnitFocus_(e || {});
   const theme = ctx.theme;
   const connection = ctx.connection;
+  const band = bulkSafeDraftYearBand_(e || {});
 
   if(k === bulkDiagnosticToolKey_('National Geographic MapMaker')){
-    return `Students use National Geographic MapMaker to create an annotated map connected to ${theme}. They add carefully chosen labels, evidence notes and visual markers, then explain how their map helps classmates understand ${connection}.`;
+    return `Students use National Geographic MapMaker to create an annotated evidence map connected to ${theme}. They add carefully chosen labels, source notes and visual markers, then justify how the spatial patterns on their map help classmates understand ${connection}.`;
   }
   if(/googlemaps/i.test(k)){
     return `Students use Google Maps Street View to make ground-level observations connected to ${theme}. They capture notes or screenshots of real places, compare what they notice, and explain how those observations support their understanding of ${connection}.`;
   }
   if(k === bulkDiagnosticToolKey_('Book Creator')){
-    return `Students use Book Creator to publish a multimodal explanation book connected to ${theme}. They combine images, captions, diagrams and optional voice recordings to show what they understand about ${connection}.`;
+    return `Students use Book Creator to publish a multimodal explanation book connected to ${theme}. They combine diagrams, evidence captions, images and optional voice recordings to explain examples and reflect on what they understand about ${connection}.`;
   }
   if(k === bulkDiagnosticToolKey_('Canva')){
-    return `Students use Canva to design a clear visual explanation connected to ${theme}. They create an infographic, poster or slide that combines key vocabulary, evidence and visuals to explain ${connection}.`;
+    return `Students use Canva to design a visual explanation or advocacy piece connected to ${theme}. They combine evidence, concise captions and deliberate visual choices, then explain how the final design helps an audience understand ${connection}.`;
   }
   if(k === bulkDiagnosticToolKey_('Padlet')){
-    return `Students use Padlet to collect, organise and compare evidence connected to ${theme}. They add posts with images, short explanations and questions, then use the shared board to identify patterns and explain ${connection}.`;
+    return `Students use Padlet to collect, organise and critique evidence connected to ${theme}. They add posts with images, explanations and questions, then identify patterns or tensions that help explain ${connection}.`;
   }
   if(k === bulkDiagnosticToolKey_('Microsoft PowerPoint')){
-    return `Students use Microsoft PowerPoint to build a short explanation deck connected to ${theme}. Each slide presents one key idea with evidence, visuals and speaker notes so students can clearly explain ${connection}.`;
+    return `Students use Microsoft PowerPoint to build a short evidence-based explanation deck connected to ${theme}. Each slide presents one key idea with visuals, speaker notes and a reflection so students can clearly explain ${connection}.`;
   }
   if(k === bulkDiagnosticToolKey_('Microsoft Sway')){
-    return `Students use Microsoft Sway to create an interactive digital report connected to ${theme}. They sequence images, text and reflections to explain examples and evidence that show their understanding of ${connection}.`;
+    return `Students use Microsoft Sway to create an interactive digital report connected to ${theme}. They sequence images, text, evidence and reflections to explain examples and show how their understanding of ${connection} has developed.`;
   }
   if(k === bulkDiagnosticToolKey_('Wise Discussion Chatbots')){
     return `Students question a Wise Discussion Chatbot in a named expert role connected to ${theme}. They ask prepared questions, check the responses against class evidence, and produce a short claim-evidence-reasoning reflection about ${connection}.`;
@@ -1252,6 +1274,22 @@ function bulkSafeDraftTrimEndPunctuation_(value){
     .trim();
 }
 
+function bulkSafeDraftYearNumber_(e){
+  const raw = String((e && (e.yn ?? e.yearNumber ?? e.year_level ?? e.yl ?? e.year ?? '')) || '').toLowerCase();
+  if(/prep|foundation/.test(raw)) return 0;
+  const m = raw.match(/(?:year\s*)?([0-6])/);
+  if(m) return Number(m[1]);
+  return null;
+}
+
+function bulkSafeDraftYearBand_(e){
+  const n = bulkSafeDraftYearNumber_(e);
+  if(n == null) return 'middle';
+  if(n <= 2) return 'early';
+  if(n <= 4) return 'middle';
+  return 'upper';
+}
+
 function bulkSafeDraftUnitFocus_(e){
   const ctx = bulkSafeDraftShortContext_(e || {});
   const theme = bulkSafeDraftTrimEndPunctuation_(ctx.theme) || 'this unit';
@@ -1270,22 +1308,35 @@ function bulkSafeDraftDescriptionForTool_(toolName, e){
   const ctx = bulkSafeDraftUnitFocus_(e || {});
   const theme = ctx.theme;
   const connection = ctx.connection;
+  const band = bulkSafeDraftYearBand_(e || {});
 
   if(k === bulkDiagnosticToolKey_('Makey Makey')){
+    if(band === 'early') return `Students use Makey Makey to turn a simple cardboard, foil or playdough model into a touch board connected to ${theme}. In Scratch, they add sounds or simple quiz responses so classmates can press parts of the model and hear what it shows about ${connection}.`;
+    if(band === 'upper') return `Students use Makey Makey to design a conductive model or interactive display that represents an idea from ${theme}. They code a Scratch quiz, soundboard or feedback sequence, test how classmates interact with it, and explain how the inputs reveal key ideas about ${connection}.`;
     return `Students use Makey Makey to build a simple conductive model from cardboard, foil or playdough that represents an idea from ${theme}. They connect the model to a short Scratch quiz or soundboard so classmates can press different parts, get feedback, and explain how the interaction reveals key ideas about ${connection}.`;
   }
   if(k === bulkDiagnosticToolKey_('Book Creator')){
+    if(band === 'early') return `Students use Book Creator to make a simple picture-and-voice book connected to ${theme}. They add drawings or photos, short captions and optional recorded sentences so they can show and tell what they understand about ${connection}.`;
+    if(band === 'upper') return `Students use Book Creator to publish a multimodal explanation book connected to ${theme}. They combine diagrams, evidence captions, images and optional voice recordings to explain examples, vocabulary and reflections that show their understanding of ${connection}.`;
     return `Students use Book Creator to publish a short multimodal book connected to ${theme}. Each page combines student drawings, photos, captions and optional voice recordings so students can explain examples, vocabulary and reflections that show their understanding of ${connection}.`;
   }
   if(k === bulkDiagnosticToolKey_('Lego Spike Prime')){
+    if(band === 'early') return `Students use Lego Spike Prime with teacher support to build and code a simple moving model connected to ${theme}. They test one change, demonstrate what the model does, and explain how it helps show ${connection}.`;
+    if(band === 'upper') return `Students use Lego Spike Prime to design, build and code a working prototype that models a process, system or solution from ${theme}. They test variables, improve the build, and present evidence of how the mechanism demonstrates their understanding of ${connection}.`;
     return `Students use Lego Spike Prime to design, build and code a working prototype that models a process, system or solution from ${theme}. They test and improve the build, then record or present an explanation of how the mechanism demonstrates their understanding of ${connection}.`;
   }
   if(k === bulkDiagnosticToolKey_('Lego Spike Essential')){
+    if(band === 'early') return `Students use Lego Spike Essential to build and code a simple moving model linked to ${theme}. They make one change to improve the model and explain what it shows about ${connection}.`;
+    if(band === 'upper') return `Students use Lego Spike Essential to build and code a model linked to ${theme}. They test how it works, improve one feature, and explain how the final demonstration represents ${connection}.`;
     return `Students use Lego Spike Essential to build and code a simple moving model linked to ${theme}. They create a short demonstration showing what the model does, what they changed during testing, and how it helps explain ${connection}.`;
   }
   if(k === bulkDiagnosticToolKey_('Wise Discussion Chatbots')){
+    if(band === 'early') return `Students ask a teacher-selected Wise Discussion Chatbot persona simple prepared questions connected to ${theme}. They record useful ideas with drawings or short notes and share one thing the chatbot helped them understand about ${connection}.`;
+    if(band === 'upper') return `Students question a Wise Discussion Chatbot in a named expert or stakeholder role connected to ${theme}. They prepare prompts, compare the chatbot’s responses with class evidence, and produce a claim-evidence-reflection about ${connection}.`;
     return `Students question a Wise Discussion Chatbot in a named expert role connected to ${theme}. They prepare questions, compare the chatbot’s responses with class evidence, and produce a short reflection or claim-evidence-reasoning note about ${connection}.`;
   }
+  if(band === 'early') return `Students use ${tool} to make a simple product connected to ${theme}. They share what they made and explain one thing it shows about ${connection}.`;
+  if(band === 'upper') return `Students use ${tool} to create a purposeful digital product connected to ${theme}. They make design choices for an audience, share the artefact, and justify how it shows their understanding of ${connection}.`;
   return `Students use ${tool} to create a practical digital product connected to ${theme}. They make a clear artefact, share it with classmates, and explain how their choices show what they understand about ${connection}.`;
 }
 
