@@ -37,6 +37,10 @@ function bulkDetectNamedToolOpportunity_(instruction){
   const text = String(instruction || '').toLowerCase().replace(/[’']/g, '');
   if(!bulkInstructionLooksLikeOpportunity(text)) return '';
   const aliases = {
+    'makey makey':'Makey Makey',
+    'the makey makey':'Makey Makey',
+    'makey-makey':'Makey Makey',
+    'makeymakey':'Makey Makey',
     'book creator':'Book Creator',
     'bookcreator':'Book Creator',
     'beebot':'Bee-Bots',
@@ -190,6 +194,101 @@ function bulkRunDiagnosticOnly_(text){
       <div style="margin-top:8px;color:var(--dim);font-size:12px">${notes}</div>
       ${scanHtml}
       <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No changes were drafted or saved.</div>
+    </div>`);
+}
+
+
+// ========== BULK AI SAFE PREVIEW MODE ==========
+// Safe command only. It finds candidate units locally and shows them; no AI, no review popup, no save.
+// Use: safe: Find more opportunities to use Makey Makey
+function bulkSafePreviewScanNamedTool_(toolName, targetYears){
+  const key = bulkDiagnosticToolKey_(toolName);
+  const candidates = [];
+  const skipped = { alreadyHasTool:0, year:0, noNonStemSlot:0, age:0, missingData:0 };
+  let existingSlots = 0;
+
+  if(!key || !Array.isArray(DATA)) return { candidates, skipped, existingSlots };
+
+  DATA.forEach((e, entryIdx) => {
+    if(!e){ skipped.missingData++; return; }
+    const yl = e.yl || '';
+    if(targetYears && targetYears.length && !targetYears.includes(yl)){ skipped.year++; return; }
+
+    const sugs = getSugs(e).filter(isRealSug);
+    let hasTool = false;
+    let firstReplaceableSlot = -1;
+
+    sugs.forEach((s, sugIdx) => {
+      if(bulkDiagnosticToolKey_(sugTool(s)) === key){ hasTool = true; existingSlots++; }
+      // Slot #6 is index 5 and should not be used for bulk opportunity changes.
+      if(firstReplaceableSlot < 0 && sugIdx !== 5) firstReplaceableSlot = sugIdx;
+    });
+
+    if(hasTool){ skipped.alreadyHasTool++; return; }
+    if(firstReplaceableSlot < 0){ skipped.noNonStemSlot++; return; }
+
+    let ageOk = true;
+    try {
+      if(typeof getAgeAppropriateTools === 'function'){
+        const allowed = getAgeAppropriateTools(yl).map(t => bulkDiagnosticToolKey_(t));
+        ageOk = !allowed.length || allowed.includes(key);
+      }
+    } catch(err){ ageOk = true; }
+    if(!ageOk){ skipped.age++; return; }
+
+    candidates.push({
+      entryIdx,
+      slotIdx:firstReplaceableSlot,
+      campus:e.ca || 'Campus?',
+      year:yl || 'Year?',
+      theme:e.th || e.theme || 'Untitled unit',
+      centralIdea:e.ci || e.centralIdea || '',
+      loi:e.loi || e.linesOfInquiry || ''
+    });
+  });
+
+  return { candidates, skipped, existingSlots };
+}
+
+function bulkRunSafePreviewOnly_(text){
+  const cleanText = String(text || '').replace(/^\s*safe\s*:?\s*/i, '').trim();
+  const info = bulkDiagnosticDetectRoute_(cleanText);
+  const years = info.targetYears && info.targetYears.length ? info.targetYears : [];
+  const yearsLabel = years.length ? years.join(', ') : 'All years';
+
+  if(!info.namedTool){
+    bulkChatAddMessage('assistant', `
+      <div style="padding:2px 0">
+        <div style="font-size:10px;color:var(--purple);font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">🧪 Safe preview only</div>
+        <div>I could not confidently detect a named tool in that request.</div>
+        <div style="margin-top:8px;color:var(--dim);font-size:12px">Try: <strong>safe: Find more opportunities to use Makey Makey</strong></div>
+        <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No changes were drafted or saved.</div>
+      </div>`);
+    return;
+  }
+
+  const scan = bulkSafePreviewScanNamedTool_(info.namedTool, years);
+  const preview = scan.candidates.slice(0, 10);
+  const rows = preview.length ? preview.map((c, i) => `
+    <div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08)">
+      <strong>${i + 1}. ${bulkDiagnosticEscape_(c.campus)} · ${bulkDiagnosticEscape_(c.year)}</strong><br>
+      <span style="color:var(--dim)">${bulkDiagnosticEscape_(c.theme)}</span>
+    </div>`).join('') : '<div style="color:var(--dim);padding:8px 0">No candidate units found.</div>';
+
+  bulkChatAddMessage('assistant', `
+    <div style="padding:2px 0">
+      <div style="font-size:10px;color:var(--purple);font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">🧪 Safe preview only</div>
+      <div>Request route: <strong>${bulkDiagnosticEscape_(info.route)}</strong></div>
+      <div>Named tool: <strong>${bulkDiagnosticEscape_(info.namedTool)}</strong></div>
+      <div>Year scope: <strong>${bulkDiagnosticEscape_(yearsLabel)}</strong></div>
+      <div style="margin-top:10px;padding:10px 12px;background:rgba(197,232,74,.06);border:1px solid rgba(197,232,74,.2);border-radius:10px">
+        <div>Existing ${bulkDiagnosticEscape_(info.namedTool)} slots: <strong>${scan.existingSlots}</strong></div>
+        <div>Candidate units without it: <strong>${scan.candidates.length}</strong></div>
+        <div style="color:var(--dim);font-size:12px;margin-top:6px">Skipped already using tool: ${scan.skipped.alreadyHasTool} · skipped by year: ${scan.skipped.year} · skipped by age range: ${scan.skipped.age}</div>
+      </div>
+      <div style="margin-top:10px;font-size:12px;color:var(--dim)">First ${preview.length} candidate units:</div>
+      <div style="margin-top:4px">${rows}</div>
+      <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No review popup opened. No changes were drafted or saved.</div>
     </div>`);
 }
 
@@ -1069,6 +1168,18 @@ async function bulkChatSend(){
   const text = input.value.trim();
   if(!text) return;
   input.value = '';
+
+  // Safe-preview mode: find candidate units locally without calling AI, opening a review popup, or saving.
+  // Type: safe: Find more opportunities to use Makey Makey
+  if(/^\s*safe\s*:?\s*/i.test(text)){
+    if(bulkChatState === 'analysing'){
+      bulkChatAddMessage('assistant', '⏳ Still analysing entries — wait for the current analysis to complete before running a safe preview.');
+      return;
+    }
+    bulkChatAddMessage('user', text);
+    try { bulkRunSafePreviewOnly_(text); } catch(e){ bulkChatAddMessage('assistant', '❌ Safe preview failed without changing anything: ' + bulkDiagnosticEscape_(e.message || e)); }
+    return;
+  }
 
   // Diagnostic-only mode: classify a Bulk AI prompt without calling AI or drafting changes.
   // Type: diagnose: Find more opportunities to use Makey Makey
