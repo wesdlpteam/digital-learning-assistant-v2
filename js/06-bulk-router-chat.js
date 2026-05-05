@@ -1269,8 +1269,43 @@ function bulkSafeDraftCleanMojibake_(value){
     .trim();
 }
 
+function bulkSafeDraftHumanisePlannerText_(value){
+  let s = bulkSafeDraftCleanMojibake_(value);
+  if(!s) return '';
+
+  // Some planner exports arrive with semicolons between every word, e.g.
+  // "How; We; Organise; Ourselves" or "Students; develop; and; present".
+  // For short title-like strings, join the fragments back into a readable phrase.
+  const parts = s.split(';').map(p => p.trim()).filter(Boolean);
+  if(parts.length >= 2){
+    const mostlyShort = parts.filter(p => p.length <= 22 && !/[.!?]/.test(p)).length >= Math.ceil(parts.length * 0.75);
+    const looksLikeBrokenSentence = parts.length >= 4 && mostlyShort;
+    const looksLikeThemeTitle = parts.length <= 6 && mostlyShort && /^[A-Za-z0-9()\-\s;’'&]+$/.test(s);
+    if(looksLikeThemeTitle || looksLikeBrokenSentence){
+      s = parts.join(' ');
+    }
+  }
+
+  s = s
+    .replace(/\s+([,.;:!?])/g, '$1')
+    .replace(/([A-Za-z0-9)\]”’])\s+—\s+([A-Za-z0-9“‘(])/g, '$1 — $2')
+    .replace(/\s*;\s*—\s*;\s*/g, ' — ')
+    .replace(/\s*;\s*/g, '; ')
+    .replace(/;\s*([.?!])/g, '$1')
+    .replace(/\(\s+/g, '(')
+    .replace(/\s+\)/g, ')')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  // Humanise common malformed PYPX/LOI wording without changing stored data.
+  s = s.replace(/\bStudent-led\s+exhibition\s+\(PYPEX\)\s+—\s+Students\s+develop\s+and\s+present\s+their\s+own\s+units\s+of\s+inquiry\b/i,
+    'Student-led exhibition (PYPEX): Students develop and present their own units of inquiry');
+
+  return bulkSafeDraftTrimEndPunctuation_(s);
+}
+
 function bulkSafeDraftCleanUnitText_(value){
-  return bulkSafeDraftCleanMojibake_(value);
+  return bulkSafeDraftHumanisePlannerText_(value);
 }
 
 function bulkSafeDraftShortContext_(e){
