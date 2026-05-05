@@ -58,6 +58,9 @@ BANNED PHRASES — these make suggestions sound generic and lazy. NEVER write an
 - "linked to the line of inquiry '...'"
 - "connected to How We Express Ourselves" (or any transdisciplinary theme name used as filler)
 - "related to the unit theme"
+- "for this unit" / "in this unit" / "about this unit"
+- "the unit focus" / "the unit's focus" / "this unit's content"
+- "connects to the unit focus"
 - "share their learning"
 - "use the app to present"
 - "make a simple product"
@@ -67,7 +70,17 @@ BANNED PHRASES — these make suggestions sound generic and lazy. NEVER write an
 - "present their findings"
 - "record their thinking"
 - "document their learning journey"
+- "document their inquiry journey"
 - "Students use [tool] to [vague verb] about [unit theme]."
+
+NAME THE ACTUAL TOPIC — never use "this unit" or "unit focus" as a placeholder:
+- BAD: "Students use Padlet as a collaborative evidence wall for this unit."
+- GOOD: "Students use Padlet to build a collaborative debate wall about real-world government decisions, posting arguments, counterarguments and evidence."
+- BAD: "Students use Book Creator to publish an exhibition-style digital companion for this unit."
+- GOOD: "Students collaboratively author interactive digital books that document their inquiry journey, research findings, and action plans. These multimedia books can include embedded videos, audio reflections, and clickable links, serving as both a portfolio and a tool for advocacy."
+- BAD: "Students use Canva to design an audience-facing campaign for this unit."
+- GOOD: "Students design visually compelling digital media campaigns — such as infographics, social media posts, and posters — using Canva. They leverage Canva's Remove Background feature to create striking visuals and combine text, imagery, and data to communicate their message effectively."
+The unit theme, central idea and lines of inquiry tell you WHAT the topic is. Use that topic by name in the suggestion. If the unit is about government decisions, say "government decisions." If it is about ecosystems, say "ecosystems." Never say "this unit" or "the unit focus" as a stand-in.
 
 HOW TO CONNECT TO THE UNIT (DO THIS INSTEAD):
 The planner context (central idea, lines of inquiry, activities) should guide the CONTENT of the suggestion in the background. Weave it into the specific task naturally:
@@ -79,6 +92,16 @@ The planner context (central idea, lines of inquiry, activities) should guide th
 - GOOD: "Students use Padlet to build a collaborative debate wall about real-world government decisions, posting arguments, counterarguments and evidence. They respond to peers with evidence-based feedback, then summarise how the debate connects to how governance affects citizens' lives."
 
 TEACHER READABILITY: Write so a primary teacher can picture exactly what happens in the lesson. No jargon, no abstract framing. If a colleague reading the suggestion cannot immediately imagine what students are doing, rewrite it.
+
+NAME THE TOOL'S FEATURES: Do not treat tools as black boxes. Name the specific feature, mode, or affordance that makes the activity work:
+- BAD: "They combine evidence, concise copy and deliberate design choices" (could be any tool)
+- GOOD: "They leverage Canva's Remove Background feature to create striking visuals and combine text, imagery, and data" (names the specific Canva feature)
+- BAD: "Each page combines student-curated evidence, diagrams, captions, voice reflection" (generic)
+- GOOD: "These multimedia books can include embedded videos, audio reflections, and clickable links, serving as both a portfolio and a tool for advocacy" (names Book Creator's specific multimedia affordances)
+- BAD: "They post examples, questions and counterpoints" (could be any platform)
+- GOOD: "Students post arguments, counterarguments, and evidence about real-world government decisions (e.g., social media bans, new laws). This interactive platform allows for peer feedback" (names what Padlet uniquely enables — threaded peer responses)
+
+GIVE CONCRETE EXAMPLES: Where possible, include 2-3 specific examples of what students might create or investigate. Use phrases like "such as", "for example", "e.g.," to ground the activity in real content rather than abstract categories.
 
 PRESERVE STRONG SUGGESTIONS: If an existing suggestion is already vivid, specific, and well-connected, do NOT rewrite it. Only rewrite clearly weak, vague, or generic suggestions.
 
