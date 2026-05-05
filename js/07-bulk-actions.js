@@ -62,11 +62,9 @@ Issue to fix: ${reason || instruction || 'The description is vague or too brief.
 Current tool: ${oldTool}
 Current description: ${oldDesc}
 
-Rewrite the description into 2-3 practical sentences that clearly state:
-- what students DO using ${oldTool}
-- what students CREATE / PRODUCE / CAPTURE / SHARE
-- how the task connects to the unit content, central idea or line of inquiry
-- enough classroom detail that a teacher can picture the lesson
+Rewrite the description into 2-3 vivid, practical sentences. The central idea and lines of inquiry above tell you what the unit is ABOUT — use that topic by name in your description, but NEVER quote the central idea or lines of inquiry directly.
+
+${SUGGESTION_STYLE}
 
 Return ONLY JSON: {"t":"${safeToolForJson}","d":"Improved description using the same tool."}`;
 
