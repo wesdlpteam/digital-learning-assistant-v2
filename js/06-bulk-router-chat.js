@@ -434,27 +434,27 @@ function bulkReplacementDescriptionForTool_(toolName, entry, removeTool){
   const connection = ctx.connection;
 
   if(k === bulkDiagnosticToolKey_('Book Creator')){
-    return `Students use Book Creator to create a short multimodal book connected to ${theme}. They combine images, captions and recorded reflections to explain key ideas about ${connection}, giving teachers a clearer product than a simple ${removeTool} post.`;
+    return `Students use Book Creator to publish a short multimodal book connected to ${theme}. They combine images, captions and recorded reflections to explain examples and key vocabulary from ${connection}, giving teachers a clearer student-created product than a simple ${removeTool} response.`;
   }
   if(k === bulkDiagnosticToolKey_('Canva')){
-    return `Students use Canva to design a visual explanation, infographic or short presentation connected to ${theme}. They combine key vocabulary, images and concise captions to communicate what they understand about ${connection}.`;
+    return `Students use Canva to design a visual explanation, infographic or short presentation connected to ${theme}. They select evidence, images and concise captions to teach classmates an important idea from ${connection}.`;
   }
   if(k === bulkDiagnosticToolKey_('Padlet')){
-    return `Students contribute evidence, images, questions and short explanations to a shared Padlet board connected to ${theme}. They organise and respond to classmates’ posts to show how their thinking has developed about ${connection}.`;
+    return `Students contribute evidence, images, questions and short explanations to a shared Padlet board connected to ${theme}. They group related posts and respond to classmates so the board becomes a collaborative record of thinking about ${connection}.`;
   }
   if(k === bulkDiagnosticToolKey_('Microsoft Forms')){
-    return `Students create a short Microsoft Forms quiz or survey connected to ${theme}. They use the responses to check understanding, notice patterns and explain what the class learned about ${connection}.`;
+    return `Students create a short Microsoft Forms quiz or survey connected to ${theme}. They collect responses, identify one pattern or misconception, and explain what the class data suggests about ${connection}.`;
   }
   if(k === bulkDiagnosticToolKey_('Microsoft Sway')){
-    return `Students use Microsoft Sway to build a simple interactive report connected to ${theme}. They sequence images, text and reflections to explain their understanding of ${connection}.`;
+    return `Students use Microsoft Sway to build a simple interactive report connected to ${theme}. They sequence images, headings, short explanations and reflections to show how their understanding of ${connection} has developed.`;
   }
   if(k === bulkDiagnosticToolKey_('Microsoft PowerPoint')){
-    return `Students create a concise PowerPoint explanation connected to ${theme}. They use slides, images and speaker notes to teach classmates the key ideas they learned about ${connection}.`;
+    return `Students create a concise PowerPoint explanation connected to ${theme}. They use slides, images and speaker notes to teach classmates key ideas from ${connection}, then present or record their explanation.`;
   }
   if(k === bulkDiagnosticToolKey_('Wise Discussion Chatbots')){
-    return `Students question a Wise Discussion Chatbot acting as a relevant expert connected to ${theme}. They ask prepared questions, compare responses with class evidence and produce a short reflection about ${connection}.`;
+    return `Students question a Wise Discussion Chatbot acting as a named expert or stakeholder connected to ${theme}. They ask prepared questions, compare responses with class evidence, and produce a short reflection about ${connection}.`;
   }
-  return `Students use ${tool} to create a practical digital product connected to ${theme}. They make, share and explain their work to show what they understand about ${connection}.`;
+  return `Students use ${tool} to create a practical digital product connected to ${theme}. They make a clear artefact, share it with classmates, and explain how it demonstrates their understanding of ${connection}.`;
 }
 
 function bulkRunSafeReplacementDraftOnly_(text){
@@ -662,9 +662,9 @@ function bulkMinecraftDescriptionForLesson_(lesson, entry){
   const title = String((lesson && lesson.title) || 'the curated Minecraft lesson').trim();
   const connection = bulkMinecraftConnectionText_(entry || {});
   if(/revamp\s+melbourne/i.test(title)){
-    return `Students use the curated Minecraft Education lesson “${title}” to explore how parts of a city can be redesigned for people and the environment. They plan and build one revised Melbourne space, then explain how their design connects to ${connection}.`;
+    return `Students use the curated Minecraft Education lesson “${title}” to investigate how city spaces can be redesigned for people, movement and the environment. They plan and build one improved Melbourne space, then annotate or present their design choices to explain how the build connects to ${connection}.`;
   }
-  return `Students use the curated Minecraft Education lesson “${title}” as a structured build challenge connected to ${connection}. They create a Minecraft model and explain the design decisions that show their understanding of the unit.`;
+  return `Students use the curated Minecraft Education lesson “${title}” as a structured build challenge connected to ${connection}. They create a Minecraft model, test or refine one design choice, and explain how the final build shows their understanding of the unit.`;
 }
 function bulkRunMinecraftExactLessonDraftOnly_(text){
   const cleanText = String(text || '').replace(/^\s*(draft|draft-safe|safe-draft)\s*:?\s*/i, '').trim();
@@ -903,28 +903,41 @@ function bulkSafeDraftTrimEndPunctuation_(value){
     .trim();
 }
 
-function bulkSafeDraftDescriptionForTool_(toolName, e){
-  const tool = normaliseToolName(toolName || '');
+function bulkSafeDraftUnitFocus_(e){
   const ctx = bulkSafeDraftShortContext_(e || {});
   const theme = bulkSafeDraftTrimEndPunctuation_(ctx.theme) || 'this unit';
-  const connection = bulkSafeDraftTrimEndPunctuation_(ctx.connection) || theme;
+  const ci = bulkSafeDraftTrimEndPunctuation_(ctx.ci || '');
+  const loi = bulkSafeDraftTrimEndPunctuation_(ctx.loi || '');
+  const connection = bulkSafeDraftTrimEndPunctuation_(loi || ci || theme) || theme;
+  // Keep templates practical and readable in the review popup. Very long LOI strings
+  // make drafts feel vague, so shorten the inserted connection without changing data.
+  const shortConnection = connection.length > 150 ? connection.slice(0, 147).replace(/\s+\S*$/, '') + '…' : connection;
+  return { theme, ci, loi, connection: shortConnection };
+}
 
-  if(bulkDiagnosticToolKey_(tool) === bulkDiagnosticToolKey_('Makey Makey')){
-    return `Students use Makey Makey to turn a simple cardboard, foil or playdough model into an interactive input device connected to ${theme}. They then create a short quiz in Scratch so classmates can press parts of the model to reveal key ideas about ${connection}.`;
+function bulkSafeDraftDescriptionForTool_(toolName, e){
+  const tool = normaliseToolName(toolName || '');
+  const k = bulkDiagnosticToolKey_(tool);
+  const ctx = bulkSafeDraftUnitFocus_(e || {});
+  const theme = ctx.theme;
+  const connection = ctx.connection;
+
+  if(k === bulkDiagnosticToolKey_('Makey Makey')){
+    return `Students use Makey Makey to build a simple conductive model from cardboard, foil or playdough that represents an idea from ${theme}. They connect the model to a short Scratch quiz or soundboard so classmates can press different parts, get feedback, and explain how the interaction reveals key ideas about ${connection}.`;
   }
-  if(bulkDiagnosticToolKey_(tool) === bulkDiagnosticToolKey_('Book Creator')){
-    return `Students use Book Creator to build a short multimodal book about ${theme}. They combine drawings, photos, captions and voice recordings to explain what they have learned about ${connection}.`;
+  if(k === bulkDiagnosticToolKey_('Book Creator')){
+    return `Students use Book Creator to publish a short multimodal book connected to ${theme}. Each page combines student drawings, photos, captions and optional voice recordings so students can explain examples, vocabulary and reflections that show their understanding of ${connection}.`;
   }
-  if(bulkDiagnosticToolKey_(tool) === bulkDiagnosticToolKey_('Lego Spike Prime')){
-    return `Students use Lego Spike Prime to design and code a working prototype that models an idea from ${theme}. They test, improve and explain how their build demonstrates ${connection}.`;
+  if(k === bulkDiagnosticToolKey_('Lego Spike Prime')){
+    return `Students use Lego Spike Prime to design, build and code a working prototype that models a process, system or solution from ${theme}. They test and improve the build, then record or present an explanation of how the mechanism demonstrates their understanding of ${connection}.`;
   }
-  if(bulkDiagnosticToolKey_(tool) === bulkDiagnosticToolKey_('Lego Spike Essential')){
-    return `Students use Lego Spike Essential to build and code a simple moving model linked to ${theme}. They create a short demonstration explaining how the model helps show ${connection}.`;
+  if(k === bulkDiagnosticToolKey_('Lego Spike Essential')){
+    return `Students use Lego Spike Essential to build and code a simple moving model linked to ${theme}. They create a short demonstration showing what the model does, what they changed during testing, and how it helps explain ${connection}.`;
   }
-  if(bulkDiagnosticToolKey_(tool) === bulkDiagnosticToolKey_('Wise Discussion Chatbots')){
-    return `Students question a Wise Discussion Chatbot acting as a unit expert connected to ${theme}. They ask prepared questions, compare the responses with class evidence, then produce a short reflection explaining what they now understand about ${connection}.`;
+  if(k === bulkDiagnosticToolKey_('Wise Discussion Chatbots')){
+    return `Students question a Wise Discussion Chatbot in a named expert role connected to ${theme}. They prepare questions, compare the chatbot’s responses with class evidence, and produce a short reflection or claim-evidence-reasoning note about ${connection}.`;
   }
-  return `Students use ${tool} to create a practical digital product connected to ${theme}. They make, test and share their work to explain what they have learned about ${connection}.`;
+  return `Students use ${tool} to create a practical digital product connected to ${theme}. They make a clear artefact, share it with classmates, and explain how their choices show what they understand about ${connection}.`;
 }
 
 function bulkSafeDraftSlotScore_(s, idx){
