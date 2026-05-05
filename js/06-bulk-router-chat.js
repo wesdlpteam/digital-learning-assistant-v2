@@ -832,6 +832,85 @@ function bulkStkY6DiagnosticHtml_(){
       <div style="margin-top:8px">${rowsHtml}</div>
     </div>`;
 }
+
+
+// Preview-only. Shows which St Kilda/St Kilda Road Year 6 suggestions would be considered for rewrite.
+// No AI calls, no drafts, no review popup, no saves.
+function bulkStkY6PreviewHtml_(){
+  const entries = Array.isArray(DATA) ? DATA.map((e, entryIdx) => ({ e, entryIdx })).filter(x => bulkStkY6LooksStKilda_(x.e) && bulkStkY6LooksYear6_(x.e)) : [];
+  const rows = [];
+  entries.forEach(({e, entryIdx}) => {
+    const sugs = (getSugs(e) || []).filter(isRealSug);
+    sugs.forEach((s, sugIdx) => {
+      const issues = bulkStkY6IssueList_(e, s);
+      if(!issues.length) return;
+      rows.push({
+        entryIdx,
+        sugIdx,
+        campus: e.ca || e.campus || 'St Kilda Road',
+        year: e.yl || e.year || 'Year 6',
+        theme: e.th || e.theme || 'Untitled unit',
+        tool: sugTool(s) || 'Untitled tool',
+        desc: bulkStkY6Desc_(s),
+        issues,
+        corruptLoi: bulkStkY6HasCorruptLoi_(e)
+      });
+    });
+  });
+
+  const grouped = new Map();
+  rows.forEach(r => {
+    const key = `${r.campus}||${r.year}||${r.theme}`;
+    if(!grouped.has(key)) grouped.set(key, []);
+    grouped.get(key).push(r);
+  });
+
+  const groups = Array.from(grouped.values())
+    .sort((a,b) => b.length - a.length)
+    .slice(0, 10);
+
+  const groupsHtml = groups.length ? groups.map(group => {
+    const first = group[0];
+    const items = group.slice(0, 4).map(r => `
+      <div style="margin-top:7px;padding:8px 10px;background:rgba(255,255,255,.035);border-radius:8px;border-left:3px solid rgba(245,166,35,.55)">
+        <div style="font-size:12px"><strong>Slot ${r.sugIdx + 1}: ${bulkDiagnosticEscape_(r.tool)}</strong></div>
+        <div style="font-size:12px;color:#bbb;margin-top:3px">Would review: ${bulkDiagnosticEscape_(r.issues.slice(0,4).join(', '))}</div>
+        ${r.desc ? `<div style="font-size:11px;color:var(--dim);margin-top:4px;line-height:1.5">Current: ${bulkDiagnosticEscape_(r.desc).slice(0,220)}${r.desc.length>220?'…':''}</div>` : ''}
+      </div>`).join('');
+    const more = group.length > 4 ? `<div style="font-size:11px;color:var(--dim);margin-top:6px">+ ${group.length - 4} more flagged suggestion${group.length-4!==1?'s':''} in this unit.</div>` : '';
+    return `
+      <div style="padding:10px 0;border-top:1px solid rgba(255,255,255,.08)">
+        <div><strong>${bulkDiagnosticEscape_(first.campus)} · ${bulkDiagnosticEscape_(first.year)} · ${bulkDiagnosticEscape_(first.theme)}</strong></div>
+        <div style="font-size:12px;color:var(--dim)">${group.length} suggestion${group.length!==1?'s':''} would be considered${first.corruptLoi ? ' · LOI separators may need cleaning' : ''}</div>
+        ${items}${more}
+      </div>`;
+  }).join('') : '<div style="font-size:12px;color:var(--dim)">No St Kilda Road Year 6 suggestions were locally flagged for preview.</div>';
+
+  return `
+    <div style="margin-top:10px;padding:10px 12px;background:rgba(197,232,74,.055);border:1px solid rgba(197,232,74,.22);border-radius:10px">
+      <div style="font-size:11px;color:var(--lime);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">St Kilda Road Year 6 preview only</div>
+      <div>Matching entries: <strong>${entries.length}</strong></div>
+      <div>Suggestions that would be considered for rewrite: <strong>${rows.length}</strong></div>
+      <div style="margin-top:8px;color:var(--dim);font-size:12px;line-height:1.5">This preview only lists targets. It does not call AI, create drafts, open a review popup, or save anything.</div>
+      <div style="margin-top:8px">${groupsHtml}</div>
+    </div>`;
+}
+
+function bulkRunStkY6PreviewOnly_(text){
+  const cleanText = String(text || '').replace(/^\s*preview\s*:?\s*/i, '').trim();
+  if(!bulkLooksLikeStkY6Diagnostic_(cleanText)){
+    bulkChatAddMessage('assistant', 'I only understand St Kilda Road Year 6 preview requests in this safe preview mode. Try: <strong>preview: Improve St Kilda Road Year 6 suggestions</strong>');
+    return;
+  }
+  bulkChatAddMessage('assistant', `
+    <div style="padding:2px 0">
+      <div style="font-size:10px;color:var(--lime);font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">🧭 Bulk AI preview only</div>
+      <div>Route detected: <strong>St Kilda Road Year 6 quality preview</strong></div>
+      <div>Scope: <strong>St Kilda Road · Year 6 only</strong></div>
+      ${bulkStkY6PreviewHtml_()}
+      <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No changes were drafted or saved.</div>
+    </div>`);
+}
 function bulkLooksLikeStkY6Diagnostic_(text){
   const t = String(text || '').toLowerCase();
   return /st\s*kilda|stk/.test(t) && /year\s*6|yr\s*6|y6/.test(t) && /suggestion|quality|diagnos|audit|weak|improve|review/.test(t);
@@ -2043,6 +2122,23 @@ async function bulkChatSend(){
   const text = input.value.trim();
   if(!text) return;
   input.value = '';
+
+
+  // Preview-only mode for St Kilda Road Year 6 quality work.
+  // Type: preview: Improve St Kilda Road Year 6 suggestions
+  if(/^\s*preview\s*:?\s*/i.test(text)){
+    if(bulkChatState === 'analysing'){
+      bulkChatAddMessage('assistant', '⏳ Still analysing entries — wait for the current analysis to complete before running a safe preview.');
+      return;
+    }
+    bulkChatAddMessage('user', text);
+    bulkRunWithTopProgress_('Previewing St Kilda Road Year 6 suggestions…', 'Preview ready ✓', function(){
+      bulkRunStkY6PreviewOnly_(text);
+    }, function(e){
+      bulkChatAddMessage('assistant', '❌ Preview failed safely without changing anything: ' + bulkDiagnosticEscape_(e.message || e));
+    });
+    return;
+  }
 
   // Safe-draft mode: locally draft a small batch and open review popup only. No AI calls, no auto-save.
   // Type: draft: Find more opportunities to use Makey Makey
