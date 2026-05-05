@@ -30,7 +30,7 @@ const TOOL_WHITELIST = [
   'chatterpix','imovie','puppet pals',
   'adobe express','adobe express podcasting',
   
-  'google maps','google earth','field guide to victoria','field guide','sky map',
+  'google maps','google earth','national geographic mapmaker','national geographic map maker','nat geo mapmaker','mapmaker','field guide to victoria','field guide','sky map',
   'geoboard',
   
   'clickview','epic','piccollage','brushes redux','word clouds','abcya',
@@ -42,9 +42,44 @@ const TOOL_WHITELIST = [
 ];
 
 function isWhitelisted(toolName){
-  if(!toolName) return true; 
-  const t = toolName.toLowerCase();
-  return TOOL_WHITELIST.some(w => t.includes(w));
+  if(!toolName) return true;
+  const raw = String(toolName || '').trim();
+  const norm = (typeof normaliseToolName === 'function' ? normaliseToolName(raw) : raw);
+  const key = norm.toLowerCase().replace(/[’']/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+
+  // National Geographic MapMaker variants are approved even if older dashboard code
+  // runs before the editable Tool Inventory finishes loading from libraries.json.
+  if(/^(national geographic mapmaker|national geographic map maker|nat geo mapmaker|mapmaker)$/.test(key)) return true;
+
+  // Banned list always wins. This mirrors Tool Inventory behaviour without
+  // auto-saving or mutating libraries.json.
+  try{
+    if(typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY){
+      const banned = Array.isArray(TOOL_INVENTORY.banned) ? TOOL_INVENTORY.banned : [];
+      const isBanned = banned.some(b => {
+        const bk = (typeof normaliseToolName === 'function' ? normaliseToolName(b) : String(b||''))
+          .toLowerCase().replace(/[’']/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+        return bk && (key === bk || key.includes(bk) || bk.includes(key));
+      });
+      if(isBanned) return false;
+
+      const approved = Array.isArray(TOOL_INVENTORY.approved) ? TOOL_INVENTORY.approved : [];
+      if(approved.length){
+        const isApproved = approved.some(a => {
+          const ak = (typeof normaliseToolName === 'function' ? normaliseToolName(a) : String(a||''))
+            .toLowerCase().replace(/[’']/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+          return ak && (key === ak || key.includes(ak) || ak.includes(key));
+        });
+        if(isApproved) return true;
+      }
+    }
+  }catch(e){}
+
+  const t = key;
+  return TOOL_WHITELIST.some(w => {
+    const wk = String(w||'').toLowerCase().replace(/[’']/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+    return wk && (t === wk || t.includes(wk) || wk.includes(t));
+  });
 }
 
 function getIssues(){
