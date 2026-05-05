@@ -33,6 +33,33 @@ function bulkEscapeRegExp_(value){
   return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+
+
+function bulkTopProgressStart_(label){
+  try { if(typeof startProgress === 'function') startProgress(); } catch(e){}
+  try { if(typeof setStatus === 'function') setStatus(label || 'Working…', 'loading'); } catch(e){}
+}
+function bulkTopProgressStop_(label){
+  setTimeout(function(){
+    try { if(typeof stopProgress === 'function') stopProgress(); } catch(e){}
+    try { if(typeof setStatus === 'function') setStatus(label || 'Ready ✓'); } catch(e){}
+  }, 450);
+}
+function bulkRunWithTopProgress_(label, doneLabel, work, onError){
+  bulkTopProgressStart_(label);
+  // Yield briefly so the browser can paint the top loading bar before local scans/drafting begin.
+  setTimeout(function(){
+    try {
+      work();
+      bulkTopProgressStop_(doneLabel);
+    } catch(e){
+      bulkTopProgressStop_('Stopped safely');
+      if(typeof onError === 'function') onError(e);
+      else throw e;
+    }
+  }, 80);
+}
+
 function bulkDetectNamedToolOpportunity_(instruction){
   const text = String(instruction || '').toLowerCase().replace(/[’']/g, '');
   if(!bulkInstructionLooksLikeOpportunity(text)) return '';
@@ -318,7 +345,7 @@ function bulkSafeDraftDescriptionForTool_(toolName, e){
   const connection = ctx.connection;
 
   if(bulkDiagnosticToolKey_(tool) === bulkDiagnosticToolKey_('Makey Makey')){
-    return `Students use Makey Makey to turn a simple cardboard, foil or playdough model connected to ${theme} into an interactive input device. They create a Scratch explanation or quiz so classmates can press parts of the model to reveal key ideas about ${connection}.`;
+    return `Students use Makey Makey to turn a simple cardboard, foil or playdough model into an interactive input device connected to ${theme}. They then create a short quiz in Scratch so classmates can press parts of the model to reveal key ideas about ${connection}.`;
   }
   if(bulkDiagnosticToolKey_(tool) === bulkDiagnosticToolKey_('Book Creator')){
     return `Students use Book Creator to build a short multimodal book about ${theme}. They combine drawings, photos, captions and voice recordings to explain what they have learned about ${connection}.`;
@@ -1319,7 +1346,11 @@ async function bulkChatSend(){
       return;
     }
     bulkChatAddMessage('user', text);
-    try { bulkRunSafeDraftOnly_(text); } catch(e){ bulkChatAddMessage('assistant', '❌ Safe draft failed without changing anything: ' + bulkDiagnosticEscape_(e.message || e)); }
+    bulkRunWithTopProgress_('Finding safe named-tool opportunities…', 'Safe draft ready for review ✓', function(){
+      bulkRunSafeDraftOnly_(text);
+    }, function(e){
+      bulkChatAddMessage('assistant', '❌ Safe draft failed without changing anything: ' + bulkDiagnosticEscape_(e.message || e));
+    });
     return;
   }
 
@@ -1331,7 +1362,11 @@ async function bulkChatSend(){
       return;
     }
     bulkChatAddMessage('user', text);
-    try { bulkRunSafePreviewOnly_(text); } catch(e){ bulkChatAddMessage('assistant', '❌ Safe preview failed without changing anything: ' + bulkDiagnosticEscape_(e.message || e)); }
+    bulkRunWithTopProgress_('Scanning safe candidate units…', 'Safe preview ready ✓', function(){
+      bulkRunSafePreviewOnly_(text);
+    }, function(e){
+      bulkChatAddMessage('assistant', '❌ Safe preview failed without changing anything: ' + bulkDiagnosticEscape_(e.message || e));
+    });
     return;
   }
 
@@ -1343,7 +1378,11 @@ async function bulkChatSend(){
       return;
     }
     bulkChatAddMessage('user', text);
-    try { bulkRunDiagnosticOnly_(text); } catch(e){ bulkChatAddMessage('assistant', '❌ Diagnostic failed safely: ' + bulkDiagnosticEscape_(e.message || e)); }
+    bulkRunWithTopProgress_('Checking Bulk AI route…', 'Diagnostic ready ✓', function(){
+      bulkRunDiagnosticOnly_(text);
+    }, function(e){
+      bulkChatAddMessage('assistant', '❌ Diagnostic failed safely: ' + bulkDiagnosticEscape_(e.message || e));
+    });
     return;
   }
 
@@ -1355,7 +1394,11 @@ async function bulkChatSend(){
     try { autoInfo = bulkDiagnosticDetectRoute_(text); } catch(e){ autoInfo = null; }
     if(autoInfo && autoInfo.route === 'named-tool opportunity search' && autoInfo.namedTool){
       bulkChatAddMessage('user', text);
-      try { bulkRunSafeDraftOnly_(text); } catch(e){ bulkChatAddMessage('assistant', '❌ Safe named-tool draft failed without changing anything: ' + bulkDiagnosticEscape_(e.message || e)); }
+      bulkRunWithTopProgress_('Finding safe ' + bulkDiagnosticEscape_(autoInfo.namedTool) + ' opportunities…', 'Safe draft ready for review ✓', function(){
+        bulkRunSafeDraftOnly_(text);
+      }, function(e){
+        bulkChatAddMessage('assistant', '❌ Safe named-tool draft failed without changing anything: ' + bulkDiagnosticEscape_(e.message || e));
+      });
       return;
     }
   }
