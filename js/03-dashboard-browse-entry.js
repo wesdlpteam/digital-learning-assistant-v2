@@ -41,33 +41,62 @@ const TOOL_WHITELIST = [
   'cubetto','pico vr','pico','merge explorer'
 ];
 
+
+const DASHBOARD_STATIC_BANNED_TOOLS = [
+  'wevideo', 'we video',
+  'classvr', 'class vr'
+];
+
+function dashboardToolKey_(toolName){
+  const raw = String(toolName || '').trim();
+  const norm = (typeof normaliseToolName === 'function' ? normaliseToolName(raw) : raw);
+  return String(norm || '')
+    .toLowerCase()
+    .replace(/[’']/g,'')
+    .replace(/[^a-z0-9]+/g,' ')
+    .trim();
+}
+
+function dashboardBannedToolMatch_(toolName){
+  const key = dashboardToolKey_(toolName);
+  if(!key) return null;
+
+  const candidates = [];
+  try{
+    if(typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY && Array.isArray(TOOL_INVENTORY.banned)){
+      candidates.push(...TOOL_INVENTORY.banned);
+    }
+  }catch(e){}
+  candidates.push(...DASHBOARD_STATIC_BANNED_TOOLS);
+
+  for(const bannedName of candidates){
+    const bk = dashboardToolKey_(bannedName);
+    if(!bk) continue;
+    if(key === bk || key.includes(bk) || bk.includes(key)){
+      return String(bannedName || '').trim() || toolName;
+    }
+  }
+  return null;
+}
+
 function isWhitelisted(toolName){
   if(!toolName) return true;
   const raw = String(toolName || '').trim();
-  const norm = (typeof normaliseToolName === 'function' ? normaliseToolName(raw) : raw);
-  const key = norm.toLowerCase().replace(/[’']/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+  const key = dashboardToolKey_(raw);
+
+  // Banned list always wins, including static legacy bans such as ClassVR.
+  if(dashboardBannedToolMatch_(raw)) return false;
 
   // National Geographic MapMaker variants are approved even if older dashboard code
   // runs before the editable Tool Inventory finishes loading from libraries.json.
   if(/^(national geographic mapmaker|national geographic map maker|nat geo mapmaker|mapmaker)$/.test(key)) return true;
 
-  // Banned list always wins. This mirrors Tool Inventory behaviour without
-  // auto-saving or mutating libraries.json.
   try{
     if(typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY){
-      const banned = Array.isArray(TOOL_INVENTORY.banned) ? TOOL_INVENTORY.banned : [];
-      const isBanned = banned.some(b => {
-        const bk = (typeof normaliseToolName === 'function' ? normaliseToolName(b) : String(b||''))
-          .toLowerCase().replace(/[’']/g,'').replace(/[^a-z0-9]+/g,' ').trim();
-        return bk && (key === bk || key.includes(bk) || bk.includes(key));
-      });
-      if(isBanned) return false;
-
       const approved = Array.isArray(TOOL_INVENTORY.approved) ? TOOL_INVENTORY.approved : [];
       if(approved.length){
         const isApproved = approved.some(a => {
-          const ak = (typeof normaliseToolName === 'function' ? normaliseToolName(a) : String(a||''))
-            .toLowerCase().replace(/[’']/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+          const ak = dashboardToolKey_(a);
           return ak && (key === ak || key.includes(ak) || ak.includes(key));
         });
         if(isApproved) return true;
@@ -77,7 +106,7 @@ function isWhitelisted(toolName){
 
   const t = key;
   return TOOL_WHITELIST.some(w => {
-    const wk = String(w||'').toLowerCase().replace(/[’']/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+    const wk = dashboardToolKey_(w);
     return wk && (t === wk || t.includes(wk) || wk.includes(t));
   });
 }
@@ -89,8 +118,24 @@ function getIssues(){
     const realSugs=sugs.filter(isRealSug);
     if(realSugs.length<6) incomplete.push({e,idx,type:'incomplete',detail:`${realSugs.length}/6 — no planner uploaded`});
 
-    if(sugs.some(s=>sugTool(s).toLowerCase().includes('wevideo')))
-      banned.push({e,idx,type:'banned',detail:'WeVideo found'});
+    const bannedSeen = new Set();
+    sugs.forEach((s, slotIdx)=>{
+      if(!s || !isRealSug(s)) return;
+      const tool = sugTool(s);
+      const desc = sugDesc(s);
+      const bannedTool = dashboardBannedToolMatch_(tool) || dashboardBannedToolMatch_(desc);
+      if(!bannedTool) return;
+      const bannedKey = dashboardToolKey_(bannedTool);
+      const uniqueKey = `${idx}:${slotIdx}:${bannedKey}`;
+      if(bannedSeen.has(uniqueKey)) return;
+      bannedSeen.add(uniqueKey);
+      banned.push({
+        e,
+        idx,
+        type:'banned',
+        detail:`${tool || bannedTool} is banned${dashboardToolKey_(tool) !== bannedKey && desc ? ' / mentioned in description' : ''}`
+      });
+    });
 
     const tools=realSugs.map(s=>sugTool(s).toLowerCase().trim());
     const seen=new Set();
@@ -100,6 +145,7 @@ function getIssues(){
       // STEM Design Cycle slot (#6, index 5) is exempt from whitelist check
       if(slotIdx === 5) return;
       const t=sugTool(s);
+      if(t && dashboardBannedToolMatch_(t)) return;
       if(t&&!isWhitelisted(t))
         offWhitelist.push({e,idx,type:'offwhitelist',detail:`"${t}" not in approved list`});
     });
@@ -431,162 +477,13 @@ function buildSugRow(sug, entryIdx, sugIdx){
         ${stemBadge}
         <div style="flex:1"></div>
         <button class="btn-sm" id="${uid}-regen" onclick="regenSingleSug(${entryIdx},${sugIdx})" title="Regenerate this suggestion">↻</button>
-        <button class="btn-sm" onclick="toggleManualSuggestionEditor(${entryIdx},${sugIdx})" title="Edit this suggestion manually">✎ edit</button>
-        <button class="btn-sm" id="${uid}-ai-reword" onclick="aiRewordSuggestion(${entryIdx},${sugIdx},false)" title="Ask AI to polish this wording for review">✨ AI reword</button>
         <button class="btn-sm" onclick="openFeedbackChat('${uid}',${entryIdx},${sugIdx})">💬 feedback</button>
       </div>
       ${stemCycleLabel}
       <div class="sug-desc">${linkify(desc)}</div>
       ${linkHtml}
-      <div id="${uid}-editor" class="manual-sug-editor" style="display:none">
-        <div style="display:grid;grid-template-columns:minmax(160px,260px) 1fr;gap:10px;margin-bottom:10px">
-          <div>
-            <div class="manual-sug-label">Tool</div>
-            <input id="${uid}-edit-tool" class="inp manual-sug-input" value="${esc(tool)}">
-          </div>
-          <div>
-            <div class="manual-sug-label">Description</div>
-            <textarea id="${uid}-edit-desc" class="inp manual-sug-textarea">${esc(desc)}</textarea>
-          </div>
-        </div>
-        <div class="manual-sug-help">Manual edits save to this suggestion only. “AI reword draft” polishes the text in the editor first, then you choose whether to save it.</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
-          <button class="btn-pri" onclick="saveManualSuggestionEdit(${entryIdx},${sugIdx})" style="padding:9px 15px;font-size:12px">Save manual edit</button>
-          <button class="btn-sm" id="${uid}-ai-edit-reword" onclick="aiRewordSuggestion(${entryIdx},${sugIdx},true)" style="color:var(--lime);border-color:var(--lime)">✨ AI reword draft</button>
-          <button class="btn-sm" onclick="toggleManualSuggestionEditor(${entryIdx},${sugIdx},false)">Cancel</button>
-        </div>
-      </div>
     </div>
   </div>`;
-}
-
-function ensureManualSuggestionEditorStyles_(){
-  if(document.getElementById('manual-suggestion-editor-styles')) return;
-  const style=document.createElement('style');
-  style.id='manual-suggestion-editor-styles';
-  style.textContent=`
-    .manual-sug-editor{margin-top:14px;padding:14px;background:rgba(255,255,255,.035);border:1px solid var(--border);border-radius:12px;}
-    .manual-sug-label{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;font-weight:900;margin-bottom:5px;}
-    .manual-sug-input{font-size:13px!important;padding:9px 11px!important;margin-bottom:0!important;}
-    .manual-sug-textarea{font-size:13px!important;line-height:1.55!important;min-height:118px!important;margin-bottom:0!important;}
-    .manual-sug-help{font-size:11px;color:var(--dim);line-height:1.5;}
-    @media(max-width:760px){.manual-sug-editor [style*="grid-template-columns"]{grid-template-columns:1fr!important;}}
-  `;
-  document.head.appendChild(style);
-}
-
-function toggleManualSuggestionEditor(entryIdx, sugIdx, forceOpen){
-  ensureManualSuggestionEditorStyles_();
-  const panel=document.getElementById(`s${entryIdx}_${sugIdx}-editor`);
-  if(!panel) return;
-  const open = forceOpen === undefined ? panel.style.display === 'none' : !!forceOpen;
-  panel.style.display = open ? 'block' : 'none';
-  if(open){
-    const desc=document.getElementById(`s${entryIdx}_${sugIdx}-edit-desc`);
-    if(desc) setTimeout(()=>desc.focus(), 20);
-  }
-}
-
-function getManualSuggestionDraft_(entryIdx, sugIdx){
-  const entry=DATA && DATA[entryIdx];
-  const oldSug=getSugs(entry)[sugIdx] || {};
-  const toolEl=document.getElementById(`s${entryIdx}_${sugIdx}-edit-tool`);
-  const descEl=document.getElementById(`s${entryIdx}_${sugIdx}-edit-desc`);
-  const tool=(toolEl ? toolEl.value : sugTool(oldSug)).trim();
-  const desc=(descEl ? descEl.value : sugDesc(oldSug)).trim();
-  const draft=Object.assign({}, oldSug, {t:tool, d:desc});
-  if(oldSug.url && !draft.url) draft.url = oldSug.url;
-  return draft;
-}
-
-function saveManualSuggestionEdit(entryIdx, sugIdx){
-  const entry=DATA && DATA[entryIdx];
-  if(!entry) return;
-  const draft=getManualSuggestionDraft_(entryIdx, sugIdx);
-  if(!sugTool(draft).trim() || !sugDesc(draft).trim()){
-    setStatus('Manual edit needs both a tool and a description.', 'error');
-    return;
-  }
-  const oldSugs=getSugs(entry);
-  const newSugs=oldSugs.map((s,i)=> i===sugIdx ? cleanSuggestionObject_(draft) : s);
-  if(typeof recordChange === 'function') recordChange(entryIdx, oldSugs, newSugs);
-  DATA[entryIdx].s = newSugs.map(cleanSuggestionObject_);
-  DATA[entryIdx].audited = true;
-  if(typeof markEntryNeedsHumanRecheck_ === 'function') markEntryNeedsHumanRecheck_(entryIdx, 'Manual suggestion edit after human verification');
-  setStatus('Manual edit saved — syncing to Drive…');
-  saveToDrive();
-  renderEntry(entryIdx);
-}
-
-function parseAiSuggestionObject_(raw){
-  const clean=String(raw||'').replace(/```json|```/g,'').trim();
-  const si=clean.indexOf('{'), ei=clean.lastIndexOf('}');
-  if(si===-1 || ei===-1 || ei<=si) throw new Error('AI did not return a JSON object.');
-  return JSON.parse(clean.slice(si, ei+1));
-}
-
-async function aiRewordSuggestion(entryIdx, sugIdx, fromEditor){
-  const entry=DATA && DATA[entryIdx];
-  if(!entry) return;
-  const current = fromEditor ? getManualSuggestionDraft_(entryIdx, sugIdx) : (getSugs(entry)[sugIdx] || {});
-  const tool=sugTool(current).trim();
-  const desc=sugDesc(current).trim();
-  if(!tool || !desc){ setStatus('AI reword needs a tool and description first.', 'error'); return; }
-  const btn=document.getElementById(fromEditor ? `s${entryIdx}_${sugIdx}-ai-edit-reword` : `s${entryIdx}_${sugIdx}-ai-reword`);
-  const oldText=btn ? btn.textContent : '';
-  if(btn){ btn.disabled=true; btn.textContent='Rewording…'; }
-  startProgress();
-  const prompt=`You are polishing one Digital Learning Assistant suggestion for Wesley College.
-
-Keep the same tool unless the tool text below already names the tool. Do not invent a different app. Reword the description so it is clear, practical, grammatical and teacher-ready.
-
-The description must clearly say:
-- what students do
-- what students create or produce
-- why it connects to the unit
-
-Use Australian English. Remove weird symbols, duplicate punctuation, and vague phrases. Keep it to 2 concise sentences.
-
-Unit context:
-Campus: ${entry.ca}
-Year level: ${entry.yl}
-Theme: ${entry.th}
-Central idea: ${entry.ci || ''}
-Lines of inquiry: ${entry.lo || ''}
-Planner summary: ${entry.plannerText || ''}
-
-Current suggestion:
-Tool: ${tool}
-Description: ${desc}
-
-Return ONLY JSON in this format:
-{"t":"${tool.replace(/"/g,'\\"')}","d":"Improved description here."}`;
-  try{
-    const raw=await callAI([{role:'user',parts:[{text:prompt}]}], null, OPENAI_FAST_MODEL || OPENAI_MODEL);
-    const parsed=cleanSuggestionObject_(parseAiSuggestionObject_(raw));
-    parsed.t = parsed.t || tool;
-    if(fromEditor){
-      const toolEl=document.getElementById(`s${entryIdx}_${sugIdx}-edit-tool`);
-      const descEl=document.getElementById(`s${entryIdx}_${sugIdx}-edit-desc`);
-      if(toolEl) toolEl.value=sugTool(parsed) || tool;
-      if(descEl) descEl.value=sugDesc(parsed);
-      setStatus('AI reworded the draft — review it, then save manually.');
-    } else {
-      showChangesPopup([{
-        entryIdx, sugIdx,
-        t:sugTool(parsed) || tool,
-        d:sugDesc(parsed),
-        url:current.url,
-        reason:'AI reworded only. Review before applying.'
-      }]);
-      setStatus('AI reword ready for review.');
-    }
-  }catch(e){
-    setStatus('AI reword failed: '+(e.message||e), 'error');
-  }finally{
-    stopProgress();
-    if(btn){ btn.disabled=false; btn.textContent=oldText; }
-  }
 }
 
 function regenAllowsPodcastTool_(entry, currentSug){
