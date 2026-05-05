@@ -433,9 +433,9 @@ function bulkReplacementPickTool_(match, usedCounts, removeTool){
 }
 
 function bulkReplacementUnitContext_(entry){
-  const ctx = bulkSafeDraftShortContext_(entry || {});
-  const theme = bulkSafeDraftTrimEndPunctuation_(ctx.theme) || 'this unit';
-  const connection = bulkSafeDraftTrimEndPunctuation_(ctx.connection) || theme;
+  const ctx = bulkSafeDraftUnitFocus_(entry || {});
+  const theme = ctx.theme || 'this unit';
+  const connection = ctx.connection || theme;
   return { theme, connection };
 }
 
@@ -530,7 +530,7 @@ function bulkRunSafeReplacementDraftOnly_(text){
       entryIdx: m.entryIdx,
       sugIdx: m.sugIdx,
       t: newTool,
-      d: bulkReplacementDescriptionForTool_(newTool, e, info.replacementTool),
+      d: bulkSafeDraftFinaliseDescription_(bulkReplacementDescriptionForTool_(newTool, e, info.replacementTool)),
       reason: isHiddenReference
         ? `Safe targeted rewrite: keeps ${newTool} but removes a hidden ${info.replacementTool} reference from the description. Slot #6/STEM is protected. Review before applying.`
         : `Safe targeted replacement draft: replaces ${info.replacementTool} in ${m.year}. Slot #6/STEM is protected. Review before applying.`,
@@ -683,10 +683,8 @@ function bulkMinecraftDiagnosticHtml_(instruction){
 
 
 function bulkMinecraftConnectionText_(entry){
-  const pieces = [entry && (entry.th || entry.theme), entry && (entry.ci || entry.centralIdea)].filter(Boolean).map(v => String(v).trim()).filter(Boolean);
-  let base = pieces[0] || pieces[1] || 'this unit';
-  base = base.replace(/[\s.?!;:]+$/g, '');
-  return base || 'this unit';
+  const ctx = bulkSafeDraftUnitFocus_(entry || {});
+  return ctx.connection || 'this unit';
 }
 function bulkMinecraftDescriptionForLesson_(lesson, entry){
   const title = String((lesson && lesson.title) || 'the curated Minecraft lesson').trim();
@@ -744,7 +742,7 @@ function bulkRunMinecraftExactLessonDraftOnly_(text){
       entryIdx: r.entryIdx,
       sugIdx: r.slotIdx,
       t: 'Minecraft Education',
-      d: bulkMinecraftDescriptionForLesson_(lesson, e),
+      d: bulkSafeDraftFinaliseDescription_(bulkMinecraftDescriptionForLesson_(lesson, e)),
       url: lesson.url || '',
       lessonUrl: lesson.url || '',
       lessonTitle: lesson.title || lessonTitle,
@@ -985,20 +983,13 @@ function bulkStkY6CollectFlagged_(limit){
 }
 
 function bulkStkY6UnitFocus_(e){
-  const theme = bulkSafeDraftTrimEndPunctuation_(bulkStkY6Text_(e && (e.th || e.theme))) || 'this Year 6 unit';
-  const ci = bulkSafeDraftTrimEndPunctuation_(bulkStkY6Text_(e && (e.ci || e.centralIdea)));
-  let loi = e && (e.loi || e.linesOfInquiry || e.lines_of_inquiry || '');
-  if(Array.isArray(loi)) loi = loi.join('; ');
-  loi = bulkStkY6Text_(loi)
-    .replace(/ |â€¢|Â•|ï‚·|\uFFFD/g, '; ')
-    .replace(/\s*[|•·]+\s*/g, '; ')
-    .replace(/\s*;\s*/g, '; ')
-    .replace(/;{2,}/g, ';')
-    .trim();
-  loi = bulkSafeDraftTrimEndPunctuation_(loi);
-  const connection = bulkSafeDraftTrimEndPunctuation_(loi || ci || theme) || theme;
-  const shortConnection = connection.length > 150 ? connection.slice(0,147).replace(/\s+\S*$/, '') + '…' : connection;
-  return { theme, ci, loi, connection: shortConnection };
+  const focus = bulkSafeDraftUnitFocus_(e || {});
+  return {
+    theme: focus.theme || 'this Year 6 unit',
+    ci: focus.ci || '',
+    loi: focus.loi || '',
+    connection: focus.connection || focus.theme || 'this Year 6 unit'
+  };
 }
 
 function bulkStkY6RewriteTool_(row){
@@ -1070,7 +1061,7 @@ function bulkRunStkY6DraftOnly_(text){
       entryIdx: row.entryIdx,
       sugIdx: row.sugIdx,
       t: newTool,
-      d: bulkStkY6RewriteDescription_(newTool, row.entry, row),
+      d: bulkSafeDraftFinaliseDescription_(bulkStkY6RewriteDescription_(newTool, row.entry, row)),
       reason: `Safe St Kilda Road Year 6 quality draft: ${row.issues.slice(0,3).join(', ')}. Keeps the same tool unless a local rule requires a safer tool correction. STEM slot #6 and Minecraft are protected. Review before applying.`,
       improvementConfidence: 'Draft-only',
       whyBetter: oldToolKey !== newToolKey
@@ -1308,6 +1299,26 @@ function bulkSafeDraftCleanUnitText_(value){
   return bulkSafeDraftHumanisePlannerText_(value);
 }
 
+function bulkSafeDraftFinaliseDescription_(value){
+  // Final pass for all safe Bulk draft routes so planner punctuation or
+  // mojibake cannot leak into the review popup from any template.
+  let s = bulkSafeDraftCleanMojibake_(value);
+  s = s
+    .replace(/How;\s*We;\s*Organise;\s*Ourselves/gi, 'How We Organise Ourselves')
+    .replace(/How;\s*The;\s*World;\s*Works/gi, 'How The World Works')
+    .replace(/Where;\s*We;\s*Are;\s*In;\s*Place;\s*And;\s*Time/gi, 'Where We Are In Place And Time')
+    .replace(/Who;\s*We;\s*Are/gi, 'Who We Are')
+    .replace(/How;\s*We;\s*Express;\s*Ourselves/gi, 'How We Express Ourselves')
+    .replace(/Sharing;\s*The;\s*Planet/gi, 'Sharing The Planet')
+    .replace(/Student-led;\s*exhibition;\s*\(PYPEX\);\s*—;\s*Students;\s*develop;\s*and;\s*present;\s*their;\s*own;\s*units;\s*of;\s*inquiry/gi, 'Student-led exhibition (PYPEX): Students develop and present their own units of inquiry')
+    .replace(/;\s*—\s*;?/g, ' — ')
+    .replace(/\s+([,.;:!?])/g, '$1')
+    .replace(/([.!?]){2,}/g, '$1')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return s;
+}
+
 function bulkSafeDraftShortContext_(e){
   const theme = bulkSafeDraftCleanUnitText_(e && (e.th || e.theme)) || 'this unit';
   const ci = bulkSafeDraftCleanUnitText_(e && (e.ci || e.centralIdea));
@@ -1496,7 +1507,7 @@ function bulkRunSafeDraftOnly_(text){
       entryIdx: c.entryIdx,
       sugIdx: c.slotIdx,
       t: info.namedTool,
-      d: bulkSafeDraftDescriptionForTool_(info.namedTool, e),
+      d: bulkSafeDraftFinaliseDescription_(bulkSafeDraftDescriptionForTool_(info.namedTool, e)),
       reason: `Safe named-tool opportunity draft for ${info.namedTool}. This unit does not already use the tool. Slot #6/STEM is protected. Review before applying.`,
       improvementConfidence: 'Draft-only',
       whyBetter: 'Adds a concrete student action, student-created product and unit connection without calling AI or changing anything automatically.'
