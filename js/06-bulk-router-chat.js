@@ -2704,3 +2704,132 @@ function showNextQuestion(parsed){
   bulkChatAddMessage('assistant', `${summary}${q.text}`, q.options);
 }
 
+
+// ========== BULK AI QUICK ACTIONS UI ==========
+// Injects a small prompt-builder panel into the Bulk AI card. Buttons fill the chat input only;
+// admins still press Send and review changes before anything is saved.
+(function(){
+  function bulkQAEl_(id){ return document.getElementById(id); }
+  function bulkQASetInput_(value){
+    const input = bulkQAEl_('bulk-chat-input');
+    if(!input) return;
+    input.value = String(value || '').trim();
+    input.focus();
+    try { input.scrollIntoView({behavior:'smooth', block:'center'}); } catch(e){}
+  }
+  function bulkQAGet_(id){
+    const el = bulkQAEl_(id);
+    return el ? String(el.value || '').trim() : '';
+  }
+  function bulkQANormaliseScope_(scope){
+    return String(scope || '').trim().replace(/\s+/g, ' ');
+  }
+  window.bulkQuickActionFill = function(kind){
+    const type = String(kind || '').toLowerCase();
+    if(type === 'opportunity'){
+      const tool = bulkQAGet_('bulk-qa-tool');
+      const scope = bulkQANormaliseScope_(bulkQAGet_('bulk-qa-scope'));
+      if(!tool){ alert('Enter a tool first, e.g. Book Creator or Makey Makey.'); return; }
+      const prompt = scope
+        ? `Find more opportunities in ${scope} to use ${tool}`
+        : `Find more opportunities to use ${tool}`;
+      bulkQASetInput_(prompt);
+      return;
+    }
+    if(type === 'replace'){
+      const tool = bulkQAGet_('bulk-qa-replace-tool');
+      const scope = bulkQANormaliseScope_(bulkQAGet_('bulk-qa-replace-scope'));
+      if(!tool){ alert('Enter the tool to replace first, e.g. Seesaw.'); return; }
+      const prompt = scope ? `Replace ${tool} in ${scope}` : `Replace ${tool}`;
+      bulkQASetInput_(prompt);
+      return;
+    }
+    if(type === 'minecraft'){
+      const lesson = bulkQAGet_('bulk-qa-minecraft-lesson');
+      if(!lesson){ alert('Enter the exact curated Minecraft lesson title first, e.g. Revamp Melbourne.'); return; }
+      const cleanLesson = lesson.replace(/\s+Minecraft\s+lesson\s*$/i, '').replace(/\s+Minecraft\s*$/i, '').trim();
+      bulkQASetInput_(`Where can the ${cleanLesson} Minecraft lesson fit?`);
+      return;
+    }
+    if(type === 'improve'){
+      const campus = bulkQANormaliseScope_(bulkQAGet_('bulk-qa-improve-campus'));
+      const year = bulkQANormaliseScope_(bulkQAGet_('bulk-qa-improve-year'));
+      if(!campus || !year){ alert('Enter both a campus and year level, e.g. Glen Waverley and Year 6.'); return; }
+      bulkQASetInput_(`Improve ${campus} ${year} suggestions`);
+      return;
+    }
+  };
+
+  window.bulkQuickActionSend = function(kind){
+    window.bulkQuickActionFill(kind);
+    setTimeout(function(){
+      const input = bulkQAEl_('bulk-chat-input');
+      if(input && input.value && typeof bulkChatSend === 'function') bulkChatSend();
+    }, 80);
+  };
+
+  function bulkQAInstall_(){
+    if(bulkQAEl_('bulk-quick-actions-panel')) return true;
+    const chat = bulkQAEl_('bulk-chat-messages');
+    if(!chat || !chat.parentNode) return false;
+    const panel = document.createElement('div');
+    panel.id = 'bulk-quick-actions-panel';
+    panel.innerHTML = `
+      <div style="padding:14px 20px;background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+          <div style="font-size:11px;font-weight:900;color:var(--lime);letter-spacing:1px;text-transform:uppercase">⚡ Bulk quick actions</div>
+          <div style="font-size:11px;color:var(--dim);line-height:1.45">Builds a safe prompt. Nothing is saved until the review popup is approved.</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px">
+          <div style="border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--card2)">
+            <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:6px">➕ Find opportunities</div>
+            <input id="bulk-qa-tool" class="inp" placeholder="Tool, e.g. Book Creator" style="font-size:12px;padding:8px 10px;margin-bottom:6px">
+            <input id="bulk-qa-scope" class="inp" placeholder="Optional scope, e.g. Prep or Year 6" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button type="button" class="btn-sm" onclick="bulkQuickActionFill('opportunity')">Fill prompt</button>
+              <button type="button" class="btn-sm" onclick="bulkQuickActionSend('opportunity')" style="color:var(--lime);border-color:var(--lime)">Draft now</button>
+            </div>
+          </div>
+          <div style="border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--card2)">
+            <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:6px">🔁 Replace a tool</div>
+            <input id="bulk-qa-replace-tool" class="inp" placeholder="Tool to remove, e.g. Seesaw" style="font-size:12px;padding:8px 10px;margin-bottom:6px">
+            <input id="bulk-qa-replace-scope" class="inp" placeholder="Scope, e.g. Year 5 and 6" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button type="button" class="btn-sm" onclick="bulkQuickActionFill('replace')">Fill prompt</button>
+              <button type="button" class="btn-sm" onclick="bulkQuickActionSend('replace')" style="color:var(--lime);border-color:var(--lime)">Draft now</button>
+            </div>
+          </div>
+          <div style="border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--card2)">
+            <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:6px">🎮 Place Minecraft lesson</div>
+            <input id="bulk-qa-minecraft-lesson" class="inp" placeholder="Exact lesson, e.g. Revamp Melbourne" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button type="button" class="btn-sm" onclick="bulkQuickActionFill('minecraft')">Fill prompt</button>
+              <button type="button" class="btn-sm" onclick="bulkQuickActionSend('minecraft')" style="color:var(--lime);border-color:var(--lime)">Draft now</button>
+            </div>
+          </div>
+          <div style="border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--card2)">
+            <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:6px">✨ Improve suggestions</div>
+            <input id="bulk-qa-improve-campus" class="inp" placeholder="Campus, e.g. Glen Waverley" style="font-size:12px;padding:8px 10px;margin-bottom:6px">
+            <input id="bulk-qa-improve-year" class="inp" placeholder="Year, e.g. Year 6" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button type="button" class="btn-sm" onclick="bulkQuickActionFill('improve')">Fill prompt</button>
+              <button type="button" class="btn-sm" onclick="bulkQuickActionSend('improve')" style="color:var(--lime);border-color:var(--lime)">Draft now</button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    chat.parentNode.insertBefore(panel, chat);
+    return true;
+  }
+
+  function bulkQAStart_(){
+    if(bulkQAInstall_()) return;
+    let tries = 0;
+    const timer = setInterval(function(){
+      tries++;
+      if(bulkQAInstall_() || tries > 40) clearInterval(timer);
+    }, 250);
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bulkQAStart_);
+  else bulkQAStart_();
+})();
