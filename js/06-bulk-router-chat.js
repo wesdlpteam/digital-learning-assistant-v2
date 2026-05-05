@@ -107,7 +107,13 @@ function bulkDetectNamedToolOpportunity_(instruction){
     'sphero indi':'Sphero Indi',
     'wise chatbots':'Wise Discussion Chatbots',
     'wise discussion chatbots':'Wise Discussion Chatbots',
-    'schoolbox discussion chatbots':'Wise Discussion Chatbots'
+    'schoolbox discussion chatbots':'Wise Discussion Chatbots',
+    'green screen':'Green Screen',
+    'green screen kit':'Green Screen',
+    'green screen kits':'Green Screen',
+    'greenscreen':'Green Screen',
+    'canva remove background':'Green Screen',
+    'remove background':'Green Screen'
   };
   for(const [alias, tool] of Object.entries(aliases)){
     const pattern = bulkEscapeRegExp_(alias).replace(/\s+/g, '\\s+');
@@ -230,7 +236,7 @@ function bulkReplacementCanonicalToolName_(value){
 }
 
 function bulkDiagnosticAllKnownTools_(){
-  const extras = ['Seesaw','Google Maps','National Geographic MapMaker','Makey Makey','Book Creator','Lego Spike Prime','Lego Spike Essential','Minecraft Education','Canva','Padlet','ScratchJR','Scratch','Adobe Express','Adobe Express Podcasting','Microsoft Forms','Microsoft Sway','GarageBand','iMovie','CoDrone EDU','Podcast Equipment + GarageBand'];
+  const extras = ['Seesaw','Google Maps','National Geographic MapMaker','Makey Makey','Book Creator','Lego Spike Prime','Lego Spike Essential','Minecraft Education','Canva','Canva Remove Background','Green Screen','Padlet','ScratchJR','Scratch','Adobe Express','Adobe Express Podcasting','Microsoft Forms','Microsoft Sway','GarageBand','iMovie','CoDrone EDU','Podcast Equipment + GarageBand'];
   const dataTools = [];
   try{
     if(Array.isArray(DATA)){
@@ -1507,6 +1513,20 @@ function bulkSafeDraftUnitFocus_(e){
   return { theme, ci, loi, connection, plannerSource };
 }
 
+function bulkSafeDraftOutputToolName_(toolName){
+  const raw = String(toolName || '').trim();
+  const key = bulkDiagnosticToolKey_(raw);
+  // Wesley rule: physical green screen kits are not the suggested tool.
+  // Use Canva's Remove Background/video compositing as the practical classroom pathway.
+  if(key === bulkDiagnosticToolKey_('Green Screen') ||
+     key === bulkDiagnosticToolKey_('Green Screen Kits') ||
+     key === bulkDiagnosticToolKey_('Canva Remove Background') ||
+     /green\s*screen|remove\s*background/i.test(raw)){
+    return 'Canva';
+  }
+  return normaliseToolName(raw || '');
+}
+
 function bulkSafeDraftDescriptionForTool_(toolName, e){
   const tool = normaliseToolName(toolName || '');
   const k = bulkDiagnosticToolKey_(tool);
@@ -1519,6 +1539,11 @@ function bulkSafeDraftDescriptionForTool_(toolName, e){
     if(band === 'early') return `Students use Makey Makey to turn a simple cardboard, foil or playdough model into a touch board connected to ${theme}. In Scratch, they add sounds or simple quiz responses so classmates can press parts of the model and hear what it shows about ${connection}.`;
     if(band === 'upper') return `Students use Makey Makey to design a conductive model or interactive display that represents an idea from ${theme}. They code a Scratch quiz, soundboard or feedback sequence, test how classmates interact with it, and explain how the inputs reveal key ideas about ${connection}.`;
     return `Students use Makey Makey to build a simple conductive model from cardboard, foil or playdough that represents an idea from ${theme}. They connect the model to a short Scratch quiz or soundboard so classmates can press different parts, get feedback, and explain how the interaction reveals key ideas about ${connection}.`;
+  }
+  if(k === bulkDiagnosticToolKey_('Green Screen') || k === bulkDiagnosticToolKey_('Green Screen Kits') || k === bulkDiagnosticToolKey_('Canva Remove Background') || /green\s*screen|remove\s*background/i.test(String(toolName || ''))){
+    if(band === 'early') return `Students use Canva's Remove Background feature to make a short green-screen-style video connected to ${theme}. They record themselves as a weather reporter, museum guide, explorer or community helper standing in front of a relevant image, then explain one clear idea about ${connection}.`;
+    if(band === 'upper') return `Students use Canva's Remove Background feature to produce a green-screen-style explainer video connected to ${theme}. They choose a purposeful background such as a historical location, data display, ecosystem, gallery wall or news studio, script a 30-60 second segment, and explain how the setting helps an audience understand ${connection}.`;
+    return `Students use Canva's Remove Background feature to create a green-screen-style report connected to ${theme}. They film themselves as a news presenter, field reporter, expert witness or tour guide in front of a chosen background, then publish a short video that explains what the setting shows about ${connection}.`;
   }
   if(k === bulkDiagnosticToolKey_('Book Creator')){
     if(band === 'early') return `Students use Book Creator to make a simple picture-and-voice book connected to ${theme}. They add drawings or photos, short captions and optional recorded sentences so they can show and tell what they understand about ${connection}.`;
@@ -1641,7 +1666,7 @@ function bulkRunSafeDraftOnly_(text){
     return {
       entryIdx: c.entryIdx,
       sugIdx: c.slotIdx,
-      t: info.namedTool,
+      t: bulkSafeDraftOutputToolName_(info.namedTool),
       d: bulkSafeDraftFinaliseDescription_(bulkSafeDraftDescriptionForTool_(info.namedTool, e)),
       reason: `Safe named-tool opportunity draft for ${info.namedTool}. This unit does not already use the tool. Slot #6/STEM is protected. Review before applying.`,
       improvementConfidence: 'Draft-only',
