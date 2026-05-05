@@ -730,8 +730,126 @@ function bulkRunMinecraftExactLessonDraftOnly_(text){
   bulkChatState = 'done';
 }
 
+
+
+// ========== ST KILDA ROAD YEAR 6 DIAGNOSTIC MODE ==========
+// Diagnostic-only. Scans only St Kilda/St Kilda Road Year 6 entries and reports likely quality issues.
+// No AI calls, no drafts, no saves, and no whole-library repair loop.
+function bulkStkY6Text_(value){
+  if(Array.isArray(value)) return value.map(bulkStkY6Text_).filter(Boolean).join('; ');
+  if(value && typeof value === 'object') return Object.values(value).map(bulkStkY6Text_).filter(Boolean).join('; ');
+  return String(value == null ? '' : value).trim();
+}
+function bulkStkY6Words_(text){
+  const stop = new Set('about after again against also because between could digital each from have into learn learning make more most other should student students their them then there these they this those through understand understanding using where which while with would your unit inquiry central idea lines line year'.split(' '));
+  return String(text || '').toLowerCase().replace(/[^a-z0-9\s-]/g,' ').split(/\s+/).filter(w => w.length >= 5 && !stop.has(w));
+}
+function bulkStkY6UnitText_(e){
+  return [e && (e.th || e.theme), e && (e.ci || e.centralIdea || e.central_idea), e && (e.loi || e.linesOfInquiry || e.lines_of_inquiry)].map(bulkStkY6Text_).filter(Boolean).join(' ');
+}
+function bulkStkY6SuggestionText_(s){
+  return [sugTool(s), s && (s.d || s.desc || s.description || s.integration_idea || s.activity || s.suggestion)].map(bulkStkY6Text_).filter(Boolean).join(' ');
+}
+function bulkStkY6LooksStKilda_(e){
+  const c = bulkStkY6Text_(e && (e.ca || e.campus || e.campusName)).toLowerCase();
+  return /st\s*kilda/.test(c) || /stk\b/.test(c);
+}
+function bulkStkY6LooksYear6_(e){
+  const y = bulkStkY6Text_(e && (e.yl || e.year || e.yearLevel || e.year_level)).toLowerCase();
+  return /year\s*6\b|yr\s*6\b|^6$/.test(y);
+}
+function bulkStkY6HasCorruptLoi_(e){
+  const loi = bulkStkY6Text_(e && (e.loi || e.linesOfInquiry || e.lines_of_inquiry));
+  return / |â€¢|Â•|ï‚·|\uFFFD|\s\|\s|\s·\s|\s•\s/.test(loi);
+}
+function bulkStkY6Desc_(s){
+  return bulkStkY6Text_(s && (s.d || s.desc || s.description || s.integration_idea || s.activity || s.suggestion));
+}
+function bulkStkY6IssueList_(entry, sug){
+  const issues = [];
+  const tool = bulkStkY6Text_(sugTool(sug));
+  const desc = bulkStkY6Desc_(sug);
+  const lower = desc.toLowerCase();
+  if(!tool) issues.push('missing tool label');
+  if(!desc) issues.push('missing description');
+  if(desc && desc.length < 110) issues.push('description may be too brief');
+  if(/\bexplore\b.*\btechnology\b|\bdigital product\b|\bshow their understanding\b|\brelevant\s+(tool|platform|perspective)\b|\bcreate a presentation\b/i.test(desc)) issues.push('generic wording');
+  if(desc && !/\b(create|build|design|code|record|produce|publish|map|model|film|animate|program|prototype|construct|present|compare|explain)\b/i.test(desc)) issues.push('student product unclear');
+  if(/google maps/i.test(tool + ' ' + desc) && /\b(pin|pins|label|labels|annotat|layer|route|custom map|plot|overlay)\b/i.test(desc)) issues.push('Google Maps used for mapping/annotation rather than Street View');
+  const unitWords = new Set(bulkStkY6Words_(bulkStkY6UnitText_(entry)));
+  const sugWords = new Set(bulkStkY6Words_(desc));
+  let overlap = 0;
+  unitWords.forEach(w => { if(sugWords.has(w)) overlap++; });
+  if(desc && unitWords.size >= 4 && overlap === 0) issues.push('weak visible unit connection');
+  return issues;
+}
+function bulkStkY6DiagnosticHtml_(){
+  const entries = Array.isArray(DATA) ? DATA.map((e, entryIdx) => ({ e, entryIdx })).filter(x => bulkStkY6LooksStKilda_(x.e) && bulkStkY6LooksYear6_(x.e)) : [];
+  let totalSuggestions = 0;
+  let flaggedSuggestions = 0;
+  let corruptLoiEntries = 0;
+  const unitRows = [];
+  entries.forEach(({e, entryIdx}) => {
+    const sugs = (getSugs(e) || []).filter(isRealSug);
+    totalSuggestions += sugs.length;
+    if(bulkStkY6HasCorruptLoi_(e)) corruptLoiEntries++;
+    const flagged = [];
+    sugs.forEach((s, sugIdx) => {
+      const issues = bulkStkY6IssueList_(e, s);
+      if(issues.length){
+        flaggedSuggestions++;
+        if(flagged.length < 3){
+          flagged.push(`slot ${sugIdx + 1}: ${bulkDiagnosticEscape_(sugTool(s) || 'Untitled tool')} — ${bulkDiagnosticEscape_(issues.slice(0,3).join(', '))}`);
+        }
+      }
+    });
+    unitRows.push({
+      entryIdx,
+      campus: e.ca || e.campus || 'St Kilda Road',
+      year: e.yl || e.year || 'Year 6',
+      theme: e.th || e.theme || 'Untitled unit',
+      suggestionCount: sugs.length,
+      corruptLoi: bulkStkY6HasCorruptLoi_(e),
+      flaggedCount: sugs.map(s => bulkStkY6IssueList_(e,s).length ? 1 : 0).reduce((a,b)=>a+b,0),
+      flagged
+    });
+  });
+  const worst = unitRows.sort((a,b) => b.flaggedCount - a.flaggedCount).slice(0, 8);
+  const rowsHtml = worst.length ? worst.map(r => `
+    <div style="padding:8px 0;border-top:1px solid rgba(255,255,255,.08)">
+      <div><strong>${bulkDiagnosticEscape_(r.campus)} · ${bulkDiagnosticEscape_(r.year)} · ${bulkDiagnosticEscape_(r.theme)}</strong></div>
+      <div style="font-size:12px;color:var(--dim)">${r.suggestionCount} suggestions · ${r.flaggedCount} locally flagged${r.corruptLoi ? ' · LOI separators may need cleaning' : ''}</div>
+      ${r.flagged.length ? `<div style="font-size:12px;color:#bbb;margin-top:4px">${r.flagged.join('<br>')}</div>` : ''}
+    </div>`).join('') : '<div style="font-size:12px;color:var(--dim)">No matching St Kilda Road Year 6 entries found.</div>';
+  return `
+    <div style="margin-top:10px;padding:10px 12px;background:rgba(96,184,240,.06);border:1px solid rgba(96,184,240,.25);border-radius:10px">
+      <div style="font-size:11px;color:#60B8F0;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">St Kilda Road Year 6 diagnostic</div>
+      <div>Matching entries: <strong>${entries.length}</strong></div>
+      <div>Total suggestions scanned: <strong>${totalSuggestions}</strong></div>
+      <div>Locally flagged suggestions: <strong>${flaggedSuggestions}</strong></div>
+      <div>Entries with possible LOI separator/corruption issues: <strong>${corruptLoiEntries}</strong></div>
+      <div style="margin-top:8px;color:var(--dim);font-size:12px">This is a lightweight local scan only. It does not regenerate, rewrite, call AI, or save anything.</div>
+      <div style="margin-top:8px">${rowsHtml}</div>
+    </div>`;
+}
+function bulkLooksLikeStkY6Diagnostic_(text){
+  const t = String(text || '').toLowerCase();
+  return /st\s*kilda|stk/.test(t) && /year\s*6|yr\s*6|y6/.test(t) && /suggestion|quality|diagnos|audit|weak|improve|review/.test(t);
+}
+
 function bulkRunDiagnosticOnly_(text){
   const cleanText = String(text || '').replace(/^\s*(diagnose|debug|route)\s*:?\s*/i, '').trim();
+  if(bulkLooksLikeStkY6Diagnostic_(cleanText)){
+    bulkChatAddMessage('assistant', `
+      <div style="padding:2px 0">
+        <div style="font-size:10px;color:#60B8F0;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">🧭 Bulk AI diagnostic only</div>
+        <div>Route detected: <strong>St Kilda Road Year 6 quality diagnostic</strong></div>
+        <div>Confidence: <strong>high</strong></div>
+        ${bulkStkY6DiagnosticHtml_()}
+        <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No changes were drafted or saved.</div>
+      </div>`);
+    return;
+  }
   const info = bulkDiagnosticDetectRoute_(cleanText);
   const years = info.targetYears && info.targetYears.length ? info.targetYears.join(', ') : 'All years';
   let scanHtml = '';
