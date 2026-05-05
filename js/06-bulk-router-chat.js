@@ -335,6 +335,168 @@ function bulkDiagnosticScanReplacementTool_(toolName, targetYears){
   return { matches, skippedYear, skippedStemSlot, totalMatchingSlots, matchingEntries };
 }
 
+
+
+// ========== BULK AI TARGETED REPLACEMENT SAFE DRAFT MODE ==========
+// Draft-only path for prompts such as: draft: Replace Seesaw in Year 5 and 6
+// It uses the same fuzzy local scanner as diagnostics, protects STEM slot #6, makes no AI calls,
+// and opens the existing review popup without saving anything automatically.
+function bulkReplacementIsBannedTool_(toolName){
+  const key = bulkDiagnosticToolKey_(toolName);
+  try {
+    const banned = ((TOOL_INVENTORY && TOOL_INVENTORY.banned) || []).map(t => bulkDiagnosticToolKey_(t));
+    return banned.includes(key);
+  } catch(e){ return false; }
+}
+
+function bulkReplacementApprovedToolsForYear_(yearLabel, removeTool){
+  const removeKey = bulkDiagnosticToolKey_(removeTool);
+  let tools = [];
+  try {
+    if(typeof getAgeAppropriateTools === 'function') tools = getAgeAppropriateTools(yearLabel) || [];
+  } catch(e){ tools = []; }
+  if(!tools.length){
+    tools = [
+      ...((typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY && TOOL_INVENTORY.approved) ? TOOL_INVENTORY.approved : []),
+      ...(typeof DEFAULT_APPROVED_TOOLS !== 'undefined' ? (DEFAULT_APPROVED_TOOLS || []) : [])
+    ];
+  }
+  const seen = new Set();
+  return tools.map(t => normaliseToolName(String(t || '').trim())).filter(t => {
+    const k = bulkDiagnosticToolKey_(t);
+    if(!k || seen.has(k)) return false;
+    seen.add(k);
+    if(k === removeKey) return false;
+    if(bulkReplacementIsBannedTool_(t)) return false;
+    // Avoid risky/special-case tools in a deterministic replacement pass.
+    if(/minecraft/i.test(t)) return false;
+    return true;
+  });
+}
+
+function bulkReplacementPreferredTools_(match){
+  const text = `${match.theme || ''} ${match.currentDesc || ''}`.toLowerCase();
+  if(/\b(quiz|survey|poll|form|questionnaire|check\s*in|feedback|data)\b/.test(text)){
+    return ['Microsoft Forms','Padlet','Canva','Book Creator','Microsoft Sway','Microsoft PowerPoint'];
+  }
+  if(/\b(discuss|discussion|perspective|opinion|debate|interview|question|empathy|point of view)\b/.test(text)){
+    return ['Wise Discussion Chatbots','Padlet','Book Creator','Canva','Microsoft Sway','Microsoft PowerPoint'];
+  }
+  if(/\b(gallery|brainstorm|collaborat|share|collect|sort|compare|wall|board)\b/.test(text)){
+    return ['Padlet','Canva','Book Creator','Microsoft PowerPoint','Microsoft Sway','Microsoft Forms'];
+  }
+  if(/\b(poster|infographic|visual|design|diagram|explain|presentation)\b/.test(text)){
+    return ['Canva','Microsoft PowerPoint','Book Creator','Microsoft Sway','Padlet','Microsoft Forms'];
+  }
+  return ['Book Creator','Canva','Padlet','Microsoft Forms','Microsoft Sway','Microsoft PowerPoint','Wise Discussion Chatbots'];
+}
+
+function bulkReplacementPickTool_(match, usedCounts, removeTool){
+  const approved = bulkReplacementApprovedToolsForYear_(match.year, removeTool);
+  const approvedKeys = new Map(approved.map(t => [bulkDiagnosticToolKey_(t), t]));
+  const preferred = bulkReplacementPreferredTools_(match).map(t => approvedKeys.get(bulkDiagnosticToolKey_(t))).filter(Boolean);
+  const pool = preferred.length ? preferred : approved.filter(t => !/seesaw/i.test(t));
+  if(!pool.length) return 'Book Creator';
+  let best = pool[0], bestScore = Infinity;
+  pool.forEach(t => {
+    const k = bulkDiagnosticToolKey_(t);
+    const score = usedCounts[k] || 0;
+    if(score < bestScore){ best = t; bestScore = score; }
+  });
+  usedCounts[bulkDiagnosticToolKey_(best)] = (usedCounts[bulkDiagnosticToolKey_(best)] || 0) + 1;
+  return best;
+}
+
+function bulkReplacementUnitContext_(entry){
+  const ctx = bulkSafeDraftShortContext_(entry || {});
+  const theme = bulkSafeDraftTrimEndPunctuation_(ctx.theme) || 'this unit';
+  const connection = bulkSafeDraftTrimEndPunctuation_(ctx.connection) || theme;
+  return { theme, connection };
+}
+
+function bulkReplacementDescriptionForTool_(toolName, entry, removeTool){
+  const tool = normaliseToolName(toolName || '');
+  const k = bulkDiagnosticToolKey_(tool);
+  const ctx = bulkReplacementUnitContext_(entry || {});
+  const theme = ctx.theme;
+  const connection = ctx.connection;
+
+  if(k === bulkDiagnosticToolKey_('Book Creator')){
+    return `Students use Book Creator to create a short multimodal book connected to ${theme}. They combine images, captions and recorded reflections to explain key ideas about ${connection}, giving teachers a clearer product than a simple ${removeTool} post.`;
+  }
+  if(k === bulkDiagnosticToolKey_('Canva')){
+    return `Students use Canva to design a visual explanation, infographic or short presentation connected to ${theme}. They combine key vocabulary, images and concise captions to communicate what they understand about ${connection}.`;
+  }
+  if(k === bulkDiagnosticToolKey_('Padlet')){
+    return `Students contribute evidence, images, questions and short explanations to a shared Padlet board connected to ${theme}. They organise and respond to classmates’ posts to show how their thinking has developed about ${connection}.`;
+  }
+  if(k === bulkDiagnosticToolKey_('Microsoft Forms')){
+    return `Students create a short Microsoft Forms quiz or survey connected to ${theme}. They use the responses to check understanding, notice patterns and explain what the class learned about ${connection}.`;
+  }
+  if(k === bulkDiagnosticToolKey_('Microsoft Sway')){
+    return `Students use Microsoft Sway to build a simple interactive report connected to ${theme}. They sequence images, text and reflections to explain their understanding of ${connection}.`;
+  }
+  if(k === bulkDiagnosticToolKey_('Microsoft PowerPoint')){
+    return `Students create a concise PowerPoint explanation connected to ${theme}. They use slides, images and speaker notes to teach classmates the key ideas they learned about ${connection}.`;
+  }
+  if(k === bulkDiagnosticToolKey_('Wise Discussion Chatbots')){
+    return `Students question a Wise Discussion Chatbot acting as a relevant expert connected to ${theme}. They ask prepared questions, compare responses with class evidence and produce a short reflection about ${connection}.`;
+  }
+  return `Students use ${tool} to create a practical digital product connected to ${theme}. They make, share and explain their work to show what they understand about ${connection}.`;
+}
+
+function bulkRunSafeReplacementDraftOnly_(text){
+  const cleanText = String(text || '').replace(/^\s*(draft|draft-safe|safe-draft)\s*:?\s*/i, '').trim();
+  const info = bulkDiagnosticDetectRoute_(cleanText);
+  const years = info.targetYears && info.targetYears.length ? info.targetYears : [];
+  const yearsLabel = years.length ? years.join(', ') : 'All years';
+
+  if(!info.replacementTool){
+    bulkChatAddMessage('assistant', `
+      <div style="padding:2px 0">
+        <div style="font-size:10px;color:var(--purple);font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">🧪 Safe replacement draft mode</div>
+        <div>I could not confidently detect which tool should be replaced.</div>
+        <div style="margin-top:8px;color:var(--dim);font-size:12px">Try: <strong>draft: Replace Seesaw in Year 5 and 6</strong></div>
+        <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No changes were drafted or saved.</div>
+      </div>`);
+    return;
+  }
+
+  const scan = bulkDiagnosticScanReplacementTool_(info.replacementTool, years);
+  const matches = (scan.matches || []).filter(m => !m.isStemSlot);
+  if(!matches.length){
+    bulkChatAddMessage('assistant', `
+      <div style="padding:2px 0">
+        <div style="font-size:10px;color:var(--purple);font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">🧪 Safe replacement draft mode</div>
+        <div>I found no draftable non-STEM <strong>${bulkDiagnosticEscape_(info.replacementTool)}</strong> slots${years.length?' in '+bulkDiagnosticEscape_(yearsLabel):''}.</div>
+        <div style="margin-top:8px;color:var(--dim);font-size:12px">Total matching slots: ${scan.totalMatchingSlots || 0} · protected STEM slot #6 skipped: ${scan.skippedStemSlot || 0}</div>
+        <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No changes were drafted or saved.</div>
+      </div>`);
+    return;
+  }
+
+  const usedCounts = {};
+  const changes = matches.map(m => {
+    const e = DATA[m.entryIdx] || {};
+    const newTool = bulkReplacementPickTool_(m, usedCounts, info.replacementTool);
+    return {
+      entryIdx: m.entryIdx,
+      sugIdx: m.sugIdx,
+      t: newTool,
+      d: bulkReplacementDescriptionForTool_(newTool, e, info.replacementTool),
+      reason: `Safe targeted replacement draft: replaces ${info.replacementTool} in ${m.year}. Slot #6/STEM is protected. Review before applying.`,
+      improvementConfidence: 'Draft-only',
+      whyBetter: `Replaces ${info.replacementTool} with an approved, age-appropriate tool while keeping a clear student action, product and unit connection.`
+    };
+  });
+
+  const sample = matches.slice(0,8).map((m, i) => `• ${bulkDiagnosticEscape_(m.campus)} · ${bulkDiagnosticEscape_(m.year)} · slot ${m.sugIdx + 1} · ${bulkDiagnosticEscape_(m.theme)} → ${bulkDiagnosticEscape_(changes[i].t)}`).join('<br>');
+  bulkChatAddMessage('assistant', `✅ <strong>${changes.length} ${bulkDiagnosticEscape_(info.replacementTool)} replacement draft${changes.length!==1?'s':''}</strong> ready for review.<br><br><span style="font-size:12px;color:var(--lime)">Safe replacement mode:</span> found targets locally, skipped STEM slot #6, used approved tools, made no AI calls and saved nothing automatically.<br><br><span style="font-size:12px;color:var(--lime)">Targets:</span><br>${sample}`);
+  bulkChatMemory.push({ role:'assistant', content:`Safe-drafted ${changes.length} ${info.replacementTool} replacements.` });
+  window._snapshotReason = `Before safe ${info.replacementTool} replacement drafts`;
+  showChangesPopup(changes);
+  bulkChatState = 'done';
+}
 function bulkRunDiagnosticOnly_(text){
   const cleanText = String(text || '').replace(/^\s*(diagnose|debug|route)\s*:?\s*/i, '').trim();
   const info = bulkDiagnosticDetectRoute_(cleanText);
@@ -581,12 +743,17 @@ function bulkRunSafeDraftOnly_(text){
   const years = info.targetYears && info.targetYears.length ? info.targetYears : [];
   const yearsLabel = years.length ? years.join(', ') : 'All years';
 
+  if(info.replacementTool && info.route === 'targeted replacement'){
+    bulkRunSafeReplacementDraftOnly_(text);
+    return;
+  }
+
   if(!info.namedTool){
     bulkChatAddMessage('assistant', `
       <div style="padding:2px 0">
         <div style="font-size:10px;color:var(--purple);font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">🧪 Safe draft mode</div>
-        <div>I could not confidently detect a named tool in that request.</div>
-        <div style="margin-top:8px;color:var(--dim);font-size:12px">Try: <strong>draft: Find more opportunities to use Makey Makey</strong></div>
+        <div>I could not confidently detect a named tool or targeted replacement in that request.</div>
+        <div style="margin-top:8px;color:var(--dim);font-size:12px">Try: <strong>draft: Find more opportunities to use Makey Makey</strong> or <strong>draft: Replace Seesaw in Year 5 and 6</strong></div>
         <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No changes were drafted or saved.</div>
       </div>`);
     return;
