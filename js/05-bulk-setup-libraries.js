@@ -130,7 +130,7 @@ const DEFAULT_APPROVED_TOOLS = [
   'Bee-Bots', 'Sphero Indi', 'Sphero BOLT', 'Lego Spike Essential', 'Lego Spike Prime',
   'Micro:bit', 'CoDrone EDU', 'Makey Makey',
   // Maker / AV hardware
-  '3D Printers', 'ClassVR', 'Merge Cubes', 'Green Screen', 'Podcast Equipment', 'iPads',
+  '3D Printers', 'Merge Cubes', 'Green Screen', 'Podcast Equipment', 'iPads',
   // Core creation
   'Seesaw', 'Canva', 'Book Creator', 'Padlet',
   // Video / audio / animation
@@ -147,7 +147,7 @@ const DEFAULT_APPROVED_TOOLS = [
 const DEFAULT_BANNED_TOOLS = [
   'ChatGPT', 'Claude', 'Gemini', 'Copilot',
   'Google Docs', 'Google Slides', 'Google Sheets',
-  'WeVideo', 'Flipgrid'
+  'WeVideo', 'Flipgrid', 'ClassVR'
 ];
 
 const DEFAULT_TOOL_AGE_RANGES = {
