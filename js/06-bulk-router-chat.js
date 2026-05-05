@@ -68,6 +68,19 @@ function bulkRunWithTopProgress_(label, doneLabel, work, onError){
   }, 120);
 }
 
+
+function bulkSafeRouteNotice_(title, details){
+  const safeTitle = bulkDiagnosticEscape_(title || 'Safe routed workflow');
+  const safeDetails = bulkDiagnosticEscape_(details || 'This request will be handled locally and opened for human review.');
+  bulkChatAddMessage('assistant', `
+    <div style="padding:2px 0">
+      <div style="display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:999px;background:rgba(197,232,74,.09);border:1px solid rgba(197,232,74,.28);color:var(--lime);font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">🛡️ Safe routed</div>
+      <div style="font-size:13px;line-height:1.55"><strong>${safeTitle}</strong></div>
+      <div style="font-size:12px;color:var(--dim);line-height:1.55;margin-top:3px">${safeDetails}</div>
+      <div style="font-size:12px;color:#F5A623;line-height:1.55;margin-top:6px">Review-only: nothing is saved unless you approve it in the review popup.</div>
+    </div>`);
+}
+
 function bulkDetectNamedToolOpportunity_(instruction){
   const text = String(instruction || '').toLowerCase().replace(/[’']/g, '');
   if(!bulkInstructionLooksLikeOpportunity(text)) return '';
@@ -2345,6 +2358,7 @@ async function bulkChatSend(){
     try { autoInfo = bulkDiagnosticDetectRoute_(text); } catch(e){ autoInfo = null; }
     if(bulkLooksLikeStkY6Diagnostic_(text)){
       bulkChatAddMessage('user', text);
+      bulkSafeRouteNotice_('St Kilda Road Year 6 quality flow', 'Studio will scan only St Kilda Road Year 6, protect STEM slot #6 and Minecraft suggestions, and draft a small review batch.');
       bulkRunWithTopProgress_('Drafting safe St Kilda Road Year 6 quality fixes…', 'St Kilda Road Year 6 draft ready for review ✓', function(){
         bulkRunStkY6DraftOnly_('draft: ' + text);
       }, function(e){
@@ -2354,6 +2368,7 @@ async function bulkChatSend(){
     }
     if(autoInfo && autoInfo.route === 'specific Minecraft lesson placement'){
       bulkChatAddMessage('user', text);
+      bulkSafeRouteNotice_('Exact Minecraft lesson placement', 'Studio will use only the matched curated Minecraft lesson, preserve its real URL, and avoid substituting other Minecraft lessons.');
       if(typeof ensureLibrariesLoadedForAI === 'function'){
         try { await ensureLibrariesLoadedForAI(); } catch(e){}
       }
@@ -2366,6 +2381,7 @@ async function bulkChatSend(){
     }
     if(autoInfo && autoInfo.route === 'targeted replacement' && autoInfo.replacementTool){
       bulkChatAddMessage('user', text);
+      bulkSafeRouteNotice_('Targeted replacement flow', 'Studio will find matching slots locally, protect STEM slot #6, and rewrite hidden references without replacing unrelated approved tools.');
       bulkRunWithTopProgress_('Finding safe ' + bulkDiagnosticEscape_(autoInfo.replacementTool) + ' replacements…', 'Safe replacement draft ready for review ✓', function(){
         bulkRunSafeDraftOnly_(text);
       }, function(e){
@@ -2375,6 +2391,7 @@ async function bulkChatSend(){
     }
     if(autoInfo && autoInfo.route === 'named-tool opportunity search' && autoInfo.namedTool){
       bulkChatAddMessage('user', text);
+      bulkSafeRouteNotice_('Named-tool opportunity flow', 'Studio will find eligible units locally, skip units already using the tool, respect year ranges, and draft a small review batch.');
       bulkRunWithTopProgress_('Finding safe ' + bulkDiagnosticEscape_(autoInfo.namedTool) + ' opportunities…', 'Safe draft ready for review ✓', function(){
         bulkRunSafeDraftOnly_(text);
       }, function(e){
