@@ -222,7 +222,7 @@ function bulkDiagnosticAllKnownTools_(){
 
 function bulkDiagnosticDetectReplacementTool_(instruction){
   const raw = String(instruction || '').trim();
-  if(!/(replace|remove|swap|change out|stop using|get rid of)/i.test(raw)) return '';
+  if(!/\b(replace|remove|swap|change out|stop using|get rid of)\b/i.test(raw)) return '';
   const lower = raw.toLowerCase().replace(/[’']/g, '');
   const aliases = {
     'seesaw':'Seesaw',
@@ -253,6 +253,48 @@ function bulkDiagnosticDetectReplacementTool_(instruction){
   return '';
 }
 
+function bulkReplacementYearKey_(value){
+  const raw = String(value || '').toLowerCase().trim();
+  if(!raw) return '';
+  if(/\bprep\b|\bfoundation\b/.test(raw)) return 'Prep';
+  const m = raw.match(/(?:year|yr|y)?\s*([1-6])\b/);
+  return m ? ('Year ' + m[1]) : String(value || '').trim();
+}
+
+function bulkReplacementCandidateText_(s){
+  if(!s) return '';
+  const parts = [];
+  ['t','tool','technology','name','title','platform','app','software','resource','d','desc','description','integration_idea','activity','suggestion'].forEach(k => {
+    if(s[k] != null && typeof s[k] !== 'object') parts.push(String(s[k]));
+  });
+  return parts.join(' | ');
+}
+
+function bulkReplacementToolMatches_(s, toolName){
+  const wantedKey = bulkDiagnosticToolKey_(toolName);
+  const toolText = String(sugTool(s) || '').trim();
+  const toolKey = bulkDiagnosticToolKey_(toolText);
+  if(wantedKey && toolKey && toolKey === wantedKey) return true;
+
+  const haystack = bulkReplacementCandidateText_(s).toLowerCase().replace(/[’']/g, '');
+  if(!haystack) return false;
+
+  if(wantedKey === 'seesaw'){
+    // Some entries use labels such as "Seesaw Learning Journal", "See Saw", or put
+    // the tool name in a description field rather than the compact tool field.
+    return /(^|[^a-z0-9])see\s*saw([^a-z0-9]|$)/i.test(haystack) || /(^|[^a-z0-9])seesaw([^a-z0-9]|$)/i.test(haystack);
+  }
+  if(wantedKey === 'googlemaps') return /google\s+maps?/i.test(haystack);
+  if(wantedKey === 'nationalgeographicmapmaker') return /mapmaker|national\s+geographic\s+mapmaker/i.test(haystack);
+
+  const phrase = String(toolName || '').toLowerCase().replace(/[’']/g, '').trim();
+  if(phrase && phrase.length >= 4){
+    const re = new RegExp('(^|[^a-z0-9])' + bulkEscapeRegExp_(phrase).replace(/\s+/g, '\\s+') + '([^a-z0-9]|$)', 'i');
+    return re.test(haystack);
+  }
+  return false;
+}
+
 function bulkDiagnosticScanReplacementTool_(toolName, targetYears){
   const key = bulkDiagnosticToolKey_(toolName);
   const matches = [];
@@ -261,27 +303,28 @@ function bulkDiagnosticScanReplacementTool_(toolName, targetYears){
   let totalMatchingSlots = 0;
   let matchingEntries = 0;
   const entriesSeen = new Set();
+  const requestedYears = (targetYears || []).map(bulkReplacementYearKey_).filter(Boolean);
 
   if(!key || !Array.isArray(DATA)) return { matches, skippedYear, skippedStemSlot, totalMatchingSlots, matchingEntries };
 
   DATA.forEach((e, entryIdx) => {
     if(!e) return;
-    const yl = e.yl || '';
-    if(targetYears && targetYears.length && !targetYears.includes(yl)){ skippedYear++; return; }
+    const yl = bulkReplacementYearKey_(e.yl || e.year || e.yearLevel || '');
+    if(requestedYears.length && !requestedYears.includes(yl)){ skippedYear++; return; }
     const sugs = getSugs(e);
     sugs.forEach((s, sugIdx) => {
       if(!s || !isRealSug(s)) return;
-      if(bulkDiagnosticToolKey_(sugTool(s)) !== key) return;
+      if(!bulkReplacementToolMatches_(s, toolName)) return;
       totalMatchingSlots++;
       entriesSeen.add(entryIdx);
       const record = {
         entryIdx,
         sugIdx,
         isStemSlot: sugIdx === 5,
-        campus: e.ca || 'Campus?',
-        year: yl || 'Year?',
+        campus: e.ca || e.campus || 'Campus?',
+        year: yl || e.yl || 'Year?',
         theme: e.th || e.theme || 'Untitled unit',
-        currentTool: sugTool(s),
+        currentTool: sugTool(s) || '(tool label missing; matched text in suggestion)',
         currentDesc: sugDesc(s)
       };
       if(record.isStemSlot) skippedStemSlot++;
