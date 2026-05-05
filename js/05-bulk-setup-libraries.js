@@ -43,16 +43,44 @@ function updateBulkRegenCount(){
 }
 
 // Shared description quality + ordering instructions — referenced by all suggestion-generating prompts
-const SUGGESTION_STYLE = `DESCRIPTION STYLE:
-- Write 2-3 vivid sentences that paint a picture of what the classroom activity looks like
-- Start with an action verb — "Students design…", "Learners investigate…", "Teams collaborate to…"
-- Name specific unit content — reference the central idea, key concepts, or actual activities from the planner
-- Convey excitement — these descriptions are read by teachers deciding whether to use the tool
-- Use clean Australian English punctuation: apostrophes must be apostrophes, dashes must be dashes, and never output stray question marks as punctuation placeholders.
-- BAD: "Use Canva to create a poster about the unit theme."
-- GOOD: "Students design an infographic campaign exploring how local government decisions affect their neighbourhood, using Canva's collaboration features to peer-review and refine each other's visual arguments."
+const SUGGESTION_STYLE = `DESCRIPTION QUALITY RULES (CRITICAL — read these before writing ANY suggestion):
 
-ORDERING: Put the most innovative, exciting, or unexpected suggestion FIRST (slot 0). Teachers see the top suggestion first — lead with something that makes them think 'I want to try that!' Save the more familiar tools (Seesaw, Canva, Book Creator) for later slots.
+INNOVATION FIRST: The most innovative, unexpected, and out-of-the-box suggestion must always come first (slot 0). Teachers see the top suggestion first — lead with something that makes them think "I want to try that!" Save the more familiar tools (Seesaw, Canva, Book Creator) for later slots.
+
+WRITING STYLE — every suggestion must be 2-3 vivid, practical sentences that paint a clear classroom picture:
+1. STATE what students DO — name concrete actions: design, code, build, record, map, collect data, test, debug, publish, present, investigate, prototype, film, compose, interview, annotate, curate, survey, programme
+2. STATE what students CREATE / PRODUCE / CAPTURE — name the specific artefact: campaign poster, explainer carousel, digital advocacy book, awareness video, collaborative debate wall, soundboard, data dashboard, guided virtual tour, short documentary, podcast episode, interactive quiz, annotated map, 3D prototype
+3. WEAVE the unit connection naturally — show HOW the activity connects to what the class is actually studying. Use the central idea and lines of inquiry as invisible guides that shape the activity, but NEVER quote them directly.
+4. Use clean Australian English punctuation: apostrophes must be straight ('), dashes must be em-dashes, and never output stray question marks as punctuation placeholders.
+
+BANNED PHRASES — these make suggestions sound generic and lazy. NEVER write any of these:
+- "connected to the central idea '...'"
+- "linked to the line of inquiry '...'"
+- "connected to How We Express Ourselves" (or any transdisciplinary theme name used as filler)
+- "related to the unit theme"
+- "share their learning"
+- "use the app to present"
+- "make a simple product"
+- "create a digital product"
+- "explore the topic"
+- "connected to the unit"
+- "present their findings"
+- "record their thinking"
+- "document their learning journey"
+- "Students use [tool] to [vague verb] about [unit theme]."
+
+HOW TO CONNECT TO THE UNIT (DO THIS INSTEAD):
+The planner context (central idea, lines of inquiry, activities) should guide the CONTENT of the suggestion in the background. Weave it into the specific task naturally:
+- BAD: "Students use Canva to create a poster connected to the central idea 'Communities make decisions that impact people and places.'"
+- GOOD: "Students use Canva to design an awareness campaign for a global issue they have investigated, such as climate action, access to education, food security or human rights. They create a campaign poster, short explainer carousel or exhibition panel that combines evidence, persuasive language and purposeful design choices to help an audience understand the issue and consider how they could respond."
+- BAD: "Students use Book Creator to make a book about what they learned in the unit."
+- GOOD: "Students create a digital advocacy book that explains a global issue through evidence, images, diagrams, captions and short reflective sections. Each page builds the audience's understanding of the issue, shows why it matters, and ends with a realistic action readers could take in their own community."
+- BAD: "Students use Padlet to share their learning connected to the line of inquiry about governance."
+- GOOD: "Students use Padlet to build a collaborative debate wall about real-world government decisions, posting arguments, counterarguments and evidence. They respond to peers with evidence-based feedback, then summarise how the debate connects to how governance affects citizens' lives."
+
+TEACHER READABILITY: Write so a primary teacher can picture exactly what happens in the lesson. No jargon, no abstract framing. If a colleague reading the suggestion cannot immediately imagine what students are doing, rewrite it.
+
+PRESERVE STRONG SUGGESTIONS: If an existing suggestion is already vivid, specific, and well-connected, do NOT rewrite it. Only rewrite clearly weak, vague, or generic suggestions.
 
 MINECRAFT EDUCATION VERIFIED LESSON USE:
 - Use the tool name "Minecraft Education".
@@ -67,7 +95,12 @@ MINECRAFT EDUCATION VERIFIED LESSON USE:
 - Do NOT invent original Minecraft build challenges, fake lesson titles, or fake URLs.
 - Do NOT force a maths-only Minecraft lesson such as Area and Volume into non-maths units. Only use a verified Minecraft lesson when its lesson content genuinely connects to the unit.
 
-PODCASTING RULE: Whenever a suggestion involves podcasting, audio recording, audio storytelling, or audio interviews, ALWAYS use the tool name "Adobe Express Podcasting" — not GarageBand, not "Podcast Equipment", not generic "Adobe Express". Adobe Express Podcasting is the school's preferred podcasting platform. Always include the URL https://podcast.adobe.com in the description.`;
+PODCASTING RULE: Whenever a suggestion involves podcasting, audio recording, audio storytelling, or audio interviews, ALWAYS use the tool name "Adobe Express Podcasting" — not GarageBand, not "Podcast Equipment", not generic "Adobe Express". Adobe Express Podcasting is the school's preferred podcasting platform. Always include the URL https://podcast.adobe.com in the description.
+
+GREEN SCREEN RULE: Instead of physical Green Screen Kits (which are banned), suggest Canva Remove Background. Good example:
+"Students record themselves as youth reporters presenting from a digital newsroom, protest site, disaster zone, gallery wall or community setting related to a global issue. Using Canva's Remove Background feature, they place themselves into a relevant visual scene and produce a short awareness video that explains the issue, its impact and a possible call to action."
+
+ENCODING: Use standard straight apostrophes (') only. Do NOT use curly/smart quotes. Do NOT use line breaks inside JSON string values.`;
 
 const REALISTIC_TOOL_USE_RULES = `REALISTIC CLASSROOM USE RULES (HARD RULE):
 - Suggestions must be practical enough for a teacher to run; name the concrete student action and product.
@@ -935,4 +968,3 @@ ${lines}`;
   }
   return `${meta.name.toUpperCase()} — VERIFIED LESSON LIBRARY (${lessons.length} lessons):\nUse ONLY these verified lessons. Do NOT invent lesson titles. Respect lesson age ranges. Include the lesson URL in the description.\n${lines}`;
 }
-
