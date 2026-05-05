@@ -651,6 +651,85 @@ function bulkMinecraftDiagnosticHtml_(instruction){
   </div>`;
 }
 
+
+function bulkMinecraftConnectionText_(entry){
+  const pieces = [entry && (entry.th || entry.theme), entry && (entry.ci || entry.centralIdea)].filter(Boolean).map(v => String(v).trim()).filter(Boolean);
+  let base = pieces[0] || pieces[1] || 'this unit';
+  base = base.replace(/[\s.?!;:]+$/g, '');
+  return base || 'this unit';
+}
+function bulkMinecraftDescriptionForLesson_(lesson, entry){
+  const title = String((lesson && lesson.title) || 'the curated Minecraft lesson').trim();
+  const connection = bulkMinecraftConnectionText_(entry || {});
+  if(/revamp\s+melbourne/i.test(title)){
+    return `Students use the curated Minecraft Education lesson “${title}” to explore how parts of a city can be redesigned for people and the environment. They plan and build one revised Melbourne space, then explain how their design connects to ${connection}.`;
+  }
+  return `Students use the curated Minecraft Education lesson “${title}” as a structured build challenge connected to ${connection}. They create a Minecraft model and explain the design decisions that show their understanding of the unit.`;
+}
+function bulkRunMinecraftExactLessonDraftOnly_(text){
+  const cleanText = String(text || '').replace(/^\s*(draft|draft-safe|safe-draft)\s*:?\s*/i, '').trim();
+  const lessonTitle = bulkDetectMinecraftLessonTitle_(cleanText);
+  const lesson = bulkFindMinecraftLesson_(lessonTitle);
+  if(!lessonTitle){
+    bulkChatAddMessage('assistant', `
+      <div style="padding:2px 0">
+        <div style="font-size:10px;color:var(--purple);font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">⛏️ Minecraft exact-lesson draft</div>
+        <div>I detected a Minecraft placement request, but not a specific curated lesson title.</div>
+        <div style="margin-top:8px;color:var(--dim);font-size:12px">Try: <strong>draft: Where can the Revamp Melbourne Minecraft lesson fit?</strong></div>
+        <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No changes were drafted or saved.</div>
+      </div>`);
+    return;
+  }
+  if(!lesson){
+    bulkChatAddMessage('assistant', `
+      <div style="padding:2px 0">
+        <div style="font-size:10px;color:#FF8080;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">⛏️ Minecraft exact-lesson draft</div>
+        <div>I could not find <strong>${bulkDiagnosticEscape_(lessonTitle)}</strong> in the curated Minecraft library.</div>
+        <div style="margin-top:8px;color:var(--dim);font-size:12px">I will not substitute another Minecraft lesson. Add or check the exact lesson in libraries.json first.</div>
+        <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No changes were drafted or saved.</div>
+      </div>`);
+    return;
+  }
+
+  const scan = bulkScanMinecraftExactLessonFit_(lesson, 10);
+  const selected = (scan.results || []).slice(0, 6);
+  if(!selected.length){
+    bulkChatAddMessage('assistant', `
+      <div style="padding:2px 0">
+        <div style="font-size:10px;color:var(--purple);font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">⛏️ Minecraft exact-lesson draft</div>
+        <div>I found the curated lesson <strong>${bulkDiagnosticEscape_(lesson.title)}</strong>, but no strong local unit matches.</div>
+        <div style="margin-top:8px;color:var(--dim);font-size:12px">That is acceptable for Minecraft: this route returns fewer results rather than forcing unrelated fits.</div>
+        <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No changes were drafted or saved.</div>
+      </div>`);
+    return;
+  }
+
+  const changes = selected.map(r => {
+    const e = DATA[r.entryIdx] || {};
+    return {
+      entryIdx: r.entryIdx,
+      sugIdx: r.slotIdx,
+      t: 'Minecraft Education',
+      d: bulkMinecraftDescriptionForLesson_(lesson, e),
+      url: lesson.url || '',
+      lessonUrl: lesson.url || '',
+      lessonTitle: lesson.title || lessonTitle,
+      library: 'minecraft',
+      reason: `Safe Minecraft exact-lesson placement draft. Uses only the curated “${lesson.title || lessonTitle}” lesson and preserves its real URL. Slot #6/STEM is protected. Review before applying.`,
+      improvementConfidence: 'Draft-only',
+      whyBetter: 'Constrained to one verified curated Minecraft lesson, matched locally to plausible units, and returned only genuine fits instead of backfilling with unrelated Minecraft lessons.'
+    };
+  });
+
+  const sample = selected.map(r => `• ${bulkDiagnosticEscape_(r.campus)} · ${bulkDiagnosticEscape_(r.year)} · ${bulkDiagnosticEscape_(r.theme)} <span style="color:var(--dim)">(${bulkDiagnosticEscape_((r.reasons||[]).join(', ') || 'local fit')})</span>`).join('<br>');
+  const capped = (scan.results || []).length > selected.length ? `<br><span style="font-size:12px;color:var(--dim)">I drafted the first ${selected.length} of ${scan.results.length} likely matches to keep this review manageable.</span>` : '';
+  bulkChatAddMessage('assistant', `✅ <strong>${changes.length} Minecraft exact-lesson placement draft${changes.length!==1?'s':''}</strong> ready for review.<br><br><span style="font-size:12px;color:var(--lime)">Safe Minecraft mode:</span> used only <strong>${bulkDiagnosticEscape_(lesson.title || lessonTitle)}</strong>, preserved the curated URL, avoided STEM slot #6, made no AI calls and saved nothing automatically.${capped}<br><br><span style="font-size:12px;color:var(--lime)">Targets:</span><br>${sample}`);
+  bulkChatMemory.push({ role:'assistant', content:`Safe-drafted ${changes.length} exact Minecraft lesson placements for ${lesson.title || lessonTitle}.` });
+  window._snapshotReason = `Before safe Minecraft exact-lesson placements`;
+  showChangesPopup(changes);
+  bulkChatState = 'done';
+}
+
 function bulkRunDiagnosticOnly_(text){
   const cleanText = String(text || '').replace(/^\s*(diagnose|debug|route)\s*:?\s*/i, '').trim();
   const info = bulkDiagnosticDetectRoute_(cleanText);
@@ -898,6 +977,11 @@ function bulkRunSafeDraftOnly_(text){
   const info = bulkDiagnosticDetectRoute_(cleanText);
   const years = info.targetYears && info.targetYears.length ? info.targetYears : [];
   const yearsLabel = years.length ? years.join(', ') : 'All years';
+
+  if(info.route === 'specific Minecraft lesson placement'){
+    bulkRunMinecraftExactLessonDraftOnly_(text);
+    return;
+  }
 
   if(info.replacementTool && info.route === 'targeted replacement'){
     bulkRunSafeReplacementDraftOnly_(text);
@@ -1837,7 +1921,10 @@ async function bulkChatSend(){
       return;
     }
     bulkChatAddMessage('user', text);
-    bulkRunWithTopProgress_('Finding safe named-tool opportunities…', 'Safe draft ready for review ✓', function(){
+    if(/minecraft/i.test(text) && typeof ensureLibrariesLoadedForAI === 'function'){
+      try { await ensureLibrariesLoadedForAI(); } catch(e){}
+    }
+    bulkRunWithTopProgress_(/minecraft/i.test(text) ? 'Finding exact Minecraft lesson fits…' : 'Finding safe named-tool opportunities…', /minecraft/i.test(text) ? 'Minecraft placement draft ready for review ✓' : 'Safe draft ready for review ✓', function(){
       bulkRunSafeDraftOnly_(text);
     }, function(e){
       bulkChatAddMessage('assistant', '❌ Safe draft failed without changing anything: ' + bulkDiagnosticEscape_(e.message || e));
@@ -1886,6 +1973,18 @@ async function bulkChatSend(){
   if(bulkChatState !== 'clarifying' && bulkChatState !== 'analysing'){
     let autoInfo = null;
     try { autoInfo = bulkDiagnosticDetectRoute_(text); } catch(e){ autoInfo = null; }
+    if(autoInfo && autoInfo.route === 'specific Minecraft lesson placement'){
+      bulkChatAddMessage('user', text);
+      if(typeof ensureLibrariesLoadedForAI === 'function'){
+        try { await ensureLibrariesLoadedForAI(); } catch(e){}
+      }
+      bulkRunWithTopProgress_('Finding exact Minecraft lesson fits…', 'Minecraft placement draft ready for review ✓', function(){
+        bulkRunSafeDraftOnly_(text);
+      }, function(e){
+        bulkChatAddMessage('assistant', '❌ Safe Minecraft exact-lesson draft failed without changing anything: ' + bulkDiagnosticEscape_(e.message || e));
+      });
+      return;
+    }
     if(autoInfo && autoInfo.route === 'targeted replacement' && autoInfo.replacementTool){
       bulkChatAddMessage('user', text);
       bulkRunWithTopProgress_('Finding safe ' + bulkDiagnosticEscape_(autoInfo.replacementTool) + ' replacements…', 'Safe replacement draft ready for review ✓', function(){
