@@ -1005,9 +1005,35 @@
     "th": "Who We Are",
     "ci": "Leaders shape communities.",
     "lo": "Roles and responsibilities of effective leadership; The purpose of leadership in communities; Qualities of influential leaders",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Wise Discussion Chatbots",
+        "d": "Students design and script an AI chatbot that simulates a famous leader (e.g., Malala Yousafzai, Greta Thunberg, Adam Goodes). Using Wise Discussion Chatbots, students program the bot to answer questions about leadership qualities, responsibilities, and community impact, allowing peers to 'interview' the leader and reflect on how leaders shape communities."
+      },
+      {
+        "t": "Canva",
+        "d": "Students create interactive digital leadership portfolios using Canva, showcasing their own leadership journey, strengths, and reflections. Each portfolio includes multimedia elements (photos, videos, quotes) and is shared with the school community to inspire others and celebrate diverse leadership styles."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students collaboratively author a digital book profiling local, national, and global leaders. Each student contributes a page highlighting a leader's roles, responsibilities, and impact on their community, integrating text, images, and audio narration to bring the stories to life."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Students design and distribute a survey using Microsoft Forms to gather data on leadership qualities valued by their peers and teachers. They analyse the results in class, discuss trends, and present findings on what makes an effective leader in their school community."
+      },
+      {
+        "t": "Minecraft: Active Citizen",
+        "d": "Students explore the 'Active Citizen' Minecraft Education world, where they learn about Nobel Peace Laureates and how their leadership shaped communities. Students reflect on the qualities of these leaders and build a virtual monument or community project inspired by their learning.",
+        "url": "https://education.minecraft.net/en-us/lessons/active-citizen"
+      },
+      {
+        "t": "Makerspace Leadership Trophy",
+        "d": "Students design and build a physical 'Leadership Trophy' using recycled materials, cardboard, popsticks, and hot glue. Each trophy must represent a key leadership quality (e.g., empathy, responsibility, courage) and include a moving part or interactive feature. Students present their trophies, explaining the symbolism and engineering choices, and display them in a school leadership showcase."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The unit 'Who We Are' explores the central idea that 'Leaders shape communities.' Students investigate the roles, responsibilities, and qualities of effective leaders through case studies, guided reading, and self-reflection. Activities include researching famous leaders, analysing leadership in different contexts, and applying their understanding by developing their own leadership skills and presenting applications for school leadership roles.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:04:07.241Z",
@@ -1021,9 +1047,35 @@
     "th": "How We Express Ourselves",
     "ci": "People can create or manipulate messages to target specific audiences.",
     "lo": "The devices used to target audiences; Critical evaluation of messages; How we know we have been influenced",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Wise Discussion Chatbots",
+        "d": "Students design and script their own AI-powered chatbot that simulates a persuasive advertiser or influencer. The chatbot interacts with classmates, adapting its language and tactics to target different audiences (e.g., children, parents, teens), allowing students to critically analyse and reflect on how digital messages are manipulated in real time."
+      },
+      {
+        "t": "Canva",
+        "d": "Students create a series of contrasting digital advertisements for the same product, each tailored to a different audience (e.g., kids, adults, eco-conscious consumers). They use Canva's design tools, including the 'Remove Background' feature, to manipulate imagery and layout, then present and justify their design choices."
+      },
+      {
+        "t": "Adobe Express Podcasting",
+        "d": "Students script, record, and edit a podcast episode where they deconstruct a popular media message (song, ad, or news story), identifying persuasive devices and discussing how the message is shaped for its intended audience. They publish their podcast for peer review and feedback."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students collaboratively curate a digital wall of real-world media examples (ads, news clips, social posts), tagging each with the intended audience and persuasive techniques used. They then comment on each other's posts, debating the effectiveness and ethical implications of the messaging."
+      },
+      {
+        "t": "Minecraft: The Investigators",
+        "d": "Students become school reporters in a Minecraft world, investigating three unique stories and evaluating the credibility and bias of different sources. They decode clues, uncover the truth, and reflect on how information can be manipulated to influence audiences. URL: https://education.minecraft.net/en-us/lessons/the-investigators",
+        "url": "https://education.minecraft.net/en-us/lessons/the-investigators"
+      },
+      {
+        "t": "Makerspace Project: Persuasion Machines",
+        "d": "Students build a physical 'Persuasion Machine' using cardboard, recycled materials, gears, and simple circuits (e.g., Makey Makey for interactive elements). The machine visually demonstrates how messages are filtered, amplified, or distorted for different audiences?such as a 'spin-o-matic' that changes a neutral message into a persuasive one using physical levers, dials, and pop-up features."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how people create or manipulate messages to target specific audiences. Students critically analyse media, advertisements, and stories, identifying persuasive devices and evaluating their impact. Activities include deconstructing texts, creating targeted messages, and reflecting on how they know they have been influenced.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T03:54:45.534Z",
@@ -1037,9 +1089,35 @@
     "th": "How We Organise Ourselves",
     "ci": "Entrepreneurs have a responsibility to develop, market and sell sustainable products and services.",
     "lo": "The power of giving back; How our environment is impacted by the products we create; Sustainable business practices",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Minecraft: Revamp Melbourne",
+        "d": "Students work in teams to design and build a sustainable business solution for Melbourne's future in Minecraft Education. They must consider the needs of the community, environmental impact, and how their entrepreneurial idea can give back. After building, students present their solution and explain how it addresses sustainability and social responsibility.",
+        "url": "https://education.minecraft.net/en-us/lessons/revamp-melbourne"
+      },
+      {
+        "t": "Canva",
+        "d": "Students create a digital marketing campaign for their sustainable product or service, including posters, infographics, and social media posts. They use Canva's design tools to visually communicate their product's environmental benefits and responsible business practices, then present their campaign to peers for feedback."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Students design and distribute a digital survey to gather data from the school community about consumer preferences for sustainable products. They analyse the results to inform their product development and marketing strategies, making data-driven decisions as real entrepreneurs."
+      },
+      {
+        "t": "Adobe Express Podcasting",
+        "d": "Students script, record, and edit a podcast episode where they interview local entrepreneurs or sustainability experts (real or role-played by classmates). The podcast explores the challenges and responsibilities of running a sustainable business, and is published to the school community."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students collaboratively brainstorm and document their entrepreneurial journey on a shared Padlet board. They post ideas, research, product sketches, marketing drafts, and reflections, allowing for peer feedback and iterative improvement throughout the unit."
+      },
+      {
+        "t": "Makerspace: Sustainable Product Prototyping",
+        "d": "Students physically prototype their sustainable product using recycled materials, cardboard, popsticks, bottle caps, and hot glue guns. They test, refine, and present their prototypes at a school market, explaining the design choices and sustainability features to visitors."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students explore the responsibilities of entrepreneurs in developing, marketing, and selling sustainable products and services. They use the design thinking process to research, ideate, prototype, and test their ideas, culminating in a market stall event where they pitch and sell their creations to the school community.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T03:54:46.303Z",
@@ -1053,9 +1131,36 @@
     "th": "How the World Works",
     "ci": "Design processes enable people to respond creatively to challenges in the natural world.",
     "lo": "The nature and impact of natural hazards (Causation); How design processes are used to generate and test solutions (Function); The ethical and practical considerations in human responses to natural challenges (Responsibility)",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "CoDrone EDU",
+        "d": "Students program CoDrone EDU drones to simulate emergency response scenarios for natural hazards such as bushfires, floods, or earthquakes. They design and code flight paths to deliver 'aid packages' to mapped zones, collect environmental data, or survey affected areas, directly linking to the unit's focus on design processes and creative responses to real-world challenges."
+      },
+      {
+        "t": "Minecraft: Filtering Water On The Iss",
+        "d": "Students explore how water is filtered on the International Space Station, then design and build their own water filtration systems in Minecraft Education. This hands-on digital activity connects to the unit's emphasis on innovative design solutions to natural challenges.",
+        "url": "https://education.minecraft.net/en-us/lessons/filtering-water-on-the-iss"
+      },
+      {
+        "t": "Micro:bit: Energy Awareness",
+        "d": "Students use Micro:bits to monitor classroom energy usage and design simple alert systems that encourage sustainable energy practices. This activity supports the unit's focus on ethical and practical considerations in human responses to environmental challenges.",
+        "url": "https://microbit.org/teach/lessons/?selected=energy-awareness"
+      },
+      {
+        "t": "Explain Everything",
+        "d": "Students create interactive digital presentations that document their design thinking process for a chosen natural hazard challenge. They record voiceovers, annotate diagrams, and visually explain how their prototypes address real-world problems."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design persuasive infographics or campaign posters advocating for innovative solutions to local natural hazards, using Canva's design tools and 'Remove Background' feature to create professional-quality visuals for community advocacy."
+      },
+      {
+        "t": "Makerspace Prototyping Challenge",
+        "d": "Students work in teams to physically prototype a solution to a local natural hazard (e.g., earthquake-resistant building, flood barrier, bushfire survival kit) using recycled materials, cardboard, popsticks, and hot glue guns. They test, refine, and present their models, documenting the design process with photos and data."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit engages Year 5 students in investigating natural hazards and the impact on people and environments. Students explore design thinking cycles, analyse real-world challenges, and develop, prototype, and pitch innovative solutions to natural disasters. Activities include mapping, data analysis, stakeholder empathy, prototyping, and community advocacy.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T03:54:19.726Z",
@@ -1069,9 +1174,35 @@
     "th": "Sharing the Planet",
     "ci": "Finding peaceful solutions to conflict can make a difference in the world.",
     "lo": "Types of conflict; Causes and impacts of conflict; Conflict resolution",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Wise Discussion Chatbots",
+        "d": "Students design and train AI chatbots to simulate real-world conflict scenarios (e.g., playground disputes, community disagreements, historical conflicts). They script dialogue for both sides, program the chatbot to respond with peaceful resolution strategies, and test each other's bots to see if they can reach a positive outcome. This pushes students to deeply analyse causes, perspectives, and peaceful solutions to conflict."
+      },
+      {
+        "t": "Canva",
+        "d": "Students collaboratively create digital infographics or interactive posters that break down different types of conflict (personal, local, global) and showcase step-by-step peaceful resolution strategies. They can use Canva's 'Remove Background' feature to add themselves into historical or hypothetical conflict scenes, visually demonstrating their role as peacebuilders."
+      },
+      {
+        "t": "Padlet",
+        "d": "Set up a digital 'Peace Wall' where students post real-life or historical examples of conflict and brainstorm possible peaceful solutions. They can comment on each other's posts, vote on the most effective strategies, and reflect on how different perspectives shape conflict and resolution."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students author and publish interactive digital storybooks that follow characters through a conflict and resolution journey. They can embed audio reflections, video dramatizations, and hyperlinks to real-world peace initiatives, making their books a resource for younger students."
+      },
+      {
+        "t": "Minecraft: Peace Builders",
+        "d": "Using the 'Peace Builders' lesson (https://education.minecraft.net/en-us/lessons/peace-builders), students explore stories of Nobel Peace Laureates and collaboratively build virtual monuments or environments that represent peaceful solutions to conflict. They reflect on how their builds symbolize real-world actions and present their creations to the class.",
+        "url": "https://education.minecraft.net/en-us/lessons/peace-builders"
+      },
+      {
+        "t": "Makerspace Project",
+        "d": "Students design and construct physical 'Conflict Resolution Toolkits' using recycled materials, cardboard, and craft supplies. Each toolkit contains tangible items (e.g., a 'listening stick', emotion cards, peace flags, mini whiteboards for 'I statements') that can be used to facilitate peaceful problem-solving in the classroom or playground. Students prototype, test, and refine their kits based on peer feedback, then present them in a community showcase."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores the theme 'Sharing the Planet' with a central idea focused on finding peaceful solutions to conflict. Students investigate types, causes, and impacts of conflict, analyse real-world and historical examples, and engage in activities such as literature analysis, music, drama, and digital collaboration. The unit emphasizes perspective-taking, resolution strategies, and student agency in advocating for peace at personal, local, and global levels.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T03:54:39.875Z",
