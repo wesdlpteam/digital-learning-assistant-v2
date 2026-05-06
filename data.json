@@ -1851,11 +1851,15 @@
       {
         "t": "Clickview",
         "d": "Students watch curated short videos about invertebrates and their life cycles using Clickview. After viewing, they create short video reflections or answer teacher-prompted questions using the iPad camera, demonstrating their understanding of key concepts."
+      },
+      {
+        "t": "Invertebrate Habitat Explorers: Augmented Bug Biomes",
+        "d": "Students work in teams to design and construct detailed 3D habitats for different invertebrates using recycled materials, clay, natural items, and craft supplies. Each group selects an invertebrate (e.g., ant, snail, butterfly, worm) and researches its needs, life cycle, and environmental role. Using iPads with an age-appropriate AR app (e.g., Quiver or AR Makr), students create digital overlays?such as moving insects, lifecycle animations, or fun facts?that appear when scanning their physical habitats. The design cycle is followed: students investigate their chosen invertebrate, plan their habitat and AR content, prototype and build the habitat, test the AR interactions, refine their work, and finally present their interactive biomes to peers and families, explaining how the environment supports their invertebrate and why it matters for the planet."
       }
     ],
     "audited": true,
     "plannerText": "Students investigate the characteristics, life cycles, and environmental roles of invertebrates through hands-on inquiry, field observations, research, and creative presentations. Activities include bug hunts, expert research projects, labelled diagrams, excursions, and sharing findings with peers and the wider community.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -1883,11 +1887,15 @@
       {
         "t": "Epic",
         "d": "Students explore the curated WWAIPT (Where We Are in Place and Time) collection on Epic, listening to read-alouds and viewing historical photos. They can then select a favourite story or fact to share with the class using a short audio or video reflection."
+      },
+      {
+        "t": "Time-Travel Toy Museum: Interactive Exhibit Builders",
+        "d": "Students work in teams to research and select a toy from the past and a toy from today. Using recycled materials (cardboard, fabric scraps, bottle caps, etc.), they physically build two large-scale, detailed models: one representing the historical toy and one the modern version. They then use Bee-Bots or Sphero Indi robots as 'museum guides'?designing and decorating pathways with markers, craft supplies, and obstacles that guide the robots between the exhibits. Each stop features a student-recorded audio fact (using QR codes linked to iPad recordings) about how and why toys have changed over time. The result is a hands-on, walk-through Toy Museum where classmates and visitors can interact with both the physical models and the tech-powered tour, deepening understanding of continuity and change through creative making and storytelling."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores how understanding history helps us see how the past shapes the future, focusing on changes in children's lives over time. Key activities include exploring artefacts and toys from the past, comparing 'then and now', interviewing family members about their childhoods, and hands-on play with historical and modern toys. Students engage in discussions, timelines, Venn diagrams, and creative reflections to build historical understanding.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -1915,11 +1923,15 @@
       {
         "t": "iPad Camera",
         "d": "Students use the iPad Camera to capture moments of kindness, teamwork, or emotional regulation in the classroom and playground, then share these images in a class discussion or digital display to celebrate positive actions and reinforce values."
+      },
+      {
+        "t": "Feelings Fort: Interactive Emotion Shelter",
+        "d": "Students work in small groups to design and build a life-sized 'Feelings Fort' using large cardboard boxes, fabric, recycled materials, and craft supplies. Each team chooses an emotion (e.g., joy, sadness, calm, excitement) and transforms their fort into a sensory-rich space that represents that feeling through colors, textures, and decorations. Integrated tech: Using Sphero Indi cars, students design a pathway leading to their fort, coding color-tile routes that represent a journey through different emotions. As peers travel the Indi path and enter each fort, they interact with simple, student-made digital sound buttons (using Makey Makey and Scratch Jr. on iPads) that play recorded affirmations or calming sounds. The project follows the Design Cycle: empathize (discussing how spaces affect feelings), define (choosing an emotion to represent), ideate (sketching fort designs), prototype (building and coding), test (inviting classmates to experience the forts), and reflect (sharing how the spaces made them feel and why)."
       }
     ],
     "audited": true,
     "plannerText": "This yearlong unit explores how thoughts, feelings, and actions shape relationships and wellbeing. Students learn to identify and name emotions, understand what causes different feelings, and practise strategies for managing emotions and resolving conflict. Key activities include reading stories about emotions, using the Colour Monster framework, role-playing, creating visual displays, and reflecting on acts of kindness and empathy.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -1947,11 +1959,15 @@
       {
         "t": "PicCollage",
         "d": "Students create vibrant digital story posters using PicCollage, combining their own drawings, photos, and text to explore how storytellers use images and words to convey meaning. They experiment with layout, colour, and stickers to express the mood and key messages of their stories, making their storytelling personal and visually engaging."
+      },
+      {
+        "t": "Shadow Puppet Storyworlds",
+        "d": "Students work in teams to design and build a 3D shadow puppet theatre using recycled cardboard, fabric scraps, and craft materials. They create their own characters and scenery as articulated shadow puppets (using sticks, brads, and translucent materials for colour effects). Using iPads, students record voiceovers and sound effects, then integrate a simple coding element with Sphero Indi or Bee-Bot: the robot triggers LED lights or moves behind the scenes to animate set changes, control lighting, or cue sound, blending digital and physical storytelling. The project follows the Design Cycle: students empathise by exploring traditional shadow stories, define their story's message, ideate puppet and set designs, prototype and test their theatre, and finally present a live and recorded multimodal performance to peers, reflecting on how physical and digital elements convey meaning."
       }
     ],
     "audited": true,
     "plannerText": "This unit immerses Year 2 students in exploring how storytellers use different methods to convey meaning, with a strong focus on visual, oral, and multimodal storytelling. Activities include author and illustrator investigations, digital story creation, and hands-on experiences that encourage students to experiment with various storytelling techniques and reflect on how stories are constructed and shared.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "plannerContextRich": ""
   },
   {
