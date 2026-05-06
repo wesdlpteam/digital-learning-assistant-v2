@@ -3558,11 +3558,15 @@
       {
         "t": "ChatterPix Kids",
         "d": "Students take photos of objects in the schoolyard (e.g., a tree, a bird, a solar panel) and use ChatterPix Kids to animate them. Each object 'talks' about how technology affects its life in the ecosystem, encouraging empathy and systems thinking through playful digital storytelling."
+      },
+      {
+        "t": "Pollinator Pathways: Robotic Garden Guardians",
+        "d": "Students use the Design Cycle to invent and construct a vibrant 3D garden ecosystem from recycled materials, clay, and craft supplies, featuring flowers, plants, and pollinator habitats. Working in teams, they design and build simple robotic 'pollinators' (using Bee-Bots or Sphero Indi with custom-decorated exteriors) that can navigate the garden to simulate pollination routes. Students must physically engineer pathways, bridges, and obstacles, and code their robots to visit specific 'flowers' in a sequence that models real-world pollinator behavior. The project culminates in testing and refining both the physical garden and the robot's code to maximize ecosystem 'health', sparking discussion on technology's role in supporting biodiversity."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores how technology can influence the survival and adaptation of ecosystems. Students investigate the roles of robotics and other technologies in society, engage with coding and digital storytelling, and reflect on ethical questions about technology's impact on the environment. Activities include coding, persuasive writing, and hands-on projects that connect technology to real-world ecosystems.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3591,11 +3595,15 @@
       {
         "t": "Word Clouds ABCya",
         "d": "Students create vibrant word clouds using key vocabulary from the unit?such as solar, fossil fuels, electricity, and sustainability?to visually represent the different energy sources and their importance. They experiment with colors and shapes to highlight words that show how energy helps us daily and why conserving it matters, producing a colorful digital poster that sparks discussion about responsible energy use."
+      },
+      {
+        "t": "Energy Adventure Arcade: Build & Power Your Own Game",
+        "d": "Students work in teams to design and construct a physical arcade-style game (such as a marble maze, pinball, or spinner challenge) using recycled cardboard, popsticks, rubber bands, and everyday craft materials. They must integrate a simple circuit?powered by batteries, solar panels, or hand-crank generators?using LEDs, buzzers, or mini-motors to add interactive features (e.g., lights flash when a marble reaches the goal, a buzzer sounds for a high score, or a spinner is powered by a small motor). Students use iPads to document their design process with time-lapse video and voice notes, then create a digital 'how it works' guide explaining the energy source, transformation, and sustainability choices in their game. The project follows the Design Cycle: students inquire about energy, ideate and sketch, prototype with physical and digital elements, test and refine, then share and reflect on how their arcade game demonstrates energy concepts and promotes cleaner energy solutions."
       }
     ],
     "audited": true,
     "plannerText": "This unit immerses Year 2 students in exploring different energy sources?such as solar, fossil fuels, and electricity?through hands-on experiments, digital circuit building, and collaborative inquiry. Students investigate energy transformation, sustainability, and the impact of energy choices on people and the planet, culminating in reflective activities and student-driven advocacy for cleaner energy.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3624,11 +3632,15 @@
       {
         "t": "ScratchJr",
         "d": "Students program simple animated stories in ScratchJR that show how people and environments depend on each other to sustain life. They create characters representing plants, animals, and people, then design scenes illustrating sustainable resource use and the impact of fossil fuels. This hands-on coding activity deepens understanding of interdependence through storytelling and sequencing."
+      },
+      {
+        "t": "Resource Rescue: Upcycled Transport Challenge",
+        "d": "Students work in teams to design and build eco-friendly transport vehicles that 'deliver' renewable resources across a custom-built landscape. Using recycled materials (cardboard, bottle caps, fabric scraps) and basic crafting tools, they construct miniature vehicles (e.g., carts, rafts, sleds) and terrain features (bridges, rivers, forests). Teams then program Sphero Indi cars (decorated as their vehicles) to navigate the landscape, stopping at 'resource stations' where students manually load/unload tokens representing finite and infinite resources. Along the way, students must problem-solve around obstacles (oil spills, blocked paths) and collaborate to share resources fairly. The project follows the Design Cycle: investigate transport needs, plan designs, create prototypes, test and refine routes, and reflect on how their choices impact the environment and resource sharing."
       }
     ],
     "audited": true,
     "plannerText": "This unit engages Year 2 students in exploring finite and infinite resources, the impact of fossil fuels, and the importance of sustainable practices for sharing the planet. Activities include debates, visual comparisons of seasons, and investigations into how people and environments depend on one another to sustain life.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3657,11 +3669,15 @@
       {
         "t": "Puppet Pals",
         "d": "Students create and perform their own puppet show retelling a journey story, using Puppet Pals to design characters and settings that represent different types of journeys and challenges. They narrate how the characters overcome obstacles and gain new understandings, bringing the central idea to life through engaging digital storytelling."
+      },
+      {
+        "t": "Journey Jumble: Interactive Map Maze",
+        "d": "Students will work in teams to design and build a large, tactile 3D map representing a journey from one place to another, using cardboard, fabric, clay, recycled materials, and craft supplies to create landscapes, obstacles, and landmarks. They will then code a Sphero Indi or Bee-Bot to navigate the map, representing a character's journey from start to finish. Along the route, teams will construct creative 'challenge stations'?physical pop-up elements (bridges, tunnels, rivers, mountains) that the robot must interact with or trigger (e.g., push a lever, activate a sound, unlock a gate). Each station represents a challenge or opportunity for growth, inspired by stories or personal experiences. Students will iterate on both their physical structures and robot coding, using the Design Cycle to test, reflect, and improve their journey maze, culminating in a showcase where they narrate the journey and the changes experienced along the way."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores the concept of journeys, focusing on how they present challenges and opportunities for growth. Students investigate different types of journeys through storybooks, interviews, and personal reflections, culminating in creative tasks that highlight the changes and understandings gained from these experiences.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
