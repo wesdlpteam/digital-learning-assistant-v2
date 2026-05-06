@@ -131,7 +131,7 @@
     "s": [],
     "audited": true,
     "plannerText": "Not yet documented in PDF.",
-    "plannerContextRich": "",
+    "plannerContextRich": "ERROR: Unit was not found in the provided PDF. Skipping to prevent loop.",
     "plannerContextRichStatus": "not_found_in_pdf",
     "plannerContextRichLastChecked": "2026-05-06T03:40:23.995Z"
   },
@@ -312,7 +312,7 @@
     "humanVerified": false,
     "humanVerifiedResetAt": "2026-05-05T03:51:54.685Z",
     "humanVerifiedResetReason": "Suggestion edited, swapped, regenerated or changed after human verification",
-    "plannerContextRich": "",
+    "plannerContextRich": "ERROR: Unit was not found in the provided PDF. Skipping to prevent loop.",
     "plannerContextRichStatus": "not_found_in_pdf"
   },
   {
@@ -1000,7 +1000,7 @@
     "audited": true,
     "plannerText": "Not yet documented in PDF.",
     "humanVerified": false,
-    "plannerContextRich": ""
+    "plannerContextRich": "ERROR: Unit was not found in the provided PDF. Skipping to prevent loop."
   },
   {
     "ca": "Elsternwick",
@@ -1642,7 +1642,7 @@
     "s": [],
     "audited": true,
     "plannerText": "Not yet documented in PDF.",
-    "plannerContextRich": ""
+    "plannerContextRich": "ERROR: Unit was not found in the provided PDF. Skipping to prevent loop."
   },
   {
     "ca": "Glen Waverley",
@@ -1976,7 +1976,7 @@
     "audited": true,
     "plannerText": "This unit immerses Year 2 students in exploring how storytellers use different methods to convey meaning, with a strong focus on visual, oral, and multimodal storytelling. Activities include author and illustrator investigations, digital story creation, and hands-on experiences that encourage students to experiment with various storytelling techniques and reflect on how stories are constructed and shared.",
     "stemRebooted": true,
-    "plannerContextRich": ""
+    "plannerContextRich": "ERROR: Unit was not found in the provided PDF. Skipping to prevent loop."
   },
   {
     "ca": "Glen Waverley",
