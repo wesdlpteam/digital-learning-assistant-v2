@@ -486,7 +486,29 @@ function checkMinecraftEducationFit(toolName, desc, entry){
   return { ok:true, reason:'' };
 }
 
+function toolInventoryBannedHit(toolName, desc){
+  normaliseToolInventory();
+  const banned = [
+    ...(TOOL_INVENTORY && Array.isArray(TOOL_INVENTORY.banned) ? TOOL_INVENTORY.banned : []),
+    ...(typeof DEFAULT_BANNED_TOOLS !== 'undefined' && Array.isArray(DEFAULT_BANNED_TOOLS) ? DEFAULT_BANNED_TOOLS : [])
+  ];
+  const haystacks = [toolName, desc].map(v => String(v || '')).filter(Boolean);
+  for(const bannedName of banned){
+    const bk = toolInventoryKey(bannedName);
+    if(!bk) continue;
+    for(const hay of haystacks){
+      const hk = toolInventoryKey(hay);
+      if(!hk) continue;
+      // Exact and composite/app-smash catches, e.g. "ClassVR & Merge Cubes".
+      if(hk === bk || hk.includes(bk) || bk.includes(hk)) return bannedName;
+    }
+  }
+  return '';
+}
+
 function checkRealisticToolUse(toolName, desc, entry){
+  const bannedHit = toolInventoryBannedHit(toolName, desc);
+  if(bannedHit) return realismResult(false, `${bannedHit} is banned/not available at Wesley.`);
   const rawTool = String(toolName || '').trim();
   const t = normaliseToolName(rawTool).toLowerCase();
   const d = String(desc || '').toLowerCase();
