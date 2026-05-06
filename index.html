@@ -274,9 +274,10 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 .stem-prompt-title{font-size:15px;font-weight:700;color:#FFF}
 .stem-prompt-sub{font-size:12px;color:#A78BFA;margin-top:3px;font-weight:500}
 .stem-prompt-arrow{font-size:18px;color:#A78BFA;flex-shrink:0}
-.stem-overlay{position:fixed !important;inset:0;width:100vw;height:100dvh;min-height:100vh;background:rgba(0,0,0,.78);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .2s;overflow:auto;overscroll-behavior:contain}
+/* Top-aligned modal overlays: keeps dialogs visible without making teachers scroll first */
+.stem-overlay{position:fixed !important;inset:0;width:100vw;height:100dvh;min-height:100vh;background:rgba(0,0,0,.78);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:clamp(18px,6vh,64px) 16px 16px;opacity:0;pointer-events:none;transition:opacity .2s;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .stem-overlay.open{opacity:1;pointer-events:all}
-.stem-modal{background:#1A1A1A;border:2px solid var(--ac);border-radius:20px;padding:0;width:100%;max-width:500px;max-height:calc(100dvh - 32px);overflow-y:auto;position:relative;margin:0 auto;flex-shrink:0;box-shadow:0 24px 90px rgba(0,0,0,.55)}
+.stem-modal{background:#1A1A1A;border:2px solid var(--ac);border-radius:20px;padding:0;width:100%;max-width:500px;max-height:calc(100dvh - 40px);overflow-y:auto;position:relative;margin:0 auto 16px;flex-shrink:0;box-shadow:0 24px 90px rgba(0,0,0,.55);outline:none}
 .stem-modal-header{padding:20px 24px 14px;border-bottom:1px solid #333;display:flex;align-items:flex-start;gap:12px}
 .stem-modal-icon{width:42px;height:42px;border-radius:10px;background:rgba(205,235,69,.1);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 .stem-modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:8px;border:1px solid #333;background:#222;color:#888;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all .15s;line-height:1}
@@ -323,9 +324,9 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 .sg-copilot-ico{width:24px;height:24px;border-radius:8px;background:#38BDF820;color:#38BDF8;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px}
 .sg-copilot-main{font-size:13px;font-weight:800;letter-spacing:-.2px;color:#FFF;white-space:nowrap}
 .sg-copilot-sub{display:none}
-.copilot-overlay{position:fixed;inset:0;background:rgba(0,0,0,.76);z-index:100000;display:flex;align-items:center;justify-content:center;padding:18px;opacity:0;pointer-events:none;transition:opacity .2s}
+.copilot-overlay{position:fixed;inset:0;background:rgba(0,0,0,.76);z-index:100000;display:flex;align-items:flex-start;justify-content:center;padding:clamp(18px,6vh,64px) 18px 18px;opacity:0;pointer-events:none;transition:opacity .2s;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .copilot-overlay.open{opacity:1;pointer-events:all}
-.copilot-modal{background:#1A1A1A;border:2px solid #38BDF8;border-radius:22px;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 80px rgba(0,0,0,.45)}
+.copilot-modal{background:#1A1A1A;border:2px solid #38BDF8;border-radius:22px;width:100%;max-width:560px;max-height:calc(100dvh - 40px);overflow-y:auto;box-shadow:0 20px 80px rgba(0,0,0,.45);position:relative;margin:0 auto 18px;outline:none}
 .copilot-modal-head{padding:22px 24px 14px;border-bottom:1px solid #333;display:flex;align-items:flex-start;gap:12px}
 .copilot-modal-icon{width:42px;height:42px;border-radius:12px;background:#38BDF820;color:#38BDF8;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
 .copilot-modal-title{font-size:18px;font-weight:800;color:#FFF;margin-bottom:4px;letter-spacing:-.3px}
@@ -504,6 +505,28 @@ function copyTextFallback(text){
   try{document.execCommand('copy');document.body.removeChild(ta);return true;}
   catch(e){document.body.removeChild(ta);return false;}
 }
+function lockDlaOverlayScroll(){
+  document.body.style.overflow='hidden';
+}
+function unlockDlaOverlayScrollIfClear(){
+  if(!document.getElementById('stemOverlay') && !document.getElementById('copilotOverlay')){
+    document.body.style.overflow='';
+  }
+}
+function focusDlaDialog(overlay){
+  if(!overlay)return;
+  var dialog=overlay.querySelector('[role="dialog"]');
+  if(dialog){
+    dialog.setAttribute('tabindex','-1');
+    try{dialog.focus({preventScroll:true});}catch(e){dialog.focus();}
+  }
+}
+function handleDlaOverlayKey(e){
+  if(e.key!=='Escape')return;
+  if(document.getElementById('copilotOverlay')){closeCopilotInstructions();return;}
+  if(document.getElementById('stemOverlay')){closeStem();}
+}
+
 function copyPromptToClipboard(text){
   if(navigator.clipboard && window.isSecureContext){
     return navigator.clipboard.writeText(text).then(function(){return true;}).catch(function(){return copyTextFallback(text);});
@@ -527,7 +550,7 @@ function showCopilotInstructions(prompt,copied,d){
     ? '✅ Copilot prompt copied. Nothing has been sent yet — paste it into Copilot when you are ready.'
     : '⚠️ I could not copy automatically. Use the “Copy prompt again” button or select the prompt below manually.';
   var warnClass=copied?'':' warn';
-  var html='<div class="copilot-modal"><div class="copilot-modal-head"><div class="copilot-modal-icon">🤖</div><div><div class="copilot-modal-title">How do I teach this?</div><div class="copilot-modal-sub">A ready-to-use prompt has been prepared for Microsoft 365 Copilot Chat.</div></div></div><div class="copilot-modal-body">'
+  var html='<div class="copilot-modal" role="dialog" aria-modal="true" aria-labelledby="copilotModalTitle"><div class="copilot-modal-head"><div class="copilot-modal-icon" aria-hidden="true">🤖</div><div><div id="copilotModalTitle" class="copilot-modal-title">How do I teach this?</div><div class="copilot-modal-sub">A ready-to-use prompt has been prepared for Microsoft 365 Copilot Chat.</div></div></div><div class="copilot-modal-body">'
     +'<div class="copilot-status'+warnClass+'">'+status+'</div>'
     +'<ol class="copilot-steps">'
     +'<li>Click <b>Open Copilot</b> below when you are ready.</li>'
@@ -546,7 +569,10 @@ function showCopilotInstructions(prompt,copied,d){
   overlay.innerHTML=html;
   overlay.onclick=function(e){if(e.target===overlay)closeCopilotInstructions();};
   document.body.appendChild(overlay);
-  requestAnimationFrame(function(){overlay.classList.add('open');});
+  lockDlaOverlayScroll();
+  document.addEventListener('keydown',handleDlaOverlayKey);
+  overlay.scrollTop=0;
+  requestAnimationFrame(function(){overlay.classList.add('open');focusDlaDialog(overlay);});
 }
 function escapeTextarea(s){
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -561,7 +587,14 @@ function copyCopilotPromptAgain(){
 }
 function closeCopilotInstructions(){
   var el=document.getElementById('copilotOverlay');
-  if(el){el.classList.remove('open');setTimeout(function(){if(el.parentNode)el.remove();},180);}
+  if(el){
+    el.classList.remove('open');
+    setTimeout(function(){
+      if(el.parentNode)el.remove();
+      unlockDlaOverlayScrollIfClear();
+      if(!document.getElementById('stemOverlay'))document.removeEventListener('keydown',handleDlaOverlayKey);
+    },180);
+  }
 }
 // ========== END COPILOT TEACHING HELPER ==========
 
@@ -1639,21 +1672,29 @@ function tgSec(id){var el=document.getElementById('sc_'+id);var btn=document.get
 function openStem(){
   var d=window._stemData;if(!d)return;
   var old=document.getElementById('stemOverlay');if(old)old.remove();
-  var html='<div class="stem-modal"><div class="stem-modal-close" onclick="closeStem()">✕</div><div class="stem-modal-header"><div class="stem-modal-icon">🔬</div><div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ac);margin-bottom:4px">STEM Design Cycle</div><div style="font-size:18px;font-weight:700;color:#FFF;line-height:1.3">'+d.toolLabel+'</div></div></div><div class="stem-modal-body"><div class="stem-label" style="margin-bottom:12px">🔄 Empathise → Define → Ideate → Prototype → Test</div><div class="sg-desc" style="font-size:14px;line-height:1.55">'+linkifyDesc(d.desc)+'</div><div class="sg-copilot"><button class="sg-copilot-btn" onclick="openCopilotHelper('+d.cpi+',this)"><span class="sg-copilot-ico">🤖</span><span class="sg-copilot-main">How do I teach this?</span></button></div><div class="sg-fb" style="margin-top:14px;padding-top:14px;border-top:1px solid #333"><button class="sg-used" onclick="markUsed('+d.usi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+d.fbi+')" class="sg-fb-btn">💬 Feedback</button><button class="sg-react-btn sg-react-up" onclick="reactFB('+d.fbi+',\'up\',this)">👍</button><button class="sg-react-btn" onclick="reactFB('+d.fbi+',\'down\',this)">👎</button></div></div></div></div>';
+  var html='<div class="stem-modal" role="dialog" aria-modal="true" aria-labelledby="stemModalTitle"><button type="button" class="stem-modal-close" onclick="closeStem()" aria-label="Close STEM activity">✕</button><div class="stem-modal-header"><div class="stem-modal-icon" aria-hidden="true">🔬</div><div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ac);margin-bottom:4px">STEM Design Cycle</div><div id="stemModalTitle" style="font-size:18px;font-weight:700;color:#FFF;line-height:1.3">'+d.toolLabel+'</div></div></div><div class="stem-modal-body"><div class="stem-label" style="margin-bottom:12px">🔄 Empathise → Define → Ideate → Prototype → Test</div><div class="sg-desc" style="font-size:14px;line-height:1.55">'+linkifyDesc(d.desc)+'</div><div class="sg-copilot"><button class="sg-copilot-btn" onclick="openCopilotHelper('+d.cpi+',this)"><span class="sg-copilot-ico">🤖</span><span class="sg-copilot-main">How do I teach this?</span></button></div><div class="sg-fb" style="margin-top:14px;padding-top:14px;border-top:1px solid #333"><button class="sg-used" onclick="markUsed('+d.usi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+d.fbi+')" class="sg-fb-btn">💬 Feedback</button><button class="sg-react-btn sg-react-up" onclick="reactFB('+d.fbi+',\'up\',this)">👍</button><button class="sg-react-btn" onclick="reactFB('+d.fbi+',\'down\',this)">👎</button></div></div></div></div>';
   var overlay=document.createElement('div');
   overlay.id='stemOverlay';
   overlay.className='stem-overlay';
   overlay.innerHTML=html;
   overlay.onclick=function(e){if(e.target===overlay)closeStem();};
   document.body.appendChild(overlay);
-  document.body.style.overflow='hidden';
+  lockDlaOverlayScroll();
+  document.addEventListener('keydown',handleDlaOverlayKey);
   overlay.scrollTop=0;
-  requestAnimationFrame(function(){overlay.classList.add('open');});
+  var modal=overlay.querySelector('.stem-modal');if(modal)modal.scrollTop=0;
+  requestAnimationFrame(function(){overlay.classList.add('open');focusDlaDialog(overlay);});
 }
 function closeStem(){
   var el=document.getElementById('stemOverlay');
-  if(el){el.classList.remove('open');setTimeout(function(){if(el.parentNode)el.remove();},200);}
-  document.body.style.overflow='';
+  if(el){
+    el.classList.remove('open');
+    setTimeout(function(){
+      if(el.parentNode)el.remove();
+      unlockDlaOverlayScrollIfClear();
+      if(!document.getElementById('copilotOverlay'))document.removeEventListener('keydown',handleDlaOverlayKey);
+    },200);
+  }
 }
 function tgATL(el,id){var d=document.getElementById("ad_"+id);var p=document.getElementById("ap_"+id);if(d.classList.contains("open")){d.classList.remove("open");p.classList.remove("open")}else{d.classList.add("open");p.classList.add("open")}}
 function tgCur(el,id){var d=document.getElementById("d_"+id);var p=document.getElementById("p_"+id);if(d.classList.contains("open")){d.classList.remove("open");p.classList.remove("open")}else{d.classList.add("open");p.classList.add("open")}}
