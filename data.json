@@ -849,11 +849,15 @@
       {
         "t": "Microsoft Forms",
         "d": "Students design and distribute a digital survey to teachers and peers about technology use and creative expression. They analyse the data in Excel, then present their findings as part of a discussion on how technology shapes communication in their community."
+      },
+      {
+        "t": "Wearable Storytellers: Interactive Message Badges",
+        "d": "Students use the Design Cycle to invent and build wearable 'message badges' that creatively express their ideas about technology and communication. First, they brainstorm messages or stories they want to share, then design and physically craft a badge using cardboard, felt, recycled plastics, and art materials. Next, they integrate a simple programmable digital component (such as a micro:bit or Makey Makey with conductive tape or copper wire) to add an interactive element?like scrolling LED text, sound, or movement?triggered by touch or motion. Students test and refine their badges, then wear and demonstrate them in a showcase, explaining how their design transforms communication and links to the unit's central idea."
       }
     ],
     "audited": true,
     "plannerText": "In this unit, students explore the central idea 'Technology transforms how we create and share ideas.' Key activities include investigating the evolution of communication tools, analysing ethical and cybersafety considerations, surveying technology use in the school, and planning digital workshops for younger students. The unit culminates in students leading hands-on technology workshops for Prep?Year 3, applying their learning to real-world service and creative expression.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": false,
     "humanVerifiedResetAt": "2026-05-05T04:27:43.024Z",
     "humanVerifiedResetReason": "Suggestion edited, swapped, regenerated or changed after human verification",
@@ -886,11 +890,15 @@
         "t": "Minecraft Education",
         "d": "Students explore 'The Hall of Inventions' in Minecraft Education, identifying key innovations that have shaped human systems (transport, communication, health, etc.). They then design and build their own invention in the game, explaining how it could connect or improve existing systems in their community.",
         "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
+      },
+      {
+        "t": "Eco-System Interactive Chain Reaction",
+        "d": "Students work in teams to design and build a large, interconnected Rube Goldberg-style chain reaction machine that models how different systems (natural, human-made, and community) interact and depend on each other. Using recycled materials (cardboard, bottles, string, marbles, etc.), students create physical segments representing different systems (e.g., water cycle, transport, waste management, pollination). Each segment must trigger the next, showing cause-and-effect relationships. Teams integrate Sphero Indi or Bee-Bots programmed via iPads as moving 'agents' that activate or travel through parts of the system, bridging digital and physical components. Throughout the Design Cycle, students brainstorm, prototype, test, and refine their chain reaction, documenting changes and system connections digitally. The final showcase highlights how disruptions or improvements in one system impact the whole, emphasizing sustainability and interconnectedness."
       }
     ],
     "audited": true,
     "plannerText": "Students begin by brainstorming and mapping systems in their lives, then investigate the form, function, and connections of both natural and human-made systems through hands-on observation, digital documentation, and collaborative inquiry. They explore how systems are interconnected, what happens when systems change or fail, and how human actions can influence or improve systems, culminating in sustainability projects and real-world action.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:00:39.523Z",
     "humanVerifiedBy": "nathan.benn@wesleycollege.edu.au",
@@ -925,11 +933,15 @@
       {
         "t": "Minecraft Education",
         "d": "Connect the study of floods and community response to real-world engineering by having students use Minecraft: Filtering Water On The Iss (https://education.minecraft.net/en-us/lessons/filtering-water-on-the-iss). Students experiment with designing water filtration systems, linking to how communities recover from floods and ensure safe water supplies after disasters."
+      },
+      {
+        "t": "Disaster-Proof Shelter Challenge",
+        "d": "Students work in teams to research different types of natural disasters (earthquakes, floods, cyclones) and how communities adapt. Using the Design Cycle, they brainstorm, sketch, and physically prototype a model shelter from recycled materials (cardboard, plastic bottles, fabric, string, etc.) that can withstand simulated disasters. Students integrate Sphero Indi robots programmed on iPads to act as 'disaster forces' (e.g., rolling as a flood or shaking the table for an earthquake). Teams iteratively test and refine their shelters' stability and resilience, documenting results with photos and videos. The project culminates in a showcase where students present their designs, explain their engineering choices, and reflect on how technology and creative problem-solving can help communities adapt to Earth's changes."
       }
     ],
     "audited": true,
     "plannerText": "This unit engages Year 4 students in exploring how changes to the Earth, such as natural disasters, impact environments and communities. Through hands-on experiments, research projects, digital presentations, and case studies, students investigate the causes of geological change, the effects of extreme environments, and how communities respond and adapt to these challenges.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:00:27.255Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
@@ -962,11 +974,15 @@
       {
         "t": "Adobe Express Podcasting",
         "d": "Students script, record, and edit short podcasts in Adobe Express Podcasting, sharing stories about the importance of Country, language, and community for First Nations people. Episodes might feature interviews, retellings of Dreaming stories (with permission), or personal reflections on connection to place."
+      },
+      {
+        "t": "Language Lands: Interactive Connection Map",
+        "d": "Students work in teams to research a local First Nations language group, then design and build a large 3D topographic map of the group's Country using cardboard, clay, recycled materials, and natural items. They craft physical landmarks (rivers, trees, meeting places) and create story markers (using QR codes or NFC tags) that, when scanned with iPads, play short student-created audio in the local language (greetings, place names, or stories). The project integrates digital storytelling with hands-on map-making, and students iterate using the Design Cycle to refine both their physical prototypes and digital content, deepening their understanding of connection to place, language, and traditions."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores how Country, language, and community are significant to the lives of First Nations people. Students investigate the diversity of First Nations groups, the importance of traditions, language, and connection to place, and reflect on how these elements shape identity and belonging. Activities include mapping, language exploration, storytelling, and creative projects that deepen understanding of Indigenous perspectives.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:00:28.044Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
