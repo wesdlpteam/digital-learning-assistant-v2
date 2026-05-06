@@ -1996,11 +1996,15 @@
       {
         "t": "Book Creator",
         "d": "Students create a digital book documenting a system of their choice, combining photos, drawings, and short audio explanations for each step. For example, they could make a 'How Our School Lunch System Works' book, showing the journey from ordering to eating."
+      },
+      {
+        "t": "System Sorters: Interactive Mail Delivery Maze",
+        "d": "Students will work in teams to design and build a miniature 'school mail system' using recycled materials (cardboard, tubes, boxes, string, etc.) to create a network of classrooms, offices, and delivery routes. Using Sphero Indi robots or Bee-Bots, students will program delivery paths to transport 'letters' (small tokens) through their hand-built system, simulating how mail moves across a campus. They will prototype sorting stations, create obstacles, and physically test their system, iterating based on whether the robot can successfully navigate and deliver mail. The project emphasizes how systems rely on clear processes and sequences, blending digital coding with hands-on construction and real-world problem-solving."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores the concept of systems in students' lives, focusing on how a sequence of processes enables a system to function. Activities include drawing and mapping everyday systems, investigating real-world examples (like the lunch order or evacuation system), creating flowcharts, and presenting projects to peers using a variety of media.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -2029,11 +2033,15 @@
         "t": "Minecraft: Radical Recycling",
         "d": "Students explore recycling systems in a Minecraft world, playing games and completing challenges that teach them about sorting, reusing, and transforming materials. They reflect on how these digital experiences connect to real-world recycling and sustainability.",
         "url": "https://education.minecraft.net/en-us/lessons/radical-recycling"
+      },
+      {
+        "t": "Material Marvels: Sensory Sorting Robots",
+        "d": "Students work in teams to design and build a vibrant, hands-on 'Material Sorting Station' using recycled materials (cardboard, bottles, fabric, etc.). They craft a series of tactile ramps, tunnels, and chutes, then integrate simple programmable robots (e.g., Sphero Indi or Bee-Bots) decorated as 'Material Detectives.' Using color or symbol-coded paths and physical obstacles, students program their robots to navigate the station and 'sort' different material samples (e.g., paper, plastic, metal tokens) into matching bins. The project blends digital coding with physical engineering and challenges students to test, iterate, and improve their designs for accurate sorting, sparking discussion about material properties and sustainable recycling practices."
       }
     ],
     "audited": true,
     "plannerText": "This unit engages Year 2 students in hands-on investigations of material properties, physical changes (bending, stretching, tearing), and sustainable practices like reuse and recycling. Activities include manipulating materials, comparing traditional and modern uses, reflecting on sustainability, and culminating in creative projects such as building musical instruments from recycled materials.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -2062,11 +2070,15 @@
         "t": "Minecraft: James Webb Space Telescope Challenge",
         "d": "Students explore the universe in Minecraft Education, peer into the James Webb Space Telescope, craft constellations, and create a model solar system. This hands-on digital experience deepens understanding of how technology helps us observe and interpret patterns in the sky.",
         "url": "https://education.minecraft.net/en-us/lessons/james-webb-space-telescope-challenge"
+      },
+      {
+        "t": "Solar System Rover Adventure",
+        "d": "Students work in teams to design and build a scaled, tactile model of a planet's surface (e.g., Mars, Moon, or Jupiter's moons) using recycled cardboard, clay, sand, pebbles, and craft materials to represent craters, mountains, and valleys. They then assemble and decorate a Sphero Indi rover, creating custom 'planet explorer' covers from lightweight materials. Using colored tiles for coding, students program their rover to navigate a mission path?collecting 'samples' (small tokens), avoiding obstacles, and reaching designated 'research stations.' The design cycle is emphasized: students plan their planetary terrain, prototype obstacles and features, test their rover's journey, and iteratively adjust both the landscape and code for a successful mission. The project integrates scientific understanding of planetary features, basic coding, and hands-on engineering, culminating in a showcase where teams explain their planet's unique characteristics and demonstrate their rover's exploration."
       }
     ],
     "audited": true,
     "plannerText": "This unit immerses Year 2 students in exploring patterns in the sky to understand Earth's place in the solar system. Activities include sky journals, moon diaries, shadow tracking, cultural astronomy investigations, hands-on solar system model making, and creative visual arts inspired by sky patterns. Students use observation, research, and communication skills to connect scientific concepts with real-world phenomena and cultural perspectives.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -2095,11 +2107,15 @@
       {
         "t": "Stop Motion Studio",
         "d": "Students use Stop Motion Studio on iPads to create animated stories showing the journey of water from source to tap, or the impact of water scarcity on communities. They can use simple props and drawings to visually represent water's path and challenges."
+      },
+      {
+        "t": "Water Rescue Relay: Smart Aqueduct Challenge",
+        "d": "Students work in teams to design, build, and test a physical aqueduct system using recycled materials (cardboard, plastic bottles, tubes, tape, popsticks) that transports 'water' (blue marbles or beads) from a 'mountain' source to various community 'villages' on a large floor map. Integrating Sphero Indi robots, students program Indis to act as 'water guardians' that travel along color-coded paths, triggering gates or levers (crafted from simple mechanisms) to divert or release water to different villages. Each team iterates through the Design Cycle: investigating real-world water access, planning their aqueduct and coding routes, constructing both the aqueduct and interactive triggers, testing and refining for efficiency and fairness, and reflecting on how their system models the challenges of water distribution. The project blends creative building, basic robotics, and social responsibility, making the journey of water tangible and collaborative."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores the essential nature of water as a limited resource, focusing on unequal access, the impact on communities, the journey of water from source to use, and our responsibility for fair distribution. Students engage with real-world issues through inquiry, multimedia, and hands-on activities, including mapping, poster creation, and physical prototyping.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
