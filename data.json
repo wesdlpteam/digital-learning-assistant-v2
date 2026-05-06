@@ -3414,11 +3414,15 @@
       {
         "t": "PicCollage",
         "d": "Students create a collage of different plant and animal adaptations using classroom photos, magazine cutouts, and digital stickers. They label each adaptation visually, then present their collage to the class, explaining how each feature helps survival in a specific environment."
+      },
+      {
+        "t": "Pollinator Playground: Bee-Bot Adaptation Quest",
+        "d": "Students will use the Design Cycle to collaboratively design and build a vibrant 3D 'garden ecosystem' using recycled materials, cardboard, fabric, clay, and natural elements. They will create model flowers with different shapes, textures, and colors, as well as obstacles representing environmental challenges (e.g., wind barriers, 'pesticide' zones, water sources). Students will then program Bee-Bots (decorated as bees) to navigate the garden, simulating pollination routes and adapting to challenges. Along the way, they will test and refine their garden and Bee-Bot paths, experimenting with how flower design and placement affects pollination. This hands-on project integrates digital robotics, creative building, and scientific exploration of plant and bee adaptations, pollination, and human impact on ecosystems."
       }
     ],
     "audited": true,
     "plannerText": "Students explored the structures and adaptations of plants and bees through hands-on experiments (bean diaries, plant growth in different conditions), scientific drawing, clay sculpture, and research. They investigated how living things survive in various environments, with a focus on plant and animal adaptations, pollination, and human impact on ecosystems.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3446,11 +3450,15 @@
       {
         "t": "Clickview",
         "d": "Students watch curated short videos on Clickview about the evolution of technology and daily life. They then use the iPad Camera app to record their own 'then and now' video reflections, describing what has changed in their lives or families, and upload these to Seesaw for class discussion."
+      },
+      {
+        "t": "Family Time Capsule Robots",
+        "d": "Students work in teams to design and construct a 'Family Time Capsule' using recycled boxes, cardboard tubes, and craft materials, decorating the capsule with symbols and images representing their unique family histories and cultures. Each team builds a simple programmable Sphero Indi robot 'delivery vehicle' (with added cardboard or clay features for personality) that transports small artefact replicas (e.g., mini clay heirlooms, drawn family photos, or written memories) along a hand-crafted timeline track. The track, made from large sheets, cardboard, and markers, visually represents past, present, and imagined future events. Students use the Design Cycle to plan, prototype, test, and refine both the capsule and the robot's journey, ensuring the artefacts are delivered to the right 'time zone' on the track. The project culminates in oral storytelling as students share their artefacts and explain their capsule's journey through time."
       }
     ],
     "audited": true,
     "plannerText": "Students explore how history and culture connect the past, present, and future by investigating family artefacts, creating timelines, comparing old and new technologies, and predicting future changes. Activities include sorting photos, interviewing family members, exploring artefacts, and designing future inventions, with a strong focus on visual, hands-on, and oral storytelling.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3478,11 +3486,15 @@
       {
         "t": "iMovie",
         "d": "Students create short digital movies where they act out and narrate the essential agreements for playing games fairly and respectfully. They use iMovie to record their voices and videos, then add simple titles and transitions to make their agreements come alive and feel personal. This hands-on storytelling helps them reflect on how their choices affect relationships and responsibilities during play."
+      },
+      {
+        "t": "Fair Play Game Lab: Design Your Own Playground Game",
+        "d": "Students work in teams to invent a brand-new playground game that promotes fairness, teamwork, and conflict resolution. Using the Design Cycle, they brainstorm, sketch, and physically prototype game equipment or play spaces using recycled cardboard, fabric scraps, string, and craft materials (e.g., building goals, markers, or imaginative obstacles). Teams document their game rules and fairness strategies using iPads to record short demo videos or digital rule posters. To test and refine their games, students integrate Bee-Bots or Sphero Indi robots as 'game referees' or moving obstacles, programming them to interact with the physical setup. The project culminates in a 'Game Expo' where each team teaches their game to others, reflecting on how their design encourages positive social interactions and fair play."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores how students learn about themselves through the games they play, focusing on fairness, rules, teamwork, and resolving conflict. Activities include creating essential agreements, reflecting on emotions and behavior during play, building team identities, and using digital tools to document and share learning about positive social interactions.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3510,11 +3522,15 @@
       {
         "t": "iMovie",
         "d": "Students work in small groups to script and film a short documentary or 'news report' about a chosen artefact or tradition, using the iPad camera and iMovie to edit clips, add voiceovers, and insert titles. This allows them to practice oral communication and digital storytelling."
+      },
+      {
+        "t": "Cultural Lightbox Stories",
+        "d": "Students explore how cultures express beliefs and values through artefacts by designing and building their own illuminated 'story box'. Using recycled cardboard, tissue paper, acetate sheets, and craft materials, each student constructs a shoebox-sized diorama that represents a meaningful tradition, festival, or artefact from their own or a researched culture. Students integrate simple circuits with LED lights (battery-powered) to highlight key parts of their scene. They use an iPad with the Tinkercad Circuits app to plan their lighting layout digitally, then physically build the circuit and box. Each student records a short audio story about their artefact using a simple sound module (pre-recorded button) embedded in the box. The final 'Cultural Lightbox Stories' are displayed gallery-style, where pressing a button illuminates the scene and plays the student's story, creating an interactive, multisensory celebration of cultural expression."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores how artefacts provide a window into the beliefs and values of cultures. Students investigate their own and others' traditions, rituals, and artefacts through activities such as drawing, research, dance, music, and storytelling. They share personal artefacts, learn about cultural celebrations, and create projects that express and compare cultural perspectives.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
