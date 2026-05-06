@@ -87,9 +87,34 @@
     "th": "How the World Works",
     "ci": "Scientists follow a method to discover new things.",
     "lo": "The scientific process; Observing my world; Drawing conclusions",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Explain Everything",
+        "d": "Students become 'junior scientists' by using Explain Everything to visually document each step of a real science experiment (e.g., ice melting, ramp rolling). They draw predictions, record observations with the iPad camera, and narrate their thinking, creating a digital 'science method story' that can be replayed and shared with families."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students use Seesaw to capture photos and voice recordings as they observe, predict, and test during hands-on science activities. Each child uploads a sequence of images and audio reflections, showing their understanding of the scientific process in a highly visual, accessible way."
+      },
+      {
+        "t": "Canva",
+        "d": "Students use Canva's drag-and-drop features to create simple, illustrated posters showing the steps of a science investigation (e.g., 'First, we predict... Next, we test...'). They can use the 'Remove Background' tool to add themselves into their science scenes, making the process personal and engaging."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students collaboratively build a digital class book documenting their science experiments. Each page features a different step of the scientific method, with students adding their own photos, drawings, and voice explanations to demonstrate their learning."
+      },
+      {
+        "t": "iPad Camera",
+        "d": "Students use the iPad Camera to take close-up photos of their science observations (e.g., melting ice, weather changes, sorting materials). These images are then sequenced to tell the story of their experiment, supporting visual recall and oral language development."
+      },
+      {
+        "t": "Physical Makerspace Project",
+        "d": "Students design and build their own 'Science Investigation Stations' using cardboard, popsticks, recycled containers, and other classroom materials. Each station represents a step in the scientific method (e.g., a 'Prediction Booth' with a mailbox for guesses, an 'Observation Window' with magnifying glasses, a 'Testing Ramp' for rolling objects). Students rotate through each station, physically acting out the scientific process and sharing their findings with peers."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Prep students explore the central idea that scientists follow a method to discover new things. Key activities include nature walks for observation, weather tracking, hands-on experiments (like ice melting and ramp rolling), and sorting materials by properties. The scientific process is made explicit through repeated cycles of predicting, testing, observing, recording, and sharing findings, with a strong emphasis on drawing, oral reflection, and collaborative inquiry.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:03:34.259Z",
@@ -155,9 +180,34 @@
     "th": "How We Express Ourselves",
     "ci": "Emotions can be expressed in different ways.",
     "lo": "Recognising our own and others' emotions; Responding to and interpreting our emotions; Different ways we express emotions",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students photograph their own facial expressions or create drawings of different emotions, then use ChatterPix Kids to animate the images with their own voice recordings, expressing how they feel and why. This brings emotions to life and encourages students to reflect on and share their feelings in a playful, creative way."
+      },
+      {
+        "t": "Canva",
+        "d": "Students use Canva's visual design tools to create digital emotion posters, combining expressive colors, shapes, and the 'Remove Background' feature to collage their own photos or artwork. They can visually represent different emotions and add simple text or icons to communicate feelings, supporting visual literacy and emotional vocabulary."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students collaboratively author a digital class book about emotions, each contributing a page with a drawing, photo, or collage representing a feeling, and recording a short audio explanation. The final book can be shared with families or read aloud in class, celebrating the diversity of emotional expression."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students document their emotional learning journey by uploading photos, drawings, or voice recordings to Seesaw. Teachers can prompt students to reflect on how they expressed emotions during different activities, and families can respond with supportive comments, building a home-school connection around emotional literacy."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "Students use Adobe Express to create short, vibrant digital posters or slideshows that visually represent a range of emotions using color, imagery, and simple animation. They can record their voices describing a time they felt a certain way, integrating visual and oral storytelling."
+      },
+      {
+        "t": "iPad + Makerspace Materials",
+        "d": "Students design and build 'Emotion Masks' using cardboard, fabric scraps, recycled materials, and art supplies. They photograph their masks with the iPad camera, then use the images in digital storytelling apps (like ChatterPix or Book Creator) to narrate a story about the emotion their mask represents. This blends hands-on making with digital expression."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The unit 'How We Express Ourselves' explores how emotions can be expressed in different ways. Students engage in activities such as reading picture books about emotions, creating artworks and masks to represent feelings, participating in role-play and group discussions, and using visual and verbal communication to recognise, interpret, and communicate emotions. The unit emphasizes creativity, self-awareness, and social-emotional learning through a variety of expressive modes.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-04T00:21:29.794Z",
@@ -171,9 +221,34 @@
     "th": "How We Organise Ourselves",
     "ci": "Services are established to help the needs of people in the community.",
     "lo": "Local services; Why we need local services in our community; How services meet personal and community needs",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students take photos of themselves or drawings of community helpers, then use ChatterPix Kids to record their voices as if they are the helper explaining their job and how they help the community. This creates a digital 'living museum' of local services, making learning interactive and personal."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students create a collaborative digital book about local community services. Each student authors a page featuring a chosen community helper, adding photos, drawings, and voice recordings to explain the service and its importance. The final book can be shared with families and the wider school community."
+      },
+      {
+        "t": "Canva",
+        "d": "Using Canva's visual templates and 'Remove Background' feature, students design posters celebrating different community helpers. They can combine their own photos (taken with the iPad camera) and illustrations, then add simple labels or speech bubbles to highlight how each service meets community needs."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students document their learning journey by recording short videos or audio reflections about the services they encounter during a 'community walk' around the school. They upload photos and voice notes to Seesaw, creating a digital portfolio that captures their understanding of how services support the community."
+      },
+      {
+        "t": "Epic",
+        "d": "Students use Epic to research and listen to read-alouds about community helpers. They then create a simple fact file or digital collage about a chosen service, using visuals and minimal text to demonstrate their understanding of how that service meets people's needs."
+      },
+      {
+        "t": "Physical Makerspace Project",
+        "d": "Students work in small groups to design and build a model of a community service building (e.g., post office, fire station, hospital) using recycled materials, cardboard, popsticks, and bottle caps. They add hand-drawn signs and simple features (like a cardboard ambulance or mailbox) to show how the service operates and helps people."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students explored the central idea 'Services are established to help the needs of people in the community' through read-alouds, guest speakers (such as the Royal Flying Doctor Service), class discussions, and student-led presentations about community helpers. Activities included writing thank-you letters, creating reports and presentations, and engaging with digital research and reflection tasks.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-04T00:28:52.506Z",
@@ -187,9 +262,34 @@
     "th": "How the World Works",
     "ci": "Patterns help us to interpret the world around us.",
     "lo": "Patterns and cycles in our lives; Different patterns around us; How patterns can be created, interpreted and extended",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students photograph patterns they find in nature or around the school using the iPad camera, then use ChatterPix Kids to animate the patterns and record a short explanation of what the pattern is and how it helps us interpret the world. This brings patterns to life and encourages oral language development."
+      },
+      {
+        "t": "Canva",
+        "d": "Students create a visual collage of different patterns and cycles (e.g., butterfly life cycle, seasons, water cycle) using Canva's drag-and-drop interface. They can use the 'Remove Background' feature to layer their own photos of patterns and add simple labels or icons, making connections between visual patterns and real-world examples."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students collaboratively build a digital class book documenting patterns and cycles they observe throughout the unit. Each student contributes a page with a drawing, photo, or voice recording describing a pattern (e.g., leaf shapes, brickwork, animal life cycles), supporting multimodal expression and early literacy."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students use Seesaw to capture and share their investigations of patterns in their environment. They can upload photos, draw over them to highlight repeating elements, and record their thinking. Teachers and peers can comment, fostering reflection and dialogue about patterns and cycles."
+      },
+      {
+        "t": "Epic",
+        "d": "Students use the Epic app to research and explore interactive books about patterns in nature, animal life cycles, and seasons. They can listen to read-alouds and use the app's built-in quizzes to reinforce understanding, supporting independent inquiry and digital research skills."
+      },
+      {
+        "t": "Physical Makerspace Project",
+        "d": "Students design and build a 'Pattern Machine' using recycled materials, cardboard, bottle caps, and popsticks. The machine could stamp, roll, or print repeating patterns onto paper, or physically demonstrate a cycle (like a rotating water cycle or butterfly life cycle wheel). This hands-on project helps students physically construct and manipulate patterns, deepening their understanding of how patterns work in the world."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The Year 1 'How the World Works' unit focuses on exploring patterns and cycles in the natural world, such as life cycles, seasons, and the water cycle. Students research, observe, and document patterns using digital tools, engage in hands-on investigations, and create models to interpret and extend their understanding of how patterns help us make sense of our environment.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-04T01:00:17.118Z",
@@ -218,9 +318,34 @@
     "th": "Where We Are in Place and Time",
     "ci": "Homes reflect our culture and environment.",
     "lo": "Different types of homes; Characteristics of a home; The importance of sustainable living spaces",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students select or draw a picture of a unique home from around the world, then use ChatterPix Kids to animate the home and record a voiceover explaining its features, materials, and how it reflects the local culture and environment. This brings global perspectives to life in a playful, memorable way."
+      },
+      {
+        "t": "Canva",
+        "d": "Students create a visual Venn diagram in Canva comparing two types of homes (e.g., igloo vs. yurt), using images, icons, and minimal text to highlight similarities and differences in materials, climate adaptation, and cultural significance."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Each student authors a page in a collaborative digital class book using Book Creator, showcasing a different type of home. They add photos, drawings, and voice recordings to describe what makes each home special and how it connects to its environment."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students document their learning journey by uploading photos of their mini home builds, drawing diagrams, and recording short reflections about how their chosen home reflects culture and environment. Families can comment and ask questions to extend learning."
+      },
+      {
+        "t": "Epic",
+        "d": "Students use Epic to research and gather facts about homes from different cultures, then create a simple fact file or digital poster with images and key points, supporting their understanding with rich, age-appropriate nonfiction texts."
+      },
+      {
+        "t": "Physical Makerspace Project",
+        "d": "Students design and build a model home using recycled materials, cardboard, fabric scraps, and natural items. They choose a real-world home type (e.g., Aboriginal gunya, houseboat, cave home, yurt) and must consider how their materials and structure suit the local climate and culture. The finished models are displayed in a 'Global Village' classroom showcase."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students explore how homes reflect culture and environment by investigating different types of homes from around the world, comparing features, and discussing sustainability. Activities include read-alouds, research using Epic, Venn diagrams, building mini homes, and a learning showcase where students present their creations and findings.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-04T01:23:43.070Z",
@@ -437,8 +562,8 @@
     "ci": "An inquiry into the nature of the self; beliefs and values; personal, physical, mental, social and spiritual health; human relationships.",
     "lo": "Lines of inquiry to be confirmed once planner is uploaded",
     "s": [],
-    "audited": false,
-    "plannerText": "",
+    "audited": true,
+    "plannerText": "Not yet documented in PDF.",
     "stemRebooted": true,
     "plannerContextRich": "CENTRAL IDEA: Individuals use different strategies to overcome challenges and keep themselves safe.\n\nLINES OF INQUIRY: The ways individuals respond to challenges and setbacks; Personal strategies to manage change; Our personal responsibility to keep ourselves safe - when we feel uncomfortable (online and face-to-face); Respecting others to positively influence friendships\n\nKEY CONCEPTS: Perspective, Change, Responsibility\n\nPROVOCATION / TUNING IN: Students listen to the song \"Try Everything\" and discuss its message. They participate in Think/Pair/Share activities about growth and fixed mindsets, and complete getting-to-know-you activities in the first week of school.\n\nLEARNING ENGAGEMENTS: \n- Growth mindset sessions: Watch videos on growth vs. fixed mindset, match statements, create Y charts, read books such as \"Y is for YET,\" \"The Magic Yet,\" and \"The Girl Who Never Made Mistakes,\" and complete related activities.\n- Building team/group skills using Youcubed videos and activities.\n- Activities to identify personal strengths, self-portraits, and positive attributes.\n- Scenarios to practice changing fixed mindset statements to growth mindset.\n- Challenge stations (bean bag, tangram, drawing, tongue twister, extreme dot-to-dot, writing with the opposite hand) with reflection questions at each station.\n- Read and discuss \"Through the Gate\" by Sally Fawcett, tracking changes in mindset.\n- \"Grow Your Mind\" program: Learn about brain parts using animal metaphors, watch videos, and complete Seesaw tasks.\n- Building resilience sessions: Identify emotions, threats, challenges, and opportunities; use resilience strategy flashcards; create personal lists and possibly Kahoot games.\n- Role-play scenarios to practice resilience and problem-solving.\n- URStrong program: Lessons on making friends, trust, friendship fires, tricky situations, and kindness.\n- Art: Create sculptures representing responses to challenges and setbacks.\n- Music: Explore identity through composition.\n- PE/Health: Physical challenges requiring resilience and teamwork; Health lessons on safety and trusted adults.\n- Drama: Explore perspective through persuasive language and advertising.\n- Library: Related lessons and resources.\n\nASSESSMENT: \n- Growth mindset portfolio tasks (e.g., Seesaw tasks, picture storybook reflection, problem-solving resilience activities).\n- Self-reflection journals and peer feedback.\n- Scenario-based activities and role-plays.\n- No formal summative assessment for each line of inquiry, but evidence gathered through discussion, observation, and day-to-day teaching.\n- Student-led conferences and sharing with parents via workshops and SeeSaw portfolios.\n\nTEACHER NOTES: \n- Strong transdisciplinary connections, especially with PE, Health, Art, Music, and Drama.\n- Consistent language and strategies used throughout the year for growth mindset, resilience, and friendship.\n- Cyber safety lessons and essential agreements revisited regularly.\n- Friendology incursion and practical activities (e.g., bringing soft toys for roleplay) were highly engaging.\n- Opportunities for student agency through choice of scenarios, self-assessment, and reflection.\n- Technology integration includes SeeSaw for portfolios, Kahoot for resilience strategies, and iPad use for research and reflection.\n- Teachers note the benefit of delivering the unit \"as needs arise\" but suggest more regular assessment and feedback in the future.\n- Parents involved through workshops and encouraged to use the same language and strategies at home.\n\nIf you need a different unit, please specify."
   },
