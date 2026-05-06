@@ -3270,11 +3270,15 @@
       {
         "t": "iPad Camera app",
         "d": "Students use the iPad Camera to document healthy choices throughout the school day?snack time, active play, mindfulness moments. These photos can be sequenced into a visual diary or slideshow, then shared with the class or families to reinforce healthy routines."
+      },
+      {
+        "t": "Healthy Habits Home: Interactive Dollhouse Design",
+        "d": "Students collaboratively design and construct a large, multi-room cardboard dollhouse representing a 'healthy home.' Each room focuses on a different aspect of wellbeing (e.g., kitchen for nutrition, bedroom for sleep, bathroom for hygiene, lounge for emotional wellbeing, backyard for exercise). Using recycled materials, paint, and craft supplies, students build furniture and accessories that model healthy choices (e.g., a fruit bowl, a bed with a bedtime chart, a handwashing station). To integrate technology, students use Bee-Bots programmed with simple sequences to 'visit' each room, completing healthy habit challenges?such as stopping at the bathroom for handwashing or the kitchen for a balanced meal. Students iterate on their designs, test Bee-Bot pathways, and reflect on how their healthy home supports wellbeing, following the Design Cycle throughout the process."
       }
     ],
     "audited": true,
     "plannerText": "The Prep 'Who We Are' unit focuses on understanding what it means to be healthy, with students exploring nutrition, exercise, sleep, hygiene, and emotional wellbeing. Activities include sorting foods, learning about the Zones of Regulation, role-playing healthy habits, and creating visual and oral reflections on making healthy choices at school and home.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3302,11 +3306,15 @@
       {
         "t": "iPad Camera app",
         "d": "Students use the iPad Camera to capture classmates demonstrating different emotions through facial expressions and body language. These images are then sorted or matched to emotion words in a classroom activity, deepening understanding of non-verbal cues."
+      },
+      {
+        "t": "Emotion Mirrors: Interactive Expression Sculptures",
+        "d": "Students will design and build life-sized 'Emotion Mirrors' using cardboard, recycled materials, fabric, and craft supplies to represent different emotions through exaggerated facial features and movable body parts. Each group selects an emotion (e.g., joy, surprise, sadness) and constructs a sculpture with articulated features (e.g., eyebrows, mouths, arms) that can be physically adjusted. Using Sphero Indi robots or Bee-Bots, students code simple movement sequences to trigger specific changes in the sculpture (e.g., rolling over a sensor activates a lever to lift eyebrows or open a mouth). This hands-on project integrates digital coding with physical prototyping, allowing students to explore and demonstrate how body language and facial expressions communicate feelings in a creative, collaborative, and tangible way. The design cycle guides students through brainstorming, prototyping, testing, and refining their interactive sculptures."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores how people express their emotions through communication, with a strong focus on body language, facial expressions, and non-verbal cues. Students engage in visual arts, drama, and music activities to explore and represent emotions, create team identities, and reflect on how feelings are shown and interpreted in different contexts.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3334,11 +3342,15 @@
       {
         "t": "Book Creator",
         "d": "Students build a digital book documenting the journey of a chosen product. Each page represents a stage in the system (e.g., farm, factory, transport, shop), with photos, drawings, and audio narration to bring the process to life for early readers."
+      },
+      {
+        "t": "Supply Chain Adventure Track",
+        "d": "Students use the Design Cycle to collaboratively create a large, interactive 'supply chain' track that physically demonstrates the journey of a product (e.g., a loaf of bread or a T-shirt) from origin to consumer. First, they research and sequence the key stages (farm, factory, transport, shop, home). Then, using recycled cardboard, boxes, fabric scraps, and craft materials, they build 3D models of each stage and connect them with tracks, ramps, or pathways. Integrating Sphero Indi or Bee-Bots, students program the robots to travel the track, stopping at each stage to trigger simple, student-made physical mechanisms (like a lever at the 'factory' to load a 'product' or a flap at the 'shop' to simulate purchase). QR codes or image cards at each station can be scanned with iPads to reveal student-created voice recordings describing what happens at each step. The final display is an immersive, hands-on journey that blends digital interactivity with tangible construction, deepening understanding of how products reach consumers."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores the systems involved in preparing products for consumers, focusing on the journey of items like food and clothing from their origins to the end user. Students investigate, sequence, and represent the stages products go through, using videos, flowcharts, and hands-on making to deepen their understanding of processing, transportation, and consumer choice.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3366,11 +3378,15 @@
       {
         "t": "ScratchJr",
         "d": "Students create simple animated stories in ScratchJr showing how weather changes affect their day. For example, they can program a character to choose an umbrella when it rains or put on a hat when it is sunny, reinforcing cause and effect through coding and storytelling."
+      },
+      {
+        "t": "Weather Wonders: Build-a-Weather Machine",
+        "d": "Students work in teams to design and construct imaginative 'weather machines' that demonstrate how different weather types affect daily life. Using recycled boxes, cardboard tubes, fabric scraps, string, and craft materials, students build a large, interactive contraption with moving parts (e.g., spinning clouds, rain levers, sun dials, wind spinners). They integrate a Sphero Indi or Bee-Bot as the 'weather activator': when placed at different stations on the machine, the robot triggers physical events (e.g., pushing a lever to release 'rain' beads, spinning a sun disc). Students use the Design Cycle: empathize (discuss how weather impacts them), define (choose weather elements to show), ideate (sketch and plan), prototype (build and test), and reflect (share how their machine represents weather's effects on daily life). The project blends tangible building, robotics, and creative storytelling, culminating in a class demonstration where each group explains their machine's weather features and real-life connections."
       }
     ],
     "audited": true,
     "plannerText": "The unit engages Year 1 students in exploring how weather affects daily life, including clothing, activities, and food choices. Students investigate weather patterns, collect and graph data, compare seasonal changes, and express their understanding through creative activities such as weather reports, tableaux, and music. The unit emphasizes student agency, hands-on inquiry, and visual documentation of learning.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
