@@ -146,21 +146,22 @@ let TOOL_INVENTORY = { approved: [], banned: [], ageRanges: {} };
 // Default seeds used when nothing is persisted yet (first time a coordinator visits after this update).
 // The coordinator can add/remove freely from the Tool Inventory card.
 const DEFAULT_APPROVED_TOOLS = [
-  // Microsoft M365
-  'Microsoft Teams', 'Microsoft Word', 'Microsoft PowerPoint', 'Microsoft OneNote',
-  'Microsoft Excel', 'Microsoft Forms', 'Microsoft Sway', 'Wise Discussion Chatbots',
-  // Robotics / STEM hardware
-  'Bee-Bots', 'Sphero Indi', 'Sphero BOLT', 'Lego Spike Essential', 'Lego Spike Prime',
+  // Microsoft M365 (Teams, PowerPoint, OneNote, Sway are BANNED — only Word, Excel, Forms allowed)
+  'Microsoft Word', 'Microsoft Excel', 'Microsoft Forms',
+  // Specialist platform
+  'Wise Discussion Chatbots',
+  // Robotics / STEM hardware (Lego Spike Essential is BANNED — only Prime allowed)
+  'Bee-Bots', 'Sphero Indi', 'Sphero BOLT', 'Lego Spike Prime',
   'Micro:bit', 'CoDrone EDU', 'Makey Makey',
-  // Maker / AV hardware
-  '3D Printers', 'Merge Cubes', 'Green Screen', 'Podcast Equipment', 'iPads',
+  // Maker / AV hardware (ClassVR, Green Screen Kits, Digital Cameras are BANNED)
+  '3D Printers', 'Merge Cubes', 'Podcast Equipment', 'iPads', 'Laptops',
   // Core creation
   'Seesaw', 'Canva', 'Book Creator', 'Padlet',
   // Video / audio / animation
   'GarageBand', 'ScratchJR', 'Stop Motion Studio', 'ChatterPix Kids', 'iMovie',
   'Puppet Pals', 'Adobe Express', 'Adobe Express Podcasting',
-  // Subject specific
-  'Google Maps', 'Google Earth', 'Field Guide to Victoria', 'Sky Map', 'Geoboard',
+  // Subject specific (Google Earth is BANNED)
+  'Google Maps', 'National Geographic MapMaker', 'Field Guide to Victoria', 'Sky Map', 'Geoboard',
   // Other
   'Clickview', 'Epic', 'PicCollage', 'Brushes Redux', 'Word Clouds ABCya',
   'Sketchbook', 'Explain Everything', 'Freeform', 'Delightex', 'Kahoot', 'Tinkercad',
@@ -168,9 +169,16 @@ const DEFAULT_APPROVED_TOOLS = [
 ];
 
 const DEFAULT_BANNED_TOOLS = [
+  // AI chatbots
   'ChatGPT', 'Claude', 'Gemini', 'Copilot',
+  // Google Suite
   'Google Docs', 'Google Slides', 'Google Sheets',
-  'WeVideo', 'Flipgrid', 'ClassVR'
+  // Microsoft banned
+  'Microsoft Teams', 'Microsoft PowerPoint', 'Microsoft OneNote', 'Microsoft Sway',
+  // Hardware banned
+  'ClassVR', 'Green Screen Kits', 'Digital Cameras', 'Lego Spike Essential',
+  // Other banned
+  'WeVideo', 'Flipgrid', 'Google Earth', 'Banqer', 'Apple Keynote'
 ];
 
 const DEFAULT_TOOL_AGE_RANGES = {
@@ -912,6 +920,10 @@ async function saveLibraries(){
     if(saveR.status === 401) throw new Error('Drive token expired');
     if(!saveR.ok) throw new Error(`Drive responded ${saveR.status}`);
     setStatus('Libraries saved to Drive ✓');
+
+    // Auto-sync tool inventory to GAS so auditor/surgeon always use the same lists
+    syncToolInventoryToGAS_().catch(err => console.warn('GAS inventory sync failed:', err.message));
+
   } catch(e){
     if(e.message.includes('expired') || e.message.includes('401')) DRIVE_TOKEN = null;
     alert(`⚠ Libraries save failed: ${e.message}\n\nYour changes are backed up locally. Refresh the page to reconnect Drive.`);
@@ -920,6 +932,33 @@ async function saveLibraries(){
 }
 
 function getLibraryLessons(key){ return LIBRARIES[key] || []; }
+
+// ===== AUTO-SYNC TOOL INVENTORY TO GAS =====
+// Pushes the Studio's approved/banned lists to GAS Script Properties
+// so the auditor, surgeon, and all GAS-side AI calls use the same lists.
+// Called automatically every time saveLibraries() succeeds.
+async function syncToolInventoryToGAS_() {
+  if (!SCRIPT_URL) return;
+  normaliseToolInventory();
+  const body = withGASToken({
+    action: 'syncToolInventory',
+    approved: TOOL_INVENTORY.approved || [],
+    banned: TOOL_INVENTORY.banned || [],
+    ageRanges: TOOL_INVENTORY.ageRanges || {}
+  });
+  try {
+    const r = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(body)
+    });
+    const d = await r.json();
+    if (d.error) console.warn('GAS inventory sync error:', d.error);
+    else console.log('Tool inventory synced to GAS ✓', d.message || '');
+  } catch (err) {
+    console.warn('GAS inventory sync failed:', err.message);
+  }
+}
 // Backward-compatible alias
 function getMinecraftLessons(){ return getLibraryLessons('minecraft'); }
 
