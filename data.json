@@ -2957,9 +2957,35 @@
     "th": "How the World Works",
     "ci": "Scientists undertake experimentation to confirm, contest and create new theories.",
     "lo": "The scientific method; How experiments lead to new understandings; The relationship between planets and the Sun; Energy transfer and transformation in circuits",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Minecraft: The Scientific Method",
+        "d": "Students use 'Minecraft: The Scientific Method' (https://education.minecraft.net/en-us/lessons/the-scientific-method) to collaboratively design, conduct, and document their own digital experiments. They can manipulate variables, collect data, and present findings in a virtual lab, directly mirroring the inquiry cycle and scientific experimentation focus of the unit.",
+        "url": "https://education.minecraft.net/en-us/lessons/the-scientific-method"
+      },
+      {
+        "t": "Explain Everything",
+        "d": "Students record and annotate their science experiments step-by-step, using Explain Everything to capture hypotheses, procedures, results, and reflections. This creates a dynamic digital science journal that documents their inquiry process and supports metacognitive thinking."
+      },
+      {
+        "t": "Merge Cubes",
+        "d": "Students use Merge Cubes to explore 3D models of molecules, circuits, and planetary systems, allowing them to visualize and manipulate scientific phenomena related to energy, matter, and planetary movement, deepening their conceptual understanding."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Students design and distribute digital surveys to collect data on classmates' experiment results, then analyse the aggregated data for trends and patterns. This reinforces the importance of repeatability, data collection, and evidence in scientific inquiry."
+      },
+      {
+        "t": "GarageBand",
+        "d": "Students create audio reports or science podcasts in GarageBand, explaining their experimental process, findings, and how their results confirm, contest, or create new scientific theories. This supports communication skills and creative synthesis of learning."
+      },
+      {
+        "t": "Makerspace: Physical Circuit Prototyping",
+        "d": "Students use cardboard, copper tape, LEDs, batteries, and recycled materials to physically prototype and test their own electrical circuits. They experiment with series and parallel designs, document changes, and reflect on energy transfer and transformation, directly linking hands-on making with scientific investigation."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit engages students in hands-on and digital scientific inquiry, focusing on experimentation to confirm, contest, and create new theories. Students investigate energy in circuits, chemical changes, planetary movement, and the scientific method, culminating in designing and presenting their own experiments.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:40:38.497Z",
@@ -2972,9 +2998,35 @@
     "th": "Sharing the Planet",
     "ci": "The influences on our consumer choices reveal the interdependence between human and natural systems and call for responsible action toward just and sustainable futures.",
     "lo": "Influences on consumer choices (function); How consumer decisions impact living things and their habitats (causation); Alternative models of consumerism that honour a fair and sustainable future (perspective)",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Minecraft: Revamp Melbourne",
+        "d": "Students use 'Minecraft: Revamp Melbourne' to collaboratively design and build a future-focused, sustainable version of Melbourne. They must integrate real-world research on ethical consumerism, sustainable materials, and urban systems, then justify their design choices in terms of environmental and social impact. This immersive simulation challenges students to apply their understanding of consumer choices and interdependence between human and natural systems in a highly creative, systems-thinking context.",
+        "url": "https://education.minecraft.net/en-us/lessons/revamp-melbourne"
+      },
+      {
+        "t": "Canva",
+        "d": "Students create persuasive multimedia campaigns using Canva to advocate for more ethical and sustainable consumer choices. They can design infographics, social media posts, or digital posters that highlight the environmental and social impacts of popular products, using data from their research to influence real-world audiences."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Students design and distribute digital surveys using Microsoft Forms to collect data on peer and family consumer habits. They analyse the results to identify trends, influences, and opportunities for more responsible action, then present their findings using visual data representations."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students collaboratively build a digital wall on Padlet to document and reflect on case studies of companies (local and global) that have shifted toward more sustainable and just business models. They can post articles, videos, and their own reflections, fostering a shared knowledge base and critical discussion."
+      },
+      {
+        "t": "Adobe Express Podcasting",
+        "d": "Students script, record, and publish a podcast episode using Adobe Express Podcasting, where they interview local business owners, sustainability experts, or peers about the challenges and opportunities of making ethical consumer choices. This real-world connection deepens their inquiry and communication skills."
+      },
+      {
+        "t": "Makerspace Project: Sustainable Product Prototype",
+        "d": "In the Makerspace, students design and physically prototype an alternative product or packaging solution that addresses a real sustainability issue identified in their research (e.g., a reusable container, upcycled packaging, or a product made from recycled materials). They use cardboard, recycled plastics, fabric scraps, and other materials, then present their prototype alongside a digital pitch explaining its environmental and social benefits."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students investigate the influences on consumer choices, analyse advertising and peer influence, and research the ethical and environmental impacts of products. They collaborate to present findings, create persuasive multimodal texts, and take action by proposing or advocating for more just and sustainable consumer models.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:40:59.541Z",
@@ -3027,9 +3079,34 @@
     "th": "Who We Are",
     "ci": "An inquiry into the nature of the self; beliefs and values; personal, physical, mental, social and spiritual health; human relationships.",
     "lo": "Lines of inquiry to be confirmed once planner is uploaded",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Wise Discussion Chatbots",
+        "d": "Students design and train their own AI-powered chatbots to simulate conversations about wellbeing, mindset, and neurodiversity. Each group codes chatbot responses to reflect different perspectives on brain function, growth mindset, and strategies for self-regulation. This allows students to role-play scenarios and receive instant, tailored feedback on wellbeing strategies in a highly interactive, digital format."
+      },
+      {
+        "t": "GarageBand",
+        "d": "Students compose and record original audio reflections or soundscapes representing different emotional states, brain functions, or wellbeing strategies. They can layer music, voice recordings, and sound effects to express how mindset and experiences influence learning and wellbeing, then share these as part of a digital wellbeing journal."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students collaboratively build a digital 'Wellbeing Wall' using Padlet, posting strategies, resources, and personal reflections on managing health, safety, and wellbeing. They can comment on each other's posts, creating a supportive online community and resource hub that grows throughout the unit."
+      },
+      {
+        "t": "Canva",
+        "d": "Students use Canva to design infographics or posters that visually explain the physiology and function of the brain, or to illustrate strategies for managing wellbeing. They can incorporate diagrams, icons, and their own artwork, then present these resources to peers or display them around the classroom."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students document their personal wellbeing journeys by creating multimedia journal entries in Seesaw. They can upload photos of their artefact spaces, record video reflections, and annotate diagrams of the brain, tracking their growth in self-management and emotional regulation over time."
+      },
+      {
+        "t": "Makerspace Project: Brain Model & Wellbeing Toolkit",
+        "d": "Students work in teams to physically construct a 3D model of the human brain using cardboard, recycled materials, and craft supplies. Each section of the brain is labelled and includes a pull-out tab or flip card describing its function. Alongside the model, students build a 'Wellbeing Toolkit' box containing tangible items (e.g., stress balls, affirmation cards, fidget tools) and student-designed instructions for strategies that support health, safety, and wellbeing. The toolkit is shared with younger students or displayed in a wellbeing corner."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores identities as individuals and collectives, focusing on physical, emotional, social, and spiritual health and wellbeing. Students investigate the physiology and function of the brain, how mindset and experiences influence learning, and develop strategies to support health, safety, and wellbeing through reflection, creative tasks, and hands-on activities.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:41:25.144Z",
@@ -3124,9 +3201,34 @@
     "th": "Sharing the Planet",
     "ci": "Human actions change the environment.",
     "lo": "How people interact with different environments; The effect people have on the environment; Ways in which people can take action and care for the environment",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Adobe Express Podcasting",
+        "d": "Students create a simple podcast episode where they interview each other about ways they and their families help care for the environment, using iPads to record and Adobe Express to add sound effects of nature and environmental sounds. This empowers even Preps to share their voice and spread environmental messages in a highly engaging, age-appropriate way."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design vibrant, visual posters in Canva showing 'before and after' scenes of environments affected by human actions (e.g., a clean beach vs. a polluted one). They use Canva's 'Remove Background' feature to collage themselves into the scene as environmental helpers, making the learning personal and visual."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students collaboratively create a digital class book in Book Creator, each contributing a page with a drawing and a voice recording explaining one way to care for the planet (e.g., picking up rubbish, planting trees). The final book can be shared with families to inspire action at home."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students use Seesaw to document their daily sustainable actions at school and home by taking photos or drawing pictures, then recording short audio reflections about how their actions help the environment. Teachers can create a class 'Sustainability Journal' to celebrate collective impact."
+      },
+      {
+        "t": "PicCollage",
+        "d": "Students go on a 'nature walk' around the school, using the iPad camera to capture photos of living and non-living things, as well as any evidence of human impact (e.g., litter, garden beds). They then use PicCollage to create a visual report, sorting images into 'helpful' and 'harmful' human actions."
+      },
+      {
+        "t": "Makerspace Project: Recycled Materials Mini-World",
+        "d": "Students work in small groups to build a 3D model of an environment (beach, forest, or ocean) using recycled materials such as cardboard, bottle caps, fabric scraps, and natural items. They add both 'positive' (trees, animals, clean water) and 'negative' (litter, pollution) elements, then present their model and explain how human actions can change the environment and what actions help protect it."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Prep students explore different environments (desert, marine, forest, playground), learn about living and non-living things, and investigate how human actions?like recycling, littering, or using reusable containers?impact the planet. Activities include drawing, storytelling, music, excursions, and hands-on art projects to build awareness and inspire sustainable choices.",
     "stemRebooted": true
   },
   {
@@ -3145,9 +3247,34 @@
     "th": "Who We Are",
     "ci": "To be healthy, people???s basic needs must be met.",
     "lo": "How our brain is growing and changing; How our emotions, behaviours and actions promote relationships; How we care for our bodies",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students take photos of their healthy lunchbox or favourite exercise activity, then use ChatterPix Kids to animate the photo and record their voice explaining why this choice helps keep them healthy. This brings student voice and creativity to life while reinforcing healthy habits."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students photograph their lunchboxes and sort foods into 'everyday' and 'sometimes' categories using Seesaw's drawing tools. They record a short audio reflection about their choices, connecting to nutrition and healthy eating in a highly visual, accessible way."
+      },
+      {
+        "t": "Canva",
+        "d": "Students create a colourful 'Eat a Rainbow' poster in Canva, using the drag-and-drop interface to add fruit and vegetable images. They use Canva's 'Remove Background' feature to insert their own photo holding a healthy food, making the poster personal and engaging."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Each student builds a digital book about their healthy routines using Book Creator. Pages can include photos of their favourite exercise, drawings of healthy foods, and audio recordings describing how they keep their 'batteries' charged. This supports multimodal expression and home-school connection."
+      },
+      {
+        "t": "iPad Camera",
+        "d": "Students use the iPad Camera to document a 'Healthy Habits' day?taking photos of their activities such as eating fruit, playing outside, or practicing calming strategies. These images are then sequenced into a visual diary, supporting reflection and discussion."
+      },
+      {
+        "t": "Physical Makerspace Project",
+        "d": "Students design and build a 'Healthy Body Buddy' using recycled materials, cardboard, bottle caps, and fabric scraps. Each Buddy features removable parts (e.g., fruit/veg for the tummy, running shoes, a sleep mask) to represent the different elements of a healthy lifestyle. Students present their Buddy and explain each part's importance to the class."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The Prep 'Who We Are' unit explores what it means to be healthy, focusing on basic needs such as nutrition, exercise, sleep, and wellbeing. Students classify foods, learn about healthy routines, use the Zones of Regulation, and reflect on their own habits through drawing, discussion, and hands-on activities.",
     "stemRebooted": true
   },
   {
@@ -3156,9 +3283,34 @@
     "th": "How We Express Ourselves",
     "ci": "People express their emotions through the way they communicate.",
     "lo": "Different ways to communicate emotions; How art, music and movement express feelings; Understanding others' expressions through body language and facial cues",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students take photos of themselves making different facial expressions, then use ChatterPix Kids to animate their faces and record their voices describing the emotion and how they express it. This creates a playful, interactive way for students to connect body language, facial expression, and spoken language to emotions."
+      },
+      {
+        "t": "Canva",
+        "d": "Students create a digital collage of emotions using Canva, combining photos, colors, and simple icons. They select colors and images that represent different feelings and use Canva's 'Remove Background' feature to layer their own photos, visually exploring how emotions can be communicated through visual art."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students record short video reflections in Seesaw, demonstrating how they use their face and body to show a chosen emotion. They can watch and comment on each other's videos, building empathy and vocabulary for describing feelings and body language."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students collaboratively build a digital class book in Book Creator, with each page dedicated to a different emotion. Each student adds a drawing or photo of themselves expressing an emotion, along with a short audio recording explaining how they feel and how others can recognize that emotion."
+      },
+      {
+        "t": "iPad Camera app",
+        "d": "Students use the iPad Camera app to capture photos of classmates showing various emotions through facial expressions and body language. These photos are then sorted into digital albums or slideshows, which can be used for class discussions about how people express feelings non-verbally."
+      },
+      {
+        "t": "Makerspace Project: Emotion Masks",
+        "d": "Students design and build wearable 'emotion masks' using cardboard, elastic, recycled materials, and art supplies. Each mask represents a different feeling, with exaggerated features (e.g., big smiles, teardrops, furrowed brows). Students present their masks and act out the emotion, helping classmates guess the feeling and discuss how physical features communicate emotions."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how people express their emotions through communication, focusing on body language, facial expressions, and a rich vocabulary of feelings. Students engage in activities across the arts, PE, and classroom discussions, including creating artworks inspired by Frida Kahlo, designing team uniforms to express identity, and reflecting on how emotions are shown and interpreted in different contexts.",
     "stemRebooted": true
   },
   {
@@ -3167,9 +3319,34 @@
     "th": "How We Organise Ourselves",
     "ci": "Systems are involved in preparing products for consumers.",
     "lo": "Where products come from; The systems products go through; How people choose their products",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Adobe Express Podcasting",
+        "d": "Students create a 'Product Journey' podcast, where they record and edit short episodes explaining the journey of a familiar product (like milk or apples) from farm to table. They can interview each other as 'farmers', 'factory workers', and 'shopkeepers', using sound effects to bring the process to life."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students use Seesaw to document and sequence the stages of a product's journey with photos, drawings, and voice recordings. They can narrate each step, showing their understanding of systems and processes in a highly visual, accessible format."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design a visual flowchart in Canva, using the drag-and-drop interface to illustrate and label each stage in the production and distribution of a chosen product. They can use Canva's 'Remove Background' feature to add themselves into the scenes."
+      },
+      {
+        "t": "Clickview",
+        "d": "Students watch selected Clickview videos about food and clothing production, then use the iPad camera to record their own 'mini-documentaries' summarising what they learned about how products are processed and transported."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students collaboratively build a digital book in Book Creator, each contributing a page that visually and verbally explains a step in the journey of a product. They can add drawings, photos, and audio to make the process engaging and multimodal."
+      },
+      {
+        "t": "Physical Makerspace Project",
+        "d": "Students work in groups to build a hands-on 'production line' system using recycled materials, cardboard, bottle caps, and popsticks. Each group creates a different stage (farm, factory, transport, shop) and physically moves a model product through the system, demonstrating their understanding of how products are prepared for consumers."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students investigate how everyday products (like food and clothing) are processed and transported from their origins to consumers. Activities include sequencing product journeys, mapping stages, hands-on making, and reflecting on choices and waste. The unit emphasises understanding systems, change, and consumer choices through visual, practical, and multimodal tasks.",
     "stemRebooted": true
   },
   {
