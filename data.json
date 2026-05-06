@@ -1258,9 +1258,35 @@
     "th": "Who We Are",
     "ci": "People's choices are influenced by their beliefs and values and can impact others.",
     "lo": "How values and beliefs impact choices; How people's choices and actions impact others; Responsible decision-making",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Wise Discussion Chatbots",
+        "d": "Students design and script interactive chatbots that simulate real-life ethical dilemmas or value-based scenarios. Using Wise Discussion Chatbots, they can create branching conversations where users must make choices based on different beliefs and values, then reflect on the impact of those choices. This allows students to deeply explore perspective-taking and responsible decision-making in a digital, interactive format."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students collaboratively build a digital 'Beliefs & Values Wall' using Padlet, where they anonymously post examples of how beliefs and values influence choices in their own lives or in global contexts. They can comment, like, and discuss posts, fostering a safe space for dialogue and reflection on diverse perspectives."
+      },
+      {
+        "t": "Canva",
+        "d": "Students use Canva to design persuasive digital posters or infographics that advocate for a value or belief they feel passionate about. They must consider how visual choices (color, imagery, layout) and language can influence others, directly connecting to the unit's focus on the impact of choices and responsible communication."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students create interactive digital storybooks in Book Creator, narrating a personal or fictional story where a character's beliefs and values influence their decisions and impact others. They can embed audio reflections, images, and hyperlinks to deepen the exploration of consequences and responsibility."
+      },
+      {
+        "t": "Minecraft: Active Citizen",
+        "d": "Students explore the 'Active Citizen' Minecraft Education world, learning about Nobel Peace Laureates and how their beliefs and values led to impactful choices. Students then build their own digital monuments or scenarios in Minecraft to represent how values-driven actions can shape communities.",
+        "url": "https://education.minecraft.net/en-us/lessons/active-citizen"
+      },
+      {
+        "t": "Makerspace Project: Values-Inspired Wearable",
+        "d": "Students design and construct a wearable badge, bracelet, or lanyard using cardboard, felt, recycled materials, and markers that visually represents a core value or belief important to them. They prototype, iterate, and present their wearable, explaining how it symbolizes their values and how wearing it might influence their own choices and interactions with others."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The unit 'Who We Are' explores how people's choices are influenced by their beliefs and values and how those choices can impact others. Students engage in reflection, discussion, and creative activities to examine perspective, causation, and responsibility, with explicit connections to social and self-management skills. Learning experiences include portfolio reflections, collaborative discussions, and creative expression in both digital and physical formats.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:03:02.099Z",
@@ -1285,9 +1311,35 @@
     "th": "How We Organise Ourselves",
     "ci": "Student-led exhibition (PYPEX) ??? Students develop and present their own units of inquiry.",
     "lo": "Student-led transdisciplinary themes; Approaches to learning; Research and presentation skills",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Minecraft: Revamp Melbourne",
+        "d": "Students use 'Minecraft: Revamp Melbourne' to collaboratively design a future city that models a new system of government, including voting booths, parliamentary chambers, and public spaces. They must explain how their digital city reflects the values, structures, and decision-making processes explored in the unit, and present their solutions to real-world challenges in governance.",
+        "url": "https://education.minecraft.net/en-us/lessons/revamp-melbourne"
+      },
+      {
+        "t": "Canva",
+        "d": "Students create persuasive campaign materials (posters, infographics, and social media posts) for a fictional political party or government initiative, using Canva's design tools to visually communicate key values, policies, and the structure of their proposed system."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students collaboratively build a digital wall on Padlet to map and compare different global political systems, adding research, videos, and debate points. They can comment on each other's posts to simulate parliamentary debate and negotiation."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students author interactive digital books that explain the process of law-making in Australia, embedding videos, diagrams, and student-recorded interviews with local representatives or experts. The books can be shared with younger students or published for the school community."
+      },
+      {
+        "t": "Adobe Express Podcasting",
+        "d": "Students script, record, and edit a podcast series where they role-play as members of parliament, debating current bills, explaining the preferential voting system, and interviewing 'experts' (classmates) about different government structures and values."
+      },
+      {
+        "t": "Makerspace Project: Cardboard Parliament Simulation",
+        "d": "Students design and build a physical model of the Australian Parliament using cardboard, recycled materials, and craft supplies. They create movable parts for the House of Representatives and Senate, design voting booths, and use popsticks or LEGO figures to simulate passing a bill, running elections, and demonstrating the flow of power between branches of government."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how values and structures determine how a system of government operates. Students investigate Australia's political system, the law-making process, and compare global political systems through activities such as mock elections, debates, research projects, and hands-on simulations. The unit emphasizes critical thinking, communication, and student agency in understanding governance and civic participation.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T03:56:26.234Z",
@@ -1301,9 +1353,36 @@
     "th": "How the World Works",
     "ci": "Energy may be converted, transformed, and used to support human progress.",
     "lo": "Different forms of energy and how they are used; The impact of different energy sources on the planet; Sustainable energy practices",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Micro:bit: Energy Awareness",
+        "d": "Students use Micro:bits to design and code interactive models that demonstrate how energy can be monitored and conserved in real-world scenarios. For example, they could create a digital energy meter that tracks 'usage' in a classroom simulation, helping them visualize energy transformation and efficiency. This hands-on coding task directly links to the unit's focus on energy conversion and sustainable practices.",
+        "url": "https://microbit.org/teach/lessons/?selected=energy-awareness"
+      },
+      {
+        "t": "Minecraft: Solar Panel Setback",
+        "d": "Students explore how solar energy powers the International Space Station and understand how robotic tools help astronauts fix items in space. They can build and test solar panel systems in Minecraft, connecting directly to the unit's exploration of renewable energy technologies and the transformation of energy for human progress.",
+        "url": "https://education.minecraft.net/en-us/lessons/solar-panel-setback"
+      },
+      {
+        "t": "Explain Everything",
+        "d": "Students create animated explanations of energy transformations using Explain Everything. They can illustrate and narrate the journey of energy from source (e.g., wind, coal, solar) to end use (e.g., powering a light bulb), making abstract concepts visible and supporting the unit's inquiry into different forms of energy and their applications."
+      },
+      {
+        "t": "Adobe Express Podcasting",
+        "d": "Students script, record, and edit a podcast episode where they debate the pros and cons of renewable versus non-renewable energy sources. This activity encourages research, critical thinking, and communication, while connecting directly to the unit's lines of inquiry about the impact of energy sources on the planet."
+      },
+      {
+        "t": "Merge Cubes",
+        "d": "Students use Merge Cubes to create and explore 3D models of energy systems (such as wind turbines, solar panels, or electrical circuits). By manipulating these models in augmented reality, students gain a deeper understanding of how energy is converted and transformed, supporting the unit's focus on function and responsibility."
+      },
+      {
+        "t": "Makerspace Project: Build a Working Wind Turbine",
+        "d": "In the Makerspace, students work in teams to design and construct a small-scale wind turbine using recycled materials, cardboard, popsticks, bottle caps, and simple DC motors. They test their prototypes to see how much energy they can generate, measure output with multimeters, and reflect on how design choices impact efficiency. This hands-on project brings the central idea of energy conversion and sustainable progress to life through physical making and experimentation."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The Year 6 'How the World Works' unit explores how energy may be converted, transformed, and used to support human progress. Students investigate different forms of energy, analyze the impact of energy sources on the planet, and examine sustainable energy practices through hands-on experiments, research, and collaborative projects.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T03:56:38.370Z",
@@ -1317,9 +1396,35 @@
     "th": "Sharing the Planet",
     "ci": "Communities interact with the environment in different ways.",
     "lo": "How community values shape the management of the natural environment; The need for sustainable practices; Taking action for environmental stewardship",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Minecraft: Watr Humans And Elephants",
+        "d": "Students use Minecraft Education to explore the complex issues of habitat destruction and land-use conflict between humans and elephants. They will analyse real-world case studies, design and trial solutions in Minecraft, and assess their effectiveness, directly connecting to the unit's focus on how communities interact with and impact the environment.",
+        "url": "https://education.minecraft.net/en-us/lessons/watr-humans-and-elephants"
+      },
+      {
+        "t": "Padlet",
+        "d": "Students collaboratively build a digital wall documenting examples of local and global environmental stewardship, including Indigenous land management, conservation efforts, and community action. Each student posts research, images, and reflections, creating a living resource that demonstrates diverse community-environment interactions."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design persuasive digital posters or infographics advocating for specific conservation actions or environmental stewardship, using evidence from their case studies and camp experiences. These can be shared with the school community to inspire real-world action."
+      },
+      {
+        "t": "Adobe Express Podcasting",
+        "d": "In small groups, students script and record short podcasts interviewing 'experts' (role-played by peers or teachers) about successful community-environment partnerships, Indigenous practices, or conservation challenges. Episodes are published for the school community, building communication and research skills."
+      },
+      {
+        "t": "Merge Cubes",
+        "d": "Students create interactive 3D models of local ecosystems or conservation projects using Merge Cubes. They annotate their models with audio or text explaining how different communities interact with these environments, highlighting both positive and negative impacts."
+      },
+      {
+        "t": "Makerspace Project: Environmental Stewardship Model",
+        "d": "Students work in teams to physically prototype a model of a sustainable community or conservation project using recycled materials, cardboard, and natural objects. They must include features that show how the community interacts with and protects the environment (e.g., water filtration, native plantings, wildlife corridors), and present their models with explanatory signage or digital QR codes linking to student-created videos."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The Year 6 'Sharing the Planet' unit centres on how communities interact with the environment in different ways, with a strong focus on environmental stewardship, Indigenous practices, and conservation. Key activities include immersive experiences at Camp Mallana, case study analysis of community-environment relationships, reflective journaling, and student-led action projects promoting sustainability and advocacy.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T03:59:02.223Z",
