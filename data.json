@@ -2495,9 +2495,35 @@
     "th": "How the World Works",
     "ci": "The design and use of products can have an impact on the natural world.",
     "lo": "How material properties determine their use; Material solutions for a sustainable future; How research solves problems in the natural world",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Merge Cubes",
+        "d": "Students use Merge Cubes and the Merge Explorer app to investigate the properties of different materials in 3D, then create an interactive AR showcase comparing sustainable and non-sustainable materials. Students record their findings in short video explanations using the iPad camera and upload to Seesaw for peer review."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students document their science experiments and research on material properties, decomposition, and sustainable solutions by creating a multimedia science journal in Book Creator. They include photos, videos, diagrams, and reflections to track their learning journey throughout the unit."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design infographics in Canva to communicate the environmental impact of different materials used in everyday products. They use Canva's 'Remove Background' feature to create product cutaways and visually highlight sustainable alternatives."
+      },
+      {
+        "t": "Minecraft: Its Good To Be Green",
+        "d": "Students explore a sustainable building in Minecraft Education, analyzing how design choices impact the environment. They reflect on how these principles could be applied to their own enrichment toy prototypes and document their ideas in a digital portfolio.",
+        "url": "https://education.minecraft.net/en-us/lessons/its-good-to-be-green"
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Students conduct a survey using Microsoft Forms to gather data on classmates' and families' choices around product materials and recycling habits. They analyze the results in Excel to identify trends and present their findings to the class."
+      },
+      {
+        "t": "Makerspace Project",
+        "d": "Students design and physically build an enrichment toy or feeding machine for a zoo animal using recycled and sustainable materials (cardboard, popsticks, bottle caps, fabric scraps). They test their prototypes with classroom guinea pigs, iterating based on animal interaction and peer feedback, then present their final designs with a reflection on material choices and environmental impact."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students investigate how material properties determine their use, explore sustainable solutions, and research how products impact the natural world. They conduct hands-on science experiments, document findings in digital journals, and design, build, and test enrichment toys for animals using sustainable materials.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:22:03.530Z",
@@ -2510,9 +2536,34 @@
     "th": "Sharing the Planet",
     "ci": "Country, language and community are significant to the lives of First Nations people.",
     "lo": "Diversity of First Nations people; Importance of community, family and traditions; Importance of Country to First Nations people",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Merge Cubes",
+        "d": "Students use Merge Cubes and the Merge Explorer app to create interactive 3D representations of significant First Nations sites, languages, or cultural artifacts. They can record audio explanations in local Indigenous languages or English, and classmates can explore these virtual objects by rotating the cubes, deepening understanding of Country and community."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students write and illustrate their own Dreamtime-inspired stories, incorporating research about First Nations traditions, Country, and language. They can embed audio recordings of themselves reading in English and, where possible, in a local Indigenous language, then publish and share these digital books with younger students."
+      },
+      {
+        "t": "Canva",
+        "d": "Using Canva, students design visual infographics or posters that highlight the diversity of First Nations communities, languages, and connections to Country. They can use Canva's 'Remove Background' feature to incorporate their own photos of artwork or excursions, and add QR codes linking to further resources or student-created videos."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students collaboratively build a digital map or timeline on Padlet, pinning stories, artworks, and facts about different First Nations groups across Australia. Each post can include images, student reflections, and links to Dreamtime stories or interviews with elders, fostering a sense of shared inquiry."
+      },
+      {
+        "t": "Minecraft: Revamp Melbourne",
+        "d": "Students use 'Minecraft: Revamp Melbourne' (https://education.minecraft.net/en-us/lessons/revamp-melbourne) to design a future Melbourne that respects and integrates First Nations perspectives on Country, language, and community. They must explain how their builds reflect Indigenous values and sustainable practices."
+      },
+      {
+        "t": "Makerspace Project: Collaborative Totem Poles",
+        "d": "In the Makerspace, students work in groups to design and construct physical totem poles using recycled materials, cardboard, paint, and natural elements. Each section of the pole represents a different aspect of First Nations culture: Country, language, family, and tradition. Students research symbols and meanings, then present their finished totems with oral explanations."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students explore the significance of Country, language, and community to First Nations people through Dreamtime stories, art analysis, excursions (e.g., CERES, Yiramalay elders), and hands-on activities. They create narratives, artworks, and dioramas, engage with elders, and reflect on physical, cultural, and spiritual connections to Country.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:28:17.350Z",
@@ -2525,9 +2576,35 @@
     "th": "Where We Are in Place and Time",
     "ci": "Exploration leads to discoveries, opportunities and new understandings.",
     "lo": "Reasons for exploration; How people have explored over time; Consequences of exploration",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Minecraft: The Hall of Inventions",
+        "d": "Students research a significant historical explorer or invention that changed the course of exploration. Using Minecraft: The Hall of Inventions, they design and build a 3D model of their chosen invention or a scene from a key exploration, then present their build to the class, explaining its historical impact and how it led to new understandings.",
+        "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
+      },
+      {
+        "t": "Google Maps",
+        "d": "Students plot the journeys of famous explorers on Google Maps, annotating key stops with text, images, or links. They compare historical routes with modern geography, discussing how technology has changed our ability to explore and understand the world."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students create a digital journal in Book Creator, documenting their own 'exploration' of a chosen topic, place, or historical period. They include multimedia elements such as photos, voice recordings, and maps to reflect on discoveries and new understandings."
+      },
+      {
+        "t": "Canva",
+        "d": "Using Canva, students design an interactive timeline or infographic that illustrates the evolution of exploration methods and technologies over time, highlighting key discoveries and their consequences."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students collaborate on a Padlet wall to share research about different explorers from various cultures and eras. Each student posts a summary, image, and a reflection on how that explorer's journey led to new opportunities or understandings."
+      },
+      {
+        "t": "Makerspace Project",
+        "d": "Students work in teams to design and build a physical model of an exploration tool or vehicle (such as a compass, sextant, ship, or rover) using recycled materials, cardboard, string, and simple electronics (optional). They test their models for functionality (e.g., does the compass point north?) and present how such tools enabled new discoveries."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit engages students in investigating the reasons for exploration, how people have explored across history, and the consequences of exploration. Activities include mapping journeys, researching explorers, writing historical narratives, and hands-on projects that connect exploration to discovery and new understandings.",
     "stemRebooted": true,
     "humanVerified": false,
     "humanVerifiedResetAt": "2026-05-05T04:39:56.962Z",
@@ -2539,9 +2616,34 @@
     "th": "Who We Are",
     "ci": "People's beliefs contribute to the diversity of human life.",
     "lo": "Spiritual or religious beliefs; Similarities and differences of spiritual beliefs; Contributions of different religions to human diversity",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Wise Discussion Chatbots",
+        "d": "Students design and script interactive chatbots that simulate respectful interfaith dialogues. Using Wise Discussion Chatbots, students can program scenarios where users ask questions about different spiritual or religious beliefs, and the chatbot responds with accurate, inclusive information. This fosters empathy, digital citizenship, and a nuanced understanding of diversity in beliefs."
+      },
+      {
+        "t": "Canva",
+        "d": "Students create visually engaging infographics or digital posters comparing symbols, places of worship, and practices from different world religions. Canva's 'Remove Background' feature can be used to highlight key religious artifacts or figures, supporting visual literacy and cross-cultural understanding."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students author a digital 'Beliefs Around the World' book, compiling research, reflections, and interviews with family or community members about their beliefs. They can include audio recordings, images, and text, making the book accessible and multimodal."
+      },
+      {
+        "t": "Clickview",
+        "d": "Students curate a playlist of short documentary clips from Clickview that showcase rituals, festivals, and places of worship from various religions. They annotate each clip with their own reflections and questions, then share the playlist with peers for discussion."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students collaboratively build a digital 'Belief Wall' on Padlet, posting images, facts, and personal stories about spiritual or religious diversity in their class and community. They can comment on each other's posts, fostering respectful dialogue and inquiry."
+      },
+      {
+        "t": "Makerspace Project: Belief Symbols Sculpture",
+        "d": "Students work in teams to design and build a large, collaborative sculpture representing the diversity of spiritual and religious beliefs in their community. Using cardboard, recycled materials, fabric, and paint, each group creates a section featuring symbols, colors, or objects significant to a particular belief system. The finished sculpture is displayed as a celebration of diversity and inclusion."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how people's beliefs contribute to the diversity of human life, focusing on spiritual or religious beliefs, similarities and differences among religions, and the contributions of these beliefs to human diversity. Key activities include gallery walks of religious imagery, question walls for different religions, research and information reports on world religions, excursions to places of worship, and the creation of cultural posters and information reports.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:29:04.476Z",
@@ -2554,9 +2656,35 @@
     "th": "How We Express Ourselves",
     "ci": "People design for purpose.",
     "lo": "How design thinking creates in various ways; Design thinking meets community needs; Effective ways to engage an audience",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Minecraft: Revamp Melbourne",
+        "d": "Students use Minecraft: Education Edition to collaboratively design and build innovative solutions for Melbourne's future needs, directly connecting to the unit's focus on purposeful design and engaging with real-world community challenges. They must justify their design choices and reflect on how their creations meet current and future needs, mirroring the design thinking process.",
+        "url": "https://education.minecraft.net/en-us/lessons/revamp-melbourne"
+      },
+      {
+        "t": "Adobe Express Podcasting",
+        "d": "Students script, record, and edit a podcast episode where they pitch their design solution for a chosen natural disaster scenario, using persuasive language and sound effects to engage an audience. This task supports the unit's emphasis on effective communication and pitching ideas."
+      },
+      {
+        "t": "Canva",
+        "d": "Students create digital infographics or persuasive posters to visually communicate the impact of their design solution, integrating data, empathy maps, and stakeholder perspectives. Canva's 'Remove Background' feature can be used to enhance visuals without a green screen."
+      },
+      {
+        "t": "Explain Everything",
+        "d": "Students storyboard and animate the journey of their design from ideation to prototype, narrating the design thinking process and highlighting how their solution addresses community needs. This supports reflection and clear communication of process and purpose."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students collaboratively document their research, empathy maps, and feedback cycles on a shared Padlet wall, enabling real-time peer feedback and iterative improvement of their design solutions. This creates a transparent record of the design thinking journey."
+      },
+      {
+        "t": "Makerspace Prototyping Challenge",
+        "d": "In teams, students physically prototype their disaster-resilient design using cardboard, recycled materials, popsticks, hot glue, and other Makerspace resources. They must test for strength, usability, and empathy-driven features, iterating based on peer feedback before presenting their final model alongside their digital pitch."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Year 5 students at Glen Waverley explore 'How We Express Ourselves' through the central idea 'People design for purpose.' The unit immerses students in the design thinking process as they investigate natural disasters, research community needs, and collaboratively prototype innovative solutions. Activities include mapping, data analysis, empathy mapping, ideation, prototyping, pitching, and reflection, with strong links to UNICEF's child rights and real-world problem solving.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:29:33.674Z",
