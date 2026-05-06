@@ -3283,9 +3283,34 @@
     "th": "How We Express Ourselves",
     "ci": "People express their emotions through the way they communicate.",
     "lo": "Different ways to communicate emotions; How art, music and movement express feelings; Understanding others' expressions through body language and facial cues",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students take photos of their own facial expressions or body language, then use ChatterPix Kids to animate the images and record their voices describing the emotion and how they are expressing it. This creates a playful, visual portfolio of emotional expression that directly connects to the unit's focus on non-verbal communication."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design digital 'emotion posters' using Canva's templates and 'Remove Background' feature to insert their own photos. They add emojis, colours, and simple words to visually represent different emotions and ways people express them, reinforcing vocabulary and visual literacy."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students record short video reflections or role-plays showing how they express different feelings through body language, facial expressions, or movement. These are shared in a class Seesaw journal for peer feedback and discussion, supporting self-awareness and empathy."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students create a collaborative digital class book where each page features a student's drawing or photo of an emotion, paired with a simple audio recording explaining how they express that feeling. This supports multimodal communication and builds a resource for emotional vocabulary."
+      },
+      {
+        "t": "iPad Camera app",
+        "d": "Students use the iPad Camera to capture classmates demonstrating different emotions through facial expressions and body language. These images are then sorted or matched to emotion words in a classroom activity, deepening understanding of non-verbal cues."
+      },
+      {
+        "t": "Makerspace: Emotion Masks",
+        "d": "Students design and build wearable 'emotion masks' using cardboard, elastic, fabric scraps, and recycled materials. Each mask represents a specific feeling (e.g., happy, surprised, worried) and students use them in drama games to act out emotions without words, exploring how physical features communicate feelings."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how people express their emotions through communication, with a strong focus on body language, facial expressions, and non-verbal cues. Students engage in visual arts, drama, and music activities to explore and represent emotions, create team identities, and reflect on how feelings are shown and interpreted in different contexts.",
     "stemRebooted": true
   },
   {
@@ -3294,9 +3319,34 @@
     "th": "How We Organise Ourselves",
     "ci": "Systems are involved in preparing products for consumers.",
     "lo": "Where products come from; The systems products go through; How people choose their products",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students take photos of different products (like apples, milk, or clothing) at various stages of their journey from farm to consumer. They record their voices as the products, explaining each step of the process in a fun, animated way, making the 'system' visible and memorable for young learners."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students create a digital flowchart or sequence using photos and drawings to show the journey of a product (e.g., apple, milk, or clothing) from its origin to the consumer. They can add voice recordings to explain each stage, supporting multimodal learning and assessment."
+      },
+      {
+        "t": "Canva",
+        "d": "Using Canva's visual templates, students collaboratively design posters that illustrate the stages a product goes through before reaching consumers. They can use the 'Remove Background' feature to create collages of products and systems, making the invisible visible."
+      },
+      {
+        "t": "Clickview",
+        "d": "Students watch curated videos about food and clothing production systems (such as 'Farm to Table' or 'War on Waste'), then use iPads to record short video reflections or create their own mini-documentaries about what they learned regarding systems and processes."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students build a digital book documenting the journey of a chosen product. Each page represents a stage in the system (e.g., farm, factory, transport, shop), with photos, drawings, and audio narration to bring the process to life for early readers."
+      },
+      {
+        "t": "Physical Makerspace Project",
+        "d": "Students work in groups to design and build a 'Product Journey System' using cardboard, popsticks, bottle caps, string, and recycled materials. For example, they might construct a model showing how milk travels from a farm to a supermarket, including trucks, conveyor belts, and storage areas. They label each stage and demonstrate the movement of a product through their system."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores the systems involved in preparing products for consumers, focusing on the journey of items like food and clothing from their origins to the end user. Students investigate, sequence, and represent the stages products go through, using videos, flowcharts, and hands-on making to deepen their understanding of processing, transportation, and consumer choice.",
     "stemRebooted": true
   },
   {
@@ -3341,9 +3391,34 @@
     "th": "Sharing the Planet",
     "ci": "Living things have structures that allow them to survive in different environments.",
     "lo": "The physical structure of plants and bees; How features support survival in different environments; Human impact on living things",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students take photos of their own bean plants or clay bee sculptures, then use ChatterPix Kids to animate the plant or bee explaining its unique adaptations for survival. This brings scientific drawing and observation to life, making plant and animal structures memorable and personal."
+      },
+      {
+        "t": "Canva",
+        "d": "Students create a highly visual infographic poster in Canva showing the life cycle of a plant or bee, using icons, arrows, and minimal text. They can use the 'Remove Background' feature to add their own photos of classroom plants or bee models, making the learning authentic and hands-on."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students document their bean diary or plant/animal adaptation research as a digital book in Book Creator, combining photos, drawings, voice recordings, and short videos. Each page can focus on a different adaptation or survival strategy, supporting multimodal learning."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students record time-lapse videos or photo journals of their plant growth experiments, then annotate and narrate their observations in Seesaw. They can compare how different conditions (light, water) affect plant structure and survival, supporting scientific thinking and reflection."
+      },
+      {
+        "t": "PicCollage",
+        "d": "Students create a collage of different plant and animal adaptations using classroom photos, magazine cutouts, and digital stickers. They label each adaptation visually, then present their collage to the class, explaining how each feature helps survival in a specific environment."
+      },
+      {
+        "t": "Physical Makerspace Project",
+        "d": "Students design and build a model of a 'Super Survivor' plant or animal using recycled materials, cardboard, pipe cleaners, and clay. They must choose and physically prototype at least three adaptations (e.g., waxy leaves, long roots, camouflage) and present how each feature helps their creation survive in a chosen environment."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students explored the structures and adaptations of plants and bees through hands-on experiments (bean diaries, plant growth in different conditions), scientific drawing, clay sculpture, and research. They investigated how living things survive in various environments, with a focus on plant and animal adaptations, pollination, and human impact on ecosystems.",
     "stemRebooted": true
   },
   {
@@ -3424,9 +3499,34 @@
     "th": "How We Express Ourselves",
     "ci": "Artefacts provide a window into the beliefs and values of cultures.",
     "lo": "Beliefs and values contribute to a culture; The importance of rituals and traditions; How artefacts capture history and cultural expression",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students photograph a personal or family artefact using the iPad camera, then use ChatterPix Kids to animate the artefact, recording a short voiceover as if the artefact is 'speaking' about its cultural significance, beliefs, or traditions. This brings artefacts to life and allows students to express understanding in a creative, highly visual way."
+      },
+      {
+        "t": "Canva",
+        "d": "Students create a digital collage or poster showcasing artefacts from their own culture and others, using Canva's drag-and-drop interface and 'Remove Background' feature to layer images, symbols, and text. They can visually compare and contrast beliefs and values represented by different artefacts."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students build a multimedia digital book about their family's traditions and artefacts, combining photos, drawings, audio recordings, and simple text. Each page can focus on a different artefact or tradition, supporting oral storytelling and visual expression."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students document their learning journey by uploading photos, voice recordings, and short videos explaining the meaning of artefacts and rituals in their culture. Teachers can prompt students to respond to classmates' posts, fostering intercultural dialogue and reflection."
+      },
+      {
+        "t": "iMovie",
+        "d": "Students work in small groups to script and film a short documentary or 'news report' about a chosen artefact or tradition, using the iPad camera and iMovie to edit clips, add voiceovers, and insert titles. This allows them to practice oral communication and digital storytelling."
+      },
+      {
+        "t": "Makerspace Project: Artefact-Inspired Sculpture",
+        "d": "Students design and physically build a model of a meaningful artefact from their own or another culture using recycled materials, cardboard, fabric, and craft supplies. They create a display card explaining its significance, then present their artefact to the class, connecting physical making with cultural storytelling."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how artefacts provide a window into the beliefs and values of cultures. Students investigate their own and others' traditions, rituals, and artefacts through activities such as drawing, research, dance, music, and storytelling. They share personal artefacts, learn about cultural celebrations, and create projects that express and compare cultural perspectives.",
     "stemRebooted": true
   },
   {
@@ -3435,9 +3535,34 @@
     "th": "How We Organise Ourselves",
     "ci": "Technology can influence the way ecosystems can survive.",
     "lo": "An ecosystem has animals, plants and microorganisms; Technology can cause ecosystems to adapt and evolve; Technology can help or hinder ecosystems",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Explain Everything",
+        "d": "Students collaboratively create an interactive digital ecosystem map, layering drawings, voice recordings, and animations to show how different technologies (like satellites, sensors, or robots) impact the survival of plants and animals. They can simulate changes (e.g., introducing a robot pollinator) and narrate the effects on the ecosystem, making abstract systems visible and dynamic."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design a 'Tech Timeline for Ecosystems' using Canva's visual templates, illustrating how different technologies have changed the way humans interact with and protect natural habitats. They can use the 'Remove Background' feature to integrate their own photos (taken with iPad cameras) into their posters, showing themselves as ecosystem scientists or inventors."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students document a week-long 'Ecosystem Watch' by taking daily photos of a school garden or local habitat with iPads, then upload and annotate these in Seesaw. They record voice reflections about how technology (e.g., sprinklers, weather sensors, apps) supports or disrupts the ecosystem, making learning visible for families and peers."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students author a multimedia eBook titled 'If I Invented a Robot for Nature...' using Book Creator. They combine hand-drawn illustrations, photos, and audio to imagine and explain a new technology that could help an ecosystem survive, considering both positive and negative impacts."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students take photos of objects in the schoolyard (e.g., a tree, a bird, a solar panel) and use ChatterPix Kids to animate them. Each object 'talks' about how technology affects its life in the ecosystem, encouraging empathy and systems thinking through playful digital storytelling."
+      },
+      {
+        "t": "Makerspace Project: Recycled Materials Ecosystem Model",
+        "d": "In the Makerspace, students build a 3D model of an ecosystem using recycled materials (cardboard, bottle caps, fabric scraps, etc.). They add simple moving parts (e.g., a windmill made from popsticks and a bottle cap, or a 'robot' animal with pipe cleaner legs) to represent how technology interacts with living things. Students label and present their models, explaining the role of each technology in ecosystem survival."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how technology can influence the survival and adaptation of ecosystems. Students investigate the roles of robotics and other technologies in society, engage with coding and digital storytelling, and reflect on ethical questions about technology's impact on the environment. Activities include coding, persuasive writing, and hands-on projects that connect technology to real-world ecosystems.",
     "stemRebooted": true
   },
   {
