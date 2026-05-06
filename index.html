@@ -291,6 +291,11 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 .tech-cur-toggle.open svg{transform:rotate(180deg)}
 .tech-cur-body{display:none;background:var(--sf);border:2px solid #38BDF8;border-top:none;border-radius:0 0 16px 16px;padding:20px;margin-bottom:14px}
 .tech-cur-body.open{display:block}
+.tech-cur-toggle.wds-cur-toggle{margin-top:0}
+.tech-cur-toggle.wds-cur-toggle:hover{border-color:#9333EA;background:rgba(147,51,234,.05)}
+.tech-cur-toggle.wds-cur-toggle.open{border-color:#9333EA;background:rgba(147,51,234,.08)}
+.tech-cur-toggle.wds-cur-toggle svg{color:#9333EA}
+.tech-cur-body.wds-cur-body{border-color:#9333EA}
 .tech-cur-subj{margin-bottom:20px}
 .tech-cur-subj:last-child{margin-bottom:0}
 .tech-cur-subj-title{font-size:14px;font-weight:700;color:#38BDF8;margin-bottom:10px;display:flex;align-items:center;gap:6px}
@@ -766,10 +771,14 @@ const WESLEY_DIGITAL_SCOPE = {
   }
 };
 
-function renderWesleyDigitalSkillsOverview(yl){
+function getWesleyDigitalSkillsScope(yl){
   var band=getTechCurBand(yl);
   if(band==='F' || band==='1-2') band='F-2';
-  var scope=WESLEY_DIGITAL_SCOPE[band];
+  return WESLEY_DIGITAL_SCOPE[band];
+}
+
+function renderWesleyDigitalSkillsOverview(yl){
+  var scope=getWesleyDigitalSkillsScope(yl);
   if(!scope)return '';
   var h='<div class="tech-cur-subj"><div class="tech-cur-subj-title">🟣 Wesley Digital Skills ('+scope.label+')</div>';
   h+='<div class="tech-cur-note">Age-level Wesley Digital Skills drawn from the College scope and sequence.</div>';
@@ -846,7 +855,6 @@ function renderTechCurriculum(yl) {
     h+='</div>';
   });
   
-  h+=renderWesleyDigitalSkillsOverview(yl);
   return h;
 }
 
@@ -865,6 +873,19 @@ function tgTCE(id,btn){
 function tgTechCur(){
   var toggle=document.getElementById('techCurToggle');
   var body=document.getElementById('techCurBody');
+  if(!toggle||!body) return;
+  if(body.classList.contains('open')){
+    body.classList.remove('open');
+    toggle.classList.remove('open');
+  } else {
+    body.classList.add('open');
+    toggle.classList.add('open');
+  }
+}
+
+function tgWesleyCur(){
+  var toggle=document.getElementById('wesleyCurToggle');
+  var body=document.getElementById('wesleyCurBody');
   if(!toggle||!body) return;
   if(body.classList.contains('open')){
     body.classList.remove('open');
@@ -1392,9 +1413,14 @@ if(!window._usedData)window._usedData=[];var _usi=window._usedData.length;window
 h+='<div class="sg-fb"><button class="sg-used" onclick="markUsed('+_usi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+_fbi+')" class="sg-fb-btn">💬 Feedback</button><button class="sg-react-btn sg-react-up" onclick="reactFB('+_fbi+',\'up\',this)">👍</button><button class="sg-react-btn" onclick="reactFB('+_fbi+',\'down\',this)">👎</button></div></div>';
 h+='</div></div>';});
 
-// Technologies Curriculum toggle
-h+='<div class="tech-cur-toggle" id="techCurToggle" onclick="tgTechCur()"><span style="font-size:16px">📋</span><span style="flex:1;font-size:14px;font-weight:700;color:#38BDF8">Technologies Curriculum — '+yl+'</span><span style="font-size:12px;color:#888">Digital Technologies + Wesley Digital Skills</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 8 10 12 14 8"/></svg></div>';
+// ACARA and Wesley curriculum toggles
+h+='<div class="tech-cur-toggle" id="techCurToggle" onclick="tgTechCur()"><span style="font-size:16px">📋</span><span style="flex:1;font-size:14px;font-weight:700;color:#38BDF8">ACARA Digital Technologies — '+yl+'</span><span style="font-size:12px;color:#888">Digital Technologies curriculum</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 8 10 12 14 8"/></svg></div>';
 h+='<div class="tech-cur-body" id="techCurBody">'+renderTechCurriculum(yl)+'</div>';
+var _wdsScope=getWesleyDigitalSkillsScope(yl);
+if(_wdsScope){
+  h+='<div class="tech-cur-toggle wds-cur-toggle" id="wesleyCurToggle" onclick="tgWesleyCur()"><span style="font-size:16px">🟣</span><span style="flex:1;font-size:14px;font-weight:700;color:#9333EA">Wesley Digital Skills — '+yl+'</span><span style="font-size:12px;color:#888">'+_wdsScope.label+'</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 8 10 12 14 8"/></svg></div>';
+  h+='<div class="tech-cur-body wds-cur-body" id="wesleyCurBody">'+renderWesleyDigitalSkillsOverview(yl)+'</div>';
+}
 
 h+='<a href="'+BK+'" target="_blank" rel="noopener noreferrer" class="bb">📅 Book a Digital Learning Coach<span class="bb-sub">Schedule a session with the DLP team</span></a>';}
 
