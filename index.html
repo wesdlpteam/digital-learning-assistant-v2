@@ -254,15 +254,15 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 .lb-empty{color:#555;font-size:13px;font-style:italic;padding:8px 12px}
 .lb-loading{color:#555;font-size:13px;text-align:center;padding:20px}
 
-@keyframes confettiFall{0%{transform:translateY(-100px) rotate(0deg);opacity:1}100%{transform:translateY(400px) rotate(720deg);opacity:0}}
+@keyframes confettiFall{0%{transform:translateY(-100px) rotate(0deg);opacity:1}100%{transform:translateY(42vh) rotate(720deg);opacity:0}}
 @keyframes pointPop{0%{transform:scale(0);opacity:0}40%{transform:scale(1.1);opacity:1}100%{transform:scale(1);opacity:1}}
 .confetti-container{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}
-.confetti{position:absolute;width:10px;height:10px;border-radius:2px;animation:confettiFall 1.5s ease-out forwards}
-.point-popup{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);animation:pointPop .5s ease-out forwards}
+.confetti{position:absolute;top:0;width:10px;height:10px;border-radius:2px;animation:confettiFall 1.5s ease-out forwards}
+.point-popup{position:fixed;inset:0;width:100vw;height:100dvh;min-height:100vh;z-index:10000;display:flex;align-items:flex-start;justify-content:center;padding:clamp(18px,6vh,64px) 16px 16px;background:rgba(0,0,0,.6);animation:pointPop .5s ease-out forwards;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 
 .point-popup-btn{display:inline-block;margin-top:16px;padding:10px 24px;border:none;border-radius:99px;background:#CDEB45;color:#111;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;transition:background .15s}
 .point-popup-btn:hover{background:#D8F050}
-.point-popup-inner{background:#111;border:3px solid #CDEB45;border-radius:24px;padding:24px 40px;text-align:center;box-shadow:0 0 60px rgba(205,235,69,.3)}
+.point-popup-inner{background:#111;border:3px solid #CDEB45;border-radius:24px;padding:24px 40px;text-align:center;box-shadow:0 0 60px rgba(205,235,69,.3);width:100%;max-width:380px;max-height:calc(100dvh - 40px);overflow-y:auto;margin:0 auto 16px;outline:none}
 .point-popup-emoji{font-size:48px;margin-bottom:8px}
 .point-popup-text{font-size:24px;font-weight:800;color:#CDEB45;font-family:"Space Grotesk",sans-serif}
 .point-popup-sub{font-size:13px;color:#888;margin-top:4px}
@@ -1464,8 +1464,7 @@ function markUsed(idx,btn){
 var d=window._usedData[idx];
 var team=d.campus+' '+d.year+' Team';
 var payload={type:'used',team:team,campus:d.campus,year:d.year,theme:d.theme,tool:d.tool,phase:d.phase};
-fetch(FBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
-refreshLeaderboardSoon();
+fetch(FBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)}).catch(function(){});
 btn.classList.add('done');
 btn.innerHTML='✅ Done!';
 btn.onclick=null;
@@ -1474,7 +1473,12 @@ var unitKey=d.campus+'|'+d.year+'|'+d.theme;
 if(!window._usedPhases[unitKey])window._usedPhases[unitKey]={};
 window._usedPhases[unitKey][d.phase]=true;
 var p=window._usedPhases[unitKey];
-if(p['Beginning']&&p['Middle']&&p['End']){
+var isStreak=!!(p['Beginning']&&p['Middle']&&p['End']);
+// The popup is immediate feedback only. Tech Champions totals are refreshed from
+// the DLA_Feedback Google Sheet so the dashboard matches the live analytics source.
+_lbSheetRefreshPendingUntil=Date.now()+18000;
+refreshLeaderboardSoon();
+if(isStreak){
 celebrateStreak(d.campus+' '+d.year);
 }else{
 celebrate(d.campus+' '+d.year);
@@ -1499,7 +1503,8 @@ container.appendChild(c);
 document.body.appendChild(container);
 var popup=document.createElement('div');
 popup.className='point-popup';
-popup.innerHTML='<div class="point-popup-inner"><div class="point-popup-emoji">🎉</div><div class="point-popup-text">+1 Point!</div><div class="point-popup-sub">'+teamName+'</div><button class="point-popup-btn" onclick="this.closest(\'.point-popup\').remove()">Keep Exploring</button></div>';
+popup.innerHTML='<div class="point-popup-inner" role="dialog" aria-modal="true" aria-label="Point awarded" tabindex="-1"><div class="point-popup-emoji">🎉</div><div class="point-popup-text">+1 Point!</div><div class="point-popup-sub">'+teamName+'</div><button class="point-popup-btn" onclick="this.closest(\'.point-popup\').remove()">Keep Exploring</button></div>';
+setTimeout(function(){var inner=popup.querySelector('.point-popup-inner');if(inner)inner.focus();},0);
 document.body.appendChild(popup);
 setTimeout(function(){container.remove();},3000);
 }
@@ -1522,38 +1527,100 @@ container.appendChild(c);
 document.body.appendChild(container);
 var popup=document.createElement('div');
 popup.className='point-popup';
-popup.innerHTML='<div class="point-popup-inner"><div class="point-popup-emoji">🔥</div><div class="point-popup-text" style="font-size:28px">STREAK BONUS!</div><div class="point-popup-text">+3 Points!</div><div class="point-popup-sub" style="margin-top:8px">'+teamName+' Team completed all 3 phases of a unit!</div><button class="point-popup-btn" onclick="this.closest(\'.point-popup\').remove()">Keep Exploring</button></div>';
+popup.innerHTML='<div class="point-popup-inner" role="dialog" aria-modal="true" aria-label="Streak bonus awarded" tabindex="-1"><div class="point-popup-emoji">🔥</div><div class="point-popup-text" style="font-size:28px">STREAK BONUS!</div><div class="point-popup-text">+3 Points!</div><div class="point-popup-sub" style="margin-top:8px">'+teamName+' Team completed all 3 phases of a unit!</div><button class="point-popup-btn" onclick="this.closest(\'.point-popup\').remove()">Keep Exploring</button></div>';
+setTimeout(function(){var inner=popup.querySelector('.point-popup-inner');if(inner)inner.focus();},0);
 document.body.appendChild(popup);
 setTimeout(function(){container.remove();},4000);
 }
 var _lbLastFetch=0;
+var _lbSheetRefreshPendingUntil=0;
+function normaliseCampusName(campus){
+  var c=String(campus||'').trim();
+  var k=c.toLowerCase().replace(/\./g,'').replace(/\s+/g,' ');
+  if(k==='el'||k==='elsternwick'||k.indexOf('elsternwick')>-1)return 'Elsternwick';
+  if(k==='gw'||k==='glen waverley'||k.indexOf('glen waverley')>-1)return 'Glen Waverley';
+  if(k==='skr'||k==='stk'||k==='st kilda'||k==='st kilda road'||k==='st kilda rd'||k.indexOf('st kilda')>-1)return 'St Kilda Rd';
+  return c;
+}
+function normaliseYearName(year){
+  var y=String(year||'').trim();
+  y=y.replace(/^(Elsternwick|Glen Waverley|St Kilda(?: Road| Rd)?|EL|GW|SKR|STK)\s*/i,'').replace(/\s*Team$/i,'').trim();
+  if(/prep|foundation/i.test(y))return 'Prep';
+  var m=y.match(/year\s*([1-6])/i)||y.match(/\b([1-6])\b/);
+  if(m)return 'Year '+m[1];
+  return y||'Unknown';
+}
+function normaliseLeaderboard(data){
+  var rows=[];
+  if(Array.isArray(data))rows=data;
+  else if(data&&Array.isArray(data.leaderboard))rows=data.leaderboard;
+  else if(data&&Array.isArray(data.teams))rows=data.teams;
+  else if(data&&Array.isArray(data.rows))rows=data.rows;
+  return rows.map(function(t){
+    var team=t.team||t.Team||'';
+    return {
+      campus:normaliseCampusName(t.campus||t.Campus||t.school||t.Location||t.location||team),
+      year:normaliseYearName(t.year||t.Year||t['Year Level']||t.yearLevel||team),
+      points:Number(t.points||t.Points||t.score||t.Score||0)||0,
+      streaks:Number(t.streaks||t.Streaks||t.streak||t.Streak||t.StreakCount||t['Streak Count']||0)||0
+    };
+  }).filter(function(t){return t.campus&&t.year&&t.year!=='Unknown';});
+}
+function mergeLeaderboard(existing,incoming){
+  var map={};
+  function put(t){
+    if(!t)return;
+    var campus=normaliseCampusName(t.campus);
+    var year=normaliseYearName(t.year);
+    var key=campus+'|'+year;
+    var points=Number(t.points||0)||0;
+    var streaks=Number(t.streaks||0)||0;
+    if(!map[key])map[key]={campus:campus,year:year,points:points,streaks:streaks};
+    else{
+      map[key].points=points;
+      map[key].streaks=streaks;
+    }
+  }
+  (existing||[]).forEach(function(t){put(t);});
+  (incoming||[]).forEach(function(t){put(t);});
+  return Object.keys(map).map(function(k){return map[k];});
+}
 function loadLeaderboard(force){
 var now=Date.now();
 if(!force && window._leaderboard && now-_lbLastFetch<30000)return;
 _lbLastFetch=now;
 fetch(FBHOOK+'?action=leaderboard&_='+now,{cache:'no-store'}).then(function(r){return r.json();}).then(function(data){
-window._leaderboard=Array.isArray(data)?data:[];
+var incoming=normaliseLeaderboard(data);
+if(incoming.length){
+  window._leaderboard=mergeLeaderboard([],incoming);
+  window._lbSheetError=false;
+}else if(!window._leaderboard){
+  window._leaderboard=[];
+}
 if(S.v==='home')R();
-}).catch(function(){if(!window._leaderboard)window._leaderboard=[];if(S.v==='home')R();});
+}).catch(function(){window._lbSheetError=true;if(!window._leaderboard)window._leaderboard=[];if(S.v==='home')R();});
 }
 function refreshLeaderboardSoon(){
   _lbLastFetch=0;
-  setTimeout(function(){loadLeaderboard(true);},1200);
-  setTimeout(function(){loadLeaderboard(true);},5000);
+  setTimeout(function(){loadLeaderboard(true);},1800);
+  setTimeout(function(){loadLeaderboard(true);},6000);
+  setTimeout(function(){loadLeaderboard(true);},15000);
 }
 function renderLeaderboard(){
-var lb=window._leaderboard;
-if(!lb)return '<div class="lb-loading">Loading leaderboard...</div>';
+var lb=normaliseLeaderboard(window._leaderboard||[]);
+if(!window._leaderboard)return '<div class="lb-loading">Loading leaderboard...</div>';
 var h='';
 var campuses=[{code:'EL',name:'Elsternwick',color:'#CDEB45'},{code:'GW',name:'Glen Waverley',color:'#F5A623'},{code:'SKR',name:'St Kilda Rd',color:'#7ED957'}];
 campuses.forEach(function(c){
-var teams=lb.filter(function(t){return t.campus===c.name;}).sort(function(a,b){return b.points-a.points;});
+var teams=lb.filter(function(t){return normaliseCampusName(t.campus)===c.name;}).sort(function(a,b){return (Number(b.points)||0)-(Number(a.points)||0);});
 h+='<div class="lb-campus"><div class="lb-campus-title"><span style="color:'+c.color+'">'+c.name+'</span></div>';
-if(teams.length===0){h+='<div class="lb-empty">No points yet — be the first!</div>';}
+if(teams.length===0){h+='<div class="lb-empty">'+(Date.now()<_lbSheetRefreshPendingUntil?'Syncing from Google Sheet...':'No points yet — be the first!')+'</div>';}
 else{teams.forEach(function(t,i){
 var rc=i===0?'gold':i===1?'silver':i===2?'bronze':'';
-h+='<div class="lb-row"><span class="lb-rank '+rc+'">#'+(i+1)+'</span><span class="lb-team">'+t.year+' Team</span><span class="lb-pts">'+t.points+' pts</span>';
-if(t.streaks>0)h+='<span class="lb-streak">🔥 '+t.streaks+' streak'+(t.streaks>1?'s':'')+'</span>';
+var pts=Number(t.points)||0;
+var streaks=Number(t.streaks)||0;
+h+='<div class="lb-row"><span class="lb-rank '+rc+'">#'+(i+1)+'</span><span class="lb-team">'+normaliseYearName(t.year)+' Team</span><span class="lb-pts">'+pts+' pts</span>';
+if(streaks>0)h+='<span class="lb-streak">🔥 '+streaks+' streak'+(streaks>1?'s':'')+'</span>';
 h+='</div>';
 });}
 h+='</div>';
