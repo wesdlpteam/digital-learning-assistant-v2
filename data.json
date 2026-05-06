@@ -2762,11 +2762,15 @@
       {
         "t": "Canva",
         "d": "Students design persuasive infographics or digital posters using Canva to communicate the importance of making informed decisions about materials and light in disaster preparedness (e.g., bushfire-resistant materials, reflective surfaces for heat management). They can use Canva's 'Remove Background' feature to enhance visuals with their own iPad photos."
+      },
+      {
+        "t": "Hazard Heroes: Smart Emergency Alert Landmarks",
+        "d": "Students work in teams to design and build scale-model landmarks (e.g., bridges, towers, houses) from recycled cardboard, craft sticks, and other makerspace materials, embedding them with programmable micro:bit sensors or Makey Makey circuits. Each landmark must physically demonstrate how it detects and responds to a simulated natural hazard (bushfire, flood, or earthquake) using the sensors?e.g., flashing LEDs for fire, buzzer alarms for floods, or shaking platforms for earthquakes. Students code the micro:bits or circuits to trigger these responses based on real-world data (e.g., temperature, moisture, vibration), then physically prototype and decorate their landmarks to reflect local environments and communities. The project culminates with teams pitching their interactive models, explaining how their integrated tech and design choices help keep people and living things safe, and reflecting on empathy, scientific thinking, and iterative improvement throughout the Design Cycle."
       }
     ],
     "audited": true,
     "plannerText": "This unit immerses Year 5 students in understanding natural hazards (bushfires, earthquakes, floods) and how the interactions between living things, materials, and light inform decision-making. Students engage in collaborative inquiry, data analysis, mapping, prototyping, and persuasive pitching, culminating in designing and presenting solutions to real-world challenges with a strong focus on empathy, scientific thinking, and the design process.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:30:11.669Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
@@ -2799,11 +2803,15 @@
       {
         "t": "Clickview",
         "d": "Students curate and annotate a playlist of short videos on conservation, local council actions, and environmental stewardship. They add their own video reflections explaining how each resource connects to the central idea and propose actions for their school community."
+      },
+      {
+        "t": "Stewardship Sensor Gardens",
+        "d": "Students work in teams to design and build a miniature 'sustainable garden ecosystem' using recycled materials (cardboard, plastic bottles, fabric scraps, etc.) to create terrain, water features, and plant models. They integrate simple environmental sensors (e.g., soil moisture, light, or temperature sensors connected to a microcontroller like a BBC micro:bit or Makey Makey) to monitor garden conditions. Students craft garden signage and habitat features, then code their microcontroller to trigger physical responses?such as lighting up LEDs, activating a small buzzer, or raising a hand-crafted flag?when certain environmental thresholds are met (e.g., soil too dry, too much sun). Teams document and iterate their designs using the Design Cycle, reflecting on how their garden models represent stewardship and local conservation challenges, and how technology can help communities care for the environment."
       }
     ],
     "audited": true,
     "plannerText": "Students explore how communities interact with the environment through conservation, local values, and stewardship. They investigate First Nations perspectives, research local council sustainability initiatives, conduct a nature walk to observe local flora and fauna, and develop persuasive pitches for environmental action within their school community.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:31:01.584Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
@@ -2836,11 +2844,15 @@
       {
         "t": "Clickview",
         "d": "Students curate and annotate a playlist of historical video clips from Clickview, focusing on the Gold Rush, Eureka Stockade, and other pivotal moments. They add their own commentary and discussion prompts to highlight how these events shaped the nation's growth and identity."
+      },
+      {
+        "t": "Gold Rush Transport Tech: Interactive Migration Journeys",
+        "d": "Students work in teams to design and build physical model transport vehicles (e.g., wagons, steamships, or pack animals) using recycled materials, cardboard, and craft supplies, representing how people migrated during Australia's resource booms. They then embed simple programmable robotics (such as Sphero Indi or Bee-Bots) into their vehicles, coding them to follow a custom-built migration route map that includes hand-crafted landscape features (rivers, goldfields, towns, Indigenous lands). Along the route, students create interactive 'event stations' (pop-up info cards, movable barriers, or decision points) highlighting historical challenges (e.g., crossing rivers, negotiating with local populations, resource scarcity). Teams iterate using the Design Cycle: empathize with historical figures, define migration challenges, ideate transport solutions, prototype vehicles and routes, test robotic journeys, and reflect on how resource discovery shaped migration and impacted diverse communities."
       }
     ],
     "audited": true,
     "plannerText": "Students explore how the discovery of resources such as gold, wool, and wheat impacted the growth and development of Australia, with a focus on migration, economic change, and effects on Indigenous and colonial populations. Activities include historical research, case studies, timelines, perspective-taking, and hands-on prototyping to understand the significance of resource discovery in shaping societies.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:31:20.779Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
@@ -2872,11 +2884,15 @@
       {
         "t": "Book Creator",
         "d": "Each student authors a multimedia eBook in Book Creator, combining text, images, audio reflections, and video clips to document their learning about managing change, acceptance, and growth. The final product serves as a personal guide and can be shared with younger students or families."
+      },
+      {
+        "t": "Emotions in Motion: Interactive Wellbeing Wearables",
+        "d": "Students will design and build wearable accessories (such as badges, wristbands, or hats) that physically represent different emotions and strategies for managing change. Using a combination of craft materials (felt, fabric, LED lights, conductive thread, recycled plastics, cardboard, Velcro, etc.) and simple programmable microcontrollers (like Micro:bit or Makey Makey), students will prototype wearables that light up, change color, or trigger gentle vibrations based on user input or touch. For example, a wristband that glows blue when pressed to signal 'I need support', or a badge that cycles through colors representing different moods. Students will use the Design Cycle to empathize (interview classmates about emotions during change), define needs, ideate wearable solutions, physically build prototypes, program simple responses, test with peers, and reflect on how these wearables could help communicate feelings and support wellbeing during transitions. This hands-on project blends creative crafting with basic coding, fostering empathy, self-awareness, and practical communication strategies."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores how managing change requires acceptance, knowledge, and strategies, with a focus on relationships, digital behaviours, and personal growth. Students engage in reflective journaling, digital art, empathy mapping, and collaborative discussions, culminating in creative projects that support wellbeing and positive transitions.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:31:37.579Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
