@@ -229,6 +229,11 @@ function ingest(arr, skipCache){
   const qy=document.getElementById('q-year');
   if(qc){ while(qc.options.length>1) qc.remove(1); campuses2.forEach(c=>qc.add(new Option(c,c))); }
   if(qy){ while(qy.options.length>1) qy.remove(1); yrs2.forEach(y=>qy.add(new Option(y,y))); }
+  // Diversity scanner dropdowns
+  const dc=document.getElementById('div-campus');
+  const dy=document.getElementById('div-year');
+  if(dc){ while(dc.options.length>1) dc.remove(1); campuses2.forEach(c=>dc.add(new Option(c,c))); }
+  if(dy){ while(dy.options.length>1) dy.remove(1); yrs2.forEach(y=>dy.add(new Option(y,y))); }
   showApp();
   
   const emailEl=document.getElementById('sidebar-user-email');
@@ -465,4 +470,3 @@ async function openEntry(idx){
     saveLocks(); // fire-and-forget — no await
   }
 }
-
