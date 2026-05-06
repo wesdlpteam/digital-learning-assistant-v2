@@ -2697,9 +2697,35 @@
     "th": "How We Organise Ourselves",
     "ci": "Economic systems are an integral part of human society.",
     "lo": "Wealth is more than money; Responsibilities when managing income; Income is earned and managed in many ways",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Minecraft: Revamp Melbourne",
+        "d": "Students collaborate in Minecraft Education to redesign Melbourne for the future, focusing on how economic systems shape city infrastructure, trade, and community services. They must justify their design choices based on economic principles, simulate trade, and reflect on how their solutions meet both current and future needs of a diverse society.",
+        "url": "https://education.minecraft.net/en-us/lessons/revamp-melbourne"
+      },
+      {
+        "t": "Canva",
+        "d": "Students create digital infographics or animated explainers that break down complex economic concepts such as taxation, budgeting, or the difference between needs and wants. These can be shared with the school community to promote financial literacy and spark discussion about economic responsibility."
+      },
+      {
+        "t": "Microsoft Excel",
+        "d": "Students use Excel to model personal and community budgets, track classroom 'income' and 'expenses' from simulated jobs or side hustles, and visualize data with graphs. This hands-on approach helps them understand financial decision-making and the impact of economic choices."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students collaboratively build a digital 'idea wall' to share and debate what constitutes wealth, how income is managed, and the responsibilities of citizens in economic systems. They can post reflections, questions, and multimedia responses to real-world economic scenarios."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students author interactive digital books that tell the story of a fictional character navigating different economic systems, making choices about earning, spending, and saving. They can embed audio reflections, videos, and images to bring economic concepts to life."
+      },
+      {
+        "t": "Makerspace Project",
+        "d": "Students design and physically build a model of their 'ideal community' using cardboard, popsticks, recycled materials, and other prototyping supplies. Each group must allocate a set budget (using play money or tokens) to 'purchase' materials for public and private facilities, simulating real-world economic trade-offs and decision-making. They present their models and justify their spending choices, linking back to the central idea of economic systems in society."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how economic systems underpin human society, with students investigating concepts of wealth, income, and financial responsibility. Activities include provocations about what makes someone 'wealthy', debates on tax, simulated classroom economies, budgeting exercises, and the collaborative design of ideal communities within set financial constraints.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:29:50.463Z",
@@ -2712,9 +2738,35 @@
     "th": "How the World Works",
     "ci": "The interactions between living things, materials, and light enable us to make decisions about the world",
     "lo": "How structural features and adaptations help living things survive; How weathering and erosion cause change to Earth's surface; How light is used in science and technology",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Minecraft: Invisible Forces At Work",
+        "d": "Students will use Minecraft Education to explore the concepts of magnetism and gravity by designing a magnetic structure that could protect the International Space Station or assist its astronauts. This hands-on digital simulation directly connects to the unit's focus on the interactions between materials and forces, allowing students to experiment with invisible forces in a creative, collaborative virtual environment.",
+        "url": "https://education.minecraft.net/en-us/lessons/invisible-forces-at-work"
+      },
+      {
+        "t": "Merge Cubes",
+        "d": "Students use Merge Cubes to create and explore interactive 3D models demonstrating how light interacts with different materials (transparent, translucent, opaque) and how these interactions affect living things. They can record their observations and share digital walkthroughs of their models, making abstract science concepts tangible and engaging."
+      },
+      {
+        "t": "Explain Everything",
+        "d": "Students collaboratively create interactive whiteboard presentations to model scenarios such as how light enables plants to grow (photosynthesis), or how materials are used in disaster-resistant building designs. They can annotate, animate, and narrate their explanations, supporting both science understanding and communication skills."
+      },
+      {
+        "t": "Sphero BOLT",
+        "d": "Students program Sphero BOLT robots to navigate obstacle courses that simulate natural hazards (e.g., bushfires, floods, earthquakes). They collect data on speed, distance, and light sensor readings, connecting robotics to real-world problem-solving and the unit's focus on decision-making in response to environmental challenges."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design persuasive infographics or digital posters using Canva to communicate the importance of making informed decisions about materials and light in disaster preparedness (e.g., bushfire-resistant materials, reflective surfaces for heat management). They can use Canva's 'Remove Background' feature to enhance visuals with their own iPad photos."
+      },
+      {
+        "t": "Makerspace: Disaster-Resistant Structure Prototyping",
+        "d": "In the Makerspace, students work in teams to design and build physical prototypes of disaster-resistant structures using cardboard, popsticks, hot glue, recycled bottles, and other materials. They test their models against simulated hazards (e.g., shaking table for earthquakes, water spray for floods, heat lamp for bushfires) and iterate based on results, applying their understanding of materials, light, and living things in a hands-on STEM challenge."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit immerses Year 5 students in understanding natural hazards (bushfires, earthquakes, floods) and how the interactions between living things, materials, and light inform decision-making. Students engage in collaborative inquiry, data analysis, mapping, prototyping, and persuasive pitching, culminating in designing and presenting solutions to real-world challenges with a strong focus on empathy, scientific thinking, and the design process.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:30:11.669Z",
@@ -2727,9 +2779,35 @@
     "th": "Sharing the Planet",
     "ci": "Communities interact with the environment in different ways.",
     "lo": "The need for conservation; Community values inform management of the natural environment; Ways environmental stewardship can drive change",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Minecraft: Revamp Melbourne",
+        "d": "Students use Minecraft Education to design and build a future-focused, sustainable version of Melbourne, integrating real-world environmental stewardship and community values. They must justify their design choices based on local council initiatives and conservation needs, then present their virtual city to the class as a persuasive pitch for change.",
+        "url": "https://education.minecraft.net/en-us/lessons/revamp-melbourne"
+      },
+      {
+        "t": "Canva",
+        "d": "Students create persuasive digital campaigns (posters, infographics, or short videos) advocating for a local environmental initiative inspired by Monash Council programs. They use Canva's 'Remove Background' feature to integrate photos from their nature walk and overlay key conservation messages."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students collaboratively build a digital mind map of local council sustainability initiatives, linking each to its potential impact on the community and environment. They add research, photos, and reflections from their council investigation and nature walk."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students author a digital book documenting their inquiry into First Nations stewardship, local flora and fauna, and their own conservation proposals. They combine text, images from the iPad camera, and audio reflections to demonstrate understanding of community-environment interactions."
+      },
+      {
+        "t": "Clickview",
+        "d": "Students curate and annotate a playlist of short videos on conservation, local council actions, and environmental stewardship. They add their own video reflections explaining how each resource connects to the central idea and propose actions for their school community."
+      },
+      {
+        "t": "Makerspace Project: Sustainable School Prototype",
+        "d": "Students design and physically build a model of a sustainable school or community space using recycled materials, cardboard, popsticks, and bottle caps. The prototype must include features inspired by their research into local council initiatives (e.g., rainwater tanks, native gardens, solar panels) and be accompanied by a persuasive pitch for implementation at Wesley College."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students explore how communities interact with the environment through conservation, local values, and stewardship. They investigate First Nations perspectives, research local council sustainability initiatives, conduct a nature walk to observe local flora and fauna, and develop persuasive pitches for environmental action within their school community.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:31:01.584Z",
@@ -2742,9 +2820,35 @@
     "th": "Where We Are in Place and Time",
     "ci": "The discovery of resources has impacted the growth and development of nations.",
     "lo": "Significance of resource discovery in development of societies; Impact of migration on cultural, social and economic growth; Exploration and settlement effects on Indigenous and colonial populations",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Minecraft: The Hall of Inventions",
+        "d": "Students research a key resource discovery (e.g., gold, wool, wheat, or minerals) that shaped Australia's growth, then use Minecraft: The Hall of Inventions to design and build a 3D model of the invention or technology that enabled its extraction or use. Students present their build as a virtual museum exhibit, explaining its historical impact on Australia's development.",
+        "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
+      },
+      {
+        "t": "Canva",
+        "d": "Students create interactive digital timelines using Canva, mapping out major resource discoveries in Australia and their ripple effects on migration, Indigenous communities, and economic growth. Each event can include images, short videos, and student-written summaries to deepen understanding of cause and effect."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students collaboratively build a Padlet 'Migration Wall' where they post digital artefacts (photos, maps, quotes, short audio clips) representing different migration waves to Australia, linking each to the discovery of resources and the resulting cultural, social, and economic changes."
+      },
+      {
+        "t": "Explain Everything",
+        "d": "Students use Explain Everything to create animated explainer videos that unpack the push and pull factors of migration during the Gold Rush and other resource booms, integrating maps, voiceovers, and annotated diagrams to show how resource discovery transformed Australian society."
+      },
+      {
+        "t": "Clickview",
+        "d": "Students curate and annotate a playlist of historical video clips from Clickview, focusing on the Gold Rush, Eureka Stockade, and other pivotal moments. They add their own commentary and discussion prompts to highlight how these events shaped the nation's growth and identity."
+      },
+      {
+        "t": "Makerspace: Resource Extraction Machine Prototype",
+        "d": "Students work in teams to design and physically build a working prototype of a simple resource extraction machine (e.g., a gold panning device, wool shearing tool, or wheat thresher) using cardboard, rubber bands, bottle caps, string, and recycled materials. They must document their design process, test their machine, and present how such inventions changed Australia's development."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students explore how the discovery of resources such as gold, wool, and wheat impacted the growth and development of Australia, with a focus on migration, economic change, and effects on Indigenous and colonial populations. Activities include historical research, case studies, timelines, perspective-taking, and hands-on prototyping to understand the significance of resource discovery in shaping societies.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:31:20.779Z",
@@ -2812,9 +2916,35 @@
     "th": "How We Organise Ourselves",
     "ci": "An inquiry into the interconnectedness of human-made systems and communities; the structure and function of organisations.",
     "lo": "Lines of inquiry to be confirmed once planner is uploaded",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Minecraft: Revamp Melbourne",
+        "d": "Students use Minecraft Education to collaboratively design a future-focused, sustainable version of Melbourne that addresses the interconnectedness of human-made systems (transport, energy, waste, housing) and community needs. They must justify their design choices based on research into real-world organisational structures and present their city as a model for efficient, equitable urban organisation.",
+        "url": "https://education.minecraft.net/en-us/lessons/revamp-melbourne"
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Students design and distribute digital surveys to collect data on consumer choices, advertising influences, and ethical considerations within their school community. They analyse the results in Excel to identify patterns and trends, directly connecting to the unit's focus on how organisations and systems influence decision-making."
+      },
+      {
+        "t": "Canva",
+        "d": "Students create persuasive digital advertisements for alternative, sustainable products or organisational models. They use Canva's 'Remove Background' feature to enhance visuals and apply design principles learned in Visual Art, linking to the unit's exploration of advertising strategies and influence."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students collaboratively build a digital wall mapping the structure and function of various organisations (e.g., companies, NGOs, government bodies). They post research findings, infographics, and reflections, visually demonstrating the interconnectedness of systems and communities."
+      },
+      {
+        "t": "GarageBand",
+        "d": "Students compose and record a multimodal song, rap, or slam poem that critiques or reimagines consumerism and organisational influence. They integrate literary devices and data from their research, directly supporting the unit's action-oriented creative assessment."
+      },
+      {
+        "t": "Makerspace Project: Sustainable Product Lifecycle Model",
+        "d": "In groups, students physically prototype a product and its entire lifecycle using recycled materials, cardboard, and craft supplies. They map out and label each stage (production, marketing, use, disposal) and annotate how different human-made systems (transport, advertising, waste management) interact at each point, making tangible the unit's central idea of interconnected systems and organisational function."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students collaboratively investigate the influences on consumer choices for a chosen product, focusing on advertising, peer influence, and environmental impact. They conduct research, analyse data, and present findings through multimodal presentations, including creative action pieces such as songs, advertisements, or slam poems that propose alternative, sustainable models of consumerism.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:40:11.693Z",
