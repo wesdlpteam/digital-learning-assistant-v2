@@ -3851,11 +3851,15 @@
       {
         "t": "Adobe Express",
         "d": "Students create short, impactful video PSAs in Adobe Express, educating their community about disaster preparedness and the importance of resilience, using a mix of student voice, animation, and real footage."
+      },
+      {
+        "t": "Disaster-Ready Shelter Showdown",
+        "d": "Students work in teams to research a real-world natural disaster (e.g., cyclone, earthquake, flood) and then use the Design Cycle to invent, prototype, and test a disaster-resistant shelter. Using recycled materials (cardboard, fabric scraps, string, popsticks, etc.), students physically build their shelter model. To integrate technology, they use programmable Sphero Indi cars as 'storm simulators'?navigating the cars (with attached fans or weighted blocks) around and into their models to simulate wind, tremors, or water movement. Students iterate on their designs after testing, refining their shelters for strength and stability, and document their process with photos and voice notes on iPads to create a digital reflection journal. The project culminates in a 'Shelter Showdown' where each team's structure is tested and showcased, highlighting both creativity and resilience strategies."
       }
     ],
     "audited": true,
     "plannerText": "This unit immerses students in understanding natural disasters, their causes, and impacts, with a strong focus on how people and communities respond with resilience. Students research different disaster types, analyze real-world case studies (such as Japan's earthquake preparedness), and engage in hands-on design challenges to create disaster-resistant solutions, culminating in creative projects that showcase their learning and action.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3884,11 +3888,15 @@
       {
         "t": "Padlet",
         "d": "Students build a collaborative digital wall to collect and compare city features, disaster responses, and architectural innovations from around the world. They can post images, videos, and reflections, then sort and group ideas to inform their own city designs."
+      },
+      {
+        "t": "Dynamic Density Pop-Up City",
+        "d": "Students work in teams to design and construct a modular cityscape using recycled cardboard, popsticks, and craft materials. Each group creates interchangeable 'city blocks' representing different urban zones (residential, commercial, transport hubs, parks, etc.), integrating simple circuits (LEDs/battery packs) to simulate city lighting and power. Using Sphero Indi robots, students program movement paths that mimic public transport or emergency response routes through their city. Throughout the Design Cycle, students test and adapt their layouts for changing scenarios (e.g., population growth, traffic congestion, or natural disasters), physically rearranging blocks and modifying routes to demonstrate urban adaptation and resilience. The project culminates in a collaborative city showcase, where students explain their design choices and demonstrate how their hybrid digital-physical city responds dynamically to real-world challenges."
       }
     ],
     "audited": true,
     "plannerText": "Students explore how cities develop and adapt over time, focusing on factors like demographics, density, transport, infrastructure, and disaster resilience. Activities include researching global cities, designing city layouts, building models, and reflecting on the needs and functions of urban environments.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3916,11 +3924,15 @@
       {
         "t": "Adobe Express",
         "d": "Create a 'Mind-Body Connection' multimedia poster in Adobe Express, combining student voice recordings, photos, and graphics to illustrate how exercise, nutrition, and friendships influence their wellbeing. Posters can be shared digitally with families to promote home-school connection."
+      },
+      {
+        "t": "Body Systems Superhero Showdown",
+        "d": "Students work in teams to design and build life-sized wearable 'super suits' that represent and protect different body systems (e.g., respiratory, circulatory, digestive). Using recycled materials, cardboard, fabric, and craft supplies, each team physically constructs suit components that highlight key functions (like a lung-inspired chest plate or a heart-powered arm shield). Then, students integrate simple programmable tech: embed Sphero Indi robots or Bee-Bots in the suits to simulate system responses?such as a 'heart rate' light or a 'digestion' journey. Teams test their suits in a creative obstacle course, where the suits must respond to various health and wellbeing scenarios (e.g., exercise, rest, cyber safety alerts) by activating the embedded tech. Throughout, students follow the Design Cycle: empathize with their 'body system', ideate protective features, prototype, test, and improve their super suits, finally presenting and reflecting on how their design choices support health and wellbeing."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores how health and wellbeing are impacted by the choices students make, focusing on body systems, fitness, cyber safety, and personal responsibility. Students research and report on body systems, set and track fitness goals, and reflect on strategies for maintaining balanced wellbeing through collaborative and individual activities.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3948,6 +3960,10 @@
       {
         "t": "Wise Discussion Chatbots",
         "d": "The teacher creates a Wise Discussion Chatbot using the Character Interview scenario and sets the bot's role as Ava, a community celebration organiser explaining why particular traditions matter to different families. The topic is ?How We Express Ourselves: The creative process involves understanding and applying artistic elements to communicate ideas and emotions across disciplines?. Students chat with the bot to explore a named perspective through guided questioning rather than general research; for example, they ask ?How does this celebration show what your community values?? and ?What might outsiders misunderstand about this tradition??. After the chat, students produce a question bank plus a short perspective-and-evidence summary that compares the chatbot responses with unit sources linked explicitly to How We Express Ourselves."
+      },
+      {
+        "t": "Opera Express: Interactive Shadow Theater",
+        "d": "Students work in teams to design and build a large-scale shadow theater inspired by Beijing Opera, using cardboard, recycled materials, fabric, and translucent colored gels. They craft expressive shadow puppets with movable joints and attach conductive materials (e.g., copper tape) to key puppet parts. Using Makey Makey kits connected to iPads running a simple soundboard app, students program sound effects and music samples that trigger when puppet parts touch specific areas on the stage. The design cycle guides them through researching shadow theater traditions, sketching puppet and stage designs, prototyping movement mechanisms, integrating digital sound triggers, and refining their performance. The final showcase features original vignettes where puppets, sound, and color combine to communicate emotion and story, with students reflecting on their creative and technical choices in their digital portfolios."
       }
     ],
     "audited": true,
@@ -3956,7 +3972,7 @@
     "humanVerifiedAt": "2026-05-05T04:50:01.981Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
     "humanVerifiedSuggestionSignature": "[{\"t\":\"Merge Cubes\",\"d\":\"Students design and create interactive 3D Beijing Opera masks or character artefacts using Merge Cube and the Merge Explorer app, then use the iPad camera to record themselves performing a short vignette in character. The 3D artefact becomes a digital prop, allowing students to blend physical movement, digital art, and AR storytelling in a single workflow.\",\"url\":\"\"},{\"t\":\"Canva\",\"d\":\"Students create a digital portfolio showcasing their character mask designs, script excerpts, and reflections on how colour and artistic elements communicate emotion and personality, using Canva's visual storytelling tools and 'Remove Background' feature for mask photos.\",\"url\":\"\"},{\"t\":\"Book Creator\",\"d\":\"Students collaboratively author a multimedia eBook documenting the creative process behind their Beijing Opera-inspired performances, including audio recordings, video snippets, and annotated images of their masks and poses.\",\"url\":\"\"},{\"t\":\"GarageBand\",\"d\":\"Students compose original soundtracks for their character vignettes, experimenting with tempo, dynamics, and instrument selection to evoke mood and support the narrative, then sync their music to performance videos.\",\"url\":\"\"},{\"t\":\"Wise Discussion Chatbots\",\"d\":\"The teacher creates a Wise Discussion Chatbot using the Character Interview scenario and sets the bot's role as Ava, a community celebration organiser explaining why particular traditions matter to different families. The topic is ?How We Express Ourselves: The creative process involves understanding and applying artistic elements to communicate ideas and emotions across disciplines?. Students chat with the bot to explore a named perspective through guided questioning rather than general research; for example, they ask ?How does this celebration show what your community values?? and ?What might outsiders misunderstand about this tradition??. After the chat, students produce a question bank plus a short perspective-and-evidence summary that compares the chatbot responses with unit sources linked explicitly to How We Express Ourselves.\",\"url\":\"\"},{\"t\":\"Makey Makey\",\"d\":\"Using the Design Cycle, students prototype interactive character masks or props that trigger sound effects or music when touched, integrating Makey Makey with conductive materials to physically express character traits and emotions in a live performance context.\",\"url\":\"\"}]",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
