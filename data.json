@@ -851,8 +851,8 @@
         "d": "Students design and distribute a digital survey to teachers and peers about technology use and creative expression. They analyse the data in Excel, then present their findings as part of a discussion on how technology shapes communication in their community."
       },
       {
-        "t": "Interactive Storytelling Machines",
-        "d": "Students use the Design Cycle to invent and build physical 'story machines' that combine digital technology with hands-on making. In groups, they brainstorm a story or message they want to share, then design a kinetic diorama or puppet theatre using cardboard, recycled materials, and craft supplies. They integrate simple robotics (e.g., Sphero Indi or Bee-Bots) or micro:bit-powered motors to animate parts of their scene (such as moving characters or opening doors). Students use iPads to record sound effects or narration, which are triggered by sensors or buttons on their creation. The final machines allow users (younger students) to interact with the story by pressing buttons, moving pieces, or guiding robots?demonstrating how technology transforms creative expression and communication."
+        "t": "Wearable Storytellers: Interactive Message Badges",
+        "d": "Students use the Design Cycle to invent and build wearable 'message badges' that creatively express their ideas about technology and communication. First, they brainstorm messages or stories they want to share, then design and physically craft a badge using cardboard, felt, recycled plastics, and art materials. Next, they integrate a simple programmable digital component (such as a micro:bit or Makey Makey with conductive tape or copper wire) to add an interactive element?like scrolling LED text, sound, or movement?triggered by touch or motion. Students test and refine their badges, then wear and demonstrate them in a showcase, explaining how their design transforms communication and links to the unit's central idea."
       }
     ],
     "audited": true,
@@ -892,8 +892,8 @@
         "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
       },
       {
-        "t": "Eco-System Chain Reaction Machine",
-        "d": "Students work in teams to design and build a large, interconnected Rube Goldberg-style chain reaction machine that models how different systems (natural and human-made) interact and affect each other. Using recycled materials (cardboard, tubes, string, bottle caps, etc.), students physically construct sections representing different systems (e.g., water cycle, transport, waste management, pollination). Each section must trigger the next, visually demonstrating cause and effect. To integrate technology, students embed simple programmable elements?such as Sphero Indi cars that activate a lever, or Makey Makey sensors that set off a sound or light?at key points, requiring coding and digital planning. Teams document their design process with iPads, using time-lapse video and digital annotation to reflect on how changes in one system ripple through the whole chain. The final showcase involves running the entire machine and explaining the interdependence of each system."
+        "t": "Eco-System Interactive Chain Reaction",
+        "d": "Students work in teams to design and build a large, interconnected Rube Goldberg-style chain reaction machine that models how different systems (natural, human-made, and community) interact and depend on each other. Using recycled materials (cardboard, bottles, string, marbles, etc.), students create physical segments representing different systems (e.g., water cycle, transport, waste management, pollination). Each segment must trigger the next, showing cause-and-effect relationships. Teams integrate Sphero Indi or Bee-Bots programmed via iPads as moving 'agents' that activate or travel through parts of the system, bridging digital and physical components. Throughout the Design Cycle, students brainstorm, prototype, test, and refine their chain reaction, documenting changes and system connections digitally. The final showcase highlights how disruptions or improvements in one system impact the whole, emphasizing sustainability and interconnectedness."
       }
     ],
     "audited": true,
@@ -935,8 +935,8 @@
         "d": "Connect the study of floods and community response to real-world engineering by having students use Minecraft: Filtering Water On The Iss (https://education.minecraft.net/en-us/lessons/filtering-water-on-the-iss). Students experiment with designing water filtration systems, linking to how communities recover from floods and ensure safe water supplies after disasters."
       },
       {
-        "t": "Disaster-Resilient Shelter Challenge",
-        "d": "Students use the Design Cycle to invent and prototype a model shelter that can withstand simulated natural disasters (earthquakes, floods, cyclones) using materials like cardboard, straws, clay, fabric, and recycled plastics. After researching real-world disaster impacts, students sketch designs, then physically build their shelter models. To integrate technology, students use Sphero Indi robots programmed with iPads to simulate floodwaters or wind by pushing or bumping into the shelters, and use iPads to record slow-motion video of the tests. Teams iterate on their designs based on test results, documenting changes and justifying improvements. The project culminates in a 'Disaster Day' where each shelter is tested and students present their design process and resilience strategies."
+        "t": "Disaster-Proof Shelter Challenge",
+        "d": "Students work in teams to research different types of natural disasters (earthquakes, floods, cyclones) and how communities adapt. Using the Design Cycle, they brainstorm, sketch, and physically prototype a model shelter from recycled materials (cardboard, plastic bottles, fabric, string, etc.) that can withstand simulated disasters. Students integrate Sphero Indi robots programmed on iPads to act as 'disaster forces' (e.g., rolling as a flood or shaking the table for an earthquake). Teams iteratively test and refine their shelters' stability and resilience, documenting results with photos and videos. The project culminates in a showcase where students present their designs, explain their engineering choices, and reflect on how technology and creative problem-solving can help communities adapt to Earth's changes."
       }
     ],
     "audited": true,
@@ -976,8 +976,8 @@
         "d": "Students script, record, and edit short podcasts in Adobe Express Podcasting, sharing stories about the importance of Country, language, and community for First Nations people. Episodes might feature interviews, retellings of Dreaming stories (with permission), or personal reflections on connection to place."
       },
       {
-        "t": "Connection to Country Interactive Map Maze",
-        "d": "Students collaboratively research and select different First Nations groups from across Australia, focusing on their unique connections to Country, language, and traditions. Using large sheets of cardboard, clay, natural and recycled materials, students physically build a 3D topographic map featuring key landmarks, waterways, and symbolic elements significant to each group. They then design and construct a maze-like path across the map, embedding cultural stories and language clues at various points. Using Sphero Indi or Bee-Bots, students program routes that 'journey' across the map, stopping at each landmark to trigger a physical storytelling station (e.g., QR codes on hand-crafted signs, or interactive pop-up elements). The project integrates digital mapping and robotics with tangible making, reinforcing understanding of diversity, place, and belonging through hands-on exploration and technology."
+        "t": "Language Lands: Interactive Connection Map",
+        "d": "Students work in teams to research a local First Nations language group, then design and build a large 3D topographic map of the group's Country using cardboard, clay, recycled materials, and natural items. They craft physical landmarks (rivers, trees, meeting places) and create story markers (using QR codes or NFC tags) that, when scanned with iPads, play short student-created audio in the local language (greetings, place names, or stories). The project integrates digital storytelling with hands-on map-making, and students iterate using the Design Cycle to refine both their physical prototypes and digital content, deepening their understanding of connection to place, language, and traditions."
       }
     ],
     "audited": true,
@@ -1028,11 +1028,15 @@
         "t": "Minecraft: Active Citizen",
         "d": "Students explore the 'Active Citizen' Minecraft Education world, where they learn about Nobel Peace Laureates and how their leadership shaped communities. Students reflect on the qualities of these leaders and build a virtual monument or community project inspired by their learning.",
         "url": "https://education.minecraft.net/en-us/lessons/active-citizen"
+      },
+      {
+        "t": "Leadership Labyrinth: Interactive Maze of Qualities",
+        "d": "Students work in teams to design and build a large, tabletop maze using cardboard, recycled materials, and craft supplies. Each section of the maze represents a leadership quality (e.g., empathy, courage, responsibility), illustrated with handmade models, symbols, or mini-scenes. Teams program a Sphero Indi robot to navigate the maze, using coloured tiles or codes that correspond to choices and dilemmas faced by leaders (e.g., 'If you choose teamwork, turn left; if you choose to work alone, turn right'). Students iteratively prototype both the physical maze and the robot's journey, reflecting on how their design choices represent leadership challenges and solutions. The final showcase allows groups to guide others through their leadership labyrinth, explaining the qualities and decisions embedded in their design."
       }
     ],
     "audited": true,
     "plannerText": "The unit 'Who We Are' explores the central idea that 'Leaders shape communities.' Students investigate the roles, responsibilities, and qualities of effective leaders through case studies, guided reading, and self-reflection. Activities include researching famous leaders, analysing leadership in different contexts, and applying their understanding by developing their own leadership skills and presenting applications for school leadership roles.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:04:07.241Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
@@ -1066,11 +1070,15 @@
         "t": "Minecraft: The Investigators",
         "d": "Students become school reporters in a Minecraft world, investigating three unique stories and evaluating the credibility and bias of different sources. They decode clues, uncover the truth, and reflect on how information can be manipulated to influence audiences. URL: https://education.minecraft.net/en-us/lessons/the-investigators",
         "url": "https://education.minecraft.net/en-us/lessons/the-investigators"
+      },
+      {
+        "t": "Persuasion Arcade: Interactive Message Machines",
+        "d": "Students work in teams to design and build physical 'persuasion machines'?interactive arcade-style games or displays made from recycled materials, cardboard, and craft supplies. Each machine must deliver a persuasive message targeting a specific audience (e.g., kids, parents, teachers) using techniques they've studied. Teams integrate micro:bit or Makey Makey kits to add digital interactivity (e.g., sound effects, lights, score counters, or buttons triggering persuasive slogans). Students prototype, test, and refine both the physical structure and digital elements, then host a class 'arcade' where peers try out each machine and discuss which persuasive devices influenced them most."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores how people create or manipulate messages to target specific audiences. Students critically analyse media, advertisements, and stories, identifying persuasive devices and evaluating their impact. Activities include deconstructing texts, creating targeted messages, and reflecting on how they know they have been influenced.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T03:54:45.534Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
@@ -1104,11 +1112,15 @@
       {
         "t": "Padlet",
         "d": "Students collaboratively brainstorm and document their entrepreneurial journey on a shared Padlet board. They post ideas, research, product sketches, marketing drafts, and reflections, allowing for peer feedback and iterative improvement throughout the unit."
+      },
+      {
+        "t": "Eco-Innovation Arcade: Smart Product Prototypes",
+        "d": "Students work in teams to design and build a sustainable product prototype that solves a real-world problem, integrating a simple programmable microcontroller (such as a BBC micro:bit or Makey Makey) with physical materials like recycled cardboard, fabric, popsticks, bottle caps, and clay. Using the Design Cycle, they research needs in their community, ideate solutions, sketch blueprints, and physically construct their prototypes?embedding the tech to add interactive features (e.g., a sensor-triggered light, a sound alert, or a basic digital display). For example, a 'Smart Plant Pot' that flashes a light when the soil is dry, or a 'Reusable Bag Alert' that beeps if left behind. Teams test and refine their inventions, then present and demo them at the market stall, explaining both the sustainable design and the embedded tech to visitors."
       }
     ],
     "audited": true,
     "plannerText": "Students explore the responsibilities of entrepreneurs in developing, marketing, and selling sustainable products and services. They use the design thinking process to research, ideate, prototype, and test their ideas, culminating in a market stall event where they pitch and sell their creations to the school community.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T03:54:46.303Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
@@ -1143,11 +1155,15 @@
       {
         "t": "Canva",
         "d": "Students design persuasive infographics or campaign posters advocating for innovative solutions to local natural hazards, using Canva's design tools and 'Remove Background' feature to create professional-quality visuals for community advocacy."
+      },
+      {
+        "t": "Disaster Response Smart Shelter Challenge",
+        "d": "Students work in teams to design, prototype, and test a model 'smart shelter' that could protect people from a chosen natural hazard (e.g., flood, earthquake, bushfire). Using recycled materials, cardboard, fabric, and craft supplies, students physically build their shelter prototype. They then integrate Sphero Indi robots programmed via iPads to simulate emergency supply delivery or evacuation routes through their shelter design. Teams use the Design Cycle to empathise with affected communities, define needs, ideate solutions, prototype, and iteratively test their shelters for strength, accessibility, and effectiveness, adjusting both the physical structure and the Sphero Indi's navigation as needed. The project culminates in a hands-on demonstration and peer feedback session."
       }
     ],
     "audited": true,
     "plannerText": "This unit engages Year 5 students in investigating natural hazards and the impact on people and environments. Students explore design thinking cycles, analyse real-world challenges, and develop, prototype, and pitch innovative solutions to natural disasters. Activities include mapping, data analysis, stakeholder empathy, prototyping, and community advocacy.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T03:54:19.726Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
