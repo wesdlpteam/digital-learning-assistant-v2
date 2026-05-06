@@ -47,6 +47,7 @@ async function buildSameToolDescriptionRewriteChange_(entryIdx, sugIdx, reason, 
   const oldTool = sugTool(oldSug);
   const oldDesc = sugDesc(oldSug);
   const safeToolForJson = JSON.stringify(String(oldTool || '')).slice(1, -1);
+  const plannerCtx = entry.plannerContextRich || entry.plannerText || '';
   const prompt = `You are improving the wording of ONE digital learning suggestion for an IB PYP unit at Wesley College.
 
 IMPORTANT: This is a DESCRIPTION-ONLY fix. Keep the SAME tool exactly: ${oldTool}
@@ -56,13 +57,13 @@ Keep the same basic classroom task unless the old task is unclear; make it more 
 Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"
 Central Idea: ${entry.ci || ''}
 Lines of Inquiry: ${entry.lo || ''}
-Planner summary: ${entry.plannerText ? entry.plannerText.slice(0, 900) : ''}
+Planner context: ${plannerCtx ? plannerCtx.slice(0, 1500) : 'No planner context available.'}
 
 Issue to fix: ${reason || instruction || 'The description is vague or too brief.'}
 Current tool: ${oldTool}
 Current description: ${oldDesc}
 
-Rewrite the description into 2-3 vivid, practical sentences. The central idea and lines of inquiry above tell you what the unit is ABOUT — use that topic by name in your description, but NEVER quote the central idea or lines of inquiry directly.
+Rewrite the description into 2-3 vivid, practical sentences. The central idea, lines of inquiry, and planner context above tell you what the unit is ABOUT — use that topic by name in your description, but NEVER quote the central idea or lines of inquiry directly.
 
 ${SUGGESTION_STYLE}
 
@@ -284,7 +285,7 @@ ${bulkReplacementToolContext_(targetTool)}
 Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"
 Central Idea: ${entry.ci || ''}
 Lines of Inquiry: ${entry.lo || ''}
-Planner summary: ${entry.plannerText ? compactForPrompt(entry.plannerText, 900) : ''}
+Planner context: ${(entry.plannerContextRich || entry.plannerText) ? compactForPrompt(entry.plannerContextRich || entry.plannerText, 1200) : ''}
 
 Current slot being replaced:
 Tool: ${oldTool}
@@ -728,7 +729,7 @@ function mcTokens_(v){
 function mcLessonScore_(lesson,entry){
   if(!lesson||getYearNumber(entry&&entry.yl)<mcLessonMinYear_(lesson)) return -999;
   if(curatedLessonLooksMathOnly_(lesson)&&!unitHasMathMeasurementContext_(entry)) return -999;
-  const u=(entry.th||'')+' '+(entry.ci||'')+' '+(entry.lo||'')+' '+(entry.plannerText||'');
+  const u=(entry.th||'')+' '+(entry.ci||'')+' '+(entry.lo||'')+' '+(entry.plannerContextRich||entry.plannerText||'');
   const l=(lesson.title||'')+' '+(lesson.desc||'')+' '+(lesson.subject||'');
   const us=new Set(mcTokens_(u)); let sc=0; mcTokens_(l).forEach(t=>{if(us.has(t))sc++;});
   const un=dlaTextForFit_(u), ln=dlaTextForFit_(l);
@@ -1084,15 +1085,17 @@ The coordinator is asking you to scan the library for places where a specific to
   const descLimit = compactOpportunityMode ? 0 : (libraryContextLen > 1500 ? 70 : 110);
   const fullContext = analysisData.map(({e,i})=>{
     const sugs = getSugs(e);
-    // Suggestion 6 is protected; slots 0-4 include short descriptions when needed for wording-quality edits.
     const toolStr = sugs.map((s,si)=>{
       const tool = compactForPrompt(sugTool(s), 70);
       if(si === 5) return `s${si}🔒STEM:${tool} [protected; do not replace]`;
       const desc = descLimit > 0 ? compactForPrompt(sugDesc(s), descLimit) : '';
       return `s${si}:${tool}${desc ? ' — '+desc : ''}`;
     }).join(' | ');
-    const plannerText = plannerLimit > 0 && e.plannerText ? compactForPrompt(e.plannerText, plannerLimit) : '';
-    return `[${i}] ${e.ca} | ${e.yl} | "${e.th}"${e.ci?' | CI: '+compactForPrompt(e.ci,160):''}${e.lo?' | LOI: '+compactForPrompt(e.lo,160):''}${plannerText?' | Planner: '+plannerText:''}\n  ${toolStr}`;
+    // Use enriched planner context (plannerContextRich) when available — much richer than plannerText
+    const richCtx = e.plannerContextRich || e.plannerText || '';
+    const richLimit = compactOpportunityMode ? 300 : (richCtx === e.plannerContextRich ? 500 : plannerLimit);
+    const plannerDisplay = richLimit > 0 && richCtx ? compactForPrompt(richCtx, richLimit) : '';
+    return `[${i}] ${e.ca} | ${e.yl} | "${e.th}"${e.ci?' | CI: '+compactForPrompt(e.ci,160):''}${e.lo?' | LOI: '+compactForPrompt(e.lo,160):''}${plannerDisplay?' | Planner: '+plannerDisplay:''}\n  ${toolStr}`;
   }).join('\n');
 
   const candidateNote = filteredForPlatformOpportunity
