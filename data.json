@@ -2940,11 +2940,15 @@
       {
         "t": "GarageBand",
         "d": "Students compose and record a multimodal song, rap, or slam poem that critiques or reimagines consumerism and organisational influence. They integrate literary devices and data from their research, directly supporting the unit's action-oriented creative assessment."
+      },
+      {
+        "t": "Sustainable Shopping Simulator",
+        "d": "Students will collaboratively design and build a life-sized, interactive 'supermarket' using recycled cardboard, fabric, and craft materials to construct shelves, products, signage, and checkout stations. Embedded within the store, students will integrate programmable micro:bit sensors or Makey Makey boards to create interactive product tags or checkout displays that reveal hidden information about advertising techniques, peer influence, and environmental impact when pressed or scanned. For example, pressing a button attached to a product might light up an LED and play a pre-recorded message about eco-friendly alternatives or reveal data on packaging waste. Students will use the Design Cycle to empathise with real shoppers, define sustainability challenges, ideate creative product displays, prototype interactive features, and test their supermarket with peers acting as consumers. The experience will culminate in student-led tours and reflection on how their design choices can influence more sustainable consumer behaviour."
       }
     ],
     "audited": true,
     "plannerText": "Students collaboratively investigate the influences on consumer choices for a chosen product, focusing on advertising, peer influence, and environmental impact. They conduct research, analyse data, and present findings through multimodal presentations, including creative action pieces such as songs, advertisements, or slam poems that propose alternative, sustainable models of consumerism.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:40:11.693Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
@@ -2977,11 +2981,15 @@
       {
         "t": "GarageBand",
         "d": "Students create audio reports or science podcasts in GarageBand, explaining their experimental process, findings, and how their results confirm, contest, or create new scientific theories. This supports communication skills and creative synthesis of learning."
+      },
+      {
+        "t": "Chain Reaction Energy Explorer",
+        "d": "Students work in teams to design and build an elaborate Rube Goldberg-style chain reaction machine that demonstrates multiple scientific principles from the unit (energy transfer, circuits, chemical changes, planetary motion). Each group must physically construct their machine using recycled materials, cardboard, popsticks, marbles, and simple electronics (LEDs, buzzers, motors). As part of the Design Cycle, students prototype, test, and refine their machines. To deeply integrate technology, students use programmable microcontrollers (such as Micro:bit or Makey Makey) to trigger or enhance at least one stage of their chain reaction?e.g., a Micro:bit senses a marble completing a circuit and then lights an LED or plays a sound. Each group documents their process with stop-motion video (using iPads) and overlays digital explanations of the scientific concepts demonstrated at each stage. The final showcase involves live demonstrations and peer feedback focused on both the creativity of the physical build and the accuracy of the scientific explanations."
       }
     ],
     "audited": true,
     "plannerText": "This unit engages students in hands-on and digital scientific inquiry, focusing on experimentation to confirm, contest, and create new theories. Students investigate energy in circuits, chemical changes, planetary movement, and the scientific method, culminating in designing and presenting their own experiments.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:40:38.497Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
@@ -3014,11 +3022,15 @@
       {
         "t": "Adobe Express Podcasting",
         "d": "Students script, record, and publish a podcast episode using Adobe Express Podcasting, where they interview local business owners, sustainability experts, or peers about the challenges and opportunities of making ethical consumer choices. This real-world connection deepens their inquiry and communication skills."
+      },
+      {
+        "t": "Ethical Product Journey Arcade",
+        "d": "Students work in teams to design and build a physical, interactive arcade game that educates players about the ethical and environmental impacts of everyday products. Using recycled materials, cardboard, and craft supplies, students construct a game cabinet and tactile components (e.g., levers, spinners, chutes). They integrate micro:bit or Makey Makey boards to add digital interactivity?such as sound effects, score tracking, or digital feedback when a player makes sustainable vs. unsustainable choices in the game. Through the Design Cycle, students research real-world product journeys (from raw materials to disposal), prototype game mechanics that highlight consumer choices, and test their arcade with peers. The final showcase invites others to play, learn, and reflect on more just and sustainable consumer models."
       }
     ],
     "audited": true,
     "plannerText": "Students investigate the influences on consumer choices, analyse advertising and peer influence, and research the ethical and environmental impacts of products. They collaborate to present findings, create persuasive multimodal texts, and take action by proposing or advocating for more just and sustainable consumer models.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:40:59.541Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
@@ -3050,11 +3062,15 @@
       {
         "t": "Microsoft Forms",
         "d": "Design and distribute a Microsoft Forms survey to the school community, gathering data on migration backgrounds, reasons for moving, and perceptions of Australian identity. Students analyse the results in Excel, then present their findings on how needs and systems influence migration and citizenship."
+      },
+      {
+        "t": "Migration Memory Suitcase",
+        "d": "Students will design and build a physical 'memory suitcase' representing a migrant's journey to Australia across different eras. Using recycled materials, cardboard, fabric, and craft supplies, each group constructs a suitcase with compartments and tactile artifacts (e.g., miniature tools, symbolic objects, photos). Integrated inside the suitcase is a simple digital storytelling device: students use a Makey Makey kit or micro:bit to add interactive audio buttons or LED-lit compartments. When pressed, these activate pre-recorded personal migration stories, historical facts, or soundscapes via connected laptops/tablets. Students follow the Design Cycle: empathise (research migration stories), define (choose a migrant's perspective), ideate (plan suitcase features), prototype (construct suitcase and tech integration), test (peer feedback), and improve. The final artefact becomes a hands-on, multisensory exhibit exploring how migration, needs, and systems shape Australian identity."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores how human needs drive the development of nations by comparing pre- and post-colonised Australia, examining the relationship between migration and needs, and analysing the influence of systems on citizens. Students engage in historical inquiry, personal narrative, museum excursions, and creative projects to understand migration, citizenship, and the shaping of Australian identity.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:41:11.892Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
