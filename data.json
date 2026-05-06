@@ -2143,11 +2143,15 @@
       {
         "t": "Explain Everything",
         "d": "Students create interactive presentations comparing past and present images of Wesley or Melbourne landmarks. They can annotate, record their thinking, and draw connections between historical evidence and current features, supporting reflection and perspective-taking."
+      },
+      {
+        "t": "Living History Diorama: Augmented Museum",
+        "d": "Students work in teams to design and build a detailed 3D diorama of a significant Wesley College scene from the past, using cardboard, clay, fabric scraps, and recycled materials. They embed simple AR markers (printed QR codes or images) onto key artefacts or locations within their diorama. Using iPads and the free app AR Makr, students create and attach digital pop-up content (e.g., narrated stories, historical photos, or animations) linked to these markers. Visitors can explore the physical diorama and, by scanning the markers, unlock layered digital stories and facts, blending hands-on making with interactive technology. This project brings together physical crafting, historical research, and digital creation to make Wesley's history come alive in a multisensory, student-built museum."
       }
     ],
     "audited": true,
     "plannerText": "Students investigate the significance of evidence in a place, make connections between past and present at Wesley College, and explore how personal and community history shapes the present. Activities include a Wonder Walk to document artefacts, excursions, guest speakers, comparing historical and current images, and a culminating artefact project.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -2176,11 +2180,15 @@
       {
         "t": "Puppet Pals",
         "d": "Students script and record short puppet shows that model conflict resolution and respectful relationships. They use the app's characters and backgrounds to act out scenarios, then share their videos with the class for discussion and peer feedback."
+      },
+      {
+        "t": "Respectful Relationship Robots: Kindness Quest Board",
+        "d": "Students collaboratively design and build a large, interactive 'Kindness Quest Board' representing a diverse community landscape (homes, parks, schools) using cardboard, recycled materials, clay figures, and craft supplies. They invent physical 'challenge stations' on the board that represent real-life scenarios about needs, wants, rights, and respectful relationships (e.g., sharing at the park, helping a friend, resolving a disagreement). Using Sphero Indi cars with custom-decorated covers (representing themselves), students program simple color-coded paths to navigate the board. At each station, the Indi pauses?students physically act out or role-play the scenario with their crafted figures, then collaboratively build or modify props to show positive solutions. The project integrates digital coding, physical making, and social-emotional learning, culminating in a class showcase where students guide their Indis and explain how their board promotes empathy, respect, and understanding of needs and rights."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores the difference between needs and wants, the importance of rights and responsibilities, and what makes a respectful relationship. Students engage in role-plays, collaborative murals, and reflective discussions to build empathy, kindness, and respect for diversity, while connecting their learning to classroom agreements and real-world scenarios.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -2208,11 +2216,15 @@
       {
         "t": "Explain Everything",
         "d": "Students collaborate in Explain Everything to create interactive digital presentations that combine their stop motion animations, graphic novel pages, and digital artworks. They narrate their creative choices and understanding of how technology influences creativity, producing a multimedia story that showcases their learning journey and creative expression."
+      },
+      {
+        "t": "Soundscape Storyboxes",
+        "d": "Students will design and build a physical 'storybox' diorama using recycled materials, cardboard, fabric, and clay to visually represent a scene or emotion from their own creative story. They will then use iPads with a simple sound recording app (such as GarageBand or Voice Memos) to create layered soundscapes?recording their own voices, sound effects crafted with everyday objects, and ambient noises. The digital soundscape is embedded into the storybox using a small, easy-to-use audio playback device (e.g., a recordable sound module or a Makey Makey with conductive materials as triggers). Viewers press a button or touch a part of the storybox to activate the sound, experiencing the students' creative expression through both physical art and immersive audio. The project follows the Design Cycle: students empathize by exploring how sound and visuals express feelings, define their story, ideate and sketch designs, prototype with materials and tech, test and refine the interactive elements, then present and reflect on their expressive choices."
       }
     ],
     "audited": true,
     "plannerText": "This unit immerses Year 3 students in exploring how creativity allows people to express their understanding of the world, with a strong focus on using technology for creative expression. Key activities include stop motion animation, graphic novel creation in Book Creator, digital art inspired by contemporary artists, and collaborative workshops that blend visual, audio, and written forms to communicate ideas. Students reflect on their creative process and share their work with peers and parents.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -2241,11 +2253,15 @@
       {
         "t": "Book Creator",
         "d": "Students author a digital 'Essential Agreement' book in Book Creator, combining text, voice recordings, and images to outline their personal commitments to safe, responsible, and creative use of digital systems. They publish and share their books with the class, fostering agency and digital communication skills."
+      },
+      {
+        "t": "Digital Systems Rescue Mission",
+        "d": "Students work in teams to design and build a 'Rescue HQ' out of recycled materials (cardboard, bottles, string, etc.), representing a digital system's safe hub. Using Sphero Indi or Bee-Bots as 'Data Bots', students physically construct a maze-like network with obstacles and checkpoints labeled as 'firewalls', 'passwords', 'data vaults', and 'sharing stations'. They must plan and prototype their HQ layout, then program their bot to safely deliver 'data packets' (small craft tokens) through the network, demonstrating how information is securely organised and shared. Throughout, students document their design cycle steps, test and refine both their physical structure and bot code, and reflect on digital citizenship and safety in their rescue mission."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores how needs can be met with digital systems, focusing on what digital systems are, how information is organised and shared safely online, and what it means to be a responsible digital citizen. Students investigate digital tools, map their digital habits, create essential agreements, and engage in hands-on and digital projects to deepen their understanding of digital systems and online safety.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
