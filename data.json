@@ -1901,9 +1901,34 @@
     "th": "Who We Are",
     "ci": "Emotions, values, and relationships guide how we connect and collaborate",
     "lo": "The function of different parts of the brain; Situations that cause pleasant and unpleasant feelings; Actions that support wellbeing",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students take photos of their own 'Colour Monster' artwork and use ChatterPix Kids to animate the monster, recording their voices to describe a time they felt that emotion and what strategies helped them manage it. This makes emotional literacy personal, visual, and engaging for Year 1."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students create a digital portfolio entry where they match emotions to Colour Monsters and record voice explanations of when they felt each emotion, supporting oral language and self-reflection on feelings and wellbeing."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students collaboratively build a digital class book about 'Acts of Kindness' using photos, drawings, and voice recordings to document real examples of kindness and strategies for positive relationships, reinforcing the central idea through multimodal storytelling."
+      },
+      {
+        "t": "Canva",
+        "d": "Using Canva's visual templates and 'Remove Background' feature, students design digital posters showing the Wheel of Choice or strategies for managing big feelings, using icons and photos to make the strategies memorable and accessible."
+      },
+      {
+        "t": "iPad Camera",
+        "d": "Students use the iPad Camera to capture moments of kindness, teamwork, or emotional regulation in the classroom and playground, then share these images in a class discussion or digital display to celebrate positive actions and reinforce values."
+      },
+      {
+        "t": "Physical Makerspace Project",
+        "d": "Students design and build their own 'Feelings Wheel' using cardboard, split pins, markers, and recycled materials. Each section of the wheel represents a different emotion and includes a flap or pocket with a student-created drawing or symbol for a calming strategy. This tactile tool supports self-regulation and classroom wellbeing."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This yearlong unit explores how thoughts, feelings, and actions shape relationships and wellbeing. Students learn to identify and name emotions, understand what causes different feelings, and practise strategies for managing emotions and resolving conflict. Key activities include reading stories about emotions, using the Colour Monster framework, role-playing, creating visual displays, and reflecting on acts of kindness and empathy.",
     "stemRebooted": true
   },
   {
@@ -1949,9 +1974,34 @@
     "th": "How We Organise Ourselves",
     "ci": "A sequence of processes enables a system to function.",
     "lo": "The systems in our lives; The purpose of various systems; How systems are made of many interdependent parts",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students select a system from their daily life (e.g., lunch order system, library borrowing, or a simple machine) and use ChatterPix Kids to animate a photo of the system. They record a voiceover explaining each step in the process, making the system 'talk' about how its sequence enables it to function. This brings abstract systems to life in a playful, memorable way."
+      },
+      {
+        "t": "Explain Everything",
+        "d": "Students collaboratively create interactive flowcharts or diagrams showing the steps in a chosen system (e.g., how mail is delivered, how a sandwich is made). They use drawing, voice recording, and animation tools to visually map out each process, highlighting interdependent parts and what happens if a step is missed."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students document a real-world system they encounter at school or home by taking photos and sequencing them in Seesaw. They add audio reflections describing each step and how the system would break down if a part was missing, then share with peers for feedback."
+      },
+      {
+        "t": "Canva",
+        "d": "Using Canva's visual templates, students design a digital poster or infographic that illustrates the steps of a familiar system (such as the journey of a letter or the recycling process). They use icons, arrows, and the 'Remove Background' feature to visually sequence the process, making it accessible and engaging."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students create a digital book documenting a system of their choice, combining photos, drawings, and short audio explanations for each step. For example, they could make a 'How Our School Lunch System Works' book, showing the journey from ordering to eating."
+      },
+      {
+        "t": "Physical Makerspace Project",
+        "d": "In the Makerspace, students work in teams to design and build a tangible model of a simple system using recycled materials, cardboard, popsticks, and bottle caps. For example, they could construct a marble run or a Rube Goldberg machine that demonstrates a sequence of processes (like moving a ball from start to finish), then label each part to show how every step is essential for the system to function."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores the concept of systems in students' lives, focusing on how a sequence of processes enables a system to function. Activities include drawing and mapping everyday systems, investigating real-world examples (like the lunch order or evacuation system), creating flowcharts, and presenting projects to peers using a variety of media.",
     "stemRebooted": true
   },
   {
@@ -1960,9 +2010,35 @@
     "th": "How the World Works (Materials)",
     "ci": "Changes to materials affect how we use and reuse them in daily life.",
     "lo": "Understanding material properties; Reuse and recycling through physical change; Sustainably managing materials",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Adobe Express Podcasting",
+        "d": "Students create a 'Material Transformations' podcast series where they interview local artists, family members, or classmates about how materials are reused or recycled in their daily lives. They can record, edit, and publish episodes, using sound effects to highlight physical changes (crunching, tearing, etc.), making the science of materials engaging and accessible."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design vibrant, interactive infographics or posters that visually explain the journey of a recycled material (e.g., plastic bottle to new product). They use Canva's 'Remove Background' feature to layer photos of their own hands manipulating materials, making the process personal and relatable."
+      },
+      {
+        "t": "iPad Camera",
+        "d": "Students document a 'Material Change Challenge' by taking before-and-after photos of objects they physically change (e.g., folding, tearing, melting). They create a digital photo diary or slideshow to visually track and explain the physical changes and discuss which changes are reversible."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students collaboratively build a digital book titled 'The Secret Life of Materials,' where each page features a different material's story?its properties, how it can be changed, and creative ways to reuse it. They can add voice recordings, drawings, and photos of their own experiments."
+      },
+      {
+        "t": "Minecraft: Radical Recycling",
+        "d": "Students explore recycling systems in a Minecraft world, playing games and completing challenges that teach them about sorting, reusing, and transforming materials. They reflect on how these digital experiences connect to real-world recycling and sustainability.",
+        "url": "https://education.minecraft.net/en-us/lessons/radical-recycling"
+      },
+      {
+        "t": "Physical Makerspace Project",
+        "d": "Students design and build their own musical instruments using only recycled and repurposed materials (e.g., cardboard tubes, bottle caps, rubber bands). They test how changing the shape, tension, or material affects the sound, then perform as a class 'Reuse Orchestra,' reflecting on material properties and sustainability."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit engages Year 2 students in hands-on investigations of material properties, physical changes (bending, stretching, tearing), and sustainable practices like reuse and recycling. Activities include manipulating materials, comparing traditional and modern uses, reflecting on sustainability, and culminating in creative projects such as building musical instruments from recycled materials.",
     "stemRebooted": true
   },
   {
@@ -1971,9 +2047,35 @@
     "th": "How the World Works (Solar System)",
     "ci": "Patterns in the sky help us understand our place in the universe.",
     "lo": "Earth's place in the solar system; Observable patterns in the sky; Tools and methods we use to observe the sky",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Sky Map",
+        "d": "Students use the Sky Map app on iPads to conduct a real-time augmented reality sky walk, identifying constellations, planets, and the moon's position. They capture screenshots and annotate them with observations about patterns and changes in the sky, directly connecting to their sky journals and pattern mapping activities."
+      },
+      {
+        "t": "Canva",
+        "d": "Students collaboratively design digital posters or infographics explaining moon phases, day/night cycles, or seasonal changes. They use Canva's 'Remove Background' feature to insert their own iPad sky photos, making their learning visual and personal."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students create interactive digital books documenting their week-long moon diary, including drawings, voice recordings, and photos. Each page can represent a different phase or sky observation, supporting multimodal communication and reflection."
+      },
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students take photos of their papier-m?ch? planet models or sky-inspired artwork, then use ChatterPix Kids to animate the planets or moon, recording short explanations of their features, movement, or the patterns they help us observe."
+      },
+      {
+        "t": "Minecraft: James Webb Space Telescope Challenge",
+        "d": "Students explore the universe in Minecraft Education, peer into the James Webb Space Telescope, craft constellations, and create a model solar system. This hands-on digital experience deepens understanding of how technology helps us observe and interpret patterns in the sky.",
+        "url": "https://education.minecraft.net/en-us/lessons/james-webb-space-telescope-challenge"
+      },
+      {
+        "t": "Physical Makerspace Project",
+        "d": "Students work in teams to design and build a large-scale, interactive solar system model using cardboard, popsticks, bottle caps, recycled materials, and string. The model must show planetary orbits and include moving parts (e.g., planets rotating or revolving using split pins or sliders). Students test and refine their prototypes, then present how their model demonstrates observable sky patterns such as day/night and the moon's phases."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit immerses Year 2 students in exploring patterns in the sky to understand Earth's place in the solar system. Activities include sky journals, moon diaries, shadow tracking, cultural astronomy investigations, hands-on solar system model making, and creative visual arts inspired by sky patterns. Students use observation, research, and communication skills to connect scientific concepts with real-world phenomena and cultural perspectives.",
     "stemRebooted": true
   },
   {
@@ -1982,9 +2084,35 @@
     "th": "Sharing the Planet",
     "ci": "Water is a limited resource that is essential to life.",
     "lo": "Unequal access to water; Communities affected by water access; Transferral of water from source to use; Responsibility as global citizens",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Merge Cubes",
+        "d": "Students use Merge Cubes with the iPad to explore interactive 3D models of the water cycle and global water systems. They can manipulate virtual water droplets, observe pollution effects, and simulate water movement from source to tap, making abstract concepts tangible and immersive."
+      },
+      {
+        "t": "Canva",
+        "d": "Students collaboratively design persuasive digital posters or infographics about water conservation and global water inequality using Canva's visual tools. They can use the 'Remove Background' feature to add themselves into water-saving scenarios, making the message personal and engaging."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students create a multimedia digital book documenting a 'Day in the Life of a Water Droplet,' integrating their own illustrations, voice recordings, and photos taken with the iPad camera. This narrative approach helps them internalize the journey and importance of water."
+      },
+      {
+        "t": "Minecraft: Outflow Order",
+        "d": "Students explore how wastewater travels from homes to treatment plants in Minecraft Education. They learn about biosolids, composting, and the water treatment process, then build and test their own virtual water treatment systems to understand real-world water management.",
+        "url": "https://education.minecraft.net/en-us/lessons/outflow-order"
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "Students use Stop Motion Studio on iPads to create animated stories showing the journey of water from source to tap, or the impact of water scarcity on communities. They can use simple props and drawings to visually represent water's path and challenges."
+      },
+      {
+        "t": "Physical Makerspace Project",
+        "d": "Students work in teams to design and build a working model of a water filtration system using recycled bottles, sand, gravel, and fabric. They test their prototypes with different 'dirty' water samples, observe the results, and iterate their designs to improve water clarity, connecting hands-on engineering to the science of water access."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores the essential nature of water as a limited resource, focusing on unequal access, the impact on communities, the journey of water from source to use, and our responsibility for fair distribution. Students engage with real-world issues through inquiry, multimedia, and hands-on activities, including mapping, poster creation, and physical prototyping.",
     "stemRebooted": true
   },
   {
