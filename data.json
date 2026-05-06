@@ -2600,11 +2600,15 @@
       {
         "t": "Padlet",
         "d": "Students collaborate on a Padlet wall to share research about different explorers from various cultures and eras. Each student posts a summary, image, and a reflection on how that explorer's journey led to new opportunities or understandings."
+      },
+      {
+        "t": "Exploration Time Capsules: Past Meets Future",
+        "d": "Students work in teams to design and build a physical 'time capsule' inspired by a historical explorer's journey, using recycled materials, cardboard, clay, and craft supplies. Each capsule must include hidden compartments and interactive elements. Teams embed a simple programmable device (e.g., a Sphero Indi or a Makey Makey circuit) that triggers lights, sounds, or movements when the capsule is opened or solved. The capsule's clues and artifacts represent discoveries, challenges, and cultural encounters from the explorer's era. Students use the Design Cycle to research, prototype, test, and refine both the physical build and the digital interactions, culminating in a hands-on museum where peers unlock and explore each other's time capsules to uncover the stories of exploration."
       }
     ],
     "audited": true,
     "plannerText": "This unit engages students in investigating the reasons for exploration, how people have explored across history, and the consequences of exploration. Activities include mapping journeys, researching explorers, writing historical narratives, and hands-on projects that connect exploration to discovery and new understandings.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": false,
     "humanVerifiedResetAt": "2026-05-05T04:39:56.962Z",
     "humanVerifiedResetReason": "Suggestion edited, swapped, regenerated or changed after human verification"
@@ -2635,11 +2639,15 @@
       {
         "t": "Padlet",
         "d": "Students collaboratively build a digital 'Belief Wall' on Padlet, posting images, facts, and personal stories about spiritual or religious diversity in their class and community. They can comment on each other's posts, fostering respectful dialogue and inquiry."
+      },
+      {
+        "t": "Belief Bots: Interactive Festival Parade",
+        "d": "Students work in teams to research a world religion or spiritual tradition, focusing on a key festival or celebration. Using the Design Cycle, they plan and physically build a vibrant parade float representing that festival using recycled materials, cardboard, fabric scraps, and art supplies. Each float must include at least one moving or interactive element powered by simple robotics (e.g., a Sphero Indi or Bee-Bot hidden inside to drive the float, or a motorized feature using a simple circuit kit). Students program the bot to perform a symbolic 'parade route' through a custom-built track that winds through a collaborative classroom 'parade ground,' encountering physical landmarks or interactive stations representing values, symbols, or rituals from their chosen belief. The culminating showcase is a live parade where students introduce their floats, explain the meaning behind their design choices, and demonstrate the interactive features, highlighting how beliefs shape cultural celebrations and contribute to our community's diversity."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores how people's beliefs contribute to the diversity of human life, focusing on spiritual or religious beliefs, similarities and differences among religions, and the contributions of these beliefs to human diversity. Key activities include gallery walks of religious imagery, question walls for different religions, research and information reports on world religions, excursions to places of worship, and the creation of cultural posters and information reports.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:29:04.476Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
@@ -2672,11 +2680,15 @@
       {
         "t": "Padlet",
         "d": "Students collaboratively document their research, empathy maps, and feedback cycles on a shared Padlet wall, enabling real-time peer feedback and iterative improvement of their design solutions. This creates a transparent record of the design thinking journey."
+      },
+      {
+        "t": "Rights in Action: Interactive Community Sculpture",
+        "d": "Students work in teams to design and build a large-scale, interactive sculpture that represents a community responding to a natural disaster, highlighting UNICEF child rights in action. Using recycled materials (cardboard, fabric, plastic, wood scraps), students physically construct buildings, shelters, and key infrastructure. Embedded within their sculpture, teams integrate simple programmable electronics (e.g., Makey Makey, micro:bit, or littleBits) to add interactive features: for example, pressing a button lights up emergency shelters, triggers recorded messages about child rights, or activates moving parts (like a rescue drone or water pump). Students use iPads to plan, document, and code simple interactions. The final sculpture becomes a hands-on exhibit, inviting peers to explore how purposeful design can support communities and uphold rights during disasters."
       }
     ],
     "audited": true,
     "plannerText": "Year 5 students at Glen Waverley explore 'How We Express Ourselves' through the central idea 'People design for purpose.' The unit immerses students in the design thinking process as they investigate natural disasters, research community needs, and collaboratively prototype innovative solutions. Activities include mapping, data analysis, empathy mapping, ideation, prototyping, pitching, and reflection, with strong links to UNICEF's child rights and real-world problem solving.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:29:33.674Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
@@ -2709,11 +2721,15 @@
       {
         "t": "Book Creator",
         "d": "Students author interactive digital books that tell the story of a fictional character navigating different economic systems, making choices about earning, spending, and saving. They can embed audio reflections, videos, and images to bring economic concepts to life."
+      },
+      {
+        "t": "Market Movers: Interactive Trade Fair Booths",
+        "d": "Students work in teams to design, build, and run their own mini-businesses by creating interactive trade fair booths. Using the Design Cycle, each team ideates a product or service, physically prototypes it with recycled materials, cardboard, popsticks, and craft supplies, and constructs a creative booth display. To integrate technology, students embed simple programmable circuits (e.g., using Makey Makey or micro:bit) into their booths to create interactive features?such as digital price displays, sound effects for transactions, or motion-activated advertisements. On Trade Fair Day, teams set up their booths in a simulated marketplace, use digital tablets to track transactions, and engage in live trading using a classroom currency system. This project deepens understanding of economic systems, entrepreneurship, and financial responsibility through hands-on creation, digital-physical integration, and authentic role-play."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores how economic systems underpin human society, with students investigating concepts of wealth, income, and financial responsibility. Activities include provocations about what makes someone 'wealthy', debates on tax, simulated classroom economies, budgeting exercises, and the collaborative design of ideal communities within set financial constraints.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:29:50.463Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
