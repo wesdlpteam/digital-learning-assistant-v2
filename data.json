@@ -4353,9 +4353,34 @@
     "th": "Who We Are",
     "ci": "Values, beliefs and actions contribute to a diverse society",
     "lo": "How our values and beliefs shape our identity and interactions; Our responsibility to manage emotions and be safe online and in person; The importance of resilience, respect and positive relationships in a diverse community",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Wise Discussion Chatbots",
+        "d": "Students design and script AI-powered chatbots that simulate conversations about values, beliefs, and ethical dilemmas. Using Wise Discussion Chatbots, groups can create branching dialogue scenarios where users must make choices reflecting different perspectives, fostering empathy and critical thinking about diversity and inclusion."
+      },
+      {
+        "t": "Canva",
+        "d": "Students collaboratively create digital infographics or posters that visually represent the diverse values, beliefs, and actions within their class or community. They can use Canva's 'Remove Background' feature to incorporate their own photos and symbols, making the work highly personalised and visually engaging."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Each student authors a digital page in a shared Book Creator project, sharing a personal story or family tradition that reflects their values or beliefs. The final digital book becomes a class anthology celebrating diversity, which can be shared with families and the wider school community."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students contribute to a collaborative Padlet wall, posting multimedia reflections (text, images, voice notes) about how their actions and beliefs shape their identity and contribute to a diverse society. This living wall can be used for peer feedback and to spark classroom discussions about similarities and differences."
+      },
+      {
+        "t": "Adobe Express Podcasting",
+        "d": "Small groups plan, record, and edit short podcasts where they interview each other or community members about how values and beliefs influence actions. Students learn to script, record, and edit audio, then publish their podcasts for the school community to listen and respond."
+      },
+      {
+        "t": "Makerspace: Diversity Totem Prototyping",
+        "d": "In the Makerspace, students design and build 'Diversity Totems' using cardboard, recycled materials, and art supplies. Each totem represents a unique combination of values, beliefs, and actions important to the student or their group. Students physically prototype, decorate, and display their totems, then present the meaning behind each element to the class."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The unit explores students' awareness of self and others, focusing on empathy, respect, and understanding of diverse values and beliefs. Activities include CyberSafety lessons, social-emotional learning (URStrong, Grow Your Mind), collaborative discussions, and creative reflection tasks to help students recognise their own and others' contributions to a diverse society.",
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:54:55.688Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
@@ -4367,9 +4392,35 @@
     "th": "How We Express Ourselves",
     "ci": "Understanding global issues and using effective communication empowers us to raise awareness and inspire action.",
     "lo": "Global issues are caused by interconnected factors that require collective solutions (Causation) ??? Presentations in the media can reflect the perspective of the author rather than the truth (Perspective) ??? We must make responsible choices when responding to and creating media (Responsibility) ??? Messages can be expressed through a range of mediums and elements can be adjusted to enhance effectiveness (Communication) ??? Design choices contribute to the effectiveness of a message (Influence)",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Adobe Express Podcasting",
+        "d": "Students create a global issues podcast series, using Adobe Express Podcasting to script, record, and edit episodes that raise awareness and inspire action on their chosen issue. They can incorporate interviews, sound effects, and music to enhance the impact and reach a wider audience."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design a persuasive digital media campaign using Canva, creating infographics, posters, and social media graphics that communicate key facts and calls to action about their global issue. They can use Canva's 'Remove Background' feature to create professional visuals without a green screen."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Groups collaboratively author an interactive digital book in Book Creator, combining text, images, audio, and video to tell the story of their global issue, highlight solutions, and showcase student action. The book can be published and shared with the school community."
+      },
+      {
+        "t": "Minecraft: Peter Is Here Ai For Cultural Heritage",
+        "d": "Students explore how technology can be used to protect and celebrate cultural heritage sites, then build a Minecraft world that raises awareness about a global issue connected to cultural heritage, using the lesson 'Peter Is Here Ai For Cultural Heritage'.",
+        "url": "https://education.minecraft.net/en-us/lessons/peter-is-here-ai-for-cultural-heritage"
+      },
+      {
+        "t": "Padlet",
+        "d": "Students curate a collaborative Padlet wall to collect and share resources, campaign ideas, action plans, and reflections on their global issue. They can embed videos, images, and links, fostering a digital hub for their advocacy work."
+      },
+      {
+        "t": "Makerspace Project",
+        "d": "Students design and build a physical interactive installation (e.g., a pop-up exhibition booth or kinetic sculpture) using recycled materials, cardboard, LEDs, and simple circuits. The installation should visually communicate their global issue and invite the school community to interact, reflect, and pledge action."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This Year 6 HWEO unit centres on students investigating global issues, developing a central idea and lines of inquiry, and taking action through a PYP Exhibition. Students research, collaborate, and communicate their findings using a variety of media, culminating in a campaign or performance to raise awareness and inspire action within the community.",
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:58:19.175Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
