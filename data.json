@@ -1521,9 +1521,34 @@
     "th": "How We Express Ourselves",
     "ci": "Emotions influence our wellbeing.",
     "lo": "How our feelings and emotions affect us; How feelings and emotions are interpreted; How our emotions and behaviour affect relationships",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students take photos of their own 'colour monster' artwork and use ChatterPix Kids to record their voices describing a time they felt that emotion, then animate the monster to 'speak' their feelings. This brings emotional literacy to life in a playful, visual way."
+      },
+      {
+        "t": "Canva",
+        "d": "Students use Canva's 'Remove Background' feature to create digital collages of themselves showing different emotions, then add emoji stickers and speech bubbles to express what might make them feel that way. This helps students visually connect facial expressions with emotional triggers."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students photograph themselves acting out different emotions, then upload to Seesaw and record short audio reflections about what caused those feelings and how they might manage them. Teachers and peers can comment with supportive messages, building empathy and self-awareness."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students create a digital class book in Book Creator, each contributing a page about a different feeling. They draw, add photos, and record their voices explaining what the feeling looks like, sounds like, and strategies for managing it. The final book can be shared with families."
+      },
+      {
+        "t": "iPad (Camera app)",
+        "d": "Students use the iPad Camera app to capture classmates' facial expressions and body language during role-play scenarios about emotions. These photos are then sorted into categories (happy, sad, angry, etc.) and discussed as a class to build understanding of nonverbal cues."
+      },
+      {
+        "t": "Physical Makerspace Project",
+        "d": "Students design and build their own 'emotion monsters' using recycled materials, cardboard, fabric scraps, and craft supplies. Each monster represents a different feeling (e.g., joy, worry, calm). Students present their creations, explaining what helps their monster feel better and how classmates can help each other."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This Prep unit explores how emotions influence wellbeing through activities like creating colour monsters, discussing feelings, interpreting emotions in stories and music, and reflecting on how behaviour affects relationships. Students engage in visual arts, language, and music to express and understand emotions, with ongoing discussions and self-reflection to build emotional intelligence.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-04T23:23:48.725Z",
