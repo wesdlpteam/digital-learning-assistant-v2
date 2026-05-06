@@ -4477,6 +4477,10 @@
       {
         "t": "Adobe Express",
         "d": "Create dynamic, student-led video explainers or animated infographics that break down the process of how a bill becomes law in Australia. Students can use Adobe Express to storyboard, animate, and narrate the journey from idea to legislation, making civics content engaging and accessible."
+      },
+      {
+        "t": "Civic Systems Board Game Lab",
+        "d": "Students work in teams to design, prototype, and build an original, large-scale board game that simulates how Australian government systems operate and impact citizens. Using cardboard, recycled materials, clay, and art supplies, they craft 3D game boards, tokens, and interactive elements representing government branches, roles, and real-life scenarios. Teams embed digital features by integrating simple circuits (e.g., Makey Makey or micro:bit) to trigger sound effects, lights, or digital scorekeeping on iPads when players land on certain spaces or pass legislation. Throughout the Design Cycle, students ideate game mechanics, prototype physical and digital components, test gameplay, and iterate to create an engaging, hands-on learning experience that brings government systems to life."
       }
     ],
     "audited": true,
@@ -4485,7 +4489,7 @@
     "humanVerifiedAt": "2026-05-05T04:58:20.121Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
     "humanVerifiedSuggestionSignature": "[{\"t\":\"National Geographic MapMaker\",\"d\":\"Students create detailed annotated maps using National Geographic MapMaker to visually represent Australia's three levels of government and their geographic jurisdictions. They plot key government buildings, electoral boundaries, and community services, then layer data showing how government decisions impact citizens across regions. This interactive mapping deepens understanding of governance structures and spatial relationships in a hands-on, visual way.\",\"url\":\"\"},{\"t\":\"Adobe Express Podcasting\",\"d\":\"Students script and record a podcast episode imagining a 'Day in the Life' of citizens living under different government systems, using Adobe Express Podcasting to combine voice narration, sound effects, and interviews. This immersive audio storytelling deepens their understanding of how government decisions impact daily life and encourages empathy by giving voice to diverse perspectives. Teachers can share the final podcasts to spark class discussions on citizenship and governance. https://podcast.adobe.com\",\"url\":\"\"},{\"t\":\"Minecraft Education\",\"d\":\"Students explore the stories of Nobel Peace Laureates and simulate how active citizenship and government decisions can create positive change. They can build virtual monuments or scenarios that reflect the impact of governance on society.\",\"url\":\"https://education.minecraft.net/en-us/lessons/active-citizen\"},{\"t\":\"Padlet\",\"d\":\"Collaboratively build a digital debate wall where students post arguments, counterarguments, and evidence about real-world government decisions (e.g., social media bans, new laws). This interactive platform allows for peer feedback and the development of critical thinking skills.\",\"url\":\"\"},{\"t\":\"Adobe Express\",\"d\":\"Create dynamic, student-led video explainers or animated infographics that break down the process of how a bill becomes law in Australia. Students can use Adobe Express to storyboard, animate, and narrate the journey from idea to legislation, making civics content engaging and accessible.\",\"url\":\"\"},{\"t\":\"Designing a Community Noticeboard System\",\"d\":\"Students empathise by interviewing peers about important community information needs. They define the problem as how to clearly share government announcements at local, state, and federal levels. They ideate by brainstorming different noticeboard designs and information layouts. Using cardboard, paper, markers, and simple craft materials, they prototype a physical noticeboard that organises information by government level and type. Finally, they test their design by presenting it to classmates for feedback on clarity and usefulness, then refine their prototype accordingly.\",\"url\":\"\"}]",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -4514,6 +4518,10 @@
       {
         "t": "Padlet",
         "d": "Students collaborate on a Padlet wall to crowdsource observations of moon phases, sunrise/sunset times, and cultural stories from their families. This shared digital space becomes a living archive of both scientific data and diverse perspectives, supporting inquiry and reflection."
+      },
+      {
+        "t": "Sun-Earth-Moon Shadow Theatre",
+        "d": "Students work in teams to design and build a physical shadow theatre using cardboard, recycled materials, and craft supplies. They construct movable models of the Earth, Moon, and Sun, mounted on rods or tracks, to accurately demonstrate phases of the moon, eclipses, and the changing position of shadows throughout the day and year. Students integrate micro:bit sensors or iPad stop-motion capture to record and measure shadow lengths and angles as they manipulate their models, collecting real data for analysis. The final theatre includes creative backdrops inspired by both scientific diagrams and Indigenous storytelling, and each group scripts and performs a short shadow play explaining a phenomenon (e.g., eclipse, season change) from both scientific and cultural perspectives, using their hybrid physical-digital stage."
       }
     ],
     "audited": true,
@@ -4522,7 +4530,7 @@
     "humanVerifiedAt": "2026-05-05T04:58:20.835Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
     "humanVerifiedSuggestionSignature": "[{\"t\":\"Sky Map\",\"d\":\"Students investigate the predictable patterns created by the Earth, Moon, and Sun by using Sky Map to observe and identify celestial bodies and constellations visible from their location. They connect scientific concepts like rotation and phases of the Moon with cultural stories by mapping night sky features, deepening their understanding of how different cultures interpret the same sky phenomena.\",\"url\":\"\"},{\"t\":\"Minecraft Education\",\"d\":\"Students use 'Minecraft: The Scientific Method' to design and run virtual experiments that model the effects of Earth's rotation, revolution, and the Moon's phases. They collect data, make predictions, and compare their findings to both scientific and Indigenous perspectives on celestial patterns.\",\"url\":\"https://education.minecraft.net/en-us/lessons/the-scientific-method\"},{\"t\":\"Adobe Express Podcasting\",\"d\":\"Students script and record science podcasts using Adobe Express Podcasting (https://podcast.adobe.com), explaining the relationships between the Earth, Moon, and Sun from both scientific and cultural perspectives. They interview classmates, share Indigenous stories, and use sound effects to bring astronomical concepts to life, culminating in a class podcast series that makes complex ideas accessible and engaging. This project empowers students to communicate their learning creatively and reach a wider audience.\",\"url\":\"\"},{\"t\":\"Book Creator\",\"d\":\"Students author digital books that combine diagrams, time-lapse photos (taken with iPad camera), and narrative text to explain the relationships between the Earth, Moon, and Sun. They include sections comparing scientific and Indigenous knowledge, and embed student-created illustrations or animations.\",\"url\":\"\"},{\"t\":\"Padlet\",\"d\":\"Students collaborate on a Padlet wall to crowdsource observations of moon phases, sunrise/sunset times, and cultural stories from their families. This shared digital space becomes a living archive of both scientific data and diverse perspectives, supporting inquiry and reflection.\",\"url\":\"\"},{\"t\":\"Lego Spike Prime\",\"d\":\"Using the Design Cycle, students prototype a motorized model that demonstrates the orbits and rotations of the Earth, Moon, and Sun. They program the model to show day/night cycles, lunar phases, and seasonal changes, then present their design process and findings to the class.\",\"url\":\"\"}]",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -4551,6 +4559,10 @@
       {
         "t": "Adobe Express Podcasting",
         "d": "Students create a podcast series using Adobe Express Podcasting (https://podcast.adobe.com) to document their STEM design projects for endangered species and share interviews with conservation experts. They plan, script, and record episodes that highlight their research, design process, and reflections on how people's actions affect the balance of nature. This authentic audio storytelling experience gives students a platform to advocate for environmental action and connect with a real-world audience."
+      },
+      {
+        "t": "Endangered Species Habitat Rescue AR Diorama",
+        "d": "Students select an endangered species and use recycled materials, cardboard, clay, and natural elements to physically construct a detailed diorama of its natural habitat, including key threats and conservation features. Using iPads and the free app 'CoSpaces Edu', students then overlay their physical diorama with custom-created Augmented Reality (AR) elements?such as animated animals, digital weather effects, and interactive conservation facts?by placing AR markers within their build. The project follows the Design Cycle: students investigate species needs, ideate habitat solutions, prototype their hybrid diorama, test and refine both the physical and AR layers, and present their immersive rescue habitat to peers and community, explaining how their design supports species survival and raises awareness."
       }
     ],
     "audited": true,
@@ -4559,7 +4571,7 @@
     "humanVerifiedAt": "2026-05-05T04:58:21.497Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
     "humanVerifiedSuggestionSignature": "[{\"t\":\"Micro:bit\",\"d\":\"Students program Micro:bit devices to create interactive digital displays that raise awareness about endangered species and conservation efforts. They design sensors and simple games that simulate environmental threats like habitat loss or pollution, demonstrating how human actions disrupt ecosystems and exploring ways technology can support balance in nature.\",\"url\":\"\"},{\"t\":\"Minecraft Education\",\"d\":\"Students explore how bees' needs and human actions affect the balance of nature by building 'beetopias' in Minecraft Education. They apply their understanding of interdependence and environmental responsibility by designing thriving bee habitats and reflecting on the consequences of human impact.\",\"url\":\"https://education.minecraft.net/en-us/lessons/build-with-bees-habitat\"},{\"t\":\"Canva\",\"d\":\"Students create persuasive digital campaigns or infographics to raise awareness about endangered species and the effects of human actions on the environment. They can use Canva's 'Remove Background' feature to create visually striking posters that inspire action and empathy.\",\"url\":\"\"},{\"t\":\"iMovie\",\"d\":\"Students capture photos and videos during their excursions to natural sites and zoos, then use iMovie to create compelling documentaries that illustrate how human actions impact ecosystems. They edit footage to include narration and captions, producing a polished video that communicates their understanding of the interdependence between humans, animals, and the environment.\",\"url\":\"\"},{\"t\":\"Adobe Express Podcasting\",\"d\":\"Students create a podcast series using Adobe Express Podcasting (https://podcast.adobe.com) to document their STEM design projects for endangered species and share interviews with conservation experts. They plan, script, and record episodes that highlight their research, design process, and reflections on how people's actions affect the balance of nature. This authentic audio storytelling experience gives students a platform to advocate for environmental action and connect with a real-world audience.\",\"url\":\"\"},{\"t\":\"Lego Spike Prime\",\"d\":\"Using the Design Cycle, students prototype a robotic device that could help monitor or protect a threatened species in their local environment (e.g., a sensor to detect invasive species or a robot to distribute food or water). They research, design, build, test, and refine their solution, documenting each stage in a digital portfolio.\",\"url\":\"\"}]",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -4588,11 +4600,15 @@
       {
         "t": "Padlet",
         "d": "Students collaboratively build a digital migration map using Padlet, pinning stories, photos, and facts about different migration journeys (historical or contemporary). This allows the class to visualise global migration patterns and the diversity of experiences, directly linking to the unit's central idea."
+      },
+      {
+        "t": "Migration Journey Interactive Map Maze",
+        "d": "Students work in teams to design and construct a large, tactile 3D map representing different migration routes from around the world using cardboard, clay, textiles, and recycled materials. Key locations feature hand-built landmarks, obstacles, and 'story stations' with QR codes. Students program Sphero Indi robots to navigate the map, simulating the journey of a migrant family. At each station, the Sphero triggers a digital audio or video narrative (recorded by students) that shares a personal migration story or historical event. The project integrates physical map-building, creative storytelling, and robotics programming, fostering empathy as students experience migration challenges and decisions through an interactive, hands-on journey."
       }
     ],
     "audited": true,
     "plannerText": "Students explore the causes and impacts of migration through personal narratives, interviews, and historical case studies. They create storyboards, conduct interviews, and present migration stories using a variety of media, with a strong focus on empathy, diversity, and the consequences of migration for individuals and societies.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
