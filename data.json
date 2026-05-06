@@ -1377,11 +1377,15 @@
       {
         "t": "Merge Cubes",
         "d": "Students use Merge Cubes to create and explore 3D models of energy systems (such as wind turbines, solar panels, or electrical circuits). By manipulating these models in augmented reality, students gain a deeper understanding of how energy is converted and transformed, supporting the unit's focus on function and responsibility."
+      },
+      {
+        "t": "Eco-Energy Kinetic Art Installation",
+        "d": "Students work in teams to design and build a large-scale kinetic art sculpture that visually demonstrates the transformation of energy forms (e.g., wind, solar, mechanical, electrical). Using recycled materials, cardboard, gears, pulleys, and simple motors, students construct moving elements powered by renewable energy sources (such as hand-crank generators or small solar panels). Teams integrate a programmable Sphero Indi robot as the 'energy trigger'?the Indi travels a custom-built track, activating switches or sensors (e.g., made with conductive tape and Makey Makey) to set different parts of the sculpture in motion. Throughout the Design Cycle, students prototype, test, and refine both digital and physical components, culminating in a collaborative installation that creatively models sustainable energy conversion in action."
       }
     ],
     "audited": true,
     "plannerText": "The Year 6 'How the World Works' unit explores how energy may be converted, transformed, and used to support human progress. Students investigate different forms of energy, analyze the impact of energy sources on the planet, and examine sustainable energy practices through hands-on experiments, research, and collaborative projects.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T03:56:38.370Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
@@ -1415,11 +1419,15 @@
       {
         "t": "Merge Cubes",
         "d": "Students create interactive 3D models of local ecosystems or conservation projects using Merge Cubes. They annotate their models with audio or text explaining how different communities interact with these environments, highlighting both positive and negative impacts."
+      },
+      {
+        "t": "Indigenous-Inspired Smart Waterways",
+        "d": "Students work in teams to research Indigenous water management and conservation practices, then use recycled materials (cardboard, plastic bottles, clay, fabric) to physically construct a model landscape featuring rivers, wetlands, and community spaces. Integrating technology, students embed simple programmable sensors (such as BBC micro:bit water level sensors or Makey Makey moisture detectors) and basic circuits to simulate water flow, drought, and pollution events. Teams program their sensors to trigger visual or sound alerts and physically modify their models in response (e.g., adding filtration systems, redirecting water, or planting 'native' vegetation). The project culminates in a showcase where students explain how their hybrid models demonstrate both traditional Indigenous stewardship and modern conservation, reflecting on the impact of community choices on the environment."
       }
     ],
     "audited": true,
     "plannerText": "The Year 6 'Sharing the Planet' unit centres on how communities interact with the environment in different ways, with a strong focus on environmental stewardship, Indigenous practices, and conservation. Key activities include immersive experiences at Camp Mallana, case study analysis of community-environment relationships, reflective journaling, and student-led action projects promoting sustainability and advocacy.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T03:59:02.223Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
@@ -1453,11 +1461,15 @@
       {
         "t": "iMovie",
         "d": "Students script, film, and edit a short documentary or news report about a significant event that shaped a place. They can use the iPad Camera app for footage and iMovie for editing, integrating interviews, archival images, and narration to demonstrate deep understanding of the event's impact."
+      },
+      {
+        "t": "Interactive Timeline Diorama",
+        "d": "Students select a significant historical event that has shaped a place, then use the Design Cycle to plan and construct a large 3D diorama representing a key scene or moment from that event. The diorama is built from recycled cardboard, clay, fabric scraps, and other craft materials. Students embed simple circuits (LEDs, buzzers, or motors) and program micro:bit or Makey Makey boards to add interactive digital elements?such as lighting up important locations, playing recorded narration, or triggering movement when buttons are pressed. The final product blends physical craftsmanship with embedded tech, allowing viewers to explore the event's impact through both tactile and digital experiences."
       }
     ],
     "audited": true,
     "plannerText": "Students investigate how significant events (local or global) have shaped places, using research, mapping, and inquiry routines. They select an event of personal interest, conduct guided research, and present their findings through informative reports and presentations, with a strong emphasis on student agency and transdisciplinary connections.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": false,
     "humanVerifiedResetAt": "2026-05-05T04:14:21.905Z",
     "humanVerifiedResetReason": "Suggestion edited, swapped, regenerated or changed after human verification",
@@ -1490,11 +1502,15 @@
       {
         "t": "Explain Everything",
         "d": "Students create dynamic digital presentations in Explain Everything to visually map their evolving sense of self, combining drawings, photos, and voice recordings to illustrate physical, social, emotional, and intellectual changes. They narrate their personal stories and reflect on key influences shaping their identity, producing rich multimedia artefacts that invite peer feedback and deepen understanding of the unit?s central idea."
+      },
+      {
+        "t": "Identity Puzzle Automata",
+        "d": "Students design and build a mechanical automaton that visually represents aspects of their evolving identity. Using recycled materials, cardboard, wooden dowels, cams, and levers, each student creates a physical 'puzzle box' automaton with moving elements symbolizing personal traits, influences, and changes. Integrated with micro:bit or Makey Makey, students add simple digital interactivity?such as triggering lights or sounds?when certain parts are moved or assembled. The project follows the Design Cycle: students brainstorm identity symbols, sketch mechanisms, prototype with physical materials, test and refine the automaton's movement, then program the tech component. Finished automata are shared in a gallery walk, where peers interact with and reflect on each other's identity stories."
       }
     ],
     "audited": true,
     "plannerText": "The unit 'Who We Are' explores how personal changes and external influences contribute to students' evolving sense of self. Key activities include digital identity mapping, collaborative reflection on influences, creative storytelling, and inquiry into how perceptions are shaped over time. The unit is highly transdisciplinary, connecting personal, social, and emotional learning with digital creation and peer feedback.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:02:35.429Z",
     "humanVerifiedBy": "nathan.benn@wesleycollege.edu.au",
