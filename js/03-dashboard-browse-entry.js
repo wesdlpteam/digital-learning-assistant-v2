@@ -1,3 +1,34 @@
+// ===== PLANNER CONTEXT — on-demand fetch from GAS for Browse feedback/regenerate =====
+const _plannerContextCache = {};
+
+async function fetchPlannerContext(entry) {
+  if (!entry || !entry.ca || !entry.yl || !entry.th) return '';
+  const cacheKey = `${entry.ca}|${entry.yl}|${entry.th}`;
+  if (_plannerContextCache[cacheKey] !== undefined) return _plannerContextCache[cacheKey];
+  try {
+    const body = withGASToken({ action: 'getPlannerContext', ca: entry.ca, yl: entry.yl, th: entry.th });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 120000);
+    const r = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(body),
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
+    const d = await r.json();
+    if (d.error) { console.warn('getPlannerContext error:', d.error); _plannerContextCache[cacheKey] = ''; return ''; }
+    const ctx = d.plannerContext || '';
+    _plannerContextCache[cacheKey] = ctx;
+    if (d.found) console.log('Planner context fetched for', cacheKey, '—', ctx.length, 'chars');
+    return ctx;
+  } catch (err) {
+    console.warn('getPlannerContext failed:', err.message);
+    _plannerContextCache[cacheKey] = '';
+    return '';
+  }
+}
+
 function closeEntry(){
   if(CURRENT_ENTRY_IDX !== null){
     // Release lock in background
@@ -552,7 +583,7 @@ function getRegenerateCandidateTools_(entry, currentSug, sugIdx, freq){
 async function regenSingleSug(entryIdx, sugIdx){
   const uid = `s${entryIdx}_${sugIdx}`;
   const btn = document.getElementById(uid+'-regen');
-  if(btn){ btn.textContent='…'; btn.disabled=true; }
+  if(btn){ btn.textContent='Scanning…'; btn.disabled=true; }
   startProgress();
 
   const entry = DATA[entryIdx];
@@ -560,6 +591,16 @@ async function regenSingleSug(entryIdx, sugIdx){
   const currentTool = sugTool(currentSug);
   const others = getSugs(entry).filter((_,i)=>i!==sugIdx).map(s=>sugTool(s)).join(', ');
   const isStem = sugIdx === 5;
+
+  // Fetch rich planner context from GAS — cached per session
+  let regenPlannerCtx = entry.plannerContextRich || '';
+  if (!regenPlannerCtx) {
+    try { regenPlannerCtx = await fetchPlannerContext(entry); } catch(e) {}
+  }
+  const regenPlannerBlock = regenPlannerCtx
+    ? regenPlannerCtx.slice(0, 1500)
+    : (entry.plannerText ? entry.plannerText.slice(0, 400) : '');
+  if(btn) btn.textContent = '…';
 
   const freq = {};
   DATA.forEach(e => {
@@ -589,9 +630,8 @@ PODCAST GUARD: Do NOT choose Adobe Express Podcasting or Podcast Equipment for t
   const prompt = `You are a Digital Learning Coach at Wesley College generating a fresh technology suggestion for an IB PYP unit.
 
 Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`
-Central Idea: "${entry.ci}"`:''}${entry.plannerText?`
-Planner: ${entry.plannerText.slice(0, 400)}`:''}
-Current suggestion being regenerated: ${currentTool}: ${sugDesc(currentSug)}
+Central Idea: "${entry.ci}"`:''}${regenPlannerBlock?`
+Planner context: ${regenPlannerBlock}`:''}Current suggestion being regenerated: ${currentTool}: ${sugDesc(currentSug)}
 Tools already used in this unit (do not repeat): ${others||'none'}
 
 ${constraintBlock}
@@ -804,10 +844,25 @@ async function applySugFeedbackDirect(uid, entryIdx, sugIdx){
   }
 
   sendBtn.disabled = true;
-  sendBtn.textContent = 'Thinking\u2026';
+  sendBtn.textContent = 'Scanning planner\u2026';
   startProgress();
   resultEl.innerHTML = '';
   if(typeof ensureLibrariesLoadedForAI === 'function') await ensureLibrariesLoadedForAI();
+
+  // Fetch rich planner context from GAS (reads the actual PDF) — cached per session
+  let richPlannerCtx = entry.plannerContextRich || '';
+  if (!richPlannerCtx) {
+    try {
+      richPlannerCtx = await fetchPlannerContext(entry);
+    } catch (err) {
+      console.warn('Planner context fetch failed, using plannerText fallback:', err.message);
+    }
+  }
+  const plannerBlock = richPlannerCtx
+    ? richPlannerCtx.slice(0, 1500)
+    : (entry.plannerText ? entry.plannerText.slice(0, 400) : '');
+
+  sendBtn.textContent = 'Thinking\u2026';
 
   // Age & availability constraints
   const ageAppropriate = getAgeAppropriateTools(entry.yl);
@@ -849,7 +904,7 @@ The 3 options must satisfy the LATEST instruction AND every earlier instruction 
 
   const prompt = `You are a Digital Learning Coach at Wesley College improving a technology suggestion for an IB PYP unit.
 
-Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${loiBlock}${entry.plannerText?`\nPlanner: ${entry.plannerText.slice(0, 400)}`:''}
+Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${loiBlock}${plannerBlock?`\nPlanner context: ${plannerBlock}`:''}
 Current suggestion tool: ${currentTool}
 Current suggestion description: "${currentDesc}"
 Other tools already in this unit (do not repeat): ${others||'none'}
@@ -1326,4 +1381,3 @@ function wouldDupeInEntry(entry, toolName, excludeSugIdx){
   if(!key) return false;
   return getSugs(entry).some((s,i) => i !== excludeSugIdx && toolKey(sugTool(s)) === key);
 }
-
