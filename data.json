@@ -1197,11 +1197,15 @@
         "t": "Minecraft: Peace Builders",
         "d": "Using the 'Peace Builders' lesson (https://education.minecraft.net/en-us/lessons/peace-builders), students explore stories of Nobel Peace Laureates and collaboratively build virtual monuments or environments that represent peaceful solutions to conflict. They reflect on how their builds symbolize real-world actions and present their creations to the class.",
         "url": "https://education.minecraft.net/en-us/lessons/peace-builders"
+      },
+      {
+        "t": "Peace Pathways: Interactive Conflict Resolution Maze",
+        "d": "Students work in teams to design and construct a large, tabletop 3D maze using recycled cardboard, craft sticks, and other Makerspace materials. The maze represents a journey through a fictional conflict scenario, with branching paths that represent different choices and outcomes. Along the maze, students embed interactive checkpoints using Sphero Indi cars or Makey Makey touchpads connected to iPads: at each checkpoint, players encounter a conflict challenge (e.g., a disagreement, misunderstanding, or cultural clash) and must collaboratively choose a peaceful solution to unlock the next section. Students digitally program the Sphero Indi or Makey Makey to respond to correct answers (e.g., opening a gate, lighting an LED, playing a sound). The final maze is shared with peers, who 'travel' through the pathways, learning about peaceful conflict resolution in a hands-on, creative, and tech-integrated way."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores the theme 'Sharing the Planet' with a central idea focused on finding peaceful solutions to conflict. Students investigate types, causes, and impacts of conflict, analyse real-world and historical examples, and engage in activities such as literature analysis, music, drama, and digital collaboration. The unit emphasizes perspective-taking, resolution strategies, and student agency in advocating for peace at personal, local, and global levels.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T03:54:39.875Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
@@ -1235,11 +1239,15 @@
       {
         "t": "Book Creator",
         "d": "Students author and publish digital books that retell colonisation stories?real or imagined?from the viewpoint of people, places, or even non-human entities (like a river or landscape). They can include audio narration, historical images, and reflective questions to deepen understanding."
+      },
+      {
+        "t": "Time-Travel Story Pods: Interactive Diorama Narratives",
+        "d": "Students work in teams to design and construct large, immersive diorama 'pods' using cardboard, recycled materials, fabric, and clay to depict key moments of colonisation from multiple perspectives (First Nations, settlers, etc.). Each pod must integrate simple circuits (LEDs, buzzers) and programmable audio buttons (e.g., Makey Makey or micro:bit with speakers) to trigger student-recorded oral histories, soundscapes, or narration when visitors interact with the scene. The design cycle guides students through researching stories, planning pod layouts, prototyping interactive elements, building physical models, and troubleshooting tech integration. The result is a walk-through, multi-sensory exhibition where visitors experience layered, contrasting narratives of place and time."
       }
     ],
     "audited": true,
     "plannerText": "Students explore how colonisation has shaped society by investigating its impacts, comparing stories from multiple perspectives, and analysing effects on people and places past, present, and future. Activities include mapping, creative writing, comparative analysis, and hands-on projects inspired by resources such as the Australian Museum's 'Unsettled' exhibition and texts like 'The Rabbits' by Shaun Tan.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T03:55:27.496Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
@@ -1273,11 +1281,15 @@
         "t": "Minecraft: Active Citizen",
         "d": "Students explore the 'Active Citizen' Minecraft Education world, learning about Nobel Peace Laureates and how their beliefs and values led to impactful choices. Students then build their own digital monuments or scenarios in Minecraft to represent how values-driven actions can shape communities.",
         "url": "https://education.minecraft.net/en-us/lessons/active-citizen"
+      },
+      {
+        "t": "Values Quest: Interactive Board Game Builders",
+        "d": "Students work in teams to design and construct an original, large-format board game that explores how beliefs and values influence choices and impact others. Using recycled cardboard, markers, clay, and craft materials, students physically build the game board, player pieces, and challenge cards. Integrating technology, teams embed Makey Makey or micro:bit sensors to create interactive elements?such as sound effects, digital scorekeeping, or scenario-triggered lights?activated by player actions on the board. The design cycle guides students through empathizing with different perspectives (game characters with diverse values), defining game mechanics to model real-life choices and consequences, ideating creative scenarios, prototyping with both digital and physical materials, testing with peers, and refining rules for fairness and engagement. The final games are play-tested across classes, sparking discussion about responsibility, perspective, and the ripple effects of our decisions."
       }
     ],
     "audited": true,
     "plannerText": "The unit 'Who We Are' explores how people's choices are influenced by their beliefs and values and how those choices can impact others. Students engage in reflection, discussion, and creative activities to examine perspective, causation, and responsibility, with explicit connections to social and self-management skills. Learning experiences include portfolio reflections, collaborative discussions, and creative expression in both digital and physical formats.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:03:02.099Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
@@ -1322,11 +1334,15 @@
       {
         "t": "Adobe Express Podcasting",
         "d": "Students script, record, and edit a podcast series where they role-play as members of parliament, debating current bills, explaining the preferential voting system, and interviewing 'experts' (classmates) about different government structures and values."
+      },
+      {
+        "t": "Design a Democratic Decision-Making Machine",
+        "d": "Students will work in teams to invent and build a large, interactive 'Decision-Making Machine' that models how laws are proposed, debated, amended, and passed in a parliamentary system. Using cardboard, recycled materials, gears, levers, and marbles, students physically construct a pathway that represents the journey of a bill through parliament. Integrated with this, students program simple robotics (e.g., Sphero Indi or Bee-Bots) to act as 'bills' that navigate the machine. Along the route, physical stations (crafted from materials like clay and popsticks) represent key stages such as committee review, debate, and voting. These stations include digital QR codes or iPad-activated audio buttons that trigger student-created explanations or debates at each stage. The final machine is a hybrid of physical engineering and interactive tech, allowing the class to simulate and reflect on the complexities of law-making in a tangible, creative way."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores how values and structures determine how a system of government operates. Students investigate Australia's political system, the law-making process, and compare global political systems through activities such as mock elections, debates, research projects, and hands-on simulations. The unit emphasizes critical thinking, communication, and student agency in understanding governance and civic participation.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T03:56:26.234Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
