@@ -3102,11 +3102,15 @@
       {
         "t": "Canva",
         "d": "Students design infographics or posters that visually explain the parts of the brain, the difference between growth and fixed mindsets, or wellbeing strategies. Using Canva's 'Remove Background' feature, they can incorporate their own photos or artefacts, making the visuals highly personal and relevant."
+      },
+      {
+        "t": "Wellbeing Wearables Workshop",
+        "d": "Students will design and build a wearable device or accessory that visually represents and supports an aspect of their personal wellbeing?physical, emotional, social, or spiritual. Using craft materials (felt, fabric, LEDs, conductive thread, recycled plastics, buttons, cardboard, etc.), each student creates a prototype such as a mood bracelet, mindfulness badge, or 'friendship signal' lanyard. They integrate simple digital tech (e.g., micro:bit, Makey Makey, or basic circuits with LED lights) so the wearable can light up, display messages, or react to touch. Throughout the Design Cycle, students identify their wellbeing focus, ideate solutions, sketch and prototype, test functionality, and reflect on how their creation expresses and supports their identity and health. The final showcase invites peers to interact with and discuss the meaning behind each wearable."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores identities as individuals and as part of collectives, focusing on physical, emotional, social, and spiritual health and wellbeing. Key activities include learning about the brain's physiology, reflecting on mindset and experiences, and developing strategies to support health, safety, and wellbeing through hands-on, reflective, and collaborative tasks.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:41:25.144Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
@@ -3138,11 +3142,15 @@
       {
         "t": "PicCollage",
         "d": "Students create vibrant digital collages using photos, drawings, and text to showcase their family and community celebrations. They combine images of traditional foods, costumes, and decorations with short captions explaining the significance of each element, expressing their understanding of how and why people celebrate important events."
+      },
+      {
+        "t": "Celebration Parade Floats: Moving Traditions",
+        "d": "Students work in small groups to design and build miniature parade floats representing a celebration or tradition important to their family or culture. Using recycled boxes, cardboard, fabric scraps, and craft materials, they construct and decorate their float with symbols, colours, and objects meaningful to their chosen celebration. Each float is mounted on a platform with wheels (e.g., LEGO wheels, bottle caps, or wooden discs). Students then use Bee-Bots to pull their floats along a parade route mapped out on the floor, which they help design with markers and paper. They program the Bee-Bot to stop at 'Celebration Stations' where they share a short story, song, or dance about their tradition. This hands-on project integrates creative building, basic robotics, storytelling, and cultural sharing, making the learning tangible and joyful."
       }
     ],
     "audited": true,
     "plannerText": "This Prep HWEO unit explores how people recognise important events through celebrations and traditions, with students engaging in cultural dances, storytelling, art (such as circle art), music, and hands-on activities like making traditional foods. The unit emphasises sharing personal and family traditions, comparing global celebrations, and expressing understanding through creative, multimodal experiences.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3170,11 +3178,15 @@
       {
         "t": "PicCollage",
         "d": "Use PicCollage on iPads for students to visually sort and group images of different community roles (e.g., teacher, nurse, firefighter, gardener), then present their collages to the class, explaining the importance of each role using simple voice recordings."
+      },
+      {
+        "t": "Community Roles Interactive Job Stations",
+        "d": "Students work in small groups to design and build miniature 'job stations' representing different community roles found in the school (e.g., nurse's office, library, cafeteria, principal's office) using cardboard, recycled materials, fabric scraps, and craft supplies. Each group chooses a role, researches its responsibilities, and creates a functional diorama or station with moving parts (e.g., spinning library shelves, sliding cafeteria trays). Next, students use age-appropriate coding robots like Bee-Bots to deliver messages or objects between stations, programming routes that reflect real school routines. The project follows the Design Cycle: students investigate roles, plan their station, prototype and build, test robot interactions, and share how each station contributes to the school community. This hands-on, tech-integrated experience deepens understanding of roles and responsibilities while fostering collaboration and creativity."
       }
     ],
     "audited": true,
     "plannerText": "In this unit, Prep students explore the central idea that everyone has roles and responsibilities in the community. Through stories, role play, visual timetables, and hands-on activities, they learn about different helpers in the school and wider community, develop essential agreements, and reflect on their own responsibilities as learners and friends.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3212,11 +3224,15 @@
       {
         "t": "Canva",
         "d": "Using Canva's 'Remove Background' feature, students create posters showing a sea creature or plant in a healthy environment and then in a polluted one. They use simple icons, photos, and their own drawings to highlight the impact of human actions."
+      },
+      {
+        "t": "Eco-Habitat Rescue Mission",
+        "d": "Students work in teams to design and build miniature habitats (desert, marine, playground) using recycled materials, clay, and natural objects. Each habitat includes both native plants and animals crafted by students. Next, they introduce 'pollution challenges' (e.g., paper litter, plastic bits) and collaboratively invent simple physical 'clean-up machines' or tools (built from popsticks, rubber bands, bottle tops, etc.). Using Bee-Bots or Sphero Indi, students program and decorate the robots as 'Eco-Helpers' that navigate their habitats, collecting or pushing pollution pieces into recycling zones. The project follows the Design Cycle: students investigate real habitats, imagine solutions, plan and build their models and clean-up tools, test and improve their Eco-Helpers, and finally share their process and discoveries with the class, reflecting on how humans can help protect environments."
       }
     ],
     "audited": true,
     "plannerText": "Prep students explore different environments (desert, marine, playground), identify plants and animals, and discuss human impact such as pollution and recycling. Activities include drawing, storytelling, excursions (e.g., aquarium), and hands-on projects like building models and creating class books to reflect on how human actions change the environment.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
