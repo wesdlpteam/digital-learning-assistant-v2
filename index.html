@@ -274,9 +274,9 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 .stem-prompt-title{font-size:15px;font-weight:700;color:#FFF}
 .stem-prompt-sub{font-size:12px;color:#A78BFA;margin-top:3px;font-weight:500}
 .stem-prompt-arrow{font-size:18px;color:#A78BFA;flex-shrink:0}
-.stem-overlay{position:fixed !important;top:0;left:0;right:0;bottom:0;width:100vw;height:100vh;background:rgba(0,0,0,.75);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .2s;overflow-y:auto}
+.stem-overlay{position:fixed !important;inset:0;width:100vw;height:100dvh;min-height:100vh;background:rgba(0,0,0,.78);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .2s;overflow:auto;overscroll-behavior:contain}
 .stem-overlay.open{opacity:1;pointer-events:all}
-.stem-modal{background:#1A1A1A;border:2px solid var(--ac);border-radius:20px;padding:0;width:100%;max-width:500px;position:relative;margin:auto;flex-shrink:0}
+.stem-modal{background:#1A1A1A;border:2px solid var(--ac);border-radius:20px;padding:0;width:100%;max-width:500px;max-height:calc(100dvh - 32px);overflow-y:auto;position:relative;margin:0 auto;flex-shrink:0;box-shadow:0 24px 90px rgba(0,0,0,.55)}
 .stem-modal-header{padding:20px 24px 14px;border-bottom:1px solid #333;display:flex;align-items:flex-start;gap:12px}
 .stem-modal-icon{width:42px;height:42px;border-radius:10px;background:rgba(205,235,69,.1);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 .stem-modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:8px;border:1px solid #333;background:#222;color:#888;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all .15s;line-height:1}
@@ -303,6 +303,12 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 .tech-cur-elab li{margin-bottom:4px}
 .tech-cur-strand{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#666;margin:12px 0 8px;padding-top:10px;border-top:1px solid #333}
 .tech-cur-strand:first-child{border-top:none;padding-top:0;margin-top:0}
+.tech-cur-note{font-size:12px;color:#AAA;line-height:1.6;margin:0 0 12px}
+.tech-cur-wds-domain{margin:14px 0 10px;padding-top:12px;border-top:1px solid #333}
+.tech-cur-wds-domain:first-child{border-top:none;padding-top:0}
+.tech-cur-wds-title{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:#9333EA;margin-bottom:8px}
+.tech-cur-wds-item{padding:9px 12px;background:rgba(147,51,234,.07);border-left:3px solid #9333EA;border-radius:0 10px 10px 0;margin-bottom:7px;font-size:12.5px;color:#EEE;line-height:1.55}
+.tech-cur-wds-item .tc-code{font-size:10px;color:#B27BFF;font-weight:800;font-family:monospace;margin-left:6px}
 
 
 /* ===== Copilot teaching helper ===== */
@@ -555,6 +561,14 @@ function closeCopilotInstructions(){
 // ========== END COPILOT TEACHING HELPER ==========
 
 
+function splitLinesOfInquiry(text){
+  return String(text||'')
+    .replace(/\u2022/g,'•')
+    .split(/\s*(?:;|•|â€¢|\?{2,}|\r?\n+)\s*/g)
+    .map(function(l){return l.trim().replace(/^[-–—•]+\s*/,'');})
+    .filter(Boolean);
+}
+
 // ========== TECHNOLOGIES CURRICULUM (ACARA v9.0) ==========
 const TECH_CUR = {
   "DT": {
@@ -648,6 +662,128 @@ const TECH_CUR = {
   },
 };
 
+const WESLEY_DIGITAL_SCOPE = {
+  "F-2": {
+    label:"Prep-Year 2",
+    domains:[
+      {domain:"Principled Practice",skills:[
+        {sub:"Safe and secure",code:"DSPPSSP1",desc:"Follow class Essential Agreement when sharing personal information and apply basic social protocols when using ICT to communicate with known audiences."},
+        {sub:"Safe and secure",code:"DSPPSSP2",desc:"Follow class Essential Agreement about applying selected standard guidelines and techniques to secure digital information."},
+        {sub:"Academic Integrity",code:"DSPPAIP1",desc:"Recognise intellectual property and ownership of digital products that others produce, and that what they create or provide can be used or misused by others."},
+        {sub:"Technology and Society",code:"DSPPTSP1",desc:"Discuss how ICT is used at home, at school and in society."}
+      ]},
+      {domain:"Engineering Knowledge",skills:[
+        {sub:"Ideate and Plan",code:"DSEKIPP1",desc:"Prepare simple plans to find solutions or answers to questions."},
+        {sub:"Prototype",code:"DSEKPP1",desc:"Participate in the development of a digital solution."},
+        {sub:"Self-Regulated Learning",code:"DSEKSLP1",desc:"Articulate and record a goal, then reflect on the goal upon completion."},
+        {sub:"Self-Regulated Learning",code:"DSEKSLP2",desc:"Seek feedback that informs and improves their practice."},
+        {sub:"Critically Curate",code:"DSEKCCP1",desc:"Plan and employ effective research strategies to locate information and other resources for intellectual or creative pursuits."},
+        {sub:"Design Thinking",code:"DSEKDTP1",desc:"Know and use a deliberate design process for generating ideas, testing theories, creating innovative artefacts or solving authentic problems."}
+      ]},
+      {domain:"Creative Communicator",skills:[
+        {sub:"Collaboration",code:"DSCCCP1",desc:"Use purposefully selected tools safely to share and exchange information with appropriate local audiences."},
+        {sub:"Computer Mediated Communication",code:"DSCCCMCP1",desc:"Understand that computer mediated communications may be received later by the receiver."},
+        {sub:"Original Works",code:"DSCCOWP1",desc:"Create original works or responsibly repurpose or remix digital resources into new creations, including visualisations, models and simulations."},
+        {sub:"Learning tools",code:"DSCCLTP1",desc:"Engage a variety of creation and collaboration tools, some of which are modelled by the instructor."}
+      ]},
+      {domain:"Systems Thinking",skills:[
+        {sub:"Use and selection",code:"DSSTUSP1",desc:"Identify and independently operate a range of devices, software, functions and commands, considering ergonomics and seeking solutions when encountering a problem."},
+        {sub:"Systems and Components",code:"DSSTSCP1",desc:"Identify the main components of common consumer systems, their fundamental functions, and describe them using basic terminology."},
+        {sub:"Data Management",code:"DSSTDMP1",desc:"Manage and maintain digital data with guidance."},
+        {sub:"Thinking Process",code:"DSSTTPP1",desc:"Articulate an understanding of algorithmic thinking."}
+      ]}
+    ]
+  },
+  "3-4": {
+    label:"Year 3 to Year 4",
+    domains:[
+      {domain:"Principled Practice",skills:[
+        {sub:"Safe and secure",code:"DSPPSS31",desc:"Apply standard guidelines and take action to avoid common dangers to personal security when using ICT and communicate with unknown audiences using appropriate social protocols."},
+        {sub:"Safe and secure",code:"DSPPSS32",desc:"Independently apply standard guidelines and techniques for particular digital systems to secure digital information."},
+        {sub:"Academic Integrity",code:"DSPPAI31",desc:"Demonstrate understanding of and respect for the rights and obligations of using and sharing intellectual property."},
+        {sub:"Academic Integrity",code:"DSPPAI32",desc:"Acknowledge when digital products created by someone else are used and start to indicate the source."},
+        {sub:"Technology and Society",code:"DSPPTS31",desc:"Identify the value and role of ICT use at home and school."}
+      ]},
+      {domain:"Engineering Knowledge",skills:[
+        {sub:"Ideate and Plan",code:"DSEKIP31",desc:"Generate ideas and plan solutions."},
+        {sub:"Prototype",code:"DSEKP31",desc:"Create and modify simple digital solutions, creative outputs or data representations/transformations for particular purposes."},
+        {sub:"Self-Regulated Learning",code:"DSEKSL31",desc:"Set personal learning goals, develop technology-supported strategies to achieve them and reflect on the learning process to improve outcomes."},
+        {sub:"Self-Regulated Learning",code:"DSEKSL32",desc:"Seek feedback that informs and improves practice in a variety of ways."},
+        {sub:"Critically Curate",code:"DSEKCC31",desc:"Plan and employ effective research strategies to locate information and resources for intellectual or creative pursuits."},
+        {sub:"Critically Curate",code:"DSEKCC32",desc:"Curate information from digital resources using a variety of tools and methods to create collections of artefacts that demonstrate meaningful connections or conclusions."},
+        {sub:"Design Thinking",code:"DSEKDT31",desc:"Select and use digital tools to plan and manage the design thinking process."}
+      ]},
+      {domain:"Creative Communicator",skills:[
+        {sub:"Collaboration",code:"DSCCC31",desc:"Use appropriate tools safely to share and exchange information with known audiences and safely collaborate with others."},
+        {sub:"Computer Mediated Communication",code:"DSCCCMC31",desc:"Understand that particular forms of computer mediated communication and tools suit synchronous/asynchronous and one-to-one/group communication."},
+        {sub:"Original Works",code:"DSCCOW31",desc:"Create original works or responsibly repurpose or remix digital resources into new creations, identifying visualisations, models and simulations."},
+        {sub:"Learning tools",code:"DSCCLT31",desc:"Choose appropriate platforms and tools for the objectives of their creation or communication."},
+        {sub:"Teamwork",code:"DSCCT31",desc:"Use collaborative technologies to work with others, including peers, experts or community members, to examine issues and problems from multiple viewpoints."}
+      ]},
+      {domain:"Systems Thinking",skills:[
+        {sub:"Use and selection",code:"DSSTUS31",desc:"Select from and safely operate a range of devices for specific tasks and use basic troubleshooting procedures to solve routine malfunctions."},
+        {sub:"Systems and Components",code:"DSSTSC31",desc:"Identify, compare and classify the use of the main components of different systems."},
+        {sub:"Data Management",code:"DSSTDM31",desc:"Manage and maintain digital data on different storage mediums, locally and on networks."},
+        {sub:"Thinking Process",code:"DSSTTP31",desc:"Formulate problem definitions suited for technology-assisted methods such as data analysis, abstract models and algorithmic thinking."},
+        {sub:"Thinking Process",code:"DSSTTP32",desc:"Use algorithmic thinking to develop a sequence of steps to create and test automated solutions."}
+      ]}
+    ]
+  },
+  "5-6": {
+    label:"Year 5 to Year 6",
+    domains:[
+      {domain:"Principled Practice",skills:[
+        {sub:"Safe and secure",code:"DSPPSS51",desc:"Engage in positive, safe, legal and ethical behaviour when using technology, including online social interactions or networked devices, and discuss strategies for protecting data and identity when collaborating."},
+        {sub:"Safe and secure",code:"DSPPSS52",desc:"Independently apply strategies for determining and protecting the security of digital information and assess risks associated with online environments."},
+        {sub:"Academic Integrity",code:"DSPPAI51",desc:"Identify legal obligations regarding ownership and use of digital products and apply some referencing conventions."},
+        {sub:"Technology and Society",code:"DSPPTS51",desc:"Identify risks to identity, privacy and emotional safety when using ICT and apply accepted social protocols in online environments across social and cultural contexts."},
+        {sub:"Technology and Society",code:"DSPPTS52",desc:"Explain the main uses of ICT at school, home and in the local community, and recognise potential positive and negative impacts on their lives."}
+      ]},
+      {domain:"Engineering Knowledge",skills:[
+        {sub:"Ideate and Plan",code:"DSEKIP51",desc:"Record ideas, represent thinking and plan solutions."},
+        {sub:"Prototype",code:"DSEKP51",desc:"Independently or collaboratively create and modify digital solutions, creative outputs or data representations/transformations for particular audiences and purposes."},
+        {sub:"Self-Regulated Learning",code:"DSEKSL51",desc:"Set personal learning goals, develop technology-supported strategies to achieve them and reflect on the learning process to improve outcomes."},
+        {sub:"Self-Regulated Learning",code:"DSEKSL52",desc:"Seek feedback that informs and improves practice to demonstrate learning in a variety of ways."},
+        {sub:"Critically Curate",code:"DSEKCC51",desc:"Build knowledge by actively exploring real-world issues and problems, developing ideas and theories and pursuing answers and solutions."},
+        {sub:"Critically Curate",code:"DSEKCC52",desc:"Evaluate the accuracy, perspective, credibility and relevance of information, media, data or other resources."},
+        {sub:"Design Thinking",code:"DSEKDT51",desc:"Develop, test and refine prototypes as part of a cyclical design process."}
+      ]},
+      {domain:"Creative Communicator",skills:[
+        {sub:"Collaboration",code:"DSCCC51",desc:"Identify, compare and classify the use of the main components of different systems."},
+        {sub:"Computer Mediated Communication",code:"DSCCC51",desc:"Manage and maintain digital data on different storage mediums, locally and on networks."},
+        {sub:"Original Works",code:"DSCCOW51",desc:"Formulate problem definitions suited for technology-assisted methods such as data analysis, abstract models and algorithmic thinking."},
+        {sub:"Learning tools",code:"DSCCLT51",desc:"Choose appropriate platforms and tools for the objectives of creation or communication, including publishing or presenting content that customises the message and medium for intended audiences."},
+        {sub:"Teamwork",code:"DSCCT51",desc:"Contribute constructively to project teams, assuming various roles and responsibilities to work effectively toward a common goal."}
+      ]},
+      {domain:"Systems Thinking",skills:[
+        {sub:"Use and selection",code:"DSSTUS51",desc:"Independently select and operate a range of devices by adjusting relevant software functions to suit specific tasks, and independently use troubleshooting procedures to solve routine malfunctions."},
+        {sub:"Systems and Components",code:"DSSTSC51",desc:"Identify and compare networked system components including hardware, software and data."},
+        {sub:"Data Management",code:"DSSTDM51",desc:"Manage and maintain data for groups of users using a variety of methods and systems."},
+        {sub:"Thinking Process",code:"DSSTTP51",desc:"Break problems into component parts, extract key information and develop descriptive models to understand complex systems or support problem-solving."},
+        {sub:"Thinking Process",code:"DSSTTP52",desc:"Use algorithmic thinking to develop a sequence of steps to create and test automated solutions to increasingly complex problems."}
+      ]}
+    ]
+  }
+};
+
+function renderWesleyDigitalSkillsOverview(yl){
+  var band=getTechCurBand(yl);
+  if(band==='F' || band==='1-2') band='F-2';
+  var scope=WESLEY_DIGITAL_SCOPE[band];
+  if(!scope)return '';
+  var h='<div class="tech-cur-subj"><div class="tech-cur-subj-title">🟣 Wesley Digital Skills ('+scope.label+')</div>';
+  h+='<div class="tech-cur-note">Age-level Wesley Digital Skills drawn from the College scope and sequence.</div>';
+  scope.domains.forEach(function(domain){
+    h+='<div class="tech-cur-wds-domain"><div class="tech-cur-wds-title">'+domain.domain+'</div>';
+    domain.skills.forEach(function(item){
+      h+='<div class="tech-cur-wds-item"><b>'+item.sub+'</b> — '+item.desc+' <span class="tc-code">'+item.code+'</span></div>';
+    });
+    h+='</div>';
+  });
+  h+='</div>';
+  return h;
+}
+
 function getTechCurBand(yl) {
   if(yl==='Prep') return 'F';
   var n=parseInt(yl.replace('Year ',''));
@@ -661,7 +797,7 @@ function renderTechCurriculum(yl) {
   var bandLabel = band==='F'?'Foundation':'Years '+band;
   var h='';
   
-  ['DT','DigiT'].forEach(function(key){
+  ['DigiT'].forEach(function(key){
     var subj = TECH_CUR[key];
     var items = subj[band];
     if(!items || !items.length) return;
@@ -710,6 +846,7 @@ function renderTechCurriculum(yl) {
     h+='</div>';
   });
   
+  h+=renderWesleyDigitalSkillsOverview(yl);
   return h;
 }
 
@@ -1181,7 +1318,7 @@ const us=gu(ca,yl),u=us[ui];if(!u){S.v='units';S.ui=null;R();return;}const tc=TC
 h+='<div class="dh" style="background:'+tc+';color:'+(TTX[u.th]||"#FFF")+'">'+'<div class="dh-wm">'+em+'</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;position:relative;z-index:1"><span class="tag-t">'+yl+'</span><span class="tag-t">'+CN[ca]+'</span></div><h2 class="dh-title" style="position:relative;z-index:1">'+u.th+'</h2><div class="dh-ci" style="position:relative;z-index:1">“'+u.ci+'”</div></div>';
 
 h+='<div class="loi-box"><div class="loi-label">Lines of Inquiry</div>';
-var lois=u.lo.split(/[;•]/).filter(l=>l.trim());
+var lois=splitLinesOfInquiry(u.lo);
 lois.forEach((l,i)=>{l=l.trim();if(l)h+='<div class="loi-item"><span class="loi-num" style="color:'+tc+'">0'+(i+1)+'</span>'+l+'</div>';});
 h+='</div>';
 
@@ -1256,7 +1393,7 @@ h+='<div class="sg-fb"><button class="sg-used" onclick="markUsed('+_usi+',this)"
 h+='</div></div>';});
 
 // Technologies Curriculum toggle
-h+='<div class="tech-cur-toggle" id="techCurToggle" onclick="tgTechCur()"><span style="font-size:16px">📋</span><span style="flex:1;font-size:14px;font-weight:700;color:#38BDF8">Technologies Curriculum — '+yl+'</span><span style="font-size:12px;color:#888">ACARA v9.0</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 8 10 12 14 8"/></svg></div>';
+h+='<div class="tech-cur-toggle" id="techCurToggle" onclick="tgTechCur()"><span style="font-size:16px">📋</span><span style="flex:1;font-size:14px;font-weight:700;color:#38BDF8">Technologies Curriculum — '+yl+'</span><span style="font-size:12px;color:#888">Digital Technologies + Wesley Digital Skills</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 8 10 12 14 8"/></svg></div>';
 h+='<div class="tech-cur-body" id="techCurBody">'+renderTechCurriculum(yl)+'</div>';
 
 h+='<a href="'+BK+'" target="_blank" rel="noopener noreferrer" class="bb">📅 Book a Digital Learning Coach<span class="bb-sub">Schedule a session with the DLP team</span></a>';}
@@ -1269,6 +1406,7 @@ var d=window._usedData[idx];
 var team=d.campus+' '+d.year+' Team';
 var payload={type:'used',team:team,campus:d.campus,year:d.year,theme:d.theme,tool:d.tool,phase:d.phase};
 fetch(FBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
+refreshLeaderboardSoon();
 btn.classList.add('done');
 btn.innerHTML='✅ Done!';
 btn.onclick=null;
@@ -1330,14 +1468,19 @@ document.body.appendChild(popup);
 setTimeout(function(){container.remove();},4000);
 }
 var _lbLastFetch=0;
-function loadLeaderboard(){
+function loadLeaderboard(force){
 var now=Date.now();
-if(now-_lbLastFetch<300000)return; // 5-minute cache — was 3 seconds
+if(!force && window._leaderboard && now-_lbLastFetch<30000)return;
 _lbLastFetch=now;
-fetch(FBHOOK+'?action=leaderboard').then(function(r){return r.json();}).then(function(data){
-window._leaderboard=data;
+fetch(FBHOOK+'?action=leaderboard&_='+now,{cache:'no-store'}).then(function(r){return r.json();}).then(function(data){
+window._leaderboard=Array.isArray(data)?data:[];
 if(S.v==='home')R();
-}).catch(function(){window._leaderboard=[];if(S.v==='home')R();});
+}).catch(function(){if(!window._leaderboard)window._leaderboard=[];if(S.v==='home')R();});
+}
+function refreshLeaderboardSoon(){
+  _lbLastFetch=0;
+  setTimeout(function(){loadLeaderboard(true);},1200);
+  setTimeout(function(){loadLeaderboard(true);},5000);
 }
 function renderLeaderboard(){
 var lb=window._leaderboard;
@@ -1478,6 +1621,7 @@ function openStem(){
   overlay.onclick=function(e){if(e.target===overlay)closeStem();};
   document.body.appendChild(overlay);
   document.body.style.overflow='hidden';
+  overlay.scrollTop=0;
   requestAnimationFrame(function(){overlay.classList.add('open');});
 }
 function closeStem(){
