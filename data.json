@@ -3715,9 +3715,34 @@
     "th": "How We Express Ourselves",
     "ci": "Methods of communication have different features which impact their effectiveness",
     "lo": "The forms of verbal, non-verbal and visual communication; How the correct form enhances the effectiveness of a message; How people interpret messages and bring their own meaning to interactions",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students select a historical or modern communication device (e.g., Morse code, emoji, smartphone, hieroglyphics), draw or photograph it, and use ChatterPix Kids to animate the object explaining its features and how it impacts communication effectiveness. This brings non-verbal and visual forms of communication to life in a playful, memorable way."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design a digital timeline poster comparing different communication methods across history (e.g., hieroglyphics, letters, telephones, texting, emojis). They use Canva's 'Remove Background' feature to create collages and annotate with icons, arrows, and text to highlight how features have changed and why some methods are more effective than others."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students collaboratively create an interactive digital book showcasing various forms of communication (verbal, non-verbal, visual, digital). Each page features student-created examples, audio recordings, and reflections on how the features of each method affect its effectiveness for different audiences and purposes."
+      },
+      {
+        "t": "Adobe Express Podcasting",
+        "d": "Small groups script and record short podcasts debating which communication method is most effective for a specific scenario (e.g., giving directions, expressing emotions, persuading someone). They edit in sound effects or music to reinforce the tone, then publish and share with the class for peer feedback."
+      },
+      {
+        "t": "Kahoot",
+        "d": "Students design and run a Kahoot quiz for their peers, with questions focused on identifying features, strengths, and weaknesses of different communication methods. This reinforces understanding of the central idea and encourages critical thinking about effectiveness in real-world contexts."
+      },
+      {
+        "t": "Makerspace Project: Communication Device Prototyping",
+        "d": "Students work in teams to design and build a physical prototype of a new communication device using recycled materials, cardboard, string, cups, and popsticks. They must consider how their device transmits messages (sound, light, movement, symbols), test its effectiveness, and present to the class, explaining which features make it effective or challenging for communication."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores the different forms and features of communication?verbal, non-verbal, and visual?and how these impact effectiveness. Students investigate historical and modern communication methods, experiment with signs, symbols, music, and body language, and reflect on how people interpret messages. Activities include silent movies, composing music, and exploring digital and non-digital communication platforms.",
     "stemRebooted": true
   },
   {
@@ -3761,9 +3786,35 @@
     "th": "How the World Works",
     "ci": "Materials behave and interact in certain ways, which poses challenges and solutions",
     "lo": "The three states of matter and their properties; How matter changes states depending on particles, temperature and energy; Responsible and ethical use of materials like glass and plastic",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Merge Cubes",
+        "d": "Students use Merge Cubes and the Merge Explorer app to create interactive 3D models demonstrating the molecular structure of solids, liquids, and gases. They record short video explanations using the iPad camera, showing how particles behave and change state, then share these AR experiences with peers for feedback."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design an infographic in Canva that visually explains the process of changing states of matter (e.g., melting, freezing, evaporation). They use Canva's 'Remove Background' feature to add photos of their own science experiments, making the infographic both personal and scientifically accurate."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students document their scientific experiments on materials and states of matter by creating a digital science journal in Book Creator. They embed photos, voice recordings, and diagrams to explain their observations and conclusions, then publish their journals for the class to review."
+      },
+      {
+        "t": "Explain Everything",
+        "d": "Students use Explain Everything to create animated videos that model how materials change state. They draw particle diagrams, record their voices explaining each stage, and use the animation tools to visually show the movement and interaction of particles during changes like melting or condensation."
+      },
+      {
+        "t": "Minecraft: Filtering Water On The Iss",
+        "d": "Students explore the 'Filtering Water On The ISS' Minecraft Education lesson to investigate how materials can be used to solve real-world challenges. They experiment with building and testing water filtration systems, connecting directly to the unit's focus on how materials behave and interact in different contexts.",
+        "url": "https://education.minecraft.net/en-us/lessons/filtering-water-on-the-iss"
+      },
+      {
+        "t": "Makerspace Project: Material Challenge",
+        "d": "In the Makerspace, students are challenged to design and build a container that keeps an ice cube from melting for the longest time. Using recycled materials, cardboard, fabric, foil, and popsticks, they prototype, test, and iterate their designs, then measure and record results to discuss which materials were most effective and why."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores the different states of matter, how and why matter changes, and the responsible use of materials. Students conduct hands-on experiments, document their observations, and investigate real-world applications such as water filtration and material adaptation. The unit emphasizes scientific inquiry, ethical use of materials, and student agency in designing and testing solutions."
   },
   {
     "ca": "St Kilda",
@@ -3806,9 +3857,35 @@
     "th": "Where We Are in Place and Time",
     "ci": "Many factors shape the development of cities.",
     "lo": "The essential features of a city; The function of a city; The development of cities through time",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Minecraft: Revamp Melbourne",
+        "d": "Students work in teams to redesign Melbourne for the future, considering how demographic, density, and social factors shape city development. They will build innovative city features, plan infrastructure, and reflect on how their designs address real-world challenges such as natural disasters, transport, and community needs. This immersive experience directly connects to the unit's focus on how cities adapt and change over time.",
+        "url": "https://education.minecraft.net/en-us/lessons/revamp-melbourne"
+      },
+      {
+        "t": "Canva",
+        "d": "Students create interactive city planning infographics or posters that showcase the essential features and amenities of a functional city. They can use Canva's 'Remove Background' feature to add themselves into city scenes, visually demonstrating their placement of key infrastructure and reflecting on their design choices."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students collaboratively author a digital class book documenting their research on cities around the world, including maps, photos (using the iPad camera), and audio reflections. Each student can contribute a page about a city, highlighting unique features and how cities respond to challenges like natural disasters."
+      },
+      {
+        "t": "Explain Everything",
+        "d": "Students design and narrate animated city maps, demonstrating how transport systems, green spaces, and infrastructure interact. They can record their voices explaining the rationale for city layouts, and use drawing tools to show changes over time or responses to disasters."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students build a collaborative digital wall to collect and compare city features, disaster responses, and architectural innovations from around the world. They can post images, videos, and reflections, then sort and group ideas to inform their own city designs."
+      },
+      {
+        "t": "Makerspace: Earthquake-Resistant City Block",
+        "d": "Students use cardboard, popsticks, rubber bands, bottle caps, and recycled materials to physically prototype a city block designed to withstand natural disasters (e.g., earthquakes or floods). They test their models on a shake table (can be made from a tray and marbles), iterating designs based on what works and what fails, directly linking to the unit's focus on city adaptation and resilient infrastructure."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students explore how cities develop and adapt over time, focusing on factors like demographics, density, transport, infrastructure, and disaster resilience. Activities include researching global cities, designing city layouts, building models, and reflecting on the needs and functions of urban environments.",
     "stemRebooted": true
   },
   {
@@ -3930,9 +4007,35 @@
     "th": "How the World Works",
     "ci": "Engineers design and build structures using specific features and materials to make them strong, stable and fit for purpose",
     "lo": "Different types of bridges and their design features; How materials and engineering principles contribute to structural strength and stability; Testing and refining designs through experimentation",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Minecraft: Moon Base One",
+        "d": "Students use Minecraft Education to collaboratively design and build a lunar base, applying engineering principles of strength, stability, and material selection. They must justify their design choices based on the unique challenges of building structures in space, such as gravity, available materials, and environmental hazards. This pushes students to think beyond Earth-based engineering and consider how engineers adapt to extreme environments.",
+        "url": "https://education.minecraft.net/en-us/lessons/moon-base-one"
+      },
+      {
+        "t": "Tinkercad",
+        "d": "Students digitally prototype their own bridge or building component using Tinkercad, experimenting with different shapes and materials. They can simulate stress tests within the software to see which designs are most stable and why, then share their models with peers for feedback."
+      },
+      {
+        "t": "Sphero BOLT",
+        "d": "Students program Sphero BOLT robots to navigate across model bridges they have constructed. They collect data on which bridge designs best support the robot's weight and movement, linking digital coding with physical engineering and iterative testing."
+      },
+      {
+        "t": "Adobe Express Podcasting",
+        "d": "Students create a podcast series interviewing real-world engineers (or role-play as engineers) about the challenges of designing strong, stable structures. They discuss the importance of material choice, environmental factors, and innovative engineering solutions, then publish episodes to share with the school community."
+      },
+      {
+        "t": "Explain Everything",
+        "d": "Students use Explain Everything to create animated explanations of how different bridge types (beam, truss, suspension) distribute forces and why certain designs are chosen for specific environments. They can annotate, draw, and record voiceovers to demonstrate their understanding."
+      },
+      {
+        "t": "Physical Makerspace Bridge Challenge",
+        "d": "In the Makerspace, students work in teams to design and build a bridge using recycled materials, cardboard, popsticks, and hot glue guns. They test their bridges by gradually adding weights (such as coins) and document the process with the iPad Camera app. Students iterate on their designs based on test results, reflecting real engineering cycles."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students investigate different types of bridges and structures, research engineering features that contribute to strength and stability, and work in teams to design, build, and test their own bridges using various materials. The unit emphasizes inquiry, hands-on prototyping, iterative improvement, and reflection on real-world engineering challenges.",
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:51:28.755Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
@@ -4023,9 +4126,34 @@
     "th": "Who We Are",
     "ci": "Leaders can help a group to function effectively",
     "lo": "Roles and responsibilities of effective leadership; Purpose of leadership; The strengths and qualities of a leader",
-    "s": [],
-    "audited": false,
-    "plannerText": ""
+    "s": [
+      {
+        "t": "Wise Discussion Chatbots",
+        "d": "Students design and script interactive chatbots that simulate leadership scenarios, such as resolving team conflicts or making group decisions. Using Wise Discussion Chatbots, students can program branching dialogues that challenge peers to make choices and reflect on the qualities of effective leaders."
+      },
+      {
+        "t": "Canva",
+        "d": "Students create digital leadership portfolios using Canva, showcasing their understanding of leadership qualities, reflections on famous leaders, and their own leadership journey. They can include infographics, timelines, and visual reflections on how leaders help groups function effectively."
+      },
+      {
+        "t": "iMovie",
+        "d": "Students film and edit short documentaries or role-play scenarios demonstrating leadership in action, such as leading a team project or resolving a classroom issue. iMovie allows them to add voiceovers, captions, and music to enhance their storytelling and analysis of leadership qualities."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students collaboratively build a digital wall of 'Leadership Moments' using Padlet, posting examples from history, school, or their own lives. They can comment on each other's posts, discuss different perspectives, and identify patterns in effective leadership."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students author interactive digital books that explore the attributes of effective leaders, including interviews, reflections, and case studies. Book Creator enables them to embed audio, video, and images, making their exploration of leadership engaging and multimodal."
+      },
+      {
+        "t": "Makerspace Leadership Simulation",
+        "d": "In teams, students design and build a 'Leadership Challenge Game' using recycled materials, cardboard, and craft supplies. The game should require players to take on different leadership roles and solve group challenges, physically modeling how leaders help groups function effectively. Students prototype, test, and refine their games, then invite peers to play and reflect on the leadership dynamics experienced."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores the qualities and responsibilities of effective leaders, with students brainstorming attributes, analyzing real-world examples, and reflecting on their own leadership potential. Activities include collaborative discussions, leadership application tasks, and multimedia presentations, all aimed at understanding how leaders help groups function effectively."
   },
   {
     "ca": "St Kilda",
