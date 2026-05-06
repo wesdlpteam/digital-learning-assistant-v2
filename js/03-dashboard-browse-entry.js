@@ -29,13 +29,246 @@ async function fetchPlannerContext(entry) {
   }
 }
 
+// ===== TOOL DIVERSITY SCANNER =====
+let _diversifyRunning = false;
+let _diversifySwaps = [];
 
-function splitLinesOfInquiry(text){
-  return String(text||'')
-    .replace(/\u2022/g,'•')
-    .split(/\s*(?:;|•|â€¢|\?{2,}|\r?\n+)\s*/g)
-    .map(l=>l.trim().replace(/^[-–—•]+\s*/,''))
-    .filter(Boolean);
+function runDiversityScan() {
+  const ca = document.getElementById('div-campus')?.value || '';
+  const yr = document.getElementById('div-year')?.value || '';
+  const statusEl = document.getElementById('diversity-status');
+  const resultsEl = document.getElementById('diversity-results');
+  const fixBtn = document.getElementById('btn-diversity-fix');
+
+  const filtered = DATA.filter(e => {
+    if (ca && e.ca !== ca) return false;
+    if (yr && e.yl !== yr) return false;
+    return getSugs(e).filter(isRealSug).length >= 1;
+  });
+  if (!filtered.length) {
+    statusEl.style.color = 'var(--salmon)';
+    statusEl.textContent = 'No entries match those filters';
+    resultsEl.innerHTML = '';
+    fixBtn.style.display = 'none';
+    return;
+  }
+
+  // Count tool frequency — per-entry (does tool appear in this entry?)
+  const toolEntryCount = {};
+  const toolNames = {};
+  filtered.forEach(e => {
+    const seen = new Set();
+    getSugs(e).filter(isRealSug).forEach(s => {
+      const raw = sugTool(s);
+      const key = toolKey(raw);
+      if (!key || seen.has(key)) return;
+      seen.add(key);
+      toolEntryCount[key] = (toolEntryCount[key] || 0) + 1;
+      if (!toolNames[key]) toolNames[key] = raw;
+    });
+  });
+
+  const sorted = Object.entries(toolEntryCount)
+    .map(([key, count]) => ({
+      key, name: toolNames[key] || key, count,
+      pct: Math.round((count / filtered.length) * 100)
+    }))
+    .sort((a, b) => b.count - a.count);
+
+  const OVERUSED_PCT = 50;
+  const overused = sorted.filter(t => t.pct > OVERUSED_PCT);
+  const TARGET_PCT = 35; // bring overused down to ~35%
+
+  // Build the underused pool (age-appropriate, not banned, used ≤2 times)
+  const yearForAge = yr || 'Year 3';
+  const ageTools = getAgeAppropriateTools(yearForAge);
+  const underused = ageTools.filter(t => {
+    const k = toolKey(t);
+    return k && (!toolEntryCount[k] || toolEntryCount[k] <= 2) && !toolContainsForbiddenKeyword(t) && !toolViolatesInventoryBan(t);
+  });
+
+  // Build swap plan for overused tools
+  _diversifySwaps = [];
+  overused.forEach(ot => {
+    const targetCount = Math.max(1, Math.ceil(filtered.length * TARGET_PCT / 100));
+    const swapsNeeded = Math.max(0, ot.count - targetCount);
+    if (swapsNeeded === 0) return;
+
+    // Find candidate entries — prefer entries where this tool appears and has other overused tools too
+    const candidates = [];
+    filtered.forEach((e, fi) => {
+      const sugs = getSugs(e).filter(isRealSug);
+      sugs.forEach((s, si) => {
+        if (toolKey(sugTool(s)) === ot.key) {
+          const idx = DATA.indexOf(e);
+          candidates.push({ entry: e, dataIdx: idx, sugIdx: si, sug: s });
+        }
+      });
+    });
+
+    // Take only as many as needed, from the end (arbitrary but stable)
+    const toSwap = candidates.slice(-swapsNeeded);
+    toSwap.forEach(c => {
+      // Pick an underused tool not already in that entry
+      const usedInEntry = new Set(getSugs(c.entry).map(s => toolKey(sugTool(s))).filter(Boolean));
+      const available = underused.filter(t => !usedInEntry.has(toolKey(t)));
+      const replacement = available.length ? available[Math.floor(Math.random() * Math.min(available.length, 6))] : null;
+      if (replacement) {
+        _diversifySwaps.push({
+          dataIdx: c.dataIdx,
+          sugIdx: c.sugIdx,
+          entry: c.entry,
+          oldTool: ot.name,
+          newTool: replacement,
+          currentDesc: sugDesc(c.sug)
+        });
+      }
+    });
+  });
+
+  // Render results
+  const maxBar = sorted.length ? sorted[0].count : 1;
+  let html = `<div style="font-size:12px;color:var(--dim);margin-bottom:12px;font-weight:600">${filtered.length} entries · ${sorted.length} unique tools</div>`;
+  html += sorted.map(t => {
+    const barW = Math.round((t.count / maxBar) * 100);
+    const isOver = t.pct > OVERUSED_PCT;
+    const color = isOver ? 'var(--salmon)' : 'var(--lime)';
+    const tag = isOver ? ` <span style="color:var(--salmon);font-weight:800;font-size:10px;letter-spacing:.5px">OVERUSED</span>` : '';
+    return `<div style="margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px;font-weight:600">
+        <span style="color:var(--text)">${esc(t.name)}${tag}</span>
+        <span style="color:var(--dim)">${t.count} entries (${t.pct}%)</span>
+      </div>
+      <div style="height:5px;background:var(--card2);border-radius:3px"><div style="height:100%;width:${barW}%;background:${color};border-radius:3px;transition:width .4s"></div></div>
+    </div>`;
+  }).join('');
+
+  if (overused.length && _diversifySwaps.length) {
+    html += `<div style="margin-top:16px;padding:12px 16px;background:rgba(155,139,255,.08);border:1px solid rgba(155,139,255,.25);border-radius:10px">
+      <div style="font-size:13px;font-weight:700;color:var(--purple);margin-bottom:6px">📊 ${overused.length} overused tool${overused.length !== 1 ? 's' : ''} · ${_diversifySwaps.length} swap${_diversifySwaps.length !== 1 ? 's' : ''} planned</div>
+      <div style="font-size:12px;color:var(--dim);line-height:1.6">
+        ${_diversifySwaps.map(sw => `<div style="margin-bottom:3px">• <strong style="color:var(--salmon)">${esc(sw.oldTool)}</strong> → <strong style="color:var(--lime)">${esc(sw.newTool)}</strong> <span style="opacity:.7">in ${esc(sw.entry.ca)} ${esc(sw.entry.yl)} — ${esc(sw.entry.th)}</span></div>`).join('')}
+      </div>
+    </div>`;
+    fixBtn.style.display = '';
+  } else if (overused.length === 0) {
+    html += `<div style="margin-top:14px;padding:10px 14px;background:rgba(197,232,74,.08);border:1px solid rgba(197,232,74,.2);border-radius:8px;font-size:13px;color:var(--lime);font-weight:600">✓ No overused tools — distribution looks healthy</div>`;
+    fixBtn.style.display = 'none';
+  } else {
+    html += `<div style="margin-top:14px;padding:10px 14px;background:rgba(255,128,128,.08);border:1px solid rgba(255,128,128,.2);border-radius:8px;font-size:13px;color:var(--salmon);font-weight:600">Overused tools found but no suitable replacements available — check your Tool Inventory</div>`;
+    fixBtn.style.display = 'none';
+  }
+
+  if (underused.length) {
+    html += `<div style="margin-top:14px;padding:12px 16px;background:var(--card2);border-radius:8px;border-left:3px solid var(--lime)">
+      <div style="font-size:11px;color:var(--lime);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">Underused tools (≤2 entries)</div>
+      <div style="font-size:12px;color:var(--dim);line-height:1.8">${underused.map(t => `<span style="display:inline-block;padding:2px 8px;margin:2px 3px;background:var(--card);border:1px solid var(--border);border-radius:6px;font-size:11px;font-weight:600;color:var(--text)">${esc(t)}</span>`).join('')}</div>
+    </div>`;
+  }
+
+  resultsEl.innerHTML = html;
+  statusEl.style.color = 'var(--lime)';
+  statusEl.textContent = `Scanned ${filtered.length} entries`;
+}
+
+async function runAutoDiversify() {
+  if (_diversifyRunning || !_diversifySwaps.length) return;
+  _diversifyRunning = true;
+  const statusEl = document.getElementById('diversity-status');
+  const fixBtn = document.getElementById('btn-diversity-fix');
+  const stopBtn = document.getElementById('btn-diversity-stop');
+  const scanBtn = document.getElementById('btn-diversity-scan');
+
+  fixBtn.disabled = true;
+  scanBtn.disabled = true;
+  stopBtn.style.display = '';
+  startProgress();
+
+  let completed = 0;
+  const total = _diversifySwaps.length;
+
+  for (const sw of _diversifySwaps) {
+    if (!_diversifyRunning) break;
+    statusEl.style.color = 'var(--purple)';
+    statusEl.textContent = `Diversifying ${completed + 1}/${total}: ${sw.oldTool} → ${sw.newTool}…`;
+
+    try {
+      const entry = DATA[sw.dataIdx];
+      const plannerCtx = entry.plannerContextRich || entry.plannerText || '';
+      const yl = entry.yl || '';
+      const constraintBlock = buildToolConstraints(yl);
+
+      const prompt = `You are a Digital Learning Coach at Wesley College (IB PYP, Melbourne).
+Rewrite this technology suggestion for a different tool.
+
+UNIT: ${entry.th || ''}
+YEAR LEVEL: ${yl}
+CAMPUS: ${entry.ca || ''}
+${plannerCtx ? 'PLANNER CONTEXT: ' + plannerCtx.slice(0, 800) : ''}
+
+OLD TOOL: ${sw.oldTool}
+OLD DESCRIPTION: ${sw.currentDesc}
+
+NEW TOOL TO USE: ${sw.newTool}
+${constraintBlock}
+
+${SUGGESTION_STYLE}
+
+Write ONE JSON object: {"t":"${sw.newTool}","d":"..."}
+The description must be for ${sw.newTool} specifically, naming its real features and concrete student actions.
+Return ONLY the JSON object, no markdown fences, no extra text.`;
+
+      const raw = await callAI(
+        [{ role: 'user', parts: [{ text: prompt }] }],
+        '', OPENAI_FAST_MODEL
+      );
+
+      const cleaned = raw.replace(/```json|```/g, '').trim();
+      const parsed = JSON.parse(cleaned);
+      if (parsed && parsed.t && parsed.d) {
+        const sugs = entry.s;
+        if (Array.isArray(sugs) && sugs[sw.sugIdx]) {
+          sugs[sw.sugIdx] = { t: parsed.t, d: parsed.d };
+          if (parsed.url) sugs[sw.sugIdx].url = parsed.url;
+          completed++;
+        }
+      }
+    } catch (err) {
+      console.warn('Diversify swap failed:', sw.oldTool, '→', sw.newTool, err.message);
+    }
+    // Brief pause between API calls
+    if (_diversifyRunning && completed < total) await new Promise(r => setTimeout(r, 3000));
+  }
+
+  _diversifyRunning = false;
+  fixBtn.disabled = false;
+  fixBtn.style.display = 'none';
+  scanBtn.disabled = false;
+  stopBtn.style.display = 'none';
+  stopProgress();
+
+  if (completed > 0) {
+    statusEl.style.color = 'var(--lime)';
+    statusEl.textContent = `✓ ${completed}/${total} suggestions diversified — saving…`;
+    try {
+      await saveToDrive();
+      CHANGE_HISTORY.push({ type: 'diversify', count: completed, ts: Date.now() });
+      statusEl.textContent = `✓ ${completed} suggestions diversified and saved to Drive`;
+      renderDashboard();
+    } catch (err) {
+      statusEl.textContent = `✓ ${completed} diversified but save failed: ${err.message}`;
+    }
+  } else {
+    statusEl.style.color = 'var(--salmon)';
+    statusEl.textContent = completed === 0 && !_diversifyRunning ? 'Stopped — no changes made' : 'No swaps succeeded';
+  }
+  _diversifySwaps = [];
+}
+
+function stopAutoDiversify() {
+  _diversifyRunning = false;
+  const statusEl = document.getElementById('diversity-status');
+  if (statusEl) statusEl.textContent += ' — stopping…';
 }
 
 function closeEntry(){
@@ -475,7 +708,7 @@ function renderEntry(idx){
     </div>`:''}
     ${e.lo?`<div style="padding:12px 16px;background:var(--card2);border-radius:10px;border-left:3px solid var(--purple);margin-bottom:12px">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--purple);margin-bottom:8px">Lines of Inquiry</div>
-      ${splitLinesOfInquiry(e.lo).map((l,i)=>`<div style="display:flex;gap:8px;align-items:baseline;margin-bottom:4px"><span style="font-size:12px;font-weight:700;color:var(--purple);flex-shrink:0">0${i+1}</span><span style="font-size:13px;color:#ccc;line-height:1.5">${esc(l.trim())}</span></div>`).join('')}
+      ${e.lo.split(/[;•]/).filter(l=>l.trim()).map((l,i)=>`<div style="display:flex;gap:8px;align-items:baseline;margin-bottom:4px"><span style="font-size:12px;font-weight:700;color:var(--purple);flex-shrink:0">0${i+1}</span><span style="font-size:13px;color:#ccc;line-height:1.5">${esc(l.trim())}</span></div>`).join('')}
     </div>`:''}
     ${e.plannerText?`<div style="padding:12px 16px;background:var(--card2);border-radius:10px;border-left:3px solid var(--blue);margin-bottom:4px">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--blue);margin-bottom:4px">Unit Summary</div>
