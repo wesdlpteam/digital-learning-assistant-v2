@@ -3706,11 +3706,15 @@
       {
         "t": "PicCollage",
         "d": "Learners create a visual collage representing their personal strengths, calming strategies, and goals for Year 3, using photos, stickers, and text bubbles to make connections between their identity and how they interact with others."
+      },
+      {
+        "t": "Strengths Superpower Wearables",
+        "d": "Students use the Design Cycle to invent and craft a wearable 'superpower badge' or accessory that represents their unique strengths and self-regulation strategies. Using cardboard, felt, recycled materials, LEDs, copper tape, and simple coin cell batteries, students design, prototype, and build their wearable. They integrate a Makey Makey or micro:bit (pre-programmed with teacher support) so that when the wearable is touched or pressed, it triggers a digital message or sound (recorded affirmation, calming music, or their own voice) on an iPad or laptop. Each student presents their wearable and explains how it helps them remember their strengths and stay calm, connecting physical making with digital interaction and self-awareness."
       }
     ],
     "audited": true,
     "plannerText": "This unit engages Year 2 students in exploring self-awareness, strengths, and self-regulation strategies through activities like self-portraits, 'Calm Palm' exercises, personal goal setting, and peer reflection. Students investigate what helps them get calm, how to identify their needs, and how their choices and strengths influence their learning and social connections.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3738,11 +3742,15 @@
       {
         "t": "Kahoot",
         "d": "Students design and run a Kahoot quiz for their peers, with questions focused on identifying features, strengths, and weaknesses of different communication methods. This reinforces understanding of the central idea and encourages critical thinking about effectiveness in real-world contexts."
+      },
+      {
+        "t": "Message Machines: Inventing Communication Contraptions",
+        "d": "Students work in teams to invent and build a unique 'Message Machine'?a tangible device that sends a simple message (like a word or emoji) from one side of the classroom to the other without speaking or writing. Using recycled materials (cardboard, tubes, string, pulleys, levers, and craft supplies), students design physical mechanisms that can 'deliver' or 'reveal' a message. To integrate technology, students embed a Sphero Indi or Bee-Bot into their contraption as the message carrier, programming it to trigger a physical reveal (like opening a flap, lighting up an LED, or spinning a wheel with a symbol). The process follows the Design Cycle: students empathise (explore past and present communication challenges), define their message and audience, ideate creative delivery systems, prototype with both tech and craft, test and refine their machines, and finally present a live demonstration. This project blends engineering, coding, and creativity to deepen understanding of how messages can be sent, received, and interpreted in innovative ways."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores the different forms and features of communication?verbal, non-verbal, and visual?and how these impact effectiveness. Students investigate historical and modern communication methods, experiment with signs, symbols, music, and body language, and reflect on how people interpret messages. Activities include silent movies, composing music, and exploring digital and non-digital communication platforms.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3770,11 +3778,15 @@
       {
         "t": "Kahoot",
         "d": "Students co-create a Kahoot quiz on ethical online choices, using real scenarios from their own digital lives. They then run the quiz for another class, sparking discussion and peer teaching about responsible online behaviour."
+      },
+      {
+        "t": "CyberSafe Adventure Arcade",
+        "d": "Students work in teams to design and build a large, interactive arcade game that teaches peers about safe and ethical online choices. Using recycled cardboard, foam board, and craft materials, students physically construct arcade game cabinets and obstacle courses. They integrate simple robotics (e.g., Sphero Indi or Bee-Bot) programmed to respond to different 'online scenario' stations within the arcade. Each station presents a digital citizenship challenge (e.g., identifying safe passwords, spotting fake news, respecting privacy), which players solve by triggering physical levers, pressing crafted buttons, or guiding the robot through crafted pathways. The project follows the Design Cycle: students empathise with digital dilemmas, define arcade learning goals, ideate creative game elements, prototype physical and digital components, test with peers, and refine for a class arcade showcase. This hands-on hybrid experience empowers student agency, blends tech and tangible making, and brings cyber safety to life in a playful, memorable way."
       }
     ],
     "audited": true,
     "plannerText": "This unit focuses on ethical decision making to support safe and responsible online choices. Students investigate their own digital media use, co-create an online essential agreement, and engage in cyber safety projects and reflections, with strong emphasis on student agency and real-world application.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
@@ -3803,11 +3815,15 @@
         "t": "Minecraft: Filtering Water On The Iss",
         "d": "Students explore the 'Filtering Water On The ISS' Minecraft Education lesson to investigate how materials can be used to solve real-world challenges. They experiment with building and testing water filtration systems, connecting directly to the unit's focus on how materials behave and interact in different contexts.",
         "url": "https://education.minecraft.net/en-us/lessons/filtering-water-on-the-iss"
+      },
+      {
+        "t": "Matter Morphing Marble Run",
+        "d": "Students use the Design Cycle to invent and build a dynamic marble run that demonstrates states of matter and material changes. Teams prototype sections of the run using cardboard, recycled plastics, fabric, and clay, integrating features where marbles pass through 'solid', 'liquid', and 'gas' zones?such as tunnels (solid), slippery slides with water-safe coatings (liquid), and fans or balloons for 'air' obstacles (gas). Students embed Sphero Indi robots as interactive triggers: when a marble hits a sensor, Indi lights up and travels to the next zone, representing a change of state. iPads are used to document design iterations and record slow-motion videos of marble movement to analyze how different materials affect speed and flow. The project emphasizes hands-on construction, responsible material choices, and digital-physical integration to visualize matter's transformations."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores the different states of matter, how and why matter changes, and the responsible use of materials. Students conduct hands-on experiments, document their observations, and investigate real-world applications such as water filtration and material adaptation. The unit emphasizes scientific inquiry, ethical use of materials, and student agency in designing and testing solutions.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "St Kilda",
