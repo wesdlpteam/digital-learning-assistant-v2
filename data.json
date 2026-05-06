@@ -2121,9 +2121,34 @@
     "th": "Where We Are in Place and Time",
     "ci": "Exploring the past helps us to understand the present.",
     "lo": "Evidence and its significance in a place; Connections between the past and present within a place; Personal history shapes the present",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "ChatterPix Kids",
+        "d": "Students photograph historical artefacts or locations around the school, then use ChatterPix Kids to animate the artefacts, giving them a 'voice' to share their story and significance from the past. This makes history personal and engaging, directly connecting to the unit's focus on evidence and personal history."
+      },
+      {
+        "t": "Canva",
+        "d": "Students create a digital timeline using Canva, combining old and new photos of Wesley College, adding captions to highlight changes over time. This helps them visually compare the past and present, reinforcing the central idea of how exploring the past helps us understand the present."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students build a collaborative digital book documenting their Wonder Walk findings, including photos, drawings, and voice recordings about historical artefacts and stories from guest speakers. Each page can focus on a different aspect of Wesley's history or a personal family artefact."
+      },
+      {
+        "t": "iPad (Camera app)",
+        "d": "During the Wonder Walk and plaque hunt, students use the iPad camera to document evidence of the past around the campus. They then sort and sequence these images to create a visual timeline or 'evidence wall' in the classroom, supporting inquiry into change and continuity."
+      },
+      {
+        "t": "Explain Everything",
+        "d": "Students create interactive presentations comparing past and present images of Wesley or Melbourne landmarks. They can annotate, record their thinking, and draw connections between historical evidence and current features, supporting reflection and perspective-taking."
+      },
+      {
+        "t": "Physical Makerspace Project",
+        "d": "Students design and build a 3D model of a significant Wesley artefact or building (e.g., the school lion, a time capsule, or an old classroom) using recycled materials, cardboard, and craft supplies. They label features and present their model, explaining how it represents the past and what evidence they used for accuracy."
+      }
+    ],
+    "audited": true,
+    "plannerText": "Students investigate the significance of evidence in a place, make connections between past and present at Wesley College, and explore how personal and community history shapes the present. Activities include a Wonder Walk to document artefacts, excursions, guest speakers, comparing historical and current images, and a culminating artefact project.",
     "stemRebooted": true
   },
   {
@@ -2205,9 +2230,35 @@
     "th": "How We Organise Ourselves",
     "ci": "Needs can be met with digital systems.",
     "lo": "What are digital systems; Ideas and information can be organised and shared in safe online environments; Being a responsible digital citizen",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Wise Discussion Chatbots",
+        "d": "Students design and script their own digital citizenship chatbots using Wise Discussion Chatbots. They create interactive scenarios where users must make choices about online safety, privacy, and responsible digital tool use, directly linking to the central idea of needs being met with digital systems. Students test and refine their chatbots with peers, collecting feedback and iterating on their digital systems."
+      },
+      {
+        "t": "Canva",
+        "d": "Students use Canva to collaboratively design infographics or digital posters that map out the components of digital systems (hardware, software, peripherals) and how they meet different needs at school and home. They incorporate icons, diagrams, and real-life examples from their digital log activity, making abstract systems visible and relatable."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students create a shared Padlet wall to document and reflect on their digital footprint and online habits. They upload screenshots, photos, or drawings of the digital tools they use, annotate with comments about safety, privacy, and creation vs consumption, and respond to classmates' posts to build a collaborative understanding of responsible digital citizenship."
+      },
+      {
+        "t": "Minecraft: Revamp Melbourne",
+        "d": "Students use Minecraft: Revamp Melbourne to collaboratively design and build a digital solution that meets a real or imagined need in the city. They must explain how their solution uses digital systems to address current and future needs, linking directly to the unit's focus on digital systems and societal impact.",
+        "url": "https://education.minecraft.net/en-us/lessons/revamp-melbourne"
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students author a digital 'Essential Agreement' book in Book Creator, combining text, voice recordings, and images to outline their personal commitments to safe, responsible, and creative use of digital systems. They publish and share their books with the class, fostering agency and digital communication skills."
+      },
+      {
+        "t": "Makerspace: Cardboard Computer System Models",
+        "d": "In the Makerspace, students work in teams to physically prototype a desktop computer or tablet using cardboard, bottle caps, recycled plastics, and other materials. They label and explain each part (screen, keyboard, mouse, CPU, ports), then present how each component helps meet user needs. Students can add moving parts (e.g., popstick levers for USB ports) to demonstrate function, making the concept of digital systems tangible."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how needs can be met with digital systems, focusing on what digital systems are, how information is organised and shared safely online, and what it means to be a responsible digital citizen. Students investigate digital tools, map their digital habits, create essential agreements, and engage in hands-on and digital projects to deepen their understanding of digital systems and online safety.",
     "stemRebooted": true
   },
   {
@@ -2216,9 +2267,35 @@
     "th": "How the World Works",
     "ci": "Observing how materials change helps us make sense of the physical world.",
     "lo": "Observable properties of solids and liquids; How heating and cooling change state; Scientific thinking helps solve everyday problems",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Merge Cubes",
+        "d": "Students use Merge Cubes and the Merge Explorer app on iPads to interact with augmented reality models of molecules and materials. They can observe and manipulate 3D representations of solids, liquids, and the process of melting or freezing, then record short video explanations of what they observe and how it connects to their experiments."
+      },
+      {
+        "t": "Canva",
+        "d": "Students create animated infographics or digital posters in Canva to visually explain the process of heating and cooling materials, using their own experiment photos (taken with the iPad camera) and Canva's 'Remove Background' feature to highlight changes of state."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students document their experiments and observations in a digital science journal using Book Creator. They combine photos, diagrams, voice recordings, and text to explain how materials change state, and publish their books to share with peers or families."
+      },
+      {
+        "t": "Padlet",
+        "d": "Students collaboratively collect and share real-life examples of materials changing state (e.g., melting chocolate, freezing water) by uploading photos, videos, and written observations to a shared Padlet wall. They can comment on each other's posts to discuss reversible and irreversible changes."
+      },
+      {
+        "t": "Minecraft: Filtering Water On The Iss",
+        "d": "Students explore how water is filtered and recycled on the International Space Station in Minecraft Education, then compare this process to how heating and cooling can change the state of water on Earth. They design and test their own virtual water filtration systems, making connections to the science of material changes.",
+        "url": "https://education.minecraft.net/en-us/lessons/filtering-water-on-the-iss"
+      },
+      {
+        "t": "Makerspace Project: Recycled Materials Melting Race",
+        "d": "Students design and build physical prototypes of 'melting race tracks' using cardboard, recycled plastic containers, foil, and popsticks. They test how different materials (e.g., chocolate, butter, ice) melt and flow down the tracks under heat lamps or sunlight, then measure and compare melting rates. Students document their process with iPad photos and create a display explaining their findings."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit focuses on observing how materials change state (solid to liquid and vice versa) through hands-on experiments with heating and cooling, classifying materials, and applying scientific thinking to real-life problems. Students record data, use scientific vocabulary, and reflect on how understanding material changes helps solve everyday challenges.",
     "stemRebooted": true
   },
   {
@@ -2227,9 +2304,35 @@
     "th": "Sharing the Planet",
     "ci": "The diversity of soils, rocks, and minerals shapes the way people value and use Earth's resources.",
     "lo": "Observable properties of soils, rocks and minerals; Earth's resources are vital and must be used responsibly; First Nations knowledge of soils and rocks",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Merge Cubes",
+        "d": "Students use Merge Cubes and the Merge Explorer app on iPads to create interactive 3D models of different soil, rock, and mineral types. They can annotate each model with information about its properties, uses, and significance to humans and ecosystems, then share their virtual collections with peers for collaborative exploration."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design infographics in Canva that compare the properties and uses of soils, rocks, and minerals in Australia and a neighbouring country. They include visuals, maps, and data to highlight similarities, differences, and the importance of responsible resource use."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students create a digital field guide in Book Creator, documenting their local soil and rock investigations with photos (using iPad Camera), observations, and research on First Nations Australians' traditional uses of earth materials. The guide can be published and shared with the school community."
+      },
+      {
+        "t": "Minecraft: Radical Recycling",
+        "d": "Students explore the 'Radical Recycling' lesson in Minecraft Education to understand recycling processes and the importance of using Earth's resources responsibly. They participate in in-game challenges that reinforce the value of sustainable practices for soils, rocks, and minerals.",
+        "url": "https://education.minecraft.net/en-us/lessons/radical-recycling"
+      },
+      {
+        "t": "Padlet",
+        "d": "Students collaboratively build a Padlet wall to share photos, questions, and findings from their soil, rock, and mineral hunts around the school and at home. They can comment on each other's posts, compare samples, and reflect on the diversity and value of earth materials."
+      },
+      {
+        "t": "Makerspace Project: DIY Soil Sifter & Rock Sorter",
+        "d": "In the Makerspace, students design and build their own soil sifters and rock sorters using recycled materials (cardboard, mesh, bottle caps, popsticks, glue). They test their devices by collecting soil samples from the school grounds, separating components, and analysing the results to understand soil diversity and its impact on plant growth and resource use."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit engages Year 3 students in hands-on investigations of soils, rocks, and minerals, exploring their observable properties, uses, and cultural significance?especially through First Nations perspectives. Students compare natural features in Australia and neighbouring countries, conduct local fieldwork, and reflect on responsible resource use and sustainability.",
     "stemRebooted": true
   },
   {
@@ -2351,9 +2454,35 @@
     "th": "How We Organise Ourselves",
     "ci": "Communities create rules, laws and services to help people live together fairly and safely.",
     "lo": "Effective and influential leadership; Strengths that help leaders guide others; How leadership impacts communities",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Minecraft: Revamp Melbourne",
+        "d": "Students will use Minecraft Education's 'Revamp Melbourne' lesson to collaboratively redesign a part of Melbourne, focusing on how rules, laws, and services shape fair and safe communities. They will justify their design choices and reflect on how their virtual city meets the needs of its citizens, directly linking to the central idea of community organisation.",
+        "url": "https://education.minecraft.net/en-us/lessons/revamp-melbourne"
+      },
+      {
+        "t": "Padlet",
+        "d": "Students create a digital 'Community Noticeboard' using Padlet, posting examples of local rules, laws, and services they research or observe in their neighbourhoods. They can comment on each other's posts, discuss fairness and safety, and propose improvements, fostering real-world connections to the unit."
+      },
+      {
+        "t": "Adobe Express Podcasting",
+        "d": "Students script and record short podcasts interviewing 'community leaders' (role-played by peers or actual guests) about the importance of rules and services. They edit and publish episodes, building communication skills and deepening understanding of how leadership and laws impact daily life."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Students design and distribute a digital survey using Microsoft Forms to gather data from peers or family about which community services are most valued and why. They analyse the results in class, discussing how community needs drive the creation of rules and services."
+      },
+      {
+        "t": "Canva",
+        "d": "Students use Canva to design infographics or posters explaining a specific community rule, law, or service, highlighting its purpose and impact. They can use the 'Remove Background' feature to add photos of their local area, making the project visually engaging and relevant."
+      },
+      {
+        "t": "Makerspace Project: Cardboard Community Systems",
+        "d": "In the Makerspace, students work in teams to physically prototype a model of a community system (e.g., a recycling station, public transport stop, or emergency service hub) using cardboard, recycled materials, and craft supplies. They must label the rules/laws that govern its use and present how it helps people live together fairly and safely."
+      }
+    ],
+    "audited": true,
+    "plannerText": "This unit explores how communities create rules, laws, and services to help people live together fairly and safely. Students investigate effective leadership, the function of organisations, and the impact of societal decision-making through scenarios, guest speakers, team-building activities, and persuasive speeches for leadership roles.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:19:59.644Z",
