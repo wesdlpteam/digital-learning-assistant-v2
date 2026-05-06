@@ -2291,11 +2291,15 @@
         "t": "Minecraft: Filtering Water On The Iss",
         "d": "Students explore how water is filtered and recycled on the International Space Station in Minecraft Education, then compare this process to how heating and cooling can change the state of water on Earth. They design and test their own virtual water filtration systems, making connections to the science of material changes.",
         "url": "https://education.minecraft.net/en-us/lessons/filtering-water-on-the-iss"
+      },
+      {
+        "t": "Chill & Melt Pop-Up Snack Lab",
+        "d": "Students use the Design Cycle to invent and prototype a 'pop-up snack cart' that demonstrates material changes through heating and cooling. In teams, students design a cart using recycled cardboard, wheels, and craft materials, then engineer two snack stations: one for melting (e.g., safe chocolate or butter melting using warm water or safe heat packs) and one for freezing (e.g., making simple ice pops using salt-ice baths). They embed a simple digital temperature sensor (e.g., with a connected iPad or micro:bit thermometer) to monitor and display the temperature changes at each station. Students build interactive signs or dials (using paper circuits or LED lights) that light up when materials have changed state. The physical cart and stations are decorated with student-created labels and digital illustrations (drawn on iPads and printed). Students test, iterate, and present their snack lab, explaining the science of material changes to visiting classes."
       }
     ],
     "audited": true,
     "plannerText": "This unit focuses on observing how materials change state (solid to liquid and vice versa) through hands-on experiments with heating and cooling, classifying materials, and applying scientific thinking to real-life problems. Students record data, use scientific vocabulary, and reflect on how understanding material changes helps solve everyday challenges.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -2324,11 +2328,15 @@
       {
         "t": "Padlet",
         "d": "Students collaboratively build a Padlet wall to share photos, questions, and findings from their soil, rock, and mineral hunts around the school and at home. They can comment on each other's posts, compare samples, and reflect on the diversity and value of earth materials."
+      },
+      {
+        "t": "Sustainable Soil Sifters: Robo-Miner Challenge",
+        "d": "Students work in teams to design, build, and test a 'Robo-Miner'?a hand-crafted, small-scale soil sorting machine that combines physical construction with simple robotics. Using recycled materials (cardboard, plastic bottles, mesh, popsticks) and a Sphero Indi or Bee-Bot as the motor, students prototype a device that can separate different soil components (gravel, sand, organic matter) they collect from the school grounds. The robot drives or pulls the sifter mechanism, demonstrating the sorting process. Students research Indigenous and global soil use, then reflect on sustainable practices by designing their Robo-Miner to minimize waste and maximize reusability. The project follows the Design Cycle: investigate soils, plan and sketch their machine, build and test with real soil samples, iterate, and present their working models with digital documentation (photos/videos on iPads)."
       }
     ],
     "audited": true,
     "plannerText": "This unit engages Year 3 students in hands-on investigations of soils, rocks, and minerals, exploring their observable properties, uses, and cultural significance?especially through First Nations perspectives. Students compare natural features in Australia and neighbouring countries, conduct local fieldwork, and reflect on responsible resource use and sustainability.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -2357,11 +2365,15 @@
       {
         "t": "Google Maps",
         "d": "Students use Google Maps to plot significant places in Australia and neighbouring countries, including First Nations Countries/Places, state capitals, and cultural landmarks. They add notes or images to each location, explaining its significance and how it is valued or represented by different communities. Students use Street View to observe ground-level evidence, compare places and capture notes that connect directly to the unit."
+      },
+      {
+        "t": "Belonging Bridges: Augmented Reality Storywalk",
+        "d": "Students work in teams to design and build a large, physical 3D map of Australia and its neighbouring regions using cardboard, recycled materials, clay, and natural objects. Each team selects a state, territory, or neighbouring region and researches its cultural, historical, and First Nations significance. They craft miniature landmarks, artefacts, and symbols to represent key features and stories. Using iPads and an age-appropriate AR app (e.g., Quiver or AR Makr), students create digital overlays?such as short video narrations, audio poetry, or animations?linked to their physical models. When visitors scan the map with an iPad, the AR content appears, sharing personal and cultural connections to place. The whole class collaborates to lay out the map, connect regions with 'bridges' representing shared stories or relationships, and host a guided AR storywalk for the school community. This project deeply integrates physical making with digital storytelling, celebrating diverse ways of understanding land, identity, and belonging."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores how land and place are represented and valued in different ways, focusing on Australia's states, territories, and neighbouring regions, as well as First Nations perspectives. Students investigate maps, cultural artefacts, poetry, and personal connections to place, comparing different ways of understanding and expressing identity and belonging.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
@@ -2389,11 +2401,15 @@
       {
         "t": "Micro:bit",
         "d": "Students design and code Micro:bit activity trackers to monitor their daily movement, exploring how choices impact health and wellbeing. They analyse their own data and set goals for healthy habits, making the connection between digital systems and personal wellbeing tangible and exciting. (https://microbit.org/teach/lessons/?selected=being-active)"
+      },
+      {
+        "t": "Wellbeing Wearables Workshop",
+        "d": "Students will design and build their own 'Wellbeing Wearable'?a creative, functional accessory (such as a bracelet, badge, or headband) that visually tracks or encourages healthy habits. Using craft materials (felt, cardboard, recycled plastics, fabric, LED stickers, yarn, velcro, etc.), students physically prototype their wearable. They then integrate a simple digital element, like a programmable step counter using a pedometer sensor or a mood indicator using a basic circuit with colored LEDs (e.g., with a Makey Makey or simple Snap Circuits kit). Students follow the Design Cycle: empathising by interviewing classmates about wellbeing needs, defining a focus (e.g., tracking hydration, reminding for movement breaks, mood check-ins), ideating designs, prototyping with both tech and craft, testing with peers, and improving their wearable. The project culminates in a 'Wellbeing Catwalk,' where students demonstrate their creations and explain how their choices support health and wellbeing."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores how the choices and actions students make contribute to their health and wellbeing. Activities include investigating nutrition, exercise, sleep, and mindfulness, engaging with guest speakers, analysing data, and creating personal health action plans. Students reflect on their learning and take action to improve their own wellbeing.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "Glen Waverley",
