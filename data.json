@@ -2437,11 +2437,15 @@
       {
         "t": "Micro:bit",
         "d": "Students use Micro:bit to compose and perform digital music that expresses their responses to different artworks, blending technology and the arts. They experiment with sound, rhythm, and code to communicate emotions and ideas, deepening their creative and critical thinking. (https://microbit.org/teach/lessons/?selected=musical-microbit-unit-overview)"
+      },
+      {
+        "t": "Emotion Machines: Kinetic Art Sculptures",
+        "d": "Students use the Design Cycle to explore how emotions can be expressed through movement and visual art. In teams, they brainstorm and sketch ideas for a kinetic sculpture that visually represents a chosen emotion (e.g., joy, curiosity, surprise). Using recycled materials, cardboard, craft sticks, and art supplies, they build a physical sculpture featuring moving parts powered by a simple motor or a Sphero Indi robot hidden inside the base. Students program the Sphero Indi or wire up the motor to create specific movement patterns that reflect their emotion (e.g., spinning for excitement, gentle swaying for calm). They decorate the sculpture in the style of Yayoi Kusama, integrating bold colours and patterns. Finally, students present their kinetic art at the student-led art show, explaining their design choices and how the movement and visual elements express their selected emotion."
       }
     ],
     "audited": true,
     "plannerText": "This unit immerses students in diverse artistic expressions, including poetry, visual art inspired by Yayoi Kusama, music composition, and excursions to the NGV and State Theatre. Students analyse, create, and respond to art forms, culminating in a student-led art show where they display and reflect on their own creative works.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:14:50.098Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
@@ -2474,11 +2478,15 @@
       {
         "t": "Canva",
         "d": "Students use Canva to design infographics or posters explaining a specific community rule, law, or service, highlighting its purpose and impact. They can use the 'Remove Background' feature to add photos of their local area, making the project visually engaging and relevant."
+      },
+      {
+        "t": "Community Decision-Making Board Game Builders",
+        "d": "Students work in teams to design and construct a large-scale, interactive board game that simulates how communities create and enforce rules, laws, and services. Using cardboard, recycled materials, markers, and clay, students physically build the game board, player pieces, and 3D structures representing community spaces (e.g., parks, schools, council buildings). They use iPads or Sphero Indi robots as 'community leaders' or 'decision-makers' that move across the board, triggered by digital QR codes or NFC tags embedded in the physical board. These codes activate student-created digital scenarios (e.g., short videos, audio dilemmas) that require players to make decisions about rules, leadership, or services. Students follow the Design Cycle: Investigate community needs, Plan the board layout and game mechanics, Create physical and digital components, Test the game with peers, and Reflect on how their rules and leadership decisions impact fairness and safety in their simulated community."
       }
     ],
     "audited": true,
     "plannerText": "This unit explores how communities create rules, laws, and services to help people live together fairly and safely. Students investigate effective leadership, the function of organisations, and the impact of societal decision-making through scenarios, guest speakers, team-building activities, and persuasive speeches for leadership roles.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:19:59.644Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
@@ -2511,11 +2519,15 @@
       {
         "t": "Microsoft Forms",
         "d": "Students conduct a survey using Microsoft Forms to gather data on classmates' and families' choices around product materials and recycling habits. They analyze the results in Excel to identify trends and present their findings to the class."
+      },
+      {
+        "t": "Smart Animal Habitat Engineers",
+        "d": "Students work in teams to design, build, and test enrichment habitats for small toy animals using recycled materials (cardboard, fabric scraps, bottle caps, string, etc.). They incorporate simple programmable robotics (e.g., Sphero Indi or Bee-Bot) as 'animal agents' to simulate animal movement and interaction with their habitat. Teams use the Design Cycle: (1) Investigate real animal needs and sustainable materials, (2) Plan their enrichment features and how the robot will explore or interact with them, (3) Build their habitats with physical crafting tools, creating tunnels, feeders, shelters, and puzzles, (4) Program the robot to navigate, triggering physical elements (like levers, ramps, or doors) and recording observations, (5) Reflect and iterate based on how well their design supports the 'animal agent's' wellbeing and environmental impact. Students document their process and findings in digital journals or video reflections."
       }
     ],
     "audited": true,
     "plannerText": "Students investigate how material properties determine their use, explore sustainable solutions, and research how products impact the natural world. They conduct hands-on science experiments, document findings in digital journals, and design, build, and test enrichment toys for animals using sustainable materials.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:22:03.530Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
@@ -2547,11 +2559,15 @@
       {
         "t": "Minecraft: Revamp Melbourne",
         "d": "Students use 'Minecraft: Revamp Melbourne' (https://education.minecraft.net/en-us/lessons/revamp-melbourne) to design a future Melbourne that respects and integrates First Nations perspectives on Country, language, and community. They must explain how their builds reflect Indigenous values and sustainable practices."
+      },
+      {
+        "t": "Dreamtime Journey: Interactive Story Pathways",
+        "d": "Students work in teams to design and construct a large, winding 'story pathway' representing a Dreamtime journey across Country. Using recycled materials, cardboard, clay, natural elements, and paint, they build physical story stations along the path?each station depicts a key moment, animal, or landscape from a Dreamtime story. At each station, students embed a simple programmable device (e.g., Sphero Indi or Bee-Bot) with custom-printed scannable story codes or symbols. As the robot travels the path, it pauses at each station: students use iPads to scan the code, triggering digital content (audio, video, or AR overlays) they have created?such as retellings, soundscapes, or digital artwork?to enrich the physical model with layered storytelling and First Nations perspectives. The project follows the Design Cycle: empathise (explore Dreamtime stories and cultural meanings), define (decide on story moments to highlight), ideate (plan the pathway and interactive elements), prototype (build and test stations and robot integration), and evaluate (share with peers and reflect on connections to Country, language, and community)."
       }
     ],
     "audited": true,
     "plannerText": "Students explore the significance of Country, language, and community to First Nations people through Dreamtime stories, art analysis, excursions (e.g., CERES, Yiramalay elders), and hands-on activities. They create narratives, artworks, and dioramas, engage with elders, and reflect on physical, cultural, and spiritual connections to Country.",
-    "stemRebooted": false,
+    "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:28:17.350Z",
     "humanVerifiedBy": "andrew.delmastro@wesleycollege.edu.au",
