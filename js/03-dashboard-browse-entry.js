@@ -29,6 +29,15 @@ async function fetchPlannerContext(entry) {
   }
 }
 
+
+function splitLinesOfInquiry(text){
+  return String(text||'')
+    .replace(/\u2022/g,'•')
+    .split(/\s*(?:;|•|â€¢|\?{2,}|\r?\n+)\s*/g)
+    .map(l=>l.trim().replace(/^[-–—•]+\s*/,''))
+    .filter(Boolean);
+}
+
 function closeEntry(){
   if(CURRENT_ENTRY_IDX !== null){
     // Release lock in background
@@ -466,7 +475,7 @@ function renderEntry(idx){
     </div>`:''}
     ${e.lo?`<div style="padding:12px 16px;background:var(--card2);border-radius:10px;border-left:3px solid var(--purple);margin-bottom:12px">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--purple);margin-bottom:8px">Lines of Inquiry</div>
-      ${e.lo.split(/[;•]/).filter(l=>l.trim()).map((l,i)=>`<div style="display:flex;gap:8px;align-items:baseline;margin-bottom:4px"><span style="font-size:12px;font-weight:700;color:var(--purple);flex-shrink:0">0${i+1}</span><span style="font-size:13px;color:#ccc;line-height:1.5">${esc(l.trim())}</span></div>`).join('')}
+      ${splitLinesOfInquiry(e.lo).map((l,i)=>`<div style="display:flex;gap:8px;align-items:baseline;margin-bottom:4px"><span style="font-size:12px;font-weight:700;color:var(--purple);flex-shrink:0">0${i+1}</span><span style="font-size:13px;color:#ccc;line-height:1.5">${esc(l.trim())}</span></div>`).join('')}
     </div>`:''}
     ${e.plannerText?`<div style="padding:12px 16px;background:var(--card2);border-radius:10px;border-left:3px solid var(--blue);margin-bottom:4px">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--blue);margin-bottom:4px">Unit Summary</div>
