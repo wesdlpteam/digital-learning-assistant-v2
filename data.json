@@ -4636,11 +4636,15 @@
       {
         "t": "Explain Everything",
         "d": "Students create interactive digital journals on Explain Everything to document their learning journey about wellbeing, emotions, and safe interactions. They combine voice recordings, drawings, photos, and text to reflect on personal goals and strategies for positive relationships. This dynamic tool empowers students to share their evolving understanding and receive real-time feedback from peers and teachers, deepening their self-awareness and connection to the unit?s central idea."
+      },
+      {
+        "t": "Friendship Fortress: Interactive Wellbeing Maze",
+        "d": "Students work in teams to design and construct a large, tabletop 3D maze using cardboard, recycled materials, and craft supplies. Each section of the maze represents a real-life or online social scenario (e.g., resolving conflict, cyberbullying, supporting a friend, setting boundaries). Teams embed simple electronic components (e.g., Makey Makey, micro:bit, or conductive tape) to create interactive checkpoints?when a metal marble or touchpoint is triggered, a digital message or sound (programmed via Scratch or micro:bit) gives feedback or a tip related to safe and healthy interactions. Students use the Design Cycle to empathise (identify key wellbeing challenges), ideate (brainstorm maze paths and scenarios), prototype (build and wire the maze), test (navigate and refine), and reflect (share insights on managing emotions and friendships). The final product is a collaborative, hands-on learning tool that fuses tangible making with digital interactivity, reinforcing the unit's focus on wellbeing and growth mindset."
       }
     ],
     "audited": true,
     "plannerText": "This unit focuses on understanding safe and healthy interactions both online and in real life, strategies for managing friendships and emotions, and the importance of wellbeing and growth mindset. Students engage in activities such as cyber safety lessons, wellbeing poster creation, learner profile self-portraits, goal setting, and reflective Seesaw tasks to build self-awareness and positive relationships.",
-    "stemRebooted": false
+    "stemRebooted": true
   },
   {
     "ca": "Elsternwick",
@@ -4668,6 +4672,10 @@
       {
         "t": "Puppet Pals",
         "d": "Students create simple digital puppet shows to share their personal timelines by selecting characters and backgrounds that represent key moments from their past. They narrate their stories aloud while animating their puppets to sequence events, helping them express how their history shapes who they are today in a fun, age-appropriate way."
+      },
+      {
+        "t": "Memory Lane Story Trains",
+        "d": "Students design and build a 'Memory Lane' train using recycled boxes, cardboard, and craft materials, where each train carriage represents a different moment or artefact from their family's past. They decorate each carriage with drawings, photos, or 3D objects (e.g., clay models, fabric scraps) to tell their story. Using Bee-Bots, students code simple journeys for their trains along a large floor map, stopping at each carriage to share their story with peers. The project follows the Design Cycle: students imagine their family's story, plan and sketch their train, build and decorate the carriages, program the Bee-Bot path, test and refine both physical and digital elements, and finally present their 'Memory Lane Story Train' to the class."
       }
     ],
     "audited": true,
@@ -4675,6 +4683,6 @@
     "humanVerified": false,
     "humanVerifiedResetAt": "2026-05-05T03:51:54.686Z",
     "humanVerifiedResetReason": "Suggestion edited, swapped, regenerated or changed after human verification",
-    "stemRebooted": false
+    "stemRebooted": true
   }
 ]
