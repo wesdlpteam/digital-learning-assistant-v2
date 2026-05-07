@@ -2521,33 +2521,37 @@
     "lo": "How material properties determine their use; Material solutions for a sustainable future; How research solves problems in the natural world",
     "s": [
       {
-        "t": "Merge Cubes",
-        "d": "Students use Merge Cubes and the Merge Explorer app to investigate the properties of different materials in 3D, then create an interactive AR showcase comparing sustainable and non-sustainable materials. Students record their findings in short video explanations using the iPad camera and upload to Seesaw for peer review."
+        "t": "Canva + GarageBand (App Smash)",
+        "d": "Students design an infographic in Canva showcasing the life cycle and decomposition rates of various materials (e.g., plastic, glass, metal, biodegradable items). They then import their infographic into GarageBand and record a podcast-style narration explaining how material choices impact sustainability, integrating scientific vocabulary and real-world examples.",
+        "url": "https://www.canva.com/ | https://www.apple.com/au/garageband/"
       },
       {
-        "t": "Book Creator",
-        "d": "Students document their science experiments and research on material properties, decomposition, and sustainable solutions by creating a multimedia science journal in Book Creator. They include photos, videos, diagrams, and reflections to track their learning journey throughout the unit."
+        "t": "Minecraft: Its Good To Be Green + Book Creator (App Smash)",
+        "d": "Students explore sustainable building practices in the Minecraft: Its Good To Be Green lesson (examining how different materials affect the environment), then document their discoveries and reflections in a digital science journal using Book Creator, including screenshots and annotated diagrams from their Minecraft builds.",
+        "url": "https://education.minecraft.net/en-us/lessons/its-good-to-be-green | https://bookcreator.com/"
       },
       {
-        "t": "Canva",
-        "d": "Students design infographics in Canva to communicate the environmental impact of different materials used in everyday products. They use Canva's 'Remove Background' feature to create product cutaways and visually highlight sustainable alternatives."
+        "t": "Micro:bit: Electrical Conductors",
+        "d": "Students use Micro:bit to investigate the conductivity of various materials, linking to the unit's focus on material properties. They collect and analyze data to determine which materials are best suited for specific uses, then share their findings using digital graphs and reports.",
+        "url": "https://microbit.org/teach/lessons/?selected=electrical-conductors-unit-of-work"
       },
       {
-        "t": "Minecraft: Its Good To Be Green",
-        "d": "Students explore a sustainable building in Minecraft Education, analyzing how design choices impact the environment. They reflect on how these principles could be applied to their own enrichment toy prototypes and document their ideas in a digital portfolio.",
-        "url": "https://education.minecraft.net/en-us/lessons/its-good-to-be-green"
+        "t": "Seesaw Digital Material Hunt",
+        "d": "Students complete a Seesaw scavenger hunt, photographing and categorizing classroom objects by material type (metal, plastic, glass, etc.). They annotate their photos with observations about each material's properties and hypothesize about its environmental impact, fostering digital research and communication skills.",
+        "url": "https://web.seesaw.me/"
       },
       {
-        "t": "Microsoft Forms",
-        "d": "Students conduct a survey using Microsoft Forms to gather data on classmates' and families' choices around product materials and recycling habits. They analyze the results in Excel to identify trends and present their findings to the class."
+        "t": "Adobe Express Animated Explainers",
+        "d": "Using Adobe Express, students create short animated videos explaining how research into material properties leads to innovative, sustainable product designs. They script, storyboard, and narrate their animations, directly connecting to the unit's inquiry into design and impact.",
+        "url": "https://www.adobe.com/express/"
       },
       {
-        "t": "Smart Animal Habitat Engineers",
-        "d": "Students work in teams to design, build, and test enrichment habitats for small toy animals using recycled materials (cardboard, fabric scraps, bottle caps, string, etc.). They incorporate simple programmable robotics (e.g., Sphero Indi or Bee-Bot) as 'animal agents' to simulate animal movement and interaction with their habitat. Teams use the Design Cycle: (1) Investigate real animal needs and sustainable materials, (2) Plan their enrichment features and how the robot will explore or interact with them, (3) Build their habitats with physical crafting tools, creating tunnels, feeders, shelters, and puzzles, (4) Program the robot to navigate, triggering physical elements (like levers, ramps, or doors) and recording observations, (5) Reflect and iterate based on how well their design supports the 'animal agent's' wellbeing and environmental impact. Students document their process and findings in digital journals or video reflections."
+        "t": "Makerspace: Sustainable Animal Enrichment Prototype",
+        "d": "In the Makerspace, students design and build a prototype of an enrichment toy or feeding device for a zoo animal, using recycled or sustainable materials. They test their prototypes, reflect on material choices, and present how their design supports animal wellbeing and environmental sustainability."
       }
     ],
     "audited": true,
-    "plannerText": "Students investigate how material properties determine their use, explore sustainable solutions, and research how products impact the natural world. They conduct hands-on science experiments, document findings in digital journals, and design, build, and test enrichment toys for animals using sustainable materials.",
+    "plannerText": "The unit 'How the World Works' explores how the design and use of products impact the natural world, focusing on material properties, sustainability, and problem-solving through research. Key activities include science experiments on material properties, digital science journals, designing animal enrichment prototypes, and reflecting on the environmental impact of materials.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:22:03.530Z",
