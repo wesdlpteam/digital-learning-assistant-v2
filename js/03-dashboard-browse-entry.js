@@ -1,4 +1,4 @@
-let DATA = [];
+var DATA = (typeof DATA !== 'undefined') ? DATA : [];
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzIoUL_vbTaH4P7PXuX8HeU9Xh6HuiEWJ05k7q50aJjCg7oeF-ELrlLuPx8uxPFHmE-eA/exec';
 let DRIVE_TOKEN = null;
 let CURRENT_USER_EMAIL = '';
