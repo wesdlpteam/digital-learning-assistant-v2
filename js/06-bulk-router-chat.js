@@ -630,6 +630,17 @@ function toggleHumanVerified(idx){
   if(CURRENT_ENTRY_IDX === idx && typeof renderEntry === 'function') renderEntry(idx);
 }
 
+function removeAllHumanVerified(){
+  if(!DATA || !DATA.length) return;
+  const count = DATA.filter(e => isHumanVerifiedEntry_(e)).length;
+  if(!count){ setStatus('No verified entries to reset'); return; }
+  if(!confirm(`Remove human verification from all ${count} entries? This lets you start verifying from scratch.`)) return;
+  DATA.forEach(function(entry, idx){ setHumanVerifiedForEntry_(idx, false); });
+  saveToDrive();
+  setStatus(`Cleared human verification from ${count} entries`);
+  if(typeof renderBrowse === 'function') renderBrowse();
+}
+
 function markEntryNeedsHumanRecheck_(idx, reason){
   const entry = DATA && DATA[idx];
   if(!entry || !isHumanVerifiedEntry_(entry)) return;
@@ -686,6 +697,7 @@ function renderBrowse(){
     <span class="human-verified-tick" style="margin-left:0">✓ Human verified audit</span>
     <span style="font-size:13px;color:var(--text);font-weight:800">${totalVerifiedCount}/${DATA.length} units checked</span>
     <span style="font-size:12px;color:var(--dim)">${remainingCount ? `${remainingCount} still need a human check` : 'All units have been human verified'}</span>
+    ${totalVerifiedCount > 0 ? `<button onclick="removeAllHumanVerified()" style="margin-left:auto;padding:5px 12px;background:transparent;border:1px solid rgba(255,128,128,0.3);color:#FF8080;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear all human verification flags so you can re-verify from scratch">Reset all verified</button>` : ''}
   </div>`;
   document.getElementById('browse-list').innerHTML=verificationSummaryHtml + filtered.map(({e,idx})=>{
     const verified = isHumanVerifiedEntry_(e);
