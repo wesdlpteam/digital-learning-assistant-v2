@@ -1,1948 +1,240 @@
-function computeStats(){
-  const toolCounts={}, campusTools={}, yearTools={}; let total=0;
-  
-  DATA.forEach(e=>{
-    if(e.audited === false) return;
-    getSugs(e).forEach((s, slotIdx)=>{
-      // Skip STEM Design Cycle slot (#6) so it doesn't pollute the audit chart
-      if(slotIdx === 5) return;
-      const raw=(s&&s.t&&s.t.trim()&&s.t.trim()!=='TBA')?s.t.trim():null;
-      if(!raw) return;
-      // Strategy: normalise the FULL name first. If it resolves to a known tool, use it directly.
-      // Only split into parts for genuine multi-tool combinations (& + or App Smash patterns).
-      let parts = [];
-      // Check for "App Smash" pattern: "Tool (App Smash with OtherTool)"
-      const appSmashParen = raw.match(/^(.+?)\s*\(\s*App\s*Smash\s+with\s+(.+?)\s*\)/i);
-      const appSmashPlus = raw.match(/^(.+?)\s*[+]\s*(.+?)\s+App\s*Smash/i);
-      if(appSmashParen){
-        parts = [appSmashParen[1].trim(), appSmashParen[2].trim()];
-      } else if(appSmashPlus){
-        parts = [appSmashPlus[1].trim(), appSmashPlus[2].trim()];
-      } else {
-        // Try normalising the whole name first — catches "Minecraft: Area and Volume" → "Minecraft Education"
-        const wholeNorm = normaliseToolName(raw);
-        if(wholeNorm !== raw){
-          // Normalisation matched — use the single normalised name
-          parts = [raw]; // will be normalised again below
-        } else {
-          // No match — try splitting on & and + only (NOT "and" — too aggressive)
-          parts = raw.split(/\s*[&+]\s*/).map(t=>t.trim()).filter(Boolean);
-        }
-      }
-      const nca=normCa(e.ca);
-      parts.forEach(rawT=>{
-        // Normalise variants: remove hyphens, fix capitalisation for known tools
-        const t = normaliseToolName(rawT);
-        toolCounts[t]=(toolCounts[t]||0)+1;
-        if(!campusTools[nca]) campusTools[nca]={};
-        campusTools[nca][t]=(campusTools[nca][t]||0)+1;
-        if(!yearTools[e.yl]) yearTools[e.yl]={};
-        yearTools[e.yl][t]=(yearTools[e.yl][t]||0)+1;
-        total++;
-      });
-    });
-  });
-  
-  const incompleteEntries = DATA.filter(e => e.audited === false || getSugs(e).length < 6 || getSugs(e).some(s=>!s||!s.t||!s.t.trim()||s.t.trim()==='TBA'));
-  const sorted=Object.entries(toolCounts).sort((a,b)=>b[1]-a[1]).map(([name,count])=>({name,count,pct:total?Math.round(count/total*100):0}));
-  return {sorted,campusTools,yearTools,total,incompleteCount:incompleteEntries.length};
+function clampYearLevelValue(value){
+  const n = Number(value);
+  if(!Number.isFinite(n)) return -2;
+  return Math.max(-2, Math.min(6, Math.round(n)));
 }
 
-function renderAudit(){
-  renderAuditChart();
+function yearLevelLabel(value){
+  const n = clampYearLevelValue(value);
+  return YEAR_LEVEL_CHOICES.find(y => y.value === n)?.label || `Year ${n}`;
 }
 
-
-
-function setAuditView(btn){
-  document.querySelectorAll('.view-tab[data-view]').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  const v=btn.dataset.view;
-  document.getElementById('audit-analytics').style.display=v==='analytics'?'block':'none';
-
+function ageRangeLabel(range){
+  const r = normaliseAgeRange(range);
+  return r.min === r.max ? yearLevelLabel(r.min) : `${yearLevelLabel(r.min)}–${yearLevelLabel(r.max)}`;
 }
 
-function setAnalyticsView(btn){
-  document.querySelectorAll('.view-tab[data-av]').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  AUDIT_VIEW=btn.dataset.av;
-  AUDIT_YEAR_CAMPUS='';
-  renderAuditChart();
-}
-function renderAuditChart(){
-  const stats = computeStats();
-  const container = document.getElementById('audit-chart');
-  const filterEl = document.getElementById('year-campus-filter');
-  if(!container) return;
-
-  
-  container.innerHTML = '';
-  if(filterEl) filterEl.innerHTML = '';
-
-  
-  const campusDebug = [...new Set(DATA.map(e=>e.ca))];
-  const debugEl = document.getElementById('audit-campus-debug');
-  if(debugEl) debugEl.innerHTML = 'Campuses in data: '+campusDebug.map(ca=>`<span style="margin-right:8px;color:${caCol(ca)}">${ca} (${DATA.filter(e=>e.ca===ca).length})</span>`).join('');
-
-  if(!stats.sorted.length){
-    container.innerHTML = '<div style="padding:40px;text-align:center;color:var(--dim);font-size:14px">No suggestion data found in this dataset.</div>';
-    return;
-  }
-
-  if(AUDIT_VIEW === 'tools'){
-    const card = document.createElement('div');
-    card.className = 'card';
-    const warningNote = stats.incompleteCount > 0
-      ? ' <span style="color:#FF8080;font-size:11px;font-weight:600">· '+stats.incompleteCount+' entries pending audit</span>'
-      : '';
-    card.innerHTML = '<span class="label">Tool frequency — ' + stats.total + ' total — click a bar to see entries</span>' + warningNote;
-
-    const top = stats.sorted.slice(0,50);
-    const mx = top[0].count || 1;
-
-    top.forEach(({name, count, pct}) => {
-      const isWarn = name.startsWith('\u26a0');
-      const barCol = isWarn ? '#FF8080' : 'var(--lime)';
-      const nameCol = isWarn ? '#FF8080' : 'var(--text)';
-      const uid = 'dd_' + name.replace(/\W/g,'').slice(0,18) + '_' + count;
-
-      const wrap = document.createElement('div');
-      wrap.style.cssText = 'margin-bottom:14px;cursor:pointer';
-
-      const labelRow = document.createElement('div');
-      labelRow.style.cssText = 'display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:5px';
-      labelRow.innerHTML = '<span style="color:'+nameCol+'">' + esc(name) + '</span><span style="color:var(--dim)">' + count + '\u00d7 (' + pct + '%)</span>';
-
-      const track = document.createElement('div');
-      track.style.cssText = 'height:6px;background:var(--card2);border-radius:3px;margin-bottom:0';
-      const fill = document.createElement('div');
-      fill.style.cssText = 'height:100%;border-radius:3px;background:'+barCol+';width:'+Math.round((count/mx)*100)+'%';
-      track.appendChild(fill);
-
-      
-      const dd = document.createElement('div');
-      dd.id = uid;
-      dd.style.cssText = 'display:none;margin-top:10px;padding:8px;background:var(--card2);border-radius:8px;border:1px solid var(--border)';
-      DATA.forEach((e,idx2) => {
-        const hasTool = getSugs(e).some(s => {
-          const t = (s && s.t && s.t.trim()) ? s.t.trim() : '';
-          if(isWarn) return !t;
-          // Compare using normalised names so "Minecraft: Ocean Heroes" matches "Minecraft Education"
-          const normT = normaliseToolName(t);
-          return normT === name || t === name || t.toLowerCase().includes(name.toLowerCase());
-        });
-        if(!hasTool) return;
-        const row = document.createElement('div');
-        row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:7px 10px;cursor:pointer;border-radius:6px;font-size:12px';
-        row.innerHTML = '<span style="color:var(--dim);width:100px;flex-shrink:0">'+esc(e.ca)+'</span>'
-          +'<span style="color:var(--gold);font-weight:600;width:62px;flex-shrink:0">'+esc(e.yl)+'</span>'
-          +'<span style="flex:1">'+esc(e.th)+'</span>'
-          +'<span style="color:var(--dim)">\u203a</span>';
-        row.onmouseover = () => row.style.background = 'var(--card)';
-        row.onmouseout = () => row.style.background = '';
-        row.onclick = (ev) => { ev.stopPropagation(); openEntry(idx2); };
-        dd.appendChild(row);
-      });
-      if(!dd.children.length) dd.innerHTML = '<div style="color:var(--dim);font-size:12px;padding:6px">No entries found</div>';
-
-      wrap.onclick = () => {
-        const open = dd.style.display !== 'none';
-        container.querySelectorAll('[id^="dd_"]').forEach(el => el.style.display = 'none');
-        dd.style.display = open ? 'none' : 'block';
-      };
-
-      wrap.appendChild(labelRow);
-      wrap.appendChild(track);
-      wrap.appendChild(dd);
-      card.appendChild(wrap);
-    });
-
-    container.appendChild(card);
-
-  } else if(AUDIT_VIEW === 'campus'){
-    const campuses = [...new Set(DATA.map(e => normCa(e.ca)))].sort();
-    const palette = ['#F5A623','#C5E84A','#60B8F0','#9B8BFF','#52B95C','#FF8080'];
-    campuses.forEach((ca, ci) => {
-      const tools = stats.campusTools[ca] || {};
-      const totalSugs = Object.values(tools).reduce((a,b)=>a+b,0);
-      const sorted = Object.entries(tools).sort((a,b) => b[1]-a[1]).slice(0,12);
-      const mx = sorted[0]?.[1] || 1;
-      const col = palette[ci % palette.length];
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.style.marginBottom = '14px';
-      let html = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">'
-        + '<div style="width:10px;height:10px;border-radius:3px;background:'+col+'"></div>'
-        + '<span style="font-weight:800;font-size:16px">'+esc(ca)+'</span>'
-        + '<span style="color:var(--dim);font-size:12px">'+totalSugs+' suggestions</span></div>';
-      if(totalSugs===0){ html+='<div style="color:var(--dim);font-size:13px;padding:8px 0">No audited suggestions yet</div>'; card.innerHTML=html; container.appendChild(card); return; }
-      sorted.forEach(([n,c]) => {
-        html += '<div style="margin-bottom:12px">'
-          + '<div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:4px"><span>'+esc(n)+'</span><span style="color:var(--dim)">'+c+'\u00d7</span></div>'
-          + '<div style="height:6px;background:var(--card2);border-radius:3px"><div style="height:100%;border-radius:3px;background:'+col+';width:'+Math.round((c/mx)*100)+'%"></div></div>'
-          + '</div>';
-      });
-      card.innerHTML = html;
-      container.appendChild(card);
-    });
-
-  } else {
-    
-    const campuses = [...new Set(DATA.map(e => normCa(e.ca)))].sort();
-    const palette = ['#F5A623','#C5E84A','#9B8BFF'];
-
-    
-    const allBtn = document.createElement('button');
-    allBtn.className = 'view-tab' + (AUDIT_YEAR_CAMPUS===''?' active':'');
-    allBtn.textContent = 'All';
-    allBtn.onclick = () => setYrCampus('', allBtn);
-    if(filterEl) filterEl.appendChild(allBtn);
-
-    campuses.forEach(ca => {
-      const b = document.createElement('button');
-      b.className = 'view-tab' + (AUDIT_YEAR_CAMPUS===ca?' active':'');
-      b.textContent = ca;
-      b.onclick = () => setYrCampus(ca, b);
-      if(filterEl) filterEl.appendChild(b);
-    });
-
-    const fd = AUDIT_YEAR_CAMPUS ? DATA.filter(e => normCa(e.ca)===AUDIT_YEAR_CAMPUS) : DATA;
-    const yt = {};
-    fd.forEach(e => {
-      if(e.audited === false) return;
-      getSugs(e).forEach(s => {
-        const t = (s && s.t && s.t.trim() && s.t.trim()!=='TBA') ? s.t.trim() : null;
-        if(!t) return;
-        if(!yt[e.yl]) yt[e.yl] = {};
-        yt[e.yl][t] = (yt[e.yl][t]||0)+1;
-      });
-    });
-
-    const col = AUDIT_YEAR_CAMPUS
-      ? palette[campuses.indexOf(AUDIT_YEAR_CAMPUS) % palette.length]
-      : '#C5E84A';
-
-    YR.filter(yr => yt[yr]).forEach(yr => {
-      const sorted = Object.entries(yt[yr]).sort((a,b)=>b[1]-a[1]).slice(0,10);
-      const mx = sorted[0]?.[1] || 1;
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.style.marginBottom = '14px';
-      let html = '<div style="font-weight:800;font-size:17px;color:var(--lime);margin-bottom:14px">'
-        + yr + (AUDIT_YEAR_CAMPUS ? ' — '+AUDIT_YEAR_CAMPUS : '') + '</div>';
-      sorted.forEach(([n,c]) => {
-        html += '<div style="margin-bottom:12px">'
-          + '<div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:4px"><span>'+esc(n)+'</span><span style="color:var(--dim)">'+c+'\u00d7</span></div>'
-          + '<div style="height:6px;background:var(--card2);border-radius:3px"><div style="height:100%;border-radius:3px;background:'+col+';width:'+Math.round((c/mx)*100)+'%"></div></div>'
-          + '</div>';
-      });
-      card.innerHTML = html;
-      container.appendChild(card);
-    });
-  }
+function yearSelectOptions(selected){
+  const sel = clampYearLevelValue(selected);
+  return YEAR_LEVEL_CHOICES
+    .map(y => `<option value="${y.value}" ${y.value === sel ? 'selected' : ''}>${y.label}</option>`)
+    .join('');
 }
 
-function setYrCampus(ca,btn){
-  AUDIT_YEAR_CAMPUS=ca;
-  document.querySelectorAll('#year-campus-filter .view-tab').forEach(b=>b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  renderAuditChart();
+function jsArg(value){
+  return JSON.stringify(String(value || ''));
 }
 
-function jumpToBrowse(toolName){
-  switchTab('browse',document.querySelector('.nav-item[data-tab="browse"]'));
-  document.getElementById('f-search').value=toolName;
-  renderBrowse();
-}
-
-function toggleToolDrilldown(row, toolName){
-  const dd=row.querySelector('.tool-drilldown');
-  if(!dd) return;
-  const isOpen=dd.style.display!=='none';
-  
-  document.querySelectorAll('.tool-drilldown').forEach(d=>d.style.display='none');
-  if(!isOpen) dd.style.display='block';
-}
-
-
-
-
-function showChangesPopup(changes){
-  changes = (changes || []).map(normaliseMinecraftChangeForEntry_);
-  const existing=document.getElementById('changes-popup-overlay');
-  if(existing) existing.remove();
-  const states=changes.map(()=>'pending');
-
-  const overlay=document.createElement('div');
-  overlay.id='changes-popup-overlay';
-  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px';
-
-  const popup=document.createElement('div');
-  popup.style.cssText='background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;max-width:min(1180px,96vw);width:100%;height:92vh;max-height:920px;display:flex;flex-direction:column;gap:0;box-sizing:border-box';
-
-  const header=document.createElement('div');
-  header.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-shrink:0';
-  header.innerHTML=`<div style="width:10px;height:10px;border-radius:50%;background:var(--lime)"></div>
-    <h3 style="font-size:18px;font-weight:900">Review Proposed Changes</h3>
-    <span id="popup-counter" style="font-size:13px;color:var(--dim);margin-left:auto"></span>`;
-  popup.appendChild(header);
-
-  const subline=document.createElement('p');
-  subline.style.cssText='font-size:13px;color:var(--dim);margin-bottom:18px;flex-shrink:0';
-  subline.textContent='Approve or decline each suggestion individually, then apply your approved changes.';
-  popup.appendChild(subline);
-
-  const rowsEl=document.createElement('div');
-  rowsEl.style.cssText='overflow-y:auto;flex:1;min-height:0;display:flex;flex-direction:column;gap:12px;margin-bottom:16px;padding-right:4px';
-
-  function updateCounter(){
-    const approved=states.filter(s=>s==='approved').length;
-    const declined=states.filter(s=>s==='declined').length;
-    const pending=states.filter(s=>s==='pending').length;
-    document.getElementById('popup-counter').textContent=`${approved} approved · ${declined} declined · ${pending} pending`;
-    const applyBtn=document.getElementById('popup-apply-btn');
-    if(applyBtn){
-      const n=states.filter(s=>s==='approved').length;
-      applyBtn.textContent=`✓ Apply ${n} approved change${n!==1?'s':''}`;
-      applyBtn.disabled=n===0;
-      applyBtn.style.opacity=n===0?'0.4':'1';
-    }
-  }
-
-  changes.forEach((c,ci)=>{
-    const e=DATA[c.entryIdx];
-    const oldSug=getSugs(e)[c.sugIdx];
-    const oldTool=oldSug?sugTool(oldSug):'(empty slot)';
-    const oldDesc=oldSug?sugDesc(oldSug):'';
-    const newTool=c.t||c.tool||c.technology||c.name||'(unknown tool)';
-    const newDesc=c.d||c.desc||c.description||c.integration_idea||c.activity||'';
-    const newUrl=c.url||c.lessonUrl||'';
-    const newUrlHtml=newUrl?`<div style="font-size:11px;margin-top:8px"><a href="${esc(newUrl)}" target="_blank" rel="noopener" style="color:var(--lime);text-decoration:none;font-weight:800">↗ Verified lesson link</a></div>`:'';
-    const rawReason = c.auditReason || c.reason || c.flagReason || c.reviewReason || c.problem || '';
-    const formattedReason = rawReason ? esc(rawReason).replace(/\s*\|\s*/g, '<br>') : '';
-    const reasonHtml = formattedReason ? `<div style="padding:10px 12px;background:rgba(245,166,35,0.10);border:1px solid rgba(245,166,35,0.35);border-left:4px solid #F5A623;border-radius:9px;margin-bottom:10px">
-      <div style="font-size:9px;color:#F5A623;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;font-weight:900">Reason flagged</div>
-      <div style="font-size:12px;color:#F8D28A;line-height:1.55">${formattedReason}</div>
-    </div>` : '';
-    const improvementConfidence = (c.improvementConfidence || c.confidence || '').toString();
-    const improvementScore = c.improvementScore != null ? c.improvementScore : '';
-    const whyBetter = c.whyBetter || c.improvementRationale || c.qualityRationale || '';
-    const remainingConcern = c.remainingConcern || c.remainingConcerns || '';
-    const confKey = improvementConfidence.toLowerCase();
-    const confColour = confKey.includes('high') ? 'var(--lime)' : confKey.includes('medium') ? '#F5A623' : '#FF8080';
-    const improvementHtml = improvementConfidence ? `<div style="padding:10px 12px;background:rgba(155,139,255,0.09);border:1px solid rgba(155,139,255,0.35);border-left:4px solid ${confColour};border-radius:9px;margin-bottom:10px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
-        <div style="font-size:9px;color:#A78BFA;text-transform:uppercase;letter-spacing:.8px;font-weight:900">AI quality check</div>
-        <div style="font-size:11px;color:${confColour};font-weight:900;margin-left:auto">${esc(improvementConfidence)}${improvementScore!=='' ? ' · '+esc(improvementScore)+'/5' : ''}</div>
-      </div>
-      ${whyBetter ? `<div style="font-size:12px;color:#ddd;line-height:1.55;margin-bottom:${remainingConcern?'5px':'0'}"><b style="color:#A78BFA">Why this should be better:</b> ${esc(whyBetter)}</div>` : ''}
-      ${remainingConcern ? `<div style="font-size:12px;color:#F8D28A;line-height:1.55"><b>Remaining concern:</b> ${esc(remainingConcern)}</div>` : ''}
-    </div>` : '';
-
-    const card=document.createElement('div');
-    card.id=`change-card-${ci}`;
-    card.style.cssText='background:var(--card2);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .15s;flex-shrink:0';
-
-    const entryRow=document.createElement('div');
-    entryRow.style.cssText='display:flex;align-items:center;gap:8px;padding:12px 16px;user-select:none';
-    entryRow.innerHTML=`<span style="font-size:12px;color:var(--dim);width:90px;flex-shrink:0">${esc(e?e.ca:'')}</span>
-      <span style="font-size:12px;color:var(--gold);font-weight:700;width:62px;flex-shrink:0">${esc(e?e.yl:'')}</span>
-      <span style="font-size:14px;font-weight:700;flex:1">${esc(e?e.th:'')}</span>
-      <span id="card-status-${ci}" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--card);color:var(--dim)">PENDING</span>`;
-
-    const detail=document.createElement('div');
-    detail.style.cssText='padding:0 16px 14px;display:block';
-    detail.innerHTML=`${reasonHtml}${improvementHtml}<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:10px;margin-bottom:10px">
-      <div style="padding:10px 12px;background:#1a0808;border:1px solid #3a1818;border-radius:10px;min-width:0">
-        <div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:700">Current suggestion being replaced</div>
-        <div style="font-size:14px;font-weight:900;color:#ff9999;margin-bottom:6px;line-height:1.25">${esc(oldTool)}</div>
-        <div style="font-size:12px;color:#bbb;line-height:1.6;max-height:220px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;padding-right:6px">${linkify(oldDesc||'No description')}</div>
-      </div>
-      <div style="padding:10px 12px;background:#081808;border:1px solid #183818;border-radius:10px;min-width:0">
-        <div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:700">Suggested replacement</div>
-        <div style="font-size:14px;font-weight:900;color:var(--lime);margin-bottom:6px;line-height:1.25">${esc(newTool)}</div>
-        <div style="font-size:12px;color:#d8d8d8;line-height:1.6;max-height:220px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;padding-right:6px">${linkify(newDesc||'No description')}</div>
-        ${newUrlHtml}
-      </div>
-    </div>
-    <div style="display:flex;gap:8px">
-      <button onclick="setChangeState(${ci},'approved')" id="btn-approve-${ci}"
-        style="flex:1;padding:10px 8px;border-radius:9px;border:2px solid var(--lime);background:transparent;color:var(--lime);font-weight:900;font-size:14px;cursor:pointer;transition:all .12s"
-        onmouseover="this.style.background='var(--lime)';this.style.color='#111'"
-        onmouseout="this.style.background='transparent';this.style.color='var(--lime)'">✓ Approve</button>
-      <button onclick="setChangeState(${ci},'declined')" id="btn-decline-${ci}"
-        style="flex:1;padding:10px 8px;border-radius:9px;border:2px solid #FF8080;background:transparent;color:#FF8080;font-weight:900;font-size:14px;cursor:pointer;transition:all .12s"
-        onmouseover="this.style.background='#FF8080';this.style.color='#111'"
-        onmouseout="this.style.background='transparent';this.style.color='#FF8080'">✗ Decline</button>
-    </div>`;
-
-    card.appendChild(entryRow);
-    card.appendChild(detail);
-    rowsEl.appendChild(card);
-  });
-
-  popup.appendChild(rowsEl);
-
-  const footer=document.createElement('div');
-  footer.style.cssText='display:flex;gap:10px;flex-shrink:0;padding-top:12px;border-top:1px solid var(--border);flex-wrap:wrap';
-  footer.innerHTML=`
-    <button onclick="(function(){window._popupStates.forEach((_,i)=>setChangeState(i,'approved'));})()"
-      style="padding:14px 20px;background:transparent;color:var(--lime);border:1.5px solid var(--lime);border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap">
-      ✓ Approve All
-    </button>
-    <button onclick="showBeforeAfterPreview()"
-      style="padding:14px 18px;background:transparent;color:var(--purple);border:1.5px solid var(--purple);border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap" title="See how tool frequency would change">
-      👁 Preview
-    </button>
-    <button id="popup-apply-btn" disabled onclick="applyChangesFromPopup()"
-      style="flex:1;min-width:180px;padding:14px;background:var(--lime);color:#111;border:none;border-radius:10px;font-weight:900;font-size:15px;cursor:pointer;opacity:0.4">
-      ✓ Apply 0 approved changes
-    </button>
-    <button onclick="document.getElementById('changes-popup-overlay').remove()"
-      style="padding:14px 20px;background:transparent;color:var(--dim);border:1.5px solid var(--border);border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;min-width:80px">
-      Close
-    </button>`;
-  popup.appendChild(footer);
-  overlay.appendChild(popup);
-  overlay._changes=changes;
-  overlay._states=states;
-  document.body.appendChild(overlay);
-  window._popupStates=states;
-  window._popupChanges=changes;
-  window._popupUpdateCounter=updateCounter;
-  updateCounter();
-}
-
-function setChangeState(ci, state){
-  const states=window._popupStates; if(!states) return;
-  states[ci]=state;
-  const card=document.getElementById(`change-card-${ci}`);
-  const statusEl=document.getElementById(`card-status-${ci}`);
-  const approveBtn=document.getElementById(`btn-approve-${ci}`);
-  const declineBtn=document.getElementById(`btn-decline-${ci}`);
-  if(state==='approved'){
-    if(card) card.style.borderColor='var(--lime)';
-    if(statusEl){ statusEl.textContent='APPROVED'; statusEl.style.background='var(--lime)'; statusEl.style.color='#111'; }
-    if(approveBtn){ approveBtn.style.background='var(--lime)'; approveBtn.style.color='#111'; }
-    if(declineBtn){ declineBtn.style.background='transparent'; declineBtn.style.color='#FF8080'; }
-  } else {
-    if(card) card.style.borderColor='#FF8080';
-    if(statusEl){ statusEl.textContent='DECLINED'; statusEl.style.background='#FF8080'; statusEl.style.color='#111'; }
-    if(declineBtn){ declineBtn.style.background='#FF8080'; declineBtn.style.color='#111'; }
-    if(approveBtn){ approveBtn.style.background='transparent'; approveBtn.style.color='var(--lime)'; }
-  }
-  if(window._popupUpdateCounter) window._popupUpdateCounter();
-}
-
-function applyChangesFromPopup(){
-  const overlay=document.getElementById('changes-popup-overlay');
-  if(!overlay) return;
-  const changes=window._popupChanges||[];
-  const states=window._popupStates||[];
-  let applied=0, skippedDupes=0;
-  let appliedRealismFixes=false;
-  
-  // Auto-create a snapshot before applying bulk changes
-  const approvedCount = states.filter(s => s === 'approved').length;
-  if(approvedCount > 0){
-    const snapName = window._snapshotReason || `Before applying ${approvedCount} bulk change${approvedCount!==1?'s':''}`;
-    createSnapshot(snapName);
-    delete window._snapshotReason;
-  }
-
-  changes.forEach((c,ci)=>{
-    if(states[ci]!=='approved') return;
-    const entryIdx=c.entryIdx;
-    const sugIdx=c.sugIdx;
-    const t=cleanSuggestionText_(c.t||c.tool||c.technology||c.name||'');
-    const d=cleanSuggestionText_(c.d||c.desc||c.description||c.integration_idea||'');
-    const url=cleanMinecraftLessonUrl_(c.url||c.lessonUrl||'');
-    // Safety net: if an earlier approved change already put this tool in a sibling slot, skip
-    if(entryIdx>=0 && entryIdx<DATA.length && wouldDupeToolProposalInEntry(DATA[entryIdx], t, sugIdx)){
-      skippedDupes++;
-      return;
-    }
-    if(entryIdx>=0&&entryIdx<DATA.length){
-      const sugs=getSugs(DATA[entryIdx]);
-      if(Array.isArray(DATA[entryIdx].s)){
-        if(sugIdx>=0&&sugIdx<DATA[entryIdx].s.length){
-          DATA[entryIdx].s[sugIdx]=url?{t,d,url}:{t,d};
-          applied++;
-          DATA[entryIdx].audited=true;
-          if(isRealismAuditChange_(c)) appliedRealismFixes=true;
-          markEntryNeedsHumanRecheck_(entryIdx, 'AI suggestion change applied after human verification');
-        }
-      } else {
-        
-        DATA[entryIdx].s=sugs.map((s,i)=>({t:sugTool(s),d:sugDesc(s)}));
-        if(sugIdx>=0&&sugIdx<DATA[entryIdx].s.length){
-          DATA[entryIdx].s[sugIdx]=url?{t,d,url}:{t,d};
-          applied++;
-          DATA[entryIdx].audited=true;
-          if(isRealismAuditChange_(c)) appliedRealismFixes=true;
-          markEntryNeedsHumanRecheck_(entryIdx, 'AI suggestion change applied after human verification');
-        }
-      }
-    }
-  });
-
-  overlay.remove();
-  delete window._popupStates;
-  delete window._popupChanges;
-  delete window._popupUpdateCounter;
-
-  saveToDrive();
-  const dupeNote = skippedDupes ? ` (skipped ${skippedDupes} duplicate${skippedDupes!==1?'s':''})` : '';
-  if(appliedRealismFixes){
-    setStatus(`${applied} suggestion${applied!==1?'s':''} updated and saved${dupeNote} — rescanning realism audit…`, 'loading');
-    setTimeout(() => rescanRealismAfterApprovedFixes_(applied, skippedDupes), 250);
-  } else {
-    setStatus(`${applied} suggestion${applied!==1?'s':''} updated and saved${dupeNote}`);
-  }
-  renderAuditChart();
-  if(typeof renderBrowse === 'function') renderBrowse();
-}
-
-// ========== BEFORE/AFTER PREVIEW ==========
-function showBeforeAfterPreview(){
-  const changes = window._popupChanges || [];
-  const states = window._popupStates || [];
-  const approvedChanges = changes.filter((c, i) => states[i] === 'approved');
-  if(!approvedChanges.length){
-    alert('No changes are currently approved. Approve some first, then preview.');
-    return;
-  }
-
-  const beforeFreq = {};
-  const afterFreq = {};
-  DATA.forEach((e, ei) => {
-    getSugs(e).forEach((s, si) => {
-      const t = normaliseToolName((s && s.t ? s.t.trim() : ''));
-      if(!t) return;
-      beforeFreq[t] = (beforeFreq[t] || 0) + 1;
-      const change = approvedChanges.find(c => c.entryIdx === ei && c.sugIdx === si);
-      if(change){
-        const newTool = normaliseToolName((change.t || '').trim());
-        if(newTool) afterFreq[newTool] = (afterFreq[newTool] || 0) + 1;
-      } else {
-        afterFreq[t] = (afterFreq[t] || 0) + 1;
-      }
-    });
-  });
-
-  const allTools = new Set([...Object.keys(beforeFreq), ...Object.keys(afterFreq)]);
-  const diff = [];
-  allTools.forEach(t => {
-    const b = beforeFreq[t] || 0;
-    const a = afterFreq[t] || 0;
-    if(b !== a) diff.push({ tool: t, before: b, after: a, delta: a - b });
-  });
-  diff.sort((x, y) => Math.abs(y.delta) - Math.abs(x.delta));
-
-  const maxCount = Math.max(...Object.values(beforeFreq), ...Object.values(afterFreq), 1);
-
-  const overlay = document.createElement('div');
-  overlay.id = 'preview-overlay';
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100001;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto';
-
-  overlay.innerHTML = `<div style="background:var(--card);border:2px solid var(--purple);border-radius:16px;padding:28px;max-width:720px;width:100%;max-height:90vh;overflow-y:auto">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-      <h3 style="font-size:18px;font-weight:900;color:var(--text);margin:0">👁 Before / After Impact</h3>
-      <button onclick="document.getElementById('preview-overlay').remove()" style="background:var(--card2);border:1px solid var(--border);color:var(--text);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;font-family:inherit">✕</button>
-    </div>
-    <p style="font-size:13px;color:var(--dim);margin-bottom:20px;line-height:1.6">Applying the ${approvedChanges.length} approved change${approvedChanges.length!==1?'s':''} will shift the tool distribution as shown below. Green = gaining usage, red = losing usage.</p>
-    <div style="font-size:11px;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">${diff.length} tool${diff.length!==1?'s':''} affected</div>
-    ${diff.length ? diff.map(d => {
-      const bPct = Math.round((d.before / maxCount) * 100);
-      const aPct = Math.round((d.after / maxCount) * 100);
-      const deltaColor = d.delta > 0 ? 'var(--lime)' : '#FF8080';
-      const deltaSign = d.delta > 0 ? '+' : '';
-      return `<div style="padding:12px 0;border-bottom:1px solid var(--border)">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-          <span style="flex:1;font-size:14px;font-weight:700;color:var(--text)">${esc(d.tool)}</span>
-          <span style="font-size:12px;color:${deltaColor};font-weight:800">${deltaSign}${d.delta}</span>
-          <span style="font-size:11px;color:var(--dim);min-width:60px;text-align:right">${d.before} → ${d.after}</span>
-        </div>
-        <div style="display:grid;grid-template-columns:40px 1fr;gap:8px;align-items:center;margin-bottom:3px">
-          <span style="font-size:10px;color:var(--dim);font-weight:700">Before</span>
-          <div style="height:5px;background:var(--card2);border-radius:2px"><div style="height:100%;width:${bPct}%;background:#666;border-radius:2px"></div></div>
-        </div>
-        <div style="display:grid;grid-template-columns:40px 1fr;gap:8px;align-items:center">
-          <span style="font-size:10px;color:${deltaColor};font-weight:700">After</span>
-          <div style="height:5px;background:var(--card2);border-radius:2px"><div style="height:100%;width:${aPct}%;background:${deltaColor};border-radius:2px"></div></div>
-        </div>
-      </div>`;
-    }).join('') : '<div style="color:var(--dim);padding:20px 0">No tool frequency change (changes might be descriptions only).</div>'}
-    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
-      <button class="btn" onclick="document.getElementById('preview-overlay').remove()" style="padding:10px 20px">Keep reviewing</button>
-      <button class="btn-pri" onclick="document.getElementById('preview-overlay').remove();applyChangesFromPopup()" style="padding:10px 22px">Apply these ${approvedChanges.length} change${approvedChanges.length!==1?'s':''}</button>
-    </div>
-  </div>`;
-  document.body.appendChild(overlay);
-  overlay.onclick = (e) => { if(e.target === overlay) overlay.remove(); };
-}
-
-function checkKeyInput(){ /* legacy no-op: AI key is managed by GAS Script Properties. */ }
-
-function initNetworkCanvas(){
-  const canvas=document.getElementById('bg-canvas');
-  if(!canvas) return;
-  const ctx=canvas.getContext('2d');
-  let W=0,H=0,nodes=[];
-  function resize(){
-    W=canvas.width=window.innerWidth;
-    H=canvas.height=window.innerHeight;
-    nodes=Array.from({length:55},()=>({
-      x:Math.random()*W, y:Math.random()*H,
-      vx:(Math.random()-.5)*.25, vy:(Math.random()-.5)*.25,
-      r:Math.random()*1.5+.5
-    }));
-  }
-  resize();
-  window.addEventListener('resize',resize);
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-    for(let i=0;i<nodes.length;i++){
-      for(let j=i+1;j<nodes.length;j++){
-        const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y;
-        const d=Math.sqrt(dx*dx+dy*dy);
-        if(d<160){
-          ctx.beginPath();
-          ctx.moveTo(nodes[i].x,nodes[i].y);
-          ctx.lineTo(nodes[j].x,nodes[j].y);
-          ctx.strokeStyle=`rgba(52,211,153,${0.09*(1-d/160)})`;
-          ctx.lineWidth=.6;
-          ctx.stroke();
-        }
-      }
-    }
-    nodes.forEach(n=>{
-      ctx.beginPath();
-      ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
-      ctx.fillStyle='rgba(0,230,118,0.45)';
-      ctx.fill();
-      n.x+=n.vx; n.y+=n.vy;
-      if(n.x<0||n.x>W) n.vx*=-1;
-      if(n.y<0||n.y>H) n.vy*=-1;
-    });
-    requestAnimationFrame(draw);
-  }
-  draw();
-}
-
-async function addToGASQueue(){
-  const ca=document.getElementById('q-campus')?.value||'';
-  const yl=document.getElementById('q-year')?.value||'';
-  const th=document.getElementById('q-theme')?.value.trim()||'';
-  const statusEl=document.getElementById('q-status');
-  const btn=document.getElementById('btn-add-queue');
-
-  if(!ca||!yl||!th){
-    statusEl.textContent='Please fill in all three fields';
-    statusEl.style.color='#FF8080'; return;
-  }
-
-  btn.disabled=true; btn.textContent='Submitting…';
-  startProgress();
-  statusEl.textContent=''; statusEl.style.color='var(--lime)';
-
-  try{
-    await fetch(SCRIPT_URL, {
-      method:'POST',
-      mode:'no-cors',
-      headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify(withGASToken({action:'addToQueue', ca, yl, th, ci:''}))
-    });
-    
-    statusEl.textContent=`✓ "${th}" queued — the auditor will process it within 10 minutes`;
-    statusEl.style.color='var(--lime)';
-    document.getElementById('q-theme').value='';
-  }catch(e){
-    statusEl.textContent='Failed to submit: '+e.message;
-    statusEl.style.color='#FF8080';
-  }
-  stopProgress();
-  btn.disabled=false; btn.textContent='Add to Queue →';
-}
-
-async function scoreEntryQuality(){
-  if(CURRENT_ENTRY_IDX===null) return;
-  const idx=CURRENT_ENTRY_IDX;
-  const entry=DATA[idx];
-  const sugs=getSugs(entry);
-  const btn=document.getElementById('btn-score-quality');
-  const res=document.getElementById('quality-score-result');
-  if(!sugs.length){ res.innerHTML='<div style="color:var(--dim);font-size:13px">No suggestions to score yet.</div>'; return; }
-
-  btn.disabled=true; btn.textContent='Scoring…';
-  startProgress();
-  res.innerHTML='<div style="font-size:12px;color:#fbbf24">Analysing suggestion quality…</div>';
-
-  const prompt=`You are reviewing technology suggestions for an IB PYP unit.
-Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${entry.plannerText?`\nPlanner context: ${entry.plannerText}`:''}
-
-Rate each suggestion as one of:
-- GENERIC: Could apply to any unit, no specific connection to this unit's content
-- GOOD: Clear connection to the unit theme, reasonably specific
-- EXCELLENT: References specific activities, vocabulary, assessments or planner content
-
-Suggestions:
-${sugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}
-
-Return ONLY a JSON array with no markdown:
-[{"idx":0,"rating":"EXCELLENT","reason":"One sentence why."},...]`;
-
-  try{
-    const raw=await callAI([{role:'user',parts:[{text:prompt}]}],null,OPENAI_MODEL);
-    const clean=raw.replace(/```json|```/g,'').trim();
-    const si=clean.indexOf('['), ei=clean.lastIndexOf(']');
-    if(si===-1||ei===-1) throw new Error('No JSON');
-    const scores=JSON.parse(clean.slice(si,ei+1));
-    const colours={EXCELLENT:'var(--lime)',GOOD:'#fbbf24',GENERIC:'#FF8080'};
-    const icons={EXCELLENT:'★★★',GOOD:'★★☆',GENERIC:'★☆☆'};
-    res.innerHTML=`<div style="display:flex;flex-direction:column;gap:8px">
-      ${scores.map(({idx:si,rating,reason})=>{
-        const sug=sugs[si];
-        if(!sug) return '';
-        const col=colours[rating]||'var(--dim)';
-        return `<div style="padding:10px 14px;background:var(--card2);border-radius:8px;border-left:3px solid ${col}">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-            <span style="font-size:13px;font-weight:700;color:${col}">${icons[rating]||'?'} ${rating}</span>
-            <span style="font-size:13px;font-weight:700;color:var(--text)">${esc(sugTool(sug))}</span>
-          </div>
-          <div style="font-size:12px;color:var(--dim);line-height:1.5">${esc(reason)}</div>
-        </div>`;
-      }).join('')}
-    </div>
-    <div style="margin-top:10px;font-size:12px;color:var(--dim)">
-      ${scores.filter(s=>s.rating==='EXCELLENT').length} excellent · ${scores.filter(s=>s.rating==='GOOD').length} good · ${scores.filter(s=>s.rating==='GENERIC').length} generic
-    </div>`;
-  }catch(e){
-    res.innerHTML=`<div style="font-size:12px;color:#FF8080">${esc(e.message)}</div>`;
-  }
-  stopProgress();
-  btn.disabled=false; btn.textContent='Score with AI';
-}
-
-
-
-// ========== REALISM & AGE AUDIT ==========
-let REALISM_AUDIT_RESULTS = [];
-
-function extractUnitKeywords(entry){
-  const raw = `${entry?.th || ''} ${entry?.ci || ''} ${entry?.lo || ''} ${entry?.plannerText || ''}`.toLowerCase();
-  const stop = new Set('the a an and or but for with from into onto over under about across through their there this that these those students learners learning unit inquiry central idea lines place world works who we are how where when why what can will use using used they them our your has have had was were be been being to of in on at by as is it its can may might should would could do does did'.split(' '));
-  const words = (raw.match(/[a-z]{4,}/g) || []).filter(w => !stop.has(w));
-  const counts = {};
-  words.forEach(w => counts[w] = (counts[w] || 0) + 1);
-  return Object.keys(counts).sort((a,b)=>counts[b]-counts[a]).slice(0,18);
-}
-
-function descHasUnitConnection(desc, entry){
-  const d = String(desc || '').toLowerCase();
-  const keywords = extractUnitKeywords(entry);
-  if(!keywords.length) return true;
-  return keywords.some(k => d.includes(k));
-}
-
-function hasConcreteStudentAction(desc){
-  return /(design|create|build|construct|prototype|code|program|record|film|photograph|map|model|test|debug|measure|collect|analyse|compare|survey|interview|animate|publish|present|compose|draw|label|simulate|investigate|explore|document|sequence|classify|sort|graph|explain|reflect|iterate|make)/i.test(String(desc || ''));
-}
-
-function suggestionAuditIssues(entry, sug, sugIdx){
-  const issues = [];
-  const tool = sugTool(sug);
-  const desc = sugDesc(sug);
-  const isStem = sugIdx === 5;
-  const full = `${tool} ${desc}`.toLowerCase();
-
-  if(!isRealSug(sug)){
-    issues.push({type:'missing', severity:'high', message:'Suggestion is missing or incomplete.'});
-    return issues;
-  }
-
-  if(toolContainsForbiddenKeyword(tool) || toolContainsForbiddenKeyword(desc) || toolViolatesInventoryBan(tool)){
-    issues.push({type:'banned', severity:'high', message:'Uses a banned or unavailable tool.'});
-  }
-
-  if(!isStem && !isToolAgeAppropriate(tool, entry.yl)){
-    issues.push({type:'age', severity:'high', message:`${tool} may not be age-appropriate for ${entry.yl}.`});
-  }
-
-  // STEM slot is allowed to be more flexible, but still should be hands-on and age-aware.
-  if(isStem){
-    const lowerYr = getYearNumber(entry.yl);
-    if(lowerYr < 4 && /(codrone|drone|sphero bolt|lego spike prime|tinkercad|3d printer|python)/i.test(full)){
-      issues.push({type:'stem-age', severity:'high', message:'Protected STEM Suggestion 6 uses hardware/software that is too advanced for this year level.'});
-    }
-    if(!/(design cycle|empathise|empathize|define|ideate|prototype|test|iterate|build|construct|make|model|materials|cardboard|recycled|popsticks|clay|maker|makerspace)/i.test(full)){
-      issues.push({type:'stem-realism', severity:'medium', message:'Protected STEM Suggestion 6 should clearly include hands-on making and the design cycle.'});
-    }
-  } else {
-    const realism = checkRealisticToolUse(tool, desc, entry);
-    if(!realism.ok){
-      issues.push({type:'realism', severity:'high', message:realism.reason || 'Tool use may not be realistic for the classroom.'});
-    }
-  }
-
-  if(!hasConcreteStudentAction(desc)){
-    issues.push({type:'vague', severity:'medium', message:'Description lacks a concrete student action/product.'});
-  }
-
-  if(String(desc || '').replace(/\s+/g,' ').trim().length < 95){
-    issues.push({type:'thin', severity:'low', message:'Description is very short; it may need more practical detail.'});
-  }
-
-  if(!descHasUnitConnection(desc, entry)){
-    issues.push({type:'connection', severity:'low', message:'Description may not clearly reference this unit\'s content or vocabulary.'});
-  }
-
-  return issues;
-}
-
-function auditEntrySuggestions(entry, entryIdx){
-  const sugs = getSugs(entry);
-  const results = [];
-  sugs.forEach((sug, sugIdx) => {
-    const issues = suggestionAuditIssues(entry, sug, sugIdx);
-    if(issues.length){
-      results.push({
-        entryIdx,
-        sugIdx,
-        ca: entry.ca,
-        yl: entry.yl,
-        th: entry.th,
-        tool: sugTool(sug),
-        desc: sugDesc(sug),
-        isStem: sugIdx === 5,
-        issues
-      });
-    }
-  });
-  return results;
-}
-
-function severityColour(sev){
-  return sev === 'high' ? '#FF8080' : sev === 'medium' ? '#F5A623' : 'var(--blue)';
-}
-function resultHighestSeverity(result){
-  if(result.issues.some(i=>i.severity==='high')) return 'high';
-  if(result.issues.some(i=>i.severity==='medium')) return 'medium';
-  return 'low';
-}
-
-function renderRealismResults(results, containerId, opts){
-  const container = document.getElementById(containerId);
-  if(!container) return;
-  opts = opts || {};
-  if(!results.length){
-    container.innerHTML = `<div style="padding:12px 14px;background:rgba(197,232,74,0.08);border:1px solid rgba(197,232,74,0.2);border-radius:10px;font-size:13px;color:var(--lime);font-weight:700">✓ No obvious realism or age issues found.</div>`;
-    return;
-  }
-  const high = results.filter(r=>resultHighestSeverity(r)==='high').length;
-  const medium = results.filter(r=>resultHighestSeverity(r)==='medium').length;
-  const low = results.filter(r=>resultHighestSeverity(r)==='low').length;
-  const display = results.slice(0, opts.limit || 80);
-  container.innerHTML = `<div style="padding:12px 14px;background:rgba(255,128,128,0.08);border:1px solid rgba(255,128,128,0.25);border-radius:10px;margin-bottom:10px">
-      <div style="font-size:13px;font-weight:800;color:#FF8080;margin-bottom:4px">${results.length} suggestion${results.length!==1?'s':''} flagged</div>
-      <div style="font-size:12px;color:var(--dim)">${high} high priority · ${medium} medium · ${low} low</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
-        <button class="btn-sm btn-realism-fix-all" onclick="draftAllRealismFixes('high')" style="color:#FF8080;border-color:#FF8080">✨ Draft fixes for high priority</button>
-        <button class="btn-sm btn-realism-fix-all" onclick="draftAllRealismFixes('all')" style="color:var(--gold);border-color:var(--gold)">✨ Draft fixes for all flagged</button>
-      </div>
-      <div id="realism-batch-progress" style="display:none;margin-top:10px;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px">
-        <div id="realism-batch-label" style="font-size:12px;color:var(--lime);font-weight:700;margin-bottom:7px">Preparing…</div>
-        <div style="height:5px;background:var(--card2);border-radius:3px;overflow:hidden"><div id="realism-batch-bar" style="height:100%;width:0%;background:var(--lime);border-radius:3px;transition:width .25s"></div></div>
-      </div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:8px;max-height:${opts.maxHeight || '520px'};overflow-y:auto;padding-right:4px">
-      ${display.map((r,idx)=>{
-        const sev = resultHighestSeverity(r);
-        const col = severityColour(sev);
-        const globalIdx = REALISM_AUDIT_RESULTS.indexOf(r);
-        const btnIdx = globalIdx >= 0 ? globalIdx : idx;
-        return `<div style="padding:12px 14px;background:var(--card2);border:1px solid var(--border);border-left:4px solid ${col};border-radius:10px">
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">
-            <span style="font-size:11px;font-weight:800;color:${col};text-transform:uppercase">${sev}</span>
-            <span style="font-size:12px;color:#9ab89a">${esc(r.ca || '')}</span>
-            <span style="font-size:12px;color:var(--gold);font-weight:700">${esc(r.yl || '')}</span>
-            <span style="font-size:12px;color:var(--dim)">Suggestion ${r.sugIdx + 1}${r.isStem ? ' · STEM' : ''}</span>
-            <span style="flex:1"></span>
-            <button class="btn-sm" onclick="openEntry(${r.entryIdx})">Open</button>
-            <button class="btn-sm" onclick="draftRealismReplacementFromAudit(${btnIdx})" style="color:var(--lime);border-color:var(--lime)">✨ Draft fix</button>
-          </div>
-          <div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:3px">${esc(r.tool || '(missing tool)')}</div>
-          <div style="font-size:12px;color:var(--dim);margin-bottom:6px">${esc(r.th || '')}</div>
-          <ul style="margin:0;padding-left:18px;font-size:12px;color:#ccc;line-height:1.55">
-            ${r.issues.map(i=>`<li><b style="color:${severityColour(i.severity)}">${esc(i.type)}</b>: ${esc(i.message)}</li>`).join('')}
-          </ul>
-        </div>`;
-      }).join('')}
-      ${results.length > display.length ? `<div style="font-size:12px;color:var(--dim);padding:8px 2px">Showing first ${display.length} flagged suggestions. Fix or filter, then rescan.</div>` : ''}
-    </div>`;
-}
-
-function scanCurrentEntryRealism(){
-  if(CURRENT_ENTRY_IDX === null) return;
-  const entry = DATA[CURRENT_ENTRY_IDX];
-  const btn = document.getElementById('btn-entry-realism-scan');
-  if(btn){ btn.disabled = true; btn.textContent = 'Scanning…'; }
-  const results = auditEntrySuggestions(entry, CURRENT_ENTRY_IDX);
-  REALISM_AUDIT_RESULTS = results;
-  renderRealismResults(results, 'entry-realism-result', {maxHeight:'none', limit:20});
-  if(btn){ btn.disabled = false; btn.textContent = 'Scan this entry'; }
-}
-
-function runFullRealismAudit(){
-  const btn = document.getElementById('btn-full-realism-audit');
-  if(btn){ btn.disabled = true; btn.textContent = 'Scanning…'; }
-  const all = [];
-  DATA.forEach((entry, entryIdx) => {
-    all.push(...auditEntrySuggestions(entry, entryIdx));
-  });
-  all.sort((a,b) => {
-    const weight = {high:0, medium:1, low:2};
-    return weight[resultHighestSeverity(a)] - weight[resultHighestSeverity(b)] || String(a.yl).localeCompare(String(b.yl)) || String(a.th).localeCompare(String(b.th));
-  });
-  REALISM_AUDIT_RESULTS = all;
-  renderRealismResults(all, 'realism-audit-result', {maxHeight:'560px', limit:100});
-  setStatus(all.length ? `Realism audit complete — ${all.length} flagged` : 'Realism audit complete — no issues found');
-  if(btn){ btn.disabled = false; btn.textContent = 'Scan all suggestions'; }
-}
-
-function draftRealismReplacementFromAudit(idx){
-  const result = REALISM_AUDIT_RESULTS[idx];
-  if(!result){ alert('Audit result not found. Please rescan.'); return; }
-  draftRealismReplacement(result.entryIdx, result.sugIdx, result.issues.map(i=>i.message).join(' | '));
-}
-
-
-function extractFirstJsonObject_(text){
-  const clean = String(text || '').replace(/```json|```/g,'').trim();
-  const si = clean.indexOf('{');
-  const ei = clean.lastIndexOf('}');
-  if(si === -1 || ei === -1 || ei <= si) throw new Error('AI did not return JSON.');
-  return JSON.parse(clean.slice(si, ei + 1));
-}
-
-function normaliseImprovementCheck_(raw){
-  const confidenceRaw = String(raw.confidence || raw.improvementConfidence || raw.rating || '').trim().toLowerCase();
-  let confidence = confidenceRaw.includes('high') ? 'High' : confidenceRaw.includes('medium') ? 'Medium' : confidenceRaw.includes('low') ? 'Low' : '';
-  let score = Number(raw.score || raw.improvementScore || raw.ratingScore || 0);
-  if(!confidence){
-    if(score >= 4) confidence = 'High';
-    else if(score >= 3) confidence = 'Medium';
-    else confidence = 'Low';
-  }
-  if(!score){
-    score = confidence === 'High' ? 5 : confidence === 'Medium' ? 3 : 1;
-  }
-  score = Math.max(1, Math.min(5, Math.round(score)));
-  return {
-    confidence,
-    score,
-    whyBetter: raw.whyBetter || raw.rationale || raw.reason || raw.improvementRationale || '',
-    remainingConcern: raw.remainingConcern || raw.concern || raw.remainingConcerns || ''
-  };
-}
-
-async function evaluateDraftImprovement(entry, oldSug, draft, flagReason, isStem){
-  const oldTool = sugTool(oldSug);
-  const oldDesc = sugDesc(oldSug);
-  const prompt = `You are the DLP quality gate for Wesley College's Digital Learning Assistant.
-Your job is to compare an OLD suggestion with a DRAFT replacement and decide whether the draft is genuinely better.
-Be strict. Do NOT rubber-stamp. If the new draft still has the same problem, mark it Low.
-
-Unit context:
-Campus: ${entry.ca}
-Year level: ${entry.yl}
-Theme: ${entry.th}
-Central Idea: ${entry.ci || ''}
-Lines of Inquiry: ${entry.lo || ''}
-Planner summary: ${entry.plannerText || ''}
-Suggestion type: ${isStem ? 'Protected STEM Design Cycle Suggestion 6' : 'Digital learning suggestion'}
-
-Original flagged problem:
-${flagReason || 'May be unrealistic, weakly connected or not age appropriate.'}
-
-OLD suggestion:
-Tool/project: ${oldTool}
-Description: ${oldDesc}
-
-DRAFT replacement:
-Tool/project: ${draft.t || ''}
-Description: ${draft.d || ''}
-
-Score the draft against these criteria:
-1. realistic classroom use
-2. age appropriateness
-3. specific connection to this unit
-4. teacher practicality
-5. clear student task/product
-6. whether it actually fixes the original flagged problem
-
-Return ONLY JSON:
-{
-  "confidence": "High" | "Medium" | "Low",
-  "score": 1-5,
-  "whyBetter": "one concise sentence explaining the improvement",
-  "remainingConcern": "one concise sentence, or empty string if none"
-}`;
-  const raw = await callAI([{role:'user',parts:[{text:prompt}]}], null, OPENAI_FAST_MODEL || OPENAI_MODEL);
-  const parsed = normaliseImprovementCheck_(extractFirstJsonObject_(raw));
-  if(parsed.confidence === 'Low' || parsed.score < 3){
-    throw new Error(`Draft failed quality check (${parsed.confidence} ${parsed.score}/5): ${parsed.remainingConcern || parsed.whyBetter || 'It was not clearly better than the current suggestion.'}`);
-  }
-  return parsed;
-}
-
-
-function realismAuditReasonText_(result){
-  return ((result && result.issues) || []).map(i => i && i.message ? i.message : '').filter(Boolean).join(' | ') || 'May be unrealistic or not age appropriate.';
-}
-
-function realismAuditIssueTypes_(result){
-  return new Set(((result && result.issues) || []).map(i => String(i && i.type || '').toLowerCase()).filter(Boolean));
-}
-
-function auditResultIsDescriptionOnlyIssue_(result){
-  const types = realismAuditIssueTypes_(result);
-  const reason = realismAuditReasonText_(result).toLowerCase();
-  return types.has('vague') || types.has('thin') || types.has('connection') || types.has('generic') ||
-    /description|too long|lesson overview|punctuation|corruption|lesson-library wording|vague|brief|thin|generic|student action|student product|unit connection/i.test(reason);
-}
-
-function findMinecraftLessonForExistingSuggestion_(entry, oldSug){
-  const oldTool = sugTool(oldSug);
-  const oldDesc = sugDesc(oldSug);
-  const hay = [oldTool, oldDesc, oldSug && oldSug.url, oldSug && oldSug.lessonUrl].filter(Boolean).join(' ');
-  let lesson = null;
-  try { lesson = findCuratedLessonMention_('minecraft', oldTool, hay); } catch(e) { lesson = null; }
-  if(lesson) return lesson;
-
-  // Fallback for existing suggestions titled like "Minecraft: Revamp Melbourne" where the
-  // description was corrupted or overlong and no URL survived in the suggestion object.
-  const titleFromTool = String(oldTool || '').match(/minecraft\s*[:—-]\s*(.+)$/i);
-  const wantedTitle = titleFromTool ? titleFromTool[1].trim() : '';
-  if(!wantedTitle) return null;
-  const wanted = dlaTextForFit_(wantedTitle);
-  const lessons = getLibraryLessons('minecraft') || [];
-  return lessons.find(l => dlaTextForFit_(l && l.title || '') === wanted || dlaTextForFit_(l && l.title || '').includes(wanted) || wanted.includes(dlaTextForFit_(l && l.title || ''))) || null;
-}
-
-function buildDeterministicMinecraftAuditFix_(result){
-  const entryIdx = result.entryIdx;
-  const sugIdx = result.sugIdx;
-  const entry = DATA[entryIdx];
-  if(!entry) return null;
-  const oldSug = getSugs(entry)[sugIdx];
-  if(!oldSug) return null;
-  const oldTool = sugTool(oldSug);
-  const oldDesc = sugDesc(oldSug);
-  if(!/minecraft/i.test(oldTool + ' ' + oldDesc)) return null;
-
-  const lesson = findMinecraftLessonForExistingSuggestion_(entry, oldSug);
-  if(!lesson) return null;
-
-  const newDesc = mcLessonDesc_(entry, lesson);
-  const realism = checkRealisticToolUse('Minecraft Education', newDesc, entry);
-  if(!realism.ok){
-    throw new Error('Deterministic Minecraft clean-up failed: ' + realism.reason);
-  }
-
-  const reason = realismAuditReasonText_(result);
-  return {
-    entryIdx,
-    sugIdx,
-    t: 'Minecraft Education',
-    d: newDesc,
-    url: mcCleanUrl_(lesson.url || oldSug.url || ''),
-    auditReason: cleanSuggestionText_(reason + ' | Auto-shortened to a verified two-sentence Minecraft classroom task.'),
-    auditIssues: result.issues || [],
-    auditSource: 'realism-age-audit-deterministic-minecraft-cleanup',
-    improvementConfidence: 'High',
-    improvementScore: 5,
-    whyBetter: 'Keeps the same verified Minecraft lesson, removes copied lesson-overview wording, and gives teachers a concise classroom task with a clear student product.',
-    remainingConcern: ''
-  };
-}
-
-function buildDeterministicRealismFix_(result){
-  // Some audit flags do not need AI at all. In particular, Minecraft length/grammar
-  // flags should keep the same verified lesson and rewrite only the description.
-  const entry = DATA[result && result.entryIdx];
-  const oldSug = entry ? getSugs(entry)[result.sugIdx] : null;
-  const oldTool = oldSug ? sugTool(oldSug) : '';
-  const oldDesc = oldSug ? sugDesc(oldSug) : '';
-  if(/minecraft/i.test(oldTool + ' ' + oldDesc) && auditResultIsDescriptionOnlyIssue_(result)){
-    return buildDeterministicMinecraftAuditFix_(result);
-  }
-  return null;
-}
-
-function renderRealismBatchFailureSummary_(failures){
-  const old = document.getElementById('realism-batch-failure-summary');
-  if(old) old.remove();
-  if(!failures || !failures.length) return;
-  const host = document.getElementById('realism-audit-result') || document.getElementById('entry-realism-result');
-  if(!host) return;
-  const html = `<div id="realism-batch-failure-summary" style="padding:12px 14px;background:rgba(245,166,35,0.10);border:1px solid rgba(245,166,35,0.35);border-radius:10px;margin-bottom:10px">
-    <div style="font-size:13px;font-weight:900;color:#F5A623;margin-bottom:5px">${failures.length} flagged suggestion${failures.length!==1?'s':''} could not be drafted</div>
-    <div style="font-size:12px;color:#ddd;line-height:1.55;margin-bottom:8px">The accepted drafts are still shown for review. These remaining flags were not auto-applied or hidden.</div>
-    <details style="font-size:12px;color:#bbb;line-height:1.55"><summary style="cursor:pointer;color:#F5A623;font-weight:800">Show failed draft reasons</summary>
-      <ul style="margin:8px 0 0;padding-left:18px">${failures.slice(0,12).map(f => `<li><b>${esc((f.result && f.result.yl) || '')} ${esc((f.result && f.result.th) || '')}</b> — ${esc(f.message || 'Unknown error')}</li>`).join('')}${failures.length>12?`<li>…and ${failures.length-12} more.</li>`:''}</ul>
-    </details>
-  </div>`;
-  host.insertAdjacentHTML('afterbegin', html);
-}
-
-async function buildRealismReplacementChange(result){
-  const entryIdx = result.entryIdx;
-  const sugIdx = result.sugIdx;
-  const reason = (result.issues || []).map(i=>i.message).join(' | ') || 'May be unrealistic or not age appropriate.';
-  const entry = DATA[entryIdx];
-  if(!entry) throw new Error('Entry not found');
-  const oldSug = getSugs(entry)[sugIdx];
-  if(!oldSug) throw new Error('Suggestion not found');
-  const deterministicFix = buildDeterministicRealismFix_(result);
-  if(deterministicFix) return deterministicFix;
-  const isStem = sugIdx === 5;
-  const oldTool = sugTool(oldSug);
-  const oldDesc = sugDesc(oldSug);
-  const otherTools = getSugs(entry).filter((s,i)=>i!==sugIdx && isRealSug(s)).map(s=>sugTool(s)).join(', ');
-  const constraints = isStem ? REALISTIC_TOOL_USE_RULES : buildToolConstraints(entry.yl);
-  const prompt = isStem ? `You are replacing protected Suggestion 6, the STEM Design Cycle idea, for this IB PYP unit. This is a manual DLP-approved action, not a bulk edit.
-Campus: ${entry.ca}
-Year level: ${entry.yl}
-Theme: ${entry.th}
-Central Idea: ${entry.ci || ''}
-Lines of Inquiry: ${entry.lo || ''}
-Planner summary: ${entry.plannerText || ''}
-Current STEM suggestion: ${oldTool}: ${oldDesc}
-Problem flagged: ${reason}
-
-Create ONE replacement STEM Design Cycle activity that is realistic for this year level. It must include tangible making/prototyping materials and a clear Empathise → Define → Ideate → Prototype → Test cycle. It may include age-appropriate technology only when the tech is genuinely useful.
-${REALISTIC_TOOL_USE_RULES}
-Return ONLY JSON: {"t":"Project name","d":"2-3 practical sentences describing exactly what students build, test and improve."}`
-  : `You are replacing one unrealistic, vague, weakly connected, banned or not age-appropriate digital learning suggestion for an IB PYP unit.
-Campus: ${entry.ca}
-Year level: ${entry.yl}
-Theme: ${entry.th}
-Central Idea: ${entry.ci || ''}
-Lines of Inquiry: ${entry.lo || ''}
-Planner summary: ${entry.plannerText || ''}
-Current suggestion to replace: ${oldTool}: ${oldDesc}
-Problem flagged: ${reason}
-Other tools already used in this unit — avoid duplicates unless you are only improving the same tool's description: ${otherTools || 'none'}
-
-${constraints}
-${SUGGESTION_STYLE}
-${REALISTIC_TOOL_USE_RULES}
-
-Create ONE replacement suggestion that is classroom-realistic, age-appropriate, and directly connected to the unit. If the current tool is actually appropriate, you may keep the same tool but must substantially improve the description so the classroom activity is practical and specific. Return ONLY JSON: {"t":"Tool Name","d":"2-3 practical sentences describing exactly what students do and create.","url":"optional direct lesson URL"}`;
-
-  const raw = await callAI([{role:'user',parts:[{text:prompt}]}], null, OPENAI_FAST_MODEL || OPENAI_MODEL);
-  const clean = raw.replace(/```json|```/g,'').trim();
-  const si = clean.indexOf('{'), ei = clean.lastIndexOf('}');
-  if(si === -1 || ei === -1) throw new Error('AI did not return JSON.');
-  const parsed = JSON.parse(clean.slice(si, ei + 1));
-  if(!parsed.t || !parsed.d) throw new Error('AI replacement was missing a tool/project name or description.');
-  if(!isStem){
-    if(!isAiToolSafeForEntry(parsed.t, entry)) throw new Error(`${parsed.t} is banned or not age-appropriate for ${entry.yl}.`);
-    // Allow same-tool description improvements, but reject duplicates with any other slot.
-    if(toolKey(parsed.t) !== toolKey(oldTool) && wouldDupeToolProposalInEntry(entry, parsed.t, sugIdx)) throw new Error(`${parsed.t} duplicates another suggestion in this unit.`);
-  }
-  const realism = checkRealisticToolUse(parsed.t, parsed.d, entry);
-  if(!realism.ok) throw new Error('Draft rejected as unrealistic: ' + realism.reason);
-  const quality = await evaluateDraftImprovement(entry, oldSug, parsed, reason, isStem);
-  const change = {
-    entryIdx,
-    sugIdx,
-    t: parsed.t,
-    d: parsed.d,
-    auditReason: reason,
-    auditIssues: result.issues || [],
-    auditSource: 'realism-age-audit',
-    improvementConfidence: quality.confidence,
-    improvementScore: quality.score,
-    whyBetter: quality.whyBetter,
-    remainingConcern: quality.remainingConcern
-  };
-  if(parsed.url) change.url = parsed.url;
-  return change;
-}
-
-async function draftAllRealismFixes(scope){
-  const source = (REALISM_AUDIT_RESULTS || []).slice();
-  if(!source.length){
-    alert('Run the realism audit first.');
-    return;
-  }
-  const targets = source.filter(r => scope === 'high' ? resultHighestSeverity(r) === 'high' : true);
-  if(!targets.length){
-    alert(scope === 'high' ? 'No high-priority flags to fix.' : 'No flagged suggestions to fix.');
-    return;
-  }
-
-  const label = scope === 'high' ? 'high-priority flagged suggestion' : 'flagged suggestion';
-  const confirmed = confirm(`Draft AI fixes for ${targets.length} ${label}${targets.length!==1?'s':''}?\n\nThis will generate replacement drafts one by one, then run an AI quality check comparing each draft against the original. Low-confidence drafts will be rejected before the review popup. Nothing will be saved automatically — all accepted drafts still need human approval.`);
-  if(!confirmed) return;
-
-  const buttons = Array.from(document.querySelectorAll('.btn-realism-fix-all'));
-  buttons.forEach(b => { b.disabled = true; });
-  const prog = document.getElementById('realism-batch-progress');
-  const bar = document.getElementById('realism-batch-bar');
-  const lbl = document.getElementById('realism-batch-label');
-  if(prog) prog.style.display = 'block';
-  startProgress();
-
-  const changes = [];
-  const failures = [];
-  const seenSlots = new Set();
-
-  for(let i=0; i<targets.length; i++){
-    const r = targets[i];
-    const pct = Math.round(((i+1)/targets.length)*100);
-    const slotKey = `${r.entryIdx}:${r.sugIdx}`;
-    if(seenSlots.has(slotKey)) continue;
-    seenSlots.add(slotKey);
-    if(bar) bar.style.width = pct + '%';
-    if(lbl) lbl.textContent = `${i+1}/${targets.length}: ${r.yl} — ${r.th} — Suggestion ${r.sugIdx + 1}`;
-    setStatus(`Drafting realism fix ${i+1}/${targets.length}: ${r.yl} — ${r.th}`, 'loading');
-    try{
-      const change = await buildRealismReplacementChange(r);
-      if(change) changes.push(change);
-    }catch(e){
-      failures.push({result:r, message:e.message});
-      console.warn('Realism fix failed:', r, e.message);
-    }
-    if(i < targets.length - 1) await sleep(350);
-  }
-
-  buttons.forEach(b => { b.disabled = false; });
-  if(prog) prog.style.display = 'none';
-  stopProgress();
-  renderRealismBatchFailureSummary_(failures);
-
-  if(!changes.length){
-    const msg = failures.length ? `No fixes were drafted. First error: ${failures[0].message}` : 'No fixes were drafted.';
-    setStatus(msg, 'error');
-    alert(msg);
-    return;
-  }
-
-  const failNote = failures.length ? ` (${failures.length} could not be drafted — see the failure summary below the audit results)` : '';
-  window._snapshotReason = `Before applying ${changes.length} realism/age fix${changes.length!==1?'es':''}`;
-  showChangesPopup(changes);
-  setStatus(`${changes.length} realism fix draft${changes.length!==1?'s':''} ready for review${failNote}`);
-}
-
-async function draftRealismReplacement(entryIdx, sugIdx, reason){
-  const entry = DATA[entryIdx];
-  if(!entry) return;
-  const oldSug = getSugs(entry)[sugIdx];
-  if(!oldSug) return;
-  const isStem = sugIdx === 5;
-  const oldTool = sugTool(oldSug);
-  const oldDesc = sugDesc(oldSug);
-  try{
-    const deterministicFix = buildDeterministicRealismFix_({
-      entryIdx,
-      sugIdx,
-      issues: [{type:'description', severity:'high', message: reason || 'May be unrealistic or not age appropriate.'}]
-    });
-    if(deterministicFix){
-      showChangesPopup([deterministicFix]);
-      setStatus('Minecraft description clean-up drafted — review before applying');
-      return;
-    }
-  }catch(detErr){
-    console.warn('Deterministic realism fix failed, falling back to AI:', detErr.message);
-  }
-  const otherTools = getSugs(entry).filter((s,i)=>i!==sugIdx && isRealSug(s)).map(s=>sugTool(s)).join(', ');
-  const constraints = isStem ? REALISTIC_TOOL_USE_RULES : buildToolConstraints(entry.yl);
-  const prompt = isStem ? `You are replacing protected Suggestion 6, the STEM Design Cycle idea, for this IB PYP unit. This is a manual DLP-approved action, not a bulk edit.
-Campus: ${entry.ca}
-Year level: ${entry.yl}
-Theme: ${entry.th}
-Central Idea: ${entry.ci || ''}
-Lines of Inquiry: ${entry.lo || ''}
-Planner summary: ${entry.plannerText || ''}
-Current STEM suggestion: ${oldTool}: ${oldDesc}
-Problem flagged: ${reason || 'May be unrealistic or not age appropriate.'}
-
-Create ONE replacement STEM Design Cycle activity that is realistic for this year level. It must include tangible making/prototyping materials and a clear Empathise → Define → Ideate → Prototype → Test cycle. It may include age-appropriate technology only when the tech is genuinely useful.
-${REALISTIC_TOOL_USE_RULES}
-Return ONLY JSON: {"t":"Project name","d":"2-3 practical sentences describing exactly what students build, test and improve."}`
-  : `You are replacing one unrealistic or not age-appropriate digital learning suggestion for an IB PYP unit.
-Campus: ${entry.ca}
-Year level: ${entry.yl}
-Theme: ${entry.th}
-Central Idea: ${entry.ci || ''}
-Lines of Inquiry: ${entry.lo || ''}
-Planner summary: ${entry.plannerText || ''}
-Current suggestion to replace: ${oldTool}: ${oldDesc}
-Problem flagged: ${reason || 'May be unrealistic or not age appropriate.'}
-Other tools already used in this unit — avoid duplicates: ${otherTools || 'none'}
-
-${constraints}
-${SUGGESTION_STYLE}
-
-Create ONE replacement suggestion that is classroom-realistic, age-appropriate, and directly connected to the unit. Return ONLY JSON: {"t":"Tool Name","d":"2-3 practical sentences describing exactly what students do and create.","url":"optional direct lesson URL"}`;
-
-  startProgress();
-  setStatus(`Drafting replacement for ${entry.yl} — ${entry.th}…`, 'loading');
-  try{
-    const raw = await callAI([{role:'user',parts:[{text:prompt}]}], null, OPENAI_FAST_MODEL || OPENAI_MODEL);
-    const clean = raw.replace(/```json|```/g,'').trim();
-    const si = clean.indexOf('{'), ei = clean.lastIndexOf('}');
-    if(si === -1 || ei === -1) throw new Error('AI did not return JSON.');
-    const parsed = JSON.parse(clean.slice(si, ei + 1));
-    if(!parsed.t || !parsed.d) throw new Error('AI replacement was missing a tool/project name or description.');
-    if(!isStem){
-      if(!isAiToolSafeForEntry(parsed.t, entry)) throw new Error(`Draft rejected: ${parsed.t} is banned or not age-appropriate for ${entry.yl}.`);
-      if(wouldDupeToolProposalInEntry(entry, parsed.t, sugIdx)) throw new Error(`Draft rejected: ${parsed.t} duplicates another suggestion in this unit.`);
-    }
-    const realism = checkRealisticToolUse(parsed.t, parsed.d, entry);
-    if(!realism.ok) throw new Error('Draft rejected as unrealistic: ' + realism.reason);
-    const quality = await evaluateDraftImprovement(entry, oldSug, parsed, reason || 'May be unrealistic or not age appropriate.', isStem);
-    const change = {
-      entryIdx,
-      sugIdx,
-      t: parsed.t,
-      d: parsed.d,
-      auditReason: reason || 'May be unrealistic or not age appropriate.',
-      auditSource: 'realism-age-audit',
-      improvementConfidence: quality.confidence,
-      improvementScore: quality.score,
-      whyBetter: quality.whyBetter,
-      remainingConcern: quality.remainingConcern
-    };
-    if(parsed.url) change.url = parsed.url;
-    showChangesPopup([change]);
-    setStatus('Replacement drafted — review before applying');
-  }catch(e){
-    alert('Could not draft replacement: ' + e.message);
-    setStatus('Replacement draft failed: ' + e.message, 'error');
-  }finally{
-    stopProgress();
-  }
-}
-
-async function fixAllIncomplete(){
-  const {incomplete,banned:_b,duplicates:_d,offWhitelist:_o} = getIssues();
-  if(!incomplete.length) return;
-  const btn=document.getElementById('btn-fix-incomplete');
-  const prog=document.getElementById('fix-incomplete-progress');
-  const lbl=document.getElementById('fix-incomplete-label');
-  const bar=document.getElementById('fix-incomplete-bar-fill');
-  if(btn) btn.disabled=true;
-  if(prog) prog.style.display='block';
-  let done=0, fixed=0, failed=0;
-  for(const {e,idx} of incomplete){
-    done++;
-    if(lbl) lbl.textContent=`${done}/${incomplete.length}: ${e.yl} — ${e.th}`;
-    if(bar) bar.style.width=`${Math.round((done/incomplete.length)*100)}%`;
-    const prompt=`Generate exactly 6 digital technology suggestions for this IB PYP unit.
-Suggestion #6 MUST be a STEM Design Cycle activity (Empathise-Define-Ideate-Prototype-Test).
-Campus: ${e.ca} | Year Level: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: "${e.ci}"`:''}${e.lo?`\nLines of Inquiry: "${e.lo}"`:''}${e.plannerText?`\nPlanner: ${e.plannerText}`:''}
-Requirements: all 5 different tools.
-${SUGGESTION_STYLE}
-Return ONLY a JSON array, no markdown: [{"t":"Tool Name","d":"2-3 vivid sentences."},...]`;
-    try{
-      let sugs = null;
-      let dupedTool = null;
-      for(let attempt=0; attempt<2; attempt++){
-        const retryNote = attempt>0 ? `\n\nRETRY: Your previous response used "${dupedTool}" twice. Every one of the 6 suggestions MUST use a DIFFERENT tool. #6 must be a STEM Design Cycle activity.` : '';
-        const raw=await callAI([{role:'user',parts:[{text:prompt+retryNote}]}], null, OPENAI_MODEL);
-        const clean=raw.replace(/```json|```/g,'').trim();
-        const si=clean.indexOf('['), ei=clean.lastIndexOf(']');
-        if(si===-1||ei===-1) throw new Error('No JSON array');
-        const parsed=JSON.parse(clean.slice(si,ei+1));
-        if(!parsed.length) throw new Error('Empty array');
-        const keys=parsed.map(s=>toolKey(sugTool(s))).filter(Boolean);
-        const dup=keys.find((k,i)=>keys.indexOf(k)!==i);
-        if(dup){ const dupSug=parsed.find(s=>toolKey(sugTool(s))===dup); dupedTool = dupSug ? sugTool(dupSug) : dup; continue; }
-        sugs = parsed;
-        break;
-      }
-      if(!sugs) throw new Error(`Duplicates in batch after retry`);
-      DATA[idx].s=sugs; DATA[idx].audited=true; fixed++;
-      saveToDrive();
-    }catch(err){
-      failed++;
-    }
-    if(done<incomplete.length) await sleep(2000);
-  }
-  if(lbl) lbl.textContent=`Done — ${fixed} fixed, ${failed} failed`;
-  if(btn){ btn.disabled=false; }
-  setStatus(`${fixed} incomplete entries fixed`);
-  renderDashboard();
-}
-
-async function readSheetRange(range){
-  const token = await getDriveToken();
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${ANALYTICS_SHEET_ID}/values/${encodeURIComponent(range)}`;
-  const r = await fetch(url, { headers: { 'Authorization': 'Bearer ' + token } });
-  const d = await r.json();
-  if(d.error) throw new Error(d.error.message);
-  return d.values || [];
-}
-
-async function readMultipleRanges(ranges){
-  const token = await getDriveToken();
-  const params = ranges.map(r => 'ranges=' + encodeURIComponent(r)).join('&');
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${ANALYTICS_SHEET_ID}/values:batchGet?${params}`;
-  const r = await fetch(url, { headers: { 'Authorization': 'Bearer ' + token } });
-  const d = await r.json();
-  if(d.error) throw new Error(d.error.message);
-  return d.valueRanges.map(vr => vr.values || []);
-}
-
-async function loadLiveAnalytics(){
-  const loading = document.getElementById('live-loading');
-  const contentEl = document.getElementById('live-content');
-  const lastUpdated = document.getElementById('live-last-updated');
-  const btn = document.getElementById('btn-refresh-live');
-  const dot = document.getElementById('live-dot');
-
-  if(loading) loading.style.display = 'block';
-  if(contentEl) contentEl.style.display = 'none';
-  if(btn) btn.disabled = true;
-  if(dot) dot.style.background = '#fbbf24';
-
-  try{
-    const [dashRows, analyticsRows, reactionsRows, feedbackRows, usedRows] = await readMultipleRanges([
-      'Dashboard!A1:F60',
-      'Analytics!A1:F500',
-      'Reactions!A1:G500',
-      'Feedback!A1:G100',
-      'Used!A1:G100'
-    ]);
-
-    renderLiveScorecard(dashRows);
-    renderLiveOverview(dashRows);
-    renderLiveCampusChart(dashRows);
-    renderLiveHeatmap(dashRows);
-    renderLiveReactions(reactionsRows);
-    renderLiveThumbsDown(reactionsRows);
-    renderLiveTopPages(dashRows);
-    renderLiveFeedback(feedbackRows);
-    renderLiveUsed(usedRows);
-    window._usedRowsCache = usedRows; // cached for ranking scope switches
-    renderToolRankings('all');
-
-    if(loading) loading.style.display = 'none';
-    if(contentEl) contentEl.style.display = 'block';
-    if(dot) dot.style.background = 'var(--lime)';
-    if(lastUpdated) lastUpdated.textContent = 'Last updated ' + new Date().toLocaleTimeString('en-AU') + ' — auto-updates as teachers use the app';
-  }catch(e){
-    if(loading) loading.innerHTML = `<div style="color:#FF8080;font-size:14px">Failed to load: ${esc(e.message)}</div>`;
-    if(dot) dot.style.background = '#FF8080';
-    console.error(e);
-  }
-  if(btn) btn.disabled = false;
-}
-
-function findSection(rows, headerText){
-  
-  let startIdx = -1;
-  for(let i=0; i<rows.length; i++){
-    if(rows[i].some(c => String(c||'').includes(headerText))){ startIdx = i; break; }
-  }
-  if(startIdx === -1) return [];
-  const result = [];
-  for(let i=startIdx+1; i<rows.length; i++){
-    if(!rows[i] || !rows[i].length || rows[i].every(c=>!c)) break;
-    result.push(rows[i]);
-  }
-  return result;
-}
-
-function renderLiveScorecard(rows){
-  const el = document.getElementById('live-scorecard'); if(!el) return;
-  const section = findSection(rows, 'WEEKLY SCORECARD');
-  
-  const data = section.slice(1);
-  if(!data.length){ el.innerHTML = '<div style="color:var(--dim);font-size:13px">No data</div>'; return; }
-
-  const statusColour = s => {
-    const v = String(s||'').toLowerCase();
-    if(v.includes('good') || v.includes('✓')) return 'var(--lime)';
-    if(v.includes('no data') || v.includes('⚪')) return 'var(--dim)';
-    if(v.includes('none') || v.includes('🔴')) return '#FF8080';
-    return '#fbbf24';
-  };
-
-  el.innerHTML = data.map(row => {
-    const [metric, , value, target, status, meaning] = row;
-    if(!metric) return '';
-    const col = statusColour(status);
-    return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
-      <div style="width:8px;height:8px;border-radius:50%;background:${col};flex-shrink:0"></div>
-      <div style="width:160px;flex-shrink:0;font-size:13px;font-weight:600">${esc(metric)}</div>
-      <div style="width:50px;font-size:20px;font-weight:900;color:${col}">${esc(value||'—')}</div>
-      <div style="width:80px;font-size:11px;color:var(--dim)">${esc(target||'')}</div>
-      <div style="flex:1;font-size:12px;color:#aaa">${esc(meaning||'')}</div>
-    </div>`;
-  }).join('');
-}
-
-function renderLiveOverview(rows){
-  const el = document.getElementById('live-overview-grid'); if(!el) return;
-  const section = findSection(rows, 'USAGE OVERVIEW');
-  if(!section.length){ el.innerHTML=''; return; }
-
-  const metrics = [];
-  for(const row of section){
-    if(row[0] && row[1]) metrics.push([row[0], row[1]]);
-  }
-  const colours = ['var(--lime)','var(--gold)','#60B8F0','#9B8BFF','#F5A623','#FF8080'];
-  el.innerHTML = metrics.slice(0,6).map(([label,val],i) =>
-    `<div class="stat-card" style="background:var(--card2)">
-      <div class="stat-num" style="color:${colours[i%colours.length]}">${esc(val)}</div>
-      <div class="stat-lbl">${esc(label)}</div>
-    </div>`
-  ).join('');
-}
-
-function renderLiveCampusChart(rows){
-  const el = document.getElementById('live-campus-chart'); if(!el) return;
-  const section = findSection(rows, 'VIEWS BY CAMPUS');
-  
-  const data = section.slice(1).filter(r=>r[0]&&r[1]);
-  if(!data.length){ el.innerHTML='<div style="color:var(--dim);font-size:13px">No data</div>'; return; }
-
-  const max = Math.max(...data.map(r=>parseInt(r[1])||0))||1;
-  const campusCols = {'Elsternwick':'#818cf8','Glen Waverley':'#34d399','St Kilda Rd':'#fb923c','St Kilda':'#fb923c'};
-  el.innerHTML = data.map(([campus,views,avgTime]) => {
-    const col = campusCols[campus] || 'var(--lime)';
-    const pct = Math.round(((parseInt(views)||0)/max)*100);
-    return `<div style="margin-bottom:12px">
-      <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:5px">
-        <span style="color:${col}">${esc(campus)}</span>
-        <span style="color:var(--dim)">${esc(views)} views · ${esc(avgTime||'—')}s avg</span>
-      </div>
-      <div style="height:7px;background:var(--card2);border-radius:4px">
-        <div style="height:100%;border-radius:4px;background:${col};width:${pct}%"></div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function renderLiveHeatmap(rows){
-  const el = document.getElementById('live-heatmap'); if(!el) return;
-  const section = findSection(rows, 'VIEWS BY CAMPUS & YEAR LEVEL');
-  if(section.length < 2){ el.innerHTML='<div style="color:var(--dim);font-size:13px">No data</div>'; return; }
-
-  const headers = section[0]; 
-  const dataRows = section.slice(1);
-  const campusCols = ['#818cf8','#34d399','#fb923c'];
-
-  let html = `<table style="width:100%;border-collapse:collapse;font-size:13px">
-    <thead><tr>`;
-  headers.forEach((h,i) => {
-    const col = i>0 && i<4 ? campusCols[i-1] : 'var(--text)';
-    html += `<th style="padding:8px 12px;text-align:${i===0?'left':'center'};color:${col};font-weight:700;border-bottom:1.5px solid var(--border)">${esc(h)}</th>`;
-  });
-  html += '</tr></thead><tbody>';
-
-  const allVals = dataRows.flatMap(r=>r.slice(1,4).map(v=>parseInt(v)||0)).filter(v=>v>0);
-  const maxVal = Math.max(...allVals)||1;
-
-  dataRows.forEach(row => {
-    const isTotalRow = String(row[0]||'').toLowerCase()==='total';
-    html += `<tr style="${isTotalRow?'font-weight:800;background:var(--card2)':''}">`;
-    row.forEach((cell,i) => {
-      const val = parseInt(cell)||0;
-      const intensity = i>0 && i<4 && val>0 ? Math.max(0.1, val/maxVal) : 0;
-      const bg = i>0 && i<4 && val>0
-        ? `rgba(${i===1?'129,140,248':i===2?'52,211,153':'251,146,60'},${intensity*0.4})`
-        : 'transparent';
-      const align = i===0?'left':'center';
-      html += `<td style="padding:9px 12px;text-align:${align};background:${bg};border-bottom:1px solid var(--border);font-size:${isTotalRow?'14px':'13px'}">${esc(cell||'—')}</td>`;
-    });
-    html += '</tr>';
-  });
-  html += '</tbody></table>';
-  el.innerHTML = html;
-}
-
-function formatAnalyticsTimestamp(ts){
-  const raw = String(ts||'').trim();
+function toolInventoryKey(tool){
+  const raw = String(tool || '').trim();
   if(!raw) return '';
-  const m = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?/);
-  if(m){
-    const d = new Date(Number(m[3]), Number(m[2])-1, Number(m[1]), Number(m[4]||0), Number(m[5]||0), Number(m[6]||0));
-    if(!isNaN(d)) return d.toLocaleDateString('en-AU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
-  }
-  const d = new Date(raw);
-  if(!isNaN(d)) return d.toLocaleDateString('en-AU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
-  return raw;
+  try { return normaliseToolName(raw).toLowerCase().trim(); }
+  catch(e){ return raw.toLowerCase().trim(); }
 }
 
-function parseReactionRows(rows){
-  return (rows||[]).slice(1).filter(r => r && r[4] && r[6]).map(r => ({
-    ts: r[0] || '',
-    campus: r[1] || '',
-    yl: r[2] || '',
-    theme: r[3] || '',
-    tool: normaliseToolName(String(r[4]||'').trim()) || String(r[4]||'').trim(),
-    rawTool: String(r[4]||'').trim(),
-    phase: r[5] || '',
-    reaction: String(r[6]||'').toLowerCase().trim()
-  }));
-}
-
-function renderLiveReactions(rows){
-  const el = document.getElementById('live-reactions'); if(!el) return;
-  const events = parseReactionRows(rows);
-  if(!events.length){ el.innerHTML='<div style="color:var(--dim);font-size:13px">No reactions yet</div>'; return; }
-  const counts = {};
-  events.forEach(ev => {
-    const key = ev.tool || ev.rawTool || 'Unknown tool';
-    if(!counts[key]) counts[key] = {up:0, down:0};
-    if(ev.reaction === 'up') counts[key].up++;
-    if(ev.reaction === 'down') counts[key].down++;
+function normaliseToolList(list){
+  if(!Array.isArray(list)) return [];
+  const seen = new Set();
+  const out = [];
+  list.forEach(item => {
+    const value = String(item || '').trim();
+    if(!value) return;
+    const key = toolInventoryKey(value);
+    if(seen.has(key)) return;
+    seen.add(key);
+    out.push(value);
   });
-  const sorted = Object.entries(counts).map(([tool,c]) => [tool,c.up,c.down,c.up+c.down]).sort((a,b)=>b[3]-a[3]).slice(0,10);
-  const max = Math.max(...sorted.map(r=>r[3]||0))||1;
-  el.innerHTML = sorted.map(([tool,up,down,total]) => {
-    const u=up||0, d=down||0, t=total||u+d;
-    const pct = Math.round((t/max)*100);
-    const approvalPct = t>0?Math.round((u/t)*100):0;
-    const barCol = approvalPct>=80?'var(--lime)':approvalPct>=50?'#fbbf24':'#FF8080';
-    return `<div style="margin-bottom:10px">
-      <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;margin-bottom:4px">
-        <span>${esc(tool)}</span>
-        <span style="color:var(--dim)">👍${u} 👎${d}</span>
-      </div>
-      <div style="height:6px;background:var(--card2);border-radius:3px">
-        <div style="height:100%;border-radius:3px;background:${barCol};width:${pct}%"></div>
-      </div>
-    </div>`;
-  }).join('');
+  return out;
 }
 
-let LIVE_THUMBSDOWN_EVENTS = [];
+function normaliseAgeRange(range){
+  const source = range && typeof range === 'object' ? range : {};
+  let min = clampYearLevelValue(source.min ?? source.minYear ?? source.from ?? 0);
+  let max = clampYearLevelValue(source.max ?? source.maxYear ?? source.to ?? 6);
+  if(min > max){ const tmp = min; min = max; max = tmp; }
+  return { min, max };
+}
 
-function renderLiveThumbsDown(rows){
-  const el = document.getElementById('live-thumbsdown');
-  const countEl = document.getElementById('live-thumbsdown-count');
-  if(!el) return;
-  const events = parseReactionRows(rows).filter(ev => ev.reaction === 'down').reverse();
-  LIVE_THUMBSDOWN_EVENTS = events.slice(0,20);
-  if(countEl) countEl.textContent = events.length ? `${events.length} downvote${events.length!==1?'s':''}` : '';
-  if(!events.length){
-    el.innerHTML='<div style="color:var(--dim);font-size:13px;padding:8px 0">No thumbs-down reactions yet.</div>';
+function normaliseAgeRanges(ranges){
+  const out = {};
+  if(!ranges || typeof ranges !== 'object') return out;
+  Object.entries(ranges).forEach(([tool, range]) => {
+    const key = toolInventoryKey(tool);
+    if(key) out[key] = normaliseAgeRange(range);
+  });
+  return out;
+}
+
+let TOOL_INVENTORY_CLEANUP_PENDING = false;
+
+function removeToolInventoryCrossListConflicts(preferList){
+  TOOL_INVENTORY.approved = Array.isArray(TOOL_INVENTORY.approved) ? TOOL_INVENTORY.approved : [];
+  TOOL_INVENTORY.banned = Array.isArray(TOOL_INVENTORY.banned) ? TOOL_INVENTORY.banned : [];
+  TOOL_INVENTORY.ageRanges = TOOL_INVENTORY.ageRanges || {};
+
+  const before = JSON.stringify({
+    approved: TOOL_INVENTORY.approved,
+    banned: TOOL_INVENTORY.banned,
+    ageRanges: TOOL_INVENTORY.ageRanges
+  });
+
+  const bannedKeys = new Set(TOOL_INVENTORY.banned.map(toolInventoryKey).filter(Boolean));
+  const approvedKeys = new Set(TOOL_INVENTORY.approved.map(toolInventoryKey).filter(Boolean));
+
+  // Safety-first default: if the same tool appears in both lists under aliases
+  // such as "Sway" and "Microsoft Sway", banned wins.
+  if(preferList === 'approved'){
+    TOOL_INVENTORY.banned = TOOL_INVENTORY.banned.filter(t => !approvedKeys.has(toolInventoryKey(t)));
+  } else {
+    TOOL_INVENTORY.approved = TOOL_INVENTORY.approved.filter(t => !bannedKeys.has(toolInventoryKey(t)));
+    bannedKeys.forEach(k => { if(k && TOOL_INVENTORY.ageRanges) delete TOOL_INVENTORY.ageRanges[k]; });
+  }
+
+  const after = JSON.stringify({
+    approved: TOOL_INVENTORY.approved,
+    banned: TOOL_INVENTORY.banned,
+    ageRanges: TOOL_INVENTORY.ageRanges
+  });
+  if(before !== after) TOOL_INVENTORY_CLEANUP_PENDING = true;
+}
+
+function normaliseToolInventory(){
+  TOOL_INVENTORY = TOOL_INVENTORY && typeof TOOL_INVENTORY === 'object'
+    ? TOOL_INVENTORY
+    : { approved: [], banned: [], ageRanges: {} };
+  TOOL_INVENTORY.approved = normaliseToolList(TOOL_INVENTORY.approved);
+  TOOL_INVENTORY.banned = normaliseToolList(TOOL_INVENTORY.banned);
+  TOOL_INVENTORY.ageRanges = normaliseAgeRanges(TOOL_INVENTORY.ageRanges);
+  removeToolInventoryCrossListConflicts('banned');
+  return TOOL_INVENTORY;
+}
+
+function loadToolInventoryFromMeta(meta){
+  const inv = (meta && meta._inventory && typeof meta._inventory === 'object') ? meta._inventory : {};
+  TOOL_INVENTORY = {
+    approved: normaliseToolList(inv.approved || inv.whitelist || inv.allowlist || []),
+    banned: normaliseToolList(inv.banned || inv.blocklist || inv.denylist || []),
+    ageRanges: normaliseAgeRanges(inv.ageRanges || inv.ranges || inv.age_ranges || {})
+  };
+  seedDefaultInventoryIfEmpty();
+  return TOOL_INVENTORY;
+}
+
+function serialiseToolInventoryForMeta(){
+  normaliseToolInventory();
+  return {
+    approved: TOOL_INVENTORY.approved || [],
+    banned: TOOL_INVENTORY.banned || [],
+    ageRanges: TOOL_INVENTORY.ageRanges || {}
+  };
+}
+
+function invAddTool(listKey){
+  const inputId = listKey === 'approved' ? 'inv-whitelist-input' : 'inv-banned-input';
+  const input = document.getElementById(inputId);
+  if(!input) return;
+  const rawVal = (input.value || '').trim();
+  if(!rawVal) return;
+  const val = normaliseToolName(rawVal).trim() || rawVal;
+  normaliseToolInventory();
+  TOOL_INVENTORY[listKey] = TOOL_INVENTORY[listKey] || [];
+  const key = toolInventoryKey(val);
+  const exists = TOOL_INVENTORY[listKey].some(x => toolInventoryKey(x) === key);
+  if(exists){
+    setStatus(`"${val}" is already in the ${listKey === 'approved' ? 'whitelist' : 'banned list'}`, 'error');
+    input.value = '';
     return;
   }
-  const campusCol = {'Elsternwick':'#818cf8','Glen Waverley':'#34d399','St Kilda Rd':'#fb923c','St Kilda':'#fb923c'};
-  el.innerHTML = LIVE_THUMBSDOWN_EVENTS.map((ev,idx) => {
-    const col = campusCol[ev.campus] || 'var(--dim)';
-    const match = findThumbsDownTarget(ev, {silent:true});
-    const matchHint = match && match.entry
-      ? `${match.isStem ? 'STEM review' : 'AI replacement'} ready`
-      : 'Could not match to library entry';
-    const disabled = match && match.entry ? '' : 'disabled';
-    return `<div style="display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)">
-      <div style="width:28px;height:28px;border-radius:9px;background:#FF808020;color:#FF8080;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">👎</div>
-      <div style="flex:1;min-width:0">
-        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px">
-          <span style="font-size:11px;color:${col};font-weight:800">${esc(ev.campus)}</span>
-          <span style="font-size:11px;color:var(--gold);font-weight:700">${esc(ev.yl)}</span>
-          <span style="font-size:11px;color:var(--dim)">${esc(ev.phase)}</span>
-          <span style="font-size:11px;color:var(--dim);margin-left:auto">${esc(formatAnalyticsTimestamp(ev.ts))}</span>
-        </div>
-        <div style="font-size:13px;color:var(--text);font-weight:700;line-height:1.35">${esc(ev.tool || ev.rawTool)}</div>
-        <div style="font-size:12px;color:#aaa;line-height:1.45;margin-top:2px">${esc(ev.theme)}</div>
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px">
-          <button id="btn-thumb-ai-${idx}" ${disabled} onclick="draftThumbsDownReplacement(${idx})" class="btn-sm" style="color:var(--lime);border-color:var(--lime);font-size:11px;padding:6px 10px">
-            ✨ Draft replacement with AI
-          </button>
-          <span style="font-size:10px;color:${match && match.entry ? 'var(--dim)' : '#FF8080'}">${esc(matchHint)}</span>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-
-function canonicalForMatch_(value){
-  return String(value || '').toLowerCase().replace(/&/g,'and').replace(/[^a-z0-9]+/g,' ').trim().replace(/\s+/g,' ');
-}
-function campusCandidatesForReaction_(campus){
-  const c = canonicalForMatch_(campus);
-  if(c.includes('glen')) return ['GW','Glen Waverley'];
-  if(c.includes('elsternwick')) return ['EL','Elsternwick'];
-  if(c.includes('st kilda')) return ['STK','St Kilda','St Kilda Rd','St Kilda Road'];
-  return [campus];
-}
-function campusMatchesReaction_(entryCampus, reactionCampus){
-  const e = canonicalForMatch_(entryCampus);
-  return campusCandidatesForReaction_(reactionCampus).some(c => canonicalForMatch_(c) === e);
-}
-function sugIdxFromReactionPhase_(phase){
-  const m = String(phase || '').match(/#\s*(\d+)/);
-  if(!m) return null;
-  const n = parseInt(m[1], 10) - 1;
-  return Number.isFinite(n) && n >= 0 ? n : null;
-}
-function findThumbsDownTarget(ev, opts){
-  const silent = opts && opts.silent;
-  const themeKey = canonicalForMatch_(ev.theme);
-  const yearKey = canonicalForMatch_(ev.yl);
-  const candidates = DATA.map((e,entryIdx)=>({e,entryIdx})).filter(({e}) =>
-    canonicalForMatch_(e.yl) === yearKey &&
-    canonicalForMatch_(e.th) === themeKey &&
-    campusMatchesReaction_(e.ca, ev.campus)
-  );
-  if(!candidates.length){
-    if(!silent) alert('Could not find the matching unit in data.json. Try refreshing Analytics after loading from Drive.');
-    return null;
-  }
-  const {e, entryIdx} = candidates[0];
-  let sugIdx = sugIdxFromReactionPhase_(ev.phase);
-  const sugs = getSugs(e);
-  if(sugIdx == null || !sugs[sugIdx]){
-    const rawToolKey = toolKey(ev.rawTool || ev.tool);
-    sugIdx = sugs.findIndex(s => toolKey(sugTool(s)) === rawToolKey || toolKey(normaliseToolName(sugTool(s))) === rawToolKey);
-  }
-  if(sugIdx < 0 || !sugs[sugIdx]){
-    if(!silent) alert('Found the unit, but could not match the downvoted suggestion slot.');
-    return null;
-  }
-  return { entry:e, entryIdx, sugIdx, currentSug:sugs[sugIdx], isStem:sugIdx===5 };
-}
-function buildThumbsDownRegenPrompt_(ev, target, retryNote){
-  const e = target.entry;
-  const oldTool = sugTool(target.currentSug);
-  const oldDesc = sugDesc(target.currentSug);
-  const siblings = getSugs(e).map((s,i)=> i===target.sugIdx ? null : sugTool(s)).filter(Boolean).join(', ');
-  const platformContext = detectPlatformContext(`${oldTool} ${oldDesc} ${e.th}`, e.yl).contextBlock || '';
-  const baseContext = `Campus: ${e.ca}\nYear Level: ${e.yl}\nTheme: ${e.th}\nCentral Idea: ${e.ci || 'Not provided'}\nLines of Inquiry: ${e.lo || 'Not provided'}\nUnit Summary: ${e.plannerText || 'Not provided'}\nDownvoted suggestion number: ${target.sugIdx + 1}\nDownvoted tool/project: ${oldTool}\nDownvoted description: ${oldDesc}\nOther tools already used in this unit: ${siblings || 'None'}`;
-  if(target.isStem){
-    return `A teacher clicked thumbs-down on the protected STEM Design Cycle idea for this unit. Draft ONE improved replacement for Suggestion 6 only.\n\n${baseContext}\n\nSTEM-SPECIFIC RULES:\n- This is Suggestion 6, the STEM Design Cycle slot stored as sugIdx:5.\n- Keep it as a hands-on STEM/Makerspace Design Cycle experience.\n- It must include tangible prototyping materials such as cardboard, recycled materials, popsticks, tape, hot glue, clay, Lego, craft materials, or simple robotics where age-appropriate.\n- Explicitly connect to Empathise → Define → Ideate → Prototype → Test.\n- Do not replace it with a normal software-only digital task.\n- Use age-appropriate language and tools for ${e.yl}.\n- Avoid duplicating the other tools/projects in this unit.\n${retryNote || ''}\n\nReturn ONLY valid JSON: {"t":"Project Name","d":"Specific improved STEM Design Cycle description."}`;
-  }
-  return `A teacher clicked thumbs-down on one DLA suggestion. Draft ONE improved replacement for that exact suggestion.\n\n${baseContext}\n\n${buildToolConstraints(e.yl)}${platformContext}\n\nRULES:\n- Replace only Suggestion ${target.sugIdx + 1}.\n- Do NOT touch Suggestion 6 / sugIdx:5 unless the downvoted item itself was Suggestion 6.\n- Prefer a genuinely stronger replacement, but you may keep the same tool if the main issue is the activity description.\n- Do not use any tools already used elsewhere in this unit: ${siblings || 'None'}.\n- Make the description practical, specific, vivid, and directly connected to the central idea/lines of inquiry.\n- Do not use forbidden tools such as ChatGPT, Claude, Gemini, Copilot, Google Docs, Google Slides, Google Sheets, WeVideo, or Flipgrid.\n${retryNote || ''}\n\nReturn ONLY valid JSON: {"t":"Tool Name","d":"Specific improved description."}`;
-}
-async function draftThumbsDownReplacement(idx){
-  const ev = LIVE_THUMBSDOWN_EVENTS[idx];
-  if(!ev) return;
-  const btn = document.getElementById(`btn-thumb-ai-${idx}`);
-  const oldText = btn ? btn.textContent : '';
-  if(btn){ btn.disabled = true; btn.textContent = 'Drafting…'; }
-  setStatus('Drafting replacement from thumbs-down feedback…','loading');
-  try{
-    await ensureLibrariesLoadedForAI();
-    const target = findThumbsDownTarget(ev);
-    if(!target) throw new Error('Could not match this thumbs-down to a current suggestion.');
-
-    let proposal = null;
-    let lastReason = '';
-    for(let attempt=1; attempt<=2; attempt++){
-      const retryNote = lastReason ? `\nPREVIOUS DRAFT WAS REJECTED: ${lastReason}. Correct this now.` : '';
-      const raw = await callAI([{role:'user',parts:[{text:buildThumbsDownRegenPrompt_(ev, target, retryNote)}]}], null, OPENAI_FAST_MODEL);
-      let parsed;
-      try{ parsed = JSON.parse(cleanJSON(raw)); }
-      catch(e){ lastReason = 'The response was not valid JSON.'; continue; }
-      const t = String(parsed.t || parsed.tool || parsed.name || '').trim();
-      const d = String(parsed.d || parsed.desc || parsed.description || parsed.activity || '').trim();
-      if(!t || !d){ lastReason = 'The draft was missing a tool/project title or description.'; continue; }
-      if(toolContainsForbiddenKeyword(t) || toolContainsForbiddenKeyword(d)){ lastReason = 'The draft contained a forbidden AI/Google/legacy tool.'; continue; }
-      if(toolViolatesInventoryBan(t)){ lastReason = 'The draft used a banned inventory item.'; continue; }
-      if(!target.isStem && !isToolAgeAppropriate(t, target.entry.yl)){ lastReason = `${t} is not age-appropriate for ${target.entry.yl}.`; continue; }
-      const realism = checkRealisticToolUse(t, d, target.entry);
-      if(!realism.ok){ lastReason = realism.reason; continue; }
-      if(!target.isStem && wouldDupeToolProposalInEntry(target.entry, t, target.sugIdx)){ lastReason = `${t} is already used elsewhere in this unit.`; continue; }
-      proposal = { entryIdx:target.entryIdx, sugIdx:target.sugIdx, t, d };
-      break;
-    }
-    if(!proposal) throw new Error(lastReason || 'AI could not create a valid replacement draft.');
-    window._snapshotReason = `Before applying thumbs-down replacement for ${target.entry.ca} ${target.entry.yl} ${target.entry.th}`;
-    showChangesPopup([proposal]);
-    setStatus('Replacement drafted — review and approve before applying ✓');
-  }catch(e){
-    console.error(e);
-    setStatus('Could not draft replacement: '+e.message,'error');
-    alert('Could not draft replacement:\n' + e.message);
-  }finally{
-    if(btn){ btn.disabled = false; btn.textContent = oldText || '✨ Draft replacement with AI'; }
-  }
-}
-
-function renderLiveTopPages(rows){
-  const el = document.getElementById('live-top-pages'); if(!el) return;
-  const section = findSection(rows, 'TOP 10 MOST VIEWED PAGES');
-  
-  const data = section.slice(2).filter(r=>r[0]&&r[1]&&r[0]!=='Page');
-  if(!data.length){ el.innerHTML='<div style="color:var(--dim);font-size:13px">No data</div>'; return; }
-
-  const max = Math.max(...data.map(r=>parseInt(r[1])||0))||1;
-  el.innerHTML = data.slice(0,10).map(([page,views,totalTime]) => {
-    const pct = Math.round(((parseInt(views)||0)/max)*100);
-    const avgSec = views&&totalTime ? Math.round((parseInt(totalTime)||0)/(parseInt(views)||1)) : 0;
-    return `<div style="margin-bottom:10px">
-      <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;margin-bottom:4px">
-        <span style="flex:1">${esc(page)}</span>
-        <span style="color:var(--dim);margin-left:8px">${esc(views)} · ${avgSec}s avg</span>
-      </div>
-      <div style="height:5px;background:var(--card2);border-radius:3px">
-        <div style="height:100%;border-radius:3px;background:#60B8F0;width:${pct}%"></div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function renderLiveFeedback(rows){
-  const el = document.getElementById('live-feedback'); if(!el) return;
-  
-  const data = rows.slice(1).filter(r=>r[6]).reverse(); 
-  if(!data.length){ el.innerHTML='<div style="color:var(--dim);font-size:13px">No feedback yet</div>'; return; }
-
-  el.innerHTML = data.slice(0,20).map(row => {
-    const [ts,campus,yl,theme,tool,phase,feedback] = row;
-    const date = ts ? new Date(ts).toLocaleDateString('en-AU',{day:'numeric',month:'short'}) : '';
-    const campusCol = {'Elsternwick':'#818cf8','Glen Waverley':'#34d399','St Kilda Rd':'#fb923c'}[campus]||'var(--dim)';
-    return `<div style="padding:10px 0;border-bottom:1px solid var(--border)">
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap">
-        <span style="font-size:11px;color:${campusCol};font-weight:700">${esc(campus)}</span>
-        <span style="font-size:11px;color:var(--gold);font-weight:600">${esc(yl)}</span>
-        <span style="font-size:11px;color:var(--dim)">${esc(theme)}</span>
-        <span style="font-size:11px;color:var(--dim);margin-left:auto">${date}</span>
-      </div>
-      <div style="font-size:11px;color:#9B8BFF;margin-bottom:4px">${esc(tool)} · ${esc(phase)}</div>
-      <div style="font-size:13px;color:var(--text);line-height:1.5">${esc(feedback)}</div>
-    </div>`;
-  }).join('');
-}
-
-function renderLiveUsed(rows){
-  const el = document.getElementById('live-used'); if(!el) return;
-  
-  const data = rows.slice(1).filter(r=>r[5]).reverse();
-  if(!data.length){ el.innerHTML='<div style="color:var(--dim);font-size:13px">No tools marked as used yet</div>'; return; }
-
-  el.innerHTML = `<div style="display:flex;flex-direction:column;gap:6px">` +
-    data.slice(0,15).map(row => {
-      const [ts,team,campus,yl,theme,tool] = row;
-      const date = ts ? new Date(ts).toLocaleDateString('en-AU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '';
-      const campusCol = {'Elsternwick':'#818cf8','Glen Waverley':'#34d399','St Kilda Rd':'#fb923c','St Kilda':'#fb923c'}[campus]||'var(--dim)';
-      return `<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;background:var(--card2);border-radius:8px;font-size:12px">
-        <span style="color:var(--lime);font-size:16px">✓</span>
-        <span style="color:${campusCol};font-weight:700;width:100px;flex-shrink:0">${esc(campus)}</span>
-        <span style="color:var(--gold);font-weight:600;width:62px;flex-shrink:0">${esc(yl)}</span>
-        <span style="flex:1;font-weight:600">${esc(tool)}</span>
-        <span style="color:var(--dim)">${esc(theme)}</span>
-        <span style="color:var(--dim);flex-shrink:0">${date}</span>
-      </div>`;
-    }).join('') + '</div>';
-}
-
-// ========== TOOL USAGE RANKINGS ==========
-let CURRENT_RANKING_SCOPE = 'all';
-
-function setRankingScope(scope){
-  CURRENT_RANKING_SCOPE = scope;
-  document.querySelectorAll('.ranking-scope').forEach(b => {
-    b.classList.toggle('active', b.dataset.scope === scope);
-  });
-  renderToolRankings(scope);
-}
-
-function renderToolRankings(scope){
-  const mostEl = document.getElementById('rankings-most-used');
-  const deadEl = document.getElementById('rankings-dead');
-  if(!mostEl || !deadEl) return;
-
-  const rows = window._usedRowsCache || [];
-  // Skip header row, filter for rows with a tool column
-  const usedEvents = rows.slice(1).filter(r => r && r[5]);
-
-  // Filter by campus if scope is set
-  let filtered = usedEvents;
-  if(scope !== 'all'){
-    filtered = usedEvents.filter(r => {
-      const campus = String(r[2]||'').trim();
-      if(scope === 'St Kilda Rd' && (campus === 'St Kilda' || campus === 'St Kilda Rd')) return true;
-      return campus === scope;
-    });
-  }
-
-  // ========== Most Used: count usage events per normalised tool name ==========
-  const usageCount = {};
-  filtered.forEach(r => {
-    const tool = normaliseToolName(String(r[5]||'').trim());
-    if(!tool) return;
-    usageCount[tool] = (usageCount[tool] || 0) + 1;
-  });
-
-  const mostUsed = Object.entries(usageCount)
-    .sort((a,b) => b[1] - a[1])
-    .slice(0, 15);
-
-  if(!mostUsed.length){
-    mostEl.innerHTML = '<div style="color:var(--dim);font-size:13px;padding:12px 0">No usage data yet for this scope. Teachers need to click "✓ I Used This" on the DLA to populate this.</div>';
+  // If adding to banned, also remove from approved (and vice versa)
+  if(listKey === 'banned'){
+    TOOL_INVENTORY.approved = (TOOL_INVENTORY.approved || []).filter(x => toolInventoryKey(x) !== key);
+    if(TOOL_INVENTORY.ageRanges) delete TOOL_INVENTORY.ageRanges[key];
   } else {
-    const maxCount = mostUsed[0][1];
-    mostEl.innerHTML = mostUsed.map((item, i) => {
-      const [tool, count] = item;
-      const pct = Math.round((count / maxCount) * 100);
-      const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
-      const rankLabel = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`;
-      return `<div class="rank-row">
-        <span class="rank-num ${rankClass}">${rankLabel}</span>
-        <div class="rank-body">
-          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px">
-            <span class="rank-tool">${esc(tool)}</span>
-            <span class="rank-count">${count}×</span>
+    TOOL_INVENTORY.banned = (TOOL_INVENTORY.banned || []).filter(x => toolInventoryKey(x) !== key);
+    const minEl = document.getElementById('inv-whitelist-min');
+    const maxEl = document.getElementById('inv-whitelist-max');
+    const range = normaliseAgeRange({ min: minEl?.value ?? 0, max: maxEl?.value ?? 6 });
+    TOOL_INVENTORY.ageRanges[key] = range;
+  }
+  TOOL_INVENTORY[listKey].push(val);
+  input.value = '';
+  renderToolInventory();
+  saveLibraries();
+  setStatus(`Added "${val}" to ${listKey === 'approved' ? 'whitelist' : 'banned list'}`);
+}
+
+function invRemoveTool(listKey, tool){
+  normaliseToolInventory();
+  const key = toolInventoryKey(tool);
+  const before = (TOOL_INVENTORY[listKey] || []).length;
+  TOOL_INVENTORY[listKey] = (TOOL_INVENTORY[listKey] || []).filter(x => toolInventoryKey(x) !== key);
+  if(listKey === 'approved' && TOOL_INVENTORY.ageRanges) delete TOOL_INVENTORY.ageRanges[key];
+  renderToolInventory();
+  saveLibraries();
+  const removed = before - (TOOL_INVENTORY[listKey] || []).length;
+  setStatus(removed ? `Removed "${tool}" from ${listKey === 'approved' ? 'whitelist' : 'banned list'}` : `"${tool}" was already removed`);
+}
+
+function invUpdateToolAge(tool, edge, value){
+  normaliseToolInventory();
+  const key = toolInventoryKey(tool);
+  const current = getToolAgeRange(tool);
+  let next = { min: current.min, max: current.max };
+  if(edge === 'min') next.min = clampYearLevelValue(value);
+  if(edge === 'max') next.max = clampYearLevelValue(value);
+  if(next.min > next.max){
+    if(edge === 'min') next.max = next.min;
+    if(edge === 'max') next.min = next.max;
+  }
+  TOOL_INVENTORY.ageRanges[key] = next;
+  renderToolInventory();
+  saveLibraries();
+  setStatus(`Updated ${tool} age range to ${ageRangeLabel(next)}`);
+}
+
+function renderToolInventory(){
+  const whitelistEl = document.getElementById('inv-whitelist-pills');
+  const bannedEl = document.getElementById('inv-banned-pills');
+  const whCountEl = document.getElementById('inv-whitelist-count');
+  const banCountEl = document.getElementById('inv-banned-count');
+  const totalEl = document.getElementById('inv-count');
+  if(!whitelistEl || !bannedEl) return;
+
+  normaliseToolInventory();
+  const shouldPersistInventoryCleanup = TOOL_INVENTORY_CLEANUP_PENDING;
+  TOOL_INVENTORY_CLEANUP_PENDING = false;
+  const approved = TOOL_INVENTORY.approved || [];
+  const banned = TOOL_INVENTORY.banned || [];
+
+  if(shouldPersistInventoryCleanup){
+    if(DRIVE_TOKEN && LIBRARIES_FILE_ID && typeof saveLibraries === 'function'){
+      setTimeout(() => saveLibraries().catch(e => console.warn('Inventory cleanup save failed:', e)), 0);
+      setStatus('Cleaned duplicate tool aliases across whitelist/banned lists ✓');
+    } else {
+      setStatus('Cleaned duplicate tool aliases locally — reconnect Drive to persist', 'loading');
+    }
+  }
+
+  if(whCountEl) whCountEl.textContent = approved.length ? `(${approved.length})` : '';
+  if(banCountEl) banCountEl.textContent = banned.length ? `(${banned.length})` : '';
+  if(totalEl) totalEl.textContent = (approved.length || banned.length) ? `${approved.length + banned.length} entries` : '';
+
+  whitelistEl.innerHTML = approved.length
+    ? approved.map(t => {
+        const range = getToolAgeRange(t);
+        return `<div style="display:grid;grid-template-columns:minmax(150px,1fr) 105px 105px auto;gap:6px;align-items:center;padding:7px 8px;background:rgba(197,232,74,0.08);border:1px solid rgba(197,232,74,0.3);border-radius:12px;font-size:12px;color:var(--lime)">
+          <div style="min-width:0">
+            <div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(t)}</div>
+            <div style="font-size:10px;color:var(--dim);font-weight:600">${ageRangeLabel(range)}</div>
           </div>
-          <div class="rank-bar"><div class="rank-bar-fill" style="width:${pct}%"></div></div>
-        </div>
-      </div>`;
-    }).join('');
-  }
+          <select class="inp" title="Minimum year level" onchange="invUpdateToolAge(${jsArg(t)},'min',this.value)" style="margin-bottom:0;font-size:11px;padding:5px 7px;color:var(--lime);border-color:rgba(197,232,74,.3)">${yearSelectOptions(range.min)}</select>
+          <select class="inp" title="Maximum year level" onchange="invUpdateToolAge(${jsArg(t)},'max',this.value)" style="margin-bottom:0;font-size:11px;padding:5px 7px;color:var(--lime);border-color:rgba(197,232,74,.3)">${yearSelectOptions(range.max)}</select>
+          <button type="button" onclick="event.stopPropagation(); invRemoveTool('approved',${jsArg(t)}); return false;" style="background:transparent;border:none;color:var(--lime);cursor:pointer;padding:0 6px;font-size:18px;line-height:1;opacity:.8" title="Remove">×</button>
+        </div>`;
+      }).join('')
+    : '<span style="font-size:11px;color:var(--dim);font-style:italic">No whitelist — all approved tools allowed.</span>';
 
-  // ========== Dead suggestions: tools suggested a lot in data.json but never (or rarely) used ==========
-  // Count how many times each tool is suggested across the library
-  const suggestedCount = {};
-  DATA.forEach(e => {
-    if(!e.audited) return;
-    // Filter by scope if set
-    if(scope !== 'all'){
-      const campus = String(e.ca||'').trim();
-      const match = scope === 'St Kilda Rd' ? (campus === 'St Kilda' || campus === 'St Kilda Rd') : campus === scope;
-      if(!match) return;
-    }
-    getSugs(e).forEach(s => {
-      const tool = normaliseToolName((s && s.t ? s.t.trim() : ''));
-      if(!tool) return;
-      suggestedCount[tool] = (suggestedCount[tool] || 0) + 1;
-    });
-  });
-
-  // Dead = suggested 3+ times but used 0 times (or suggestion:use ratio worse than 10:1)
-  const dead = Object.entries(suggestedCount)
-    .filter(([tool, sCount]) => {
-      if(sCount < 3) return false;
-      const used = usageCount[tool] || 0;
-      return used === 0 || (sCount / used >= 10);
-    })
-    .sort((a,b) => b[1] - a[1])
-    .slice(0, 8);
-
-  if(!dead.length){
-    deadEl.innerHTML = '<div style="color:var(--dim);font-size:12px;padding:10px 0">No dead tools detected. Every suggested tool is being used.</div>';
-  } else {
-    deadEl.innerHTML = dead.map(([tool, sCount]) => {
-      const used = usageCount[tool] || 0;
-      return `<div class="dead-row">
-        <div class="dead-tool">${esc(tool)}</div>
-        <div class="dead-sub">Suggested ${sCount}× · Used ${used}×</div>
-      </div>`;
-    }).join('');
-  }
+  bannedEl.innerHTML = banned.length
+    ? banned.map(t => `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 4px 4px 10px;background:rgba(255,128,128,0.08);border:1px solid rgba(255,128,128,0.3);border-radius:99px;font-size:12px;font-weight:600;color:#FF8080">${esc(t)}<button type="button" onclick="event.stopPropagation(); invRemoveTool('banned',${jsArg(t)}); return false;"  style="background:transparent;border:none;color:#FF8080;cursor:pointer;padding:0 6px;font-size:14px;line-height:1;opacity:.7" title="Remove">×</button></span>`).join('')
+    : '<span style="font-size:11px;color:var(--dim);font-style:italic">No bans.</span>';
 }
-
-
-
