@@ -2521,34 +2521,35 @@
     "lo": "How material properties determine their use; Material solutions for a sustainable future; How research solves problems in the natural world",
     "s": [
       {
-        "t": "Tinkercad + CoSpaces Edu (App Smash)",
-        "d": "Students design an innovative animal enrichment toy or sustainable product prototype in Tinkercad, focusing on material properties and environmental impact. They then import their 3D models into CoSpaces Edu to create an interactive, explorable virtual zoo or habitat, where users can see the toy in action and learn about its sustainable features. This App Smash allows students to demonstrate both their understanding of materials science and their ability to communicate scientific ideas through immersive digital storytelling, directly connecting to the unit's focus on design, innovation, and impact on the natural world."
-      },
-      {
-        "t": "Book Creator + Seesaw (App Smash)",
-        "d": "Students document their science experiments (such as testing material properties, sink/float, or friction) in Book Creator, combining photos, videos, and written reflections. They then share their digital journals on Seesaw for peer feedback and teacher assessment, enabling a cycle of reflection and communication. This App Smash leverages Book Creator's multimedia capabilities and Seesaw's interactive feedback tools to deepen students' understanding of scientific inquiry and material investigation, while fostering communication and research skills."
+        "t": "Book Creator + Micro:bit: Volcano Animations",
+        "d": "Students begin by researching different material properties and their uses in sustainable design, documenting their findings and reflections in a multimedia Book Creator science journal. Next, they use Micro:bit's 'Volcano Animations' lesson (https://microbit.org/teach/lessons/?selected=volcano-animations-unit-of-work) to code and animate a volcano eruption, visually demonstrating the impact of material choices in real-world scenarios (e.g., building materials for volcano-resistant structures). This App Smash allows students to combine rich digital storytelling with hands-on coding, deepening their understanding of how research and material science solve natural world problems.",
+        "url": "https://microbit.org/teach/lessons/?selected=volcano-animations-unit-of-work"
       },
       {
         "t": "Minecraft: Filtering Water On The ISS",
-        "d": "Using the 'Filtering Water On The ISS' lesson in Minecraft Education (https://education.minecraft.net/en-us/lessons/filtering-water-on-the-iss), students explore how material properties are critical in designing water filtration systems for space. They experiment with creating their own water filters in Minecraft, learning about decomposition, sustainability, and the impact of material choices on the environment?mirroring real-world scientific problem-solving and directly linking to the unit's inquiry into sustainable solutions and the use of research to solve natural world problems.",
+        "d": "Using the 'Filtering Water On The ISS' Minecraft Education lesson (https://education.minecraft.net/en-us/lessons/filtering-water-on-the-iss), students experiment with designing and testing water filtration systems, mirroring real-world engineering challenges. They explore how material properties (such as permeability and durability) determine the effectiveness of filtration, directly linking to the unit's focus on sustainable solutions and the impact of design on the environment. Students can iterate on their designs and reflect on how their choices affect both human and environmental wellbeing.",
         "url": "https://education.minecraft.net/en-us/lessons/filtering-water-on-the-iss"
       },
       {
+        "t": "Seesaw + Canva: Sustainable Product Pitch",
+        "d": "Students use Seesaw to document their research into sustainable materials and prototype development, capturing photos, videos, and reflections throughout the process. They then App Smash with Canva to design a persuasive digital poster or infographic pitching their sustainable product, highlighting the properties of chosen materials and their environmental impact. This workflow empowers students to synthesize research, design thinking, and communication skills, culminating in a polished, shareable artifact that advocates for sustainable innovation."
+      },
+      {
+        "t": "Padlet Interactive Material Gallery",
+        "d": "Students collaboratively build a digital gallery on Padlet, uploading images, videos, and short descriptions of various materials they investigate in class (e.g., metals, plastics, fibres, glass). Each entry includes observations about the material's properties, uses, and environmental impact, fostering peer-to-peer learning and critical analysis. This interactive resource becomes a living reference that supports inquiry into how material choices affect product design and sustainability."
+      },
+      {
         "t": "Micro:bit: Electrical Conductors",
-        "d": "Students use the 'Electrical Conductors' lesson (https://microbit.org/teach/lessons/?selected=electrical-conductors-unit-of-work) to investigate which materials conduct electricity and why. By designing and testing circuits with various materials, students gain hands-on experience with properties, classification, and the real-world implications of material choices. This activity directly supports the unit's focus on how material properties determine their use and encourages students to think critically about sustainable and innovative solutions.",
+        "d": "Through the Micro:bit 'Electrical Conductors' lesson (https://microbit.org/teach/lessons/?selected=electrical-conductors-unit-of-work), students design and conduct experiments to test which materials conduct electricity and which act as insulators. They record and analyze their data, connecting their findings to real-world applications such as designing safe, efficient, and sustainable products. This hands-on digital integration reinforces the unit's emphasis on investigating material properties and their practical implications.",
         "url": "https://microbit.org/teach/lessons/?selected=electrical-conductors-unit-of-work"
       },
       {
-        "t": "Adobe Express Video",
-        "d": "Students create short explainer videos in Adobe Express Video, showcasing their research into sustainable materials or the lifecycle of a product (e.g., from raw material to decomposition or recycling). They use narration, images, and animations to communicate scientific concepts and advocate for sustainable choices, directly addressing the unit's lines of inquiry around research, impact, and communication. This project builds digital literacy and empowers students to become knowledgeable advocates for sustainability."
-      },
-      {
-        "t": "Physical Makerspace Challenge: Sustainable Animal Enrichment Prototype",
-        "d": "In the Makerspace, students design and build a prototype of an animal enrichment toy or feeding machine using only recycled or biodegradable materials. They must consider the properties and limitations of each material, document their design process, and test their prototypes with classroom pets or through simulated scenarios. This hands-on project synthesizes learning about material science, sustainability, and design thinking, culminating in a real-world application that supports animal wellbeing and environmental stewardship."
+        "t": "Physical Makerspace: Animal Enrichment Prototype Challenge",
+        "d": "In the Makerspace, students design and build a prototype of an animal enrichment toy or feeding machine using recycled and sustainable materials. They must consider the properties and environmental impact of each material, iterating on their designs based on testing and feedback. This hands-on challenge directly connects to the unit's focus on how material choices and design thinking can support animal wellbeing and promote sustainability in the natural world."
       }
     ],
     "audited": true,
-    "plannerText": "Students investigate how material properties influence their use, explore sustainable solutions, and conduct hands-on experiments (e.g., sink/float, friction, decomposition). They document findings in digital journals, compare enrichment toys for animals, and design sustainable prototypes to support animal wellbeing, integrating research, communication, and design thinking throughout the unit.",
+    "plannerText": "Students investigate material properties, sustainability, and the impact of design on the natural world. Key activities include science experiments (e.g., sink/float, friction, magnetism), research and reflection in digital science journals, and the design and prototyping of animal enrichment devices using sustainable materials.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:22:03.530Z",
