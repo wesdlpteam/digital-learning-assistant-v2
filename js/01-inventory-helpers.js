@@ -1,7 +1,7 @@
 function clampYearLevelValue(value){
   const n = Number(value);
-  if(!Number.isFinite(n)) return 0;
-  return Math.max(0, Math.min(6, Math.round(n)));
+  if(!Number.isFinite(n)) return -2;
+  return Math.max(-2, Math.min(6, Math.round(n)));
 }
 
 function yearLevelLabel(value){
@@ -238,4 +238,3 @@ function renderToolInventory(){
     ? banned.map(t => `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 4px 4px 10px;background:rgba(255,128,128,0.08);border:1px solid rgba(255,128,128,0.3);border-radius:99px;font-size:12px;font-weight:600;color:#FF8080">${esc(t)}<button type="button" onclick="event.stopPropagation(); invRemoveTool('banned',${jsArg(t)}); return false;"  style="background:transparent;border:none;color:#FF8080;cursor:pointer;padding:0 6px;font-size:14px;line-height:1;opacity:.7" title="Remove">×</button></span>`).join('')
     : '<span style="font-size:11px;color:var(--dim);font-style:italic">No bans.</span>';
 }
-
