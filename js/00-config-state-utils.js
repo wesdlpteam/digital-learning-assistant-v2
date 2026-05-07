@@ -15,7 +15,7 @@ const CLIENT_ID = '334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleuser
 const ANALYTICS_SHEET_ID = '1R4P4FJlc8SyRFlVWoM0HpHmfCNMNVOpI8cuEILFxBNY';
 const OPENAI_MODEL = 'gpt-4.1';            // main model (Bulk AI Edit, Fix All, regenerate, scoring)
 const OPENAI_FAST_MODEL = 'gpt-4.1-mini';  // feedback & single-suggestion regen — faster & cheaper
-const YR = ["Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"];
+const YR = ["3 Year Old Kinder","4 Year Old Kinder","Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"];
 const CAMPUS_COL = { Elsternwick:'#818cf8', 'Glen Waverley':'#34d399', 'St Kilda':'#fb923c', 'St Kilda Road':'#fb923c' };
 
 function getKey(){ return ''; } // Legacy no-op: OpenAI key now lives in GAS Script Properties.
@@ -322,6 +322,8 @@ loadPlaybooks();
 
 // ========== TOOL INVENTORY UI ==========
 const YEAR_LEVEL_CHOICES = [
+  { value: -2, label: '3 Year Old Kinder' },
+  { value: -1, label: '4 Year Old Kinder' },
   { value: 0, label: 'Prep' },
   { value: 1, label: 'Year 1' },
   { value: 2, label: 'Year 2' },
@@ -330,4 +332,3 @@ const YEAR_LEVEL_CHOICES = [
   { value: 5, label: 'Year 5' },
   { value: 6, label: 'Year 6' }
 ];
-
