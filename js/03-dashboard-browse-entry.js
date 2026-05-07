@@ -1,24 +1,22 @@
-// v5.19: All top-level declarations use var to avoid collisions with 02-ui-load-navigation.js
-// which declares the same globals. let/const throw on redeclaration; var does not.
-var DATA = (typeof DATA !== 'undefined') ? DATA : [];
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzIoUL_vbTaH4P7PXuX8HeU9Xh6HuiEWJ05k7q50aJjCg7oeF-ELrlLuPx8uxPFHmE-eA/exec';
-var DRIVE_TOKEN = DRIVE_TOKEN || null;
-var CURRENT_USER_EMAIL = CURRENT_USER_EMAIL || '';
-var DRIVE_FILE_ID = DRIVE_FILE_ID || null;
-var CURRENT_ENTRY_IDX = (typeof CURRENT_ENTRY_IDX !== 'undefined') ? CURRENT_ENTRY_IDX : null;
-var PREV_TAB = PREV_TAB || 'dashboard';
-var AUDIT_VIEW = AUDIT_VIEW || 'tools';
-var AUDIT_YEAR_CAMPUS = AUDIT_YEAR_CAMPUS || '';
-var CHANGE_HISTORY = (typeof CHANGE_HISTORY !== 'undefined') ? CHANGE_HISTORY : [];
-var LOCKS = (typeof LOCKS !== 'undefined') ? LOCKS : {};
-var MAX_HISTORY = 20;
+let DATA = [];
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzIoUL_vbTaH4P7PXuX8HeU9Xh6HuiEWJ05k7q50aJjCg7oeF-ELrlLuPx8uxPFHmE-eA/exec';
+let DRIVE_TOKEN = null;
+let CURRENT_USER_EMAIL = '';
+let DRIVE_FILE_ID = null;
+let CURRENT_ENTRY_IDX = null;
+let PREV_TAB = 'dashboard';
+let AUDIT_VIEW = 'tools';
+let AUDIT_YEAR_CAMPUS = '';
+const CHANGE_HISTORY = [];
+const LOCKS = {}; 
+const MAX_HISTORY = 20;
 
-var CLIENT_ID = '334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleusercontent.com';
-var ANALYTICS_SHEET_ID = '1R4P4FJlc8SyRFlVWoM0HpHmfCNMNVOpI8cuEILFxBNY';
-var OPENAI_MODEL = 'gpt-4.1';            // main model (Bulk AI Edit, Fix All, regenerate, scoring)
-var OPENAI_FAST_MODEL = 'gpt-4.1-mini';  // feedback & single-suggestion regen — faster & cheaper
-var YR = ["3 Year Old Kinder","4 Year Old Kinder","Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"];
-var CAMPUS_COL = { Elsternwick:'#818cf8', 'Glen Waverley':'#34d399', 'St Kilda':'#fb923c', 'St Kilda Road':'#fb923c' };
+const CLIENT_ID = '334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleusercontent.com';
+const ANALYTICS_SHEET_ID = '1R4P4FJlc8SyRFlVWoM0HpHmfCNMNVOpI8cuEILFxBNY';
+const OPENAI_MODEL = 'gpt-4.1';            // main model (Bulk AI Edit, Fix All, regenerate, scoring)
+const OPENAI_FAST_MODEL = 'gpt-4.1-mini';  // feedback & single-suggestion regen — faster & cheaper
+const YR = ["3 Year Old Kinder","4 Year Old Kinder","Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"];
+const CAMPUS_COL = { Elsternwick:'#818cf8', 'Glen Waverley':'#34d399', 'St Kilda':'#fb923c', 'St Kilda Road':'#fb923c' };
 
 function getKey(){ return ''; } // Legacy no-op: OpenAI key now lives in GAS Script Properties.
 function getGASToken(){ return localStorage.getItem('dla_shared_secret') || ''; }
@@ -118,7 +116,7 @@ function normaliseChanges(raw){
 }
 
 // Shared AI safety helpers used by Bulk AI and per-suggestion feedback.
-var AI_FORBIDDEN_TOOL_KEYWORDS = ['chatgpt','gemini','claude ai','copilot','google docs','google slides','google sheets','wevideo','flipgrid'];
+const AI_FORBIDDEN_TOOL_KEYWORDS = ['chatgpt','gemini','claude ai','copilot','google docs','google slides','google sheets','wevideo','flipgrid'];
 function compactForPrompt(value, max){
   const text = String(value || '').replace(/\s+/g, ' ').trim();
   return text.length > max ? text.slice(0, max - 1).trim() + '…' : text;
@@ -167,9 +165,9 @@ function recordChange(idx, oldSugs, newSugs){
 }
 
 // ========== SNAPSHOT / UNDO SYSTEM ==========
-var SNAPSHOTS = [];
-var MAX_SNAPSHOTS = 20;
-var SNAPSHOT_KEY = 'dla_snapshots_v1';
+let SNAPSHOTS = [];
+const MAX_SNAPSHOTS = 20;
+const SNAPSHOT_KEY = 'dla_snapshots_v1';
 
 function loadSnapshots(){
   try {
@@ -247,9 +245,9 @@ function renderSnapshotsList(){
 }
 
 // ========== PLAYBOOKS SYSTEM ==========
-var PLAYBOOKS = [];
-var PLAYBOOK_KEY = 'dla_playbooks_v1';
-var SEED_PLAYBOOKS = [
+let PLAYBOOKS = [];
+const PLAYBOOK_KEY = 'dla_playbooks_v1';
+const SEED_PLAYBOOKS = [
   { name: 'Diversify most overused tool', prompt: 'Find the most overused tool in the library and propose replacements for the worst offenders using underused alternatives.' },
   { name: 'Scan for Minecraft opportunities', prompt: 'Find opportunities to use verified Minecraft Education lessons from the curated library wherever they genuinely connect to the unit.' },
   { name: 'Scan for Micro:bit opportunities', prompt: 'Find opportunities to use Micro:bit wherever a curated lesson genuinely connects to the unit.' },
@@ -323,7 +321,7 @@ loadSnapshots();
 loadPlaybooks();
 
 // ========== TOOL INVENTORY UI ==========
-var YEAR_LEVEL_CHOICES = [
+const YEAR_LEVEL_CHOICES = [
   { value: -2, label: '3 Year Old Kinder' },
   { value: -1, label: '4 Year Old Kinder' },
   { value: 0, label: 'Prep' },
