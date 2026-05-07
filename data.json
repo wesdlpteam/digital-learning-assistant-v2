@@ -2522,34 +2522,37 @@
     "s": [
       {
         "t": "Book Creator + Seesaw",
-        "d": "Students use Book Creator to document their science investigations into material properties, sustainability, and animal enrichment prototypes, including photos, videos, and written reflections. They then app smash by uploading key pages or video reflections to Seesaw for peer and teacher feedback, fostering communication and iterative improvement. This workflow supports the unit's focus on research, analysis, and communicating findings using digital tools."
+        "d": "Students use Book Creator to document their science investigations into material properties and sustainability, including photos, diagrams, and reflections. They then app smash by uploading their Book Creator pages to Seesaw, where peers can leave feedback and ask questions about each other's findings. This process encourages collaborative inquiry and digital communication while building digital portfolios.",
+        "url": "https://bookcreator.com/"
       },
       {
-        "t": "Minecraft: Filtering Water On The ISS + Padlet",
-        "d": "Students collaboratively complete the 'Filtering Water On The ISS' Minecraft Education lesson (https://education.minecraft.net/en-us/lessons/filtering-water-on-the-iss), designing and testing water filtration systems in a simulated environment. They then use Padlet to share screenshots, design rationales, and reflections on how material choices affect sustainability and real-world impact, connecting digital prototyping to authentic environmental challenges.",
-        "url": "https://education.minecraft.net/en-us/lessons/filtering-water-on-the-iss"
-      },
-      {
-        "t": "Micro:bit: Electrical Conductors + Book Creator",
-        "d": "Learners use the 'Micro:bit: Electrical Conductors' lesson (https://microbit.org/teach/lessons/?selected=electrical-conductors-unit-of-work) to investigate which materials conduct electricity, collecting data with their devices. They then app smash by creating a digital science journal in Book Creator, embedding photos, data tables, and explanations of how material properties determine their use in sustainable product design.",
-        "url": "https://microbit.org/teach/lessons/?selected=electrical-conductors-unit-of-work"
-      },
-      {
-        "t": "Canva + Padlet",
-        "d": "Students use Canva to design infographics or posters explaining how different materials decompose, recycle, or impact the environment, integrating scientific vocabulary and visuals. They then app smash by posting their creations to a shared Padlet wall, enabling a digital gallery walk where peers comment on the most sustainable solutions and innovative material uses, reinforcing the unit's focus on communication and sustainability."
+        "t": "Google Streetview + PicCollage",
+        "d": "Students take a virtual field trip using Google Streetview to explore real-world examples of sustainable buildings and natural habitats. They capture screenshots of interesting features, then use PicCollage to create annotated posters comparing material choices and their environmental impact. This app smash deepens understanding of how material properties support sustainability in diverse contexts.",
+        "url": "https://www.google.com/maps/about/streetside/ | https://pic-collage.com/"
       },
       {
         "t": "Minecraft: Radical Recycling",
-        "d": "Using the 'Radical Recycling' Minecraft Education lesson (https://education.minecraft.net/en-us/lessons/radical-recycling), students explore recycling processes and sustainable material choices through interactive games and challenges. They reflect on how their in-game decisions relate to real-world product design and environmental impact, deepening their understanding of systems thinking and sustainable futures.",
+        "d": "Using the 'Radical Recycling' lesson in Minecraft Education, students explore recycling processes and design a recycling center in-game. They experiment with sorting and processing different materials, then reflect on how material choices affect the environment. This immersive activity links directly to the unit's focus on sustainable solutions and material impact. ",
         "url": "https://education.minecraft.net/en-us/lessons/radical-recycling"
       },
       {
-        "t": "Makerspace Project: Sustainable Animal Enrichment Toy with Material Testing",
-        "d": "Students design and build a physical enrichment toy for a classroom animal (e.g., guinea pig) using recycled cardboard, fabric, and natural materials. They test different material properties?such as strength, flexibility, and biodegradability?by constructing prototypes and observing how the animal interacts with each version. Optional: Use a Micro:bit to add a simple motion sensor or timer to track animal engagement. This hands-on engineering project reinforces the unit's lines of inquiry by requiring students to research, test, and justify material choices for both animal wellbeing and environmental sustainability."
+        "t": "Micro:bit: Energy Awareness + Book Creator",
+        "d": "Students use the Micro:bit 'Energy Awareness' lesson to investigate how energy is used and conserved in everyday products. After collecting data with their Micro:bits, they app smash by creating digital science journals in Book Creator, recording their experiments, results, and reflections on sustainable energy use. This integration supports multi-step inquiry and digital literacy.",
+        "url": "https://microbit.org/teach/lessons/?selected=energy-awareness"
+      },
+      {
+        "t": "Padlet + PicCollage",
+        "d": "Students research innovative sustainable materials and post their findings on a shared Padlet wall, including images, facts, and examples. They then select one material and use PicCollage to visually compare its properties and uses with traditional materials, presenting their collages to the class. This app smash fosters collaborative research and creative digital presentation skills.",
+        "url": "https://padlet.com/ | https://pic-collage.com/"
+      },
+      {
+        "t": "Makerspace: Sustainable Animal Enrichment Toy with Micro:bit Sensors",
+        "d": "Students design and build an enrichment toy for a classroom pet or local animal using recycled cardboard, fabric, and other sustainable materials. They integrate a Micro:bit as a sensor to track how often the animal interacts with the toy (e.g., using the accelerometer or light sensor). The build process involves planning, prototyping, and testing, connecting material properties to real-world animal wellbeing and sustainability. Students reflect on how their design choices impact both the animal and the environment.",
+        "url": "https://microbit.org/teach/lessons/?selected=energy-awareness"
       }
     ],
     "audited": true,
-    "plannerText": "The Year 4 'How the World Works' unit explores how the design and use of products impact the natural world, focusing on patterns, cycles, systems, and sustainable innovation. Students investigate how material properties determine their use, what solutions support a sustainable future, and how research informs problem-solving in the natural world. The unit emphasizes hands-on inquiry, science journaling, and the creation of animal enrichment prototypes, with strong links to sustainability, material science, and real-world application.",
+    "plannerText": "The 'How the World Works' unit for Year 4 explores how the design and use of products impact the natural world, focusing on patterns, cycles, systems, and sustainable solutions. Students investigate material properties, conduct science experiments, and design prototypes for animal enrichment, all while considering environmental impact. The unit emphasizes inquiry, research, and communication skills, with strong links to maths, sustainability, and hands-on design thinking.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:22:03.530Z",
