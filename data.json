@@ -2521,35 +2521,35 @@
     "lo": "How material properties determine their use; Material solutions for a sustainable future; How research solves problems in the natural world",
     "s": [
       {
-        "t": "Book Creator + Micro:bit: Electrical Conductors",
-        "d": "Students begin by documenting their predictions, observations, and reflections about different materials and their properties in a digital science journal using Book Creator. Next, they use Micro:bit's 'Electrical Conductors' lesson (https://microbit.org/teach/lessons/?selected=electrical-conductors-unit-of-work) to design and run experiments testing which classroom materials conduct electricity. Students then import photos and data from their Micro:bit experiments into their Book Creator journals, synthesizing their findings into a multimedia report that directly links material properties to real-world applications and sustainability.",
-        "url": "https://microbit.org/teach/lessons/?selected=electrical-conductors-unit-of-work"
+        "t": "Book Creator + Seesaw",
+        "d": "Students use Book Creator to document their science investigations into material properties, sustainability, and animal enrichment prototypes, including photos, videos, and written reflections. They then app smash by uploading key pages or video reflections to Seesaw for peer and teacher feedback, fostering communication and iterative improvement. This workflow supports the unit's focus on research, analysis, and communicating findings using digital tools."
       },
       {
-        "t": "Minecraft: Filtering Water On The Iss",
-        "d": "Using the 'Filtering Water On The ISS' Minecraft Education lesson (https://education.minecraft.net/en-us/lessons/filtering-water-on-the-iss), students explore how material properties are critical for designing sustainable solutions. They experiment with building and testing water filtration systems, mirroring real-world engineering challenges. This hands-on digital activity allows students to investigate how different materials impact the effectiveness of their designs, directly connecting to the unit's focus on sustainable material solutions and the impact of design on the natural world.",
+        "t": "Minecraft: Filtering Water On The ISS + Padlet",
+        "d": "Students collaboratively complete the 'Filtering Water On The ISS' Minecraft Education lesson (https://education.minecraft.net/en-us/lessons/filtering-water-on-the-iss), designing and testing water filtration systems in a simulated environment. They then use Padlet to share screenshots, design rationales, and reflections on how material choices affect sustainability and real-world impact, connecting digital prototyping to authentic environmental challenges.",
         "url": "https://education.minecraft.net/en-us/lessons/filtering-water-on-the-iss"
       },
       {
-        "t": "Canva + Scratch",
-        "d": "Students use Canva to design a digital poster or infographic explaining the properties and environmental impact of a chosen material (e.g., plastic, glass, metal, or a sustainable alternative). They then import their Canva design into Scratch, where they code interactive elements?such as clickable hotspots that reveal facts, quizzes, or animations demonstrating decomposition or recycling processes. This App Smash empowers students to communicate scientific research in a dynamic, interactive way, deepening their understanding of how research and digital tools can solve real-world problems."
+        "t": "Micro:bit: Electrical Conductors + Book Creator",
+        "d": "Learners use the 'Micro:bit: Electrical Conductors' lesson (https://microbit.org/teach/lessons/?selected=electrical-conductors-unit-of-work) to investigate which materials conduct electricity, collecting data with their devices. They then app smash by creating a digital science journal in Book Creator, embedding photos, data tables, and explanations of how material properties determine their use in sustainable product design.",
+        "url": "https://microbit.org/teach/lessons/?selected=electrical-conductors-unit-of-work"
       },
       {
-        "t": "Seesaw",
-        "d": "Students conduct a 'Mystery Material' investigation, using Seesaw to document their process. They upload photos and videos as they observe, test, and classify unknown materials based on properties like strength, flexibility, and biodegradability. Students use Seesaw's annotation and voice recording features to explain their reasoning and reflect on how material choices impact sustainability, supporting the unit's inquiry into research and problem-solving in the natural world."
+        "t": "Canva + Padlet",
+        "d": "Students use Canva to design infographics or posters explaining how different materials decompose, recycle, or impact the environment, integrating scientific vocabulary and visuals. They then app smash by posting their creations to a shared Padlet wall, enabling a digital gallery walk where peers comment on the most sustainable solutions and innovative material uses, reinforcing the unit's focus on communication and sustainability."
       },
       {
-        "t": "Micro:bit: Energy Awareness",
-        "d": "With the 'Energy Awareness' Micro:bit lesson (https://microbit.org/teach/lessons/?selected=energy-awareness), students investigate how different materials can be used to design energy-efficient solutions. They program Micro:bits to monitor and compare energy usage or temperature changes in various material prototypes, such as insulation for an animal enclosure. This activity links directly to the unit's exploration of sustainable design and the impact of material choices on the environment.",
-        "url": "https://microbit.org/teach/lessons/?selected=energy-awareness"
+        "t": "Minecraft: Radical Recycling",
+        "d": "Using the 'Radical Recycling' Minecraft Education lesson (https://education.minecraft.net/en-us/lessons/radical-recycling), students explore recycling processes and sustainable material choices through interactive games and challenges. They reflect on how their in-game decisions relate to real-world product design and environmental impact, deepening their understanding of systems thinking and sustainable futures.",
+        "url": "https://education.minecraft.net/en-us/lessons/radical-recycling"
       },
       {
-        "t": "Physical Makerspace: Sustainable Animal Enrichment Prototype",
-        "d": "In the Makerspace, students design and build a prototype of an enrichment toy or feeding machine for a zoo animal, focusing on using recycled or biodegradable materials. They test their prototypes for strength, safety, and enrichment value, then reflect on how their material choices support animal wellbeing and environmental sustainability. This hands-on project brings together the unit's key concepts of material properties, design thinking, and real-world impact."
+        "t": "Makerspace Project: Sustainable Animal Enrichment Toy with Material Testing",
+        "d": "Students design and build a physical enrichment toy for a classroom animal (e.g., guinea pig) using recycled cardboard, fabric, and natural materials. They test different material properties?such as strength, flexibility, and biodegradability?by constructing prototypes and observing how the animal interacts with each version. Optional: Use a Micro:bit to add a simple motion sensor or timer to track animal engagement. This hands-on engineering project reinforces the unit's lines of inquiry by requiring students to research, test, and justify material choices for both animal wellbeing and environmental sustainability."
       }
     ],
     "audited": true,
-    "plannerText": "Students investigate how material properties determine their use, explore sustainable solutions, and research how design impacts the natural world. Activities include science experiments, digital science journals, and designing animal enrichment prototypes using sustainable materials.",
+    "plannerText": "The Year 4 'How the World Works' unit explores how the design and use of products impact the natural world, focusing on patterns, cycles, systems, and sustainable innovation. Students investigate how material properties determine their use, what solutions support a sustainable future, and how research informs problem-solving in the natural world. The unit emphasizes hands-on inquiry, science journaling, and the creation of animal enrichment prototypes, with strong links to sustainability, material science, and real-world application.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:22:03.530Z",
