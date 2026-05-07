@@ -985,9 +985,35 @@
     "th": "How the World Works",
     "ci": "Changes to the Earth impact environment and communities.",
     "lo": "The causes of geological change over time; How extreme environments cause natural disasters; The impact of natural events on communities",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Book Creator + Seesaw",
+        "d": "Students use Book Creator to design an interactive digital book explaining a chosen natural disaster, including diagrams, photos, and voice recordings. After publishing, they upload their book to Seesaw, where peers can leave audio or written feedback and ask questions. This app smash encourages multi-step creation, reflection, and peer interaction, supporting both digital literacy and communication skills."
+      },
+      {
+        "t": "Google Earth + Seesaw",
+        "d": "Learners explore global locations of recent natural disasters using Google Earth, observing terrain and environmental features. They take screenshots of affected areas and upload them to Seesaw, where they annotate the images and record short explanations about why disasters might occur in those regions. This app smash deepens understanding of geography and causation while building digital annotation skills."
+      },
+      {
+        "t": "Canva + PowerPoint",
+        "d": "Students collaboratively research a major bushfire or earthquake and use Canva to create infographics summarizing key facts, causes, and community responses. They then import these infographics into a PowerPoint presentation, adding transitions and voice-over narration to create a multimedia report. This app smash leverages Canva's design strengths and PowerPoint's presentation features for a polished, multi-step project."
+      },
+      {
+        "t": "Google Streetview",
+        "d": "Using Google Streetview, students virtually explore a city or region recently impacted by a natural disaster, observing changes to the environment and infrastructure. They document their observations in a digital journal, describing visible effects and hypothesizing how the community might respond. This activity builds global awareness and observational skills without requiring sign-ins or markers."
+      },
+      {
+        "t": "Minecraft: Area and Volume",
+        "d": "Students engage with the 'Area and Volume' Minecraft Education lesson to create and solve real-world area and volume problems related to natural disasters, such as designing flood barriers or earthquake-safe shelters. They collaborate in teams to build their solutions and reflect on how mathematical thinking supports disaster preparedness. This lesson integrates STEM concepts with creative problem-solving in a familiar digital environment.",
+        "url": "https://education.minecraft.net/en-us/lessons/area-and-volume-2"
+      },
+      {
+        "t": "Makerspace: Earthquake-Resistant Towers",
+        "d": "In the makerspace, students work in small teams to design and construct earthquake-resistant towers using cardboard, wooden sticks, rubber bands, and masking tape. After building, they test their structures on a shake table (or a tray with marbles underneath) to simulate an earthquake, observing which designs withstand the most shaking. Students record results, discuss improvements, and connect their findings to real-world engineering challenges faced by communities in earthquake zones."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The 'How the World Works' unit for Year 4 explores the causes and effects of natural disasters (such as bushfires, floods, earthquakes, and cyclones), how extreme environments impact communities, and how people respond to environmental change. Students investigate scientific principles, conduct hands-on experiments, and use digital tools to research, document, and present their understanding. The unit emphasizes inquiry, collaboration, and real-world connections, supporting the development of research, communication, and self-management skills.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:00:27.255Z",
@@ -1001,9 +1027,34 @@
     "th": "Sharing the Planet",
     "ci": "Country, language and community are significant to the lives of First Nations people.",
     "lo": "The diversity of First Nations people; The importance of community, family and kinship; The importance of Country to First Nations people",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Book Creator + Seesaw",
+        "d": "Students create a digital 'Country, Language, and Community' book in Book Creator, adding images, text, and audio to represent their understanding of First Nations perspectives. They then upload their finished books to Seesaw, where they record a reflective voice note explaining how their book demonstrates empathy and respect for Indigenous cultures. This app smash allows for creative expression and reflection, supporting both multimodal learning and digital sharing with peers and families."
+      },
+      {
+        "t": "Google Earth + Seesaw",
+        "d": "Learners use Google Earth to virtually explore significant Indigenous sites across Australia, such as Uluru or the Birrarung (Yarra) River. They take screenshots of locations and upload them to Seesaw, where they annotate the images with facts about the site's cultural significance and record a short explanation of why these places are important to First Nations people. This app smash combines virtual exploration with digital annotation and oral explanation."
+      },
+      {
+        "t": "Canva",
+        "d": "Students use Canva to design a visual dictionary of Woiwurrung words, pairing each word with an image and an English translation. They can print these as posters for classroom display or share them digitally. This activity encourages creative design skills and deepens understanding of the importance of language in Indigenous cultures, while also supporting vocabulary development."
+      },
+      {
+        "t": "Padlet + Seesaw",
+        "d": "After researching different Indigenous groups around the world, students post one interesting fact about each group to a shared Padlet wall. They then select one fact to expand on in Seesaw, recording a short video or audio reflection about why this fact stood out and how it connects to the central idea of diversity and community. This app smash leverages collaborative knowledge-building and personal reflection."
+      },
+      {
+        "t": "Google Slides",
+        "d": "In small groups, students create a Google Slides presentation about a famous First Nations person, such as Adam Goodes. Each slide covers a different aspect: connection to Country, language, community, and leadership qualities. Students present their slides to the class, practicing digital communication and public speaking. This project integrates research, digital design, and oral presentation skills."
+      },
+      {
+        "t": "Makerspace: Totem Poles with Digital Story Tags",
+        "d": "Students design and construct their own totem poles using cardboard tubes, clay, and paint, representing aspects of their identity, community, and connection to Country. Each totem includes a QR code (created with a digital tool) that links to a short video or audio recording of the student explaining the meaning behind their design. This project combines hands-on making with digital storytelling, allowing students to share their cultural learning in a creative, multimodal way."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The 'Sharing the Planet' unit for Year 4 explores the significance of Country, language, and community to First Nations people, focusing on diversity, tradition, and identity. Students inquire into Indigenous cultures locally and globally, reflect on the importance of language and connection to land, and investigate the perspectives and contributions of First Nations individuals. The unit emphasizes empathy, open-mindedness, and respect for different perspectives, integrating learning across English, Social Studies, and the Arts, with strong links to Australian Indigenous histories and cultures.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:00:28.044Z",
@@ -1017,9 +1068,36 @@
     "th": "Where We Are in Place and Time",
     "ci": "Human migration is a response to challenges and opportunities",
     "lo": "The reasons people migrate; Migration throughout history; Effects of migration on communities, cultures and individuals",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Google Earth + Seesaw",
+        "d": "Students use Google Earth to virtually explore significant locations where major natural disasters have occurred around the world. They take screenshots of these locations and upload them to Seesaw, where they annotate the images with facts about the disaster, its causes, and community responses. This app smash allows students to combine real-world mapping with digital annotation and reflection, deepening their understanding of place and time."
+      },
+      {
+        "t": "Book Creator + Canva",
+        "d": "Learners research a historical natural disaster and create a digital storybook in Book Creator, integrating images, text, and voice narration. They then use Canva to design a visually engaging cover and infographics that summarize key facts and timelines, which are imported into their Book Creator project. This app smash enhances both storytelling and visual communication, supporting multi-step digital literacy for Year 4."
+      },
+      {
+        "t": "Minecraft: Shipwreck Narrative",
+        "d": "Students engage with the 'Shipwreck Narrative' lesson in Minecraft Education, where they write and build a story about a mysterious shipwreck. They explore how place and time influence the narrative, using Minecraft to construct the setting and key events. This immersive activity encourages creative writing, spatial reasoning, and historical empathy as students reflect on how people in different times responded to disasters.",
+        "url": "https://education.minecraft.net/en-us/lessons/shipwreck-narrative"
+      },
+      {
+        "t": "Google Streetview",
+        "d": "Using Google Streetview, students virtually visit towns or cities that have experienced significant natural disasters, such as earthquakes or floods. They observe the current landscape and discuss changes over time, focusing on how communities have rebuilt or adapted. This activity helps students connect real-world geography with historical events, fostering observation and critical thinking skills."
+      },
+      {
+        "t": "Micro:bit: Barefoot Litter Hunt + Seesaw",
+        "d": "Students participate in the 'Barefoot Litter Hunt' Micro:bit lesson, using Micro:bits to collect and record data on litter around the school or local area. They then upload their findings, photos, and reflections to Seesaw, where they analyze patterns and propose solutions for reducing waste. This app smash combines hands-on data collection with digital reflection and action planning.",
+        "url": "https://microbit.org/teach/lessons/?selected=barefoot-litter-hunt"
+      },
+      {
+        "t": "Cardboard Engineering: Earthquake-Resistant Structures",
+        "d": "Students work in teams to design and build model earthquake-resistant buildings using cardboard, straws, rubber bands, and masking tape. They test their structures on a 'shake table' (a tray or board that can be gently shaken) to simulate an earthquake, observing which designs withstand the most movement. After testing, students reflect on their design choices and relate them to real-world engineering challenges, reinforcing STEM concepts through hands-on construction."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The 'Where We Are in Place and Time' unit for Year 4 explores how changes to the Earth impact environments and communities, focusing on natural disasters such as earthquakes, bushfires, floods, and cyclones. Students investigate the causes and effects of these events, how extreme environments contribute to disasters, and how communities respond and recover. The unit integrates research, mapping, scientific experiments, and creative projects to build understanding of place, time, and human resilience.",
     "humanVerified": false,
     "plannerContextRich": "ERROR: Unit was not found in the provided PDF. Skipping to prevent loop."
   },
@@ -1029,9 +1107,34 @@
     "th": "Who We Are",
     "ci": "Leaders shape communities.",
     "lo": "Roles and responsibilities of effective leadership; The purpose of leadership in communities; Qualities of influential leaders",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Book Creator + Seesaw",
+        "d": "Students research a famous leader and create a digital biography in Book Creator, using text, images, and voice recordings to showcase the leader's qualities and impact. They then export their Book Creator project and upload it to Seesaw, where classmates can leave audio or written feedback. This app smash allows for creative storytelling in Book Creator and interactive peer reflection in Seesaw, deepening understanding of leadership qualities."
+      },
+      {
+        "t": "Canva + PowerPoint",
+        "d": "Learners design a leadership qualities infographic in Canva, selecting icons, colors, and layouts to represent key traits of effective leaders. They then import their Canva design into PowerPoint to add interactive elements, such as clickable definitions or short video reflections. This app smash leverages Canva's design strengths and PowerPoint's interactivity to create engaging, multimedia presentations about leadership."
+      },
+      {
+        "t": "Google Streetview",
+        "d": "Students use Google Streetview to virtually explore the hometowns or significant locations of global leaders studied in class. They observe and discuss how the environment might have influenced each leader's values and actions. This activity builds global awareness and empathy, connecting students to the real-world contexts of leadership."
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "In small groups, students use Stop Motion Studio to create short animations that depict a scenario where a leader makes a positive impact on their community. They plan, storyboard, and film their scenes using classroom materials, then add narration to explain the leader's choices and outcomes. This hands-on digital project encourages teamwork and creative expression."
+      },
+      {
+        "t": "Canva + Seesaw",
+        "d": "Students design a digital poster in Canva highlighting the responsibilities of a leader at school. After exporting their poster, they upload it to Seesaw and record a short audio reflection explaining why they chose those responsibilities and how they can demonstrate them. This app smash combines Canva's visual design tools with Seesaw's reflection and sharing features for a multi-modal learning experience."
+      },
+      {
+        "t": "Makerspace Leadership Badge Project",
+        "d": "Students design and construct a physical 'Leadership Badge' using cardboard, felt, and recycled materials. They brainstorm symbols and colors that represent leadership qualities, sketch their designs, and build their badges using scissors, glue, and craft supplies. Optionally, students can use the iPad camera to document their process and create a digital portfolio page explaining their design choices. This project emphasizes hands-on creativity, symbolism, and personal reflection on leadership."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The 'Who We Are' unit for Year 4 explores the central idea that 'Leaders shape communities.' Students inquire into the roles and responsibilities of leaders, the purpose of leadership, and the strengths and qualities that make effective leaders. The unit emphasizes principled and caring actions, encourages students to reflect on their own leadership potential, and connects learning to both local and global communities. Through reading, research, creative projects, and self-reflection, students develop communication, social, and self-management skills while investigating how leadership impacts communities.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T04:04:07.241Z",
@@ -1045,9 +1148,36 @@
     "th": "How We Express Ourselves",
     "ci": "People can create or manipulate messages to target specific audiences.",
     "lo": "The devices used to target audiences; Critical evaluation of messages; How we know we have been influenced",
-    "s": [],
-    "audited": false,
-    "plannerText": "",
+    "s": [
+      {
+        "t": "Canva + Seesaw",
+        "d": "Students use Canva to design persuasive posters or infographics targeting a specific audience, applying visual design principles such as emphasis, color, and layout. They then upload their creations to Seesaw and record an audio reflection explaining their design choices and how they aimed to influence their audience. This app smash allows students to combine advanced visual design (Canva) with multimodal reflection and sharing (Seesaw), deepening their understanding of how messages are crafted and received."
+      },
+      {
+        "t": "iMovie + Book Creator",
+        "d": "Students script and film short persuasive video advertisements using iMovie, focusing on how tone, music, and visual effects can manipulate audience emotions. They then embed their videos into a digital portfolio in Book Creator, adding written reflections and peer feedback sections. This app smash leverages iMovie's video editing capabilities and Book Creator's interactive publishing tools, supporting critical evaluation of multimedia messages and collaborative review."
+      },
+      {
+        "t": "Padlet + Google Streetview",
+        "d": "Students explore global advertising or public messaging by virtually visiting famous locations using Google Streetview (no sign-ins or markers). They capture screenshots of billboards or public art, then upload these to a shared Padlet board. On Padlet, they annotate each image with observations about the intended audience, persuasive devices, and cultural context, fostering critical thinking about how messages are tailored for different communities."
+      },
+      {
+        "t": "Minecraft: The Investigators",
+        "d": "Students participate in the Minecraft Education lesson 'The Investigators', where they become school reporters investigating the reliability and bias of different information sources. Through interactive quests, they evaluate clues, decode messages, and reflect on how media can be manipulated to influence opinions. This immersive experience builds critical literacy and digital citizenship skills in a playful, age-appropriate way.",
+        "url": "https://education.minecraft.net/en-us/lessons/the-investigators"
+      },
+      {
+        "t": "Micro:bit: Nature Art + Seesaw",
+        "d": "Students use Micro:bits to create digital art that expresses a message or emotion, experimenting with patterns, scrolling text, or simple animations. They then record a video on Seesaw explaining the choices they made in their design and how their digital artwork communicates to an audience. This app smash combines coding and computational thinking (Micro:bit) with reflective communication (Seesaw), reinforcing the unit's focus on intentional expression.",
+        "url": "https://microbit.org/teach/lessons/?selected=nature-art-unit-of-work"
+      },
+      {
+        "t": "Makerspace: Persuasive Product Packaging",
+        "d": "Students design and construct physical product packaging using cardboard, recycled materials, and basic craft supplies. They apply principles of visual persuasion?such as color, shape, and slogans?to target a specific audience (e.g., kids, parents, eco-conscious shoppers). Optionally, students can use Canva to design digital labels or QR codes that link to a student-created video pitch. This hands-on project develops design thinking, creativity, and an understanding of how physical and digital elements work together to influence consumer choices."
+      }
+    ],
+    "audited": true,
+    "plannerText": "The 'How We Express Ourselves' unit for Year 5 explores how people create and manipulate messages to target specific audiences, focusing on the devices used, critical evaluation of messages, and understanding influence. Students engage with a variety of mentor texts (picture books, songs, advertising campaigns, documentaries) to analyze perspective, form, and responsibility in communication. The unit emphasizes critical thinking, ethical use of media, and creative expression through both traditional and digital modalities, culminating in projects that require students to design, reflect, and justify their choices for real audiences.",
     "stemRebooted": true,
     "humanVerified": true,
     "humanVerifiedAt": "2026-05-05T03:54:45.534Z",
