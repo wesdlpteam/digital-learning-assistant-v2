@@ -1,2396 +1,1345 @@
-function bulkInstructionLooksLikeOpportunity(instruction){
-  return /\b(find|look|search|scan|identify|where|opportunit|more uses?|add more|chance|integrate|incorporate|places? to use)\b/i.test(instruction || '');
-}
+// ===== PLANNER CONTEXT — on-demand fetch from GAS for Browse feedback/regenerate =====
+const _plannerContextCache = {};
 
-function getBulkPlatformToolName(platform){
-  if(!platform) return '';
-  const name = platform.name || '';
-  if(/micro.?bit/i.test(name)) return 'Micro:bit';
-  if(/minecraft/i.test(name)) return 'Minecraft Education';
-  return name;
-}
-
-function bulkUniqueToolsForDetection_(){
-  normaliseToolInventory();
-  const all = [
-    ...(DEFAULT_APPROVED_TOOLS || []),
-    ...((TOOL_INVENTORY && TOOL_INVENTORY.approved) || []),
-    'Bee-Bots','ScratchJR','Sphero Indi','Sphero BOLT','Lego Spike Essential','Lego Spike Prime',
-    'Book Creator','Canva','Padlet','Seesaw','Microsoft Forms','Microsoft Sway','Microsoft PowerPoint',
-    'Microsoft Word','Microsoft Excel','Microsoft Teams','Microsoft OneNote','Wise Discussion Chatbots',
-    'Micro:bit','Minecraft Education','GarageBand','iMovie','Adobe Express','Stop Motion Studio','Tinkercad'
-  ];
-  const seen = new Set();
-  return all.map(t => normaliseToolName(String(t || '').trim())).filter(t => {
-    const k = toolInventoryKey(t);
-    if(!k || seen.has(k)) return false;
-    seen.add(k);
-    return true;
-  }).sort((a,b) => b.length - a.length);
-}
-
-function bulkEscapeRegExp_(value){
-  return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-
-
-function bulkTopProgressStep_(pct, label){
-  try { if(typeof showProgress === 'function') showProgress(pct); } catch(e){}
-  try { if(label && typeof setStatus === 'function') setStatus(label, 'loading'); } catch(e){}
-}
-function bulkTopProgressStop_(label){
-  try { bulkTopProgressStep_(90, label || 'Almost ready…'); } catch(e){}
-  setTimeout(function(){
-    try { if(typeof stopProgress === 'function') stopProgress(); else if(typeof showProgress === 'function') showProgress(null); } catch(e){}
-    try { if(typeof setStatus === 'function') setStatus(label || 'Ready ✓'); } catch(e){}
-  }, 350);
-}
-function bulkRunWithTopProgress_(label, doneLabel, work, onError){
-  // Local Bulk routes can finish quickly, so use explicit staged progress updates
-  // instead of the old timer-only bar. This gives visible feedback without changing logic.
-  bulkTopProgressStep_(12, label || 'Starting…');
-  setTimeout(function(){
-    bulkTopProgressStep_(35, 'Finding candidate units…');
-    setTimeout(function(){
-      bulkTopProgressStep_(65, 'Preparing safe review drafts…');
-      setTimeout(function(){
-        try {
-          work();
-          bulkTopProgressStop_(doneLabel || 'Ready ✓');
-        } catch(e){
-          bulkTopProgressStop_('Stopped safely');
-          if(typeof onError === 'function') onError(e);
-          else throw e;
-        }
-      }, 90);
-    }, 120);
-  }, 120);
-}
-
-
-function bulkSafeRouteNotice_(title, details){
-  const safeTitle = bulkDiagnosticEscape_(title || 'Safe routed workflow');
-  const safeDetails = bulkDiagnosticEscape_(details || 'This request will be handled locally and opened for human review.');
-  bulkChatAddMessage('assistant', `
-    <div style="padding:2px 0">
-      <div style="display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:999px;background:rgba(197,232,74,.09);border:1px solid rgba(197,232,74,.28);color:var(--lime);font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">🛡️ Safe routed</div>
-      <div style="font-size:13px;line-height:1.55"><strong>${safeTitle}</strong></div>
-      <div style="font-size:12px;color:var(--dim);line-height:1.55;margin-top:3px">${safeDetails}</div>
-      <div style="font-size:12px;color:#F5A623;line-height:1.55;margin-top:6px">Review-only: nothing is saved unless you approve it in the review popup.</div>
-    </div>`);
-}
-
-function bulkDetectNamedToolOpportunity_(instruction){
-  const text = String(instruction || '').toLowerCase().replace(/[’']/g, '');
-  if(!bulkInstructionLooksLikeOpportunity(text)) return '';
-  const aliases = {
-    'makey makey':'Makey Makey',
-    'the makey makey':'Makey Makey',
-    'makey-makey':'Makey Makey',
-    'makeymakey':'Makey Makey',
-    'book creator':'Book Creator',
-    'bookcreator':'Book Creator',
-    'beebot':'Bee-Bots',
-    'bee bot':'Bee-Bots',
-    'bee-bot':'Bee-Bots',
-    'bee bots':'Bee-Bots',
-    'bee-bots':'Bee-Bots',
-    'scratch jr':'ScratchJR',
-    'scratchjr':'ScratchJR',
-    'microbit':'Micro:bit',
-    'micro bit':'Micro:bit',
-    'micro:bit':'Micro:bit',
-    'lego spike prime':'Lego Spike Prime',
-    'lego spike essential':'Lego Spike Essential',
-    'sphero bolt':'Sphero BOLT',
-    'sphero indi':'Sphero Indi',
-    'wise chatbots':'Wise Discussion Chatbots',
-    'wise discussion chatbots':'Wise Discussion Chatbots',
-    'schoolbox discussion chatbots':'Wise Discussion Chatbots',
-    'green screen':'Green Screen',
-    'green screen kit':'Green Screen',
-    'green screen kits':'Green Screen',
-    'greenscreen':'Green Screen',
-    'canva remove background':'Green Screen',
-    'remove background':'Green Screen'
-  };
-  for(const [alias, tool] of Object.entries(aliases)){
-    const pattern = bulkEscapeRegExp_(alias).replace(/\s+/g, '\\s+');
-    const re = new RegExp('(^|[^a-z0-9])' + pattern + '([^a-z0-9]|$)', 'i');
-    if(re.test(text)) return tool;
-  }
-  const tools = bulkUniqueToolsForDetection_();
-  for(const tool of tools){
-    const phrase = tool.toLowerCase().replace(/[’']/g, '');
-    if(!phrase || phrase.length < 4) continue;
-    const pattern = bulkEscapeRegExp_(phrase).replace(/\s+/g, '\\s+');
-    const re = new RegExp('(^|[^a-z0-9])' + pattern + '([^a-z0-9]|$)', 'i');
-    if(re.test(text)) return tool;
-  }
-  return '';
-}
-
-
-// ========== BULK AI DIAGNOSTIC MODE ==========
-// Diagnostic-only command. It does not call AI, does not draft changes, and does not save.
-// Use: diagnose: Find more opportunities to use Makey Makey
-function bulkDiagnosticEscape_(value){
-  if(typeof esc === 'function') return esc(value);
-  return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch){
-    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
-  });
-}
-
-function bulkDiagnosticToolKey_(value){
-  try { return toolInventoryKey(normaliseToolName(value)); }
-  catch(e){ return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim(); }
-}
-
-function bulkDiagnosticDetectRoute_(instruction){
-  const raw = String(instruction || '').trim();
-  const lower = raw.toLowerCase();
-  const namedTool = bulkDetectNamedToolOpportunity_(raw);
-  const targetYears = bulkExtractTargetYears_(raw);
-  const replacementTool = bulkDiagnosticDetectReplacementTool_(raw);
-  let route = 'generic bulk edit';
-  let confidence = 'low';
-  let notes = [];
-
-  if(/\b(where can|fit|place|places? for|opportunit)/i.test(raw) && /minecraft/i.test(raw) && /lesson/i.test(raw)){
-    route = 'specific Minecraft lesson placement'; confidence = 'medium';
-    notes.push('Minecraft + lesson-placement wording detected.');
-  } else if(/\b(replace|remove|swap|change out|stop using|get rid of|delete|retire|phase out|stop suggesting)\b/i.test(raw)){
-    route = 'targeted replacement'; confidence = replacementTool ? 'high' : 'medium';
-    notes.push('Replacement wording detected.');
-    if(replacementTool) notes.push('Tool to remove detected locally.');
-    else notes.push('Could not confidently detect which tool should be removed.');
-  } else if(namedTool && bulkInstructionLooksLikeOpportunity(raw)){
-    route = 'named-tool opportunity search'; confidence = 'high';
-    notes.push('Opportunity wording plus a named tool detected.');
-  } else if(bulkInstructionLooksLikeOpportunity(raw)){
-    route = 'opportunity search, tool unclear'; confidence = 'medium';
-    notes.push('Opportunity wording detected, but no known tool was confidently matched.');
-  }
-
-  return { route, confidence, namedTool, replacementTool, targetYears, notes };
-}
-
-function bulkDiagnosticScanNamedTool_(toolName, targetYears){
-  const key = bulkDiagnosticToolKey_(toolName);
-  let existingEntries = 0;
-  let existingSlots = 0;
-  let eligibleEntriesWithoutTool = 0;
-  let skippedAlreadyHasTool = 0;
-  let skippedYear = 0;
-  let skippedNoNonStemSlot = 0;
-  const examples = [];
-
-  if(!key || !Array.isArray(DATA)) return { existingEntries, existingSlots, eligibleEntriesWithoutTool, skippedAlreadyHasTool, skippedYear, skippedNoNonStemSlot, examples };
-
-  DATA.forEach((e, entryIdx) => {
-    if(!e) return;
-    const yl = e.yl || '';
-    if(targetYears && targetYears.length && !targetYears.includes(yl)){ skippedYear++; return; }
-    const sugs = getSugs(e).filter(isRealSug);
-    let hasTool = false;
-    let nonStemSlots = 0;
-    sugs.forEach((s, sugIdx) => {
-      if(sugIdx !== 5) nonStemSlots++;
-      if(bulkDiagnosticToolKey_(sugTool(s)) === key){ hasTool = true; existingSlots++; }
+async function fetchPlannerContext(entry) {
+  if (!entry || !entry.ca || !entry.yl || !entry.th) return '';
+  const cacheKey = `${entry.ca}|${entry.yl}|${entry.th}`;
+  if (_plannerContextCache[cacheKey] !== undefined) return _plannerContextCache[cacheKey];
+  try {
+    const body = withGASToken({ action: 'getPlannerContext', ca: entry.ca, yl: entry.yl, th: entry.th });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 120000);
+    const r = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(body),
+      signal: controller.signal
     });
-    if(hasTool){ existingEntries++; skippedAlreadyHasTool++; return; }
-    if(!nonStemSlots){ skippedNoNonStemSlot++; return; }
+    clearTimeout(timeout);
+    const d = await r.json();
+    if (d.error) { console.warn('getPlannerContext error:', d.error); _plannerContextCache[cacheKey] = ''; return ''; }
+    const ctx = d.plannerContext || '';
+    _plannerContextCache[cacheKey] = ctx;
+    if (d.found) console.log('Planner context fetched for', cacheKey, '—', ctx.length, 'chars');
+    return ctx;
+  } catch (err) {
+    console.warn('getPlannerContext failed:', err.message);
+    _plannerContextCache[cacheKey] = '';
+    return '';
+  }
+}
 
-    // Use the app's age helper if available. Diagnostics do not enforce; they report likely eligibility.
-    let ageOk = true;
-    try {
-      if(typeof getAgeAppropriateTools === 'function'){
-        const allowed = getAgeAppropriateTools(yl).map(t => bulkDiagnosticToolKey_(t));
-        ageOk = !allowed.length || allowed.includes(key);
-      }
-    } catch(e){ ageOk = true; }
-    if(!ageOk) return;
+// ===== TOOL DIVERSITY SCANNER =====
+let _diversifyRunning = false;
+let _diversifySwaps = [];
 
-    eligibleEntriesWithoutTool++;
-    if(examples.length < 8){
-      examples.push(`${e.ca || 'Campus?'} · ${yl || 'Year?'} · ${e.th || e.theme || 'Untitled unit'}`);
-    }
+function runDiversityScan() {
+  const ca = document.getElementById('div-campus')?.value || '';
+  const yr = document.getElementById('div-year')?.value || '';
+  const statusEl = document.getElementById('diversity-status');
+  const resultsEl = document.getElementById('diversity-results');
+  const fixBtn = document.getElementById('btn-diversity-fix');
+
+  const filtered = DATA.filter(e => {
+    if (ca && e.ca !== ca) return false;
+    if (yr && e.yl !== yr) return false;
+    return getSugs(e).filter(isRealSug).length >= 1;
+  });
+  if (!filtered.length) {
+    statusEl.style.color = 'var(--salmon)';
+    statusEl.textContent = 'No entries match those filters';
+    resultsEl.innerHTML = '';
+    fixBtn.style.display = 'none';
+    return;
+  }
+
+  // Count tool frequency — per-entry (does tool appear in this entry?)
+  const toolEntryCount = {};
+  const toolNames = {};
+  filtered.forEach(e => {
+    const seen = new Set();
+    getSugs(e).filter(isRealSug).forEach(s => {
+      const raw = sugTool(s);
+      const key = toolKey(raw);
+      if (!key || seen.has(key)) return;
+      seen.add(key);
+      toolEntryCount[key] = (toolEntryCount[key] || 0) + 1;
+      if (!toolNames[key]) toolNames[key] = raw;
+    });
   });
 
-  return { existingEntries, existingSlots, eligibleEntriesWithoutTool, skippedAlreadyHasTool, skippedYear, skippedNoNonStemSlot, examples };
+  const sorted = Object.entries(toolEntryCount)
+    .map(([key, count]) => ({
+      key, name: toolNames[key] || key, count,
+      pct: Math.round((count / filtered.length) * 100)
+    }))
+    .sort((a, b) => b.count - a.count);
+
+  const OVERUSED_PCT = 50;
+  const overused = sorted.filter(t => t.pct > OVERUSED_PCT);
+  const TARGET_PCT = 35; // bring overused down to ~35%
+
+  // Build the underused pool (age-appropriate, not banned, used ≤2 times)
+  const yearForAge = yr || 'Year 3';
+  const ageTools = getAgeAppropriateTools(yearForAge);
+  const underused = ageTools.filter(t => {
+    const k = toolKey(t);
+    return k && (!toolEntryCount[k] || toolEntryCount[k] <= 2) && !toolContainsForbiddenKeyword(t) && !toolViolatesInventoryBan(t);
+  });
+
+  // Build swap plan for overused tools
+  _diversifySwaps = [];
+  overused.forEach(ot => {
+    const targetCount = Math.max(1, Math.ceil(filtered.length * TARGET_PCT / 100));
+    const swapsNeeded = Math.max(0, ot.count - targetCount);
+    if (swapsNeeded === 0) return;
+
+    // Find candidate entries — prefer entries where this tool appears and has other overused tools too
+    const candidates = [];
+    filtered.forEach((e, fi) => {
+      const sugs = getSugs(e).filter(isRealSug);
+      sugs.forEach((s, si) => {
+        if (toolKey(sugTool(s)) === ot.key) {
+          const idx = DATA.indexOf(e);
+          candidates.push({ entry: e, dataIdx: idx, sugIdx: si, sug: s });
+        }
+      });
+    });
+
+    // Take only as many as needed, from the end (arbitrary but stable)
+    const toSwap = candidates.slice(-swapsNeeded);
+    toSwap.forEach(c => {
+      // Pick an underused tool not already in that entry
+      const usedInEntry = new Set(getSugs(c.entry).map(s => toolKey(sugTool(s))).filter(Boolean));
+      const available = underused.filter(t => !usedInEntry.has(toolKey(t)));
+      const replacement = available.length ? available[Math.floor(Math.random() * Math.min(available.length, 6))] : null;
+      if (replacement) {
+        _diversifySwaps.push({
+          dataIdx: c.dataIdx,
+          sugIdx: c.sugIdx,
+          entry: c.entry,
+          oldTool: ot.name,
+          newTool: replacement,
+          currentDesc: sugDesc(c.sug)
+        });
+      }
+    });
+  });
+
+  // Render results
+  const maxBar = sorted.length ? sorted[0].count : 1;
+  let html = `<div style="font-size:12px;color:var(--dim);margin-bottom:12px;font-weight:600">${filtered.length} entries · ${sorted.length} unique tools</div>`;
+  html += sorted.map(t => {
+    const barW = Math.round((t.count / maxBar) * 100);
+    const isOver = t.pct > OVERUSED_PCT;
+    const color = isOver ? 'var(--salmon)' : 'var(--lime)';
+    const tag = isOver ? ` <span style="color:var(--salmon);font-weight:800;font-size:10px;letter-spacing:.5px">OVERUSED</span>` : '';
+    return `<div style="margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px;font-weight:600">
+        <span style="color:var(--text)">${esc(t.name)}${tag}</span>
+        <span style="color:var(--dim)">${t.count} entries (${t.pct}%)</span>
+      </div>
+      <div style="height:5px;background:var(--card2);border-radius:3px"><div style="height:100%;width:${barW}%;background:${color};border-radius:3px;transition:width .4s"></div></div>
+    </div>`;
+  }).join('');
+
+  if (overused.length && _diversifySwaps.length) {
+    html += `<div style="margin-top:16px;padding:12px 16px;background:rgba(155,139,255,.08);border:1px solid rgba(155,139,255,.25);border-radius:10px">
+      <div style="font-size:13px;font-weight:700;color:var(--purple);margin-bottom:6px">📊 ${overused.length} overused tool${overused.length !== 1 ? 's' : ''} · ${_diversifySwaps.length} swap${_diversifySwaps.length !== 1 ? 's' : ''} planned</div>
+      <div style="font-size:12px;color:var(--dim);line-height:1.6">
+        ${_diversifySwaps.map(sw => `<div style="margin-bottom:3px">• <strong style="color:var(--salmon)">${esc(sw.oldTool)}</strong> → <strong style="color:var(--lime)">${esc(sw.newTool)}</strong> <span style="opacity:.7">in ${esc(sw.entry.ca)} ${esc(sw.entry.yl)} — ${esc(sw.entry.th)}</span></div>`).join('')}
+      </div>
+    </div>`;
+    fixBtn.style.display = '';
+  } else if (overused.length === 0) {
+    html += `<div style="margin-top:14px;padding:10px 14px;background:rgba(197,232,74,.08);border:1px solid rgba(197,232,74,.2);border-radius:8px;font-size:13px;color:var(--lime);font-weight:600">✓ No overused tools — distribution looks healthy</div>`;
+    fixBtn.style.display = 'none';
+  } else {
+    html += `<div style="margin-top:14px;padding:10px 14px;background:rgba(255,128,128,.08);border:1px solid rgba(255,128,128,.2);border-radius:8px;font-size:13px;color:var(--salmon);font-weight:600">Overused tools found but no suitable replacements available — check your Tool Inventory</div>`;
+    fixBtn.style.display = 'none';
+  }
+
+  if (underused.length) {
+    html += `<div style="margin-top:14px;padding:12px 16px;background:var(--card2);border-radius:8px;border-left:3px solid var(--lime)">
+      <div style="font-size:11px;color:var(--lime);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">Underused tools (≤2 entries)</div>
+      <div style="font-size:12px;color:var(--dim);line-height:1.8">${underused.map(t => `<span style="display:inline-block;padding:2px 8px;margin:2px 3px;background:var(--card);border:1px solid var(--border);border-radius:6px;font-size:11px;font-weight:600;color:var(--text)">${esc(t)}</span>`).join('')}</div>
+    </div>`;
+  }
+
+  resultsEl.innerHTML = html;
+  statusEl.style.color = 'var(--lime)';
+  statusEl.textContent = `Scanned ${filtered.length} entries`;
 }
 
+async function runAutoDiversify() {
+  if (_diversifyRunning || !_diversifySwaps.length) return;
+  _diversifyRunning = true;
+  const statusEl = document.getElementById('diversity-status');
+  const fixBtn = document.getElementById('btn-diversity-fix');
+  const stopBtn = document.getElementById('btn-diversity-stop');
+  const scanBtn = document.getElementById('btn-diversity-scan');
 
-function bulkReplacementCanonicalToolName_(value){
-  const raw = String(value || '').trim();
-  if(!raw) return '';
-  const lower = raw.toLowerCase().replace(/[’']/g,'').replace(/[^a-z0-9+& ]+/g,' ').replace(/\s+/g,' ').trim();
-  if(/^(see\s*saw|seesaw)(\s+learning\s+journal)?$/.test(lower)) return 'Seesaw';
-  if(/^(co\s*drone|codrone)(\s+edu)?$/.test(lower)) return 'CoDrone EDU';
-  if(/^podcast\s+equipment(?:\s*(?:\+|&|and)\s*garageband)?$/.test(lower)) return 'Podcast Equipment + GarageBand';
-  if(/^(national\s+geographic\s+map\s*maker|national\s+geographic\s+mapmaker|nat\s+geo\s+mapmaker|mapmaker)$/.test(lower)) return 'National Geographic MapMaker';
-  if(/^google\s+maps?$/.test(lower)) return 'Google Maps';
-  if(/^minecraft(\s+education)?$/.test(lower)) return 'Minecraft Education';
-  try { return normaliseToolName(raw); } catch(e){ return raw; }
+  fixBtn.disabled = true;
+  scanBtn.disabled = true;
+  stopBtn.style.display = '';
+  startProgress();
+
+  let completed = 0;
+  const total = _diversifySwaps.length;
+
+  for (const sw of _diversifySwaps) {
+    if (!_diversifyRunning) break;
+    statusEl.style.color = 'var(--purple)';
+    statusEl.textContent = `Diversifying ${completed + 1}/${total}: ${sw.oldTool} → ${sw.newTool}…`;
+
+    try {
+      const entry = DATA[sw.dataIdx];
+      const plannerCtx = entry.plannerContextRich || entry.plannerText || '';
+      const yl = entry.yl || '';
+      const constraintBlock = buildToolConstraints(yl);
+
+      const prompt = `You are a Digital Learning Coach at Wesley College (IB PYP, Melbourne).
+Rewrite this technology suggestion for a different tool.
+
+UNIT: ${entry.th || ''}
+YEAR LEVEL: ${yl}
+CAMPUS: ${entry.ca || ''}
+${plannerCtx ? 'PLANNER CONTEXT: ' + plannerCtx.slice(0, 8000) : ''}
+
+OLD TOOL: ${sw.oldTool}
+OLD DESCRIPTION: ${sw.currentDesc}
+
+NEW TOOL TO USE: ${sw.newTool}
+${constraintBlock}
+
+${SUGGESTION_STYLE}
+
+Write ONE JSON object: {"t":"${sw.newTool}","d":"..."}
+The description must be for ${sw.newTool} specifically, naming its real features and concrete student actions.
+Return ONLY the JSON object, no markdown fences, no extra text.`;
+
+      const raw = await callAI(
+        [{ role: 'user', parts: [{ text: prompt }] }],
+        '', OPENAI_FAST_MODEL
+      );
+
+      const cleaned = raw.replace(/```json|```/g, '').trim();
+      const parsed = JSON.parse(cleaned);
+      if (parsed && parsed.t && parsed.d) {
+        const sugs = entry.s;
+        if (Array.isArray(sugs) && sugs[sw.sugIdx]) {
+          sugs[sw.sugIdx] = { t: parsed.t, d: parsed.d };
+          if (parsed.url) sugs[sw.sugIdx].url = parsed.url;
+          completed++;
+        }
+      }
+    } catch (err) {
+      console.warn('Diversify swap failed:', sw.oldTool, '→', sw.newTool, err.message);
+    }
+    // Brief pause between API calls
+    if (_diversifyRunning && completed < total) await new Promise(r => setTimeout(r, 3000));
+  }
+
+  _diversifyRunning = false;
+  fixBtn.disabled = false;
+  fixBtn.style.display = 'none';
+  scanBtn.disabled = false;
+  stopBtn.style.display = 'none';
+  stopProgress();
+
+  if (completed > 0) {
+    statusEl.style.color = 'var(--lime)';
+    statusEl.textContent = `✓ ${completed}/${total} suggestions diversified — saving…`;
+    try {
+      await saveToDrive();
+      CHANGE_HISTORY.push({ type: 'diversify', count: completed, ts: Date.now() });
+      statusEl.textContent = `✓ ${completed} suggestions diversified and saved to Drive`;
+      renderDashboard();
+    } catch (err) {
+      statusEl.textContent = `✓ ${completed} diversified but save failed: ${err.message}`;
+    }
+  } else {
+    statusEl.style.color = 'var(--salmon)';
+    statusEl.textContent = completed === 0 && !_diversifyRunning ? 'Stopped — no changes made' : 'No swaps succeeded';
+  }
+  _diversifySwaps = [];
 }
 
-function bulkDiagnosticAllKnownTools_(){
-  const extras = ['Seesaw','Google Maps','National Geographic MapMaker','Makey Makey','Book Creator','Lego Spike Prime','Lego Spike Essential','Minecraft Education','Canva','Canva Remove Background','Green Screen','Padlet','ScratchJR','Scratch','Adobe Express','Adobe Express Podcasting','Microsoft Forms','Microsoft Sway','GarageBand','iMovie','CoDrone EDU','Podcast Equipment + GarageBand'];
-  const dataTools = [];
+function stopAutoDiversify() {
+  _diversifyRunning = false;
+  const statusEl = document.getElementById('diversity-status');
+  if (statusEl) statusEl.textContent += ' — stopping…';
+}
+
+function closeEntry(){
+  if(CURRENT_ENTRY_IDX !== null){
+    // Release lock in background
+    if(DATA._locks) delete DATA._locks[String(CURRENT_ENTRY_IDX)];
+    MY_LOCK_IDX = null;
+    stopLockHeartbeat();
+    saveLocks(); // fire-and-forget
+    renderLockIndicators();
+  }
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  const panel=document.getElementById('panel-'+PREV_TAB);
+  if(panel) panel.classList.add('active');
+  CURRENT_ENTRY_IDX=null;
+  if(PREV_TAB==='browse') renderBrowse();
+}
+
+// v5.18 FIX: Removed all BANNED tools from this list. Previously contained
+// classvr, green screen, digital camera, google earth, lego spike essential,
+// teams, powerpoint, onenote, sway — all of which are banned.
+// This list is the FALLBACK whitelist when TOOL_INVENTORY.approved is empty,
+// so banned tools in here could slip through if the inventory hasn't loaded.
+const TOOL_WHITELIST = [
+  // Microsoft M365 (only approved ones: Word, Excel, Forms)
+  // Note: bare 'microsoft' removed — it was a substring-match backdoor for banned MS tools.
+  'microsoft word','microsoft excel','microsoft forms','word','excel','forms',
+  'wise','schoolbox','wise discussion chatbots','schoolbox discussion chatbots',
+
+  // Robotics / STEM (Lego Spike Essential is BANNED — only Prime)
+  'beebot','beebots','bee-bot','bee-bots','sphero indi','sphero bolt','sphero',
+  'lego spike prime','lego spike','lego','micro:bit','microbit','codrone','makey makey',
+
+  // Hardware (ClassVR, Green Screen, Digital Camera are BANNED)
+  '3d printer','merge cube','merge cubes',
+  'podcast equipment','rodecaster','ipad','laptop',
+
+  // Core creation
+  'seesaw','canva','book creator','padlet',
+
+  // Video / audio / animation
+  'garageband','scratchjr','scratch jr','scratch','stop motion studio','stop motion',
+  'chatterpix','imovie','puppet pals',
+  'adobe express','adobe express podcasting',
+
+  // Subject specific (Google Earth is BANNED)
+  'google maps','national geographic mapmaker','national geographic map maker','nat geo mapmaker','mapmaker',
+  'field guide to victoria','field guide','sky map',
+  'geoboard',
+
+  // Other
+  'clickview','epic','piccollage','brushes redux','word clouds','abcya',
+  'sketchbook','explain everything','freeform','delightex',
+  'kahoot','tinkercad','minecraft','minecraft education',
+
+  // Extended hardware
+  'insta360','rugged robot','smart bricks','indi robot','edison',
+  'cubetto','pico vr','pico','merge explorer'
+];
+
+
+// v5.18 FIX: Expanded static banned list so these tools are caught
+// even before TOOL_INVENTORY loads from libraries.json.
+const DASHBOARD_STATIC_BANNED_TOOLS = [
+  'wevideo', 'we video',
+  'classvr', 'class vr',
+  'flipgrid', 'flip',
+  'google earth',
+  'google slides', 'google docs', 'google sheets',
+  'google streetview', 'google street view', 'google syncview',
+  'microsoft teams', 'teams',
+  'microsoft powerpoint', 'powerpoint',
+  'microsoft onenote', 'onenote',
+  'microsoft sway', 'sway',
+  'lego spike essential',
+  'green screen', 'green screen kits',
+  'digital camera', 'digital cameras',
+  'apple keynote', 'keynote',
+  'banqer',
+  'chatgpt', 'claude', 'gemini', 'copilot'
+];
+
+function dashboardToolKey_(toolName){
+  const raw = String(toolName || '').trim();
+  const norm = (typeof normaliseToolName === 'function' ? normaliseToolName(raw) : raw);
+  return String(norm || '')
+    .toLowerCase()
+    .replace(/[’']/g,'')
+    .replace(/[^a-z0-9]+/g,' ')
+    .trim();
+}
+
+function dashboardBannedToolMatch_(toolName){
+  const key = dashboardToolKey_(toolName);
+  if(!key) return null;
+
+  const candidates = [];
   try{
-    if(Array.isArray(DATA)){
-      DATA.forEach(e => getSugs(e).forEach((s, idx) => {
-        if(idx === 5) return; // avoid STEM/activity titles in replacement detection
-        const t = sugTool(s);
-        if(t) dataTools.push(t);
-      }));
+    if(typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY && Array.isArray(TOOL_INVENTORY.banned)){
+      candidates.push(...TOOL_INVENTORY.banned);
     }
   }catch(e){}
-  const all = [
-    ...extras,
-    ...(typeof DEFAULT_APPROVED_TOOLS !== 'undefined' ? (DEFAULT_APPROVED_TOOLS || []) : []),
-    ...((typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY && TOOL_INVENTORY.approved) ? TOOL_INVENTORY.approved : []),
-    ...((typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY && TOOL_INVENTORY.banned) ? TOOL_INVENTORY.banned : []),
-    ...dataTools
-  ];
-  const seen = new Set();
-  return all.map(t => bulkReplacementCanonicalToolName_(String(t || '').trim())).filter(t => {
-    const k = bulkDiagnosticToolKey_(t);
-    if(!k || seen.has(k)) return false;
-    // Filter out likely lesson/activity titles that are not technology tools.
-    if(/[:]/.test(t) && !/^(Minecraft|Micro:bit)/i.test(t)) return false;
-    if(/\b(quest|maze|challenge|campaign|companion|trail|exhibition|prototype model)\b/i.test(t) && t.length > 35) return false;
-    seen.add(k);
-    return true;
-  }).sort((a,b) => b.length - a.length);
-}
-
-function bulkDiagnosticDetectReplacementTool_(instruction){
-  const raw = String(instruction || '').trim();
-  if(!/\b(replace|remove|swap|change out|stop using|get rid of|delete|retire|phase out|stop suggesting)\b/i.test(raw)) return '';
-  const lower = raw.toLowerCase().replace(/[’']/g, '');
-  const aliases = {
-    'seesaw':'Seesaw',
-    'see saw':'Seesaw',
-    'seesaw learning journal':'Seesaw',
-    'google maps':'Google Maps',
-    'mapmaker':'National Geographic MapMaker',
-    'national geographic mapmaker':'National Geographic MapMaker',
-    'national geographic map maker':'National Geographic MapMaker',
-    'makey makey':'Makey Makey',
-    'book creator':'Book Creator',
-    'lego spike prime':'Lego Spike Prime',
-    'lego spike essential':'Lego Spike Essential',
-    'minecraft':'Minecraft Education',
-    'minecraft education':'Minecraft Education',
-    'codrone':'CoDrone EDU',
-    'codrone edu':'CoDrone EDU',
-    'codroneedu':'CoDrone EDU',
-    'co drone':'CoDrone EDU',
-    'co-drone':'CoDrone EDU',
-    'co drone edu':'CoDrone EDU',
-    'co-drone edu':'CoDrone EDU',
-    'podcast equipment':'Podcast Equipment + GarageBand',
-    'podcast equipment garageband':'Podcast Equipment + GarageBand',
-    'podcast equipment and garageband':'Podcast Equipment + GarageBand',
-    'podcast equipment + garageband':'Podcast Equipment + GarageBand',
-    'podcast equipment & garageband':'Podcast Equipment + GarageBand'
-  };
-  for(const [alias, tool] of Object.entries(aliases)){
-    const pattern = bulkEscapeRegExp_(alias).replace(/\s+/g, '\s+');
-    const re = new RegExp('(^|[^a-z0-9])' + pattern + '([^a-z0-9]|$)', 'i');
-    if(re.test(lower)) return tool;
-  }
-
-  const tools = bulkDiagnosticAllKnownTools_();
-  // Prefer longest known tool names first so Adobe Express Podcasting wins over Adobe Express.
-  for(const tool of tools){
-    const phrase = String(tool || '').toLowerCase().replace(/[’']/g, '');
-    if(!phrase || phrase.length < 4) continue;
-    const pattern = bulkEscapeRegExp_(phrase).replace(/\s+/g, '\s+');
-    const re = new RegExp('(^|[^a-z0-9])' + pattern + '([^a-z0-9]|$)', 'i');
-    if(re.test(lower)) return tool;
-  }
-
-  // Fallback: parse the words after the replacement verb, then compare that phrase
-  // against the known tools. This catches natural requests such as
-  // “get rid of all Adobe Express Podcasting” or “stop using Podcast Equipment and GarageBand”.
-  let phrase = lower
-    .replace(/^.*?\b(?:replace|remove|swap|change out|stop using|get rid of|delete|retire|phase out|stop suggesting)\b\s*/i, '')
-    .replace(/^all\s+/, '')
-    .replace(/\b(in|from|across|for)\b.*$/i, '')
-    .replace(/\b(years?|yr|y)\s*[1-6].*$/i, '')
-    .replace(/\b(all planners|all units|everywhere|everything)\b.*$/i, '')
-    .replace(/[^a-z0-9+& ]+/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-  if(phrase){
-    const phraseKey = bulkDiagnosticToolKey_(bulkReplacementCanonicalToolName_(phrase));
-    let best = '';
-    let bestScore = 0;
-    tools.forEach(tool => {
-      const tk = bulkDiagnosticToolKey_(tool);
-      if(!tk) return;
-      let score = 0;
-      if(tk === phraseKey) score = 1000;
-      else if(phraseKey && (tk.includes(phraseKey) || phraseKey.includes(tk))) score = Math.min(tk.length, phraseKey.length);
-      if(score > bestScore){ bestScore = score; best = tool; }
-    });
-    if(best && bestScore >= 4) return best;
-  }
-  return '';
-}
-
-function bulkReplacementYearKey_(value){
-  const raw = String(value || '').toLowerCase().trim();
-  if(!raw) return '';
-  if(/\bprep\b|\bfoundation\b/.test(raw)) return 'Prep';
-  const m = raw.match(/(?:year|yr|y)?\s*([1-6])\b/);
-  return m ? ('Year ' + m[1]) : String(value || '').trim();
-}
-
-function bulkReplacementCandidateText_(s){
-  if(!s) return '';
-  const parts = [];
-  ['t','tool','technology','name','title','platform','app','software','resource','d','desc','description','integration_idea','activity','suggestion'].forEach(k => {
-    if(s[k] != null && typeof s[k] !== 'object') parts.push(String(s[k]));
-  });
-  return parts.join(' | ');
-}
-
-function bulkReplacementLabelMatches_(s, toolName){
-  toolName = bulkReplacementCanonicalToolName_(toolName);
-  const wantedKey = bulkDiagnosticToolKey_(toolName);
-  const toolText = String(sugTool(s) || '').trim();
-  const canonicalTool = bulkReplacementCanonicalToolName_(toolText);
-  const toolKey = bulkDiagnosticToolKey_(canonicalTool);
-  if(wantedKey && toolKey && toolKey === wantedKey) return true;
-  if(wantedKey === 'seesaw') return /(^|[^a-z0-9])see\s*saw([^a-z0-9]|$)|(^|[^a-z0-9])seesaw([^a-z0-9]|$)/i.test(toolText);
-  if(wantedKey === 'googlemaps') return /google\s+maps?/i.test(toolText);
-  if(wantedKey === 'nationalgeographicmapmaker') return /mapmaker|national\s+geographic\s+mapmaker/i.test(toolText);
-  if(wantedKey === 'podcastequipmentgarageband') return /podcast\s+equipment(?:\s*(?:\+|&|and)\s*garageband)?/i.test(toolText);
-  if(wantedKey === 'codroneedu') return /co[\s-]*drone(?:\s*edu)?|codrone(?:\s*edu)?/i.test(toolText);
-  return false;
-}
-
-function bulkReplacementToolMatches_(s, toolName){
-  toolName = bulkReplacementCanonicalToolName_(toolName);
-  const wantedKey = bulkDiagnosticToolKey_(toolName);
-  if(bulkReplacementLabelMatches_(s, toolName)) return true;
-
-  const haystack = bulkReplacementCandidateText_(s).toLowerCase().replace(/[’']/g, '');
-  if(!haystack) return false;
-
-  if(wantedKey === 'seesaw'){
-    // Some legacy entries keep an approved tool such as Padlet in the label, but
-    // still tell students to use Seesaw inside the description. Match those too,
-    // then decide later whether to replace the tool or only rewrite the wording.
-    return /(^|[^a-z0-9])see\s*saw([^a-z0-9]|$)/i.test(haystack) || /(^|[^a-z0-9])seesaw([^a-z0-9]|$)/i.test(haystack);
-  }
-  if(wantedKey === 'googlemaps') return /google\s+maps?/i.test(haystack);
-  if(wantedKey === 'nationalgeographicmapmaker') return /mapmaker|national\s+geographic\s+mapmaker/i.test(haystack);
-  if(wantedKey === 'podcastequipmentgarageband') return /podcast\s+equipment(?:\s*(?:\+|&|and)\s*garageband)?/i.test(haystack);
-  if(wantedKey === 'codroneedu') return /co[\s-]*drone(?:\s*edu)?|codrone(?:\s*edu)?/i.test(haystack);
-
-  const phrase = String(toolName || '').toLowerCase().replace(/[’']/g, '').trim();
-  if(phrase && phrase.length >= 4){
-    const re = new RegExp('(^|[^a-z0-9])' + bulkEscapeRegExp_(phrase).replace(/\s+/g, '\\s+') + '([^a-z0-9]|$)', 'i');
-    return re.test(haystack);
-  }
-  return false;
-}
-
-function bulkDiagnosticScanReplacementTool_(toolName, targetYears){
-  const key = bulkDiagnosticToolKey_(toolName);
-  const matches = [];
-  let skippedYear = 0;
-  let skippedStemSlot = 0;
-  let totalMatchingSlots = 0;
-  let matchingEntries = 0;
-  const entriesSeen = new Set();
-  const requestedYears = (targetYears || []).map(bulkReplacementYearKey_).filter(Boolean);
-
-  if(!key || !Array.isArray(DATA)) return { matches, skippedYear, skippedStemSlot, totalMatchingSlots, matchingEntries };
-
-  DATA.forEach((e, entryIdx) => {
-    if(!e) return;
-    const yl = bulkReplacementYearKey_(e.yl || e.year || e.yearLevel || '');
-    if(requestedYears.length && !requestedYears.includes(yl)){ skippedYear++; return; }
-    const sugs = getSugs(e);
-    sugs.forEach((s, sugIdx) => {
-      if(!s || !isRealSug(s)) return;
-      if(!bulkReplacementToolMatches_(s, toolName)) return;
-      totalMatchingSlots++;
-      entriesSeen.add(entryIdx);
-      const labelMatch = bulkReplacementLabelMatches_(s, toolName);
-      const record = {
-        entryIdx,
-        sugIdx,
-        isStemSlot: sugIdx === 5,
-        matchKind: labelMatch ? 'tool-label' : 'description-reference',
-        campus: e.ca || e.campus || 'Campus?',
-        year: yl || e.yl || 'Year?',
-        theme: e.th || e.theme || 'Untitled unit',
-        currentTool: sugTool(s) || '(tool label missing; matched text in suggestion)',
-        currentDesc: sugDesc(s)
-      };
-      if(record.isStemSlot) skippedStemSlot++;
-      else matches.push(record);
-    });
-  });
-  matchingEntries = entriesSeen.size;
-  return { matches, skippedYear, skippedStemSlot, totalMatchingSlots, matchingEntries };
-}
-
-
-
-// ========== BULK AI TARGETED REPLACEMENT SAFE DRAFT MODE ==========
-// Draft-only path for prompts such as: draft: Replace Seesaw in Year 5 and 6
-// It uses the same fuzzy local scanner as diagnostics, protects STEM slot #6, makes no AI calls,
-// and opens the existing review popup without saving anything automatically.
-function bulkReplacementIsBannedTool_(toolName){
-  const key = bulkDiagnosticToolKey_(toolName);
-  try {
-    const banned = ((TOOL_INVENTORY && TOOL_INVENTORY.banned) || []).map(t => bulkDiagnosticToolKey_(t));
-    return banned.includes(key);
-  } catch(e){ return false; }
-}
-
-function bulkReplacementApprovedToolsForYear_(yearLabel, removeTool){
-  const removeKey = bulkDiagnosticToolKey_(removeTool);
-  let tools = [];
-  try {
-    if(typeof getAgeAppropriateTools === 'function') tools = getAgeAppropriateTools(yearLabel) || [];
-  } catch(e){ tools = []; }
-  if(!tools.length){
-    tools = [
-      ...((typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY && TOOL_INVENTORY.approved) ? TOOL_INVENTORY.approved : []),
-      ...(typeof DEFAULT_APPROVED_TOOLS !== 'undefined' ? (DEFAULT_APPROVED_TOOLS || []) : [])
-    ];
-  }
-  const seen = new Set();
-  return tools.map(t => normaliseToolName(String(t || '').trim())).filter(t => {
-    const k = bulkDiagnosticToolKey_(t);
-    if(!k || seen.has(k)) return false;
-    seen.add(k);
-    if(k === removeKey) return false;
-    if(bulkReplacementIsBannedTool_(t)) return false;
-    // Avoid risky/special-case tools in a deterministic replacement pass.
-    if(/minecraft/i.test(t)) return false;
-    return true;
-  });
-}
-
-function bulkReplacementPreferredTools_(match){
-  const text = `${match.theme || ''} ${match.currentDesc || ''}`.toLowerCase();
-  if(/\b(quiz|survey|poll|form|questionnaire|check\s*in|feedback|data)\b/.test(text)){
-    return ['Microsoft Forms','Padlet','Canva','Book Creator','Microsoft Sway','Microsoft PowerPoint'];
-  }
-  if(/\b(discuss|discussion|perspective|opinion|debate|interview|question|empathy|point of view)\b/.test(text)){
-    return ['Wise Discussion Chatbots','Padlet','Book Creator','Canva','Microsoft Sway','Microsoft PowerPoint'];
-  }
-  if(/\b(gallery|brainstorm|collaborat|share|collect|sort|compare|wall|board)\b/.test(text)){
-    return ['Padlet','Canva','Book Creator','Microsoft PowerPoint','Microsoft Sway','Microsoft Forms'];
-  }
-  if(/\b(poster|infographic|visual|design|diagram|explain|presentation)\b/.test(text)){
-    return ['Canva','Microsoft PowerPoint','Book Creator','Microsoft Sway','Padlet','Microsoft Forms'];
-  }
-  return ['Book Creator','Canva','Padlet','Microsoft Forms','Microsoft Sway','Microsoft PowerPoint','Wise Discussion Chatbots'];
-}
-
-function bulkReplacementPickTool_(match, usedCounts, removeTool){
-  const approved = bulkReplacementApprovedToolsForYear_(match.year, removeTool);
-  const approvedKeys = new Map(approved.map(t => [bulkDiagnosticToolKey_(t), t]));
-  const preferred = bulkReplacementPreferredTools_(match).map(t => approvedKeys.get(bulkDiagnosticToolKey_(t))).filter(Boolean);
-  const pool = preferred.length ? preferred : approved.filter(t => !/seesaw/i.test(t));
-  if(!pool.length) return 'Book Creator';
-  let best = pool[0], bestScore = Infinity;
-  pool.forEach(t => {
-    const k = bulkDiagnosticToolKey_(t);
-    const score = usedCounts[k] || 0;
-    if(score < bestScore){ best = t; bestScore = score; }
-  });
-  usedCounts[bulkDiagnosticToolKey_(best)] = (usedCounts[bulkDiagnosticToolKey_(best)] || 0) + 1;
-  return best;
-}
-
-function bulkReplacementUnitContext_(entry){
-  const ctx = bulkSafeDraftUnitFocus_(entry || {});
-  const theme = ctx.theme || 'this unit';
-  const connection = ctx.connection || theme;
-  return { theme, connection };
-}
-
-function bulkReplacementDescriptionForTool_(toolName, entry, removeTool){
-  const tool = normaliseToolName(toolName || '');
-  const k = bulkDiagnosticToolKey_(tool);
-  const ctx = bulkReplacementUnitContext_(entry || {});
-  const theme = ctx.theme;
-  const connection = ctx.connection;
-  const band = bulkSafeDraftYearBand_(entry || {});
-
-  if(k === bulkDiagnosticToolKey_('Book Creator')){
-    if(band === 'early') return `Students use Book Creator to make a simple picture-and-voice book for this unit. They add drawings or photos, short captions and a recorded sentence on each page to show what they understand about ${connection}, giving teachers a clearer student-created product than a simple ${removeTool} response.`;
-    if(band === 'upper') return `Students use Book Creator to publish a multimodal explanation book for this unit. They combine diagrams, evidence captions and recorded reflections to explain examples, vocabulary and design choices from ${connection}, giving teachers a richer student-created product than a simple ${removeTool} response.`;
-    return `Students use Book Creator to publish a short multimodal book for this unit. They combine images, captions and recorded reflections to explain examples and key vocabulary from ${connection}, giving teachers a clearer student-created product than a simple ${removeTool} response.`;
-  }
-  if(k === bulkDiagnosticToolKey_('Canva')){
-    if(band === 'early') return `Students use Canva to make a simple labelled poster for this unit. They choose images, add short labels and explain one important idea about ${connection} to a partner or small group.`;
-    if(band === 'upper') return `Students use Canva to design an infographic or short visual campaign for this unit. They select evidence, organise claims and captions, and explain how their visual choices help an audience understand ${connection}.`;
-    return `Students use Canva to design a visual explanation, infographic or short presentation for this unit. They select evidence, images and concise captions to teach classmates an important idea from ${connection}.`;
-  }
-  if(k === bulkDiagnosticToolKey_('Padlet')){
-    if(band === 'early') return `Students add pictures, short notes or voice comments to a shared Padlet board for this unit. They sort examples together and talk about what the board shows about ${connection}.`;
-    if(band === 'upper') return `Students use Padlet to collect, organise and critique evidence for this unit. They group posts, respond to peers and identify patterns or tensions that help explain ${connection}.`;
-    return `Students contribute evidence, images, questions and short explanations to a shared Padlet board for this unit. They group related posts and respond to classmates so the board becomes a collaborative record of thinking about ${connection}.`;
-  }
-  if(k === bulkDiagnosticToolKey_('Microsoft Forms')){
-    if(band === 'early') return `Students answer or help build a short Microsoft Forms class survey for this unit. They look at the results together and describe one pattern they notice about ${connection}.`;
-    if(band === 'upper') return `Students create a Microsoft Forms survey or quiz for this unit. They analyse response data, identify a pattern or misconception, and use the evidence to explain something important about ${connection}.`;
-    return `Students create a short Microsoft Forms quiz or survey for this unit. They collect responses, identify one pattern or misconception, and explain what the class data suggests about ${connection}.`;
-  }
-  if(k === bulkDiagnosticToolKey_('Microsoft Sway')){
-    if(band === 'early') return `Students use Microsoft Sway to make a short class-supported digital story for this unit. They add images, simple sentences and a reflection that shows one thing they learned about ${connection}.`;
-    if(band === 'upper') return `Students use Microsoft Sway to build an interactive digital report for this unit. They sequence evidence, images, explanations and reflections to show how their thinking about ${connection} has developed.`;
-    return `Students use Microsoft Sway to build a simple interactive report for this unit. They sequence images, headings, short explanations and reflections to show how their understanding of ${connection} has developed.`;
-  }
-  if(k === bulkDiagnosticToolKey_('Microsoft PowerPoint')){
-    if(band === 'early') return `Students create a short PowerPoint with images, labels and one recorded explanation for this unit. They share it to show a key idea they understand about ${connection}.`;
-    if(band === 'upper') return `Students create a concise PowerPoint explanation for this unit. They use evidence, visuals, speaker notes and a short recorded or live presentation to teach classmates key ideas from ${connection}.`;
-    return `Students create a concise PowerPoint explanation for this unit. They use slides, images and speaker notes to teach classmates key ideas from ${connection}, then present or record their explanation.`;
-  }
-  if(k === bulkDiagnosticToolKey_('Wise Discussion Chatbots')){
-    if(band === 'early') return `Students question a teacher-selected Wise Discussion Chatbot persona for this unit. They ask simple prepared questions, record useful ideas and share one thing the chatbot helped them understand about ${connection}.`;
-    if(band === 'upper') return `Students question a Wise Discussion Chatbot acting as a named expert or stakeholder for this unit. They ask prepared questions, compare responses with class evidence, and produce a claim-evidence-reflection about ${connection}.`;
-    return `Students question a Wise Discussion Chatbot acting as a named expert or stakeholder for this unit. They ask prepared questions, compare responses with class evidence, and produce a short reflection about ${connection}.`;
-  }
-  if(band === 'early') return `Students use ${tool} to make a simple digital product for this unit. They share what they made and explain one thing it shows about ${connection}.`;
-  if(band === 'upper') return `Students use ${tool} to create a purposeful digital product for this unit. They make design choices for a real audience, share their artefact, and justify how it demonstrates their understanding of ${connection}.`;
-  return `Students use ${tool} to create a practical digital product for this unit. They make a clear artefact, share it with classmates, and explain how it demonstrates their understanding of ${connection}.`;
-}
-
-function bulkRunSafeReplacementDraftOnly_(text){
-  const cleanText = String(text || '').replace(/^\s*(draft|draft-safe|safe-draft)\s*:?\s*/i, '').trim();
-  const info = bulkDiagnosticDetectRoute_(cleanText);
-  const years = info.targetYears && info.targetYears.length ? info.targetYears : [];
-  const yearsLabel = years.length ? years.join(', ') : 'All years';
-
-  if(!info.replacementTool){
-    bulkChatAddMessage('assistant', `
-      <div style="padding:2px 0">
-        <div style="font-size:10px;color:var(--purple);font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">🧪 Safe replacement draft mode</div>
-        <div>I could not confidently detect which tool should be replaced.</div>
-        <div style="margin-top:8px;color:var(--dim);font-size:12px">Try: <strong>draft: Replace Seesaw in Year 5 and 6</strong></div>
-        <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No changes were drafted or saved.</div>
-      </div>`);
-    return;
-  }
-
-  const scan = bulkDiagnosticScanReplacementTool_(info.replacementTool, years);
-  const matches = (scan.matches || []).filter(m => !m.isStemSlot);
-  if(!matches.length){
-    bulkChatAddMessage('assistant', `
-      <div style="padding:2px 0">
-        <div style="font-size:10px;color:var(--purple);font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">🧪 Safe replacement draft mode</div>
-        <div>I found no draftable non-STEM <strong>${bulkDiagnosticEscape_(info.replacementTool)}</strong> slots${years.length?' in '+bulkDiagnosticEscape_(yearsLabel):''}.</div>
-        <div style="margin-top:8px;color:var(--dim);font-size:12px">Total matching slots: ${scan.totalMatchingSlots || 0} · protected STEM slot #6 skipped: ${scan.skippedStemSlot || 0}</div>
-        <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No changes were drafted or saved.</div>
-      </div>`);
-    return;
-  }
-
-  const usedCounts = {};
-  let labelReplacementCount = 0;
-  let hiddenRewriteCount = 0;
-  const changes = matches.map(m => {
-    const e = DATA[m.entryIdx] || {};
-    const currentTool = normaliseToolName(String(m.currentTool || '').replace(/^\(tool label missing.*$/i, '').trim());
-    const isHiddenReference = m.matchKind === 'description-reference' && currentTool && bulkDiagnosticToolKey_(currentTool) !== bulkDiagnosticToolKey_(info.replacementTool);
-    const newTool = isHiddenReference ? currentTool : bulkReplacementPickTool_(m, usedCounts, info.replacementTool);
-    if(isHiddenReference) hiddenRewriteCount++; else labelReplacementCount++;
-    return {
-      entryIdx: m.entryIdx,
-      sugIdx: m.sugIdx,
-      t: newTool,
-      d: bulkSafeDraftFinaliseDescription_(bulkReplacementDescriptionForTool_(newTool, e, info.replacementTool)),
-      reason: isHiddenReference
-        ? `Safe targeted rewrite: keeps ${newTool} but removes a hidden ${info.replacementTool} reference from the description. Slot #6/STEM is protected. Review before applying.`
-        : `Safe targeted replacement draft: replaces ${info.replacementTool} in ${m.year}. Slot #6/STEM is protected. Review before applying.`,
-      improvementConfidence: 'Draft-only',
-      whyBetter: isHiddenReference
-        ? `Keeps the approved original tool (${newTool}) and removes the legacy ${info.replacementTool} instruction from the wording while preserving a clear student action, product and unit connection.`
-        : `Replaces ${info.replacementTool} with an approved, age-appropriate tool while keeping a clear student action, product and unit connection.`
-    };
-  });
-
-  const sample = matches.slice(0,8).map((m, i) => {
-    const action = m.matchKind === 'description-reference' ? 'rewrite wording only' : 'replace tool';
-    return `• ${bulkDiagnosticEscape_(m.campus)} · ${bulkDiagnosticEscape_(m.year)} · slot ${m.sugIdx + 1} · ${bulkDiagnosticEscape_(m.theme)} → ${bulkDiagnosticEscape_(changes[i].t)} <span style="color:var(--dim)">(${action})</span>`;
-  }).join('<br>');
-  bulkChatAddMessage('assistant', `✅ <strong>${changes.length} ${bulkDiagnosticEscape_(info.replacementTool)} cleanup draft${changes.length!==1?'s':''}</strong> ready for review.<br><br><span style="font-size:12px;color:var(--lime)">Safe replacement mode:</span> found targets locally, skipped STEM slot #6, used approved tools, made no AI calls and saved nothing automatically.<br><br><span style="font-size:12px;color:var(--lime)">Planned actions:</span> ${labelReplacementCount} tool replacement${labelReplacementCount!==1?'s':''}; ${hiddenRewriteCount} wording-only rewrite${hiddenRewriteCount!==1?'s':''}.<br><br><span style="font-size:12px;color:var(--lime)">Targets:</span><br>${sample}`);
-  bulkChatMemory.push({ role:'assistant', content:`Safe-drafted ${changes.length} ${info.replacementTool} replacements.` });
-  window._snapshotReason = `Before safe ${info.replacementTool} replacement drafts`;
-  showChangesPopup(changes);
-  bulkChatState = 'done';
-}
-
-
-// ========== MINECRAFT EXACT LESSON DIAGNOSTICS ==========
-function bulkMinecraftNorm_(value){
-  return String(value || '').toLowerCase().replace(/[’']/g,'').replace(/[^a-z0-9]+/g,' ').trim();
-}
-function bulkDetectMinecraftLessonTitle_(instruction){
-  const t = bulkMinecraftNorm_(instruction);
-  if(/revamp\s+melbourne/.test(t)) return 'Revamp Melbourne';
-  // Conservative: only auto-detect exact curated titles in the Minecraft library.
-  try {
-    const lessons = (typeof LIBRARIES !== 'undefined' && LIBRARIES && Array.isArray(LIBRARIES.minecraft)) ? LIBRARIES.minecraft : [];
-    for(const l of lessons){
-      const title = String(l && l.title || '').trim();
-      if(title && bulkMinecraftNorm_(title) && t.includes(bulkMinecraftNorm_(title))) return title;
-    }
-  } catch(e){}
-  return '';
-}
-function bulkFindMinecraftLesson_(title){
-  const wanted = bulkMinecraftNorm_(title);
-  const lessons = (typeof LIBRARIES !== 'undefined' && LIBRARIES && Array.isArray(LIBRARIES.minecraft)) ? LIBRARIES.minecraft : [];
-  if(!wanted || !lessons.length) return null;
-  return lessons.find(l => bulkMinecraftNorm_(l && l.title) === wanted) ||
-         lessons.find(l => bulkMinecraftNorm_(l && l.title).includes(wanted) || wanted.includes(bulkMinecraftNorm_(l && l.title))) ||
-         null;
-}
-function bulkMinecraftYearAgeOk_(lesson, yearLabel){
-  const ages = String((lesson && (lesson.ages || lesson.age || lesson.ageRange)) || '').toLowerCase();
-  if(!ages) return true;
-  const yi = YR.indexOf(yearLabel);
-  if(yi < 0) return true;
-  const approxAge = yi === 0 ? 5 : yi + 5;
-  const m = ages.match(/(\d+)\s*\+/);
-  if(m) return approxAge >= Number(m[1]);
-  const nums = ages.match(/\d+/g);
-  if(nums && nums.length) return approxAge >= Number(nums[0]);
-  return true;
-}
-function bulkScanMinecraftExactLessonFit_(lesson, maxResults){
-  const title = String(lesson && lesson.title || '');
-  const titleKey = bulkMinecraftNorm_(title);
-  const results = [];
-  const skipped = { age:0, alreadyHasMinecraft:0, noNonStemSlot:0 };
-  const isRevamp = /revamp\s+melbourne/.test(titleKey);
-  if(!lesson || !Array.isArray(DATA)) return { results, skipped };
-
-  DATA.forEach((e, entryIdx) => {
-    if(!e) return;
-    const yl = e.yl || '';
-    if(!bulkMinecraftYearAgeOk_(lesson, yl)){ skipped.age++; return; }
-    const sugs = getSugs(e).filter(isRealSug);
-    let hasMinecraft = false;
-    let firstReplaceableSlot = -1;
-    sugs.forEach((s, sugIdx) => {
-      if(/minecraft/i.test(String(sugTool(s) || ''))) hasMinecraft = true;
-      if(firstReplaceableSlot < 0 && sugIdx !== 5) firstReplaceableSlot = sugIdx;
-    });
-    if(hasMinecraft){ skipped.alreadyHasMinecraft++; return; }
-    if(firstReplaceableSlot < 0){ skipped.noNonStemSlot++; return; }
-
-    const text = bulkMinecraftNorm_([
-      e.ca, e.yl, e.th || e.theme, e.ci || e.centralIdea, e.loi || e.linesOfInquiry,
-      (Array.isArray(e.lois) ? e.lois.join(' ') : '')
-    ].filter(Boolean).join(' '));
-    let score = 0;
-    const reasons = [];
-    function hit(words, reason, weight){
-      if(words.some(w => text.includes(w))){ score += weight || 1; reasons.push(reason); }
-    }
-    if(isRevamp){
-      hit(['melbourne','city','cities','urban','suburb','neighbourhood','neighborhood'], 'city/place context', 3);
-      hit(['sustainab','liveab','livability','environment','sharing the planet'], 'sustainability or liveability connection', 2);
-      hit(['community','communities','citizen','civic','people'], 'community/citizenship connection', 1);
-      hit(['design','redesign','revamp','built','building','architecture','space','place','map','mapping'], 'design or built-environment connection', 2);
-      hit(['change','future','innovation','systems','interdepend'], 'change/systems connection', 1);
-    } else {
-      const lessonWords = bulkMinecraftNorm_([lesson.title, lesson.desc, lesson.subject].filter(Boolean).join(' ')).split(' ').filter(w => w.length > 4);
-      const unique = [...new Set(lessonWords)].slice(0, 20);
-      unique.forEach(w => { if(text.includes(w)) score += 1; });
-      if(score) reasons.push('unit wording overlaps with curated lesson metadata');
-    }
-    if(score > 0){
-      results.push({
-        entryIdx, slotIdx:firstReplaceableSlot,
-        campus:e.ca || 'Campus?', year:yl || 'Year?', theme:e.th || e.theme || 'Untitled unit',
-        centralIdea:e.ci || e.centralIdea || '', score, reasons:[...new Set(reasons)].slice(0,3)
-      });
-    }
-  });
-  results.sort((a,b) => b.score - a.score || (a.year||'').localeCompare(b.year||''));
-  return { results: results.slice(0, maxResults || 10), skipped };
-}
-function bulkMinecraftDiagnosticHtml_(instruction){
-  const lessonTitle = bulkDetectMinecraftLessonTitle_(instruction);
-  const lesson = bulkFindMinecraftLesson_(lessonTitle);
-  const lessons = (typeof LIBRARIES !== 'undefined' && LIBRARIES && Array.isArray(LIBRARIES.minecraft)) ? LIBRARIES.minecraft : [];
-  if(!lessonTitle){
-    return `<div style="margin-top:10px;padding:10px 12px;background:rgba(96,184,240,.06);border:1px solid rgba(96,184,240,.25);border-radius:10px">
-      <div style="font-size:11px;color:var(--blue);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Minecraft exact-lesson scan</div>
-      <div>I detected a Minecraft placement request, but not a specific curated lesson title.</div>
-      <div style="margin-top:8px;color:var(--dim);font-size:12px">Try: <strong>Where can the Revamp Melbourne Minecraft lesson fit?</strong></div>
-    </div>`;
-  }
-  if(!lesson){
-    const available = lessons.slice(0, 12).map(l => l.title).filter(Boolean).map(bulkDiagnosticEscape_).join('<br>');
-    return `<div style="margin-top:10px;padding:10px 12px;background:rgba(255,128,128,.06);border:1px solid rgba(255,128,128,.25);border-radius:10px">
-      <div style="font-size:11px;color:#FF8080;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Minecraft exact-lesson scan</div>
-      <div>Lesson requested: <strong>${bulkDiagnosticEscape_(lessonTitle)}</strong></div>
-      <div>Curated lesson found in libraries.json: <strong>No</strong></div>
-      <div style="margin-top:8px;color:var(--dim);font-size:12px">Minecraft library lessons loaded: ${lessons.length}</div>
-      ${available ? `<div style="margin-top:8px;color:var(--dim);font-size:12px">First available lessons:<br>${available}</div>` : ''}
-    </div>`;
-  }
-  const scan = bulkScanMinecraftExactLessonFit_(lesson, 10);
-  const examples = scan.results.map(r => `${r.campus} · ${r.year} · ${r.theme} — ${r.reasons.join(', ')}`);
-  return `<div style="margin-top:10px;padding:10px 12px;background:rgba(96,184,240,.06);border:1px solid rgba(96,184,240,.25);border-radius:10px">
-    <div style="font-size:11px;color:var(--blue);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Minecraft exact-lesson scan</div>
-    <div>Lesson requested: <strong>${bulkDiagnosticEscape_(lessonTitle)}</strong></div>
-    <div>Curated lesson found in libraries.json: <strong>Yes</strong></div>
-    <div>Actual curated title: <strong>${bulkDiagnosticEscape_(lesson.title)}</strong></div>
-    <div>Real URL: <strong>${bulkDiagnosticEscape_(lesson.url || 'No URL recorded')}</strong></div>
-    <div>Library lessons considered: <strong>1 exact lesson only</strong> <span style="color:var(--dim)">(no other Minecraft lessons)</span></div>
-    <div>Likely unit matches: <strong>${scan.results.length}</strong></div>
-    <div>Skipped because unit already has Minecraft: <strong>${scan.skipped.alreadyHasMinecraft}</strong></div>
-    <div>Skipped by lesson age range: <strong>${scan.skipped.age}</strong></div>
-    ${examples.length ? `<div style="margin-top:8px;color:var(--dim);font-size:12px">Likely matches:<br>${examples.map(bulkDiagnosticEscape_).join('<br>')}</div>` : `<div style="margin-top:8px;color:var(--dim);font-size:12px">No strong local matches found. That is acceptable; this route should return fewer results rather than forcing unrelated Minecraft lessons.</div>`}
-  </div>`;
-}
-
-
-function bulkMinecraftConnectionText_(entry){
-  const ctx = bulkSafeDraftUnitFocus_(entry || {});
-  return ctx.connection || 'this unit';
-}
-function bulkMinecraftDescriptionForLesson_(lesson, entry){
-  const title = String((lesson && lesson.title) || 'the curated Minecraft lesson').trim();
-  const connection = bulkMinecraftConnectionText_(entry || {});
-  const band = bulkSafeDraftYearBand_(entry || {});
-  if(/revamp\s+melbourne/i.test(title)){
-    if(band === 'early') return `Students use the curated Minecraft Education lesson “${title}” to explore how a familiar place could be improved for people and the environment. They build one simple improved space, then explain their design choices with labels or a short teacher-guided reflection connected to ${connection}.`;
-    return `Students use the curated Minecraft Education lesson “${title}” to investigate how city spaces can be redesigned for people, movement and the environment. They plan and build one improved Melbourne space, then annotate or present their design choices to explain how the build connects to ${connection}.`;
-  }
-  if(band === 'early') return `Students use the curated Minecraft Education lesson “${title}” as a guided build challenge connected to ${connection}. They create a simple Minecraft model and explain one design choice that shows their understanding of the unit.`;
-  if(band === 'upper') return `Students use the curated Minecraft Education lesson “${title}” as a structured design challenge connected to ${connection}. They create a Minecraft model, test or refine a design choice, and justify how the final build shows their understanding of the unit.`;
-  return `Students use the curated Minecraft Education lesson “${title}” as a structured build challenge connected to ${connection}. They create a Minecraft model, test or refine one design choice, and explain how the final build shows their understanding of the unit.`;
-}
-function bulkRunMinecraftExactLessonDraftOnly_(text){
-  const cleanText = String(text || '').replace(/^\s*(draft|draft-safe|safe-draft)\s*:?\s*/i, '').trim();
-  const lessonTitle = bulkDetectMinecraftLessonTitle_(cleanText);
-  const lesson = bulkFindMinecraftLesson_(lessonTitle);
-  if(!lessonTitle){
-    bulkChatAddMessage('assistant', `
-      <div style="padding:2px 0">
-        <div style="font-size:10px;color:var(--purple);font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">⛏️ Minecraft exact-lesson draft</div>
-        <div>I detected a Minecraft placement request, but not a specific curated lesson title.</div>
-        <div style="margin-top:8px;color:var(--dim);font-size:12px">Try: <strong>draft: Where can the Revamp Melbourne Minecraft lesson fit?</strong></div>
-        <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No changes were drafted or saved.</div>
-      </div>`);
-    return;
-  }
-  if(!lesson){
-    bulkChatAddMessage('assistant', `
-      <div style="padding:2px 0">
-        <div style="font-size:10px;color:#FF8080;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">⛏️ Minecraft exact-lesson draft</div>
-        <div>I could not find <strong>${bulkDiagnosticEscape_(lessonTitle)}</strong> in the curated Minecraft library.</div>
-        <div style="margin-top:8px;color:var(--dim);font-size:12px">I will not substitute another Minecraft lesson. Add or check the exact lesson in libraries.json first.</div>
-        <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No changes were drafted or saved.</div>
-      </div>`);
-    return;
-  }
-
-  const scan = bulkScanMinecraftExactLessonFit_(lesson, 10);
-  const selected = (scan.results || []).slice(0, 6);
-  if(!selected.length){
-    bulkChatAddMessage('assistant', `
-      <div style="padding:2px 0">
-        <div style="font-size:10px;color:var(--purple);font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">⛏️ Minecraft exact-lesson draft</div>
-        <div>I found the curated lesson <strong>${bulkDiagnosticEscape_(lesson.title)}</strong>, but no strong local unit matches.</div>
-        <div style="margin-top:8px;color:var(--dim);font-size:12px">That is acceptable for Minecraft: this route returns fewer results rather than forcing unrelated fits.</div>
-        <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No changes were drafted or saved.</div>
-      </div>`);
-    return;
-  }
-
-  const changes = selected.map(r => {
-    const e = DATA[r.entryIdx] || {};
-    return {
-      entryIdx: r.entryIdx,
-      sugIdx: r.slotIdx,
-      t: 'Minecraft Education',
-      d: bulkSafeDraftFinaliseDescription_(bulkMinecraftDescriptionForLesson_(lesson, e)),
-      url: lesson.url || '',
-      lessonUrl: lesson.url || '',
-      lessonTitle: lesson.title || lessonTitle,
-      library: 'minecraft',
-      reason: `Safe Minecraft exact-lesson placement draft. Uses only the curated “${lesson.title || lessonTitle}” lesson and preserves its real URL. Slot #6/STEM is protected. Review before applying.`,
-      improvementConfidence: 'Draft-only',
-      whyBetter: 'Constrained to one verified curated Minecraft lesson, matched locally to plausible units, and returned only genuine fits instead of backfilling with unrelated Minecraft lessons.'
-    };
-  });
-
-  const sample = selected.map(r => `• ${bulkDiagnosticEscape_(r.campus)} · ${bulkDiagnosticEscape_(r.year)} · ${bulkDiagnosticEscape_(r.theme)} <span style="color:var(--dim)">(${bulkDiagnosticEscape_((r.reasons||[]).join(', ') || 'local fit')})</span>`).join('<br>');
-  const capped = (scan.results || []).length > selected.length ? `<br><span style="font-size:12px;color:var(--dim)">I drafted the first ${selected.length} of ${scan.results.length} likely matches to keep this review manageable.</span>` : '';
-  bulkChatAddMessage('assistant', `✅ <strong>${changes.length} Minecraft exact-lesson placement draft${changes.length!==1?'s':''}</strong> ready for review.<br><br><span style="font-size:12px;color:var(--lime)">Safe Minecraft mode:</span> used only <strong>${bulkDiagnosticEscape_(lesson.title || lessonTitle)}</strong>, preserved the curated URL, avoided STEM slot #6, made no AI calls and saved nothing automatically.${capped}<br><br><span style="font-size:12px;color:var(--lime)">Targets:</span><br>${sample}`);
-  bulkChatMemory.push({ role:'assistant', content:`Safe-drafted ${changes.length} exact Minecraft lesson placements for ${lesson.title || lessonTitle}.` });
-  window._snapshotReason = `Before safe Minecraft exact-lesson placements`;
-  showChangesPopup(changes);
-  bulkChatState = 'done';
-}
-
-
-
-// ========== ST KILDA ROAD YEAR 6 DIAGNOSTIC MODE ==========
-// Diagnostic-only. Scans only St Kilda/St Kilda Road Year 6 entries and reports likely quality issues.
-// No AI calls, no drafts, no saves, and no whole-library repair loop.
-function bulkStkY6Text_(value){
-  if(Array.isArray(value)) return value.map(bulkStkY6Text_).filter(Boolean).join('; ');
-  if(value && typeof value === 'object') return Object.values(value).map(bulkStkY6Text_).filter(Boolean).join('; ');
-  return String(value == null ? '' : value).trim();
-}
-function bulkStkY6Words_(text){
-  const stop = new Set('about after again against also because between could digital each from have into learn learning make more most other should student students their them then there these they this those through understand understanding using where which while with would your unit inquiry central idea lines line year'.split(' '));
-  return String(text || '').toLowerCase().replace(/[^a-z0-9\s-]/g,' ').split(/\s+/).filter(w => w.length >= 5 && !stop.has(w));
-}
-function bulkStkY6UnitText_(e){
-  return [e && (e.th || e.theme), e && (e.ci || e.centralIdea || e.central_idea), e && (e.loi || e.linesOfInquiry || e.lines_of_inquiry)].map(bulkStkY6Text_).filter(Boolean).join(' ');
-}
-function bulkStkY6SuggestionText_(s){
-  return [sugTool(s), s && (s.d || s.desc || s.description || s.integration_idea || s.activity || s.suggestion)].map(bulkStkY6Text_).filter(Boolean).join(' ');
-}
-function bulkStkY6LooksStKilda_(e){
-  const c = bulkStkY6Text_(e && (e.ca || e.campus || e.campusName)).toLowerCase();
-  return /st\s*kilda/.test(c) || /stk\b/.test(c);
-}
-function bulkStkY6LooksYear6_(e){
-  const y = bulkStkY6Text_(e && (e.yl || e.year || e.yearLevel || e.year_level)).toLowerCase();
-  return /year\s*6\b|yr\s*6\b|^6$/.test(y);
-}
-function bulkStkY6HasCorruptLoi_(e){
-  const loi = bulkStkY6Text_(e && (e.loi || e.linesOfInquiry || e.lines_of_inquiry));
-  return / |â€¢|Â•|ï‚·|\uFFFD|\s\|\s|\s·\s|\s•\s/.test(loi);
-}
-function bulkStkY6Desc_(s){
-  return bulkStkY6Text_(s && (s.d || s.desc || s.description || s.integration_idea || s.activity || s.suggestion));
-}
-function bulkStkY6IssueList_(entry, sug){
-  const issues = [];
-  const tool = bulkStkY6Text_(sugTool(sug));
-  const desc = bulkStkY6Desc_(sug);
-  const lower = desc.toLowerCase();
-  if(!tool) issues.push('missing tool label');
-  if(!desc) issues.push('missing description');
-  if(desc && desc.length < 110) issues.push('description may be too brief');
-  if(/\bexplore\b.*\btechnology\b|\bdigital product\b|\bshow their understanding\b|\brelevant\s+(tool|platform|perspective)\b|\bcreate a presentation\b/i.test(desc)) issues.push('generic wording');
-  if(desc && !/\b(create|build|design|code|record|produce|publish|map|model|film|animate|program|prototype|construct|present|compare|explain)\b/i.test(desc)) issues.push('student product unclear');
-  if(/google maps/i.test(tool + ' ' + desc) && /\b(pin|pins|label|labels|annotat|layer|route|custom map|plot|overlay)\b/i.test(desc)) issues.push('Google Maps used for mapping/annotation rather than Street View');
-  const unitWords = new Set(bulkStkY6Words_(bulkStkY6UnitText_(entry)));
-  const sugWords = new Set(bulkStkY6Words_(desc));
-  let overlap = 0;
-  unitWords.forEach(w => { if(sugWords.has(w)) overlap++; });
-  if(desc && unitWords.size >= 4 && overlap === 0) issues.push('weak visible unit connection');
-  return issues;
-}
-function bulkStkY6DiagnosticHtml_(){
-  const entries = Array.isArray(DATA) ? DATA.map((e, entryIdx) => ({ e, entryIdx })).filter(x => bulkStkY6LooksStKilda_(x.e) && bulkStkY6LooksYear6_(x.e)) : [];
-  let totalSuggestions = 0;
-  let flaggedSuggestions = 0;
-  let corruptLoiEntries = 0;
-  const unitRows = [];
-  entries.forEach(({e, entryIdx}) => {
-    const sugs = (getSugs(e) || []).filter(isRealSug);
-    totalSuggestions += sugs.length;
-    if(bulkStkY6HasCorruptLoi_(e)) corruptLoiEntries++;
-    const flagged = [];
-    sugs.forEach((s, sugIdx) => {
-      const issues = bulkStkY6IssueList_(e, s);
-      if(issues.length){
-        flaggedSuggestions++;
-        if(flagged.length < 3){
-          flagged.push(`slot ${sugIdx + 1}: ${bulkDiagnosticEscape_(sugTool(s) || 'Untitled tool')} — ${bulkDiagnosticEscape_(issues.slice(0,3).join(', '))}`);
-        }
-      }
-    });
-    unitRows.push({
-      entryIdx,
-      campus: e.ca || e.campus || 'St Kilda Road',
-      year: e.yl || e.year || 'Year 6',
-      theme: e.th || e.theme || 'Untitled unit',
-      suggestionCount: sugs.length,
-      corruptLoi: bulkStkY6HasCorruptLoi_(e),
-      flaggedCount: sugs.map(s => bulkStkY6IssueList_(e,s).length ? 1 : 0).reduce((a,b)=>a+b,0),
-      flagged
-    });
-  });
-  const worst = unitRows.sort((a,b) => b.flaggedCount - a.flaggedCount).slice(0, 8);
-  const rowsHtml = worst.length ? worst.map(r => `
-    <div style="padding:8px 0;border-top:1px solid rgba(255,255,255,.08)">
-      <div><strong>${bulkDiagnosticEscape_(r.campus)} · ${bulkDiagnosticEscape_(r.year)} · ${bulkDiagnosticEscape_(r.theme)}</strong></div>
-      <div style="font-size:12px;color:var(--dim)">${r.suggestionCount} suggestions · ${r.flaggedCount} locally flagged${r.corruptLoi ? ' · LOI separators may need cleaning' : ''}</div>
-      ${r.flagged.length ? `<div style="font-size:12px;color:#bbb;margin-top:4px">${r.flagged.join('<br>')}</div>` : ''}
-    </div>`).join('') : '<div style="font-size:12px;color:var(--dim)">No matching St Kilda Road Year 6 entries found.</div>';
-  return `
-    <div style="margin-top:10px;padding:10px 12px;background:rgba(96,184,240,.06);border:1px solid rgba(96,184,240,.25);border-radius:10px">
-      <div style="font-size:11px;color:#60B8F0;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">St Kilda Road Year 6 diagnostic</div>
-      <div>Matching entries: <strong>${entries.length}</strong></div>
-      <div>Total suggestions scanned: <strong>${totalSuggestions}</strong></div>
-      <div>Locally flagged suggestions: <strong>${flaggedSuggestions}</strong></div>
-      <div>Entries with possible LOI separator/corruption issues: <strong>${corruptLoiEntries}</strong></div>
-      <div style="margin-top:8px;color:var(--dim);font-size:12px">This is a lightweight local scan only. It does not regenerate, rewrite, call AI, or save anything.</div>
-      <div style="margin-top:8px">${rowsHtml}</div>
-    </div>`;
-}
-
-
-// Preview-only. Shows which St Kilda/St Kilda Road Year 6 suggestions would be considered for rewrite.
-// No AI calls, no drafts, no review popup, no saves.
-function bulkStkY6PreviewHtml_(){
-  const entries = Array.isArray(DATA) ? DATA.map((e, entryIdx) => ({ e, entryIdx })).filter(x => bulkStkY6LooksStKilda_(x.e) && bulkStkY6LooksYear6_(x.e)) : [];
-  const rows = [];
-  entries.forEach(({e, entryIdx}) => {
-    const sugs = (getSugs(e) || []).filter(isRealSug);
-    sugs.forEach((s, sugIdx) => {
-      const issues = bulkStkY6IssueList_(e, s);
-      if(!issues.length) return;
-      rows.push({
-        entryIdx,
-        sugIdx,
-        campus: e.ca || e.campus || 'St Kilda Road',
-        year: e.yl || e.year || 'Year 6',
-        theme: e.th || e.theme || 'Untitled unit',
-        tool: sugTool(s) || 'Untitled tool',
-        desc: bulkStkY6Desc_(s),
-        issues,
-        corruptLoi: bulkStkY6HasCorruptLoi_(e)
-      });
-    });
-  });
-
-  const grouped = new Map();
-  rows.forEach(r => {
-    const key = `${r.campus}||${r.year}||${r.theme}`;
-    if(!grouped.has(key)) grouped.set(key, []);
-    grouped.get(key).push(r);
-  });
-
-  const groups = Array.from(grouped.values())
-    .sort((a,b) => b.length - a.length)
-    .slice(0, 10);
-
-  const groupsHtml = groups.length ? groups.map(group => {
-    const first = group[0];
-    const items = group.slice(0, 4).map(r => `
-      <div style="margin-top:7px;padding:8px 10px;background:rgba(255,255,255,.035);border-radius:8px;border-left:3px solid rgba(245,166,35,.55)">
-        <div style="font-size:12px"><strong>Slot ${r.sugIdx + 1}: ${bulkDiagnosticEscape_(r.tool)}</strong></div>
-        <div style="font-size:12px;color:#bbb;margin-top:3px">Would review: ${bulkDiagnosticEscape_(r.issues.slice(0,4).join(', '))}</div>
-        ${r.desc ? `<div style="font-size:11px;color:var(--dim);margin-top:4px;line-height:1.5">Current: ${bulkDiagnosticEscape_(r.desc).slice(0,220)}${r.desc.length>220?'…':''}</div>` : ''}
-      </div>`).join('');
-    const more = group.length > 4 ? `<div style="font-size:11px;color:var(--dim);margin-top:6px">+ ${group.length - 4} more flagged suggestion${group.length-4!==1?'s':''} in this unit.</div>` : '';
-    return `
-      <div style="padding:10px 0;border-top:1px solid rgba(255,255,255,.08)">
-        <div><strong>${bulkDiagnosticEscape_(first.campus)} · ${bulkDiagnosticEscape_(first.year)} · ${bulkDiagnosticEscape_(first.theme)}</strong></div>
-        <div style="font-size:12px;color:var(--dim)">${group.length} suggestion${group.length!==1?'s':''} would be considered${first.corruptLoi ? ' · LOI separators may need cleaning' : ''}</div>
-        ${items}${more}
-      </div>`;
-  }).join('') : '<div style="font-size:12px;color:var(--dim)">No St Kilda Road Year 6 suggestions were locally flagged for preview.</div>';
-
-  return `
-    <div style="margin-top:10px;padding:10px 12px;background:rgba(197,232,74,.055);border:1px solid rgba(197,232,74,.22);border-radius:10px">
-      <div style="font-size:11px;color:var(--lime);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">St Kilda Road Year 6 preview only</div>
-      <div>Matching entries: <strong>${entries.length}</strong></div>
-      <div>Suggestions that would be considered for rewrite: <strong>${rows.length}</strong></div>
-      <div style="margin-top:8px;color:var(--dim);font-size:12px;line-height:1.5">This preview only lists targets. It does not call AI, create drafts, open a review popup, or save anything.</div>
-      <div style="margin-top:8px">${groupsHtml}</div>
-    </div>`;
-}
-
-function bulkRunStkY6PreviewOnly_(text){
-  const cleanText = String(text || '').replace(/^\s*preview\s*:?\s*/i, '').trim();
-  if(!bulkLooksLikeStkY6Diagnostic_(cleanText)){
-    bulkChatAddMessage('assistant', 'I only understand St Kilda Road Year 6 preview requests in this safe preview mode. Try: <strong>preview: Improve St Kilda Road Year 6 suggestions</strong>');
-    return;
-  }
-  bulkChatAddMessage('assistant', `
-    <div style="padding:2px 0">
-      <div style="font-size:10px;color:var(--lime);font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">🧭 Bulk AI preview only</div>
-      <div>Route detected: <strong>St Kilda Road Year 6 quality preview</strong></div>
-      <div>Scope: <strong>St Kilda Road · Year 6 only</strong></div>
-      ${bulkStkY6PreviewHtml_()}
-      <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No changes were drafted or saved.</div>
-    </div>`);
-}
-
-
-// Consolidated safe St Kilda Road Year 6 draft flow.
-// This deliberately avoids AI calls and heavy repair loops. It drafts a tiny batch into
-// the normal review popup only. Nothing saves unless a human approves.
-function bulkStkY6CollectFlagged_(limit){
-  const rows = [];
-  if(!Array.isArray(DATA)) return rows;
-  DATA.forEach((e, entryIdx) => {
-    if(!bulkStkY6LooksStKilda_(e) || !bulkStkY6LooksYear6_(e)) return;
-    const sugs = getSugs(e) || [];
-    sugs.forEach((s, sugIdx) => {
-      if(sugIdx === 5) return; // protect STEM slot #6
-      if(!isRealSug(s)) return;
-      const tool = normaliseToolName(sugTool(s) || '');
-      // Do not auto-rewrite curated Minecraft suggestions in a broad quality pass.
-      // Minecraft changes must go through exact curated lesson flows only.
-      if(/minecraft/i.test(tool)) return;
-      const issues = bulkStkY6IssueList_(e, s);
-      if(!issues.length) return;
-      rows.push({
-        entryIdx,
-        sugIdx,
-        entry:e,
-        suggestion:s,
-        campus:e.ca || e.campus || 'St Kilda Road',
-        year:e.yl || e.year || 'Year 6',
-        theme:e.th || e.theme || 'Untitled unit',
-        tool:tool || 'Untitled tool',
-        desc:bulkStkY6Desc_(s),
-        issues,
-        score:(issues.length * 10) + (bulkStkY6HasCorruptLoi_(e) ? 5 : 0) + (String(bulkStkY6Desc_(s)||'').length < 110 ? 8 : 0)
-      });
-    });
-  });
-  rows.sort((a,b) => b.score - a.score || a.entryIdx - b.entryIdx || a.sugIdx - b.sugIdx);
-  return typeof limit === 'number' ? rows.slice(0, limit) : rows;
-}
-
-function bulkStkY6UnitFocus_(e){
-  const focus = bulkSafeDraftUnitFocus_(e || {});
-  return {
-    theme: focus.theme || 'this Year 6 unit',
-    ci: focus.ci || '',
-    loi: focus.loi || '',
-    connection: focus.connection || focus.theme || 'this Year 6 unit'
-  };
-}
-
-function bulkStkY6RewriteTool_(row){
-  const tool = normaliseToolName(row.tool || '');
-  const text = `${tool} ${row.desc || ''}`;
-  if(/google maps/i.test(text) && /\b(pin|pins|label|labels|annotat|layer|route|custom map|plot|overlay)\b/i.test(text)){
-    return 'National Geographic MapMaker';
-  }
-  if(/co\s*spaces|delightex/i.test(tool)) return 'Delightex';
-  return tool || 'Book Creator';
-}
-
-function bulkStkY6RewriteDescription_(toolName, e, row){
-  const tool = normaliseToolName(toolName || row.tool || '');
-  const k = bulkDiagnosticToolKey_(tool);
-  const ctx = bulkStkY6UnitFocus_(e || {});
-  const theme = ctx.theme;
-  const connection = ctx.connection;
-  const plannerSource = ctx.plannerSource || (ctx.loi ? 'line of inquiry' : ctx.ci ? 'central idea' : 'unit theme');
-
-  // Year 6 quality drafts should feel more like authentic inquiry work than a
-  // generic app substitution. Keep the same tool where possible, but make the
-  // learning product more innovative, audience-facing and explicitly tied to
-  // the planner reference available from data.json.
-  if(k === bulkDiagnosticToolKey_('National Geographic MapMaker')){
-    return `Students use National Geographic MapMaker to build a spatial inquiry map for ${theme}, using locations, labels and source notes as evidence rather than decoration. They add a short curator note explaining how the mapped patterns connect to ${connection}, then use the map to lead a peer discussion about what the planner evidence reveals.`;
-  }
-  if(/googlemaps/i.test(k)){
-    return `Students use Google Maps Street View as a virtual fieldwork tool for this unit. They collect ground-level observations, compare what different places reveal, and create a short evidence board explaining how these observations support ${connection}.`;
-  }
-  if(k === bulkDiagnosticToolKey_('Book Creator')){
-    return `Students use Book Creator to publish an exhibition-style digital companion for ${theme}. Each page combines student-curated evidence, diagrams, captions, voice reflection and a “so what?” note that explains how the artefact connects to ${connection}.`;
-  }
-  if(k === bulkDiagnosticToolKey_('Canva')){
-    return `Students use Canva to design an audience-facing campaign, visual explainer or exhibition panel for this unit. They combine evidence, concise copy and deliberate design choices, then justify how the final piece helps an audience understand ${connection}.`;
-  }
-  if(k === bulkDiagnosticToolKey_('Padlet')){
-    return `Students use Padlet as a collaborative evidence wall for ${theme}. They post examples, questions and counterpoints, tag them by theme, then synthesise the strongest patterns into a short group claim about ${connection}.`;
-  }
-  if(k === bulkDiagnosticToolKey_('Microsoft PowerPoint')){
-    return `Students use Microsoft PowerPoint to create a concise exhibition pitch for this unit. They build a claim-evidence-reflection sequence, rehearse it for an audience, and explain how their selected evidence links back to ${connection}.`;
-  }
-  if(k === bulkDiagnosticToolKey_('Microsoft Sway')){
-    return `Students use Microsoft Sway to build an interactive inquiry trail for ${theme}. They sequence evidence, images, short explanations and reflection checkpoints so viewers can follow how their thinking developed in relation to ${connection}.`;
-  }
-  if(k === bulkDiagnosticToolKey_('Wise Discussion Chatbots')){
-    return `Students question a Wise Discussion Chatbot in a named expert or stakeholder role for this unit. They prepare prompts, fact-check the chatbot against class evidence, and create a claim-evidence-reasoning reflection that responds to ${connection}.`;
-  }
-  if(k === bulkDiagnosticToolKey_('Delightex')){
-    return `Students use Delightex to design an interactive 3D provocation or mini-exhibition for this unit. They add narration, hotspots and evidence labels so visitors can explore different perspectives and understand how the scene represents ${connection}.`;
-  }
-  return `Students use ${tool} to create an audience-facing digital artefact for this unit. They include evidence from the planner focus, make deliberate design choices, and explain how their final product demonstrates understanding of ${connection}.`;
-}
-
-function bulkRunStkY6DraftOnly_(text){
-  const cleanText = String(text || '').replace(/^\s*(draft|draft-safe|safe-draft)\s*:?\s*/i, '').trim();
-  if(!bulkLooksLikeStkY6Diagnostic_(cleanText)){
-    bulkChatAddMessage('assistant', 'I only understand St Kilda Road Year 6 draft requests in this safe draft mode. Try: <strong>draft: Improve 3 St Kilda Road Year 6 suggestions</strong>');
-    return;
-  }
-  const requested = (String(text||'').match(/\b(\d{1,2})\b/) || [])[1];
-  const limit = Math.max(1, Math.min(Number(requested || 3), 6));
-  const rows = bulkStkY6CollectFlagged_(limit);
-  if(!rows.length){
-    bulkChatAddMessage('assistant', `✅ I did not find any draftable St Kilda Road Year 6 suggestions in this safe pass. Minecraft and STEM slot #6 were protected. No changes were made.`);
-    return;
-  }
-  const changes = rows.map(row => {
-    const newTool = bulkStkY6RewriteTool_(row);
-    const oldToolKey = bulkDiagnosticToolKey_(row.tool || '');
-    const newToolKey = bulkDiagnosticToolKey_(newTool || '');
-    return {
-      entryIdx: row.entryIdx,
-      sugIdx: row.sugIdx,
-      t: newTool,
-      d: bulkSafeDraftFinaliseDescription_(bulkStkY6RewriteDescription_(newTool, row.entry, row)),
-      reason: `Safe St Kilda Road Year 6 quality draft: ${row.issues.slice(0,3).join(', ')}. Keeps the same tool unless a local rule requires a safer tool correction. STEM slot #6 and Minecraft are protected. Review before applying.`,
-      improvementConfidence: 'Draft-only',
-      whyBetter: oldToolKey !== newToolKey
-        ? `Corrects the tool use from ${row.tool} to ${newTool} and gives students a clearer task, product and unit connection.`
-        : `Keeps ${newTool} and rewrites the description so it more clearly states what students do, what they create and why it connects to the unit.`
-    };
-  });
-  const sample = rows.map((r, i) => `• ${bulkDiagnosticEscape_(r.campus)} · ${bulkDiagnosticEscape_(r.year)} · slot ${r.sugIdx + 1} · ${bulkDiagnosticEscape_(r.theme)} → ${bulkDiagnosticEscape_(changes[i].t)} <span style="color:var(--dim)">(${bulkDiagnosticEscape_(r.issues.slice(0,2).join(', '))})</span>`).join('<br>');
-  bulkChatAddMessage('assistant', `✅ <strong>${changes.length} St Kilda Road Year 6 quality draft${changes.length!==1?'s':''}</strong> ready for review.<br><br><span style="font-size:12px;color:var(--lime)">Safe Year 6 mode:</span> scanned only St Kilda Road Year 6, used lightweight local rules, protected STEM slot #6 and Minecraft, made no AI calls and saved nothing automatically.<br><br><span style="font-size:12px;color:var(--lime)">Targets:</span><br>${sample}`);
-  bulkChatMemory.push({ role:'assistant', content:`Safe-drafted ${changes.length} St Kilda Road Year 6 quality rewrites.` });
-  window._snapshotReason = 'Before safe St Kilda Road Year 6 quality drafts';
-  showChangesPopup(changes);
-  bulkChatState = 'done';
-}
-function bulkLooksLikeStkY6Diagnostic_(text){
-  const t = String(text || '').toLowerCase();
-  return /st\s*kilda|stk/.test(t) && /year\s*6|yr\s*6|y6/.test(t) && /suggestion|quality|diagnos|audit|weak|improve|review/.test(t);
-}
-
-function bulkRunDiagnosticOnly_(text){
-  const cleanText = String(text || '').replace(/^\s*(diagnose|debug|route)\s*:?\s*/i, '').trim();
-  if(bulkLooksLikeStkY6Diagnostic_(cleanText)){
-    bulkChatAddMessage('assistant', `
-      <div style="padding:2px 0">
-        <div style="font-size:10px;color:#60B8F0;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">🧭 Bulk AI diagnostic only</div>
-        <div>Route detected: <strong>St Kilda Road Year 6 quality diagnostic</strong></div>
-        <div>Confidence: <strong>high</strong></div>
-        ${bulkStkY6DiagnosticHtml_()}
-        <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No changes were drafted or saved.</div>
-      </div>`);
-    return;
-  }
-  const info = bulkDiagnosticDetectRoute_(cleanText);
-  const years = info.targetYears && info.targetYears.length ? info.targetYears.join(', ') : 'All years';
-  let scanHtml = '';
-
-  if(info.route === 'specific Minecraft lesson placement'){
-    scanHtml = bulkMinecraftDiagnosticHtml_(cleanText);
-  } else if(info.replacementTool){
-    const scan = bulkDiagnosticScanReplacementTool_(info.replacementTool, info.targetYears || []);
-    const examples = (scan.matches || []).slice(0, 10).map(m => {
-      return `${m.campus} · ${m.year} · slot ${m.sugIdx + 1} · ${m.theme}`;
-    });
-    scanHtml = `
-      <div style="margin-top:10px;padding:10px 12px;background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.25);border-radius:10px">
-        <div style="font-size:11px;color:#F5A623;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Targeted replacement scan</div>
-        <div>Tool to remove: <strong>${bulkDiagnosticEscape_(info.replacementTool)}</strong></div>
-        <div>Total matching slots in scope: <strong>${scan.totalMatchingSlots}</strong></div>
-        <div>Matching entries: <strong>${scan.matchingEntries}</strong></div>
-        <div>Draftable non-STEM slots: <strong>${scan.matches.length}</strong></div>
-        <div>Protected STEM slot #6 matches skipped: <strong>${scan.skippedStemSlot}</strong></div>
-        <div>Skipped by year filter: <strong>${scan.skippedYear}</strong></div>
-        ${examples.length ? `<div style="margin-top:8px;color:var(--dim);font-size:12px">First draftable matches:<br>${examples.map(bulkDiagnosticEscape_).join('<br>')}</div>` : ''}
-      </div>`;
-  } else if(info.namedTool){
-    const scan = bulkDiagnosticScanNamedTool_(info.namedTool, info.targetYears || []);
-    scanHtml = `
-      <div style="margin-top:10px;padding:10px 12px;background:rgba(197,232,74,.06);border:1px solid rgba(197,232,74,.2);border-radius:10px">
-        <div style="font-size:11px;color:var(--lime);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Named-tool scan</div>
-        <div>Existing ${bulkDiagnosticEscape_(info.namedTool)} slots: <strong>${scan.existingSlots}</strong></div>
-        <div>Units already using it: <strong>${scan.existingEntries}</strong></div>
-        <div>Likely eligible units without it: <strong>${scan.eligibleEntriesWithoutTool}</strong></div>
-        <div>Skipped by year filter: <strong>${scan.skippedYear}</strong></div>
-        ${scan.examples.length ? `<div style="margin-top:8px;color:var(--dim);font-size:12px">First examples:<br>${scan.examples.map(bulkDiagnosticEscape_).join('<br>')}</div>` : ''}
-      </div>`;
-  }
-
-  const notes = (info.notes || []).map(bulkDiagnosticEscape_).join('<br>') || 'No special route hints detected.';
-  bulkChatAddMessage('assistant', `
-    <div style="padding:2px 0">
-      <div style="font-size:10px;color:var(--purple);font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">🧭 Bulk AI diagnostic only</div>
-      <div>Route detected: <strong>${bulkDiagnosticEscape_(info.route)}</strong></div>
-      <div>Confidence: <strong>${bulkDiagnosticEscape_(info.confidence)}</strong></div>
-      <div>Named tool: <strong>${bulkDiagnosticEscape_(info.namedTool || 'None detected')}</strong></div>
-      <div>Tool to remove: <strong>${bulkDiagnosticEscape_(info.replacementTool || 'None detected')}</strong></div>
-      <div>Year scope: <strong>${bulkDiagnosticEscape_(years)}</strong></div>
-      <div style="margin-top:8px;color:var(--dim);font-size:12px">${notes}</div>
-      ${scanHtml}
-      <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No changes were drafted or saved.</div>
-    </div>`);
-}
-
-
-// ========== BULK AI SAFE PREVIEW MODE ==========
-// Safe command only. It finds candidate units locally and shows them; no AI, no review popup, no save.
-// Use: safe: Find more opportunities to use Makey Makey
-function bulkSafePreviewScanNamedTool_(toolName, targetYears){
-  const key = bulkDiagnosticToolKey_(toolName);
-  const candidates = [];
-  const skipped = { alreadyHasTool:0, year:0, noNonStemSlot:0, age:0, missingData:0 };
-  let existingSlots = 0;
-
-  if(!key || !Array.isArray(DATA)) return { candidates, skipped, existingSlots };
-
-  DATA.forEach((e, entryIdx) => {
-    if(!e){ skipped.missingData++; return; }
-    const yl = e.yl || '';
-    if(targetYears && targetYears.length && !targetYears.includes(yl)){ skipped.year++; return; }
-
-    const sugs = getSugs(e).filter(isRealSug);
-    let hasTool = false;
-    let firstReplaceableSlot = -1;
-
-    sugs.forEach((s, sugIdx) => {
-      if(bulkDiagnosticToolKey_(sugTool(s)) === key){ hasTool = true; existingSlots++; }
-      // Slot #6 is index 5 and should not be used for bulk opportunity changes.
-      if(firstReplaceableSlot < 0 && sugIdx !== 5) firstReplaceableSlot = sugIdx;
-    });
-
-    if(hasTool){ skipped.alreadyHasTool++; return; }
-    if(firstReplaceableSlot < 0){ skipped.noNonStemSlot++; return; }
-
-    let ageOk = true;
-    try {
-      if(typeof getAgeAppropriateTools === 'function'){
-        const allowed = getAgeAppropriateTools(yl).map(t => bulkDiagnosticToolKey_(t));
-        ageOk = !allowed.length || allowed.includes(key);
-      }
-    } catch(err){ ageOk = true; }
-    if(!ageOk){ skipped.age++; return; }
-
-    candidates.push({
-      entryIdx,
-      slotIdx:firstReplaceableSlot,
-      campus:e.ca || 'Campus?',
-      year:yl || 'Year?',
-      theme:e.th || e.theme || 'Untitled unit',
-      centralIdea:e.ci || e.centralIdea || '',
-      loi:e.loi || e.linesOfInquiry || ''
-    });
-  });
-
-  return { candidates, skipped, existingSlots };
-}
-
-function bulkRunSafePreviewOnly_(text){
-  const cleanText = String(text || '').replace(/^\s*safe\s*:?\s*/i, '').trim();
-  const info = bulkDiagnosticDetectRoute_(cleanText);
-  const years = info.targetYears && info.targetYears.length ? info.targetYears : [];
-  const yearsLabel = years.length ? years.join(', ') : 'All years';
-
-  if(!info.namedTool){
-    bulkChatAddMessage('assistant', `
-      <div style="padding:2px 0">
-        <div style="font-size:10px;color:var(--purple);font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">🧪 Safe preview only</div>
-        <div>I could not confidently detect a named tool in that request.</div>
-        <div style="margin-top:8px;color:var(--dim);font-size:12px">Try: <strong>safe: Find more opportunities to use Makey Makey</strong></div>
-        <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No changes were drafted or saved.</div>
-      </div>`);
-    return;
-  }
-
-  const scan = bulkSafePreviewScanNamedTool_(info.namedTool, years);
-  const preview = scan.candidates.slice(0, 10);
-  const rows = preview.length ? preview.map((c, i) => `
-    <div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08)">
-      <strong>${i + 1}. ${bulkDiagnosticEscape_(c.campus)} · ${bulkDiagnosticEscape_(c.year)}</strong><br>
-      <span style="color:var(--dim)">${bulkDiagnosticEscape_(c.theme)}</span>
-    </div>`).join('') : '<div style="color:var(--dim);padding:8px 0">No candidate units found.</div>';
-
-  bulkChatAddMessage('assistant', `
-    <div style="padding:2px 0">
-      <div style="font-size:10px;color:var(--purple);font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">🧪 Safe preview only</div>
-      <div>Request route: <strong>${bulkDiagnosticEscape_(info.route)}</strong></div>
-      <div>Named tool: <strong>${bulkDiagnosticEscape_(info.namedTool)}</strong></div>
-      <div>Year scope: <strong>${bulkDiagnosticEscape_(yearsLabel)}</strong></div>
-      <div style="margin-top:10px;padding:10px 12px;background:rgba(197,232,74,.06);border:1px solid rgba(197,232,74,.2);border-radius:10px">
-        <div>Existing ${bulkDiagnosticEscape_(info.namedTool)} slots: <strong>${scan.existingSlots}</strong></div>
-        <div>Candidate units without it: <strong>${scan.candidates.length}</strong></div>
-        <div style="color:var(--dim);font-size:12px;margin-top:6px">Skipped already using tool: ${scan.skipped.alreadyHasTool} · skipped by year: ${scan.skipped.year} · skipped by age range: ${scan.skipped.age}</div>
-      </div>
-      <div style="margin-top:10px;font-size:12px;color:var(--dim)">First ${preview.length} candidate units:</div>
-      <div style="margin-top:4px">${rows}</div>
-      <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No review popup opened. No changes were drafted or saved.</div>
-    </div>`);
-}
-
-
-// ========== BULK AI SAFE DRAFT MODE ==========
-// Draft-only command. It finds a small batch locally and opens the existing review popup.
-// It does not call AI and it does not save unless a human approves in the popup.
-// Use: draft: Find more opportunities to use Makey Makey
-function bulkSafeDraftCleanMojibake_(value){
-  let s = String(value || '');
-  return s
-    .replace(/\uFFFD/g, '')
-    .replace(/â€“|â€”|â€"|â€•/g, ' — ')
-    .replace(/â€¢|Â•|ï‚·| |•/g, '; ')
-    .replace(/â€˜|â€™|â€š|â€›/g, '’')
-    .replace(/â€œ|â€|â€ž|â€Ÿ/g, '“')
-    .replace(/Â/g, '')
-    .replace(/\s*[|]\s*/g, '; ')
-    .replace(/\s*[;]+\s*/g, '; ')
-    .replace(/\s+—\s+/g, ' — ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-function bulkSafeDraftHumanisePlannerText_(value){
-  let s = bulkSafeDraftCleanMojibake_(value);
-  if(!s) return '';
-
-  // Some planner exports arrive with semicolons between every word, e.g.
-  // "How; We; Organise; Ourselves" or "Students; develop; and; present".
-  // For short title-like strings, join the fragments back into a readable phrase.
-  const parts = s.split(';').map(p => p.trim()).filter(Boolean);
-  if(parts.length >= 2){
-    const mostlyShort = parts.filter(p => p.length <= 22 && !/[.!?]/.test(p)).length >= Math.ceil(parts.length * 0.75);
-    const looksLikeBrokenSentence = parts.length >= 4 && mostlyShort;
-    const looksLikeThemeTitle = parts.length <= 6 && mostlyShort && /^[A-Za-z0-9()\-\s;’'&]+$/.test(s);
-    if(looksLikeThemeTitle || looksLikeBrokenSentence){
-      s = parts.join(' ');
+  candidates.push(...DASHBOARD_STATIC_BANNED_TOOLS);
+
+  for(const bannedName of candidates){
+    const bk = dashboardToolKey_(bannedName);
+    if(!bk) continue;
+    if(key === bk || key.includes(bk) || bk.includes(key)){
+      return String(bannedName || '').trim() || toolName;
     }
   }
-
-  s = s
-    .replace(/\s+([,.;:!?])/g, '$1')
-    .replace(/([A-Za-z0-9)\]”’])\s+—\s+([A-Za-z0-9“‘(])/g, '$1 — $2')
-    .replace(/\s*;\s*—\s*;\s*/g, ' — ')
-    .replace(/\s*;\s*/g, '; ')
-    .replace(/;\s*([.?!])/g, '$1')
-    .replace(/\(\s+/g, '(')
-    .replace(/\s+\)/g, ')')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-  // Humanise common malformed PYPX/LOI wording without changing stored data.
-  s = s.replace(/\bStudent-led\s+exhibition\s+\(PYPEX\)\s+—\s+Students\s+develop\s+and\s+present\s+their\s+own\s+units\s+of\s+inquiry\b/i,
-    'Student-led exhibition (PYPEX): Students develop and present their own units of inquiry');
-
-  return bulkSafeDraftTrimEndPunctuation_(s);
-}
-
-function bulkSafeDraftCleanUnitText_(value){
-  return bulkSafeDraftHumanisePlannerText_(value);
-}
-
-function bulkSafeDraftFinaliseDescription_(value){
-  // Final pass for all safe Bulk draft routes so planner punctuation or
-  // mojibake cannot leak into the review popup from any template.
-  let s = bulkSafeDraftCleanMojibake_(value);
-
-  s = s
-    .replace(/How;\s*We;\s*Organise;\s*Ourselves/gi, 'How We Organise Ourselves')
-    .replace(/How;\s*The;\s*World;\s*Works/gi, 'How The World Works')
-    .replace(/Where;\s*We;\s*Are;\s*In;\s*Place;\s*And;\s*Time/gi, 'Where We Are In Place And Time')
-    .replace(/Who;\s*We;\s*Are/gi, 'Who We Are')
-    .replace(/How;\s*We;\s*Express;\s*Ourselves/gi, 'How We Express Ourselves')
-    .replace(/Sharing;\s*The;\s*Planet/gi, 'Sharing The Planet')
-    .replace(/Student-led;\s*exhibition;\s*\(PYPEX\);\s*—;?\s*Students;\s*develop;\s*and;\s*present;\s*their;\s*own;\s*units;\s*of;\s*inquiry/gi, 'Student-led exhibition (PYPEX): Students develop and present their own units of inquiry')
-    .replace(/;\s*—\s*;?/g, ' — ');
-
-  // If planner text has leaked in with semicolons between most words, do a
-  // sentence-level cleanup. This is intentionally density-based so normal
-  // occasional semicolons are left alone, but strings like
-  // "Students; use; Makey; Makey; ..." become readable again.
-  const semicolonCount = (s.match(/;/g) || []).length;
-  const wordCount = (s.match(/[A-Za-z0-9’'-]+/g) || []).length || 1;
-  if(semicolonCount >= 6 && semicolonCount / wordCount > 0.12){
-    s = s
-      .replace(/;\s*/g, ' ')
-      .replace(/\s+([,.:!?])/g, '$1')
-      .replace(/\(\s+/g, '(')
-      .replace(/\s+\)/g, ')')
-      .replace(/“\s+/g, '“')
-      .replace(/\s+”/g, '”');
-  }
-
-  // Do not quote the PYP transdisciplinary theme, central idea or LOI inside
-  // the actual lesson idea. Those fields should guide the draft silently;
-  // the teacher already sees the unit context elsewhere in Studio.
-  const uoiThemePattern = '(?:How We Express Ourselves|How We Organise Ourselves|How The World Works|How the World Works|Who We Are|Where We Are In Place And Time|Where We Are in Place and Time|Sharing The Planet|Sharing the Planet)';
-  s = s
-    .replace(new RegExp('\\s*(?:connected to|linked to|for|from)\\s+' + uoiThemePattern + '\\.?', 'gi'), ' for this unit.')
-    .replace(new RegExp('\\s*(?:about|supports?|responds? to|represents|demonstrates|shows|helps show|helps an audience understand)\\s+(?:the\\s+)?(?:central idea|line of inquiry|unit theme)\\s+[“"][^”"]+[”"]', 'gi'), ' the unit focus')
-    .replace(/\b(?:the\s+)?(?:central idea|line of inquiry|unit theme)\s+[“"][^”"]+[”"]/gi, 'the unit focus')
-    .replace(/\bcentral idea\b/gi, 'unit focus')
-    .replace(/\bline of inquiry\b/gi, 'unit focus')
-    .replace(/\bunit theme\b/gi, 'unit focus')
-    .replace(/\bBook;\s*Creator\b/gi, 'Book Creator')
-    .replace(/\bMakey;\s*Makey\b/gi, 'Makey Makey')
-    .replace(/\bLego;\s*Spike;\s*Prime\b/gi, 'Lego Spike Prime');
-
-  s = s
-    .replace(/\s+([,.;:!?])/g, '$1')
-    .replace(/([.!?]){2,}/g, '$1')
-    .replace(/\bfor this unit\.\s*\./gi, 'for this unit.')
-    .replace(/\bthe unit focus\s+the unit focus\b/gi, 'the unit focus')
-    .replace(/\s+/g, ' ')
-    .trim();
-  return s;
-}
-
-function bulkSafeDraftShortContext_(e){
-  const theme = bulkSafeDraftCleanUnitText_(e && (e.th || e.theme)) || 'this unit';
-  const ci = bulkSafeDraftCleanUnitText_(e && (e.ci || e.centralIdea));
-  let loi = e && (e.loi || e.linesOfInquiry || '');
-  if(Array.isArray(loi)) loi = loi.join('; ');
-  loi = bulkSafeDraftCleanUnitText_(loi);
-  const connection = loi || ci || theme;
-  return { theme, ci, loi, connection };
-}
-
-function bulkSafeDraftTrimEndPunctuation_(value){
-  return String(value || '')
-    .replace(/\s+/g, ' ')
-    .replace(/[\s.。!?！？;；:：,，]+$/g, '')
-    .trim();
-}
-
-function bulkSafeDraftYearNumber_(e){
-  const raw = String((e && (e.yn ?? e.yearNumber ?? e.year_level ?? e.yl ?? e.year ?? '')) || '').toLowerCase();
-  if(/prep|foundation/.test(raw)) return 0;
-  const m = raw.match(/(?:year\s*)?([0-6])/);
-  if(m) return Number(m[1]);
   return null;
 }
 
-function bulkSafeDraftYearBand_(e){
-  const n = bulkSafeDraftYearNumber_(e);
-  if(n == null) return 'middle';
-  if(n <= 2) return 'early';
-  if(n <= 4) return 'middle';
-  return 'upper';
+function isWhitelisted(toolName){
+  if(!toolName) return true;
+  const raw = String(toolName || '').trim();
+  const key = dashboardToolKey_(raw);
+
+  // Banned list always wins, including static legacy bans such as ClassVR.
+  if(dashboardBannedToolMatch_(raw)) return false;
+
+  // National Geographic MapMaker variants are approved even if older dashboard code
+  // runs before the editable Tool Inventory finishes loading from libraries.json.
+  if(/^(national geographic mapmaker|national geographic map maker|nat geo mapmaker|mapmaker)$/.test(key)) return true;
+
+  try{
+    if(typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY){
+      const approved = Array.isArray(TOOL_INVENTORY.approved) ? TOOL_INVENTORY.approved : [];
+      if(approved.length){
+        const isApproved = approved.some(a => {
+          const ak = dashboardToolKey_(a);
+          return ak && (key === ak || key.includes(ak) || ak.includes(key));
+        });
+        if(isApproved) return true;
+      }
+    }
+  }catch(e){}
+
+  const t = key;
+  return TOOL_WHITELIST.some(w => {
+    const wk = dashboardToolKey_(w);
+    return wk && (t === wk || t.includes(wk) || wk.includes(t));
+  });
 }
 
-function bulkSafeDraftSplitPlannerPhrases_(value){
-  const clean = bulkSafeDraftCleanUnitText_(value || '');
-  if(!clean) return [];
-  return clean
-    .replace(/\s+—\s+/g, ': ')
-    .split(/(?:\s*;\s*|\s*\|\s*|\s*•\s*|\n+|\s+\/\s+)/)
-    .map(x => bulkSafeDraftTrimEndPunctuation_(bulkSafeDraftCleanUnitText_(x)))
-    .filter(Boolean)
-    .filter(x => x.length >= 8)
-    .filter(x => !/^(how|who|where|sharing|the|we|are|in|and|of|our|ourselves)$/i.test(x));
+function getIssues(){
+  const incomplete=[], banned=[], duplicates=[], offWhitelist=[], missingPlanner=[];
+  DATA.forEach((e,idx)=>{
+    const sugs=getSugs(e);
+    const realSugs=sugs.filter(isRealSug);
+    if(realSugs.length<6) incomplete.push({e,idx,type:'incomplete',detail:`${realSugs.length}/6 — no planner uploaded`});
+
+    const bannedSeen = new Set();
+    sugs.forEach((s, slotIdx)=>{
+      if(!s || !isRealSug(s)) return;
+      const tool = sugTool(s);
+      const desc = sugDesc(s);
+      const bannedTool = dashboardBannedToolMatch_(tool) || dashboardBannedToolMatch_(desc);
+      if(!bannedTool) return;
+      const bannedKey = dashboardToolKey_(bannedTool);
+      const uniqueKey = `${idx}:${slotIdx}:${bannedKey}`;
+      if(bannedSeen.has(uniqueKey)) return;
+      bannedSeen.add(uniqueKey);
+      banned.push({
+        e,
+        idx,
+        type:'banned',
+        detail:`${tool || bannedTool} is banned${dashboardToolKey_(tool) !== bannedKey && desc ? ' / mentioned in description' : ''}`
+      });
+    });
+
+    const tools=realSugs.map(s=>sugTool(s).toLowerCase().trim());
+    const seen=new Set();
+    tools.forEach(t=>{ if(seen.has(t)) duplicates.push({e,idx,type:'duplicate',detail:`"${sugTool(realSugs[tools.indexOf(t)])}" appears twice`}); seen.add(t); });
+
+    realSugs.forEach((s, slotIdx)=>{
+      // STEM Design Cycle slot (#6, index 5) is exempt from whitelist check
+      if(slotIdx === 5) return;
+      const t=sugTool(s);
+      if(t && dashboardBannedToolMatch_(t)) return;
+      if(t&&!isWhitelisted(t))
+        offWhitelist.push({e,idx,type:'offwhitelist',detail:`"${t}" not in approved list`});
+    });
+
+    if(!e.plannerText || e.plannerText.trim().length < 20)
+      missingPlanner.push({e,idx,type:'missingplanner',detail:'No planner summary'});
+  });
+  return {incomplete,banned,duplicates,offWhitelist,missingPlanner};
 }
 
-function bulkSafeDraftBestPlannerPhrase_(value){
-  const parts = bulkSafeDraftSplitPlannerPhrases_(value);
-  if(!parts.length) return bulkSafeDraftTrimEndPunctuation_(bulkSafeDraftCleanUnitText_(value || ''));
-  const scored = parts.map(part => {
-    let score = 0;
-    const words = (part.match(/[A-Za-z0-9’'-]+/g) || []).length;
-    if(words >= 5 && words <= 24) score += 20;
-    if(words > 24) score -= Math.min(18, words - 24);
-    if(/(student|students|inquiry|develop|present|create|action|impact|community|systems?|change|perspective|responsib|evidence|audience)/i.test(part)) score += 8;
-    if(/(how we|who we|where we|sharing the planet)/i.test(part)) score -= 5;
-    if(part.length > 170) score -= 20;
-    return { part, score };
-  }).sort((a,b) => b.score - a.score);
-  let chosen = scored[0].part;
-  // Do not put ellipses into drafts. If the planner phrase is too long,
-  // use a complete clause before a comma/colon/dash where possible.
-  if(chosen.length > 170){
-    const shorter = chosen.split(/[,.:]\s+/).find(x => x.length >= 30 && x.length <= 150);
-    if(shorter) chosen = shorter;
+function filterIssueType(label){
+  
+  const map={'banned':'banned','off whitelist':'offwhitelist','duplicates':'duplicate','no planner':'incomplete','no planner summary':'missingplanner'};
+  const type=map[label];
+  const el=document.getElementById('issues-list');
+  if(!el) return;
+  const all=window._ALL_ISSUES||[];
+  const filtered=type?all.filter(i=>i.type===type):all;
+  el.innerHTML=filtered.length
+    ?filtered.map(iss=>issueRowHTML(iss)).join('')
+    :'<div style="padding:20px;color:var(--dim);text-align:center">No issues of this type ✓</div>';
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function renderDashboard(){
+  const {incomplete,banned,duplicates,offWhitelist,missingPlanner}=getIssues();
+  const total=incomplete.length+banned.length+duplicates.length+offWhitelist.length+missingPlanner.length;
+  document.getElementById('db-sub').textContent=`${DATA.length} entries across ${[...new Set(DATA.map(e=>e.ca))].length} campuses — ${total} issue${total!==1?'s':''} found`;
+  const statDefs=[
+    {label:'total entries',val:DATA.length,bg:'#C5E84A',col:'#111'},
+    {label:'no planner',val:incomplete.length,bg:incomplete.length>0?'#F5A623':'#1a1a1a',col:incomplete.length>0?'#111':'#888'},
+    {label:'banned tools',val:banned.length,bg:banned.length>0?'#FF8080':'#1a1a1a',col:banned.length>0?'#111':'#888'},
+    {label:'duplicates',val:duplicates.length,bg:duplicates.length>0?'#9B8BFF':'#1a1a1a',col:duplicates.length>0?'#fff':'#888'},
+    {label:'off whitelist',val:offWhitelist.length,bg:offWhitelist.length>0?'#60B8F0':'#1a1a1a',col:offWhitelist.length>0?'#111':'#888'},
+    {label:'no planner',val:missingPlanner.length,bg:missingPlanner.length>0?'#D4A017':'#1a1a1a',col:missingPlanner.length>0?'#111':'#888'},
+  ];
+  document.getElementById('stat-cards').innerHTML=statDefs.map(({label,val,bg,col})=>`<div class="stat-card" style="background:${bg};border-color:transparent;cursor:pointer" onclick="filterIssueType('${label}')"><div class="stat-num" style="color:${col}">${val}</div><div class="stat-lbl" style="color:${col}">${label}</div></div>`).join('');
+
+  const all=[
+    ...banned,
+    ...offWhitelist,
+    ...duplicates,
+    ...incomplete,
+    ...missingPlanner,
+  ];
+  window._ALL_ISSUES = all;
+  
+  const fixBar = document.getElementById('fix-incomplete-bar');
+  if(fixBar){
+    const fixBtns = [];
+    if(incomplete.length>0) fixBtns.push({count:incomplete.length, label:'Fix no planner', color:'var(--orange)', type:'incomplete', fn:"fixAllOfType('incomplete')"});
+    if(duplicates.length>0) fixBtns.push({count:duplicates.length, label:'Fix duplicates', color:'#9B8BFF', type:'duplicate', fn:"fixAllOfType('duplicate')"});
+    if(banned.length>0) fixBtns.push({count:banned.length, label:'Fix banned tools', color:'#FF8080', type:'banned', fn:"fixAllOfType('banned')"});
+    if(offWhitelist.length>0) fixBtns.push({count:offWhitelist.length, label:'Fix off-list', color:'#60B8F0', type:'offwhitelist', fn:"fixAllOfType('offwhitelist')"});
+
+    if(fixBtns.length > 0){
+      fixBar.innerHTML=`
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px">
+          ${fixBtns.map(b=>`
+            <div style="flex:1;min-width:200px;display:flex;align-items:center;gap:12px;padding:12px 16px;background:rgba(255,255,255,0.04);border:1px solid ${b.color}44;border-radius:10px">
+              <div style="flex:1">
+                <div style="font-size:13px;font-weight:700;color:${b.color}">${b.count} ${b.label.toLowerCase().replace('fix ','')}</div>
+              </div>
+              <button onclick="${b.fn}" style="padding:7px 14px;background:${b.color};color:#111;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">${b.label}</button>
+            </div>`).join('')}
+        </div>
+        <div id="fix-all-progress" style="display:none;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:10px">
+          <div style="font-size:13px;color:var(--lime);font-weight:600;margin-bottom:8px" id="fix-all-label">Starting…</div>
+          <div style="height:5px;background:var(--card2);border-radius:3px"><div id="fix-all-bar" style="height:100%;border-radius:3px;background:var(--lime);width:0%;transition:width .4s"></div></div>
+        </div>`;
+    } else {
+      fixBar.innerHTML='<div style="padding:10px 14px;background:rgba(197,232,74,0.08);border:1px solid rgba(197,232,74,0.2);border-radius:8px;font-size:13px;color:var(--lime);font-weight:600">✓ No issues — all entries look good</div>';
+    }
   }
-  return bulkSafeDraftTrimEndPunctuation_(chosen);
+  document.getElementById('issues-list').innerHTML=all.length
+    ? all.map(({e,idx,type,detail})=>{
+        const badgeBg={'banned':'#FF8080','incomplete':'#F5A623','duplicate':'#9B8BFF','offwhitelist':'#60B8F0','missingplanner':'#D4A017'}[type]||'#888';
+        const badgeCol={'banned':'#111','incomplete':'#111','duplicate':'#fff','offwhitelist':'#111','missingplanner':'#111'}[type]||'#fff';
+        const label={'banned':'banned','incomplete':'no planner','duplicate':'duplicate','offwhitelist':'off-list','missingplanner':'no planner'}[type]||type;
+        return `<div class="row" onclick="openEntry(${idx})">
+          <span style="font-size:11px;padding:4px 11px;border-radius:20px;background:${badgeBg};color:${badgeCol};font-weight:800;letter-spacing:.3px;flex-shrink:0">${label}</span>
+          <span style="font-size:13px;color:#9ab89a;width:110px;flex-shrink:0">${esc(e.ca)}</span>
+          <span style="font-size:13px;color:var(--gold);font-weight:700;width:70px;flex-shrink:0">${esc(e.yl)}</span>
+          <span style="flex:1;font-size:14px;font-weight:600;color:var(--text)">${esc(e.th)}</span>
+          <span style="font-size:11px;color:var(--dim)">${detail}</span>
+          <span style="color:var(--dim)">›</span>
+        </div>`;
+      }).join('')
+    : '<div style="text-align:center;padding:24px;color:var(--dim);font-size:13px">No issues found ✓</div>';
 }
 
-function bulkSafeDraftUnitFocus_(e){
-  const ctx = bulkSafeDraftShortContext_(e || {});
-  const theme = bulkSafeDraftTrimEndPunctuation_(ctx.theme) || 'this unit';
-  const ci = bulkSafeDraftBestPlannerPhrase_(ctx.ci || '');
-  const loi = bulkSafeDraftBestPlannerPhrase_(ctx.loi || '');
-  let connection = '';
-  let plannerSource = '';
-  if(loi){
-    connection = 'the unit focus';
-    plannerSource = 'line of inquiry';
-  } else if(ci){
-    connection = 'the unit focus';
-    plannerSource = 'central idea';
+
+// ========== HUMAN VERIFICATION + REALISM RESCAN HELPERS ==========
+function ensureHumanVerificationStyles_(){
+  if(document.getElementById('human-verify-styles')) return;
+  const style = document.createElement('style');
+  style.id = 'human-verify-styles';
+  style.textContent = `
+    .human-verified-unit{
+      border-color:rgba(212,160,23,.95)!important;
+      background:linear-gradient(90deg,rgba(212,160,23,.13),rgba(26,26,26,.98) 46%,rgba(197,232,74,.04))!important;
+      box-shadow:0 0 0 1px rgba(212,160,23,.42),0 0 24px rgba(212,160,23,.24),inset 0 0 22px rgba(212,160,23,.055);
+    }
+    .human-verified-unit:hover{
+      border-color:var(--gold)!important;
+      box-shadow:0 0 0 1px rgba(212,160,23,.75),0 0 32px rgba(212,160,23,.35),inset 0 0 26px rgba(212,160,23,.08);
+    }
+    .human-verify-flash{animation:humanVerifyGoldFlash 1.25s ease-out 1;}
+    @keyframes humanVerifyGoldFlash{
+      0%{transform:scale(.992);box-shadow:0 0 0 0 rgba(212,160,23,.9),0 0 0 rgba(212,160,23,0)}
+      42%{transform:scale(1.006);box-shadow:0 0 0 4px rgba(212,160,23,.42),0 0 42px rgba(212,160,23,.58)}
+      100%{transform:scale(1);}
+    }
+    .human-verified-tick{
+      display:inline-flex;align-items:center;gap:5px;margin-left:10px;padding:3px 10px;border-radius:999px;
+      background:rgba(212,160,23,.16);border:1px solid rgba(212,160,23,.68);color:var(--gold);
+      font-size:10px;font-weight:900;letter-spacing:.65px;text-transform:uppercase;vertical-align:middle;white-space:nowrap;
+      box-shadow:0 0 14px rgba(212,160,23,.18);
+    }
+    .human-verified-btn,.human-verified-entry-btn{
+      padding:7px 12px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--dim);
+      font-size:11px;font-weight:900;font-family:inherit;cursor:pointer;letter-spacing:.45px;text-transform:uppercase;white-space:nowrap;
+      transition:all .12s ease;
+    }
+    .human-verified-btn:hover,.human-verified-entry-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(212,160,23,.08);}
+    .human-verified-btn.verified,.human-verified-entry-btn.verified{
+      border-color:rgba(212,160,23,.9);background:rgba(212,160,23,.16);color:var(--gold);
+      box-shadow:0 0 14px rgba(212,160,23,.16);
+    }
+    .human-verified-entry-banner{
+      padding:9px 14px;background:rgba(212,160,23,.10);border:1px solid rgba(212,160,23,.55);border-radius:10px;margin-bottom:10px;
+      color:var(--gold);font-size:12px;font-weight:800;box-shadow:0 0 18px rgba(212,160,23,.12);
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+function isHumanVerifiedEntry_(entry){
+  return !!(entry && (entry.humanVerified === true || entry.humanVerifiedAt || entry.human_verified === true));
+}
+
+function humanVerifiedMeta_(entry){
+  if(!entry) return '';
+  const bits = [];
+  if(entry.humanVerifiedBy) bits.push(entry.humanVerifiedBy);
+  if(entry.humanVerifiedAt){
+    try { bits.push(new Date(entry.humanVerifiedAt).toLocaleString('en-AU', {dateStyle:'medium', timeStyle:'short'})); }
+    catch(e){ bits.push(entry.humanVerifiedAt); }
+  }
+  return bits.join(' · ');
+}
+
+function setHumanVerifiedForEntry_(idx, verified){
+  const entry = DATA && DATA[idx];
+  if(!entry) return false;
+  if(verified){
+    entry.humanVerified = true;
+    entry.humanVerifiedAt = new Date().toISOString();
+    entry.humanVerifiedBy = CURRENT_USER_EMAIL || localStorage.getItem('dla_user_email') || 'DLP team';
   } else {
-    connection = 'the unit focus';
-    plannerSource = 'unit theme';
+    entry.humanVerified = false;
+    delete entry.humanVerifiedAt;
+    delete entry.humanVerifiedBy;
+    delete entry.humanVerifiedReason;
   }
-  return { theme, ci, loi, connection, plannerSource };
+  return true;
 }
 
-function bulkSafeDraftOutputToolName_(toolName){
-  // Clean planner-punctuation leakage before normalising tool labels.
-  // This prevents labels like "Book; Creator" appearing in the review popup.
-  const raw = String(toolName || '').replace(/;+/g, ' ').replace(/\s+/g, ' ').trim();
-  const key = bulkDiagnosticToolKey_(raw);
-  // Wesley rule: physical green screen kits are not the suggested tool.
-  // Use Canva's Remove Background/video compositing as the practical classroom pathway.
-  if(key === bulkDiagnosticToolKey_('Green Screen') ||
-     key === bulkDiagnosticToolKey_('Green Screen Kits') ||
-     key === bulkDiagnosticToolKey_('Canva Remove Background') ||
-     /green\s*screen|remove\s*background/i.test(raw)){
-    return 'Canva';
-  }
-  return normaliseToolName(raw || '');
+function toggleHumanVerified(idx){
+  const entry = DATA && DATA[idx];
+  if(!entry) return;
+  const next = !isHumanVerifiedEntry_(entry);
+  setHumanVerifiedForEntry_(idx, next);
+  window._lastHumanVerifiedIdx = next ? idx : null;
+  saveToDrive();
+  setStatus(next ? `Human verified: ${entry.yl} — ${entry.th}` : `Human verification removed: ${entry.yl} — ${entry.th}`);
+  if(typeof renderBrowse === 'function') renderBrowse();
+  if(CURRENT_ENTRY_IDX === idx && typeof renderEntry === 'function') renderEntry(idx);
 }
 
-function bulkSafeDraftDescriptionForTool_(toolName, e){
-  const tool = normaliseToolName(toolName || '');
-  const k = bulkDiagnosticToolKey_(tool);
-  const ctx = bulkSafeDraftUnitFocus_(e || {});
-  const theme = ctx.theme;
-  const connection = ctx.connection;
-  const band = bulkSafeDraftYearBand_(e || {});
-
-  if(k === bulkDiagnosticToolKey_('Makey Makey')){
-    if(band === 'early') return `Students use Makey Makey to turn a simple cardboard, foil or playdough model into a touch board for this unit. In Scratch, they add sounds or simple quiz responses so classmates can press parts of the model and hear what it shows about ${connection}.`;
-    if(band === 'upper') return `Students use Makey Makey to design a conductive model or interactive display that represents an idea from ${theme}. They code a Scratch quiz, soundboard or feedback sequence, test how classmates interact with it, and explain how the inputs reveal key ideas about ${connection}.`;
-    return `Students use Makey Makey to build a simple conductive model from cardboard, foil or playdough that represents an idea from ${theme}. They connect the model to a short Scratch quiz or soundboard so classmates can press different parts, get feedback, and explain how the interaction reveals key ideas about ${connection}.`;
-  }
-  if(k === bulkDiagnosticToolKey_('Green Screen') || k === bulkDiagnosticToolKey_('Green Screen Kits') || k === bulkDiagnosticToolKey_('Canva Remove Background') || /green\s*screen|remove\s*background/i.test(String(toolName || ''))){
-    if(band === 'early') return `Students use Canva's Remove Background feature to make a short green-screen-style video for this unit. They record themselves as a weather reporter, museum guide, explorer or community helper standing in front of a relevant image, then explain one clear idea about ${connection}.`;
-    if(band === 'upper') return `Students use Canva's Remove Background feature to produce a green-screen-style explainer video for this unit. They choose a purposeful background such as a historical location, data display, ecosystem, gallery wall or news studio, script a 30-60 second segment, and explain how the setting helps an audience understand ${connection}.`;
-    return `Students use Canva's Remove Background feature to create a green-screen-style report for this unit. They film themselves as a news presenter, field reporter, expert witness or tour guide in front of a chosen background, then publish a short video that explains what the setting shows about ${connection}.`;
-  }
-  if(k === bulkDiagnosticToolKey_('Book Creator')){
-    if(band === 'early') return `Students use Book Creator to make a simple picture-and-voice book for this unit. They add drawings or photos, short captions and optional recorded sentences so they can show and tell what they understand about ${connection}.`;
-    if(band === 'upper') return `Students use Book Creator to publish a multimodal explanation book for this unit. They combine diagrams, evidence captions, images and optional voice recordings to explain examples, vocabulary and reflections that show their understanding of ${connection}.`;
-    return `Students use Book Creator to publish a short multimodal book for this unit. Each page combines student drawings, photos, captions and optional voice recordings so students can explain examples, vocabulary and reflections that show their understanding of ${connection}.`;
-  }
-  if(k === bulkDiagnosticToolKey_('Lego Spike Prime')){
-    if(band === 'early') return `Students use Lego Spike Prime with teacher support to build and code a simple moving model for this unit. They test one change, demonstrate what the model does, and explain how it helps show ${connection}.`;
-    if(band === 'upper') return `Students use Lego Spike Prime to design, build and code a working prototype that models a process, system or solution from ${theme}. They test variables, improve the build, and present evidence of how the mechanism demonstrates their understanding of ${connection}.`;
-    return `Students use Lego Spike Prime to design, build and code a working prototype that models a process, system or solution from ${theme}. They test and improve the build, then record or present an explanation of how the mechanism demonstrates their understanding of ${connection}.`;
-  }
-  if(k === bulkDiagnosticToolKey_('Lego Spike Essential')){
-    if(band === 'early') return `Students use Lego Spike Essential to build and code a simple moving model for this unit. They make one change to improve the model and explain what it shows about ${connection}.`;
-    if(band === 'upper') return `Students use Lego Spike Essential to build and code a model for this unit. They test how it works, improve one feature, and explain how the final demonstration represents ${connection}.`;
-    return `Students use Lego Spike Essential to build and code a simple moving model for this unit. They create a short demonstration showing what the model does, what they changed during testing, and how it helps explain ${connection}.`;
-  }
-  if(k === bulkDiagnosticToolKey_('Wise Discussion Chatbots')){
-    if(band === 'early') return `Students ask a teacher-selected Wise Discussion Chatbot persona simple prepared questions for this unit. They record useful ideas with drawings or short notes and share one thing the chatbot helped them understand about ${connection}.`;
-    if(band === 'upper') return `Students question a Wise Discussion Chatbot in a named expert or stakeholder role for this unit. They prepare prompts, compare the chatbot’s responses with class evidence, and produce a claim-evidence-reflection about ${connection}.`;
-    return `Students question a Wise Discussion Chatbot in a named expert role for this unit. They prepare questions, compare the chatbot’s responses with class evidence, and produce a short reflection or claim-evidence-reasoning note about ${connection}.`;
-  }
-  if(band === 'early') return `Students use ${tool} to make a simple product for this unit. They share what they made and explain one thing it shows about ${connection}.`;
-  if(band === 'upper') return `Students use ${tool} to create a purposeful digital product for this unit. They make design choices for an audience, share the artefact, and justify how it shows their understanding of ${connection}.`;
-  return `Students use ${tool} to create a practical digital product for this unit. They make a clear artefact, share it with classmates, and explain how their choices show what they understand about ${connection}.`;
+function markEntryNeedsHumanRecheck_(idx, reason){
+  const entry = DATA && DATA[idx];
+  if(!entry || !isHumanVerifiedEntry_(entry)) return;
+  entry.humanVerified = false;
+  entry.humanVerifiedResetAt = new Date().toISOString();
+  entry.humanVerifiedResetReason = reason || 'Suggestion changed after human verification';
+  delete entry.humanVerifiedAt;
+  delete entry.humanVerifiedBy;
 }
 
-function bulkSafeDraftSlotScore_(s, idx){
-  // Higher score = safer/better candidate to replace in a draft-only opportunity flow.
-  if(idx === 5) return -9999; // protected STEM slot #6
-  if(!s || !isRealSug(s)) return 80;
-  const tool = sugTool(s);
-  const desc = sugDesc(s);
-  let score = 0;
-  const len = String(desc || '').length;
-  if(len < 90) score += 25;
-  if(len < 150) score += 10;
-  if(/\b(students will|students use|explore|create|make|investigate)\b/i.test(desc || '')) score += 2;
-  if(!/\b(create|produce|build|record|design|publish|explain|share)\b/i.test(desc || '')) score += 12;
-  if(!/\b(unit|inquiry|because|connect|theme|central idea|line of inquiry)\b/i.test(desc || '')) score += 12;
-  if(/\b(minecraft education|minecraft)\b/i.test(tool || '')) score -= 50; // curated lessons should not be casually replaced
-  if(/\b(stem|lego spike|sphero|bee-bot|bee bots|makey makey)\b/i.test(tool || '')) score -= 10;
+function isRealismAuditChange_(change){
+  const text = [change && change.auditSource, change && change.auditReason, change && change.reason, change && change.flagReason].filter(Boolean).join(' ');
+  return /realism|age audit|age-audit|audit-deterministic|too long|unrealistic|age-appropriate|vague|generic|weak/i.test(text);
+}
+
+function rescanRealismAfterApprovedFixes_(appliedCount, skippedDupes){
+  try{
+    const before = (REALISM_AUDIT_RESULTS || []).length;
+    runFullRealismAudit();
+    const after = (REALISM_AUDIT_RESULTS || []).length;
+    const reduced = Math.max(0, before - after);
+    const host = document.getElementById('realism-audit-result');
+    if(host){
+      host.insertAdjacentHTML('afterbegin', `<div style="padding:12px 14px;background:rgba(197,232,74,.09);border:1px solid rgba(197,232,74,.32);border-left:4px solid var(--lime);border-radius:10px;margin-bottom:10px">
+        <div style="font-size:13px;font-weight:900;color:var(--lime);margin-bottom:4px">✓ Re-scanned after applying fixes</div>
+        <div style="font-size:12px;color:#ddd;line-height:1.55">Applied ${appliedCount} approved fix${appliedCount!==1?'es':''}${skippedDupes?` and skipped ${skippedDupes} duplicate${skippedDupes!==1?'s':''}`:''}. ${reduced ? `The audit now shows ${reduced} fewer flag${reduced!==1?'s':''}.` : 'The audit has refreshed below so remaining flags are current.'}</div>
+      </div>`);
+    }
+  }catch(e){
+    console.warn('Auto-rescan after approved fixes failed:', e);
+    setStatus('Fixes saved, but automatic rescan failed — run Scan all suggestions again.', 'error');
+  }
+}
+
+function renderBrowse(){
+  ensureHumanVerificationStyles_();
+  const ca=document.getElementById('f-campus')?.value||'';
+  const yr=document.getElementById('f-year')?.value||'';
+  const q=(document.getElementById('f-search')?.value||'').toLowerCase();
+  const tool=(document.getElementById('f-tool')?.value||'').toLowerCase();
+  const filtered=DATA.map((e,idx)=>({e,idx})).filter(({e})=>{
+    if(ca&&e.ca!==ca) return false;
+    if(yr&&e.yl!==yr) return false;
+    const verifiedText = isHumanVerifiedEntry_(e) ? 'human verified verified checked approved' : '';
+    if(q&&!e.th?.toLowerCase().includes(q)&&!verifiedText.includes(q)&&!getSugs(e).some(s=>sugTool(s).toLowerCase().includes(q)||sugDesc(s).toLowerCase().includes(q))) return false;
+    if(tool&&!getSugs(e).some(s=>sugTool(s).toLowerCase().includes(tool))) return false;
+    return true;
+  });
+  const verifiedCount = filtered.filter(({e})=>isHumanVerifiedEntry_(e)).length;
+  const totalVerifiedCount = DATA.filter(e=>isHumanVerifiedEntry_(e)).length;
+  const remainingCount = Math.max(0, DATA.length - totalVerifiedCount);
+  document.getElementById('browse-count').textContent=`${filtered.length} entries · ${verifiedCount} human verified in view`;
+  const verificationSummaryHtml = `<div class="card2" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-color:${remainingCount ? 'rgba(212,160,23,.35)' : 'rgba(197,232,74,.4)'};background:${remainingCount ? 'rgba(212,160,23,.06)' : 'rgba(197,232,74,.08)'}">
+    <span class="human-verified-tick" style="margin-left:0">✓ Human verified audit</span>
+    <span style="font-size:13px;color:var(--text);font-weight:800">${totalVerifiedCount}/${DATA.length} units checked</span>
+    <span style="font-size:12px;color:var(--dim)">${remainingCount ? `${remainingCount} still need a human check` : 'All units have been human verified'}</span>
+  </div>`;
+  document.getElementById('browse-list').innerHTML=verificationSummaryHtml + filtered.map(({e,idx})=>{
+    const verified = isHumanVerifiedEntry_(e);
+    const flash = window._lastHumanVerifiedIdx === idx ? ' human-verify-flash' : '';
+    const meta = verified ? humanVerifiedMeta_(e) : '';
+    const tick = verified ? `<span class="human-verified-tick" title="${esc(meta || 'Human verified')}">✓ Human verified</span>` : '';
+    const btnText = verified ? '✓ Human verified' : 'Human verify';
+    const btnTitle = verified ? `Click to remove human verification${meta ? ' — '+esc(meta) : ''}` : 'Mark this unit as manually checked by a human';
+    return `<div class="row ${verified ? 'human-verified-unit' : ''}${flash}" id="browse-row-${idx}" onclick="openEntry(${idx})">
+      <span style="font-size:13px;color:#9ab89a;width:110px;flex-shrink:0">${esc(e.ca)}</span>
+      <span style="font-size:13px;color:var(--gold);font-weight:700;width:70px;flex-shrink:0">${esc(e.yl)}</span>
+      <span style="flex:1;font-size:14px;font-weight:700;color:var(--text);min-width:0;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <span style="overflow:hidden;text-overflow:ellipsis">${esc(e.th)}</span>${tick}
+      </span>
+      <button class="human-verified-btn ${verified?'verified':''}" title="${btnTitle}" onclick="event.stopPropagation();toggleHumanVerified(${idx});return false;">${btnText}</button>
+      <span style="font-size:13px;color:#9ab89a;min-width:52px;text-align:right">${getSugs(e).length}/6 ›</span>
+    </div>`;
+  }).join('');
+  window._lastHumanVerifiedIdx = null;
+}
+
+function renderEntry(idx){
+  const e=DATA[idx];
+  ensureHumanVerificationStyles_();
+  const entryHumanVerified = isHumanVerifiedEntry_(e);
+  const entryHumanVerifiedMeta = entryHumanVerified ? humanVerifiedMeta_(e) : '';
+  const entryHumanVerifiedBanner = entryHumanVerified ? `<div class="human-verified-entry-banner" title="${esc(entryHumanVerifiedMeta || 'Human verified')}">✓ Human verified${entryHumanVerifiedMeta ? ` · ${esc(entryHumanVerifiedMeta)}` : ''}</div>` : '';
+  
+  const existingLock = isLocked(idx);
+  const lockBanner = existingLock && !isLockedByMe(idx)
+    ? `<div style="padding:8px 14px;background:rgba(251,191,36,0.15);border:1px solid #fbbf24;border-radius:8px;margin-bottom:10px;font-size:12px;color:#fbbf24;font-weight:600">
+        🔒 ${existingLock.user} is also editing this entry — coordinate before saving
+      </div>`
+    : `<div style="padding:6px 14px;background:rgba(197,232,74,0.08);border:1px solid rgba(197,232,74,0.2);border-radius:8px;margin-bottom:10px;font-size:11px;color:var(--lime)">
+        ✓ Locked by you — others will see this entry is in use
+      </div>`;
+  document.getElementById('entry-header').innerHTML=lockBanner+entryHumanVerifiedBanner+`
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:${(e.ci||e.lo||e.plannerText)?'16px':'0'}">
+      <div>
+        <h2 style="font-size:24px;font-weight:700;color:#fff;margin-bottom:6px">${esc(e.th)}</h2>
+        <p style="font-size:14px;color:var(--dim);font-weight:500">${esc(e.ca)} · ${esc(e.yl)}</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+        <button class="human-verified-entry-btn ${entryHumanVerified?'verified':''}" onclick="toggleHumanVerified(${idx})" title="${entryHumanVerified ? 'Remove human verification' : 'Mark this unit as manually checked by a human'}">${entryHumanVerified ? '✓ Human verified' : 'Human verify'}</button>
+        <button onclick="deleteEntry(${idx})" style="flex-shrink:0;padding:7px 14px;background:transparent;border:1px solid #FF8080;color:#FF8080;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit" title="Delete this entry">🗑 Delete</button>
+      </div>
+    </div>
+    ${e.ci?`<div style="padding:12px 16px;background:var(--card2);border-radius:10px;border-left:3px solid var(--gold);margin-bottom:12px">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:4px">Central Idea</div>
+      <div style="font-size:14px;color:var(--text);line-height:1.6;font-style:italic">"${esc(e.ci)}"</div>
+    </div>`:''}
+    ${e.lo?`<div style="padding:12px 16px;background:var(--card2);border-radius:10px;border-left:3px solid var(--purple);margin-bottom:12px">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--purple);margin-bottom:8px">Lines of Inquiry</div>
+      ${e.lo.split(/[;•]/).filter(l=>l.trim()).map((l,i)=>`<div style="display:flex;gap:8px;align-items:baseline;margin-bottom:4px"><span style="font-size:12px;font-weight:700;color:var(--purple);flex-shrink:0">0${i+1}</span><span style="font-size:13px;color:#ccc;line-height:1.5">${esc(l.trim())}</span></div>`).join('')}
+    </div>`:''}
+    ${e.plannerText?`<div style="padding:12px 16px;background:var(--card2);border-radius:10px;border-left:3px solid var(--blue);margin-bottom:4px">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--blue);margin-bottom:4px">Unit Summary</div>
+      <div style="font-size:13px;color:#aaa;line-height:1.65">${esc(e.plannerText.length>600?e.plannerText.slice(0,600)+'…':e.plannerText)}</div>
+    </div>`:''}`;
+  const sugs=getSugs(e);
+  document.getElementById('entry-sugs').innerHTML=sugs.length
+    ? sugs.map((s,i)=>buildSugRow(s,idx,i)).join('')
+    : '<div class="card2" style="color:var(--dim);font-size:12px;font-style:italic">No suggestions yet.</div>';
+  document.getElementById('regen-all-result').innerHTML='';
+  document.getElementById('btn-regen-all').disabled=false;
+  document.getElementById('btn-regen-all').textContent=`Generate 6 new suggestions for ${e.yl}`;
+}
+
+
+function buildSugRow(sug, entryIdx, sugIdx){
+  const uid = `s${entryIdx}_${sugIdx}`;
+  const tool = sugTool(sug);
+  const desc = sugDesc(sug);
+  const url = sug.url || null;
+  const isStem = sugIdx === 5;
+  const linkHtml = url
+    ? `<a href="${esc(url)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--lime);text-decoration:none;font-weight:700;margin-top:6px;padding:3px 8px;border:1px solid var(--lime);border-radius:6px">↗ View lesson</a>`
+    : '';
+  const stemBadge = isStem
+    ? `<span style="font-size:9px;font-weight:800;padding:3px 10px;border-radius:99px;background:#4361ee;color:#fff;letter-spacing:.8px;text-transform:uppercase;flex-shrink:0">🔬 STEM Design Cycle</span>`
+    : '';
+  const stemBorder = isStem ? 'border-color:#4361ee' : '';
+  const stemCycleLabel = isStem
+    ? `<div style="font-size:12px;font-weight:700;color:#4361ee;margin-bottom:8px">🔄 Empathise → Define → Ideate → Prototype → Test → Empathise</div>`
+    : '';
+  const stemSeparator = isStem
+    ? `<div style="display:flex;align-items:center;gap:10px;margin:18px 0 10px"><div style="flex:1;height:1px;background:var(--border)"></div><span style="font-size:10px;font-weight:700;color:#4361ee;letter-spacing:1px;text-transform:uppercase;white-space:nowrap">STEM Idea</span><div style="flex:1;height:1px;background:var(--border)"></div></div>`
+    : '';
+  return `${stemSeparator}<div class="sug" id="${uid}" style="${stemBorder}">
+    <div class="sug-main">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="sug-tool">${esc(tool)}</div>
+        ${stemBadge}
+        <div style="flex:1"></div>
+        <button class="btn-sm" id="${uid}-regen" onclick="regenSingleSug(${entryIdx},${sugIdx})" title="Regenerate this suggestion">↻</button>
+        <button class="btn-sm" onclick="openFeedbackChat('${uid}',${entryIdx},${sugIdx})">💬 feedback</button>
+      </div>
+      ${stemCycleLabel}
+      <div class="sug-desc">${linkify(desc)}</div>
+      ${linkHtml}
+    </div>
+  </div>`;
+}
+
+function regenAllowsPodcastTool_(entry, currentSug){
+  const text = [
+    entry?.th, entry?.ci, entry?.lo, entry?.plannerText,
+    sugTool(currentSug), sugDesc(currentSug)
+  ].filter(Boolean).join(' ').toLowerCase();
+  return /podcast|audio|voice|voiceover|voice-over|oral history|interview|narrat|spoken|speaking|listening|soundscape|sound track|soundtrack|radio|recording|record\b|music|garageband/.test(text);
+}
+
+function shuffleRegenTools_(arr, seedText){
+  const out = [...arr];
+  let seed = 0;
+  const seedSource = String(seedText || '') + '|' + Date.now() + '|' + Math.random();
+  for(let i=0;i<seedSource.length;i++) seed = ((seed << 5) - seed + seedSource.charCodeAt(i)) >>> 0;
+  function rand(){ seed = (1664525 * seed + 1013904223) >>> 0; return seed / 4294967296; }
+  for(let i=out.length-1;i>0;i--){
+    const j = Math.floor(rand() * (i+1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+function regenToolPriorityScore_(tool, entry, freq, isStem){
+  const t = normaliseToolName(tool || '');
+  const key = t.toLowerCase();
+  const unit = [entry?.th, entry?.ci, entry?.lo, entry?.plannerText].filter(Boolean).join(' ').toLowerCase();
+  let score = 40;
+  const count = freq[t] || 0;
+  score -= Math.min(count, 18); // underused tools rise naturally, but not by hard-forcing one platform
+  if(isStem){
+    if(/sphero|lego spike|micro:bit|codrone|makey makey|3d printer|tinkercad|bee-bot|beebot|indi|minecraft/.test(key)) score += 20;
+    if(/adobe express podcasting|seesaw|book creator|padlet|canva/.test(key)) score -= 18;
+  }
+  if(/where we are|place|time|migration|journey|map|geography|settlement|country|local|community/.test(unit) && /google earth|google maps|minecraft|padlet|canva|book creator/.test(key)) score += 10;
+  if(/sharing the planet|sustain|habitat|ecosystem|environment|water|waste|climate|biodiversity|conservation|animal|plant/.test(unit) && /field guide|google earth|micro:bit|minecraft|book creator|canva|padlet|microsoft forms|excel/.test(key)) score += 10;
+  if(/how the world works|force|motion|energy|material|machine|system|science|experiment|investig/.test(unit) && /sphero|lego spike|micro:bit|tinkercad|minecraft|makey makey|microsoft excel|forms/.test(key)) score += 10;
+  if(/express|identity|culture|story|belief|perspective|communication|arts|celebration/.test(unit) && /book creator|canva|imovie|adobe express|garageband|green screen|puppet pals|chatterpix|wise/.test(key)) score += 10;
+  if(/organise|government|economy|market|systems|community services|civics|rules|decision/.test(unit) && /microsoft forms|microsoft excel|canva|padlet|book creator|google maps|wise/.test(key)) score += 8;
   return score;
 }
 
-function bulkSafeDraftPickSlot_(e, toolName){
-  const targetKey = bulkDiagnosticToolKey_(toolName);
-  const sugs = getSugs(e);
-  let bestIdx = -1;
-  let bestScore = -9999;
-  for(let i=0; i<sugs.length; i++){
-    if(i === 5) continue;
-    const s = sugs[i];
-    if(s && isRealSug(s) && bulkDiagnosticToolKey_(sugTool(s)) === targetKey) continue;
-    const score = bulkSafeDraftSlotScore_(s, i);
-    if(score > bestScore){ bestScore = score; bestIdx = i; }
-  }
-  return bestIdx;
-}
+function getRegenerateCandidateTools_(entry, currentSug, sugIdx, freq){
+  const currentTool = sugTool(currentSug);
+  const isStem = sugIdx === 5;
+  const podcastAllowed = regenAllowsPodcastTool_(entry, currentSug);
+  const usedKeys = new Set(getSugs(entry).map(s => toolKey(sugTool(s))).filter(Boolean));
+  usedKeys.delete(toolKey(currentTool));
 
-function bulkSafeDraftScanNamedTool_(toolName, targetYears){
-  const base = bulkSafePreviewScanNamedTool_(toolName, targetYears);
-  const candidates = [];
-  (base.candidates || []).forEach(c => {
-    const e = DATA[c.entryIdx];
-    const slotIdx = bulkSafeDraftPickSlot_(e, toolName);
-    if(slotIdx < 0) return;
-    candidates.push(Object.assign({}, c, { slotIdx }));
-  });
-  return Object.assign({}, base, { candidates });
-}
-
-function bulkRunSafeDraftOnly_(text){
-  const cleanText = String(text || '').replace(/^\s*(draft|draft-safe|safe-draft)\s*:?\s*/i, '').trim();
-  if(bulkLooksLikeStkY6Diagnostic_(cleanText)){
-    bulkRunStkY6DraftOnly_(text);
-    return;
-  }
-  const info = bulkDiagnosticDetectRoute_(cleanText);
-  const years = info.targetYears && info.targetYears.length ? info.targetYears : [];
-  const yearsLabel = years.length ? years.join(', ') : 'All years';
-
-  if(info.route === 'specific Minecraft lesson placement'){
-    bulkRunMinecraftExactLessonDraftOnly_(text);
-    return;
-  }
-
-  if(info.replacementTool && info.route === 'targeted replacement'){
-    bulkRunSafeReplacementDraftOnly_(text);
-    return;
-  }
-
-  if(!info.namedTool){
-    bulkChatAddMessage('assistant', `
-      <div style="padding:2px 0">
-        <div style="font-size:10px;color:var(--purple);font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">🧪 Safe draft mode</div>
-        <div>I could not confidently detect a named tool or targeted replacement in that request.</div>
-        <div style="margin-top:8px;color:var(--dim);font-size:12px">Try: <strong>draft: Find more opportunities to use Makey Makey</strong> or <strong>draft: Replace Seesaw in Year 5 and 6</strong></div>
-        <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No changes were drafted or saved.</div>
-      </div>`);
-    return;
-  }
-
-  const scan = bulkSafeDraftScanNamedTool_(info.namedTool, years);
-  const maxDrafts = 5;
-  const selected = scan.candidates.slice(0, maxDrafts);
-
-  if(!selected.length){
-    bulkChatAddMessage('assistant', `
-      <div style="padding:2px 0">
-        <div style="font-size:10px;color:var(--purple);font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">🧪 Safe draft mode</div>
-        <div>I found no safe candidate units for <strong>${bulkDiagnosticEscape_(info.namedTool)}</strong>${years.length?' in '+bulkDiagnosticEscape_(yearsLabel):''}.</div>
-        <div style="margin-top:8px;color:var(--dim);font-size:12px">Existing slots: ${scan.existingSlots || 0} · skipped already using tool: ${scan.skipped?.alreadyHasTool || 0} · skipped by age range: ${scan.skipped?.age || 0}</div>
-        <div style="margin-top:10px;font-size:12px;color:#F5A623;font-style:italic">No AI call was made. No changes were drafted or saved.</div>
-      </div>`);
-    return;
-  }
-
-  const changes = selected.map(c => {
-    const e = DATA[c.entryIdx] || {};
-    return {
-      entryIdx: c.entryIdx,
-      sugIdx: c.slotIdx,
-      t: bulkSafeDraftOutputToolName_(info.namedTool),
-      d: bulkSafeDraftFinaliseDescription_(bulkSafeDraftDescriptionForTool_(info.namedTool, e)),
-      reason: `Safe named-tool opportunity draft for ${info.namedTool}. This unit does not already use the tool. Slot #6/STEM is protected. Review before applying.`,
-      improvementConfidence: 'Draft-only',
-      whyBetter: 'Adds a concrete student action, student-created product and unit connection without calling AI or changing anything automatically.'
-    };
+  let candidates = getAgeAppropriateTools(entry.yl).filter(t => {
+    const k = toolKey(t);
+    if(!k || k === toolKey(currentTool)) return false;
+    if(usedKeys.has(k)) return false;
+    if(toolContainsForbiddenKeyword(t) || toolViolatesInventoryBan(t)) return false;
+    if(!podcastAllowed && /adobe express podcasting|podcast equipment/i.test(normaliseToolName(t))) return false;
+    return true;
   });
 
-  const sample = selected.slice(0,5).map((c, i) => `• ${bulkDiagnosticEscape_(c.campus)} · ${bulkDiagnosticEscape_(c.year)} · ${bulkDiagnosticEscape_(c.theme)}`).join('<br>');
-  const capped = scan.candidates.length > selected.length ? `<br><span style="font-size:12px;color:var(--dim)">I drafted the first ${selected.length} of ${scan.candidates.length} candidate units to keep this safe. Run again after reviewing if you want more.</span>` : '';
-  bulkChatAddMessage('assistant', `✅ <strong>${changes.length} ${bulkDiagnosticEscape_(info.namedTool)} opportunit${changes.length!==1?'ies':'y'}</strong> ready for review.<br><br><span style="font-size:12px;color:var(--lime)">Safe draft mode:</span> found candidates locally, skipped units already using the tool, avoided STEM slot #6, made no AI calls and saved nothing automatically.${capped}<br><br><span style="font-size:12px;color:var(--lime)">Sample targets:</span><br>${sample}`);
-  bulkChatMemory.push({ role:'assistant', content:`Safe-drafted ${changes.length} ${info.namedTool} opportunities.` });
-  window._snapshotReason = `Before safe ${info.namedTool} opportunity drafts`;
-  showChangesPopup(changes);
-  bulkChatState = 'done';
+  candidates = candidates.sort((a,b) => regenToolPriorityScore_(b, entry, freq, isStem) - regenToolPriorityScore_(a, entry, freq, isStem));
+  const top = candidates.slice(0, 18);
+  const rest = shuffleRegenTools_(candidates.slice(18), `${entry?.ca}|${entry?.yl}|${entry?.th}|${sugIdx}`);
+  const mixedTop = shuffleRegenTools_(top, `${entry?.ca}|${entry?.yl}|${entry?.th}|${sugIdx}|top`);
+  return [...mixedTop.slice(0, 12), ...rest.slice(0, 4)];
 }
 
-function bulkExtractTargetYears_(instruction){
-  const t = String(instruction || '').toLowerCase();
-  const out = new Set();
-  if(/\b(prep|foundation)\b/.test(t)) out.add('Prep');
+async function regenSingleSug(entryIdx, sugIdx){
+  const uid = `s${entryIdx}_${sugIdx}`;
+  const btn = document.getElementById(uid+'-regen');
+  if(btn){ btn.textContent='Scanning…'; btn.disabled=true; }
+  startProgress();
 
-  // Direct forms: Year 5, yr 6, y4
-  const re = /\b(?:year|yr|y)\s*([1-6])\b/g;
-  let m;
-  while((m = re.exec(t)) !== null){ out.add('Year ' + m[1]); }
+  const entry = DATA[entryIdx];
+  const currentSug = getSugs(entry)[sugIdx];
+  const currentTool = sugTool(currentSug);
+  const others = getSugs(entry).filter((_,i)=>i!==sugIdx).map(s=>sugTool(s)).join(', ');
+  const isStem = sugIdx === 5;
 
-  // Compact or grouped forms: Years 5 and 6, Year 5/6, yrs 3-4, y5 & y6
-  const groupRe = /\b(?:years?|yrs?|y)\s*([1-6])(?:\s*(?:and|&|,|\/|-)\s*([1-6]))?(?:\s*(?:and|&|,|\/)\s*([1-6]))?/g;
-  while((m = groupRe.exec(t)) !== null){
-    [m[1], m[2], m[3]].filter(Boolean).forEach(n => out.add('Year ' + n));
-    if(m[1] && m[2] && t.slice(m.index, groupRe.lastIndex).includes('-')){
-      const a = Number(m[1]), b = Number(m[2]);
-      for(let n=Math.min(a,b); n<=Math.max(a,b); n++) out.add('Year ' + n);
-    }
+  // Fetch rich planner context from GAS — cached per session
+  let regenPlannerCtx = entry.plannerContextRich || '';
+  if (!regenPlannerCtx) {
+    try { regenPlannerCtx = await fetchPlannerContext(entry); } catch(e) {}
   }
+  const regenPlannerBlock = regenPlannerCtx
+    ? regenPlannerCtx.slice(0, 8000)
+    : (entry.plannerText ? entry.plannerText.slice(0, 1500) : '');
+  if(btn) btn.textContent = '…';
 
-  // Contextual shorthand after a year mention: "year 5 and 6" only gives the
-  // first number to the simple regex above, so explicitly capture the trailing number.
-  const trailing = t.match(/\b(?:year|yr|y)\s*([1-6])\s*(?:and|&|\/)\s*([1-6])\b/);
-  if(trailing){ out.add('Year ' + trailing[1]); out.add('Year ' + trailing[2]); }
-
-  return [...out].sort((a,b) => YR.indexOf(a) - YR.indexOf(b));
-}
-// Backward-compatible alias
-function buildMinecraftContext(){ return buildLibraryContext('minecraft'); }
-
-// ========== ADD LIBRARY DIALOG ==========
-
-function showAddLibraryDialog(){
-  const existing = document.getElementById('add-lib-overlay');
-  if(existing) existing.remove();
-
-  const overlay = document.createElement('div');
-  overlay.id = 'add-lib-overlay';
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px';
-
-  overlay.innerHTML = `
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:480px;width:100%">
-      <h3 style="font-size:18px;font-weight:900;margin-bottom:6px">Add New Library</h3>
-      <p style="font-size:13px;color:var(--dim);margin-bottom:20px;line-height:1.6">Create a new lesson library section. You can add lessons to it afterward.</p>
-
-      <div style="font-size:11px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Library Name <span style="color:#f87171">*</span></div>
-      <input id="add-lib-name" class="inp" placeholder="e.g. Code.org, Tinkercad, Common Sense Education" style="margin-bottom:14px;font-size:13px">
-
-      <div style="font-size:11px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Icon (emoji)</div>
-      <input id="add-lib-icon" class="inp" placeholder="e.g. 🧩 💻 🎨" style="margin-bottom:14px;font-size:13px;width:80px" maxlength="4">
-
-      <div style="font-size:11px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">URL Pattern (for auto-detection)</div>
-      <input id="add-lib-urlpattern" class="inp" placeholder="e.g. code.org or tinkercad.com" style="margin-bottom:14px;font-size:13px">
-
-      <div style="font-size:11px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Lesson URL Prefix (for auto-extracting titles)</div>
-      <input id="add-lib-urlprefix" class="inp" placeholder="e.g. https://code.org/curriculum/lesson/" style="margin-bottom:20px;font-size:13px">
-
-      <div style="display:flex;gap:10px">
-        <button class="btn-pri" onclick="createNewLibrary()" style="flex:1">Create Library</button>
-        <button class="btn" onclick="document.getElementById('add-lib-overlay').remove()" style="padding:12px 20px">Cancel</button>
-      </div>
-      <div id="add-lib-status" style="font-size:12px;font-weight:600;margin-top:10px"></div>
-    </div>`;
-
-  document.body.appendChild(overlay);
-  document.getElementById('add-lib-name').focus();
-}
-
-function createNewLibrary(){
-  const name = document.getElementById('add-lib-name')?.value.trim();
-  const icon = document.getElementById('add-lib-icon')?.value.trim() || '📚';
-  const urlPattern = document.getElementById('add-lib-urlpattern')?.value.trim();
-  const urlPrefix = document.getElementById('add-lib-urlprefix')?.value.trim();
-  const statusEl = document.getElementById('add-lib-status');
-
-  if(!name){ statusEl.textContent = '⚠ Name is required'; statusEl.style.color = '#f87171'; return; }
-
-  // Generate key from name
-  const key = name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
-  if(!key){ statusEl.textContent = '⚠ Invalid name'; statusEl.style.color = '#f87171'; return; }
-  if(LIBRARIES[key]){ statusEl.textContent = '⚠ A library with this name already exists'; statusEl.style.color = '#f87171'; return; }
-
-  // Create the library
-  LIBRARIES[key] = [];
-  LIBRARIES_META[key] = { name, icon, urlPattern, urlPrefix, urlHint: urlPattern ? `Paste a lesson URL from ${urlPattern}` : 'Paste a lesson URL', subjects: [...COMMON_SUBJECTS] };
-
-  saveLibraries();
-  renderLibraries();
-  document.getElementById('add-lib-overlay').remove();
-  setStatus(`Library "${name}" created ✓`);
-}
-
-// ========== DELETE LIBRARY ==========
-function deleteLibrary(key){
-  const meta = getLibraryMeta(key);
-  const count = (LIBRARIES[key]||[]).length;
-  if(!confirm(`Delete the "${meta.name}" library${count ? ` and its ${count} lesson${count!==1?'s':''}` : ''}?\n\nThis cannot be undone.`)) return;
-  delete LIBRARIES[key];
-  delete LIBRARIES_META[key];
-  saveLibraries();
-  renderLibraries();
-  setStatus(`Library "${meta.name}" deleted`);
-}
-
-// ========== GENERIC LIBRARY FUNCTIONS ==========
-
-function libToggleSection(key){
-  const body = document.getElementById(`lib-${key}-body`);
-  const arrow = document.getElementById(`lib-${key}-arrow`);
-  if(!body) return;
-  const open = body.style.display !== 'none';
-  body.style.display = open ? 'none' : 'block';
-  if(arrow) arrow.style.transform = open ? '' : 'rotate(180deg)';
-}
-
-function libSlugToTitle(slug){
-  if(!slug) return '';
-  return slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-}
-
-function libExtractFromUrl(key){
-  const urlEl = document.getElementById(`lib-${key}-url`);
-  const titleEl = document.getElementById(`lib-${key}-title`);
-  if(!urlEl || !titleEl) return;
-  const url = urlEl.value.trim();
-  const m = url.match(/lessons?\/([a-z0-9-]+)/i);
-  if(m && !titleEl.value.trim()){
-    titleEl.value = libSlugToTitle(m[1]);
-  }
-}
-
-function libClearForm(key){
-  [`lib-${key}-url`,`lib-${key}-title`,`lib-${key}-desc`].forEach(id=>{
-    const el = document.getElementById(id); if(el) el.value='';
-  });
-  [`lib-${key}-ages`,`lib-${key}-subject`].forEach(id=>{
-    const el = document.getElementById(id); if(el) el.value='';
-  });
-  const s = document.getElementById(`lib-${key}-status`);
-  if(s) s.textContent = '';
-}
-
-function libAddLesson(key){
-  const url = document.getElementById(`lib-${key}-url`)?.value.trim() || '';
-  const title = document.getElementById(`lib-${key}-title`)?.value.trim() || '';
-  const ages = document.getElementById(`lib-${key}-ages`)?.value || '';
-  const subject = document.getElementById(`lib-${key}-subject`)?.value || '';
-  const desc = document.getElementById(`lib-${key}-desc`)?.value.trim() || '';
-  const statusEl = document.getElementById(`lib-${key}-status`);
-
-  if(!title){ if(statusEl){ statusEl.textContent='⚠ Title is required'; statusEl.style.color='#f87171'; } return; }
-  if(!ages){ if(statusEl){ statusEl.textContent='⚠ Select an age rating'; statusEl.style.color='#f87171'; } return; }
-  if(!subject){ if(statusEl){ statusEl.textContent='⚠ Select a subject'; statusEl.style.color='#f87171'; } return; }
-
-  if(!LIBRARIES[key]) LIBRARIES[key] = [];
-  const lessons = LIBRARIES[key];
-  const k = title.toLowerCase().trim();
-  const existingIdx = lessons.findIndex(l => l.title.toLowerCase().trim() === k);
-  const entry = { title, desc, ages, subject };
-  if(url) entry.url = url;
-
-  let msg;
-  if(existingIdx >= 0){
-    lessons[existingIdx] = entry;
-    msg = `✓ "${title}" updated`;
-  } else {
-    lessons.push(entry);
-    msg = `✓ "${title}" added`;
-  }
-
-  libClearForm(key);
-  if(statusEl){ statusEl.textContent = msg; statusEl.style.color='var(--lime)'; }
-  saveLibraries();
-  renderLibraries();
-}
-
-function libDeleteLesson(key, title){
-  const meta = getLibraryMeta(key);
-  if(!confirm(`Delete "${title}" from the ${meta.name} library?`)) return;
-  if(!LIBRARIES[key]) return;
-  LIBRARIES[key] = LIBRARIES[key].filter(l => l.title !== title);
-  saveLibraries();
-  renderLibraries();
-}
-
-function libEditLesson(key, title){
-  const lessons = getLibraryLessons(key);
-  const lesson = lessons.find(l => l.title === title);
-  if(!lesson) return;
-  document.getElementById(`lib-${key}-url`).value = lesson.url || '';
-  document.getElementById(`lib-${key}-title`).value = lesson.title;
-  document.getElementById(`lib-${key}-ages`).value = lesson.ages;
-  document.getElementById(`lib-${key}-subject`).value = lesson.subject || '';
-  document.getElementById(`lib-${key}-desc`).value = lesson.desc || '';
-  // Expand section if collapsed
-  const body = document.getElementById(`lib-${key}-body`);
-  const arrow = document.getElementById(`lib-${key}-arrow`);
-  if(body) body.style.display = 'block';
-  if(arrow) arrow.style.transform = 'rotate(180deg)';
-  document.getElementById(`lib-${key}-title`).focus();
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-
-function libExportAll(){
-  const saveObj = { _meta: LIBRARIES_META };
-  getLibraryKeys().forEach(k => { saveObj[k] = LIBRARIES[k] || []; });
-  const blob = new Blob([JSON.stringify(saveObj, null, 2)], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `libraries-${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-// Keep old name working for backward compat
-function libExportLessons(){ libExportAll(); }
-
-function libImportAllTrigger(){ document.getElementById('lib-import-all')?.click(); }
-function libImportTrigger(){ libImportAllTrigger(); } // backward compat
-
-function libImportAll(event){
-  const file = event.target.files?.[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const imported = JSON.parse(e.target.result);
-      let totalAdded = 0, totalUpdated = 0;
-
-      // Handle _meta
-      if(imported._meta && typeof imported._meta === 'object'){
-        Object.assign(LIBRARIES_META, imported._meta);
-      }
-
-      // Process each library key
-      Object.keys(imported).forEach(key => {
-        if(key === '_meta') return;
-        const mcLessons = Array.isArray(imported[key]) ? imported[key] : [];
-        const valid = mcLessons.filter(l => l && l.title && l.ages && l.subject);
-        if(!valid.length) return;
-
-        if(!LIBRARIES[key]) LIBRARIES[key] = [];
-        let added = 0, updated = 0;
-        valid.forEach(l => {
-          const k = l.title.toLowerCase().trim();
-          const idx = LIBRARIES[key].findIndex(e => e.title.toLowerCase().trim() === k);
-          const entry = { title: l.title, desc: l.desc||'', ages: l.ages, subject: l.subject };
-          if(l.url) entry.url = l.url;
-          if(idx >= 0){ LIBRARIES[key][idx] = entry; updated++; }
-          else { LIBRARIES[key].push(entry); added++; }
-        });
-        totalAdded += added;
-        totalUpdated += updated;
-      });
-
-      // Also support plain array import (old format — assumes minecraft)
-      if(Array.isArray(imported)){
-        const valid = imported.filter(l => l && l.title && l.ages && l.subject);
-        if(valid.length){
-          if(!LIBRARIES.minecraft) LIBRARIES.minecraft = [];
-          valid.forEach(l => {
-            const k = l.title.toLowerCase().trim();
-            const idx = LIBRARIES.minecraft.findIndex(e => e.title.toLowerCase().trim() === k);
-            const entry = { title: l.title, desc: l.desc||'', ages: l.ages, subject: l.subject };
-            if(l.url) entry.url = l.url;
-            if(idx >= 0){ LIBRARIES.minecraft[idx] = entry; totalUpdated++; }
-            else { LIBRARIES.minecraft.push(entry); totalAdded++; }
-          });
-        }
-      }
-
-      saveLibraries();
-      alert(`Imported: ${totalAdded} added, ${totalUpdated} updated`);
-      renderLibraries();
-    } catch(err){
-      alert('Import failed: ' + err.message);
-    }
-  };
-  reader.readAsText(file);
-  event.target.value = '';
-}
-
-// Keep old name working
-function libImportLessons(event){ libImportAll(event); }
-
-// ========== LIBRARIES PANEL RENDERER ==========
-
-function renderLibraries(){
-  const container = document.getElementById('lib-sections');
-  if(!container) return;
-
-  const keys = getLibraryKeys();
-  const ageOptions = `<option value="">Age rating…</option>
-    <option value="5+">5+ (all year levels)</option>
-    <option value="8+">8+ (Year 3+)</option>
-    <option value="10+">10+ (Year 5+)</option>
-    <option value="11+">11+ (Year 6 only)</option>`;
-
-  container.innerHTML = keys.map(key => {
-    const meta = getLibraryMeta(key);
-    const lessons = getLibraryLessons(key);
-    const isBuiltIn = key === 'minecraft' || key === 'microbit';
-    const subjects = meta.subjects || COMMON_SUBJECTS;
-    const subjectOptions = subjects.map(s => `<option value="${esc(s)}">${esc(s.split('&').map(p=>p.trim().charAt(0).toUpperCase()+p.trim().slice(1).toLowerCase()).join(' & '))}</option>`).join('');
-
-    // Group lessons by subject
-    const bySubject = {};
-    lessons.forEach(l => {
-      const s = l.subject || 'OTHER';
-      if(!bySubject[s]) bySubject[s] = [];
-      bySubject[s].push(l);
-    });
-
-    const lessonsHtml = !lessons.length
-      ? '<div style="color:var(--dim);font-size:13px;padding:12px 0">No lessons saved yet. Add your first above, or import a libraries.json file.</div>'
-      : Object.entries(bySubject).map(([subj, list]) => `
-        <div style="margin-bottom:18px">
-          <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:8px">${esc(subj)} <span style="color:var(--dim);font-weight:600">(${list.length})</span></div>
-          ${list.map(l => `
-            <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:10px">
-              <div style="flex:1;min-width:0">
-                <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
-                  <span style="font-size:14px;font-weight:700;color:var(--text)">${esc(l.title)}</span>
-                  <span style="font-size:10px;padding:2px 7px;border-radius:20px;background:rgba(197,232,74,0.12);color:var(--lime);font-weight:700">ages ${esc(l.ages)}</span>
-                </div>
-                ${l.desc ? `<div style="font-size:12px;color:var(--dim);line-height:1.5">${esc(l.desc)}</div>` : ''}
-                ${l.url ? `<a href="${esc(l.url)}" target="_blank" style="font-size:11px;color:var(--mint);text-decoration:none;word-break:break-all">${esc(l.url)}</a>` : ''}
-              </div>
-              <div style="display:flex;gap:6px;flex-shrink:0">
-                <button class="btn-sm" onclick="libEditLesson('${esc(key)}','${esc(l.title).replace(/'/g,"\\'")}')">Edit</button>
-                <button class="btn-sm" onclick="libDeleteLesson('${esc(key)}','${esc(l.title).replace(/'/g,"\\'")}')" style="color:#FF8080">Delete</button>
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      `).join('');
-
-    return `
-    <div class="card" style="padding:0;overflow:hidden;margin-bottom:14px">
-      <div onclick="libToggleSection('${esc(key)}')" style="display:flex;align-items:center;gap:10px;padding:18px 24px;cursor:pointer;user-select:none;background:var(--card)">
-        <span style="font-size:18px">${meta.icon}</span>
-        <span style="font-size:15px;font-weight:800;color:var(--text);flex:1">${esc(meta.name)}</span>
-        <span style="font-size:11px;color:var(--dim);font-weight:700">${lessons.length} lesson${lessons.length!==1?'s':''}</span>
-        ${!isBuiltIn ? `<button class="btn-sm" onclick="event.stopPropagation();deleteLibrary('${esc(key)}')" style="color:#FF8080;font-size:11px;padding:3px 10px">Delete Library</button>` : ''}
-        <span id="lib-${esc(key)}-arrow" style="font-size:14px;color:var(--dim);transition:transform .2s">▼</span>
-      </div>
-      <div id="lib-${esc(key)}-body" style="display:none;padding:0 24px 20px;border-top:1px solid var(--border)">
-        <p style="font-size:13px;color:var(--dim);margin:14px 0;line-height:1.6">${esc(meta.urlHint || 'Add lessons to this library.')}${meta.urlPattern ? ` (<a href="https://${esc(meta.urlPattern)}" target="_blank" style="color:var(--lime)">${esc(meta.urlPattern)}</a>)` : ''}</p>
-
-        <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:10px">
-          <input id="lib-${esc(key)}-url" class="inp" placeholder="Lesson URL (optional)" style="margin-bottom:0;font-size:13px" oninput="libExtractFromUrl('${esc(key)}')">
-          <button class="btn-sm" onclick="libClearForm('${esc(key)}')" style="white-space:nowrap">Clear</button>
-        </div>
-
-        <div style="display:grid;grid-template-columns:2fr 1fr 1.5fr;gap:8px;margin-bottom:10px">
-          <input id="lib-${esc(key)}-title" class="inp" placeholder="Lesson title" style="margin-bottom:0;font-size:13px">
-          <select id="lib-${esc(key)}-ages" class="inp" style="margin-bottom:0;font-size:13px">
-            ${ageOptions}
-          </select>
-          <select id="lib-${esc(key)}-subject" class="inp" style="margin-bottom:0;font-size:13px">
-            <option value="">Subject…</option>
-            ${subjectOptions}
-          </select>
-        </div>
-
-        <input id="lib-${esc(key)}-desc" class="inp" placeholder="Short description" style="margin-bottom:10px;font-size:13px">
-
-        <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px">
-          <button class="btn-pri" onclick="libAddLesson('${esc(key)}')" style="font-size:13px;padding:10px 16px">+ Add lesson</button>
-          <span id="lib-${esc(key)}-status" style="font-size:12px;font-weight:600"></span>
-        </div>
-
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-top:12px;border-top:1px solid var(--border)">
-          <span style="font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;letter-spacing:1.5px">Saved lessons · ${lessons.length}</span>
-          <div style="flex:1"></div>
-        </div>
-        ${lessonsHtml}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-// ========== END LIBRARIES PANEL ==========
-
-// Build KNOWN_PLATFORMS dynamically — includes all user-created libraries with lessons
-function buildKnownPlatforms(){
-  const platforms = [
-    { match: /minecraft/i, name: 'Minecraft Education', key: 'minecraft',
-      get context(){ return buildLibraryContext('minecraft'); } },
-    { match: /microbit\.org|micro.?bit/i, name: 'Micro:bit', key: 'microbit',
-      get context(){ return buildLibraryContext('microbit'); } },
-    { match: /wise discussion|schoolbox.*discussion|schoolbox.*chatbot|ai discussion chatbot|discussion chatbot/i, name: 'Wise Discussion Chatbots',
-      context: WISE_DISCUSSION_CHATBOTS_CONTEXT },
-    { match: /code\.org/i, name: 'Code.org',
-      context: 'You have strong knowledge of Code.org courses and lesson plans. Reference specific lessons, courses and activities from Code.org when proposing changes.' },
-    { match: /scratch\.mit|scratchfoundation/i, name: 'Scratch',
-      context: 'You know the Scratch educator resources and lesson library. Reference specific Scratch projects and activities when proposing changes.' },
-    { match: /tinkercad/i, name: 'Tinkercad',
-      context: 'You know the Tinkercad lesson library for 3D design and circuits. Reference specific Tinkercad lessons when proposing changes.' },
-    { match: /commonsense/i, name: 'Common Sense Education',
-      context: 'You know the Common Sense Education digital citizenship curriculum. Reference specific lessons when proposing changes.' },
-    { match: /canva\.com\/edu/i, name: 'Canva for Education',
-      context: 'You know the Canva for Education lesson templates and resources.' },
-  ];
-
-  // Add user-created libraries that have a URL pattern and lessons
-  getLibraryKeys().forEach(key => {
-    if(key === 'minecraft' || key === 'microbit') return; // already included
-    const meta = getLibraryMeta(key);
-    const lessons = getLibraryLessons(key);
-    if(!meta.urlPattern || !lessons.length) return;
-    // Check if already covered by a built-in pattern
-    const alreadyCovered = platforms.some(p => p.match.test(meta.urlPattern));
-    if(alreadyCovered) return;
-    const pattern = meta.urlPattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    platforms.push({
-      match: new RegExp(pattern, 'i'),
-      name: meta.name,
-      key,
-      get context(){ return buildLibraryContext(key); }
-    });
-  });
-
-  return platforms;
-}
-
-// Use a getter so it always reflects current library state
-const KNOWN_PLATFORMS_STATIC = []; // placeholder for direct array references
-Object.defineProperty(window, 'KNOWN_PLATFORMS', {
-  get(){ return buildKnownPlatforms(); },
-  configurable: true
-});
-
-// ========== BULK AI EDIT — CHATBOT INTERFACE ==========
-
-let bulkChatHistory = []; // [{role:'user'|'assistant', content:'...', options?:[{label,value}], selected?:string}]
-let bulkChatState = 'idle'; // idle | clarifying | analysing | done
-let bulkChatContext = {}; // stores resolved instruction, platform, etc.
-let bulkChatMemory = []; // full multi-turn memory for GPT: [{role, content}]
-let bulkInsightsComputed = false;
-
-// Compute proactive insights about the library state
-function computeBulkInsights(){
-  const complete = DATA.filter(e => e.audited && getSugs(e).filter(isRealSug).length >= 6);
-  if(!complete.length) return [];
-
-  // Tool frequency across library (normalised)
   const freq = {};
-  complete.forEach(e => {
+  DATA.forEach(e => {
     getSugs(e).forEach(s => {
       const t = normaliseToolName((s && s.t ? s.t.trim() : ''));
-      if(!t) return;
-      freq[t] = (freq[t] || 0) + 1;
+      if(t) freq[t] = (freq[t] || 0) + 1;
     });
   });
-  const sorted = Object.entries(freq).sort((a,b) => b[1] - a[1]);
-  const totalSlots = complete.length * 6;
 
-  const insights = [];
+  // Age-appropriate tools for this unit's year level. Exclude the current tool and other tools already used in this unit.
+  const ageAppropriate = getAgeAppropriateTools(entry.yl).filter(t => toolKey(t) !== toolKey(currentTool));
+  const candidateTools = getRegenerateCandidateTools_(entry, currentSug, sugIdx, freq);
+  const candidateKeys = new Set(candidateTools.map(toolKey).filter(Boolean));
+  const podcastAllowed = regenAllowsPodcastTool_(entry, currentSug);
+  const constraintBlock = buildToolConstraints(entry.yl);
 
-  // 1. Overused tool
-  if(sorted.length && sorted[0][1] > 13){
-    const [tool, count] = sorted[0];
-    const pct = Math.round((count / totalSlots) * 100);
-    insights.push({
-      icon: '⚠️',
-      title: `${tool} is overused`,
-      body: `Appears in <strong>${count} suggestion slots</strong> (${pct}% of the library). Would you like me to find places to diversify?`,
-      action: `Diversify ${tool} suggestions across the library`
-    });
-  }
+  const overused = Object.entries(freq).filter(([t,c]) => c > 13).map(([t])=>t);
+  const neverUsed = candidateTools.filter(t => !freq[normaliseToolName(t)]).slice(0, 6);
 
-  // 2. Minecraft underuse if library has entries
-  if(typeof LIBRARIES !== 'undefined' && LIBRARIES.minecraft && LIBRARIES.minecraft.length > 20){
-    const mcCount = freq['Minecraft Education'] || 0;
-    if(mcCount < 8){
-      insights.push({
-        icon: '⛏️',
-        title: `Minecraft Education underused`,
-        body: `You've curated <strong>${LIBRARIES.minecraft.length} lessons</strong> in your Minecraft library but it only appears in <strong>${mcCount} slots</strong>. There may be unused matches.`,
-        action: 'Find opportunities to use Minecraft Education'
-      });
+  const stemInstruction = isStem ? `
+THIS IS SUGGESTION #6 — IT MUST BE A STEM DESIGN CYCLE ACTIVITY using the cycle: Empathise → Define → Ideate → Prototype → Test. Use a hands-on maker/robotics tool that is age-appropriate.` : '';
+
+  const podcastGuard = podcastAllowed ? `
+Podcast/audio tools are allowed for this regeneration because the current unit or activity includes audio, speaking, interview, narration or sound.` : `
+PODCAST GUARD: Do NOT choose Adobe Express Podcasting or Podcast Equipment for this regeneration. The current unit/activity does not specifically call for podcasting, interviews, audio storytelling, narration or sound work.`;
+
+  const prompt = `You are a Digital Learning Coach at Wesley College generating a fresh technology suggestion for an IB PYP unit.
+
+Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`
+Central Idea: "${entry.ci}"`:''}${regenPlannerBlock?`
+Planner context: ${regenPlannerBlock}`:''}Current suggestion being regenerated: ${currentTool}: ${sugDesc(currentSug)}
+Tools already used in this unit (do not repeat): ${others||'none'}
+
+${constraintBlock}
+${stemInstruction}
+${podcastGuard}
+
+HARD RULES:
+- This is a regeneration, not a wording tweak.
+- Do NOT use the current tool again: ${currentTool || '(none)'}.
+- Do NOT duplicate any other tool already used in this unit.
+- Choose exactly ONE tool from this candidate list: ${candidateTools.length ? candidateTools.join(', ') : '(no available candidates)'}.
+- Do NOT choose a tool outside the candidate list.
+- Do NOT default to Adobe Express Podcasting. Only use it when podcast/audio work is explicitly central to the activity.
+
+OVERUSED TOOLS (avoid unless perfect fit — already appears 14+ times across library): ${overused.length ? overused.join(', ') : '(none)'}
+NEVER-USED candidate tools (fresh ideas): ${neverUsed.length ? neverUsed.join(', ') : '(none)'}
+
+Generate ONE fresh suggestion that is genuinely age-appropriate for ${entry.yl} and connects to this unit's theme.
+${SUGGESTION_STYLE}
+
+Return ONLY JSON: {"t":"Tool Name","d":"2-3 vivid sentences connecting to this unit."}`;
+
+  try{
+    if(!candidateTools.length) throw new Error('No available age-appropriate tools left for this unit after excluding repeats and banned tools');
+    let newSug = null;
+    let lastIssue = null;
+    for(let attempt=0; attempt<5; attempt++){
+      let retryNote = '';
+      if(lastIssue === 'same') retryNote = `
+
+RETRY: You used the same tool (${currentTool}). You MUST choose a DIFFERENT tool from this candidate list only: ${candidateTools.join(', ')}.`;
+      else if(lastIssue === 'dupe') retryNote = `
+
+RETRY: Previous response used a tool already in this unit. Pick a DIFFERENT tool from this candidate list only: ${candidateTools.join(', ')}.`;
+      else if(lastIssue === 'age') retryNote = `
+
+RETRY: Previous response proposed a tool NOT age-appropriate for ${entry.yl}. You MUST pick from: ${candidateTools.join(', ')}.`;
+      else if(lastIssue === 'unavailable') retryNote = `
+
+RETRY: Previous response proposed a tool Wesley does NOT have. Pick from this candidate list only: ${candidateTools.join(', ')}.`;
+      else if(lastIssue === 'candidate') retryNote = `
+
+RETRY: Previous response chose a tool outside the candidate list. Pick exactly ONE of these tools and no others: ${candidateTools.join(', ')}.`;
+      else if(lastIssue === 'podcast') retryNote = `
+
+RETRY: Do NOT choose Adobe Express Podcasting. This regeneration is not for a podcast, audio interview, narration or sound activity. Pick a different candidate tool: ${candidateTools.join(', ')}.`;
+
+      const raw = await callAI([{role:'user',parts:[{text:prompt+retryNote}]}], null, OPENAI_FAST_MODEL);
+      const clean = raw.replace(/```json|```/g,'').trim();
+      const si = clean.indexOf('{'), ei = clean.lastIndexOf('}');
+      if(si===-1||ei===-1) throw new Error('No JSON');
+      const parsed = JSON.parse(clean.slice(si, ei+1));
+      if(!parsed.t||!parsed.d) throw new Error('Invalid');
+
+      if(toolKey(parsed.t) === toolKey(currentTool)){
+        lastIssue = 'same';
+        continue;
+      }
+      if(wouldDupeInEntry(entry, parsed.t, sugIdx)){
+        lastIssue = 'dupe';
+        continue;
+      }
+      const toolLower = normaliseToolName(parsed.t).toLowerCase();
+      if(NOT_AVAILABLE_AT_WESLEY.some(na => na.toLowerCase() === toolLower)){
+        lastIssue = 'unavailable';
+        continue;
+      }
+      if(!isToolAgeAppropriate(parsed.t, entry.yl)){
+        lastIssue = 'age';
+        continue;
+      }
+      if(!candidateKeys.has(toolKey(parsed.t))){
+        lastIssue = 'candidate';
+        continue;
+      }
+      if(!podcastAllowed && /adobe express podcasting|podcast equipment/i.test(normaliseToolName(parsed.t))){
+        lastIssue = 'podcast';
+        continue;
+      }
+      newSug = parsed;
+      break;
     }
-  }
-
-  // 3. Micro:bit underuse if library has entries
-  if(typeof LIBRARIES !== 'undefined' && LIBRARIES.microbit && LIBRARIES.microbit.length > 10){
-    const mbCount = freq['Micro:bit'] || 0;
-    if(mbCount < 5){
-      insights.push({
-        icon: '🔌',
-        title: `Micro:bit underused`,
-        body: `You have <strong>${LIBRARIES.microbit.length} Micro:bit lessons</strong> curated but only <strong>${mbCount} slots</strong> use them. Let me scan for matches.`,
-        action: 'Find opportunities to use Micro:bit'
-      });
+    if(!newSug){
+      const problem = lastIssue === 'same' ? 'AI kept repeating the same tool' :
+                      lastIssue === 'age' ? 'AI kept proposing tools not age-appropriate' :
+                      lastIssue === 'dupe' ? 'AI kept proposing tools already in this unit' :
+                      lastIssue === 'unavailable' ? 'AI kept proposing tools Wesley does not have' :
+                      lastIssue === 'candidate' ? 'AI kept choosing tools outside the candidate list' :
+                      lastIssue === 'podcast' ? 'AI kept defaulting to Adobe Express Podcasting for a non-audio activity' :
+                      'AI failed after 5 attempts';
+      throw new Error(`${problem} — try 💬 feedback with a specific tool name`);
     }
-  }
 
-  // 4. Usage vs suggestion mismatch (requires live analytics)
-  if(window._usedRowsCache){
-    const usedRows = window._usedRowsCache.slice(1).filter(r => r && r[5]);
-    const usedFreq = {};
-    usedRows.forEach(r => {
-      const t = normaliseToolName(String(r[5]||'').trim());
-      if(t) usedFreq[t] = (usedFreq[t]||0) + 1;
-    });
-    // Find "dead" tools: suggested 5+ times, used 0 times
-    const dead = Object.entries(freq).filter(([t, c]) => c >= 5 && !(usedFreq[t])).sort((a,b)=>b[1]-a[1]);
-    if(dead.length){
-      const [tool, count] = dead[0];
-      insights.push({
-        icon: '💤',
-        title: `${tool} suggestions are ignored`,
-        body: `Suggested <strong>${count}×</strong> but teachers have <strong>never</strong> clicked "I Used This" for it. Consider replacing or improving these.`,
-        action: `Replace ${tool} suggestions with more appealing alternatives`
-      });
-    }
+    // Safety-first: do not apply or save immediately. Show before/after for approval.
+    window._snapshotReason = `Before regenerating ${currentTool || 'suggestion'} in ${entry.yl} ${entry.th}`;
+    showChangesPopup([{ entryIdx, sugIdx, t:newSug.t, d:newSug.d, reason:'Single suggestion regeneration from Browse Library' }]);
+    setStatus('Regenerated draft ready for review');
+  }catch(e){
+    setStatus('Regen failed: '+e.message, 'error');
+  }finally{
+    stopProgress();
+    if(btn){ btn.textContent='↻'; btn.disabled=false; }
   }
+}
 
-  // 5. Weak/generic suggestions scan
-  let weakCount = 0;
-  const weakPatterns = [
-    /research online/i, /look up/i, /google (this|it)/i,
-    /type (your|the)/i, /write (about|up)/i,
-    /use (the|a) (app|tool|program)/i,
-    /simply|basic[ae]lly|just to/i
+function openFeedbackChat(uid, entryIdx, sugIdx){
+  document.querySelectorAll('.sug-chat-window').forEach(el=>{
+    if(el.id !== uid+'-chat') el.remove();
+  });
+  const existing = document.getElementById(uid+'-chat');
+  if(existing){ existing.remove(); delete window['_fbmem_'+uid]; return; }
+
+  // Reset conversation memory for a fresh panel open
+  delete window['_fbmem_'+uid];
+
+  const entry = DATA[entryIdx];
+  const sug = getSugs(entry)[sugIdx];
+  const sugEl = document.getElementById(uid);
+  if(!sugEl) return;
+
+  const isStem = sugIdx === 5;
+  const ciChip = entry.ci ? `<span class="fb-ci-chip" title="${esc(entry.ci)}">💡 ${esc(entry.ci)}</span>` : '';
+
+  // Quick-action chips — most common edit intents, one tap to fire
+  const chips = isStem ? [
+    { label: '🔧 Strengthen Design Cycle', prompt: 'Make the Design Cycle phases (Empathise → Define → Ideate → Prototype → Test) more explicit and concrete' },
+    { label: '✋ More hands-on', prompt: 'Make this activity more hands-on with physical materials and prototyping' },
+    { label: '🎯 Connect to CI', prompt: 'Connect this more explicitly to the central idea' },
+    { label: '🔄 Different tool', prompt: 'Suggest the Design Cycle activity using a different age-appropriate maker or robotics tool' },
+    { label: '🌱 Try underused', prompt: 'Reframe the Design Cycle using an underused age-appropriate maker tool' },
+    { label: '🤝 Group', prompt: 'Reframe this as a small-group collaborative Design Cycle activity' }
+  ] : [
+    { label: '✋ Hands-on', prompt: 'Make this activity more hands-on and physical for students' },
+    { label: '🎯 Connect to CI', prompt: 'Connect this more explicitly to the central idea' },
+    { label: '🔄 New tool', prompt: 'Suggest a different age-appropriate tool for this activity' },
+    { label: '✨ More vivid', prompt: 'Make the description more vivid and specific — replace generic language with concrete student actions' },
+    { label: '🌱 Try underused', prompt: 'Reframe this using an underused age-appropriate tool that fits the unit' },
+    { label: '🤝 Group', prompt: 'Reframe this as a collaborative small-group activity' }
   ];
+
+  const chipsHtml = chips.map(c =>
+    `<button class="fb-chip" onclick="feedbackQuickAction('${uid}',${entryIdx},${sugIdx},${JSON.stringify(c.prompt).replace(/"/g,'&quot;')})">${esc(c.label)}</button>`
+  ).join('');
+
+  const placeholderText = "e.g. make it hands-on · use Sphero BOLT · connect to provocation · simpler · group · change 'students' to 'learners'…";
+
+  const panel = document.createElement('div');
+  panel.id = uid+'-chat';
+  panel.className = 'sug-chat-window';
+  panel.style.cssText = 'background:#0a0f0a;border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;overflow:hidden;margin-bottom:12px';
+  panel.innerHTML = `
+    <div style="padding:10px 16px;background:var(--card2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <span style="font-size:11px;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:.5px">Edit Suggestion</span>
+      <span style="font-size:11px;color:var(--gold);font-weight:600">${esc(sugTool(sug))}</span>
+      ${ciChip}
+      <div style="flex:1"></div>
+      <button onclick="document.getElementById('${uid}-chat').remove();delete window['_fbmem_${uid}']" style="background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:16px;padding:0">✕</button>
+    </div>
+    <div style="padding:10px 16px;background:#0a0f0a;border-bottom:1px solid var(--border)">
+      <div style="font-size:10px;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Quick changes</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">${chipsHtml}</div>
+    </div>
+    <div style="padding:12px 16px;border-top:1px solid var(--border);background:var(--card2)">
+      <div id="${uid}-memhint" style="margin-bottom:8px;display:none"></div>
+      <div style="font-size:11px;color:var(--dim);margin-bottom:8px;line-height:1.5">Type any request — GPT-4.1 Mini understands tool swaps, refinements, direct edits, curriculum ties, and more.</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-sm" onclick="toggleFeedbackVoice('${uid}')" id="${uid}-voice" title="Speak your request (en-AU)" style="padding:8px 10px;flex-shrink:0">🎤</button>
+        <input id="${uid}-input" class="inp" placeholder="${esc(placeholderText)}" style="flex:1;margin-bottom:0;font-size:13px" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();applySugFeedbackDirect('${uid}',${entryIdx},${sugIdx})}">
+        <button class="btn-pri" id="${uid}-send" onclick="applySugFeedbackDirect('${uid}',${entryIdx},${sugIdx})" style="padding:10px 16px;font-size:13px;white-space:nowrap">Apply →</button>
+      </div>
+      <div id="${uid}-result" style="margin-top:10px"></div>
+    </div>`;
+
+  sugEl.after(panel);
+  panel.querySelector(`#${uid}-input`).focus();
+}
+
+async function applySugFeedbackDirect(uid, entryIdx, sugIdx){
+  const input = document.getElementById(uid+'-input');
+  const sendBtn = document.getElementById(uid+'-send');
+  const resultEl = document.getElementById(uid+'-result');
+  const memHintEl = document.getElementById(uid+'-memhint');
+  const instruction = input?.value.trim();
+  if(!instruction) return;
+
+  const entry = DATA[entryIdx];
+  const sug = getSugs(entry)[sugIdx];
+  const others = getSugs(entry).filter((_,i)=>i!==sugIdx).map(s=>sugTool(s)).join(', ');
+  const isStem = sugIdx === 5;
+  const currentTool = sugTool(sug);
+  const currentDesc = sugDesc(sug);
+
+  // ===== Conversation memory — multi-turn refinements =====
+  const memKey = '_fbmem_' + uid;
+  if(!window[memKey]) window[memKey] = { instructions: [] };
+  window[memKey].instructions.push(instruction);
+  const allInstructions = window[memKey].instructions.slice();
+  const priorInstructions = allInstructions.slice(0, -1);
+
+  // Update memory hint UI
+  if(memHintEl){
+    if(priorInstructions.length){
+      const memList = priorInstructions.map((p,i)=>`${i+1}. "${esc(p.length>50?p.slice(0,50)+'…':p)}"`).join(' &nbsp;·&nbsp; ');
+      memHintEl.style.display = 'block';
+      memHintEl.className = 'fb-mem-hint';
+      memHintEl.innerHTML = `<span style="font-weight:700">↻ Refining</span> <span style="opacity:.85">${memList}</span> <button onclick="resetFeedbackMemory('${uid}')" style="margin-left:auto;background:transparent;border:none;color:var(--purple);cursor:pointer;font-size:10px;font-weight:700;text-decoration:underline">reset</button>`;
+    } else {
+      memHintEl.style.display = 'none';
+    }
+  }
+
+  sendBtn.disabled = true;
+  sendBtn.textContent = 'Scanning planner\u2026';
+  startProgress();
+  resultEl.innerHTML = '';
+  if(typeof ensureLibrariesLoadedForAI === 'function') await ensureLibrariesLoadedForAI();
+
+  // Fetch rich planner context from GAS (reads markdown directly) — cached per session
+  let richPlannerCtx = entry.plannerContextRich || '';
+  if (!richPlannerCtx) {
+    try {
+      richPlannerCtx = await fetchPlannerContext(entry);
+    } catch (err) {
+      console.warn('Planner context fetch failed, using plannerText fallback:', err.message);
+    }
+  }
+  const plannerBlock = richPlannerCtx
+    ? richPlannerCtx.slice(0, 8000)
+    : (entry.plannerText ? entry.plannerText.slice(0, 1500) : '');
+
+  sendBtn.textContent = 'Thinking\u2026';
+
+  // Age & availability constraints
+  const ageAppropriate = getAgeAppropriateTools(entry.yl);
+  const constraintBlock = buildToolConstraints(entry.yl);
+
+  // Platform detection from the latest instruction
+  const { platform, contextBlock: platformContext } = detectPlatformContext(instruction, entry.yl);
+
+  // Overused / underused awareness
+  const freq = {};
   DATA.forEach(e => {
-    if(!e.audited) return;
     getSugs(e).forEach(s => {
-      const d = (s && s.d ? s.d : '').toLowerCase();
-      if(d.length < 60) { weakCount++; return; }
-      if(weakPatterns.some(p => p.test(d))) weakCount++;
+      const t = normaliseToolName((s && s.t ? s.t.trim() : ''));
+      if(t) freq[t] = (freq[t] || 0) + 1;
     });
   });
-  if(weakCount >= 5){
-    insights.push({
-      icon: '🔎',
-      title: `${weakCount} weak suggestions detected`,
-      body: `Descriptions that are very short (<60 chars), generic ("research online", "just use the app"), or vague. These rarely get used by teachers.`,
-      action: 'Scan the library for weak or generic suggestions and propose stronger replacements'
+  const overused = Object.entries(freq).filter(([t,c]) => c > 13).map(([t])=>t);
+  const ageAppropriateLower = ageAppropriate.map(t=>t.toLowerCase());
+  const underused = Object.entries(freq)
+    .filter(([t,c]) => c <= 2 && ageAppropriateLower.includes(t.toLowerCase()))
+    .sort((a,b)=>a[1]-b[1])
+    .slice(0, 8)
+    .map(([t,c])=>`${t} (${c}x)`);
+
+  const stemInstruction = isStem ? `
+NOTE: This is suggestion #6 — the STEM Design Cycle slot. Every proposal must frame a hands-on Empathise → Define → Ideate → Prototype → Test activity using an age-appropriate maker/robotics tool.` : '';
+
+  // Lines of inquiry — useful for CURRICULUM_TIE intent
+  const loiBlock = entry.lo ? `\nLines of Inquiry: ${entry.lo}` : '';
+
+  // Conversation memory injection — when user refines, prior instructions still apply
+  const conversationBlock = priorInstructions.length
+    ? `\nCONVERSATION CONTEXT (multi-turn refinement — apply ALL of these together):
+${priorInstructions.map((p,i)=>`  Earlier: "${p}"`).join('\n')}
+  LATEST: "${instruction}"
+
+The 3 options must satisfy the LATEST instruction AND every earlier instruction in this conversation.`
+    : `\nTeacher's instruction: "${instruction}"`;
+
+  const prompt = `You are a Digital Learning Coach at Wesley College improving a technology suggestion for an IB PYP unit.
+
+Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${loiBlock}${plannerBlock?`\nPlanner context: ${plannerBlock}`:''}
+Current suggestion tool: ${currentTool}
+Current suggestion description: "${currentDesc}"
+Other tools already in this unit (do not repeat): ${others||'none'}
+${stemInstruction}
+
+${constraintBlock}
+${platformContext}
+
+OVERUSED TOOLS across library (avoid unless teacher specifically names them): ${overused.length ? overused.join(', ') : '(none)'}
+UNDERUSED age-appropriate tools (prefer these when suitable): ${underused.length ? underused.join(', ') : '(none)'}
+
+TOOL FIELD RULE:
+- Prefer one clear tool in the "t" field.
+- If the teacher explicitly asks for an app smash, you may use "Tool A + Tool B" only when BOTH tools are age-appropriate and neither is banned.
+- Never include a banned or unavailable tool, even as part of an app smash.
+${conversationBlock}
+
+INTENT DETECTION (auto-detect from the teacher's instruction and respond accordingly):
+
+1. DESCRIPTION_REFINE — teacher wants to change style, angle, or emphasis ("more hands-on", "shorter", "more vivid", "more concrete", "less generic", "add scaffolding"). Keep the CURRENT tool (${currentTool}). Return 3 different description variants of the activity, all using ${currentTool}, each taking a distinct angle on the refinement.
+
+2. TOOL_SWAP — teacher names a specific tool ("use Canva", "swap for Sphero BOLT", "change to Minecraft"). Use ONLY that tool in all 3 options, with 3 different activity ideas. If the named tool is not age-appropriate or not available at Wesley, return 3 close alternatives and politely note the issue in the description of option 1.
+
+3. TOOL_BROWSE — teacher asks for alternatives without naming one ("different tool", "something else", "what else", "any alternative", "try something new"). Return 3 options each using a DIFFERENT age-appropriate tool not already in this entry. Prefer underused tools.
+
+4. DIRECT_EDIT — teacher gives literal text instruction ("change 'X' to 'Y'", "replace X with Y", "remove the bit about X", "add a sentence about Y", "use 'learners' instead of 'students'"). Apply the edit literally to the current description. Option 1 should be the closest exact edit; options 2 and 3 can be lightly polished variants. All keep the same tool and same overall activity unless the teacher explicitly names a new tool.
+
+5. STEM_REFRAME — teacher asks for hands-on Design Cycle / maker / robotics activity. Restructure the activity as Empathise → Define → Ideate → Prototype → Test using an age-appropriate maker/robotics tool. All 3 options should follow the Design Cycle.
+
+6. CURRICULUM_TIE — teacher asks to connect to central idea, lines of inquiry, provocation, or transdisciplinary theme. Reference the relevant curriculum element explicitly in each option using a direct phrase from the central idea or lines of inquiry above. Tool can stay the same or change — your choice based on best fit.
+
+7. DIFFICULTY_ADJUST — "simpler", "easier", "more rigorous", "more challenging", "more scaffolding", "extension for advanced students". Keep the tool unless teacher names a new one; adjust complexity, vocabulary, and scaffolding in the description.
+
+8. OUTPUT_TYPE — teacher specifies an artefact ("produce a video", "create a podcast", "make a poster", "build a model", "design a poster"). Reframe the activity to produce that specific output, choosing or keeping a tool that supports it.
+
+9. SOCIAL_MODE — "group", "individual", "pairs", "collaborative", "small-group", "whole-class". Reframe collaboration structure of the activity.
+
+10. TIME_BOUND — "shorter", "single lesson", "extend over a week", "5-minute warm-up", "full unit". Adjust scope and duration to fit.
+
+If MULTIPLE intents apply (e.g. "use Sphero BOLT and make it more hands-on"), satisfy all of them.
+If intent is AMBIGUOUS or UNCLEAR, default to TOOL_BROWSE and return 3 different age-appropriate tool options.
+
+NEGATIVE INSTRUCTIONS:
+If the teacher says "do not", "don't", "avoid", "not X", "but not X", or "without X", exclude that tool, wording, or approach completely from all 3 options.
+
+GENERAL RULES:
+- Every tool must be in the age-appropriate list above.
+- Every description must connect specifically to this unit's content — nothing generic.
+- Each of the 3 options must be MEANINGFULLY different from the others — different tools, OR different angles on the same tool.
+${SUGGESTION_STYLE}
+
+Return ONLY a JSON array of exactly 3 suggestions:
+[{"t":"Tool Name","d":"2-3 vivid sentences."},{"t":"Tool Name","d":"2-3 vivid sentences."},{"t":"Tool Name","d":"2-3 vivid sentences."}]`;
+
+  try{
+    const raw = await callAI([{role:'user',parts:[{text:prompt}]}], null, OPENAI_FAST_MODEL);
+    const clean = raw.replace(/```json|```/g,'').trim();
+    const si = clean.indexOf('['), ei = clean.lastIndexOf(']');
+    if(si===-1||ei===-1) throw new Error('No suggestions returned');
+    const rawSugs = JSON.parse(clean.slice(si, ei+1));
+    if(!rawSugs.length) throw new Error('Empty response');
+
+    // Filter out: duplicates, unavailable tools, age-inappropriate tools
+    const filtered = [];
+    const rejected = [];
+    rawSugs.forEach(s => {
+      if(!s || !s.t) return;
+      if(wouldDupeToolProposalInEntry(entry, s.t, sugIdx)){ rejected.push({t:s.t, reason:'already in this unit'}); return; }
+      if(toolContainsForbiddenKeyword(s.t)){ rejected.push({t:s.t, reason:'forbidden tool'}); return; }
+      if(toolViolatesInventoryBan(s.t)){ rejected.push({t:s.t, reason:'not available at Wesley'}); return; }
+      if(!isToolAgeAppropriate(s.t, entry.yl)){
+        rejected.push({t:s.t, reason:`not age-appropriate for ${entry.yl}`}); return;
+      }
+      filtered.push(s);
     });
+
+    if(!filtered.length){
+      const rejectedNote = rejected.length
+        ? `All ${rejected.length} options were rejected:\n${rejected.map(r=>`• ${r.t} (${r.reason})`).join('\n')}`
+        : 'All options duplicate tools already in this unit';
+      throw new Error(rejectedNote + '\n\nTry rephrasing — e.g. name a different tool or ask for "any age-appropriate alternative".');
+    }
+
+    window['_fbsugs_'+uid] = filtered;
+
+    let rejectedBanner = '';
+    if(rejected.length){
+      rejectedBanner = `<div style="padding:8px 12px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:8px;margin-bottom:8px;font-size:11px;color:var(--gold);line-height:1.5">
+        <strong>⚠ Filtered ${rejected.length} option${rejected.length!==1?'s':''}:</strong> ${rejected.map(r => `${esc(r.t)} (${r.reason})`).join(' · ')}
+      </div>`;
+    }
+
+    resultEl.innerHTML = rejectedBanner + filtered.map((s,i) => `
+      <div style="padding:10px 14px;background:#0a1a0a;border:1px solid #1e3a1e;border-radius:8px;margin-bottom:8px">
+        <div style="display:flex;align-items:flex-start;gap:8px">
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:700;color:var(--lime);margin-bottom:2px">${esc(s.t)}</div>
+            <div style="font-size:12px;color:#aaa;line-height:1.5">${esc(s.d)}</div>
+          </div>
+          <button onclick="confirmSugFeedback(${entryIdx},${sugIdx},'${uid}',${i})" style="flex-shrink:0;padding:7px 14px;background:var(--lime);color:#111;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer">Apply</button>
+        </div>
+      </div>`).join('') +
+      `<div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap">
+        <button onclick="feedbackGetMore('${uid}',${entryIdx},${sugIdx})" style="padding:6px 12px;background:transparent;border:1px solid var(--border);color:var(--lime);border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Get 3 fresh options keeping the same context">🔄 More options</button>
+        <button onclick="resetFeedbackMemory('${uid}')" style="padding:6px 12px;background:transparent;border:1px solid var(--border);color:var(--dim);border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear conversation context and start fresh">↻ Reset</button>
+        <button onclick="document.getElementById('${uid}-result').innerHTML='';document.getElementById('${uid}-input').value=''" style="padding:6px 12px;background:transparent;border:1px solid var(--border);color:var(--dim);border-radius:8px;font-weight:600;font-size:11px;cursor:pointer">Clear</button>
+      </div>`;
+
+    // Clear input ready for next refinement
+    if(input) input.value = '';
+
+  }catch(e){
+    const isParseError = e.message.includes('JSON') || e.message.includes('No suggestions') || e.message.includes('Empty');
+    const msg = isParseError
+      ? 'AI returned an unexpected format. Try being more specific, e.g. "change the tool to Canva" or "make this about the provocation activity".'
+      : e.message.replace(/\n/g, '<br>');
+    resultEl.innerHTML = `<div style="font-size:12px;color:#f87171;line-height:1.5">\u2717 ${msg}</div>`;
+    // Roll back this turn from memory since it failed
+    if(window[memKey] && window[memKey].instructions.length){
+      window[memKey].instructions.pop();
+    }
   }
-
-  return insights.slice(0, 4);
+  stopProgress();
+  sendBtn.disabled = false;
+  sendBtn.textContent = 'Apply \u2192';
 }
 
-function renderBulkWelcome(){
-  const container = document.getElementById('bulk-chat-messages');
-  if(!container) return;
-  const welcome = document.getElementById('bulk-chat-welcome');
-  if(!welcome) return;
+// ===== FEEDBACK HELPERS — quick chips, voice, more options, memory reset =====
 
-  const insights = computeBulkInsights();
-  const totalEntries = DATA.filter(e => e.audited).length;
-  const completeEntries = DATA.filter(e => e.audited && getSugs(e).filter(isRealSug).length >= 6).length;
-
-  let html = `<div class="chat-bubble">👋 Hi! I've scanned your library — <strong>${completeEntries} of ${totalEntries}</strong> entries are complete.`;
-
-  if(insights.length){
-    html += `\n\nHere's what I noticed:</div>`;
-    html += `<div style="margin-top:10px">`;
-    insights.forEach(ins => {
-      html += `<div class="insight-card"><div style="display:flex;align-items:flex-start;gap:10px"><span class="insight-icon">${ins.icon}</span><div style="flex:1"><div class="insight-title">${ins.title}</div><div class="insight-body">${ins.body}</div><span class="insight-action" onclick="bulkChatQuickStart('${ins.action.replace(/'/g,"\\'")}')">→ ${esc(ins.action)}</span></div></div></div>`;
-    });
-    html += `</div>`;
-    html += `<div class="chat-bubble" style="margin-top:10px">Or ask me anything — "Find X opportunities", "Replace Y with Z", "Scan for weak suggestions", etc.</div>`;
-  } else {
-    html += `\n\nYour library looks well-balanced! Try:</div>`;
-    html += `<div style="margin-top:10px"><div class="insight-card"><div style="display:flex;align-items:flex-start;gap:10px"><span class="insight-icon">💭</span><div style="flex:1"><div class="insight-title">Explore with "what if"</div><div class="insight-body">Ask hypothetical questions like <em>"What if I banned Book Creator?"</em> — I'll simulate the impact without changing anything.</div></div></div></div>`;
-  }
-
-  welcome.innerHTML = html;
-  bulkInsightsComputed = true;
+function feedbackQuickAction(uid, entryIdx, sugIdx, prompt){
+  const input = document.getElementById(uid+'-input');
+  if(!input) return;
+  input.value = prompt;
+  // Slight delay so the user sees what's being submitted
+  setTimeout(() => applySugFeedbackDirect(uid, entryIdx, sugIdx), 150);
 }
 
-function bulkChatQuickStart(text){
-  const input = document.getElementById('bulk-chat-input');
-  if(input){ input.value = text; input.focus(); }
-  // Auto-send after a brief pause so user sees what was filled
-  setTimeout(() => bulkChatSend(), 300);
-}
-
-function bulkChatReset(){
-  if(bulkChatState === 'analysing'){
-    if(!confirm('Analysis in progress. Reset anyway?')) return;
-  }
-  bulkChatHistory = [];
-  bulkChatContext = {};
-  bulkChatMemory = [];
-  bulkChatState = 'idle';
-  hideReasoningSteps();
-  renderBulkWelcome();
-  renderBulkChat();
-}
-
-// ========== WHAT IF SIMULATIONS ==========
-async function runWhatIfSimulation(text){
-  const quickMatch = text.match(/what\s*if\s+(.+)/i);
-  const scenario = quickMatch ? quickMatch[1].trim() : text;
-
-  bulkChatAddMessage('assistant', `🔮 Simulating: "${esc(scenario)}"`);
-  showReasoningSteps([
-    { text: 'Reading your hypothesis', status: 'active' },
-    { text: 'Scanning library for affected entries', status: 'pending' },
-    { text: 'Computing ripple effects', status: 'pending' }
-  ]);
-
-  try {
-    updateReasoningStep(0, 'done');
-    updateReasoningStep(1, 'active');
-
-    const freq = {};
-    DATA.forEach(e => {
-      getSugs(e).forEach(s => {
-        const t = normaliseToolName((s && s.t ? s.t.trim() : ''));
-        if(t) freq[t] = (freq[t] || 0) + 1;
-      });
-    });
-    const topTools = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,20).map(([t,c])=>`${t}(${c}x)`).join(', ');
-
-    updateReasoningStep(1, 'done');
-    updateReasoningStep(2, 'active');
-
-    const prompt = `You are a digital-learning data analyst. A coordinator is asking a hypothetical "what if" question about their library of ${DATA.length} IB PYP unit planners.
-
-Current tool distribution: ${topTools}
-
-Scenario: "${scenario}"
-
-Respond with a concise, well-formatted analysis answering the hypothetical. Include:
-1. A one-sentence direct answer
-2. Specific numbers: how many entries / slots would be affected
-3. 2-3 concrete consequences (e.g. which tools would absorb the displaced slots, coverage gaps, age-level impacts)
-4. A practical recommendation
-
-Be concrete. Use <strong> tags for emphasis, <br> for line breaks. Keep under 250 words. Do NOT produce any APPLY_CHANGES block — this is analysis-only.`;
-
-    const response = await callAI(
-      [{role:'user', parts:[{text: prompt}]}],
-      null, OPENAI_FAST_MODEL
-    );
-
-    updateReasoningStep(2, 'done');
-    setTimeout(hideReasoningSteps, 800);
-
-    const clean = response.replace(/```[a-z]*\n?/gi, '').replace(/```/g, '').trim();
-    bulkChatAddMessage('assistant', `<div style="padding:4px 0"><div style="font-size:10px;color:var(--purple);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">🔮 Hypothetical analysis</div>${clean}<br><br><em style="font-size:12px;color:var(--dim)">Nothing was changed. Type a non-"what if" request to actually make changes.</em></div>`);
-    bulkChatMemory.push({ role: 'user', content: 'WHAT IF: ' + scenario });
-    bulkChatMemory.push({ role: 'assistant', content: 'Hypothetical analysis: ' + clean.replace(/<[^>]+>/g, '').slice(0, 500) });
-  } catch(e){
-    hideReasoningSteps();
-    bulkChatAddMessage('assistant', `❌ Simulation error: ${e.message}`);
-  }
-}
-
-// ========== VOICE INPUT ==========
-let _voiceRec = null;
-let _voiceActive = false;
-
-function toggleBulkVoice(){
+let _fbVoiceRec = null;
+function toggleFeedbackVoice(uid){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR){
-    alert('Voice input is not supported in this browser. Try Chrome or Edge.');
+    alert('Voice input not supported in this browser. Try Chrome or Edge.');
     return;
   }
-  const btn = document.getElementById('btn-bulk-voice');
-  const input = document.getElementById('bulk-chat-input');
-
-  if(_voiceActive){
-    try { _voiceRec && _voiceRec.stop(); } catch{}
-    _voiceActive = false;
-    if(btn){ btn.textContent = '🎤'; btn.style.background = ''; btn.style.color = ''; btn.style.borderColor = ''; }
+  // Stop any active recognition
+  if(_fbVoiceRec){
+    try { _fbVoiceRec.stop(); } catch{}
+    _fbVoiceRec = null;
     return;
   }
-
-  _voiceRec = new SR();
-  _voiceRec.lang = 'en-AU';
-  _voiceRec.interimResults = true;
-  _voiceRec.continuous = false;
+  const btn = document.getElementById(uid+'-voice');
+  const input = document.getElementById(uid+'-input');
+  _fbVoiceRec = new SR();
+  _fbVoiceRec.lang = 'en-AU';
+  _fbVoiceRec.interimResults = true;
+  _fbVoiceRec.continuous = false;
 
   let finalText = '';
-  _voiceRec.onstart = () => {
-    _voiceActive = true;
+  _fbVoiceRec.onstart = () => {
     if(btn){ btn.textContent = '🛑'; btn.style.background = '#FF6B6B'; btn.style.color = '#FFF'; btn.style.borderColor = '#FF6B6B'; }
-    if(input) input.placeholder = 'Listening…';
   };
-  _voiceRec.onresult = (e) => {
+  _fbVoiceRec.onresult = (e) => {
     let interim = '';
     for(let i = e.resultIndex; i < e.results.length; i++){
       const transcript = e.results[i][0].transcript;
@@ -2399,1024 +1348,317 @@ function toggleBulkVoice(){
     }
     if(input) input.value = (finalText + interim).trim();
   };
-  _voiceRec.onerror = (e) => {
-    console.warn('Voice error:', e.error);
-    _voiceActive = false;
+  _fbVoiceRec.onerror = (e) => {
+    console.warn('Feedback voice error:', e.error);
     if(btn){ btn.textContent = '🎤'; btn.style.background = ''; btn.style.color = ''; btn.style.borderColor = ''; }
-    if(input) input.placeholder = 'Describe the change you want to make…';
+    _fbVoiceRec = null;
     if(e.error === 'not-allowed') alert('Microphone access denied. Check browser permissions.');
   };
-  _voiceRec.onend = () => {
-    _voiceActive = false;
+  _fbVoiceRec.onend = () => {
     if(btn){ btn.textContent = '🎤'; btn.style.background = ''; btn.style.color = ''; btn.style.borderColor = ''; }
-    if(input) input.placeholder = 'Describe the change you want to make…';
     if(finalText && input){ input.value = finalText.trim(); input.focus(); }
+    _fbVoiceRec = null;
   };
-  try { _voiceRec.start(); } catch(e){ console.warn(e); }
+  try { _fbVoiceRec.start(); } catch(e){ console.warn(e); _fbVoiceRec = null; }
 }
 
-// ========== REASONING STREAM — shows AI thinking stages ==========
-function showReasoningSteps(steps){
-  const container = document.getElementById('bulk-reasoning');
-  if(!container) return;
-  container.style.display = 'block';
-  container.innerHTML = steps.map((step, i) => {
-    const status = step.status || 'pending';
-    const icon = status === 'active' ? '⏳' : status === 'done' ? '✓' : status === 'error' ? '✗' : '○';
-    return `<div class="reasoning-step ${status}" id="rstep-${i}">
-      <span style="font-size:14px">${icon}</span>
-      <span>${esc(step.text)}</span>
-    </div>`;
-  }).join('');
-  container.scrollTop = container.scrollHeight;
-}
-
-function updateReasoningStep(index, status, newText){
-  const el = document.getElementById(`rstep-${index}`);
-  if(!el) return;
-  el.className = `reasoning-step ${status}`;
-  const icon = status === 'active' ? '⏳' : status === 'done' ? '✓' : status === 'error' ? '✗' : '○';
-  const textEl = el.querySelector('span:last-child');
-  const iconEl = el.querySelector('span:first-child');
-  if(iconEl) iconEl.textContent = icon;
-  if(newText && textEl) textEl.textContent = newText;
-}
-
-function hideReasoningSteps(){
-  const container = document.getElementById('bulk-reasoning');
-  if(container){
-    container.style.display = 'none';
-    container.innerHTML = '';
-  }
-}
-
-function bulkChatAddMessage(role, content, options){
-  const msg = { role, content };
-  if(options) msg.options = options;
-  bulkChatHistory.push(msg);
-  renderBulkChat();
-}
-
-function renderBulkChat(){
-  const container = document.getElementById('bulk-chat-messages');
-  if(!container) return;
-
-  // Keep the welcome message + render history
-  let html = '';
-  bulkChatHistory.forEach((msg, idx) => {
-    if(msg.role === 'user'){
-      html += `<div class="chat-msg user"><div class="chat-bubble">${esc(msg.content)}</div></div>`;
-    } else {
-      html += `<div class="chat-msg model"><div class="chat-bubble">${msg.content}</div>`;
-      // Render option buttons if present and not yet selected
-      if(msg.options && !msg.selected){
-        html += `<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">`;
-        msg.options.forEach((opt, oi) => {
-          html += `<button class="btn" onclick="bulkChatSelectOption(${idx},${oi})" style="font-size:13px;padding:8px 16px;border-color:var(--lime);color:var(--lime)">${esc(opt.label)}</button>`;
-        });
-        html += `</div>`;
-      } else if(msg.options && msg.selected){
-        html += `<div style="margin-top:8px;font-size:12px;color:var(--lime);font-weight:700">✓ ${esc(msg.selected)}</div>`;
-      }
-      html += `</div>`;
-    }
-  });
-
-  // Keep the initial welcome, then append history
-  const welcomeMsg = container.querySelector('#bulk-chat-welcome');
-  const welcomeHtml = welcomeMsg ? welcomeMsg.outerHTML : '';
-  container.innerHTML = welcomeHtml + html;
-
-  // Scroll to bottom
-  container.scrollTop = container.scrollHeight;
-}
-
-
-function handleBulkAnalysisError_(err){
-  const message = err && err.message ? err.message : String(err || 'Unknown error');
-  console.error('Bulk analysis failed safely:', err);
-  try { hideReasoningSteps(); } catch(e){}
-  try { stopProgress(); } catch(e){}
-  try {
-    const prog = document.getElementById('bulk-ai-progress');
-    if(prog) prog.style.display = 'none';
-  } catch(e){}
-  bulkChatState = 'idle';
-  const safe = (typeof esc === 'function') ? esc(message) : message.replace(/[&<>"']/g, function(ch){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]; });
-  bulkChatAddMessage('assistant', '❌ Bulk analysis stopped safely instead of crashing the Studio.<br><br><span style="font-size:12px;color:#f87171">' + safe + '</span><br><br><span style="font-size:12px;color:var(--dim)">Try the request again, or click ↻ to reset the Bulk AI Chat if the conversation state looks stale.</span>');
-}
-
-function runStartBulkAnalysisSafely_(){
-  return startBulkAnalysis().catch(handleBulkAnalysisError_);
-}
-
-function bulkChatUserTurns_(){
-  return (bulkChatMemory || [])
-    .filter(m => m && m.role === 'user')
-    .map(m => String(m.content || '').trim())
-    .filter(Boolean);
-}
-
-function bulkChatEffectiveInstruction_(rawInstruction){
-  const raw = String(rawInstruction || '').trim();
-  const userTurns = bulkChatUserTurns_();
-  const priorTurns = userTurns.slice(0, -1);
-  const isFollowUp = !!(bulkChatContext && bulkChatContext.isFollowUp);
-  const refersBack = /\b(it|that|this|same|previous|above|those|them|connect|connected|relevant planners|all relevant planners|planners|units|entries)\b/i.test(raw);
-
-  if(isFollowUp && priorTurns.length && refersBack){
-    return priorTurns.join('\n') + '\n\nFollow-up instruction: ' + raw;
-  }
-
-  // If a follow-up is short and does not name the platform/lesson again, carry the previous user request forward.
-  if(isFollowUp && priorTurns.length && raw.length < 120 && !/\b(minecraft|micro:?bit|wise|sphero|canva|book creator|lesson|tool|app)\b/i.test(raw)){
-    return priorTurns.join('\n') + '\n\nFollow-up instruction: ' + raw;
-  }
-
-  return raw;
-}
-
-function bulkAppendClarifications_(instruction, clarifications){
-  const list = Array.isArray(clarifications) ? clarifications : [];
-  if(!list.length) return instruction;
-  return String(instruction || '') + '\n\nAdditional context from conversation:\n' + list.map(c => 'Q: ' + (c.question || '') + '\nA: ' + (c.answer || '')).join('\n');
-}
-
-function bulkPlatformSearchText_(latestText){
-  const userTurns = bulkChatUserTurns_();
-  const base = userTurns.length ? userTurns.join('\n') : String(latestText || '');
-  return base + '\n' + String(latestText || '');
-}
-
-function bulkChatSelectOption(msgIdx, optionIdx){
-  const msg = bulkChatHistory[msgIdx];
-  if(!msg || !msg.options) return;
-  const selected = msg.options[optionIdx];
-  msg.selected = selected.label;
-
-  // Add user reply
-  bulkChatAddMessage('user', selected.label);
-
-  // Process the selection based on current state
-  if(bulkChatState === 'clarifying'){
-    bulkChatContext.clarifications = bulkChatContext.clarifications || [];
-    bulkChatContext.clarifications.push({ question: msg.content, answer: selected.value || selected.label });
-
-    // Check if we have enough clarification (max 3 rounds)
-    if(bulkChatContext.clarifyRound >= 2 || selected.value === '__proceed__'){
-      runStartBulkAnalysisSafely_();
-    } else {
-      bulkChatContext.clarifyRound++;
-      askNextClarification();
-    }
-  }
-}
-
-async function bulkChatSend(){
-  const input = document.getElementById('bulk-chat-input');
+function feedbackGetMore(uid, entryIdx, sugIdx){
+  const input = document.getElementById(uid+'-input');
   if(!input) return;
-  const text = input.value.trim();
-  if(!text) return;
-  input.value = '';
+  // Re-fire keeping conversation memory intact, asking for fresh alternatives
+  input.value = 'Show me 3 more different options that still satisfy the previous instructions';
+  applySugFeedbackDirect(uid, entryIdx, sugIdx);
+}
+
+function resetFeedbackMemory(uid){
+  delete window['_fbmem_'+uid];
+  const memHintEl = document.getElementById(uid+'-memhint');
+  if(memHintEl){ memHintEl.style.display = 'none'; memHintEl.innerHTML = ''; }
+  const resultEl = document.getElementById(uid+'-result');
+  if(resultEl) resultEl.innerHTML = '<div style="font-size:11px;color:var(--dim);padding:6px 0">↻ Conversation reset — next request starts fresh</div>';
+  const input = document.getElementById(uid+'-input');
+  if(input){ input.value = ''; input.focus(); }
+}
 
 
-  // Preview-only mode for St Kilda Road Year 6 quality work.
-  // Type: preview: Improve St Kilda Road Year 6 suggestions
-  if(/^\s*preview\s*:?\s*/i.test(text)){
-    if(bulkChatState === 'analysing'){
-      bulkChatAddMessage('assistant', '⏳ Still analysing entries — wait for the current analysis to complete before running a safe preview.');
-      return;
-    }
-    bulkChatAddMessage('user', text);
-    bulkRunWithTopProgress_('Previewing St Kilda Road Year 6 suggestions…', 'Preview ready ✓', function(){
-      bulkRunStkY6PreviewOnly_(text);
-    }, function(e){
-      bulkChatAddMessage('assistant', '❌ Preview failed safely without changing anything: ' + bulkDiagnosticEscape_(e.message || e));
-    });
+function confirmSugFeedback(entryIdx, sugIdx, uid, choiceIdx){
+  const suggestions = window['_fbsugs_'+uid];
+  if(!suggestions || !suggestions[choiceIdx]) return;
+  const newSug = cleanSuggestionObject_(suggestions[choiceIdx]);
+  // Safety net: if another slot was changed between showing options and confirming, abort
+  if(wouldDupeToolProposalInEntry(DATA[entryIdx], newSug.t, sugIdx)){
+    setStatus(`Skipped \u2014 "${newSug.t}" is already used in this unit`, 'error');
     return;
   }
-
-  // Safe-draft mode: locally draft a small batch and open review popup only. No AI calls, no auto-save.
-  // Type: draft: Find more opportunities to use Makey Makey
-  if(/^\s*(draft|draft-safe|safe-draft)\s*:?\s*/i.test(text)){
-    if(bulkChatState === 'analysing'){
-      bulkChatAddMessage('assistant', '⏳ Still analysing entries — wait for the current analysis to complete before running a safe draft.');
-      return;
-    }
-    bulkChatAddMessage('user', text);
-    if(/lesson\s+from\s+.+library/i.test(text) && typeof ensureLibrariesLoadedForAI === 'function'){
-      try { await ensureLibrariesLoadedForAI(); } catch(e){}
-    } else if(/minecraft/i.test(text) && typeof ensureLibrariesLoadedForAI === 'function'){
-      try { await ensureLibrariesLoadedForAI(); } catch(e){}
-    }
-    const draftPlainText = String(text||'').replace(/^\s*(draft|draft-safe|safe-draft)\s*:?\s*/i,'');
-    const libPlacement = bulkDetectLibraryLessonPlacement_(draftPlainText);
-    bulkRunWithTopProgress_(libPlacement ? 'Finding curated lesson fits…' : (/minecraft/i.test(text) ? 'Finding exact Minecraft lesson fits…' : 'Finding safe named-tool opportunities…'), libPlacement ? 'Curated lesson draft ready for review ✓' : (/minecraft/i.test(text) ? 'Minecraft placement draft ready for review ✓' : 'Safe draft ready for review ✓'), function(){
-      if(libPlacement) bulkRunLibraryLessonDraftSafe_(draftPlainText);
-      else bulkRunSafeDraftOnly_(text);
-    }, function(e){
-      bulkChatAddMessage('assistant', '❌ Safe draft failed without changing anything: ' + bulkDiagnosticEscape_(e.message || e));
-    });
+  const realism = checkRealisticToolUse(newSug.t, newSug.d, DATA[entryIdx]);
+  if(!realism.ok){
+    setStatus(`Skipped \u2014 unrealistic classroom use: ${realism.reason}`, 'error');
     return;
   }
-
-  // Safe-preview mode: find candidate units locally without calling AI, opening a review popup, or saving.
-  // Type: safe: Find more opportunities to use Makey Makey
-  if(/^\s*safe\s*:?\s*/i.test(text)){
-    if(bulkChatState === 'analysing'){
-      bulkChatAddMessage('assistant', '⏳ Still analysing entries — wait for the current analysis to complete before running a safe preview.');
-      return;
-    }
-    bulkChatAddMessage('user', text);
-    bulkRunWithTopProgress_('Scanning safe candidate units…', 'Safe preview ready ✓', function(){
-      bulkRunSafePreviewOnly_(text);
-    }, function(e){
-      bulkChatAddMessage('assistant', '❌ Safe preview failed without changing anything: ' + bulkDiagnosticEscape_(e.message || e));
-    });
-    return;
+  const sugs = [...getSugs(DATA[entryIdx])];
+  sugs[sugIdx] = {t: newSug.t, d: newSug.d};
+  recordChange(entryIdx, getSugs(DATA[entryIdx]), sugs);
+  DATA[entryIdx].s = sugs;
+  DATA[entryIdx].audited = true;
+  markEntryNeedsHumanRecheck_(entryIdx, 'Suggestion feedback edit applied after human verification');
+  saveToDrive();
+  setStatus('Suggestion updated and saved');
+  delete window['_fbsugs_'+uid];
+  delete window['_fbmem_'+uid];  // clear conversation memory after a successful apply
+  document.getElementById(uid+'-chat')?.remove();
+  const sugEl = document.getElementById(`s${entryIdx}_${sugIdx}`);
+  if(sugEl){
+    const newRow = document.createElement('div');
+    newRow.innerHTML = buildSugRow(sugs[sugIdx], entryIdx, sugIdx);
+    sugEl.replaceWith(newRow.firstElementChild);
   }
+}
 
-  // Diagnostic-only mode: classify a Bulk AI prompt without calling AI or drafting changes.
-  // Type: diagnose: Find more opportunities to use Makey Makey
-  if(/^\s*(diagnose|debug|route)\s*:?\s*/i.test(text)){
-    if(bulkChatState === 'analysing'){
-      bulkChatAddMessage('assistant', '⏳ Still analysing entries — wait for the current analysis to complete before running diagnostics.');
-      return;
-    }
-    bulkChatAddMessage('user', text);
-    if(/minecraft/i.test(text) && typeof ensureLibrariesLoadedForAI === 'function'){
-      try { await ensureLibrariesLoadedForAI(); } catch(e){}
-    }
-    bulkRunWithTopProgress_('Checking Bulk AI route…', 'Diagnostic ready ✓', function(){
-      bulkRunDiagnosticOnly_(text);
-    }, function(e){
-      bulkChatAddMessage('assistant', '❌ Diagnostic failed safely: ' + bulkDiagnosticEscape_(e.message || e));
-    });
-    return;
-  }
 
-  // Normal named-tool opportunity prompts now use the tested safe draft route automatically.
-  // Example: Find more opportunities to use Makey Makey
-  // This avoids the old generic clarification path that asked about all 121 units.
-  if(bulkChatState !== 'clarifying' && bulkChatState !== 'analysing'){
-    let autoInfo = null;
-    try { autoInfo = bulkDiagnosticDetectRoute_(text); } catch(e){ autoInfo = null; }
-    if(bulkLooksLikeStkY6Diagnostic_(text)){
-      bulkChatAddMessage('user', text);
-      bulkSafeRouteNotice_('St Kilda Road Year 6 quality flow', 'Studio will scan only St Kilda Road Year 6, protect STEM slot #6 and Minecraft suggestions, and draft a small review batch.');
-      bulkRunWithTopProgress_('Drafting safe St Kilda Road Year 6 quality fixes…', 'St Kilda Road Year 6 draft ready for review ✓', function(){
-        bulkRunStkY6DraftOnly_('draft: ' + text);
-      }, function(e){
-        bulkChatAddMessage('assistant', '❌ Safe St Kilda Road Year 6 draft failed without changing anything: ' + bulkDiagnosticEscape_(e.message || e));
-      });
-      return;
-    }
-    const libraryPlacementInfo = bulkDetectLibraryLessonPlacement_(text);
-    if(libraryPlacementInfo){
-      bulkChatAddMessage('user', text);
-      bulkSafeRouteNotice_('Curated lesson placement', 'Studio will use the selected library and exact lesson title, draft a small review batch, and save nothing unless approved.');
-      if(typeof ensureLibrariesLoadedForAI === 'function'){
-        try { await ensureLibrariesLoadedForAI(); } catch(e){}
+
+async function regenAll(){
+  if(CURRENT_ENTRY_IDX===null) return;
+  const idx=CURRENT_ENTRY_IDX;
+  const entry=DATA[idx];
+  const btn=document.getElementById('btn-regen-all');
+  const res=document.getElementById('regen-all-result');
+  btn.disabled=true; btn.textContent='Generating…';
+  startProgress();
+  res.innerHTML='<div style="font-size:12px;color:#fbbf24">Generating 5 suggestions…</div>';
+  const prompt=`Generate exactly 6 digital technology suggestions for this IB PYP unit.
+Suggestion #6 MUST be a STEM Design Cycle activity (Empathise-Define-Ideate-Prototype-Test).
+Campus: ${entry.ca} | Year Level: ${entry.yl} | Theme: "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${entry.lo?`\nLines of Inquiry: "${entry.lo}"`:''}${entry.plannerText?`\nPlanner: ${entry.plannerText}`:''}
+Requirements:
+- All 5 suggestions use different tools (no repeats)
+${SUGGESTION_STYLE}
+- Return ONLY a JSON array with no markdown or backticks:
+[{"t":"Tool Name","d":"2-3 vivid sentences for this unit."},...]`;
+  try{
+    let sugs = null;
+    let dupedTool = null;
+    for(let attempt=0; attempt<2; attempt++){
+      const retryNote = attempt>0 ? `\n\nRETRY: Your previous response used "${dupedTool}" twice. Every one of the 5 suggestions MUST use a DIFFERENT tool \u2014 no repeats whatsoever.` : '';
+      const raw=await callAI([{role:'user',parts:[{text:prompt+retryNote}]}]);
+      const clean=raw.replace(/```json|```/g,'').trim();
+      const si=clean.indexOf('['), ei=clean.lastIndexOf(']');
+      if(si===-1||ei===-1) throw new Error('No JSON array in response');
+      const parsed=JSON.parse(clean.slice(si,ei+1));
+      const keys=parsed.map(s=>toolKey(sugTool(s))).filter(Boolean);
+      const dup=keys.find((k,i)=>keys.indexOf(k)!==i);
+      if(dup){
+        const dupSug=parsed.find(s=>toolKey(sugTool(s))===dup);
+        dupedTool = dupSug ? sugTool(dupSug) : dup;
+        continue;
       }
-      bulkRunWithTopProgress_('Finding curated lesson fits…', 'Curated lesson draft ready for review ✓', function(){
-        bulkRunLibraryLessonDraftSafe_(text);
-      }, function(e){
-        bulkChatAddMessage('assistant', '❌ Safe curated lesson placement failed without changing anything: ' + bulkDiagnosticEscape_(e.message || e));
-      });
-      return;
+      sugs = parsed;
+      break;
     }
-    if(autoInfo && autoInfo.route === 'specific Minecraft lesson placement'){
-      bulkChatAddMessage('user', text);
-      bulkSafeRouteNotice_('Exact Minecraft lesson placement', 'Studio will use only the matched curated Minecraft lesson, preserve its real URL, and avoid substituting other Minecraft lessons.');
-      if(typeof ensureLibrariesLoadedForAI === 'function'){
-        try { await ensureLibrariesLoadedForAI(); } catch(e){}
-      }
-      bulkRunWithTopProgress_('Finding exact Minecraft lesson fits…', 'Minecraft placement draft ready for review ✓', function(){
-        bulkRunSafeDraftOnly_(text);
-      }, function(e){
-        bulkChatAddMessage('assistant', '❌ Safe Minecraft exact-lesson draft failed without changing anything: ' + bulkDiagnosticEscape_(e.message || e));
-      });
-      return;
-    }
-    if(autoInfo && autoInfo.route === 'targeted replacement' && autoInfo.replacementTool){
-      bulkChatAddMessage('user', text);
-      bulkSafeRouteNotice_('Targeted replacement flow', 'Studio will find matching slots locally, protect STEM slot #6, and rewrite hidden references without replacing unrelated approved tools.');
-      bulkRunWithTopProgress_('Finding safe ' + bulkDiagnosticEscape_(autoInfo.replacementTool) + ' replacements…', 'Safe replacement draft ready for review ✓', function(){
-        bulkRunSafeDraftOnly_(text);
-      }, function(e){
-        bulkChatAddMessage('assistant', '❌ Safe targeted replacement draft failed without changing anything: ' + bulkDiagnosticEscape_(e.message || e));
-      });
-      return;
-    }
-    if(autoInfo && autoInfo.route === 'named-tool opportunity search' && autoInfo.namedTool){
-      bulkChatAddMessage('user', text);
-      bulkSafeRouteNotice_('Named-tool opportunity flow', 'Studio will find eligible units locally, skip units already using the tool, respect year ranges, and draft a small review batch.');
-      bulkRunWithTopProgress_('Finding safe ' + bulkDiagnosticEscape_(autoInfo.namedTool) + ' opportunities…', 'Safe draft ready for review ✓', function(){
-        bulkRunSafeDraftOnly_(text);
-      }, function(e){
-        bulkChatAddMessage('assistant', '❌ Safe named-tool draft failed without changing anything: ' + bulkDiagnosticEscape_(e.message || e));
-      });
-      return;
-    }
-  }
-
-  if(typeof ensureLibrariesLoadedForAI === 'function') await ensureLibrariesLoadedForAI();
-
-  if(bulkChatState === 'analysing'){
-    bulkChatAddMessage('assistant', '⏳ Still analysing entries — please wait for the current analysis to complete.');
-    return;
-  }
-
-  // If we're in the middle of clarification and user types freely, treat as additional context
-  if(bulkChatState === 'clarifying'){
-    bulkChatAddMessage('user', text);
-    bulkChatContext.clarifications = bulkChatContext.clarifications || [];
-    bulkChatContext.clarifications.push({ question: 'Additional context from user', answer: text });
-    runStartBulkAnalysisSafely_();
-    return;
-  }
-
-  // Detect "what if" simulation requests — runs without applying
-  const isWhatIf = /^\s*what\s*if\b/i.test(text);
-  if(isWhatIf){
-    bulkChatAddMessage('user', text);
-    runWhatIfSimulation(text);
-    return;
-  }
-
-  // Multi-turn: if a previous analysis completed and user types a new message,
-  // treat it as a refinement of the previous run rather than reset.
-  const isFollowUp = bulkChatMemory.length > 0 && bulkChatState === 'done';
-
-  if(!isFollowUp){
-    // New conversation
-    bulkChatHistory = [];
-    bulkChatContext = {};
-    bulkChatMemory = [];
-    bulkChatState = 'idle';
-  }
-
-  bulkChatAddMessage('user', text);
-  bulkChatMemory.push({ role: 'user', content: text });
-
-  // Detect platform from the full user conversation on follow-ups, so "connect it to all relevant planners"
-  // still inherits the earlier Minecraft / specific-lesson request.
-  const platforms = buildKnownPlatforms();
-  const platformSearchText = bulkPlatformSearchText_(text);
-  const platform = platforms.find(p => p.match.test(platformSearchText)) || bulkChatContext.platform || null;
-
-  bulkChatContext.rawInstruction = text;
-  bulkChatContext.platform = platform;
-  bulkChatContext.clarifyRound = 0;
-  bulkChatContext.isFollowUp = isFollowUp;
-
-  // Show reasoning stream
-  showReasoningSteps([
-    { text: 'Reading your request', status: 'active' },
-    { text: isFollowUp ? 'Recalling previous context' : 'Scanning tool distribution', status: 'pending' },
-    { text: 'Deciding if clarification needed', status: 'pending' }
-  ]);
-
-  // Ask clarifying questions via AI
-  bulkChatState = 'clarifying';
-
-  try {
-    updateReasoningStep(0, 'done');
-    updateReasoningStep(1, 'active');
-    
-    const clarifyPrompt = buildClarifyPrompt(text, platform);
-    
-    setTimeout(() => updateReasoningStep(1, 'done'), 400);
-    setTimeout(() => updateReasoningStep(2, 'active'), 500);
-    
-    const response = await callAI(
-      [{role:'user', parts:[{text: clarifyPrompt}]}],
-      null, OPENAI_FAST_MODEL
-    );
-    
-    updateReasoningStep(2, 'done');
-    setTimeout(hideReasoningSteps, 600);
-
-    // Parse the AI's clarifying questions
-    const parsed = parseClarifyResponse(response);
-
-    if(parsed.readyToGo){
-      // AI thinks the instruction is clear enough — proceed directly
-      bulkChatAddMessage('assistant', `${parsed.summary || "Got it!"}\n\nI understand what you want — let me analyse all entries now.`);
-      bulkChatMemory.push({ role: 'assistant', content: parsed.summary || 'Understood — analysing.' });
-      runStartBulkAnalysisSafely_();
-    } else {
-      // Show the first clarifying question
-      bulkChatContext.pendingQuestions = parsed.questions || [];
-      showNextQuestion(parsed);
-    }
-  } catch(e){
-    hideReasoningSteps();
-    bulkChatState = 'idle';
-    bulkChatAddMessage('assistant', `❌ Error: ${e.message}\n\nPlease try again.`);
-  }
-}
-
-function buildClarifyPrompt(instruction, platform){
-  const entryCount = DATA.filter(e => e.audited && getSugs(e).filter(isRealSug).length >= 6).length;
-  const allTools = {};
-  DATA.forEach(e => {
-    getSugs(e).forEach(s => {
-      const t = sugTool(s).trim();
-      if(t) allTools[t] = (allTools[t]||0) + 1;
-    });
-  });
-  const topTools = Object.entries(allTools).sort((a,b)=>b[1]-a[1]).slice(0,15).map(([t,c])=>`${t} (${c}x)`).join(', ');
-
-  // Include conversation memory for multi-turn context
-  const memoryContext = bulkChatMemory.length > 1 ? `
-PRIOR CONVERSATION (for context — the latest message is the current request):
-${bulkChatMemory.slice(0, -1).map(m => `${m.role === 'user' ? 'Coordinator' : 'You'}: ${m.content}`).join('\n')}
-` : '';
-
-  return `You are a Digital Learning Coach assistant helping a coordinator make bulk changes to a library of ${entryCount} IB PYP unit planners at Wesley College.
-${memoryContext}
-The coordinator just said: "${instruction}"
-${platform ? `\nDetected platform: ${platform.name}` : ''}
-
-Current tool distribution (top 15): ${topTools}
-
-Your task: Decide whether you need clarification before proceeding, or if the instruction is clear enough.
-
-IMPORTANT: If the coordinator is refining a previous request (e.g. "now do that for Year 3 only", "remove the Minecraft ones", "also try Sphero"), treat the full conversation context as one continuous instruction and set readyToGo:true if the combined meaning is clear.
-
-RESPOND IN THIS EXACT JSON FORMAT (no markdown fences, no preamble):
-{
-  "readyToGo": true/false,
-  "summary": "Brief 1-sentence restatement of what you understood",
-  "questions": [
-    {
-      "text": "Your clarifying question",
-      "options": [
-        {"label": "Short option text", "value": "value_to_use"},
-        {"label": "Another option", "value": "value_to_use"}
-      ]
-    }
-  ]
-}
-
-RULES:
-- If the instruction is specific enough (names a tool, a clear action, and/or a lesson library), set readyToGo: true
-- If unclear, ask 1-2 questions MAX (never more than 2). Each question should have 2-4 concise options.
-- Always include a "Go ahead with my instruction as-is" option as the last option in the first question
-- Questions should be SHORT and practical, not philosophical
-- Focus on: scope (which year levels/campuses), replacement strategy, or which specific tools/lessons to target
-- Keep option labels under 8 words`;
-}
-
-function parseClarifyResponse(response){
-  try {
-    const clean = response.replace(/```json|```/g,'').trim();
-    const start = clean.indexOf('{');
-    const end = clean.lastIndexOf('}');
-    if(start === -1 || end === -1) return { readyToGo: true, summary: '' };
-    return JSON.parse(clean.slice(start, end+1));
-  } catch(e){
-    console.log('Clarify parse error:', e.message, response.slice(0,300));
-    return { readyToGo: true, summary: '' };
-  }
-}
-
-function showNextQuestion(parsed){
-  if(!parsed.questions || !parsed.questions.length){
-    bulkChatAddMessage('assistant', `${parsed.summary || "Got it!"}\n\nLet me analyse all entries now.`);
-    runStartBulkAnalysisSafely_();
-    return;
-  }
-
-  const q = parsed.questions[0];
-  bulkChatContext.pendingQuestions = parsed.questions.slice(1);
-
-  // Add a "proceed as-is" option if not already present
-  const hasProceeed = q.options.some(o => o.value === '__proceed__');
-  if(!hasProceeed){
-    q.options.push({ label: 'Just go ahead as-is', value: '__proceed__' });
-  }
-
-  const summary = parsed.summary ? `${parsed.summary}\n\n` : '';
-  bulkChatAddMessage('assistant', `${summary}${q.text}`, q.options);
-}
-
-
-
-
-// ========== GENERIC CURATED LESSON PLACEMENT ==========
-// Safe route for quick-action lesson placement from any curated library.
-// Minecraft still uses the stricter existing exact Minecraft lesson route.
-function bulkLibraryKeyLooksReal_(key, metaValue){
-  const k = String(key || '').trim();
-  if(!k) return false;
-  if(/^_/.test(k)) return false;
-  if(/^(inventory|_inventory|approved|banned|ageRanges|age_ranges|tools|toolInventory|tool_inventory)$/i.test(k)) return false;
-  if(metaValue && typeof metaValue === 'object'){
-    const label = String(metaValue.name || metaValue.title || '').trim();
-    if(/^(inventory|tool inventory)$/i.test(label)) return false;
-  }
-  return true;
-}
-function bulkLibraryKeysSafe_(){
-  if(typeof LIBRARIES === 'undefined' || !LIBRARIES) return [];
-  const keys = new Set();
-  try {
-    Object.keys(LIBRARIES).forEach(k => {
-      if(bulkLibraryKeyLooksReal_(k, LIBRARIES[k]) && Array.isArray(LIBRARIES[k])) keys.add(k);
-    });
-    // Include library keys that exist in metadata as well. This catches newly-created
-    // libraries such as Adobe Express even when the quick-actions panel was drawn
-    // before the library array finished loading from Drive. Ignore inventory metadata.
-    if(LIBRARIES._meta && typeof LIBRARIES._meta === 'object'){
-      Object.keys(LIBRARIES._meta).forEach(k => {
-        if(bulkLibraryKeyLooksReal_(k, LIBRARIES._meta[k])) keys.add(k);
-      });
-    }
-    if(typeof LIBRARIES_META !== 'undefined' && LIBRARIES_META && typeof LIBRARIES_META === 'object'){
-      Object.keys(LIBRARIES_META).forEach(k => {
-        if(bulkLibraryKeyLooksReal_(k, LIBRARIES_META[k])) keys.add(k);
-      });
-    }
-  } catch(e){}
-  return Array.from(keys);
-}
-function bulkLibraryLabelSafe_(key){
-  const k = String(key || '').trim();
-  try {
-    if(typeof LIBRARIES_META !== 'undefined' && LIBRARIES_META && LIBRARIES_META[k] && LIBRARIES_META[k].name) return bulkSafeDraftCleanPlannerText_(LIBRARIES_META[k].name);
-    if(typeof LIBRARIES !== 'undefined' && LIBRARIES && LIBRARIES._meta && LIBRARIES._meta[k] && LIBRARIES._meta[k].name) return bulkSafeDraftCleanPlannerText_(LIBRARIES._meta[k].name);
-  } catch(e){}
-  return k.replace(/[_-]+/g,' ').replace(/\b\w/g, m => m.toUpperCase());
-}
-function bulkLibraryKeyFromLabelSafe_(label){
-  const raw = String(label || '').trim();
-  const n = bulkDiagnosticToolKey_(raw);
-  const keys = bulkLibraryKeysSafe_();
-  return keys.find(k => bulkDiagnosticToolKey_(k) === n || bulkDiagnosticToolKey_(bulkLibraryLabelSafe_(k)) === n) || '';
-}
-function bulkToolForLibrarySafe_(key){
-  const label = bulkLibraryLabelSafe_(key);
-  const lk = String(key || '').toLowerCase();
-  const ll = String(label || '').toLowerCase();
-  if(lk === 'minecraft' || /minecraft/.test(ll)) return 'Minecraft Education';
-  if(/micro\s*:?bit|microbit/.test(lk + ' ' + ll)) return 'Micro:bit';
-  if(/scratch\s*jr|scratchjr/.test(lk + ' ' + ll)) return 'ScratchJR';
-  if(/scratch/.test(lk + ' ' + ll)) return 'Scratch';
-  return label || 'Curated Lesson';
-}
-function bulkDetectLibraryLessonPlacement_(text){
-  const raw = String(text || '').trim();
-  let m = raw.match(/where\s+can\s+(?:the\s+)?["“]?(.+?)["”]?\s+lesson\s+from\s+(?:the\s+)?["“]?(.+?)["”]?\s+library\s+fit\??\s*$/i);
-  if(!m) m = raw.match(/place\s+(?:the\s+)?["“]?(.+?)["”]?\s+lesson\s+from\s+(?:the\s+)?["“]?(.+?)["”]?\s+library/i);
-  if(!m) return null;
-  const lessonTitle = bulkSafeDraftCleanPlannerText_(m[1]).replace(/^the\s+/i,'').trim();
-  const libLabel = bulkSafeDraftCleanPlannerText_(m[2]).trim();
-  const libraryKey = bulkLibraryKeyFromLabelSafe_(libLabel);
-  if(!lessonTitle || !libraryKey) return { lessonTitle, libLabel, libraryKey:'', lesson:null };
-  const lesson = bulkFindLibraryLessonSafe_(libraryKey, lessonTitle);
-  return { lessonTitle, libLabel:bulkLibraryLabelSafe_(libraryKey), libraryKey, lesson };
-}
-function bulkFindLibraryLessonSafe_(libraryKey, title){
-  const lessons = (typeof LIBRARIES !== 'undefined' && LIBRARIES && Array.isArray(LIBRARIES[libraryKey])) ? LIBRARIES[libraryKey] : [];
-  const wanted = bulkMinecraftNorm_(title || '');
-  if(!wanted) return null;
-  return lessons.find(l => bulkMinecraftNorm_(l && l.title) === wanted) ||
-         lessons.find(l => bulkMinecraftNorm_(l && l.title).includes(wanted) || wanted.includes(bulkMinecraftNorm_(l && l.title))) ||
-         null;
-}
-function bulkLibraryLessonWordsSafe_(lesson){
-  const text = bulkMinecraftNorm_([lesson && lesson.title, lesson && lesson.desc, lesson && lesson.description, lesson && lesson.subject, lesson && lesson.tags].filter(Boolean).join(' '));
-  return Array.from(new Set(text.split(/\s+/).filter(w => w.length > 4 && !/^(lesson|students|student|teacher|teachers|learning|activity|activities)$/.test(w))));
-}
-function bulkScanLibraryLessonFitSafe_(libraryKey, lesson, maxResults){
-  const rows = [];
-  const skipped = { alreadyHasTool:0, noNonStemSlot:0 };
-  if(!lesson || !Array.isArray(DATA)) return { rows, skipped };
-  const toolName = bulkToolForLibrarySafe_(libraryKey);
-  const toolKey = bulkDiagnosticToolKey_(toolName);
-  const titleKey = bulkMinecraftNorm_(lesson.title || '');
-  const lessonWords = bulkLibraryLessonWordsSafe_(lesson);
-  DATA.forEach((e, entryIdx) => {
-    const sugs = getSugs(e) || [];
-    let hasTool = false;
-    let firstSlot = -1;
-    sugs.forEach((s, sugIdx) => {
-      if(bulkDiagnosticToolKey_(sugTool(s)) === toolKey) hasTool = true;
-      if(firstSlot < 0 && sugIdx !== 5 && isRealSug(s)) firstSlot = sugIdx;
-    });
-    if(hasTool){ skipped.alreadyHasTool++; return; }
-    if(firstSlot < 0){ skipped.noNonStemSlot++; return; }
-    const unitText = bulkMinecraftNorm_([e.th,e.theme,e.ci,e.centralIdea,e.loi,e.linesOfInquiry].filter(Boolean).join(' '));
-    let score = 0;
-    if(titleKey && unitText.includes(titleKey)) score += 10;
-    lessonWords.forEach(w => { if(unitText.includes(w)) score += 2; });
-    if(score <= 0) score = 1; // review-only; do not force application
-    rows.push({ entryIdx, slotIdx:firstSlot, entry:e, score, campus:e.ca||e.campus||'', year:e.yl||e.year||'', theme:e.th||e.theme||'Untitled unit' });
-  });
-  rows.sort((a,b) => b.score - a.score || a.entryIdx - b.entryIdx);
-  return { rows: rows.slice(0, maxResults || 6), skipped };
-}
-function bulkLibraryLessonConnectionSafe_(e){
-  const f = bulkSafeDraftUnitFocus_(e || {});
-  return f.connection || f.loi || f.ci || f.theme || 'this unit';
-}
-function bulkLibraryLessonDraftDescriptionSafe_(libraryKey, lesson, e){
-  const label = bulkLibraryLabelSafe_(libraryKey);
-  const title = bulkSafeDraftCleanPlannerText_(lesson && lesson.title || 'the selected lesson');
-  const connection = bulkLibraryLessonConnectionSafe_(e);
-  const theme = (bulkSafeDraftUnitFocus_(e || {}).theme || 'this unit');
-  const product = /micro\s*:?bit|microbit/i.test(label) ? 'a working coded prototype and short explanation' : 'a short digital product, reflection or explanation';
-  return bulkSafeDraftFinalClean_(`Students use the curated ${label} lesson “${title}” as a starting point for ${theme}. They complete the lesson activity, create ${product}, and explain how their work connects to ${connection}.`);
-}
-function bulkRunLibraryLessonDraftSafe_(text){
-  const info = bulkDetectLibraryLessonPlacement_(text);
-  if(!info || !info.libraryKey){
-    bulkChatAddMessage('assistant', `I could not match that library. Use the quick action selector, or try: <strong>Where can the Revamp Melbourne lesson from the Minecraft library fit?</strong>`);
-    return;
-  }
-  if(!info.lesson){
-    const count = (typeof LIBRARIES !== 'undefined' && LIBRARIES && Array.isArray(LIBRARIES[info.libraryKey])) ? LIBRARIES[info.libraryKey].length : 0;
-    bulkChatAddMessage('assistant', `I could not find the exact lesson <strong>${bulkDiagnosticEscape_(info.lessonTitle)}</strong> in the <strong>${bulkDiagnosticEscape_(info.libLabel)}</strong> library. Lessons available in that library: <strong>${count}</strong>. No changes were drafted.`);
-    return;
-  }
-  const scan = bulkScanLibraryLessonFitSafe_(info.libraryKey, info.lesson, 6);
-  if(!scan.rows.length){
-    bulkChatAddMessage('assistant', `I found the curated lesson, but there were no draftable non-STEM slots for it. No changes were made.`);
-    return;
-  }
-  const toolName = bulkToolForLibrarySafe_(info.libraryKey);
-  const changes = scan.rows.map(row => ({
-    entryIdx: row.entryIdx,
-    sugIdx: row.slotIdx,
-    oldTool: sugTool(getSugs(row.entry)[row.slotIdx]),
-    oldDesc: sugDesc(getSugs(row.entry)[row.slotIdx]),
-    tool: toolName,
-    desc: bulkLibraryLessonDraftDescriptionSafe_(info.libraryKey, info.lesson, row.entry),
-    reason: `Safe curated lesson placement from the ${info.libLabel} library. Review-only; no changes are saved until approved.`,
-    sourceUrl: info.lesson.url || info.lesson.link || info.lesson.lessonUrl || ''
-  }));
-  bulkChatAddMessage('assistant', `🛡️ Safe routed: curated lesson placement. I found <strong>${changes.length}</strong> possible fit${changes.length!==1?'s':''} for <strong>${bulkDiagnosticEscape_(info.lesson.title || info.lessonTitle)}</strong> from <strong>${bulkDiagnosticEscape_(info.libLabel)}</strong>. Review the drafts before applying.`);
-  openBulkReviewPopup(changes, `Safe curated lesson placement: ${info.libLabel} · ${info.lesson.title || info.lessonTitle}`);
-}
-
-// ========== BULK AI QUICK ACTIONS UI ==========
-// Injects a small prompt-builder panel into the Bulk AI card. Buttons fill the chat input only;
-// admins still press Send and review changes before anything is saved.
-(function(){
-  function bulkQAEl_(id){ return document.getElementById(id); }
-  function bulkQASetInput_(value){
-    const input = bulkQAEl_('bulk-chat-input');
-    if(!input) return;
-    input.value = String(value || '').trim();
-    input.focus();
-    try { input.scrollIntoView({behavior:'smooth', block:'center'}); } catch(e){}
-  }
-  function bulkQAGet_(id){
-    const el = bulkQAEl_(id);
-    return el ? String(el.value || '').trim() : '';
-  }
-  function bulkQANormaliseScope_(scope){
-    return String(scope || '').trim().replace(/\s+/g, ' ');
-  }
-  function bulkQAOptionTag_(value, label){
-    const v = bulkDiagnosticEscape_(value);
-    const l = bulkDiagnosticEscape_(label || value);
-    return `<option value="${v}">${l}</option>`;
-  }
-  function bulkQACanonicalQuickToolLabel_(value){
-    let label = normaliseToolName ? normaliseToolName(String(value||'').trim()) : String(value||'').trim();
-    if(!label) return '';
-    const key = bulkDiagnosticToolKey_(label);
-    // The library has historically stored this as several labels. Show it once
-    // in quick-action dropdowns, but keep scanner aliases broad enough to find
-    // all variants when replacing.
-    if(key === 'podcastequipment' || key === 'podcastequipmentgarageband' || key === 'podcastequipmentandgarageband'){
-      return 'Podcast Equipment + GarageBand';
-    }
-    if(/^podcast\s+equipment(?:\s*(?:\+|&|and)\s*garageband)?$/i.test(label)){
-      return 'Podcast Equipment + GarageBand';
-    }
-    return label;
-  }
-  function bulkQACollectApprovedTools_(){
-    const fallback = ['Book Creator','Makey Makey','Lego Spike Prime','Lego Spike Essential','Adobe Express','Padlet','Minecraft Education','National Geographic MapMaker','Delightex','Scratch','ScratchJR','Sphero BOLT','Micro:bit','Tinkercad','Canva','Wise Discussion Chatbots'];
-    const seen = new Set();
-    const out = [];
-    function add(v){
-      const label = bulkQACanonicalQuickToolLabel_(v);
-      if(!label) return;
-      const k = bulkDiagnosticToolKey_(label);
-      if(!k || seen.has(k)) return;
-      seen.add(k); out.push(label);
-    }
-    try {
-      if(typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY && Array.isArray(TOOL_INVENTORY.approved)){ TOOL_INVENTORY.approved.forEach(add); }
-      if(typeof LIBRARIES !== 'undefined' && LIBRARIES && LIBRARIES._meta && LIBRARIES._meta._inventory && Array.isArray(LIBRARIES._meta._inventory.approved)){ LIBRARIES._meta._inventory.approved.forEach(add); }
-    } catch(e){}
-    if(!out.length) fallback.forEach(add);
-    return out.sort((a,b)=>a.localeCompare(b));
-  }
-  function bulkQALooksLikeToolName_(label, knownKeys){
-    const raw = String(label || '').trim();
-    if(!raw) return false;
-    const key = bulkDiagnosticToolKey_(raw);
-    if(knownKeys && knownKeys.has(key)) return true;
-    // STEM/unit suggestion titles often look like “Calm Quest: personalized wellbeing maze”.
-    // Keep the replace list focused on actual technology tools, not lesson/activity titles.
-    if(/[:;]/.test(raw)) return false;
-    const words = raw.split(/\s+/).filter(Boolean);
-    if(words.length > 5) return false;
-    if(/\b(quest|maze|challenge|lesson|activity|project|poster|presentation|reflection|exhibition|community|wellbeing)\b/i.test(raw) && !(knownKeys && knownKeys.has(key))) return false;
-    return true;
-  }
-  function bulkQACollectReplaceTools_(){
-    const seen = new Set();
-    const out = [];
-    const knownKeys = new Set();
-    function canonical(v){
-      return bulkQACanonicalQuickToolLabel_(v);
-    }
-    function rememberKnown(v){
-      const label = canonical(v);
-      const k = bulkDiagnosticToolKey_(label);
-      if(k) knownKeys.add(k);
-    }
-    function add(v, forceKnown){
-      const label = canonical(v);
-      if(!label) return;
-      const k = bulkDiagnosticToolKey_(label);
-      if(!k || seen.has(k)) return;
-      if(forceKnown) knownKeys.add(k);
-      if(!forceKnown && !bulkQALooksLikeToolName_(label, knownKeys)) return;
-      seen.add(k); out.push(label);
-    }
-    try {
-      if(typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY){
-        (TOOL_INVENTORY.banned || []).forEach(rememberKnown);
-        (TOOL_INVENTORY.approved || []).forEach(rememberKnown);
-      }
-      if(typeof LIBRARIES !== 'undefined' && LIBRARIES && LIBRARIES._meta && LIBRARIES._meta._inventory){
-        (LIBRARIES._meta._inventory.banned || []).forEach(rememberKnown);
-        (LIBRARIES._meta._inventory.approved || []).forEach(rememberKnown);
-      }
-      // Always include inventory/legacy tools first. These may include tools no longer used
-      // in current suggestions but still need a removal workflow.
-      if(typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY){
-        (TOOL_INVENTORY.banned || []).forEach(v => add(v, true));
-        (TOOL_INVENTORY.approved || []).forEach(v => add(v, true));
-      }
-      if(typeof LIBRARIES !== 'undefined' && LIBRARIES && LIBRARIES._meta && LIBRARIES._meta._inventory){
-        (LIBRARIES._meta._inventory.banned || []).forEach(v => add(v, true));
-        (LIBRARIES._meta._inventory.approved || []).forEach(v => add(v, true));
-      }
-      if(Array.isArray(DATA)){
-        DATA.forEach(e => (getSugs(e)||[]).forEach((s, idx) => {
-          // Slot #6 / STEM extension often stores a lesson/activity title rather than a tool.
-          // Do not let those titles flood the “tool to remove” dropdown.
-          if(idx >= 5) return;
-          if(isRealSug(s)) add(sugTool(s), false);
-        }));
-      }
-    } catch(e){}
-    ['Seesaw','ClassVR','Flip','Google Maps','Adobe Spark','CoSpaces','Delightex (CoSpaces)'].forEach(v => add(v, true));
-    return out.sort((a,b)=>a.localeCompare(b));
-  }
-  function bulkQAToolOptions_(){
-    return '<option value="">Select approved tool…</option>' + bulkQACollectApprovedTools_().map(t => bulkQAOptionTag_(t)).join('');
-  }
-  function bulkQAReplaceToolOptions_(){
-    return '<option value="">Select tool to remove…</option>' + bulkQACollectReplaceTools_().map(t => bulkQAOptionTag_(t)).join('');
-  }
-  function bulkQAYearScopeOptions_(){
-    return [
-      ['Prep','Prep'],['Year 1','Year 1'],['Year 2','Year 2'],['Year 3','Year 3'],['Year 4','Year 4'],['Year 5','Year 5'],['Year 6','Year 6']
-    ].map(x => bulkQAOptionTag_(x[0], x[1])).join('');
-  }
-  function bulkQAReplaceScopeOptions_(){
-    return [
-      ['All planners','All planners (Surgeon-style)'],
-      ['Prep','Prep'],['Year 1','Year 1'],['Year 2','Year 2'],['Year 3','Year 3'],['Year 4','Year 4'],['Year 5','Year 5'],['Year 6','Year 6']
-    ].map(x => bulkQAOptionTag_(x[0], x[1])).join('');
-  }
-
-  window.bulkQARefreshLibrarySelect_ = function bulkQARefreshLibrarySelect_(){
-    const sel = bulkQAEl_('bulk-qa-lesson-library');
-    if(!sel) return false;
-    const before = sel.value;
-    const html = bulkQALibraryOptions_();
-    if(html && sel.getAttribute('data-options-html') !== html){
-      sel.innerHTML = html;
-      sel.setAttribute('data-options-html', html);
-      if(before && Array.from(sel.options).some(o => o.value === before)) sel.value = before;
-    }
-    return true;
-  }
-
-  window.bulkQARefreshToolSelects_ = function bulkQARefreshToolSelects_(){
-    const opp = bulkQAEl_('bulk-qa-tool');
-    if(opp){ const before = opp.value; opp.innerHTML = bulkQAToolOptions_(); if(before && Array.from(opp.options).some(o => o.value === before)) opp.value = before; }
-    const rep = bulkQAEl_('bulk-qa-replace-tool');
-    if(rep){ const before = rep.value; rep.innerHTML = bulkQAReplaceToolOptions_(); if(before && Array.from(rep.options).some(o => o.value === before)) rep.value = before; }
-    return true;
-  };
-  function bulkQAHideLegacyBulkCards_(){
-    const panel = document.getElementById('panel-tools');
-    if(!panel) return;
-    Array.from(panel.querySelectorAll('.card')).forEach(card => {
-      if(card.id === 'realism-audit-card') return;
-      const txt = (card.textContent || '').toLowerCase().replace(/\s+/g,' ');
-      if(txt.includes('snapshots & undo') || txt.includes('playbooks') || txt.includes('side-by-side campus comparison') || txt.includes('run surgeon')){
-        card.style.display = 'none';
-        card.setAttribute('data-bulk-quick-actions-hidden','true');
-      }
-    });
-  }
-
-  function bulkQASetAdvancedOpen_(open){
-    const chat = bulkQAEl_('bulk-chat-messages');
-    if(!chat) return;
-    const reasoning = bulkQAEl_('bulk-reasoning');
-    const inputRow = bulkQAEl_('bulk-chat-input') ? bulkQAEl_('bulk-chat-input').parentNode : null;
-    const btn = bulkQAEl_('bulk-qa-advanced-toggle');
-    const show = !!open;
-    chat.style.display = show ? '' : 'none';
-    if(reasoning) reasoning.style.display = show ? (reasoning.getAttribute('data-was-open') === '1' ? '' : reasoning.style.display) : 'none';
-    if(inputRow) inputRow.style.display = show ? 'flex' : 'none';
-    if(btn) btn.textContent = show ? 'Hide advanced custom chat' : 'Show advanced custom chat';
-    const hint = bulkQAEl_('bulk-qa-advanced-hint');
-    if(hint) hint.style.display = show ? 'none' : 'block';
-  }
-  window.bulkQuickActionToggleAdvanced = function(){
-    const chat = bulkQAEl_('bulk-chat-messages');
-    const currentlyOpen = chat && chat.style.display !== 'none';
-    bulkQASetAdvancedOpen_(!currentlyOpen);
-  };
-
-  function bulkQALibraryOptions_(){
-    let keys = [];
-    try { keys = bulkLibraryKeysSafe_(); } catch(e){ keys = []; }
-    if(!keys.length) keys = ['minecraft'];
-    keys.sort((a,b) => bulkLibraryLabelSafe_(a).localeCompare(bulkLibraryLabelSafe_(b)));
-    if(keys.includes('minecraft')) keys = ['minecraft'].concat(keys.filter(k => k !== 'minecraft'));
-    return keys.map(k => `<option value="${bulkDiagnosticEscape_(k)}">${bulkDiagnosticEscape_(bulkLibraryLabelSafe_(k))}</option>`).join('');
-  }
-  window.bulkQuickActionFill = function(kind){
-    const type = String(kind || '').toLowerCase();
-    if(type === 'opportunity'){
-      const tool = bulkQAGet_('bulk-qa-tool');
-      const scope = bulkQANormaliseScope_(bulkQAGet_('bulk-qa-scope'));
-      if(!tool){ alert('Enter a tool first, e.g. Book Creator or Makey Makey.'); return; }
-      const prompt = scope
-        ? `Find more opportunities in ${scope} to use ${tool}`
-        : `Find more opportunities to use ${tool}`;
-      bulkQASetInput_(prompt);
-      bulkQASetAdvancedOpen_(true);
-      return;
-    }
-    if(type === 'replace'){
-      const tool = bulkQAGet_('bulk-qa-replace-tool');
-      const scope = bulkQANormaliseScope_(bulkQAGet_('bulk-qa-replace-scope'));
-      if(!tool){ alert('Enter the tool to replace first, e.g. Seesaw.'); return; }
-      const prompt = /all\s+planners|all\s+years/i.test(scope)
-        ? `Replace ${tool} across all planners`
-        : (scope ? `Replace ${tool} in ${scope}` : `Replace ${tool}`);
-      bulkQASetInput_(prompt);
-      bulkQASetAdvancedOpen_(true);
-      return;
-    }
-    if(type === 'lesson' || type === 'minecraft'){
-      const libraryKey = bulkQAGet_('bulk-qa-lesson-library') || 'minecraft';
-      const lesson = bulkQAGet_('bulk-qa-lesson-title') || bulkQAGet_('bulk-qa-minecraft-lesson');
-      if(!lesson){ alert('Enter the exact curated lesson title first, e.g. Revamp Melbourne.'); return; }
-      const cleanLesson = lesson.replace(/\s+Minecraft\s+lesson\s*$/i, '').replace(/\s+Minecraft\s*$/i, '').trim();
-      const libraryLabel = bulkLibraryLabelSafe_(libraryKey || 'minecraft');
-      if(String(libraryKey).toLowerCase() === 'minecraft' || /minecraft/i.test(libraryLabel)){
-        bulkQASetInput_(`Where can the ${cleanLesson} Minecraft lesson fit?`);
-      } else {
-        bulkQASetInput_(`Where can the ${cleanLesson} lesson from the ${libraryLabel} library fit?`);
-      }
-      bulkQASetAdvancedOpen_(true);
-      return;
-    }
-    if(type === 'improve'){
-      const campus = bulkQANormaliseScope_(bulkQAGet_('bulk-qa-improve-campus'));
-      const year = bulkQANormaliseScope_(bulkQAGet_('bulk-qa-improve-year'));
-      if(!campus || !year){ alert('Enter both a campus and year level, e.g. Glen Waverley and Year 6.'); return; }
-      bulkQASetInput_(`Improve ${campus} ${year} suggestions`);
-      bulkQASetAdvancedOpen_(true);
-      return;
-    }
-  };
-
-  window.bulkQuickActionSend = function(kind){
-    window.bulkQuickActionFill(kind);
-    setTimeout(function(){
-      const input = bulkQAEl_('bulk-chat-input');
-      if(input && input.value && typeof bulkChatSend === 'function') bulkChatSend();
-    }, 80);
-  };
-
-  function bulkQAInstall_(){
-    if(bulkQAEl_('bulk-quick-actions-panel')) return true;
-    const chat = bulkQAEl_('bulk-chat-messages');
-    if(!chat || !chat.parentNode) return false;
-    const panel = document.createElement('div');
-    panel.id = 'bulk-quick-actions-panel';
-    panel.innerHTML = `
-      <div style="padding:14px 20px;background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
-          <div style="font-size:11px;font-weight:900;color:var(--lime);letter-spacing:1px;text-transform:uppercase">⚡ Bulk quick actions</div>
-          <div style="font-size:11px;color:var(--dim);line-height:1.45">Use these safe workflows first. Nothing is saved until the review popup is approved.</div>
-          <div style="flex:1"></div>
-          <button type="button" id="bulk-qa-advanced-toggle" class="btn-sm" onclick="bulkQuickActionToggleAdvanced()">Show advanced custom chat</button>
-        </div>
-        <div id="bulk-qa-advanced-hint" style="font-size:11px;color:var(--dim);padding:8px 10px;margin-bottom:10px;background:rgba(197,232,74,.05);border:1px solid rgba(197,232,74,.15);border-radius:9px">Advanced chat is collapsed. Use quick actions for common review-only workflows, or open custom chat for unusual requests.</div>
-        <!-- Tool selectors are populated from the live Tool Inventory / current data. -->
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px">
-          <div style="border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--card2)">
-            <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:6px">➕ Find opportunities</div>
-            <select id="bulk-qa-tool" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:6px">${bulkQAToolOptions_()}</select>
-            <select id="bulk-qa-scope" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
-              <option value="">All eligible years</option>${bulkQAYearScopeOptions_()}
-            </select>
-            <div style="display:flex;gap:6px;flex-wrap:wrap">
-              <button type="button" class="btn-sm" onclick="bulkQuickActionFill('opportunity')">Fill prompt</button>
-              <button type="button" class="btn-sm" onclick="bulkQuickActionSend('opportunity')" style="color:var(--lime);border-color:var(--lime)">Draft now</button>
-            </div>
-          </div>
-          <div style="border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--card2)">
-            <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:6px">🔁 Replace a tool</div>
-            <select id="bulk-qa-replace-tool" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:6px">${bulkQAReplaceToolOptions_()}</select>
-            <select id="bulk-qa-replace-scope" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
-              ${bulkQAReplaceScopeOptions_()}
-            </select>
-            <div style="font-size:10px;color:var(--dim);margin:-3px 0 7px;line-height:1.35">Choose <strong>All planners</strong> for the old Surgeon-style remove-everywhere workflow.</div>
-            <div style="display:flex;gap:6px;flex-wrap:wrap">
-              <button type="button" class="btn-sm" onclick="bulkQuickActionFill('replace')">Fill prompt</button>
-              <button type="button" class="btn-sm" onclick="bulkQuickActionSend('replace')" style="color:var(--lime);border-color:var(--lime)">Draft now</button>
-            </div>
-          </div>
-          <div style="border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--card2)">
-            <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:6px">📚 Place lesson</div>
-            <div style="display:flex;gap:6px;margin-bottom:6px">
-              <select id="bulk-qa-lesson-library" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:0;flex:1">
-                ${bulkQALibraryOptions_()}
-              </select>
-              <button type="button" class="btn-sm" onclick="bulkQARefreshLibrarySelect_()" title="Refresh library list from loaded libraries.json">↻</button>
-            </div>
-            <input id="bulk-qa-lesson-title" class="inp" placeholder="Exact lesson title, e.g. Revamp Melbourne" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
-            <div style="display:flex;gap:6px;flex-wrap:wrap">
-              <button type="button" class="btn-sm" onclick="bulkQuickActionFill('lesson')">Fill prompt</button>
-              <button type="button" class="btn-sm" onclick="bulkQuickActionSend('lesson')" style="color:var(--lime);border-color:var(--lime)">Draft now</button>
-            </div>
-          </div>
-          <div style="border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--card2)">
-            <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:6px">✨ Improve suggestions</div>
-            <select id="bulk-qa-improve-campus" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:6px">
-              <option value="">Select campus…</option>
-              <option>Elsternwick</option>
-              <option>Glen Waverley</option>
-              <option>St Kilda Road</option>
-            </select>
-            <select id="bulk-qa-improve-year" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
-              <option value="">Select year…</option>
-              <option>Prep</option><option>Year 1</option><option>Year 2</option><option>Year 3</option><option>Year 4</option><option>Year 5</option><option>Year 6</option>
-            </select>
-            <div style="display:flex;gap:6px;flex-wrap:wrap">
-              <button type="button" class="btn-sm" onclick="bulkQuickActionFill('improve')">Fill prompt</button>
-              <button type="button" class="btn-sm" onclick="bulkQuickActionSend('improve')" style="color:var(--lime);border-color:var(--lime)">Draft now</button>
-            </div>
-          </div>
-        </div>
+    if(!sugs) throw new Error(`AI repeated "${dupedTool}" in the batch \u2014 try again`);
+    const pendingId='regenall_'+idx;
+    window[pendingId]=sugs;
+    res.innerHTML=`
+      <div style="font-size:10px;color:var(--mint);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Preview — apply to save</div>
+      ${sugs.map(s=>`<div class="preview-ok"><div class="preview-tool">${esc(s.t)}</div><div class="preview-desc">${esc(s.d)}</div></div>`).join('')}
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn-pri" onclick="applyRegenAll(${idx},'${pendingId}')">Apply all</button>
+        <button class="btn-sm" onclick="document.getElementById('regen-all-result').innerHTML='';document.getElementById('btn-regen-all').disabled=false;document.getElementById('btn-regen-all').textContent='Generate 6 new suggestions'">Discard</button>
       </div>`;
-    chat.parentNode.insertBefore(panel, chat);
-    bulkQARefreshLibrarySelect_();
-    bulkQARefreshToolSelects_();
-    bulkQAHideLegacyBulkCards_();
-    bulkQASetAdvancedOpen_(false);
-    // Libraries may load after this panel is injected. Refresh the selector for a short
-    // window so newly-added libraries such as Adobe Express appear without reload.
-    let refreshTries = 0;
-    const refreshTimer = setInterval(function(){
-      refreshTries++;
-      bulkQARefreshLibrarySelect_();
-      bulkQARefreshToolSelects_();
-      bulkQAHideLegacyBulkCards_();
-      if(refreshTries > 30) clearInterval(refreshTimer);
-    }, 1000);
-    return true;
+  }catch(e){
+    res.innerHTML=`<div style="font-size:12px;color:#f87171">${esc(e.message)}</div>`;
+    stopProgress();
+  btn.disabled=false; btn.textContent='Generate 6 new suggestions';
   }
+}
 
-  function bulkQAStart_(){
-    if(bulkQAInstall_()) return;
-    let tries = 0;
-    const timer = setInterval(function(){
-      tries++;
-      if(bulkQAInstall_() || tries > 40) clearInterval(timer);
-    }, 250);
+function applyRegenAll(idx,pendingId){
+  const sugs=window[pendingId]; if(!sugs) return;
+  DATA[idx].s=sugs.map(cleanSuggestionObject_);
+  DATA[idx].audited=true;
+  markEntryNeedsHumanRecheck_(idx, 'Regenerated suggestions after human verification');
+  delete window[pendingId];
+  setStatus('Saved'); saveToDrive();
+  renderEntry(idx);
+}
+
+function getSugs(e){ return normEntry(e); }
+
+function sugTool(s){
+  if(!s) return '';
+  if(typeof s==='string') return s;
+  return s.t||s.tool||s.technology||s.equipment||s.name||s.title||'';
+}
+
+function sugDesc(s){
+  if(!s) return '';
+  if(typeof s==='string') return '';
+  return s.d||s.desc||s.description||s.integration_idea||s.activity_description
+    ||s.justification||s.unit_connection||s.application||s.suggested_activity
+    ||s.integration_suggestion||s.learning_experience||s.activity_idea
+    ||s.implementation_idea||s.text||'';
+}
+
+function normSug(s){
+  if(!s) return null;
+  if(typeof s==='string') return s.trim()?{t:s.trim(),d:''}:null;
+  const t=sugTool(s).trim();
+  const d=sugDesc(s).trim();
+  if(!t) return null;
+  const out = {t, d};
+  if(s.url) out.url = s.url;
+  return out;
+}
+
+function normEntry(e){
+  const s=e.s;
+  let arr=[];
+  if(Array.isArray(s)) arr=s;
+  else if(s && typeof s==='object') arr=Object.values(s);
+  else return [];
+  return arr.map(normSug).filter(x=>x&&x.t&&x.t!=='TBA'&&x.t.trim()!=='');
+}
+
+function isRealSug(s){ return !!(s && sugTool(s).trim()); }
+
+// Split any suggestion that has combined tools like "Minecraft & OneNote" into two separate suggestions
+// Called during ingest and after any bulk operation
+function splitCombinedSugs(data){
+  return data.map(e=>{
+    if(!e.s || !Array.isArray(e.s)) return e;
+    const expanded = [];
+    e.s.forEach(s=>{
+      const tool = (s.t||'').trim();
+      const parts = tool.split(/\s*[&+]\s*|\s+and\s+/i).map(t=>t.trim()).filter(Boolean);
+      if(parts.length > 1){
+        // Split into separate suggestions, keeping the description on the first one
+        parts.forEach((t,i)=>expanded.push({t, d: i===0 ? (s.d||'') : ''}));
+      } else {
+        expanded.push(s);
+      }
+    });
+    // Keep only first 5
+    return {...e, s: expanded.slice(0,5)};
+  });
+}
+
+function normCa(ca){
+  return ca||'';  
+}
+
+function normaliseToolName(t){
+  // Canonical forms for known variants
+  const map = {
+    'bee-bot':'Beebots','bee-bots':'Beebots','beebot':'Beebots','beebots':'Beebots',
+    'micro:bit':'Micro:bit','microbit':'Micro:bit','micro:bits':'Micro:bit','microbits':'Micro:bit',
+    'scratchjr':'ScratchJr','scratch jr':'ScratchJr','scratch junior':'ScratchJr',
+    'chatterpix':'ChatterPix Kids','chatterpix kids':'ChatterPix Kids',
+    'stop motion studio':'Stop Motion Studio','stopmotion':'Stop Motion Studio',
+    'adobe express animate from audio':'Adobe Express Animate from Audio',
+    'adobe express podcasting':'Adobe Express Podcasting',
+    'adobe express video':'Adobe Express Video',
+    'lego spike prime':'Lego Spike Prime','lego spike essential':'Lego Spike Essential',
+    'sphero bolt':'Sphero BOLT','sphero indi':'Sphero Indi',
+    'microsoft onenote':'Microsoft OneNote','onenote':'Microsoft OneNote',
+    'microsoft powerpoint':'Microsoft PowerPoint','powerpoint':'Microsoft PowerPoint',
+    'microsoft word':'Microsoft Word','microsoft teams':'Microsoft Teams',
+    'microsoft forms':'Microsoft Forms','forms':'Microsoft Forms','ms forms':'Microsoft Forms','office forms':'Microsoft Forms',
+    'microsoft sway':'Microsoft Sway','sway':'Microsoft Sway','ms sway':'Microsoft Sway','office sway':'Microsoft Sway','m365 sway':'Microsoft Sway',
+    'wise discussion chatbots':'Wise Discussion Chatbots','wise discussion chatbot':'Wise Discussion Chatbots','wise chatbot':'Wise Discussion Chatbots','wise chatbots':'Wise Discussion Chatbots','schoolbox discussion chatbots':'Wise Discussion Chatbots','schoolbox ai discussion chatbots':'Wise Discussion Chatbots','ai discussion chatbots':'Wise Discussion Chatbots','ai discussion chatbot':'Wise Discussion Chatbots',
+    'microsoft excel':'Microsoft Excel','excel':'Microsoft Excel','ms excel':'Microsoft Excel','office excel':'Microsoft Excel',
+    'word':'Microsoft Word','ms word':'Microsoft Word','office word':'Microsoft Word',
+    'teams':'Microsoft Teams','ms teams':'Microsoft Teams','office teams':'Microsoft Teams',
+    'google earth':'Google Earth','google maps':'Google Maps',
+    'google streetview':'Google Streetview','google street view':'Google Streetview','google syncview':'Google Streetview',
+    'google slides':'Google Slides','google docs':'Google Docs','google sheets':'Google Sheets',
+    'flip':'Flip','microsoft flip':'Flip',
+    'book creator':'Book Creator','garageband':'GarageBand',
+    'imovie':'iMovie','piccollage':'PicCollage','tinkercad':'Tinkercad',
+    'minecraft education':'Minecraft Education',
+    'puppet pals':'Puppet Pals','padlet':'Padlet','seesaw':'Seesaw','canva':'Canva',
+  };
+  const key = t.toLowerCase().trim();
+  if(map[key]) return map[key];
+  // Pattern-based: collapse lesson-specific variants to the base tool name
+  // e.g. "Minecraft: Ocean Heroes" → "Minecraft Education"
+  // e.g. "Micro:bit — Helping Plants Grow" → "Micro:bit"
+  if(key.startsWith('minecraft')) return 'Minecraft Education';
+  if(key.startsWith('micro:bit') || key.startsWith('microbit')) return 'Micro:bit';
+  // Handle "Tool Name Activity/Lesson" patterns: extract just the tool
+  if(key.startsWith('bee-bot') || key.startsWith('beebot')) return 'Beebots';
+  if(key.startsWith('sphero indi') || key === 'indi') return 'Sphero Indi';
+  if(key.startsWith('sphero bolt') || key.startsWith('sphero b.o.l.t')) return 'Sphero BOLT';
+  if(key.startsWith('sphero')) return 'Sphero';
+  if(key.startsWith('lego spike essential')) return 'Lego Spike Essential';
+  if(key.startsWith('lego spike prime')) return 'Lego Spike Prime';
+  if(key.startsWith('lego spike') || key.startsWith('lego')) return 'Lego Spike';
+  if(key.startsWith('codrone')) return 'CoDrone EDU';
+  if(key.startsWith('chatterpix')) return 'ChatterPix Kids';
+  if(key.startsWith('scratchjr') || key.startsWith('scratch jr') || key.startsWith('scratch junior')) return 'ScratchJR';
+  if(key.startsWith('scratch')) return 'Scratch';
+  if(key.startsWith('adobe express')) return 'Adobe Express';
+  if(key.startsWith('stop motion')) return 'Stop Motion Studio';
+  if(key.startsWith('puppet pals')) return 'Puppet Pals';
+  if(key.startsWith('green screen')) return 'Green Screen';
+  if(key.startsWith('merge cube')) return 'Merge Cubes';
+  if(key.startsWith('classvr')) return 'ClassVR';
+  if(key.startsWith('delightex') || key.startsWith('cospaces')) return 'Delightex';
+  if(key.startsWith('google earth')) return 'Google Earth';
+  if(key.startsWith('google maps')) return 'Google Maps';
+  if(key.startsWith('google streetview') || key.startsWith('google street view') || key.startsWith('google syncview')) return 'Google Streetview';
+  if(key.startsWith('google slides')) return 'Google Slides';
+  if(key.startsWith('google docs')) return 'Google Docs';
+  if(key.startsWith('google sheets')) return 'Google Sheets';
+  if(key === 'flip' || key.startsWith('flip ') || key === 'flipgrid') return 'Flip';
+  if(key.startsWith('makey makey') || key.startsWith('makeymakey')) return 'Makey Makey';
+  if(key.startsWith('3d print')) return '3D Printers';
+  if(key.startsWith('field guide')) return 'Field Guide to Victoria';
+  if(key.startsWith('word cloud') || key.startsWith('abcya')) return 'Word Clouds ABCya';
+  if(key.startsWith('explain everything')) return 'Explain Everything';
+  if(key.startsWith('seesaw')) return 'Seesaw';
+  if(key.startsWith('canva')) return 'Canva';
+  if(key.startsWith('imovie')) return 'iMovie';
+  if(key.startsWith('ipad')) return 'iPad';
+  if(key.startsWith('book creator')) return 'Book Creator';
+  if(key.startsWith('padlet')) return 'Padlet';
+  if(key.startsWith('kahoot')) return 'Kahoot';
+  if(key.startsWith('tinkercad')) return 'Tinkercad';
+  if(key.startsWith('freeform')) return 'Freeform';
+  if(key.startsWith('sketchbook')) return 'Sketchbook';
+  if(key.startsWith('epic')) return 'Epic';
+  if(key.startsWith('clickview')) return 'Clickview';
+  if(key.startsWith('garageband')) return 'GarageBand';
+  if(key.startsWith('piccollage')) return 'PicCollage';
+  if(key.startsWith('brushes redux')) return 'Brushes Redux';
+  if(key.startsWith('sky map')) return 'Sky Map';
+  if(key.startsWith('geoboard')) return 'Geoboard';
+  // Microsoft/Office aliases: treat bare and prefixed app names as the same tool.
+  if(key === 'sway' || key.endsWith(' sway')) return 'Microsoft Sway';
+  if(key === 'forms' || key.endsWith(' forms')) return 'Microsoft Forms';
+  if(key === 'excel' || key.endsWith(' excel')) return 'Microsoft Excel';
+  if(key === 'word' || key.endsWith(' word')) return 'Microsoft Word';
+  if(key === 'powerpoint' || key.endsWith(' powerpoint') || key.endsWith(' power point')) return 'Microsoft PowerPoint';
+  if(key === 'teams' || key.endsWith(' teams')) return 'Microsoft Teams';
+  if(key === 'onenote' || key === 'one note' || key.endsWith(' onenote') || key.endsWith(' one note')) return 'Microsoft OneNote';
+  if((key.includes('wise') && key.includes('chatbot')) || (key.includes('wise') && key.includes('discussion')) || (key.includes('schoolbox') && key.includes('chatbot')) || (key.includes('schoolbox') && key.includes('discussion')) || (key.includes('ai discussion') && key.includes('chatbot'))) return 'Wise Discussion Chatbots';
+  if(key.startsWith('microsoft ')) return t; // keep other specific MS tools
+  // "App Smashing: Tool" → extract the tool
+  if(key.startsWith('app smash')){
+    const afterColon = t.replace(/^App\s*Smash\w*[:\s]+/i, '').trim();
+    return afterColon ? normaliseToolName(afterColon) : t;
   }
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bulkQAStart_);
-  else bulkQAStart_();
-})();
+  // Remove parenthetical suffixes for any remaining: "Tool (stuff)" → "Tool"
+  const parenMatch = t.match(/^([A-Za-z][A-Za-z0-9\s:'-]+?)\s*\(/);
+  if(parenMatch) return parenMatch[1].trim();
+  return t;
+}
+
+// Canonical key for comparing two tool names (normalises known variants, lowercases, trims)
+function toolKey(t){
+  return normaliseToolName((t||'').toString().trim()).toLowerCase().trim();
+}
+
+// Would placing `toolName` into `entry` (excluding slot `excludeSugIdx`) create a duplicate?
+function wouldDupeInEntry(entry, toolName, excludeSugIdx){
+  const key = toolKey(toolName);
+  if(!key) return false;
+  return getSugs(entry).some((s,i) => i !== excludeSugIdx && toolKey(sugTool(s)) === key);
+}
