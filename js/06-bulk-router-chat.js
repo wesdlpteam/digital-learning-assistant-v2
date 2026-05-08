@@ -641,6 +641,65 @@ function removeAllHumanVerified(){
   if(typeof renderBrowse === 'function') renderBrowse();
 }
 
+// v5.20: Makerspace reboot — calls GAS to replace the 6th suggestion with a new
+// catchy hands-on physical project. Processes up to 4 entries per batch.
+async function rebootMakerspaceBatch(){
+  const ca = document.getElementById('browse-campus')?.value || '';
+  const yr = document.getElementById('browse-year')?.value || '';
+  const scopeLabel = ca || yr ? ` (${[ca, yr].filter(Boolean).join(' · ')})` : '';
+  if(!confirm(`Reboot the Makerspace (#6) suggestion for entries${scopeLabel}? This processes 4 at a time and replaces only suggestion #6 — suggestions 1-5 are preserved.`)) return;
+
+  setStatus(`Rebooting makerspace${scopeLabel}…`, 'loading');
+  try {
+    const payload = withGASToken({ action: 'rebootMakerspace' });
+    if(ca) payload.filterCa = ca;
+    if(yr) payload.filterYl = yr;
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+    if(result.error){ setStatus('Reboot error: ' + result.error, 'error'); return; }
+    setStatus(result.message || `Rebooted ${result.rebooted || 0} makerspace projects`, 'success');
+    // Reload data from Drive so we see the new suggestions
+    if(typeof loadFromDrive === 'function'){
+      await loadFromDrive();
+      if(typeof renderBrowse === 'function') renderBrowse();
+    }
+  } catch(err) {
+    setStatus('Reboot failed: ' + err.message, 'error');
+  }
+}
+
+async function resetMakerspaceFlagsBatch(){
+  const ca = document.getElementById('browse-campus')?.value || '';
+  const yr = document.getElementById('browse-year')?.value || '';
+  const scopeLabel = ca || yr ? ` (${[ca, yr].filter(Boolean).join(' · ')})` : '';
+  if(!confirm(`Reset the Makerspace reboot flags for entries${scopeLabel}? This lets you re-run the reboot from scratch — existing #6 suggestions stay until reboot is run again.`)) return;
+
+  setStatus(`Resetting reboot flags${scopeLabel}…`, 'loading');
+  try {
+    const payload = withGASToken({ action: 'resetMakerspaceFlags' });
+    if(ca) payload.filterCa = ca;
+    if(yr) payload.filterYl = yr;
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+    if(result.error){ setStatus('Reset error: ' + result.error, 'error'); return; }
+    setStatus(result.message || `Reset ${result.reset || 0} flags`, 'success');
+    if(typeof loadFromDrive === 'function'){
+      await loadFromDrive();
+      if(typeof renderBrowse === 'function') renderBrowse();
+    }
+  } catch(err) {
+    setStatus('Reset failed: ' + err.message, 'error');
+  }
+}
+
 function markEntryNeedsHumanRecheck_(idx, reason){
   const entry = DATA && DATA[idx];
   if(!entry || !isHumanVerifiedEntry_(entry)) return;
@@ -693,13 +752,28 @@ function renderBrowse(){
   const totalVerifiedCount = DATA.filter(e=>isHumanVerifiedEntry_(e)).length;
   const remainingCount = Math.max(0, DATA.length - totalVerifiedCount);
   document.getElementById('browse-count').textContent=`${filtered.length} entries · ${verifiedCount} human verified in view`;
+
+  // v5.20: Makerspace Reboot summary — counts how many filtered entries have a refreshed makerspace project
+  const filteredAudited = filtered.filter(({e}) => e.audited && Array.isArray(e.s) && e.s.length >= 5);
+  const filteredRebooted = filteredAudited.filter(({e}) => e.stemRebooted === true).length;
+  const filteredAuditedTotal = filteredAudited.length;
+  const filteredRebootRemaining = filteredAuditedTotal - filteredRebooted;
+  const scopeLabel = ca || yr ? `in view (${[ca, yr].filter(Boolean).join(' · ')})` : 'across all units';
+  const makerspaceSummaryHtml = filteredAuditedTotal > 0 ? `<div class="card2" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px;border-color:rgba(167,139,250,.35);background:rgba(167,139,250,.06)">
+    <span style="font-size:18px">🛠</span>
+    <span style="font-size:13px;color:var(--text);font-weight:800">${filteredRebooted}/${filteredAuditedTotal} makerspace projects rebooted ${scopeLabel}</span>
+    <span style="font-size:12px;color:var(--dim)">${filteredRebootRemaining > 0 ? `${filteredRebootRemaining} still using the original generated #6 suggestion` : 'All makerspace projects refreshed with catchy hands-on titles'}</span>
+    ${filteredRebootRemaining > 0 ? `<button onclick="rebootMakerspaceBatch()" style="margin-left:auto;padding:6px 14px;background:#A78BFA;color:#111;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer" title="Replace the 6th (Makerspace) suggestion with a new catchy hands-on physical project. Processes 4 at a time.">Reboot makerspace${ca || yr ? ' (in view)' : ''}</button>` : ''}
+    ${filteredRebooted > 0 ? `<button onclick="resetMakerspaceFlagsBatch()" style="padding:6px 12px;background:transparent;border:1px solid rgba(255,128,128,.3);color:#FF8080;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear the rebooted flag so you can re-run the makerspace reboot from scratch">Reset reboot flags</button>` : ''}
+  </div>` : '';
+
   const verificationSummaryHtml = `<div class="card2" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-color:${remainingCount ? 'rgba(212,160,23,.35)' : 'rgba(197,232,74,.4)'};background:${remainingCount ? 'rgba(212,160,23,.06)' : 'rgba(197,232,74,.08)'}">
     <span class="human-verified-tick" style="margin-left:0">✓ Human verified audit</span>
     <span style="font-size:13px;color:var(--text);font-weight:800">${totalVerifiedCount}/${DATA.length} units checked</span>
     <span style="font-size:12px;color:var(--dim)">${remainingCount ? `${remainingCount} still need a human check` : 'All units have been human verified'}</span>
     ${totalVerifiedCount > 0 ? `<button onclick="removeAllHumanVerified()" style="margin-left:auto;padding:5px 12px;background:transparent;border:1px solid rgba(255,128,128,0.3);color:#FF8080;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear all human verification flags so you can re-verify from scratch">Reset all verified</button>` : ''}
   </div>`;
-  document.getElementById('browse-list').innerHTML=verificationSummaryHtml + filtered.map(({e,idx})=>{
+  document.getElementById('browse-list').innerHTML=makerspaceSummaryHtml + verificationSummaryHtml + filtered.map(({e,idx})=>{
     const verified = isHumanVerifiedEntry_(e);
     const flash = window._lastHumanVerifiedIdx === idx ? ' human-verify-flash' : '';
     const meta = verified ? humanVerifiedMeta_(e) : '';
