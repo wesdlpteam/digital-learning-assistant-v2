@@ -827,6 +827,7 @@ function renderWesleyDigitalSkillsOverview(yl){
 }
 
 function getTechCurBand(yl) {
+  if(/kinder/i.test(yl)) return 'F';
   if(yl==='Prep') return 'F';
   var n=parseInt(yl.replace('Year ',''));
   if(n<=2) return '1-2';
@@ -935,15 +936,15 @@ const CM={"Glen Waverley":"GW","Elsternwick":"EL","St Kilda":"SKR"},CN={"GW":"Gl
 const CC={"GW":"#F5A623","EL":"#CDEB45","SKR":"#7ED957"};
 const CTX={"GW":"#3D1E00","EL":"#1A2E05","SKR":"#0D3B00"};
 const TC={"Who We Are":"#FF6B6B","Where We Are in Place and Time":"#F5A623","How We Express Ourselves":"#A78BFA","How the World Works":"#CDEB45","How the World Works (Materials)":"#CDEB45","How the World Works (Solar System)":"#CDEB45","How We Organise Ourselves":"#38BDF8","Sharing the Planet":"#22C55E"};
-const YO=["Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"];
-const YC={"Prep":"#CDEB45","Year 1":"#7ED957","Year 2":"#F5A623","Year 3":"#FF6B6B","Year 4":"#A78BFA","Year 5":"#38BDF8","Year 6":"#FB923C"};
+const YO=["3 Year Old Kinder","4 Year Old Kinder","Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"];
+const YC={"3 Year Old Kinder":"#FFB5E8","4 Year Old Kinder":"#B5DEFF","Prep":"#CDEB45","Year 1":"#7ED957","Year 2":"#F5A623","Year 3":"#FF6B6B","Year 4":"#A78BFA","Year 5":"#38BDF8","Year 6":"#FB923C"};
 const TE={"Who We Are":"🧠","Where We Are in Place and Time":"🗺️","How We Express Ourselves":"🎨","How the World Works":"🔬","How the World Works (Materials)":"🧪","How the World Works (Solar System)":"🌍","How We Organise Ourselves":"⚙️","Sharing the Planet":"🌿"};
 const TTX={"Who We Are":"#FFF","Where We Are in Place and Time":"#3D1E00","How We Express Ourselves":"#FFF","How the World Works":"#1A2E05","How the World Works (Materials)":"#1A2E05","How the World Works (Solar System)":"#1A2E05","How We Organise Ourselves":"#052E44","Sharing the Planet":"#FFF"};
 
 function gu(c,y){const n=Object.entries(CM).find(([k,v])=>v===c);return n?D.filter(r=>r.ca===n[0]&&r.yl===y):[]}
 function gS(t,d){const s=(t+" "+d).toLowerCase();if(/scratch|robot|code|micro.bit|beebot|sphero|spike|codrone|cubetto|indi|drone|dji|website/.test(s))return"Digital Technologies";if(/garageband|music|chrome music/.test(s))return"Music";if(/imovie|green screen|stop motion|video|premiere|insta360|360/.test(s))return"Media Arts";if(/canva.*present|poster|infograph|visual|drawing|character animat/.test(s))return"Visual Arts";if(/google earth|geography|timeline|histor|migrat|colon/.test(s))return"HASS";if(/data|graph|survey|excel|chart|measur|statistic/.test(s))return"Mathematics";if(/experiment|investig|scien|material|force|energy|plant|animal|habitat|ecosystem|weather|sensor/.test(s))return"Science";if(/book creator|writing|story|narrat|reading|podcast|oral|literacy/.test(s))return"English";if(/wellbeing|emotion|relationship|health|safe|reflect|journal/.test(s))return"Health & PE";return"Integrated"}
 function gV(y,j,t,d){
-const b=y==="Prep"?"F-2":/1|2/.test(y)?"F-2":/3|4/.test(y)?"3-4":"5-6";
+const b=/kinder/i.test(y)?"F-2":y==="Prep"?"F-2":/1|2/.test(y)?"F-2":/3|4/.test(y)?"3-4":"5-6";
 const s=(t+" "+d).toLowerCase();
 const links=[];
 const DT={"F-2":[
@@ -1260,7 +1261,7 @@ if(/reflect.*on.*their.*learn|reflect.*on.*learn|self.assess|metacognit|review.*
 return r;}
 function gWDS(t,d,yl){
 var tool=t.toLowerCase(),desc=d.toLowerCase(),s=tool+' '+desc,r=[];
-var isF2=(yl==='Prep'||yl==='Year 1'||yl==='Year 2');
+var isF2=(/kinder/i.test(yl)||yl==='Prep'||yl==='Year 1'||yl==='Year 2');
 var is34=(yl==='Year 3'||yl==='Year 4');
 var is56=(yl==='Year 5'||yl==='Year 6');
 var isRobot=/scratch|lego spike|micro.?bit|codrone|beebot|cubetto|indi robot|sphero/.test(tool);
@@ -1346,8 +1347,10 @@ h+='<div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick
 if(v==="home"){
 h+='<div class="hero"><h2 class="hero-title">Tech ideas<br>for every<br><span class="hero-accent">Unit of Inquiry.</span></h2><p class="hero-sub">Select your campus to explore planner-specific technology suggestions.</p></div>';
 for(const[n,k]of Object.entries(CM)){
-var cc=CC[k],ct=CTX[k],uc=D.filter(r=>r.ca===n).length;
-h+='<div class="cc" onclick="nv(\'ca\',\''+k+'\')" style="background:'+cc+'"><div class="cc-wm" style="color:'+ct+'">'+k+'</div><div class="cc-inner"><div class="cc-name" style="color:'+ct+'">'+n+'</div><div class="cc-sub" style="color:'+ct+'99">Prep – Year 6 · '+uc+' units</div></div></div>';
+var cc=CC[k],ct=CTX[k],campusUnits=D.filter(r=>r.ca===n),uc=campusUnits.length;
+var yrsPresent=YO.filter(y=>campusUnits.some(u=>u.yl===y));
+var rangeLabel=yrsPresent.length?(yrsPresent[0]+' – '+yrsPresent[yrsPresent.length-1]):'Prep – Year 6';
+h+='<div class="cc" onclick="nv(\'ca\',\''+k+'\')" style="background:'+cc+'"><div class="cc-wm" style="color:'+ct+'">'+k+'</div><div class="cc-inner"><div class="cc-name" style="color:'+ct+'">'+n+'</div><div class="cc-sub" style="color:'+ct+'99">'+rangeLabel+' · '+uc+' units</div></div></div>';
 }
 h+='<div class="lb-section"><h2 class="sec-title" style="margin-bottom:16px">🏆 Tech Champions</h2>';
 h+=renderLeaderboard();
@@ -1547,6 +1550,8 @@ function normaliseCampusName(campus){
 function normaliseYearName(year){
   var y=String(year||'').trim();
   y=y.replace(/^(Elsternwick|Glen Waverley|St Kilda(?: Road| Rd)?|EL|GW|SKR|STK)\s*/i,'').replace(/\s*Team$/i,'').trim();
+  if(/3\s*year\s*old\s*kinder|3yo\s*kinder/i.test(y))return '3 Year Old Kinder';
+  if(/4\s*year\s*old\s*kinder|4yo\s*kinder/i.test(y))return '4 Year Old Kinder';
   if(/prep|foundation/i.test(y))return 'Prep';
   var m=y.match(/year\s*([1-6])/i)||y.match(/\b([1-6])\b/);
   if(m)return 'Year '+m[1];
@@ -1665,7 +1670,13 @@ var TH_SLUG={
 var TH_UNSLUG={};
 Object.keys(TH_SLUG).forEach(function(k){TH_UNSLUG[TH_SLUG[k]]=k;});
 function slugYL(y){return y.replace(/\s+/g,'');}
-function unslugYL(y){return y.replace(/(Year|Term)(\d)/,'$1 $2');}
+function unslugYL(y){
+  // Handle Kinder slug e.g. "3YearOldKinder" -> "3 Year Old Kinder"
+  if(/kinder/i.test(y)){
+    return y.replace(/(\d)YearOldKinder/i,'$1 Year Old Kinder');
+  }
+  return y.replace(/(Year|Term)(\d)/,'$1 $2');
+}
 
 // Detect the base path once (e.g. "/digital-learning-assistant")
 // Must be defined before readHash() runs
