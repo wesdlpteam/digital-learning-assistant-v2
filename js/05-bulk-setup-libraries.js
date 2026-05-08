@@ -182,24 +182,26 @@ const DEFAULT_BANNED_TOOLS = [
 ];
 
 const DEFAULT_TOOL_AGE_RANGES = {
-  // All year levels
-  'Seesaw': {min:0,max:6}, 'Epic': {min:0,max:6}, 'GarageBand': {min:0,max:6},
-  'iMovie': {min:0,max:6}, 'PicCollage': {min:0,max:6}, 'Google Maps': {min:0,max:6},
+  // Kinder–Year 6 (kinder-appropriate per the GAS audit prompt rules)
+  'Seesaw': {min:-2,max:6}, 'Epic': {min:-2,max:6}, 'PicCollage': {min:-2,max:6},
+  'Freeform': {min:-2,max:6}, 'Brushes Redux': {min:-2,max:6}, 'Book Creator': {min:-2,max:6},
+  // All other Prep–Year 6
+  'GarageBand': {min:0,max:6}, 'iMovie': {min:0,max:6}, 'Google Maps': {min:0,max:6},
   'Google Earth': {min:0,max:6}, 'Clickview': {min:0,max:6}, 'Green Screen': {min:0,max:6},
   'iPads': {min:0,max:6}, 'Laptops': {min:0,max:6}, 'Digital Cameras': {min:0,max:6},
-  'Freeform': {min:0,max:6}, 'Sketchbook': {min:0,max:6}, 'Brushes Redux': {min:0,max:6},
+  'Sketchbook': {min:0,max:6},
   'Delightex': {min:0,max:6}, 'Merge Cubes': {min:0,max:6}, 'Makey Makey': {min:0,max:6},
   'Word Clouds ABCya': {min:0,max:6}, 'Field Guide to Victoria': {min:0,max:6}, 'Sky Map': {min:0,max:6},
   'Geoboard': {min:0,max:6}, 'Adobe Express Podcasting': {min:0,max:6},
   'Microsoft Excel': {min:0,max:6}, 'Microsoft Forms': {min:0,max:6}, 'Microsoft Sway': {min:0,max:6},
   'Wise Discussion Chatbots': {min:3,max:6},
-  // Prep-Year 2
-  'Bee-Bots': {min:0,max:2}, 'ScratchJR': {min:0,max:2}, 'ChatterPix Kids': {min:0,max:2},
-  'Puppet Pals': {min:0,max:2}, 'Sphero Indi': {min:0,max:2},
+  // Kinder–Year 2 (play-based hardware/apps for the youngest learners)
+  'Bee-Bots': {min:-2,max:2}, 'ScratchJR': {min:-2,max:2}, 'ChatterPix Kids': {min:-2,max:2},
+  'Puppet Pals': {min:-2,max:2}, 'Sphero Indi': {min:-2,max:2},
   // Year 3+
   'Sphero BOLT': {min:3,max:6}, 'Lego Spike Essential': {min:3,max:6}, 'Micro:bit': {min:3,max:6},
   'Scratch': {min:3,max:6}, 'Stop Motion Studio': {min:3,max:6}, 'Adobe Express': {min:3,max:6},
-  'Canva': {min:3,max:6}, 'Book Creator': {min:0,max:6}, 'Padlet': {min:3,max:6},
+  'Canva': {min:3,max:6}, 'Padlet': {min:3,max:6},
   'Kahoot': {min:3,max:6}, 'Tinkercad': {min:3,max:6}, 'Explain Everything': {min:3,max:6},
   // Year 4+
   'Microsoft Teams': {min:4,max:6}, 'Microsoft Word': {min:4,max:6}, 'Microsoft PowerPoint': {min:4,max:6},
@@ -251,7 +253,7 @@ function buildDynamicToolAgeGuide(){
     : DEFAULT_APPROVED_TOOLS;
   const lines = tools.map(t => `- ${t}: ${ageRangeLabel(getToolAgeRange(t))}`).join('\n');
   return `TOOL AGE GUIDE (HARD RULE — match Australian year levels):
-Prep = ages 5-6 | Year 1 = 6-7 | Year 2 = 7-8 | Year 3 = 8-9 | Year 4 = 9-10 | Year 5 = 10-11 | Year 6 = 11-12
+3 Year Old Kinder = ages 3-4 | 4 Year Old Kinder = ages 4-5 | Prep = ages 5-6 | Year 1 = 6-7 | Year 2 = 7-8 | Year 3 = 8-9 | Year 4 = 9-10 | Year 5 = 10-11 | Year 6 = 11-12
 Current Studio-approved tool age ranges:
 ${lines || '- No approved tools configured.'}
 NEVER propose a tool for a year level outside its configured range.`;
@@ -304,17 +306,23 @@ Object.defineProperty(window, 'NOT_AVAILABLE_AT_WESLEY', {
 });
 
 const TOOL_AGE_GUIDE = `TOOL AGE GUIDE (HARD RULE — match Australian year levels):
-Prep = ages 5-6 | Year 1 = 6-7 | Year 2 = 7-8 | Year 3 = 8-9 | Year 4 = 9-10 | Year 5 = 10-11 | Year 6 = 11-12
-- Prep-Year 2 ONLY: Bee-Bots, ScratchJR, ChatterPix Kids, Puppet Pals, Sphero Indi
+3 Year Old Kinder = ages 3-4 | 4 Year Old Kinder = ages 4-5 | Prep = ages 5-6 | Year 1 = 6-7 | Year 2 = 7-8 | Year 3 = 8-9 | Year 4 = 9-10 | Year 5 = 10-11 | Year 6 = 11-12
+- Kinder-Year 2 ONLY: Bee-Bots, ScratchJR, ChatterPix Kids, Puppet Pals, Sphero Indi
 - Year 3+: Sphero BOLT, Lego Spike Essential, Micro:bits, Scratch, Stop Motion Studio, Adobe Express, Canva, Padlet, Kahoot, Tinkercad, Explain Everything, Wise Discussion Chatbots
 - Year 4+: Microsoft Teams, Lego Spike Prime, CoDrone EDU, Minecraft Education (with scaffolding for Year 4)
 - Year 5+: 3D Printers, Python-based coding
-- All year levels: Seesaw, Epic, GarageBand, iMovie, PicCollage, Google Maps, Google Earth, Clickview, Green Screen, iPads, Laptops, Digital Cameras, Freeform, Sketchbook, Brushes Redux, Book Creator
+- Kinder-Year 6: Seesaw, Epic, PicCollage, Freeform, Brushes Redux, Book Creator
+- Prep-Year 6: GarageBand, iMovie, Google Maps, Google Earth, Clickview, Green Screen, iPads, Laptops, Digital Cameras, Sketchbook
 NEVER propose a tool for a year level below its minimum age.`;
 
 // Map year level string → numeric year for age filtering
 function getYearNumber(yearLevel){
   const s = String(yearLevel || '').toLowerCase().trim();
+  // Kinder year levels are stored as negative numbers so they slot in
+  // before Prep on the same numeric scale. Mirror the GAS-side
+  // getYearNumber_ so both halves of the system agree.
+  if(s.includes('3 year old') || s.includes('3yo')) return -2;
+  if(s.includes('4 year old') || s.includes('4yo')) return -1;
   if(s.includes('prep') || s === 'p' || s === 'f' || s.includes('foundation')) return 0;
   const m = s.match(/\d+/);
   return m ? parseInt(m[0], 10) : 0;
