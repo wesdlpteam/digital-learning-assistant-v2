@@ -254,18 +254,23 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 .lb-empty{color:#555;font-size:13px;font-style:italic;padding:8px 12px}
 .lb-loading{color:#555;font-size:13px;text-align:center;padding:20px}
 
-@keyframes confettiFall{0%{transform:translateY(-100px) rotate(0deg);opacity:1}100%{transform:translateY(42vh) rotate(720deg);opacity:0}}
-@keyframes pointPop{0%{transform:scale(0);opacity:0}40%{transform:scale(1.1);opacity:1}100%{transform:scale(1);opacity:1}}
-.confetti-container{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}
-.confetti{position:absolute;top:0;width:10px;height:10px;border-radius:2px;animation:confettiFall 1.5s ease-out forwards}
-.point-popup{position:fixed;inset:0;width:100vw;height:100dvh;min-height:100vh;z-index:10000;display:flex;align-items:flex-start;justify-content:center;padding:clamp(18px,6vh,64px) 16px 16px;background:rgba(0,0,0,.6);animation:pointPop .5s ease-out forwards;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
-
-.point-popup-btn{display:inline-block;margin-top:16px;padding:10px 24px;border:none;border-radius:99px;background:#CDEB45;color:#111;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;transition:background .15s}
-.point-popup-btn:hover{background:#D8F050}
-.point-popup-inner{background:#111;border:3px solid #CDEB45;border-radius:24px;padding:24px 40px;text-align:center;box-shadow:0 0 60px rgba(205,235,69,.3);width:100%;max-width:380px;max-height:calc(100dvh - 40px);overflow-y:auto;margin:0 auto 16px;outline:none}
-.point-popup-emoji{font-size:48px;margin-bottom:8px}
-.point-popup-text{font-size:24px;font-weight:800;color:#CDEB45;font-family:"Space Grotesk",sans-serif}
-.point-popup-sub{font-size:13px;color:#888;margin-top:4px}
+/* Inline confetti burst — anchored to the clicked button, not the viewport */
+@keyframes confettiBurst{0%{transform:translate(0,0) rotate(0deg);opacity:1}100%{transform:translate(var(--cx,0),var(--cy,0)) rotate(720deg);opacity:0}}
+@keyframes pointPopIn{0%{transform:translate(-50%,-90%) scale(.4);opacity:0}55%{transform:translate(-50%,-100%) scale(1.08);opacity:1}100%{transform:translate(-50%,-100%) scale(1);opacity:1}}
+@keyframes pointPopOut{0%{transform:translate(-50%,-100%) scale(1);opacity:1}100%{transform:translate(-50%,-110%) scale(.95);opacity:0}}
+.confetti-container{position:absolute;pointer-events:none;z-index:9999;width:1px;height:1px;overflow:visible}
+.confetti{position:absolute;top:0;left:0;width:8px;height:8px;border-radius:2px;animation:confettiBurst 1.4s cubic-bezier(.2,.7,.3,1) forwards}
+.point-popup-inline{position:absolute;z-index:10000;pointer-events:auto;background:#111;border:2px solid #CDEB45;border-radius:16px;padding:14px 22px 12px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.55),0 0 32px rgba(205,235,69,.35);min-width:200px;max-width:min(320px,calc(100vw - 24px));font-family:inherit;animation:pointPopIn .45s cubic-bezier(.2,.7,.3,1.2) forwards;outline:none}
+.point-popup-inline.fade-out{animation:pointPopOut .3s ease-in forwards}
+.point-popup-inline::after{content:"";position:absolute;left:50%;bottom:-9px;transform:translateX(-50%) rotate(45deg);width:14px;height:14px;background:#111;border-right:2px solid #CDEB45;border-bottom:2px solid #CDEB45;border-radius:0 0 3px 0}
+.point-popup-inline.streak{border-color:#F5A623;box-shadow:0 12px 40px rgba(0,0,0,.55),0 0 40px rgba(245,166,35,.45);min-width:240px;padding:16px 24px 14px}
+.point-popup-inline.streak::after{border-right-color:#F5A623;border-bottom-color:#F5A623}
+.ppi-emoji{font-size:30px;line-height:1;margin-bottom:4px}
+.point-popup-inline.streak .ppi-emoji{font-size:36px}
+.ppi-headline{font-size:11px;font-weight:800;letter-spacing:1.5px;color:#F5A623;text-transform:uppercase;margin-bottom:2px}
+.ppi-text{font-size:20px;font-weight:800;color:#CDEB45;font-family:"Space Grotesk",sans-serif;line-height:1.1}
+.point-popup-inline.streak .ppi-text{color:#F5A623;font-size:22px}
+.ppi-sub{font-size:12px;color:#AAA;margin-top:3px;line-height:1.3}
 
 .stem-prompt{background:linear-gradient(135deg,rgba(124,58,237,.08) 0%,rgba(99,102,241,.08) 100%);border:2px solid #7C3AED;border-radius:16px;padding:16px 20px;margin:20px 0 14px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .15s;user-select:none;box-shadow:0 0 0 0 rgba(124,58,237,0)}
 .stem-prompt:hover{border-color:#A78BFA;background:linear-gradient(135deg,rgba(124,58,237,.14) 0%,rgba(99,102,241,.14) 100%);transform:scale(1.01);box-shadow:0 0 20px 0 rgba(124,58,237,.15)}
@@ -1468,7 +1473,7 @@ h+='</div></div>';var pv=a.dataset.lastView||'';var cv=S.v+S.ca+S.yl+S.ui;var is
 function markUsed(idx,btn){
 var d=window._usedData[idx];
 var team=d.campus+' '+d.year+' Team';
-var payload={type:'used',team:team,campus:d.campus,year:d.year,theme:d.theme,tool:d.tool,phase:d.phase};
+var payload={type:'used',v:'2',team:team,campus:d.campus,year:d.year,theme:d.theme,tool:d.tool,phase:d.phase};
 fetch(FBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)}).catch(function(){});
 btn.classList.add('done');
 btn.innerHTML='✅ Done!';
@@ -1484,58 +1489,83 @@ var isStreak=!!(p['Beginning']&&p['Middle']&&p['End']);
 _lbSheetRefreshPendingUntil=Date.now()+18000;
 refreshLeaderboardSoon();
 if(isStreak){
-celebrateStreak(d.campus+' '+d.year);
+celebrateStreak(d.campus+' '+d.year,btn);
 }else{
-celebrate(d.campus+' '+d.year);
+celebrate(d.campus+' '+d.year,btn);
 }
 }
-function celebrate(teamName){
+// Position a confetti container at the centre of the clicked button (in document coords).
+function _positionAnchor(btn){
+var r=btn.getBoundingClientRect();
+var anchorX=r.left+window.scrollX+r.width/2;
+var anchorY=r.top+window.scrollY+r.height/2;
+return {x:anchorX,y:anchorY,top:r.top+window.scrollY,bottom:r.bottom+window.scrollY,vw:Math.max(document.documentElement.clientWidth,window.innerWidth||0)};
+}
+function _spawnConfetti(anchor,count,spread){
 var colors=['#CDEB45','#F5A623','#7ED957','#38BDF8','#A78BFA','#FF6B6B','#FBBF24','#22C55E'];
 var container=document.createElement('div');
 container.className='confetti-container';
-for(var i=0;i<80;i++){
+container.style.left=anchor.x+'px';
+container.style.top=anchor.y+'px';
+for(var i=0;i<count;i++){
 var c=document.createElement('div');
 c.className='confetti';
-c.style.left=Math.random()*100+'%';
+var angle=Math.random()*Math.PI*2;
+var dist=spread*(0.4+Math.random()*0.6);
+c.style.setProperty('--cx',(Math.cos(angle)*dist)+'px');
+c.style.setProperty('--cy',(Math.sin(angle)*dist-spread*0.4)+'px');
 c.style.background=colors[Math.floor(Math.random()*colors.length)];
-c.style.animationDelay=Math.random()*0.8+'s';
-c.style.animationDuration=(1.5+Math.random()*2)+'s';
-c.style.width=(6+Math.random()*8)+'px';
-c.style.height=(6+Math.random()*8)+'px';
+c.style.animationDelay=(Math.random()*0.15)+'s';
+c.style.animationDuration=(1.1+Math.random()*0.6)+'s';
+var size=6+Math.random()*7;
+c.style.width=size+'px';
+c.style.height=size+'px';
 c.style.borderRadius=Math.random()>0.5?'50%':'2px';
 container.appendChild(c);
 }
 document.body.appendChild(container);
-var popup=document.createElement('div');
-popup.className='point-popup';
-popup.innerHTML='<div class="point-popup-inner" role="dialog" aria-modal="true" aria-label="Point awarded" tabindex="-1"><div class="point-popup-emoji">🎉</div><div class="point-popup-text">+1 Point!</div><div class="point-popup-sub">'+teamName+'</div><button class="point-popup-btn" onclick="this.closest(\'.point-popup\').remove()">Keep Exploring</button></div>';
-setTimeout(function(){var inner=popup.querySelector('.point-popup-inner');if(inner)inner.focus();},0);
-document.body.appendChild(popup);
-setTimeout(function(){container.remove();},3000);
+return container;
 }
-function celebrateStreak(teamName){
-var colors=['#CDEB45','#F5A623','#7ED957','#38BDF8','#A78BFA','#FF6B6B','#FBBF24','#22C55E'];
-var container=document.createElement('div');
-container.className='confetti-container';
-for(var i=0;i<120;i++){
-var c=document.createElement('div');
-c.className='confetti';
-c.style.left=Math.random()*100+'%';
-c.style.background=colors[Math.floor(Math.random()*colors.length)];
-c.style.animationDelay=Math.random()*1.2+'s';
-c.style.animationDuration=(1.5+Math.random()*2)+'s';
-c.style.width=(6+Math.random()*10)+'px';
-c.style.height=(6+Math.random()*10)+'px';
-c.style.borderRadius=Math.random()>0.5?'50%':'2px';
-container.appendChild(c);
+function _placeInlinePopup(popup,anchor){
+// Centre horizontally over the button, but clamp inside the viewport with 12px padding.
+var halfWidth=160; // approximation; popup max-width is 320px
+var minLeft=window.scrollX+12+halfWidth;
+var maxLeft=window.scrollX+anchor.vw-12-halfWidth;
+var leftPx=Math.min(Math.max(anchor.x,minLeft),maxLeft);
+popup.style.left=leftPx+'px';
+popup.style.top=(anchor.top-12)+'px';
 }
-document.body.appendChild(container);
+function celebrate(teamName,btn){
+if(!btn){btn=document.activeElement;} // best-effort fallback
+if(!btn||!btn.getBoundingClientRect){return;}
+var anchor=_positionAnchor(btn);
+var confetti=_spawnConfetti(anchor,40,140);
 var popup=document.createElement('div');
-popup.className='point-popup';
-popup.innerHTML='<div class="point-popup-inner" role="dialog" aria-modal="true" aria-label="Streak bonus awarded" tabindex="-1"><div class="point-popup-emoji">🔥</div><div class="point-popup-text" style="font-size:28px">STREAK BONUS!</div><div class="point-popup-text">+3 Points!</div><div class="point-popup-sub" style="margin-top:8px">'+teamName+' Team completed all 3 phases of a unit!</div><button class="point-popup-btn" onclick="this.closest(\'.point-popup\').remove()">Keep Exploring</button></div>';
-setTimeout(function(){var inner=popup.querySelector('.point-popup-inner');if(inner)inner.focus();},0);
+popup.className='point-popup-inline';
+popup.setAttribute('role','status');
+popup.setAttribute('aria-live','polite');
+popup.innerHTML='<div class="ppi-emoji">🎉</div><div class="ppi-text">+1 Point!</div><div class="ppi-sub">'+teamName+' Team</div>';
 document.body.appendChild(popup);
-setTimeout(function(){container.remove();},4000);
+_placeInlinePopup(popup,anchor);
+setTimeout(function(){popup.classList.add('fade-out');},2200);
+setTimeout(function(){if(popup.parentNode)popup.remove();},2600);
+setTimeout(function(){if(confetti.parentNode)confetti.remove();},2200);
+}
+function celebrateStreak(teamName,btn){
+if(!btn){btn=document.activeElement;}
+if(!btn||!btn.getBoundingClientRect){return;}
+var anchor=_positionAnchor(btn);
+var confetti=_spawnConfetti(anchor,90,220);
+var popup=document.createElement('div');
+popup.className='point-popup-inline streak';
+popup.setAttribute('role','status');
+popup.setAttribute('aria-live','polite');
+popup.innerHTML='<div class="ppi-emoji">🔥</div><div class="ppi-headline">Streak Bonus</div><div class="ppi-text">+3 Points!</div><div class="ppi-sub">'+teamName+' Team completed all 3 phases of a unit</div>';
+document.body.appendChild(popup);
+_placeInlinePopup(popup,anchor);
+setTimeout(function(){popup.classList.add('fade-out');},3200);
+setTimeout(function(){if(popup.parentNode)popup.remove();},3600);
+setTimeout(function(){if(confetti.parentNode)confetti.remove();},3000);
 }
 var _lbLastFetch=0;
 var _lbSheetRefreshPendingUntil=0;
@@ -1802,7 +1832,7 @@ function tgCur(el,id){var d=document.getElementById("d_"+id);var p=document.getE
 var _fbCurrent='';
 function openFB(idx){_fbCurrent=window._fbData[idx]||{};var ctx=(_fbCurrent.campus||'')+' · '+(_fbCurrent.year||'')+' · '+(_fbCurrent.theme||'')+' · '+(_fbCurrent.tool||'')+' · '+(_fbCurrent.phase||'');document.getElementById('fbContent').innerHTML='<div class="fb-title">💬 Suggestion Feedback</div><div class="fb-sub">Your feedback helps us improve these suggestions for everyone.</div><div class="fb-context">'+ctx+'</div><div class="fb-label">How did this go, or what would you change?</div><textarea class="fb-textarea" id="fbText" placeholder="e.g. We tried this and it worked great, but we\'d swap Canva for Book Creator next time..."></textarea><div class="fb-actions"><button class="fb-cancel" onclick="closeFB()">Cancel</button><button class="fb-submit" id="fbSubmit" onclick="submitFB()">Submit Feedback</button></div>';document.getElementById('fbOverlay').classList.add('open');}
 function closeFB(){document.getElementById('fbOverlay').classList.remove('open');}
-function submitFB(){var txt=document.getElementById('fbText').value.trim();if(!txt){document.getElementById('fbText').style.borderColor='#FF6B6B';return;}var btn=document.getElementById('fbSubmit');btn.disabled=true;btn.textContent='Sending...';var payload={campus:_fbCurrent.campus,year:_fbCurrent.year,theme:_fbCurrent.theme,tool:_fbCurrent.tool,phase:_fbCurrent.phase,feedback:txt};fetch(FBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)}).then(function(){showFBSuccess();}).catch(function(){showFBSuccess();});}
+function submitFB(){var txt=document.getElementById('fbText').value.trim();if(!txt){document.getElementById('fbText').style.borderColor='#FF6B6B';return;}var btn=document.getElementById('fbSubmit');btn.disabled=true;btn.textContent='Sending...';var payload={type:'feedback',v:'2',campus:_fbCurrent.campus,year:_fbCurrent.year,theme:_fbCurrent.theme,tool:_fbCurrent.tool,phase:_fbCurrent.phase,feedback:txt};fetch(FBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)}).then(function(){showFBSuccess();}).catch(function(){showFBSuccess();});}
 function showFBSuccess(){document.getElementById('fbContent').innerHTML='<div class="fb-success"><div class="fb-success-icon">✅</div><div class="fb-success-msg">Thanks for your feedback!</div><div class="fb-success-sub">This helps us make better suggestions for everyone.</div><button class="fb-cancel" onclick="closeFB()" style="margin-top:20px">Close</button></div>';}
 
 var _pageStart=Date.now(),_pageName="Home",_pageCampus="",_pageYear="";
@@ -1815,7 +1845,7 @@ var _analyticsFlushTimer=null;
 
 function _flushAnalytics(sync){
 if(!_analyticsQueue.length)return;
-var batch={type:'analytics_batch',session:_userSession,events:_analyticsQueue.slice()};
+var batch={type:'analytics_batch',v:'2',session:_userSession,events:_analyticsQueue.slice()};
 _analyticsQueue=[];
 var body=JSON.stringify(batch);
 if(sync&&navigator.sendBeacon){
@@ -1850,7 +1880,13 @@ window.addEventListener('beforeunload',function(){trackPage('exit','','');_flush
 
 function reactFB(idx,reaction,btn){
 var d=window._fbData[idx];
-var payload={type:'reaction',campus:d.campus,year:d.year,theme:d.theme,tool:d.tool,phase:d.phase,reaction:reaction};
+// Client-side debounce: ignore identical click within 1.5s on the same suggestion
+if(!window._reactDebounce)window._reactDebounce={};
+var dkey=idx+'|'+reaction;
+var now=Date.now();
+if(window._reactDebounce[dkey]&&(now-window._reactDebounce[dkey])<1500)return;
+window._reactDebounce[dkey]=now;
+var payload={type:'reaction',v:'2',campus:d.campus,year:d.year,theme:d.theme,tool:d.tool,phase:d.phase,reaction:reaction};
 fetch(FBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
 var parent=btn.parentElement;parent.querySelectorAll('.sg-react-btn').forEach(function(b){b.classList.remove('voted');});
 btn.classList.add('voted');
