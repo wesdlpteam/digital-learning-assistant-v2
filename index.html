@@ -1478,12 +1478,17 @@ fetch(FBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'}
 btn.classList.add('done');
 btn.innerHTML='✅ Done!';
 btn.onclick=null;
-if(!window._usedPhases)window._usedPhases={};
+// Local celebration heuristic — matches the server rule of "3 uses in the same unit = +3 bonus".
+// Server is the source of truth; this only decides which animation to show on the click itself.
+if(!window._usedUnits)window._usedUnits={};
 var unitKey=d.campus+'|'+d.year+'|'+d.theme;
-if(!window._usedPhases[unitKey])window._usedPhases[unitKey]={};
-window._usedPhases[unitKey][d.phase]=true;
-var p=window._usedPhases[unitKey];
-var isStreak=!!(p['Beginning']&&p['Middle']&&p['End']);
+if(!window._usedUnits[unitKey])window._usedUnits[unitKey]={count:0,awarded:false};
+window._usedUnits[unitKey].count+=1;
+var isStreak=false;
+if(window._usedUnits[unitKey].count>=3&&!window._usedUnits[unitKey].awarded){
+  window._usedUnits[unitKey].awarded=true;
+  isStreak=true;
+}
 // The popup is immediate feedback only. Tech Champions totals are refreshed from
 // the DLA_Feedback Google Sheet so the dashboard matches the live analytics source.
 _lbSheetRefreshPendingUntil=Date.now()+18000;
@@ -1560,7 +1565,7 @@ var popup=document.createElement('div');
 popup.className='point-popup-inline streak';
 popup.setAttribute('role','status');
 popup.setAttribute('aria-live','polite');
-popup.innerHTML='<div class="ppi-emoji">🔥</div><div class="ppi-headline">Streak Bonus</div><div class="ppi-text">+3 Points!</div><div class="ppi-sub">'+teamName+' Team completed all 3 phases of a unit</div>';
+popup.innerHTML='<div class="ppi-emoji">🔥</div><div class="ppi-headline">Streak Bonus</div><div class="ppi-text">+3 Points!</div><div class="ppi-sub">'+teamName+' Team logged 3 tech suggestions for a unit</div>';
 document.body.appendChild(popup);
 _placeInlinePopup(popup,anchor);
 setTimeout(function(){popup.classList.add('fade-out');},3200);
@@ -1623,12 +1628,15 @@ function mergeLeaderboard(existing,incoming){
   return Object.keys(map).map(function(k){return map[k];});
 }
 var _lbJsonpSeq=0;
+// JSONP fallback — used only if the primary fetch() path fails (e.g. CORS
+// blocked by a proxy or extension). Kept because Apps Script's redirect chain
+// occasionally trips strict browser cache policies on cross-origin GETs.
 function fetchLeaderboardJsonp(now){
   return new Promise(function(resolve,reject){
-    var cb='dlaLeaderboardCb_'+now+'_'+(++_lbJsonpSeq);
+    var cb='dlaLbCb_'+now+'_'+(++_lbJsonpSeq);
     var script=document.createElement('script');
     var done=false;
-    var timer=setTimeout(function(){cleanup();reject(new Error('Leaderboard request timed out'));},10000);
+    var timer=setTimeout(function(){cleanup();reject(new Error('Leaderboard JSONP timeout'));},10000);
     function cleanup(){
       if(done)return;
       done=true;
@@ -1638,15 +1646,32 @@ function fetchLeaderboardJsonp(now){
     }
     window[cb]=function(data){cleanup();resolve(data);};
     script.onerror=function(){cleanup();reject(new Error('Leaderboard JSONP failed'));};
-    script.src=FBHOOK+'?action=leaderboard&callback='+encodeURIComponent(cb)+'&_='+now;
+    script.src=FBHOOK+'?action=leaderboard&callback='+encodeURIComponent(cb)+'&t='+now;
     document.head.appendChild(script);
+  });
+}
+// Primary path — plain CORS fetch. Apps Script /exec sends
+// Access-Control-Allow-Origin: * for "Anyone" deployments, so this works
+// cross-origin and surfaces errors properly (unlike a silently-failing
+// <script> tag). Falls back to JSONP only on real failure.
+function fetchLeaderboardJson(now){
+  return fetch(FBHOOK+'?action=leaderboard&t='+now,{method:'GET',cache:'no-store',credentials:'omit'})
+    .then(function(r){
+      if(!r.ok)throw new Error('Leaderboard HTTP '+r.status);
+      return r.json();
+    });
+}
+function fetchLeaderboard(now){
+  return fetchLeaderboardJson(now).catch(function(err){
+    if(window.console&&console.warn)console.warn('Leaderboard fetch failed, retrying via JSONP:',err&&err.message||err);
+    return fetchLeaderboardJsonp(now);
   });
 }
 function loadLeaderboard(force){
 var now=Date.now();
 if(!force && window._leaderboard && now-_lbLastFetch<30000)return;
 _lbLastFetch=now;
-fetchLeaderboardJsonp(now).then(function(data){
+fetchLeaderboard(now).then(function(data){
 var incoming=normaliseLeaderboard(data);
 if(incoming.length){
   window._leaderboard=mergeLeaderboard([],incoming);
@@ -1656,7 +1681,12 @@ if(incoming.length){
   window._lbSheetError=false;
 }
 if(S.v==='home')R();
-}).catch(function(){window._lbSheetError=true;if(!window._leaderboard)window._leaderboard=[];if(S.v==='home')R();});
+}).catch(function(err){
+  if(window.console&&console.error)console.error('Leaderboard load failed:',err&&err.message||err);
+  window._lbSheetError=true;
+  if(!window._leaderboard)window._leaderboard=[];
+  if(S.v==='home')R();
+});
 }
 function refreshLeaderboardSoon(){
   _lbLastFetch=0;

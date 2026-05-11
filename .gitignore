@@ -1,0 +1,10 @@
+# Clasp / Google Secrets
+.clasprc.json
+clasp.json
+
+# Node Modules (if you installed clasp locally)
+node_modules/
+
+# OS junk
+.DS_Store
+Thumbs.db 

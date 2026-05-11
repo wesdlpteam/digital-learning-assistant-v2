@@ -59,6 +59,8 @@ Load order matters — `08` ships after `09` so its definitions win. Don't "fix"
 
 `index.html` is a single self-contained file (inline CSS + JS); it does not load the `js/` folder.
 
+The top of `00-config-state-utils.js` is where global constants live: `SCRIPT_URL` (gas_backend `/exec`), `CLIENT_ID` (Google OAuth — change here if Wesley rotates the client), `ANALYTICS_SHEET_ID`, plus two model names — `OPENAI_MODEL = 'gpt-4.1'` for heavy paths (Bulk AI Edit, Fix All, regenerate, scoring) and `OPENAI_FAST_MODEL = 'gpt-4.1-mini'` for per-suggestion feedback and single-suggestion regen. Grep for both when tracing model usage.
+
 ### Authentication & backend calls
 - Frontend obtains a Google OAuth access token via GIS (`accounts.google.com/gsi/client`), stored in `DRIVE_TOKEN`. The same token is sent to GAS as `googleAccessToken` so the backend can verify the user's email against `DLA_ALLOWED_EMAILS` in `gas_backend/Code.js`. To add a user, edit that array and `clasp push`.
 - Optional `DLA_SHARED_SECRET` fallback: stored in `localStorage` under `dla_shared_secret` on the client and as a Script Property on the server. Used only when Google auth is unavailable.
@@ -75,6 +77,8 @@ Hardcoded Drive/Sheet IDs at the top of the file: `DATA_JSON_FILE_ID`, `LIBRARIE
 
 ### gas_analytics (`gas_analytics/`)
 Separate Apps Script project. `doPost` routes by `body.type`: `used`, `reaction`, `analytics_batch`, `feedback`. Writes to the `Analytics` / `Used` / `Feedback` / `Reactions` / `Leaderboard` sheets in spreadsheet `1R4P4FJlc8SyRFlVWoM0HpHmfCNMNVOpI8cuEILFxBNY`. `GET ?action=leaderboard` returns JSONP. The deployed web app URL is hardcoded as `FBHOOK` in `index.html` — if you redeploy and the `/exec` URL changes, update that constant.
+
+`gas_analytics/app.html` is an unused/legacy view — `doGet` only returns JSON (or JSONP for `?action=leaderboard`) and never serves this HTML. Don't waste time editing `app.html` thinking it's the rendered web app.
 
 ## Conventions & gotchas
 
