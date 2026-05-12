@@ -85,7 +85,7 @@ const APPROVED_TOOLS = `APPROVED TOOLS ONLY (Wesley College — Microsoft school
 - Robotics/STEM: Bee-Bots, Sphero Indi, Sphero BOLT, Lego Spike Prime, Micro:bits, CoDrone EDU, Makey Makey
 - Maker/A/V Hardware: 3D Printers, Merge Cubes, Podcast Equipment, iPads, Laptops
 - Core Creation: Seesaw, Canva, Book Creator, Padlet, Delightex
-- Video/Audio/Animation: GarageBand, ScratchJR, Stop Motion Studio, ChatterPix Kids, iMovie, Puppet Pals, Adobe Express, Adobe Express Podcasting
+- Video/Audio/Animation: GarageBand, ScratchJR, Stop Motion Studio, ChatterPix Kids, iMovie, Puppet Pals, Adobe Express, Adobe Express Podcasting, Animating a Character with Adobe Express
 - Subject Specific: Google Maps, National Geographic MapMaker, Field Guide to Victoria, Sky Map, Geoboard
 - Specialist: Wise Discussion Chatbots
 - Other: Clickview, Epic, PicCollage, Brushes Redux, Word Clouds ABCya, Sketchbook, Explain Everything, Freeform, Kahoot, Tinkercad, Minecraft Education
@@ -556,15 +556,15 @@ function auditPlanners(filterCa, filterYl) {
     // aligned to the age ranges in the Studio Tool Inventory.
     // Previously the early years prompt listed Canva which is Year 3+.
     if (kinder.includes(planner.yl)) {
-      yearRule = "Kindergarten (" + planner.yl + "): These are 3-4 year old children. Suggestions must be VERY simple, play-based, and hands-on. Use only: Bee-Bots, Sphero Indi, ScratchJR, ChatterPix Kids, Puppet Pals, PicCollage, Seesaw, Book Creator, Brushes Redux, Freeform, Epic. All activities must be teacher-guided with minimal text. Focus on tapping, dragging, recording voice, taking photos, and physical play. Do NOT suggest any tool requiring reading, typing, or complex multi-step workflows. Maximise diversity — use 6 different tools.";
+      yearRule = "Kindergarten (" + planner.yl + "): These are 3-4 year old children. Suggestions must be VERY simple, play-based, and hands-on. Use only: Bee-Bots, Sphero Indi, ScratchJR, ChatterPix Kids, Puppet Pals, PicCollage, Seesaw, Book Creator, Brushes Redux, Freeform, Epic, Animating a Character with Adobe Express (teacher-guided — teacher operates the tool while children record their voices and a character lip-syncs). All activities must be teacher-guided with minimal text. Focus on tapping, dragging, recording voice, taking photos, and physical play. Do NOT suggest any tool requiring reading, typing, or complex multi-step workflows. Maximise diversity — use 6 different tools.";
     } else if (upperPrimary.includes(planner.yl)) {
-      yearRule = "Upper primary (Year 4-6): Wide tool pool. Canva, Book Creator, Padlet, Delightex, Adobe Express, M365 (Word/Excel/Forms), Minecraft Education, Lego Spike Prime, CoDrone EDU, Micro:bit, and all general tools are appropriate. Maximise diversity — use 6 different tools.";
+      yearRule = "Upper primary (Year 4-6): Wide tool pool. Canva, Book Creator, Padlet, Delightex, Adobe Express, Animating a Character with Adobe Express, M365 (Word/Excel/Forms), Minecraft Education, Lego Spike Prime, CoDrone EDU, Micro:bit, and all general tools are appropriate. Maximise diversity — use 6 different tools.";
     } else if (midPrimary.includes(planner.yl)) {
-      yearRule = "Mid primary (Year 3): Canva, Book Creator, Delightex, Adobe Express, Padlet, Sphero BOLT, Micro:bit, Stop Motion Studio, Scratch, Kahoot, Explain Everything, and all general tools (Seesaw, PicCollage, GarageBand, iMovie, etc.) are appropriate. Maximise diversity — use 6 different tools.";
+      yearRule = "Mid primary (Year 3): Canva, Book Creator, Delightex, Adobe Express, Animating a Character with Adobe Express, Padlet, Sphero BOLT, Micro:bit, Stop Motion Studio, Scratch, Kahoot, Explain Everything, and all general tools (Seesaw, PicCollage, GarageBand, iMovie, etc.) are appropriate. Maximise diversity — use 6 different tools.";
     } else if (planner.yl === "Year 2") {
-      yearRule = "Early years (Year 2): Use a DIVERSE mix from the Prep-Year 2 pool: Seesaw, Book Creator, Delightex, Bee-Bots, Sphero Indi, ScratchJR, ChatterPix Kids, Puppet Pals, PicCollage, GarageBand, iMovie, Merge Cubes, Makey Makey, Brushes Redux, Freeform, Sketchbook, Epic, Word Clouds ABCya. Do NOT suggest Canva, Padlet, Adobe Express, Minecraft, or any Year 3+ tool. Maximise diversity — use 6 different tools.";
+      yearRule = "Early years (Year 2): Use a DIVERSE mix from the Prep-Year 2 pool: Seesaw, Book Creator, Delightex, Bee-Bots, Sphero Indi, ScratchJR, ChatterPix Kids, Puppet Pals, PicCollage, GarageBand, iMovie, Merge Cubes, Makey Makey, Brushes Redux, Freeform, Sketchbook, Epic, Word Clouds ABCya, Animating a Character with Adobe Express (teacher-guided). Do NOT suggest Canva, Padlet, the general Adobe Express editor, Minecraft, or any Year 3+ tool. Maximise diversity — use 6 different tools.";
     } else {
-      yearRule = "Early years (Prep-Year 1): Use a DIVERSE mix from the Prep-Year 1 pool: Seesaw, Book Creator, Delightex, Bee-Bots, Sphero Indi, ScratchJR, ChatterPix Kids, Puppet Pals, PicCollage, GarageBand, iMovie, Merge Cubes, Makey Makey, Brushes Redux, Freeform, Sketchbook, Epic, Word Clouds ABCya. Do NOT suggest Canva, Padlet, Adobe Express, Minecraft, Sphero BOLT, or any Year 3+ tool. Maximise diversity — use 6 different tools.";
+      yearRule = "Early years (Prep-Year 1): Use a DIVERSE mix from the Prep-Year 1 pool: Seesaw, Book Creator, Delightex, Bee-Bots, Sphero Indi, ScratchJR, ChatterPix Kids, Puppet Pals, PicCollage, GarageBand, iMovie, Merge Cubes, Makey Makey, Brushes Redux, Freeform, Sketchbook, Epic, Word Clouds ABCya, Animating a Character with Adobe Express (teacher-guided). Do NOT suggest Canva, Padlet, the general Adobe Express editor, Minecraft, Sphero BOLT, or any Year 3+ tool. Maximise diversity — use 6 different tools.";
     }
 
     let prompt = `You are a dual-role expert: a Digital Learning Coach AND a STEM/Makerspace Coordinator. 
@@ -807,15 +807,15 @@ function runSurgeon(bannedTool, replacementTool) {
     let upperPrimary = ["Year 4", "Year 5", "Year 6"];
     let yearGuidance = "";
     if (planner.yl === "3 Year Old Kinder" || planner.yl === "4 Year Old Kinder") {
-      yearGuidance = `Kindergarten (${planner.yl}): 3-4 year olds. Use only simple, play-based tools: Bee-Bots, Sphero Indi, ScratchJR, ChatterPix Kids, Puppet Pals, PicCollage, Seesaw, Book Creator, Brushes Redux, Freeform, Epic. Teacher-guided, no reading/typing required.`;
+      yearGuidance = `Kindergarten (${planner.yl}): 3-4 year olds. Use only simple, play-based tools: Bee-Bots, Sphero Indi, ScratchJR, ChatterPix Kids, Puppet Pals, PicCollage, Seesaw, Book Creator, Brushes Redux, Freeform, Epic, Animating a Character with Adobe Express (teacher-guided). Teacher-guided, no reading/typing required.`;
     } else if (upperPrimary.includes(planner.yl)) {
-      yearGuidance = "Upper primary (Year 4-6): Canva, Adobe Express, Delightex, or Book Creator are appropriate.";
+      yearGuidance = "Upper primary (Year 4-6): Canva, Adobe Express, Animating a Character with Adobe Express, Delightex, or Book Creator are appropriate.";
     } else if (planner.yl === "Prep" || planner.yl === "Year 1") {
-      yearGuidance = `Early years (Prep, Year 1): prefer Seesaw, Canva, Delightex, or Book Creator. NO SPHERO BOLT. NO MINECRAFT.`;
+      yearGuidance = `Early years (Prep, Year 1): prefer Seesaw, Canva, Delightex, Book Creator, or Animating a Character with Adobe Express (teacher-guided). NO SPHERO BOLT. NO MINECRAFT.`;
     } else if (planner.yl === "Year 2") {
-      yearGuidance = `Early years (Year 2): prefer Seesaw, Canva, Delightex, or Book Creator. NO SPHERO BOLT.`;
+      yearGuidance = `Early years (Year 2): prefer Seesaw, Canva, Delightex, Book Creator, or Animating a Character with Adobe Express (teacher-guided). NO SPHERO BOLT.`;
     } else {
-      yearGuidance = "Mid primary (Year 3): Canva, Book Creator, Delightex, or Adobe Express.";
+      yearGuidance = "Mid primary (Year 3): Canva, Book Creator, Delightex, Adobe Express, or Animating a Character with Adobe Express.";
     }
     yearGuidance += "\nPRESENTATION RULE: All presentation suggestions MUST use either Canva or Adobe Express. PowerPoint is BANNED.";
     yearGuidance += libraryText;

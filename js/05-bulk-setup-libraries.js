@@ -131,6 +131,8 @@ The Minecraft 2-sentence cap does NOT apply to other verified lesson libraries. 
 
 PODCASTING RULE: Whenever a suggestion involves podcasting, audio recording, audio storytelling, or audio interviews, ALWAYS use the tool name "Adobe Express Podcasting" — not GarageBand, not "Podcast Equipment", not generic "Adobe Express". Adobe Express Podcasting is the school's preferred podcasting platform. Always include the URL https://podcast.adobe.com in the description.
 
+ANIMATE CHARACTER RULE: Whenever a suggestion involves a talking character, animated narration, a lip-synced explainer, an avatar telling a story, a character delivering information, or any animated character speaking, ALWAYS use the tool name "Animating a Character with Adobe Express" — not generic "Adobe Express", not ChatterPix Kids (which is Prep–Year 2 only), not Puppet Pals. This is Adobe Express's Animate from Audio feature: students record audio and a character automatically lip-syncs to it. Always include the URL https://new.express.adobe.com/home/tools/animate-from-audio in the description, and name the specific feature ("Animate from Audio") in the description text. For Kinder and Prep–Year 2, frame it as teacher-guided (the teacher operates the tool while children record their voices).
+
 GREEN SCREEN RULE: Instead of physical Green Screen Kits (which are banned), suggest Canva Remove Background. Good example:
 "Students record themselves as youth reporters presenting from a digital newsroom, protest site, disaster zone, gallery wall or community setting related to a global issue. Using Canva's Remove Background feature, they place themselves into a relevant visual scene and produce a short awareness video that explains the issue, its impact and a possible call to action."
 
@@ -170,7 +172,7 @@ const DEFAULT_APPROVED_TOOLS = [
   'Seesaw', 'Canva', 'Book Creator', 'Padlet',
   // Video / audio / animation
   'GarageBand', 'ScratchJR', 'Stop Motion Studio', 'ChatterPix Kids', 'iMovie',
-  'Puppet Pals', 'Adobe Express', 'Adobe Express Podcasting',
+  'Puppet Pals', 'Adobe Express', 'Adobe Express Podcasting', 'Animating a Character with Adobe Express',
   // Subject specific (Google Earth is BANNED)
   'Google Maps', 'National Geographic MapMaker', 'Field Guide to Victoria', 'Sky Map', 'Geoboard',
   // Other
@@ -204,6 +206,7 @@ const DEFAULT_TOOL_AGE_RANGES = {
   'Delightex': {min:0,max:6}, 'Merge Cubes': {min:0,max:6}, 'Makey Makey': {min:0,max:6},
   'Word Clouds ABCya': {min:0,max:6}, 'Field Guide to Victoria': {min:0,max:6}, 'Sky Map': {min:0,max:6},
   'Geoboard': {min:0,max:6}, 'Adobe Express Podcasting': {min:0,max:6},
+  'Animating a Character with Adobe Express': {min:-2,max:6},
   'Microsoft Excel': {min:0,max:6}, 'Microsoft Forms': {min:0,max:6}, 'Microsoft Sway': {min:0,max:6},
   'Wise Discussion Chatbots': {min:3,max:6},
   // Kinder–Year 2 (play-based hardware/apps for the youngest learners)
@@ -355,6 +358,7 @@ function getAgeAppropriateTools(yearLevel){
     {n:'Makey Makey', min:0}, {n:'Word Clouds ABCya', min:0},
     {n:'Field Guide to Victoria', min:0}, {n:'Sky Map', min:0},
     {n:'Geoboard',    min:0}, {n:'Adobe Express Podcasting', min:0},
+    {n:'Animating a Character with Adobe Express', min:0},
     {n:'Book Creator', min:0},
     // Prep-Yr2 ONLY (max:2)
     {n:'Bee-Bots',      min:0, max:2},

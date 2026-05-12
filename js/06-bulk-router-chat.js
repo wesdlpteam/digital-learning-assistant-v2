@@ -312,7 +312,7 @@ const TOOL_WHITELIST = [
   // Video / audio / animation
   'garageband','scratchjr','scratch jr','scratch','stop motion studio','stop motion',
   'chatterpix','imovie','puppet pals',
-  'adobe express','adobe express podcasting',
+  'adobe express','adobe express podcasting','animating a character with adobe express',
 
   // Subject specific (Google Earth is BANNED)
   'google maps','national geographic mapmaker','national geographic map maker','nat geo mapmaker','mapmaker',
@@ -1640,7 +1640,12 @@ function normaliseToolName(t){
     'scratchjr':'ScratchJr','scratch jr':'ScratchJr','scratch junior':'ScratchJr',
     'chatterpix':'ChatterPix Kids','chatterpix kids':'ChatterPix Kids',
     'stop motion studio':'Stop Motion Studio','stopmotion':'Stop Motion Studio',
-    'adobe express animate from audio':'Adobe Express Animate from Audio',
+    'animating a character with adobe express':'Animating a Character with Adobe Express',
+    'adobe express animate from audio':'Animating a Character with Adobe Express',
+    'animate from audio':'Animating a Character with Adobe Express',
+    'adobe express character animator':'Animating a Character with Adobe Express',
+    'character animator':'Animating a Character with Adobe Express',
+    'animate character':'Animating a Character with Adobe Express',
     'adobe express podcasting':'Adobe Express Podcasting',
     'adobe express video':'Adobe Express Video',
     'lego spike prime':'Lego Spike Prime','lego spike essential':'Lego Spike Essential',
