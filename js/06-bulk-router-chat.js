@@ -425,6 +425,8 @@ function getIssues(){
     const bannedSeen = new Set();
     sugs.forEach((s, slotIdx)=>{
       if(!s || !isRealSug(s)) return;
+      // STEM Design Cycle slot (#6, index 5) titles are activity names, not tech tools — skip banned-tool match.
+      if(slotIdx === 5) return;
       const tool = sugTool(s);
       const desc = sugDesc(s);
       const bannedTool = dashboardBannedToolMatch_(tool) || dashboardBannedToolMatch_(desc);
