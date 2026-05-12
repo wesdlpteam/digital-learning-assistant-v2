@@ -239,6 +239,12 @@ function doPost(e) {
       return jsonResponse({ enriched: enriched.length, total: audited.length, remaining: remaining, user: verifiedEmail });
     }
 
+    if (action === 'refreshplannercontext') {
+      const result = refreshPlannerContext_(body);
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
     if (action === 'rebootmakerspace') {
       const filterCa = body.filterCa || null;
       const filterYl = body.filterYl || null;
@@ -1058,6 +1064,72 @@ function pushLibrariesToGitHub() {
 
 
 // ==========================================
+// 4b. AUTO GITHUB SYNC — time-driven trigger
+// ==========================================
+// Studio writes lesson edits straight to Drive (saveToDriveConcurrentMerge_),
+// bypassing GAS, so pushToGitHub never runs for those edits. This trigger
+// closes that gap: every AUTO_SYNC_INTERVAL_MINUTES it checks Drive's
+// modifiedTime against the last-pushed timestamp and only commits if newer.
+const AUTO_SYNC_INTERVAL_MINUTES = 5;
+const AUTO_SYNC_HANDLER_NAME = 'autoSyncDriveToGitHub';
+const PROP_LAST_PUSHED_DATA = 'DLA_LAST_PUSHED_DATA_MTIME';
+const PROP_LAST_PUSHED_LIBS = 'DLA_LAST_PUSHED_LIBS_MTIME';
+
+function autoSyncDriveToGitHub() {
+  const props = PropertiesService.getScriptProperties();
+  const lock = LockService.getScriptLock();
+  // If a previous tick is still running (rare, but possible during 429 retries),
+  // skip rather than queue up duplicate commits.
+  if (!lock.tryLock(1000)) {
+    Logger.log('autoSyncDriveToGitHub: another tick is still running, skipping');
+    return;
+  }
+  try {
+    autoSyncOne_(DATA_JSON_FILE_ID, PROP_LAST_PUSHED_DATA, 'data.json', pushToGitHub, props);
+    autoSyncOne_(LIBRARIES_JSON_FILE_ID, PROP_LAST_PUSHED_LIBS, 'libraries.json', pushLibrariesToGitHub, props);
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function autoSyncOne_(fileId, propKey, label, pushFn, props) {
+  try {
+    const driveMtime = DriveApp.getFileById(fileId).getLastUpdated().getTime();
+    const lastPushed = Number(props.getProperty(propKey) || 0);
+    if (driveMtime <= lastPushed) return;
+    pushFn();
+    // pushFn throws on failure, so we only reach here on success.
+    props.setProperty(propKey, String(driveMtime));
+    Logger.log('autoSync: ' + label + ' pushed (drive mtime ' + new Date(driveMtime).toISOString() + ')');
+  } catch (e) {
+    Logger.log('autoSync ' + label + ' failed: ' + (e && e.message ? e.message : e));
+  }
+}
+
+// Run ONCE from the Apps Script editor to install the trigger.
+function installAutoSyncTrigger() {
+  removeAutoSyncTrigger();
+  ScriptApp.newTrigger(AUTO_SYNC_HANDLER_NAME)
+    .timeBased()
+    .everyMinutes(AUTO_SYNC_INTERVAL_MINUTES)
+    .create();
+  Logger.log('Installed ' + AUTO_SYNC_HANDLER_NAME + ' every ' + AUTO_SYNC_INTERVAL_MINUTES + ' minutes');
+}
+
+function removeAutoSyncTrigger() {
+  const triggers = ScriptApp.getProjectTriggers();
+  let removed = 0;
+  for (let i = 0; i < triggers.length; i++) {
+    if (triggers[i].getHandlerFunction() === AUTO_SYNC_HANDLER_NAME) {
+      ScriptApp.deleteTrigger(triggers[i]);
+      removed++;
+    }
+  }
+  Logger.log('Removed ' + removed + ' existing auto-sync trigger(s)');
+}
+
+
+// ==========================================
 // 5. PLANNER CONTEXT — On-demand + Batch Enrichment
 // ==========================================
 
@@ -1090,48 +1162,144 @@ function getPlannerContext_(body) {
 // PLANNER ENRICHMENT
 // ==========================================
 // v5.19: Reads markdown planners directly from Drive — zero API calls.
-// Previously sent each PDF to OpenAI for text extraction at ~15-25s per unit.
-// Now completes the entire dataset in seconds.
+// v5.22: Re-enriches an entry when the .md file's lastUpdated is newer than
+//        the stored plannerContextRichAt, so AI prompts never run on stale text.
 function enrichPlannerContext() {
   var file = DriveApp.getFileById(DATA_JSON_FILE_ID);
   var data = JSON.parse(file.getBlob().getDataAsString());
   var folder = DriveApp.getFolderById(PLANNERS_FOLDER_ID);
-  var enrichedCount = 0, needsSave = false;
+  var enrichedCount = 0, refreshedCount = 0, needsSave = false;
 
   for (var i = 0; i < data.length; i++) {
     var entry = data[i];
-    
-    // Skip if already successfully enriched OR if marked with our long error string
-    if (entry.plannerContextRich && entry.plannerContextRich.length > 50) continue;
     if (!entry.audited) continue;
-    
+
     var ca = entry.ca, yl = entry.yl, th = entry.th;
     var caCode = campusMap[ca];
     if (!caCode) continue;
 
+    var hasRich = entry.plannerContextRich && entry.plannerContextRich.length > 50;
+    var richIsError = hasRich && /^ERROR:/.test(entry.plannerContextRich);
+
+    // Fast path: skip if already enriched AND the .md hasn't been edited since.
+    // For entries we have no timestamp for yet, do a cheap stat-only check so
+    // we don't read large blobs we don't need.
+    if (hasRich && !richIsError) {
+      var mdFile = findPlannerFile_(folder, yl, th, caCode);
+      if (!mdFile) continue; // file deleted — keep cache rather than blank it
+      var mdUpdated = mdFile.getLastUpdated().getTime();
+      var cachedAt = entry.plannerContextRichAt ? new Date(entry.plannerContextRichAt).getTime() : 0;
+      if (cachedAt && mdUpdated <= cachedAt) continue; // cache still fresh
+
+      var text = mdFile.getBlob().getDataAsString();
+      if (!text || !text.trim()) continue;
+      data[i].plannerContextRich = text.trim();
+      data[i].plannerContextRichAt = new Date(mdUpdated).toISOString();
+      needsSave = true;
+      refreshedCount++;
+      Logger.log('Refreshed (md newer): "' + th + '" — ' + text.length + ' chars');
+      continue;
+    }
+
+    // Initial enrichment (no cache yet, or cached as ERROR).
     var mdResult = readPlannerMarkdown_(folder, yl, th, caCode);
-    
-    if (!mdResult) { 
-      data[i].plannerContextRich = 'ERROR: No planner markdown could be found. Skipping to prevent loop.'; 
-      needsSave = true; 
+
+    if (!mdResult) {
+      data[i].plannerContextRich = 'ERROR: No planner markdown could be found. Skipping to prevent loop.';
+      needsSave = true;
       Logger.log('No markdown found for ' + th + '. Marked as error.');
-      continue; 
+      continue;
     }
 
     data[i].plannerContextRich = mdResult.text;
+    var mdFileForTs = findPlannerFile_(folder, yl, th, caCode);
+    if (mdFileForTs) data[i].plannerContextRichAt = mdFileForTs.getLastUpdated().toISOString();
     needsSave = true;
     enrichedCount++;
     Logger.log('Enriched: "' + th + '" — ' + mdResult.text.length + ' chars (direct read)');
   }
 
-  if (needsSave) { 
-    file.setContent(JSON.stringify(data, null, 2)); 
-    Logger.log('Saved data. Enriched ' + enrichedCount + ' entries (zero API calls).'); 
-    if (typeof pushToGitHub === 'function') pushToGitHub(); 
+  if (needsSave) {
+    file.setContent(JSON.stringify(data, null, 2));
+    Logger.log('Saved data. Enriched ' + enrichedCount + ', refreshed ' + refreshedCount + ' entries.');
+    if (typeof pushToGitHub === 'function') pushToGitHub();
   }
-  
+
   var remaining = data.filter(function(e) { return e.audited && (!e.plannerContextRich || e.plannerContextRich.length <= 50); }).length;
   Logger.log(remaining + ' entries still need enrichment');
+  return { enriched: enrichedCount, refreshed: refreshedCount, remaining: remaining };
+}
+
+// ==========================================
+// PLANNER CONTEXT REFRESH (manual cache-bust)
+// ==========================================
+// Force-reads .md files from Drive and overwrites plannerContextRich,
+// bypassing the timestamp gate. Body:
+//   { all: true }                       → refresh every audited entry
+//   { ca, yl, th }                      → refresh just that one
+//   { ca, yl }                          → refresh all entries for that campus+year
+function refreshPlannerContext_(body) {
+  var file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  var data = JSON.parse(file.getBlob().getDataAsString());
+  var folder = DriveApp.getFolderById(PLANNERS_FOLDER_ID);
+
+  var all = body.all === true || String(body.all) === 'true';
+  var ca = String(body.ca || '').trim();
+  var yl = String(body.yl || '').trim();
+  var th = String(body.th || '').trim();
+
+  if (!all && !(ca && yl)) {
+    throw new Error('refreshPlannerContext requires {all:true} or {ca, yl[, th]}');
+  }
+
+  var refreshed = 0, missing = 0, skipped = 0, needsSave = false;
+  var perFileCache = {}; // avoid re-reading the same .md when many entries share one planner
+
+  for (var i = 0; i < data.length; i++) {
+    var entry = data[i];
+    if (!all) {
+      if (ca && entry.ca !== ca) continue;
+      if (yl && entry.yl !== yl) continue;
+      if (th && entry.th !== th) continue;
+    }
+    if (!entry.audited && !all) { skipped++; continue; }
+    var caCode = campusMap[entry.ca];
+    if (!caCode) { skipped++; continue; }
+
+    var cacheKey = entry.yl + '|' + entry.th + '|' + caCode;
+    var hit = perFileCache[cacheKey];
+    var mdFile, text;
+    if (hit) {
+      mdFile = hit.mdFile;
+      text = hit.text;
+    } else {
+      mdFile = findPlannerFile_(folder, entry.yl, entry.th, caCode);
+      if (!mdFile) {
+        perFileCache[cacheKey] = { mdFile: null, text: '' };
+        missing++;
+        Logger.log('refreshPlannerContext: no .md found for ' + entry.ca + ' ' + entry.yl + ' — ' + entry.th);
+        continue;
+      }
+      text = mdFile.getBlob().getDataAsString();
+      perFileCache[cacheKey] = { mdFile: mdFile, text: text };
+    }
+
+    if (!mdFile) { missing++; continue; }
+    if (!text || !text.trim()) { missing++; continue; }
+
+    data[i].plannerContextRich = text.trim();
+    data[i].plannerContextRichAt = mdFile.getLastUpdated().toISOString();
+    needsSave = true;
+    refreshed++;
+  }
+
+  if (needsSave) {
+    file.setContent(JSON.stringify(data, null, 2));
+    if (typeof pushToGitHub === 'function') pushToGitHub();
+  }
+
+  Logger.log('refreshPlannerContext: refreshed ' + refreshed + ', missing ' + missing + ', skipped ' + skipped);
+  return { refreshed: refreshed, missing: missing, skipped: skipped, scope: all ? 'all' : (th ? 'unit' : 'campus+year') };
 }
 
 

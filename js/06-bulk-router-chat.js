@@ -1750,3 +1750,445 @@ function wouldDupeInEntry(entry, toolName, excludeSugIdx){
   if(!key) return false;
   return getSugs(entry).some((s,i) => i !== excludeSugIdx && toolKey(sugTool(s)) === key);
 }
+
+// ========== PLANNER CONTEXT REFRESH ==========
+// Forces the GAS backend to re-read .md planners from Drive and overwrite the
+// cached plannerContextRich in data.json so the next AI call sees fresh content.
+async function refreshAllPlannerContext(){
+  if(!confirm('Re-read every audited planner .md from Drive and overwrite cached planner context? This usually takes 30-90 seconds and triggers a data.json push to GitHub.')) return;
+  if(typeof setStatus === 'function') setStatus('Refreshing planner context from Drive…', 'loading');
+  try {
+    const payload = withGASToken({ action: 'refreshPlannerContext', all: true });
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+    if(result.error){ setStatus('Refresh error: ' + result.error, 'error'); return; }
+    const msg = `Planner context refreshed: ${result.refreshed||0} updated, ${result.missing||0} missing .md`;
+    if(typeof setStatus === 'function') setStatus(msg, 'success');
+    if(typeof loadFromDrive === 'function') await loadFromDrive();
+  } catch(err) {
+    if(typeof setStatus === 'function') setStatus('Refresh failed: ' + err.message, 'error');
+  }
+}
+
+async function refreshOnePlannerContext(entry){
+  if(!entry || !entry.ca || !entry.yl || !entry.th){
+    if(typeof setStatus === 'function') setStatus('refreshOnePlannerContext: missing ca/yl/th', 'error');
+    return;
+  }
+  if(typeof setStatus === 'function') setStatus(`Refreshing ${entry.ca} ${entry.yl} — ${entry.th}…`, 'loading');
+  try {
+    const payload = withGASToken({ action: 'refreshPlannerContext', ca: entry.ca, yl: entry.yl, th: entry.th });
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+    if(result.error){ setStatus('Refresh error: ' + result.error, 'error'); return result; }
+    const msg = `Refreshed ${result.refreshed||0} entr${(result.refreshed||0)===1?'y':'ies'} for "${entry.th}"`;
+    if(typeof setStatus === 'function') setStatus(msg, 'success');
+    if(typeof loadFromDrive === 'function') await loadFromDrive();
+    return result;
+  } catch(err) {
+    if(typeof setStatus === 'function') setStatus('Refresh failed: ' + err.message, 'error');
+  }
+}
+
+// ========== BULK AI QUICK ACTIONS UI ==========
+// Injects a prompt-builder panel into the Bulk AI Edit card. Each card fills (or sends)
+// the chat input with a structured request — Find opportunities / Replace a tool /
+// Place lesson / Improve suggestions. Nothing is saved until the review popup is approved.
+// Restored from commit a16c249 (2026-05-05), adapted to current helpers.
+(function(){
+  function bulkQAEl_(id){ return document.getElementById(id); }
+  function bulkQAEsc_(value){
+    if(typeof esc === 'function') return esc(value);
+    return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+    });
+  }
+  function bulkQAToolKey_(value){
+    const v = String(value || '').trim();
+    try {
+      if(typeof normaliseToolName === 'function' && typeof toolInventoryKey === 'function'){
+        return toolInventoryKey(normaliseToolName(v));
+      }
+      if(typeof toolInventoryKey === 'function') return toolInventoryKey(v);
+    } catch(e){}
+    return v.toLowerCase().replace(/[^a-z0-9]+/g,'').trim();
+  }
+  function bulkQALibraryKeys_(){
+    try {
+      if(typeof getLibraryKeys === 'function'){
+        const keys = getLibraryKeys();
+        if(Array.isArray(keys) && keys.length) return keys.slice();
+      }
+      if(typeof LIBRARIES !== 'undefined' && LIBRARIES){
+        return Object.keys(LIBRARIES).filter(k => k !== '_meta' && Array.isArray(LIBRARIES[k]));
+      }
+    } catch(e){}
+    return [];
+  }
+  function bulkQALibraryLabel_(key){
+    try {
+      if(typeof getLibraryMeta === 'function'){
+        const meta = getLibraryMeta(key);
+        if(meta && meta.name) return meta.name;
+      }
+    } catch(e){}
+    return String(key || '');
+  }
+  function bulkQASetInput_(value){
+    const input = bulkQAEl_('bulk-chat-input');
+    if(!input) return;
+    input.value = String(value || '').trim();
+    input.focus();
+    try { input.scrollIntoView({behavior:'smooth', block:'center'}); } catch(e){}
+  }
+  function bulkQAGet_(id){
+    const el = bulkQAEl_(id);
+    return el ? String(el.value || '').trim() : '';
+  }
+  function bulkQANormaliseScope_(scope){
+    return String(scope || '').trim().replace(/\s+/g, ' ');
+  }
+  function bulkQAOptionTag_(value, label){
+    const v = bulkQAEsc_(value);
+    const l = bulkQAEsc_(label || value);
+    return `<option value="${v}">${l}</option>`;
+  }
+  function bulkQACanonicalQuickToolLabel_(value){
+    let label = (typeof normaliseToolName === 'function') ? normaliseToolName(String(value||'').trim()) : String(value||'').trim();
+    if(!label) return '';
+    const key = bulkQAToolKey_(label);
+    if(key === 'podcastequipment' || key === 'podcastequipmentgarageband' || key === 'podcastequipmentandgarageband'){
+      return 'Podcast Equipment + GarageBand';
+    }
+    if(/^podcast\s+equipment(?:\s*(?:\+|&|and)\s*garageband)?$/i.test(label)){
+      return 'Podcast Equipment + GarageBand';
+    }
+    return label;
+  }
+  function bulkQACollectApprovedTools_(){
+    const fallback = ['Book Creator','Makey Makey','Lego Spike Prime','Lego Spike Essential','Adobe Express','Padlet','Minecraft Education','National Geographic MapMaker','Delightex','Scratch','ScratchJR','Sphero BOLT','Micro:bit','Tinkercad','Canva','Wise Discussion Chatbots'];
+    const seen = new Set();
+    const out = [];
+    function add(v){
+      const label = bulkQACanonicalQuickToolLabel_(v);
+      if(!label) return;
+      const k = bulkQAToolKey_(label);
+      if(!k || seen.has(k)) return;
+      seen.add(k); out.push(label);
+    }
+    try {
+      if(typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY && Array.isArray(TOOL_INVENTORY.approved)){ TOOL_INVENTORY.approved.forEach(add); }
+      if(typeof LIBRARIES !== 'undefined' && LIBRARIES && LIBRARIES._meta && LIBRARIES._meta._inventory && Array.isArray(LIBRARIES._meta._inventory.approved)){ LIBRARIES._meta._inventory.approved.forEach(add); }
+    } catch(e){}
+    if(!out.length) fallback.forEach(add);
+    return out.sort((a,b)=>a.localeCompare(b));
+  }
+  function bulkQALooksLikeToolName_(label, knownKeys){
+    const raw = String(label || '').trim();
+    if(!raw) return false;
+    const key = bulkQAToolKey_(raw);
+    if(knownKeys && knownKeys.has(key)) return true;
+    // STEM/unit suggestion titles often look like "Calm Quest: personalized wellbeing maze".
+    // Keep the replace list focused on actual technology tools, not lesson/activity titles.
+    if(/[:;]/.test(raw)) return false;
+    const words = raw.split(/\s+/).filter(Boolean);
+    if(words.length > 5) return false;
+    if(/\b(quest|maze|challenge|lesson|activity|project|poster|presentation|reflection|exhibition|community|wellbeing)\b/i.test(raw) && !(knownKeys && knownKeys.has(key))) return false;
+    return true;
+  }
+  function bulkQACollectReplaceTools_(){
+    const seen = new Set();
+    const out = [];
+    const knownKeys = new Set();
+    function canonical(v){ return bulkQACanonicalQuickToolLabel_(v); }
+    function rememberKnown(v){
+      const label = canonical(v);
+      const k = bulkQAToolKey_(label);
+      if(k) knownKeys.add(k);
+    }
+    function add(v, forceKnown){
+      const label = canonical(v);
+      if(!label) return;
+      const k = bulkQAToolKey_(label);
+      if(!k || seen.has(k)) return;
+      if(forceKnown) knownKeys.add(k);
+      if(!forceKnown && !bulkQALooksLikeToolName_(label, knownKeys)) return;
+      seen.add(k); out.push(label);
+    }
+    try {
+      if(typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY){
+        (TOOL_INVENTORY.banned || []).forEach(rememberKnown);
+        (TOOL_INVENTORY.approved || []).forEach(rememberKnown);
+      }
+      if(typeof LIBRARIES !== 'undefined' && LIBRARIES && LIBRARIES._meta && LIBRARIES._meta._inventory){
+        (LIBRARIES._meta._inventory.banned || []).forEach(rememberKnown);
+        (LIBRARIES._meta._inventory.approved || []).forEach(rememberKnown);
+      }
+      // Always include inventory/legacy tools first. These may include tools no longer used
+      // in current suggestions but still need a removal workflow.
+      if(typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY){
+        (TOOL_INVENTORY.banned || []).forEach(v => add(v, true));
+        (TOOL_INVENTORY.approved || []).forEach(v => add(v, true));
+      }
+      if(typeof LIBRARIES !== 'undefined' && LIBRARIES && LIBRARIES._meta && LIBRARIES._meta._inventory){
+        (LIBRARIES._meta._inventory.banned || []).forEach(v => add(v, true));
+        (LIBRARIES._meta._inventory.approved || []).forEach(v => add(v, true));
+      }
+      if(Array.isArray(DATA)){
+        DATA.forEach(e => (getSugs(e)||[]).forEach((s, idx) => {
+          // Slot #6 / STEM extension often stores a lesson/activity title rather than a tool.
+          // Do not let those titles flood the "tool to remove" dropdown.
+          if(idx >= 5) return;
+          if(isRealSug(s)) add(sugTool(s), false);
+        }));
+      }
+    } catch(e){}
+    ['Seesaw','ClassVR','Flip','Google Maps','Adobe Spark','CoSpaces','Delightex (CoSpaces)'].forEach(v => add(v, true));
+    return out.sort((a,b)=>a.localeCompare(b));
+  }
+  function bulkQAToolOptions_(){
+    return '<option value="">Select approved tool…</option>' + bulkQACollectApprovedTools_().map(t => bulkQAOptionTag_(t)).join('');
+  }
+  function bulkQAReplaceToolOptions_(){
+    return '<option value="">Select tool to remove…</option>' + bulkQACollectReplaceTools_().map(t => bulkQAOptionTag_(t)).join('');
+  }
+  function bulkQAYearScopeOptions_(){
+    return [
+      ['Prep','Prep'],['Year 1','Year 1'],['Year 2','Year 2'],['Year 3','Year 3'],['Year 4','Year 4'],['Year 5','Year 5'],['Year 6','Year 6']
+    ].map(x => bulkQAOptionTag_(x[0], x[1])).join('');
+  }
+  function bulkQAReplaceScopeOptions_(){
+    return [
+      ['All planners','All planners (Surgeon-style)'],
+      ['Prep','Prep'],['Year 1','Year 1'],['Year 2','Year 2'],['Year 3','Year 3'],['Year 4','Year 4'],['Year 5','Year 5'],['Year 6','Year 6']
+    ].map(x => bulkQAOptionTag_(x[0], x[1])).join('');
+  }
+  function bulkQALibraryOptions_(){
+    let keys = bulkQALibraryKeys_();
+    if(!keys.length) keys = ['minecraft'];
+    keys.sort((a,b) => bulkQALibraryLabel_(a).localeCompare(bulkQALibraryLabel_(b)));
+    if(keys.includes('minecraft')) keys = ['minecraft'].concat(keys.filter(k => k !== 'minecraft'));
+    return keys.map(k => `<option value="${bulkQAEsc_(k)}">${bulkQAEsc_(bulkQALibraryLabel_(k))}</option>`).join('');
+  }
+
+  window.bulkQARefreshLibrarySelect_ = function bulkQARefreshLibrarySelect_(){
+    const sel = bulkQAEl_('bulk-qa-lesson-library');
+    if(!sel) return false;
+    const before = sel.value;
+    const html = bulkQALibraryOptions_();
+    if(html && sel.getAttribute('data-options-html') !== html){
+      sel.innerHTML = html;
+      sel.setAttribute('data-options-html', html);
+      if(before && Array.from(sel.options).some(o => o.value === before)) sel.value = before;
+    }
+    return true;
+  };
+
+  window.bulkQARefreshToolSelects_ = function bulkQARefreshToolSelects_(){
+    const opp = bulkQAEl_('bulk-qa-tool');
+    if(opp){ const before = opp.value; opp.innerHTML = bulkQAToolOptions_(); if(before && Array.from(opp.options).some(o => o.value === before)) opp.value = before; }
+    const rep = bulkQAEl_('bulk-qa-replace-tool');
+    if(rep){ const before = rep.value; rep.innerHTML = bulkQAReplaceToolOptions_(); if(before && Array.from(rep.options).some(o => o.value === before)) rep.value = before; }
+    return true;
+  };
+
+  function bulkQAHideLegacyBulkCards_(){
+    const panel = document.getElementById('panel-tools');
+    if(!panel) return;
+    Array.from(panel.querySelectorAll('.card')).forEach(card => {
+      if(card.id === 'realism-audit-card') return;
+      const txt = (card.textContent || '').toLowerCase().replace(/\s+/g,' ');
+      if(txt.includes('snapshots & undo') || txt.includes('playbooks') || txt.includes('side-by-side campus comparison') || txt.includes('run surgeon')){
+        card.style.display = 'none';
+        card.setAttribute('data-bulk-quick-actions-hidden','true');
+      }
+    });
+  }
+
+  function bulkQASetAdvancedOpen_(open){
+    const chat = bulkQAEl_('bulk-chat-messages');
+    if(!chat) return;
+    const reasoning = bulkQAEl_('bulk-reasoning');
+    const inputRow = bulkQAEl_('bulk-chat-input') ? bulkQAEl_('bulk-chat-input').parentNode : null;
+    const btn = bulkQAEl_('bulk-qa-advanced-toggle');
+    const show = !!open;
+    chat.style.display = show ? '' : 'none';
+    if(reasoning) reasoning.style.display = show ? (reasoning.getAttribute('data-was-open') === '1' ? '' : reasoning.style.display) : 'none';
+    if(inputRow) inputRow.style.display = show ? 'flex' : 'none';
+    if(btn) btn.textContent = show ? 'Hide advanced custom chat' : 'Show advanced custom chat';
+    const hint = bulkQAEl_('bulk-qa-advanced-hint');
+    if(hint) hint.style.display = show ? 'none' : 'block';
+  }
+  window.bulkQuickActionToggleAdvanced = function(){
+    const chat = bulkQAEl_('bulk-chat-messages');
+    const currentlyOpen = chat && chat.style.display !== 'none';
+    bulkQASetAdvancedOpen_(!currentlyOpen);
+  };
+
+  window.bulkQuickActionFill = function(kind){
+    const type = String(kind || '').toLowerCase();
+    if(type === 'opportunity'){
+      const tool = bulkQAGet_('bulk-qa-tool');
+      const scope = bulkQANormaliseScope_(bulkQAGet_('bulk-qa-scope'));
+      if(!tool){ alert('Choose a tool first, e.g. Book Creator or Makey Makey.'); return; }
+      const prompt = scope
+        ? `Find more opportunities in ${scope} to use ${tool}`
+        : `Find more opportunities to use ${tool}`;
+      bulkQASetInput_(prompt);
+      bulkQASetAdvancedOpen_(true);
+      return;
+    }
+    if(type === 'replace'){
+      const tool = bulkQAGet_('bulk-qa-replace-tool');
+      const scope = bulkQANormaliseScope_(bulkQAGet_('bulk-qa-replace-scope'));
+      if(!tool){ alert('Choose the tool to replace first, e.g. Seesaw.'); return; }
+      const prompt = /all\s+planners|all\s+years/i.test(scope)
+        ? `Replace ${tool} across all planners`
+        : (scope ? `Replace ${tool} in ${scope}` : `Replace ${tool}`);
+      bulkQASetInput_(prompt);
+      bulkQASetAdvancedOpen_(true);
+      return;
+    }
+    if(type === 'lesson' || type === 'minecraft'){
+      const libraryKey = bulkQAGet_('bulk-qa-lesson-library') || 'minecraft';
+      const lesson = bulkQAGet_('bulk-qa-lesson-title') || bulkQAGet_('bulk-qa-minecraft-lesson');
+      if(!lesson){ alert('Enter the exact curated lesson title first, e.g. Revamp Melbourne.'); return; }
+      const cleanLesson = lesson.replace(/\s+Minecraft\s+lesson\s*$/i, '').replace(/\s+Minecraft\s*$/i, '').trim();
+      const libraryLabel = bulkQALibraryLabel_(libraryKey || 'minecraft');
+      if(String(libraryKey).toLowerCase() === 'minecraft' || /minecraft/i.test(libraryLabel)){
+        bulkQASetInput_(`Where can the ${cleanLesson} Minecraft lesson fit?`);
+      } else {
+        bulkQASetInput_(`Where can the ${cleanLesson} lesson from the ${libraryLabel} library fit?`);
+      }
+      bulkQASetAdvancedOpen_(true);
+      return;
+    }
+    if(type === 'improve'){
+      const campus = bulkQANormaliseScope_(bulkQAGet_('bulk-qa-improve-campus'));
+      const year = bulkQANormaliseScope_(bulkQAGet_('bulk-qa-improve-year'));
+      if(!campus || !year){ alert('Choose both a campus and year level, e.g. Glen Waverley and Year 6.'); return; }
+      bulkQASetInput_(`Improve ${campus} ${year} suggestions`);
+      bulkQASetAdvancedOpen_(true);
+      return;
+    }
+  };
+
+  window.bulkQuickActionSend = function(kind){
+    window.bulkQuickActionFill(kind);
+    setTimeout(function(){
+      const input = bulkQAEl_('bulk-chat-input');
+      if(input && input.value && typeof bulkChatSend === 'function') bulkChatSend();
+    }, 80);
+  };
+
+  function bulkQAInstall_(){
+    if(bulkQAEl_('bulk-quick-actions-panel')) return true;
+    const chat = bulkQAEl_('bulk-chat-messages');
+    if(!chat || !chat.parentNode) return false;
+    const panel = document.createElement('div');
+    panel.id = 'bulk-quick-actions-panel';
+    panel.innerHTML = `
+      <div style="padding:14px 20px;background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+          <div style="font-size:11px;font-weight:900;color:var(--lime);letter-spacing:1px;text-transform:uppercase">⚡ Bulk quick actions</div>
+          <div style="font-size:11px;color:var(--dim);line-height:1.45">Use these safe workflows first. Nothing is saved until the review popup is approved.</div>
+          <div style="flex:1"></div>
+          <button type="button" class="btn-sm" onclick="refreshAllPlannerContext()" title="Re-read every audited planner .md from Drive so AI calls use the latest planner content (cache-bust).">↻ Refresh planner context</button>
+          <button type="button" id="bulk-qa-advanced-toggle" class="btn-sm" onclick="bulkQuickActionToggleAdvanced()">Show advanced custom chat</button>
+        </div>
+        <div id="bulk-qa-advanced-hint" style="font-size:11px;color:var(--dim);padding:8px 10px;margin-bottom:10px;background:rgba(197,232,74,.05);border:1px solid rgba(197,232,74,.15);border-radius:9px">Advanced chat is collapsed. Use quick actions for common review-only workflows, or open custom chat for unusual requests.</div>
+        <!-- Tool selectors are populated from the live Tool Inventory / current data. -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px">
+          <div style="border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--card2)">
+            <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:6px">➕ Find opportunities</div>
+            <select id="bulk-qa-tool" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:6px">${bulkQAToolOptions_()}</select>
+            <select id="bulk-qa-scope" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
+              <option value="">All eligible years</option>${bulkQAYearScopeOptions_()}
+            </select>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button type="button" class="btn-sm" onclick="bulkQuickActionFill('opportunity')">Fill prompt</button>
+              <button type="button" class="btn-sm" onclick="bulkQuickActionSend('opportunity')" style="color:var(--lime);border-color:var(--lime)">Draft now</button>
+            </div>
+          </div>
+          <div style="border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--card2)">
+            <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:6px">🔁 Replace a tool</div>
+            <select id="bulk-qa-replace-tool" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:6px">${bulkQAReplaceToolOptions_()}</select>
+            <select id="bulk-qa-replace-scope" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
+              ${bulkQAReplaceScopeOptions_()}
+            </select>
+            <div style="font-size:10px;color:var(--dim);margin:-3px 0 7px;line-height:1.35">Choose <strong>All planners</strong> for the old Surgeon-style remove-everywhere workflow.</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button type="button" class="btn-sm" onclick="bulkQuickActionFill('replace')">Fill prompt</button>
+              <button type="button" class="btn-sm" onclick="bulkQuickActionSend('replace')" style="color:var(--lime);border-color:var(--lime)">Draft now</button>
+            </div>
+          </div>
+          <div style="border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--card2)">
+            <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:6px">📚 Place lesson</div>
+            <div style="display:flex;gap:6px;margin-bottom:6px">
+              <select id="bulk-qa-lesson-library" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:0;flex:1">
+                ${bulkQALibraryOptions_()}
+              </select>
+              <button type="button" class="btn-sm" onclick="bulkQARefreshLibrarySelect_()" title="Refresh library list from loaded libraries.json">↻</button>
+            </div>
+            <input id="bulk-qa-lesson-title" class="inp" placeholder="Exact lesson title, e.g. Revamp Melbourne" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button type="button" class="btn-sm" onclick="bulkQuickActionFill('lesson')">Fill prompt</button>
+              <button type="button" class="btn-sm" onclick="bulkQuickActionSend('lesson')" style="color:var(--lime);border-color:var(--lime)">Draft now</button>
+            </div>
+          </div>
+          <div style="border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--card2)">
+            <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:6px">✨ Improve suggestions</div>
+            <select id="bulk-qa-improve-campus" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:6px">
+              <option value="">Select campus…</option>
+              <option>Elsternwick</option>
+              <option>Glen Waverley</option>
+              <option>St Kilda Road</option>
+            </select>
+            <select id="bulk-qa-improve-year" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
+              <option value="">Select year…</option>
+              <option>Prep</option><option>Year 1</option><option>Year 2</option><option>Year 3</option><option>Year 4</option><option>Year 5</option><option>Year 6</option>
+            </select>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button type="button" class="btn-sm" onclick="bulkQuickActionFill('improve')">Fill prompt</button>
+              <button type="button" class="btn-sm" onclick="bulkQuickActionSend('improve')" style="color:var(--lime);border-color:var(--lime)">Draft now</button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    chat.parentNode.insertBefore(panel, chat);
+    bulkQARefreshLibrarySelect_();
+    bulkQARefreshToolSelects_();
+    bulkQAHideLegacyBulkCards_();
+    bulkQASetAdvancedOpen_(false);
+    // Libraries may load after this panel is injected. Refresh the selector for a short
+    // window so newly-added libraries appear without a page reload.
+    let refreshTries = 0;
+    const refreshTimer = setInterval(function(){
+      refreshTries++;
+      bulkQARefreshLibrarySelect_();
+      bulkQARefreshToolSelects_();
+      bulkQAHideLegacyBulkCards_();
+      if(refreshTries > 30) clearInterval(refreshTimer);
+    }, 1000);
+    return true;
+  }
+
+  function bulkQAStart_(){
+    if(bulkQAInstall_()) return;
+    let tries = 0;
+    const timer = setInterval(function(){
+      tries++;
+      if(bulkQAInstall_() || tries > 40) clearInterval(timer);
+    }, 250);
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bulkQAStart_);
+  else bulkQAStart_();
+})();
