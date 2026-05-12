@@ -1001,7 +1001,9 @@ function buildLibraryContext(key){
   lessons.forEach(l => {
     const s = l.subject || 'OTHER';
     if(!bySubject[s]) bySubject[s] = [];
-    bySubject[s].push(`- ${l.title} (${l.desc || 'no description'}; ages ${l.ages})${l.url ? ' URL: '+l.url : ''}`);
+    const notes = (l.teaching_notes || '').trim();
+    const notesLine = notes ? `\n    Teaching notes: ${notes}` : '';
+    bySubject[s].push(`- ${l.title} (${l.desc || 'no description'}; ages ${l.ages})${l.url ? ' URL: '+l.url : ''}${notesLine}`);
   });
   const sections = Object.entries(bySubject)
     .map(([s, lines]) => `${s}:\n${lines.join('\n')}`)
@@ -1049,6 +1051,7 @@ function buildLibraryContextCompact(key){
       l.subject ? `subject ${l.subject}` : '',
       l.ages ? `ages ${l.ages}` : '',
       l.desc ? compactForPrompt(l.desc, 95) : '',
+      l.teaching_notes ? `notes ${compactForPrompt(l.teaching_notes, 140)}` : '',
       l.url ? `URL: ${l.url}` : ''
     ].filter(Boolean);
     return bits.join(' | ');

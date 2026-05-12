@@ -461,12 +461,12 @@ function auditPlanners(filterCa, filterYl) {
     const libFile = DriveApp.getFileById(LIBRARIES_JSON_FILE_ID);
     const libraries = JSON.parse(libFile.getBlob().getDataAsString());
     if (libraries.minecraft && libraries.minecraft.length > 0) {
-      libraryText += "\nAPPROVED MINECRAFT LESSONS LIBRARY:\nIf you choose to suggest Minecraft Education, you MUST select exactly one from this list. Format the tool name as 'Minecraft: [Title]'. You MUST output the exact URL provided in your JSON.\n" +
-      libraries.minecraft.map(m => `- [Ages ${m.ages}] ${m.title}: ${m.desc || ''} (URL: ${m.url || 'No URL'})`).join("\n");
+      libraryText += "\nAPPROVED MINECRAFT LESSONS LIBRARY:\nIf you choose to suggest Minecraft Education, you MUST select exactly one from this list. Format the tool name as 'Minecraft: [Title]'. You MUST output the exact URL provided in your JSON.\nUse the Teaching notes (when shown) to ground the description in concrete lesson stages and connect them to the unit.\n" +
+      libraries.minecraft.map(m => `- [Ages ${m.ages}] ${m.title}: ${m.desc || ''} (URL: ${m.url || 'No URL'})${m.teaching_notes ? '\n    Teaching notes: ' + m.teaching_notes : ''}`).join("\n");
     }
     if (libraries.microbit && libraries.microbit.length > 0) {
-      libraryText += "\n\nAPPROVED MICRO:BIT LESSONS LIBRARY:\nIf you choose to suggest Micro:bits, you MUST select exactly one from this list. Format the tool name as 'Micro:bit: [Title]'. You MUST output the exact URL provided in your JSON.\n" +
-      libraries.microbit.map(m => `- [Ages ${m.ages}] ${m.title} (URL: ${m.url || 'No URL'})`).join("\n");
+      libraryText += "\n\nAPPROVED MICRO:BIT LESSONS LIBRARY:\nIf you choose to suggest Micro:bits, you MUST select exactly one from this list. Format the tool name as 'Micro:bit: [Title]'. You MUST output the exact URL provided in your JSON.\nUse the Teaching notes (when shown) to ground the description in concrete lesson stages and connect them to the unit.\n" +
+      libraries.microbit.map(m => `- [Ages ${m.ages}] ${m.title} (URL: ${m.url || 'No URL'})${m.desc ? ' — ' + m.desc : ''}${m.teaching_notes ? '\n    Teaching notes: ' + m.teaching_notes : ''}`).join("\n");
     }
   } catch(e) {
     Logger.log("Could not load libraries.json. Make sure LIBRARIES_JSON_FILE_ID is correct.");
@@ -788,12 +788,12 @@ function runSurgeon(bannedTool, replacementTool) {
     const libFile = DriveApp.getFileById(LIBRARIES_JSON_FILE_ID);
     const libraries = JSON.parse(libFile.getBlob().getDataAsString());
     if (libraries.minecraft && libraries.minecraft.length > 0) {
-      libraryText += "\nAPPROVED MINECRAFT LESSONS LIBRARY:\nIf you choose to suggest Minecraft Education, you MUST select exactly one from this list. Format the tool name as 'Minecraft: [Title]'. You MUST output the exact URL provided in your JSON.\n" +
-      libraries.minecraft.map(m => `- [Ages ${m.ages}] ${m.title}: ${m.desc || ''} (URL: ${m.url || 'No URL'})`).join("\n");
+      libraryText += "\nAPPROVED MINECRAFT LESSONS LIBRARY:\nIf you choose to suggest Minecraft Education, you MUST select exactly one from this list. Format the tool name as 'Minecraft: [Title]'. You MUST output the exact URL provided in your JSON.\nUse the Teaching notes (when shown) to ground the description in concrete lesson stages and connect them to the unit.\n" +
+      libraries.minecraft.map(m => `- [Ages ${m.ages}] ${m.title}: ${m.desc || ''} (URL: ${m.url || 'No URL'})${m.teaching_notes ? '\n    Teaching notes: ' + m.teaching_notes : ''}`).join("\n");
     }
     if (libraries.microbit && libraries.microbit.length > 0) {
-      libraryText += "\n\nAPPROVED MICRO:BIT LESSONS LIBRARY:\nIf you choose to suggest Micro:bits, you MUST select exactly one from this list. Format the tool name as 'Micro:bit: [Title]'. You MUST output the exact URL provided in your JSON.\n" +
-      libraries.microbit.map(m => `- [Ages ${m.ages}] ${m.title} (URL: ${m.url || 'No URL'})`).join("\n");
+      libraryText += "\n\nAPPROVED MICRO:BIT LESSONS LIBRARY:\nIf you choose to suggest Micro:bits, you MUST select exactly one from this list. Format the tool name as 'Micro:bit: [Title]'. You MUST output the exact URL provided in your JSON.\nUse the Teaching notes (when shown) to ground the description in concrete lesson stages and connect them to the unit.\n" +
+      libraries.microbit.map(m => `- [Ages ${m.ages}] ${m.title} (URL: ${m.url || 'No URL'})${m.desc ? ' — ' + m.desc : ''}${m.teaching_notes ? '\n    Teaching notes: ' + m.teaching_notes : ''}`).join("\n");
     }
   } catch(e) {
     Logger.log("Could not load libraries.json for Surgeon.");

@@ -2213,7 +2213,7 @@ function libExtractFromUrl(key){
 }
 
 function libClearForm(key){
-  [`lib-${key}-url`,`lib-${key}-title`,`lib-${key}-desc`].forEach(id=>{
+  [`lib-${key}-url`,`lib-${key}-title`,`lib-${key}-desc`,`lib-${key}-notes`].forEach(id=>{
     const el = document.getElementById(id); if(el) el.value='';
   });
   [`lib-${key}-ages`,`lib-${key}-subject`].forEach(id=>{
@@ -2229,6 +2229,7 @@ function libAddLesson(key){
   const ages = document.getElementById(`lib-${key}-ages`)?.value || '';
   const subject = document.getElementById(`lib-${key}-subject`)?.value || '';
   const desc = document.getElementById(`lib-${key}-desc`)?.value.trim() || '';
+  const teaching_notes = document.getElementById(`lib-${key}-notes`)?.value.trim() || '';
   const statusEl = document.getElementById(`lib-${key}-status`);
 
   if(!title){ if(statusEl){ statusEl.textContent='⚠ Title is required'; statusEl.style.color='#f87171'; } return; }
@@ -2241,6 +2242,7 @@ function libAddLesson(key){
   const existingIdx = lessons.findIndex(l => l.title.toLowerCase().trim() === k);
   const entry = { title, desc, ages, subject };
   if(url) entry.url = url;
+  if(teaching_notes) entry.teaching_notes = teaching_notes;
 
   let msg;
   if(existingIdx >= 0){
@@ -2275,6 +2277,8 @@ function libEditLesson(key, title){
   document.getElementById(`lib-${key}-ages`).value = lesson.ages;
   document.getElementById(`lib-${key}-subject`).value = lesson.subject || '';
   document.getElementById(`lib-${key}-desc`).value = lesson.desc || '';
+  const notesEl = document.getElementById(`lib-${key}-notes`);
+  if(notesEl) notesEl.value = lesson.teaching_notes || '';
   // Expand section if collapsed
   const body = document.getElementById(`lib-${key}-body`);
   const arrow = document.getElementById(`lib-${key}-arrow`);
@@ -2408,6 +2412,7 @@ function renderLibraries(){
                   <span style="font-size:10px;padding:2px 7px;border-radius:20px;background:rgba(197,232,74,0.12);color:var(--lime);font-weight:700">ages ${esc(l.ages)}</span>
                 </div>
                 ${l.desc ? `<div style="font-size:12px;color:var(--dim);line-height:1.5">${esc(l.desc)}</div>` : ''}
+                ${l.teaching_notes ? `<div style="font-size:11px;color:var(--mint);line-height:1.5;margin-top:4px;padding:6px 10px;background:rgba(197,232,74,0.05);border-left:2px solid rgba(197,232,74,0.4);border-radius:4px"><span style="font-weight:700;letter-spacing:.5px;text-transform:uppercase;font-size:9px;color:var(--lime)">Teaching notes</span><br>${esc(l.teaching_notes)}</div>` : ''}
                 ${l.url ? `<a href="${esc(l.url)}" target="_blank" style="font-size:11px;color:var(--mint);text-decoration:none;word-break:break-all">${esc(l.url)}</a>` : ''}
               </div>
               <div style="display:flex;gap:6px;flex-shrink:0">
@@ -2447,7 +2452,8 @@ function renderLibraries(){
           </select>
         </div>
 
-        <input id="lib-${esc(key)}-desc" class="inp" placeholder="Short description" style="margin-bottom:10px;font-size:13px">
+        <input id="lib-${esc(key)}-desc" class="inp" placeholder="Short description (elevator pitch — 1-2 sentences, max ~200 chars)" style="margin-bottom:8px;font-size:13px">
+        <textarea id="lib-${esc(key)}-notes" class="inp" placeholder="Teaching notes (optional — pedagogy, lesson stages, assessment cues, ~400-800 chars). Used to help the AI write a deeper unit-connection." style="margin-bottom:10px;font-size:13px;min-height:64px;resize:vertical;line-height:1.5"></textarea>
 
         <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px">
           <button class="btn-pri" onclick="libAddLesson('${esc(key)}')" style="font-size:13px;padding:10px 16px">+ Add lesson</button>

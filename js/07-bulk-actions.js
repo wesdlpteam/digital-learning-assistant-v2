@@ -1081,6 +1081,10 @@ The coordinator is asking you to scan the library for places where a specific to
 
   const compactOpportunityMode = isOpportunityStyle || (platformSection + namedToolSection + opportunitySection).length > 3000;
   const libraryContextLen = (platformSection + namedToolSection + opportunitySection).length;
+  // Curated-lesson placement runs target a small set of candidates with a big lesson library
+  // in the prompt. Give the model a much deeper view of each unit's planner so it can ground
+  // the connection in specific assessment tasks / lines of inquiry rather than just the theme.
+  const isCuratedLibraryRun = !!platform;
   const plannerLimit = compactOpportunityMode ? 0 : (libraryContextLen > 1500 ? 120 : 180);
   const descLimit = compactOpportunityMode ? 0 : (libraryContextLen > 1500 ? 70 : 110);
   const fullContext = analysisData.map(({e,i})=>{
@@ -1088,12 +1092,20 @@ The coordinator is asking you to scan the library for places where a specific to
     const toolStr = sugs.map((s,si)=>{
       const tool = compactForPrompt(sugTool(s), 70);
       if(si === 5) return `s${si}🔒STEM:${tool} [protected; do not replace]`;
-      const desc = descLimit > 0 ? compactForPrompt(sugDesc(s), descLimit) : '';
+      const dLimit = isCuratedLibraryRun ? Math.max(descLimit, 140) : descLimit;
+      const desc = dLimit > 0 ? compactForPrompt(sugDesc(s), dLimit) : '';
       return `s${si}:${tool}${desc ? ' — '+desc : ''}`;
     }).join(' | ');
     // Use enriched planner context (plannerContextRich) when available — much richer than plannerText
     const richCtx = e.plannerContextRich || e.plannerText || '';
-    const richLimit = compactOpportunityMode ? 300 : (richCtx === e.plannerContextRich ? 500 : plannerLimit);
+    let richLimit;
+    if(isCuratedLibraryRun){
+      richLimit = richCtx === e.plannerContextRich ? 1800 : 600;
+    } else if(compactOpportunityMode){
+      richLimit = 300;
+    } else {
+      richLimit = richCtx === e.plannerContextRich ? 500 : plannerLimit;
+    }
     const plannerDisplay = richLimit > 0 && richCtx ? compactForPrompt(richCtx, richLimit) : '';
     return `[${i}] ${e.ca} | ${e.yl} | "${e.th}"${e.ci?' | CI: '+compactForPrompt(e.ci,160):''}${e.lo?' | LOI: '+compactForPrompt(e.lo,160):''}${plannerDisplay?' | Planner: '+plannerDisplay:''}\n  ${toolStr}`;
   }).join('\n');
