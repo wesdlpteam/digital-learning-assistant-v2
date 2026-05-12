@@ -118,6 +118,17 @@ MINECRAFT EDUCATION VERIFIED LESSON USE:
 - Do NOT invent original Minecraft build challenges, fake lesson titles, or fake URLs.
 - Do NOT force a maths-only Minecraft lesson such as Area and Volume into non-maths units. Only use a verified Minecraft lesson when its lesson content genuinely connects to the unit.
 
+VERIFIED LIBRARY LESSONS — NON-MINECRAFT (Micro:bit, Adobe Express, and any future user-curated library):
+The Minecraft 2-sentence cap does NOT apply to other verified lesson libraries. Treat them with the SAME descriptive richness as a strong app-smash suggestion (e.g., the Padlet → iMovie documentary example).
+- Write 3-4 vivid, practical sentences. Aim for 70-130 words.
+- Name the specific library lesson AND include its direct URL inline in the description.
+- Name the platform-specific feature the lesson actually uses — never use black-box phrasing like "the device", "a simple device", "the platform" or "the technology". For Micro:bit specifically: name the actual sensors or inputs (accelerometer, light sensor, temperature sensor, compass, radio, A/B buttons, LED matrix, MakeCode blocks, Python editor). For Adobe Express: name the specific Adobe Express feature being used.
+- Name the concrete student artefact (data log, working prototype, paired-device alert, sensor map, annotated MakeCode screenshot, calibration report, edited podcast episode, infographic, awareness video) — never just "a prototype" or "their product".
+- Show the pedagogical arc when teaching notes are provided in the library entry — explore → prototype → test/iterate → present/justify — using those notes to ground concrete lesson stages.
+- Reference SPECIFIC unit content from the planner: the assessment task, an LoI elaboration, a weekly activity, or a named topic — never "this unit", "the unit focus", "their inquiry" as placeholders.
+- BAD example (too thin — looks like the Minecraft 2-sentence cap was wrongly applied): "Students use the Protecting Animals Micro:bit lesson (URL) to design and code a simple device that could help monitor or protect local wildlife. They present their prototype and explain how technology can support conservation efforts."
+- GOOD example: "Students follow the Protecting Animals Micro:bit lesson (https://microbit.org/teach/lessons/?selected=protecting-animals) to prototype a low-power motion-sensing alert that helps protect a local species the class has researched, such as the eastern barred bandicoot or platypus. Working in pairs, they programme the accelerometer and radio to broadcast a signal when movement is detected, then iterate the MakeCode blocks after testing the trigger sensitivity outdoors. Each pair logs sensor readings, captures annotated MakeCode screenshots and a 60-second demonstration video that shows the device responding in context. They link the prototype to the Line of Inquiry about how humans can take action for vulnerable habitats, presenting one concrete protective behaviour their technology could enable."
+
 PODCASTING RULE: Whenever a suggestion involves podcasting, audio recording, audio storytelling, or audio interviews, ALWAYS use the tool name "Adobe Express Podcasting" — not GarageBand, not "Podcast Equipment", not generic "Adobe Express". Adobe Express Podcasting is the school's preferred podcasting platform. Always include the URL https://podcast.adobe.com in the description.
 
 GREEN SCREEN RULE: Instead of physical Green Screen Kits (which are banned), suggest Canva Remove Background. Good example:
