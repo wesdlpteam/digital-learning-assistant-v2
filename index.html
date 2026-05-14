@@ -176,12 +176,6 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 .sg-collapsible.open{max-height:600px;padding:8px 0 0;transition:max-height .35s ease-in}
 
 .sg-react{display:inline-flex;gap:8px;margin-left:auto}
-.sg-react-btn{background:#FF6B6B20;border:none;border-radius:99px;padding:8px 14px;cursor:pointer;font-size:14px;transition:all .15s;color:#FF6B6B}
-.sg-react-btn:hover{background:#FF6B6B35}
-.sg-react-btn.voted{background:#FF6B6B;color:#111}
-.sg-react-up{background:#22C55E20;color:#22C55E}
-.sg-react-up:hover{background:#22C55E35}
-.sg-react-up.voted{background:#22C55E;color:#111}
 
 .planner-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
 .planner-overlay.open{opacity:1;pointer-events:all}
@@ -1461,7 +1455,7 @@ Object.keys(wdsgrp).forEach(function(cat){var wid='wds'+window._wid++;h+='<div c
 h+='</div></div>';
 if(!window._fbData)window._fbData=[];var _fbi=window._fbData.length;window._fbData.push({campus:CN[ca],year:yl,theme:u.th,tool:s.t,phase:phaseLabel+' #'+(si+1)});
 if(!window._usedData)window._usedData=[];var _usi=window._usedData.length;window._usedData.push({campus:CN[ca],year:yl,theme:u.th,tool:s.t,phase:phaseLabel});
-h+='<div class="sg-fb"><button class="sg-used" onclick="markUsed('+_usi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+_fbi+')" class="sg-fb-btn">💬 Feedback</button><button class="sg-react-btn sg-react-up" onclick="reactFB('+_fbi+',\'up\',this)">👍</button><button class="sg-react-btn" onclick="reactFB('+_fbi+',\'down\',this)">👎</button></div></div>';
+h+='<div class="sg-fb"><button class="sg-used" onclick="markUsed('+_usi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+_fbi+')" class="sg-fb-btn">💬 Feedback</button></div></div>';
 h+='</div></div>';});
 
 // ACARA and Wesley curriculum toggles
@@ -1841,7 +1835,7 @@ function tgSec(id){var el=document.getElementById('sc_'+id);var btn=document.get
 function openStem(){
   var d=window._stemData;if(!d)return;
   var old=document.getElementById('stemOverlay');if(old)old.remove();
-  var html='<div class="stem-modal" role="dialog" aria-modal="true" aria-labelledby="stemModalTitle"><button type="button" class="stem-modal-close" onclick="closeStem()" aria-label="Close STEM activity">✕</button><div class="stem-modal-header"><div class="stem-modal-icon" aria-hidden="true">🔬</div><div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ac);margin-bottom:4px">STEM Design Cycle</div><div id="stemModalTitle" style="font-size:18px;font-weight:700;color:#FFF;line-height:1.3">'+d.toolLabel+'</div></div></div><div class="stem-modal-body"><div class="stem-label" style="margin-bottom:12px">🔄 Empathise → Define → Ideate → Prototype → Test</div><div class="sg-desc" style="font-size:14px;line-height:1.55">'+linkifyDesc(d.desc)+'</div><div class="sg-copilot"><button class="sg-copilot-btn" onclick="openCopilotHelper('+d.cpi+',this)"><span class="sg-copilot-ico">🤖</span><span class="sg-copilot-main">How do I teach this?</span></button></div><div class="sg-fb" style="margin-top:14px;padding-top:14px;border-top:1px solid #333"><button class="sg-used" onclick="markUsed('+d.usi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+d.fbi+')" class="sg-fb-btn">💬 Feedback</button><button class="sg-react-btn sg-react-up" onclick="reactFB('+d.fbi+',\'up\',this)">👍</button><button class="sg-react-btn" onclick="reactFB('+d.fbi+',\'down\',this)">👎</button></div></div></div></div>';
+  var html='<div class="stem-modal" role="dialog" aria-modal="true" aria-labelledby="stemModalTitle"><button type="button" class="stem-modal-close" onclick="closeStem()" aria-label="Close STEM activity">✕</button><div class="stem-modal-header"><div class="stem-modal-icon" aria-hidden="true">🔬</div><div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ac);margin-bottom:4px">STEM Design Cycle</div><div id="stemModalTitle" style="font-size:18px;font-weight:700;color:#FFF;line-height:1.3">'+d.toolLabel+'</div></div></div><div class="stem-modal-body"><div class="stem-label" style="margin-bottom:12px">🔄 Empathise → Define → Ideate → Prototype → Test</div><div class="sg-desc" style="font-size:14px;line-height:1.55">'+linkifyDesc(d.desc)+'</div><div class="sg-copilot"><button class="sg-copilot-btn" onclick="openCopilotHelper('+d.cpi+',this)"><span class="sg-copilot-ico">🤖</span><span class="sg-copilot-main">How do I teach this?</span></button></div><div class="sg-fb" style="margin-top:14px;padding-top:14px;border-top:1px solid #333"><button class="sg-used" onclick="markUsed('+d.usi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+d.fbi+')" class="sg-fb-btn">💬 Feedback</button></div></div></div></div>';
   var overlay=document.createElement('div');
   overlay.id='stemOverlay';
   overlay.className='stem-overlay';
@@ -1916,19 +1910,6 @@ if(document.visibilityState==='hidden'){trackPage('exit','','');_flushAnalytics(
 });
 window.addEventListener('beforeunload',function(){trackPage('exit','','');_flushAnalytics(true);});
 
-function reactFB(idx,reaction,btn){
-var d=window._fbData[idx];
-// Client-side debounce: ignore identical click within 1.5s on the same suggestion
-if(!window._reactDebounce)window._reactDebounce={};
-var dkey=idx+'|'+reaction;
-var now=Date.now();
-if(window._reactDebounce[dkey]&&(now-window._reactDebounce[dkey])<1500)return;
-window._reactDebounce[dkey]=now;
-var payload={type:'reaction',v:'2',campus:d.campus,year:d.year,theme:d.theme,tool:d.tool,phase:d.phase,reaction:reaction};
-fetch(FBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
-var parent=btn.parentElement;parent.querySelectorAll('.sg-react-btn').forEach(function(b){b.classList.remove('voted');});
-btn.classList.add('voted');
-}
 </script>
 
 <div class="planner-overlay" id="plannerOverlay" onclick="if(event.target===this)closePlanner()">
