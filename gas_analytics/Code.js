@@ -7,6 +7,7 @@
  *
  * Routes events by `body.type`:
  *   used             → Used sheet, then recompute Leaderboard
+ *   unused           → removes most recent matching Used row (toggle off), recomputes Leaderboard
  *   reaction         → Reactions sheet (server-side debounce: 5s same-context window)
  *   analytics_batch  → Analytics sheet (one row per event in batch)
  *   feedback         → Feedback sheet (REFUSES empty feedback text)
@@ -61,6 +62,8 @@ function doPost(e) {
 
     if (type === 'used') {
       handleUsed_(ss, body);
+    } else if (type === 'unused') {
+      handleUnused_(ss, body);
     } else if (type === 'reaction') {
       handleReaction_(ss, body);
     } else if (type === 'analytics_batch') {
@@ -120,6 +123,43 @@ function handleUsed_(ss, body) {
   const team = clean_(body.team) || (campus + ' ' + year + ' Team');
   sheet.appendRow([ts, team, campus, year, theme, tool, phase]);
   recomputeLeaderboard_(ss);
+}
+
+// Removes the most recent Used row matching campus|year|theme|tool|phase so the
+// "I Used This" button can toggle off. Team is matched if present so two
+// teams sharing a unit can't undo each other's clicks.
+function handleUnused_(ss, body) {
+  const sheet = ensureSheet_(ss, SHEETS.USED);
+  const campus = clean_(body.campus);
+  const year   = clean_(body.year);
+  const theme  = clean_(body.theme);
+  const tool   = clean_(body.tool);
+  const phase  = clean_(body.phase);
+  const team   = clean_(body.team);
+  if (!campus || !year || !theme) {
+    logError_(ss, 'unused_missing_required', 'unused', body, '');
+    return;
+  }
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) return;
+  const data = sheet.getRange(2, 1, lastRow - 1, 7).getValues();
+  // Used columns: 0 Timestamp, 1 Team, 2 Campus, 3 Year, 4 Theme, 5 Tool, 6 Phase
+  for (let i = data.length - 1; i >= 0; i--) {
+    const r = data[i];
+    if (
+      clean_(r[2]) === campus &&
+      clean_(r[3]) === year &&
+      clean_(r[4]) === theme &&
+      clean_(r[5]) === tool &&
+      clean_(r[6]) === phase &&
+      (!team || clean_(r[1]) === team)
+    ) {
+      sheet.deleteRow(i + 2);
+      recomputeLeaderboard_(ss);
+      return;
+    }
+  }
+  // No match — leave the sheet untouched. Likely a stale undo from a refreshed page.
 }
 
 function handleReaction_(ss, body) {

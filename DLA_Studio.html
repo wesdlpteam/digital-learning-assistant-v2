@@ -413,6 +413,21 @@
         <!-- Usage Overview -->
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px" id="live-overview-grid"></div>
 
+        <!-- Growth over time -->
+        <div class="card" style="margin-bottom:14px">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
+            <span class="label" style="margin:0">growth over time</span>
+            <div style="flex:1"></div>
+            <div style="display:flex;gap:6px" id="growth-range-filters">
+              <button class="btn-sm growth-range active" data-range="12w" onclick="setGrowthRange('12w')">12 weeks</button>
+              <button class="btn-sm growth-range" data-range="6m" onclick="setGrowthRange('6m')">6 months</button>
+              <button class="btn-sm growth-range" data-range="all" onclick="setGrowthRange('all')">All time</button>
+            </div>
+          </div>
+          <p style="font-size:12px;color:var(--dim);margin-bottom:8px">Page views (blue) and tools marked as used (lime) bucketed by week — track adoption trend.</p>
+          <div id="live-growth"></div>
+        </div>
+
         <!-- Views by Campus -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
           <div class="card">

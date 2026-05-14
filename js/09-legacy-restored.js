@@ -1468,14 +1468,16 @@ async function loadLiveAnalytics(){
   try{
     const [dashRows, analyticsRows, reactionsRows, feedbackRows, usedRows] = await readMultipleRanges([
       'Dashboard!A1:F60',
-      'Analytics!A1:F500',
+      'Analytics!A1:F5000',
       'Reactions!A1:G500',
       'Feedback!A1:G100',
-      'Used!A1:G100'
+      'Used!A1:G2000'
     ]);
 
     renderLiveScorecard(dashRows);
     renderLiveOverview(dashRows);
+    window._growthRowsCache = { analytics: analyticsRows, used: usedRows };
+    renderLiveGrowth(CURRENT_GROWTH_RANGE);
     renderLiveCampusChart(dashRows);
     renderLiveHeatmap(dashRows);
     renderLiveReactions(reactionsRows);
@@ -1558,6 +1560,151 @@ function renderLiveOverview(rows){
       <div class="stat-lbl">${esc(label)}</div>
     </div>`
   ).join('');
+}
+
+let CURRENT_GROWTH_RANGE = '12w';
+
+function setGrowthRange(range){
+  CURRENT_GROWTH_RANGE = range;
+  document.querySelectorAll('.growth-range').forEach(b => {
+    b.classList.toggle('active', b.dataset.range === range);
+  });
+  renderLiveGrowth(range);
+}
+
+function parseGrowthTimestamp_(raw){
+  const s = String(raw||'').trim();
+  if(!s) return null;
+  // Sheets DD/MM/YYYY HH:MM[:SS]
+  const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?/);
+  if(m){
+    const d = new Date(Number(m[3]), Number(m[2])-1, Number(m[1]), Number(m[4]||0), Number(m[5]||0), Number(m[6]||0));
+    return isNaN(d) ? null : d;
+  }
+  const d = new Date(s);
+  return isNaN(d) ? null : d;
+}
+
+function weekKey_(date){
+  // ISO-ish Monday-anchored week. Returns YYYY-MM-DD of the Monday.
+  const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const day = d.getDay(); // 0 Sun .. 6 Sat
+  const offset = day === 0 ? -6 : 1 - day; // shift to Monday
+  d.setDate(d.getDate() + offset);
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  return `${d.getFullYear()}-${m}-${dd}`;
+}
+
+function renderLiveGrowth(range){
+  const el = document.getElementById('live-growth'); if(!el) return;
+  const cache = window._growthRowsCache || {};
+  const analyticsRows = cache.analytics || [];
+  const usedRows = cache.used || [];
+
+  const viewDates = analyticsRows.slice(1).map(r => parseGrowthTimestamp_(r[0])).filter(Boolean);
+  const usedDates = usedRows.slice(1).map(r => parseGrowthTimestamp_(r[0])).filter(Boolean);
+
+  if(!viewDates.length && !usedDates.length){
+    el.innerHTML = '<div style="color:var(--dim);font-size:13px;padding:8px 0">No timestamped activity yet — graph appears once teachers start using the DLA.</div>';
+    return;
+  }
+
+  const now = new Date();
+  let weeksBack;
+  if(range === '12w') weeksBack = 12;
+  else if(range === '6m') weeksBack = 26;
+  else {
+    // All time — derive from earliest event
+    const earliest = [...viewDates, ...usedDates].reduce((a,b)=> a && a<b ? a : b);
+    weeksBack = Math.max(4, Math.ceil((now - earliest) / (7*24*3600*1000)) + 1);
+  }
+
+  // Build week buckets ending this week.
+  const buckets = [];
+  const cursor = new Date(now);
+  cursor.setHours(0,0,0,0);
+  const day = cursor.getDay();
+  cursor.setDate(cursor.getDate() + (day === 0 ? -6 : 1 - day)); // Monday of current week
+  for(let i = weeksBack - 1; i >= 0; i--){
+    const start = new Date(cursor);
+    start.setDate(start.getDate() - i*7);
+    buckets.push({ key: weekKey_(start), start, views: 0, used: 0 });
+  }
+  const idxByKey = Object.fromEntries(buckets.map((b,i)=>[b.key,i]));
+
+  viewDates.forEach(d => { const k = weekKey_(d); if(k in idxByKey) buckets[idxByKey[k]].views++; });
+  usedDates.forEach(d => { const k = weekKey_(d); if(k in idxByKey) buckets[idxByKey[k]].used++; });
+
+  const maxViews = Math.max(1, ...buckets.map(b=>b.views));
+  const maxUsed  = Math.max(1, ...buckets.map(b=>b.used));
+  const yMax = Math.max(maxViews, maxUsed);
+
+  // SVG dimensions
+  const W = 760, H = 220, PAD_L = 36, PAD_R = 12, PAD_T = 14, PAD_B = 34;
+  const plotW = W - PAD_L - PAD_R;
+  const plotH = H - PAD_T - PAD_B;
+  const n = buckets.length;
+  const xFor = i => PAD_L + (n === 1 ? plotW/2 : (i * plotW / (n-1)));
+  const yFor = v => PAD_T + plotH - (v / yMax) * plotH;
+
+  // Gridlines + Y labels (5 ticks)
+  let grid = '';
+  for(let t = 0; t <= 4; t++){
+    const y = PAD_T + (plotH * t / 4);
+    const val = Math.round(yMax * (1 - t/4));
+    grid += `<line x1="${PAD_L}" y1="${y}" x2="${W-PAD_R}" y2="${y}" stroke="var(--border)" stroke-width="1" opacity="0.5"/>`;
+    grid += `<text x="${PAD_L-6}" y="${y+3}" text-anchor="end" font-size="10" fill="var(--dim)">${val}</text>`;
+  }
+
+  // X labels (every ~6 buckets to avoid clutter)
+  const labelStep = Math.max(1, Math.ceil(n / 8));
+  let xLabels = '';
+  for(let i = 0; i < n; i += labelStep){
+    const d = buckets[i].start;
+    const lbl = d.toLocaleDateString('en-AU', { day:'numeric', month:'short' });
+    xLabels += `<text x="${xFor(i)}" y="${H-PAD_B+16}" text-anchor="middle" font-size="10" fill="var(--dim)">${lbl}</text>`;
+  }
+
+  const viewsPath = buckets.map((b,i) => `${i===0?'M':'L'} ${xFor(i).toFixed(1)} ${yFor(b.views).toFixed(1)}`).join(' ');
+  const usedPath  = buckets.map((b,i) => `${i===0?'M':'L'} ${xFor(i).toFixed(1)} ${yFor(b.used ).toFixed(1)}`).join(' ');
+
+  // Area fills (below each line) for visual weight
+  const viewsArea = `${viewsPath} L ${xFor(n-1).toFixed(1)} ${(PAD_T+plotH).toFixed(1)} L ${xFor(0).toFixed(1)} ${(PAD_T+plotH).toFixed(1)} Z`;
+  const usedArea  = `${usedPath } L ${xFor(n-1).toFixed(1)} ${(PAD_T+plotH).toFixed(1)} L ${xFor(0).toFixed(1)} ${(PAD_T+plotH).toFixed(1)} Z`;
+
+  const dots = buckets.map((b,i) => `
+    <circle cx="${xFor(i).toFixed(1)}" cy="${yFor(b.views).toFixed(1)}" r="3" fill="#60B8F0">
+      <title>Week of ${b.start.toLocaleDateString('en-AU')}: ${b.views} views</title>
+    </circle>
+    <circle cx="${xFor(i).toFixed(1)}" cy="${yFor(b.used ).toFixed(1)}" r="3" fill="var(--lime)">
+      <title>Week of ${b.start.toLocaleDateString('en-AU')}: ${b.used} used</title>
+    </circle>`).join('');
+
+  const totalViews = buckets.reduce((a,b)=>a+b.views,0);
+  const totalUsed  = buckets.reduce((a,b)=>a+b.used,0);
+  // Slope = avg of last 4 buckets vs prior 4 buckets, as % change.
+  const tail = buckets.slice(-4).reduce((a,b)=>a+b.views,0);
+  const head = buckets.slice(-8,-4).reduce((a,b)=>a+b.views,0);
+  const pct = head > 0 ? Math.round(((tail - head) / head) * 100) : (tail > 0 ? 100 : 0);
+  const trendCol = pct >= 0 ? 'var(--lime)' : '#FF8080';
+  const trendArrow = pct >= 0 ? '▲' : '▼';
+
+  el.innerHTML = `
+    <div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:10px;font-size:12px;color:var(--dim)">
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#60B8F0;margin-right:6px;vertical-align:middle"></span>Views <b style="color:var(--text)">${totalViews}</b></span>
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--lime);margin-right:6px;vertical-align:middle"></span>Used <b style="color:var(--text)">${totalUsed}</b></span>
+      <span style="margin-left:auto;color:${trendCol};font-weight:700">${trendArrow} ${Math.abs(pct)}% <span style="color:var(--dim);font-weight:400">views, last 4w vs prior 4w</span></span>
+    </div>
+    <svg viewBox="0 0 ${W} ${H}" width="100%" preserveAspectRatio="xMidYMid meet" style="display:block">
+      ${grid}
+      <path d="${viewsArea}" fill="#60B8F0" opacity="0.08"/>
+      <path d="${usedArea}"  fill="var(--lime)" opacity="0.10"/>
+      <path d="${viewsPath}" fill="none" stroke="#60B8F0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="${usedPath}"  fill="none" stroke="var(--lime)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      ${dots}
+      ${xLabels}
+    </svg>`;
 }
 
 function renderLiveCampusChart(rows){

@@ -222,7 +222,8 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 
 .sg-used{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:8px 18px;border-radius:99px;cursor:pointer;border:none;background:#22C55E;color:#111;transition:all .15s;font-family:inherit}
 .sg-used:hover{background:#2AD264}
-.sg-used.done{background:#22C55E;color:#111;cursor:default;opacity:.8}
+.sg-used.done{background:#22C55E;color:#111;cursor:pointer;opacity:.9}
+.sg-used.done:hover{background:#1FAE58;color:#FFF}
 .team-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
 .team-overlay.open{opacity:1;pointer-events:all}
 .team-modal{background:#1A1A1A;border:2px solid #CDEB45;border-radius:20px;padding:32px;width:100%;max-width:400px;text-align:center}
@@ -1475,11 +1476,29 @@ h+='</div></div>';var pv=a.dataset.lastView||'';var cv=S.v+S.ca+S.yl+S.ui;var is
 function markUsed(idx,btn){
 var d=window._usedData[idx];
 var team=d.campus+' '+d.year+' Team';
+var isDone=btn.classList.contains('done');
+if(isDone){
+// Toggle OFF — undo the mark.
+var unpayload={type:'unused',v:'2',team:team,campus:d.campus,year:d.year,theme:d.theme,tool:d.tool,phase:d.phase};
+fetch(FBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(unpayload)}).catch(function(){});
+btn.classList.remove('done');
+btn.innerHTML='✓ I Used This';
+if(window._usedUnits){
+  var uk=d.campus+'|'+d.year+'|'+d.theme;
+  if(window._usedUnits[uk]){
+    window._usedUnits[uk].count=Math.max(0,window._usedUnits[uk].count-1);
+    if(window._usedUnits[uk].count<3)window._usedUnits[uk].awarded=false;
+  }
+}
+_lbSheetRefreshPendingUntil=Date.now()+18000;
+refreshLeaderboardSoon();
+return;
+}
+// Toggle ON — mark as used.
 var payload={type:'used',v:'2',team:team,campus:d.campus,year:d.year,theme:d.theme,tool:d.tool,phase:d.phase};
 fetch(FBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)}).catch(function(){});
 btn.classList.add('done');
-btn.innerHTML='✅ Done!';
-btn.onclick=null;
+btn.innerHTML='✅ Used — click to undo';
 // Local celebration heuristic — matches the server rule of "3 uses in the same unit = +3 bonus".
 // Server is the source of truth; this only decides which animation to show on the click itself.
 if(!window._usedUnits)window._usedUnits={};
