@@ -1564,6 +1564,7 @@ function renderLiveOverview(rows){
 }
 
 let CURRENT_GROWTH_BUCKET = 'week';
+let CURRENT_GROWTH_CAMPUS = 'all';
 
 function setGrowthBucket(bucket){
   CURRENT_GROWTH_BUCKET = bucket;
@@ -1571,6 +1572,25 @@ function setGrowthBucket(bucket){
     b.classList.toggle('active', b.dataset.bucket === bucket);
   });
   renderLiveGrowth(bucket);
+}
+
+function setGrowthCampus(campus){
+  CURRENT_GROWTH_CAMPUS = campus;
+  document.querySelectorAll('.growth-campus').forEach(b => {
+    b.classList.toggle('active', b.dataset.campus === campus);
+  });
+  renderLiveGrowth(CURRENT_GROWTH_BUCKET);
+}
+
+// Loose campus equality — handles "St Kilda" vs "St Kilda Rd" and case/whitespace.
+function campusMatchesGrowth_(rowCampus, scope){
+  if(scope === 'all') return true;
+  const a = String(rowCampus||'').toLowerCase().replace(/[^a-z0-9]+/g,'').trim();
+  const b = String(scope    ||'').toLowerCase().replace(/[^a-z0-9]+/g,'').trim();
+  if(!a) return false;
+  if(a === b) return true;
+  if(b.startsWith('stkilda') && a.startsWith('stkilda')) return true;
+  return false;
 }
 
 function parseGrowthTimestamp_(raw){
@@ -1613,11 +1633,21 @@ function renderLiveGrowth(bucket){
   const analyticsRows = cache.analytics || [];
   const usedRows = cache.used || [];
 
-  const viewDates = analyticsRows.slice(1).map(r => parseGrowthTimestamp_(r[0])).filter(Boolean);
-  const usedDates = usedRows.slice(1).map(r => parseGrowthTimestamp_(r[0])).filter(Boolean);
+  const scope = CURRENT_GROWTH_CAMPUS;
+  // Analytics columns: 0 Timestamp, 1 Session, 2 Page, 3 Campus, ...
+  // Used columns:      0 Timestamp, 1 Team,    2 Campus, ...
+  const viewDates = analyticsRows.slice(1)
+    .filter(r => campusMatchesGrowth_(r[3], scope))
+    .map(r => parseGrowthTimestamp_(r[0]))
+    .filter(Boolean);
+  const usedDates = usedRows.slice(1)
+    .filter(r => campusMatchesGrowth_(r[2], scope))
+    .map(r => parseGrowthTimestamp_(r[0]))
+    .filter(Boolean);
 
   if(!viewDates.length && !usedDates.length){
-    el.innerHTML = '<div style="color:var(--dim);font-size:13px;padding:8px 0">No timestamped activity yet — graph appears once teachers start using the DLA.</div>';
+    const label = scope === 'all' ? 'teachers start using the DLA' : 'activity is recorded for ' + scope;
+    el.innerHTML = `<div style="color:var(--dim);font-size:13px;padding:8px 0">No timestamped activity yet — graph appears once ${label}.</div>`;
     return;
   }
 

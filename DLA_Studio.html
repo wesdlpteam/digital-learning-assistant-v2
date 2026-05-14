@@ -415,7 +415,7 @@
 
         <!-- Growth over time -->
         <div class="card" style="margin-bottom:14px">
-          <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;flex-wrap:wrap">
             <span class="label" style="margin:0">growth over time</span>
             <div style="flex:1"></div>
             <div style="display:flex;gap:6px" id="growth-bucket-filters">
@@ -424,7 +424,13 @@
               <button class="btn-sm growth-bucket" data-bucket="month" onclick="setGrowthBucket('month')">Month</button>
             </div>
           </div>
-          <p style="font-size:12px;color:var(--dim);margin-bottom:8px">Page views (blue) and tools marked as used (lime) — switch between daily, weekly, and monthly buckets.</p>
+          <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap" id="growth-campus-filters">
+            <button class="btn-sm growth-campus active" data-campus="all" onclick="setGrowthCampus('all')">All campuses</button>
+            <button class="btn-sm growth-campus" data-campus="Elsternwick" onclick="setGrowthCampus('Elsternwick')">Elsternwick</button>
+            <button class="btn-sm growth-campus" data-campus="Glen Waverley" onclick="setGrowthCampus('Glen Waverley')">Glen Waverley</button>
+            <button class="btn-sm growth-campus" data-campus="St Kilda Rd" onclick="setGrowthCampus('St Kilda Rd')">St Kilda Rd</button>
+          </div>
+          <p style="font-size:12px;color:var(--dim);margin-bottom:8px">Page views (blue) and tools marked as used (lime) — switch between daily, weekly, and monthly buckets, scoped to a campus.</p>
           <div id="live-growth"></div>
         </div>
 
