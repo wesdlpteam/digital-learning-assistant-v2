@@ -401,7 +401,7 @@ const HT={
 let D = [];
 fetch('data.json')
   .then(r => r.json())
-  .then(data => { D = data; R(); loadLeaderboard(); })
+  .then(data => { D = data; if(typeof readHash==='function')readHash(); R(); loadLeaderboard(); })
   .catch(() => { document.getElementById('app').innerHTML = '<div style="color:#FF6B6B;padding:40px;text-align:center">⚠️ Could not load data.json — make sure it is in the same folder as this file.</div>'; });
 const BK="https://outlook.office365.com/book/DigitalLearningPractice@WesleyCollegeMelbourne.onmicrosoft.com/?ismsaljsauthenabled=true";
 const ADMIN_URL="https://wesdlpteam.github.io/digital-learning-assistant-v2/DLA_Studio.html"; // Admin shortcut to the live DLA Studio.
