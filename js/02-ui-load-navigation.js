@@ -166,11 +166,9 @@ async function loadFromDrive(){
   btn.disabled=true; btn.textContent='Connecting…'; err.style.display='none';
   try{
     const tok=await getDriveToken();
-    const r=await fetch("https://www.googleapis.com/drive/v3/files?q=name='data.json' and trashed=false&fields=files(id)&pageSize=5",{headers:{'Authorization':'Bearer '+tok}});
-    const d=await r.json();
-    if(!d.files||!d.files.length) throw new Error('data.json not found on Drive');
-    DRIVE_FILE_ID=d.files[0].id;
-    const r2=await fetch(`https://www.googleapis.com/drive/v3/files/${DRIVE_FILE_ID}?alt=media`,{headers:{'Authorization':'Bearer '+tok}});
+    DRIVE_FILE_ID='1x6h0G43CCUiY1H635Rbv2zI8T-6-wTXV';
+    const r2=await fetch(`https://www.googleapis.com/drive/v3/files/${DRIVE_FILE_ID}?alt=media&supportsAllDrives=true`,{headers:{'Authorization':'Bearer '+tok}});
+    if(!r2.ok) throw new Error(`Failed to load canonical data.json (HTTP ${r2.status})`);
     ingest(await r2.json());
     LIBRARIES_READY = false;
     ensureLibrariesLoaded().catch(e => console.warn('Libraries preload failed:', e)); // Load lesson libraries after Drive auth

@@ -848,18 +848,14 @@ async function loadLibraries(){
     return true;
   }
 
-  // Try Drive first
+  // Try Drive first — load by canonical file ID (matches gas_backend/Code.js LIBRARIES_JSON_FILE_ID)
   if(DRIVE_TOKEN){
     try {
-      const r = await fetch("https://www.googleapis.com/drive/v3/files?q=name='libraries.json' and trashed=false&fields=files(id)&pageSize=5",{
+      LIBRARIES_FILE_ID = '13QhwQsT_GFP8buqhJOVWwdIciwXILKnY';
+      const r2 = await fetch(`https://www.googleapis.com/drive/v3/files/${LIBRARIES_FILE_ID}?alt=media&supportsAllDrives=true`,{
         headers:{'Authorization':'Bearer '+DRIVE_TOKEN}
       });
-      const d = await r.json();
-      if(d.files && d.files.length){
-        LIBRARIES_FILE_ID = d.files[0].id;
-        const r2 = await fetch(`https://www.googleapis.com/drive/v3/files/${LIBRARIES_FILE_ID}?alt=media`,{
-          headers:{'Authorization':'Bearer '+DRIVE_TOKEN}
-        });
+      if(r2.ok){
         const data = await r2.json();
         if(processLoaded(data)){
           const counts = getLibraryKeys().map(k => `${(LIBRARIES[k]||[]).length} ${getLibraryMeta(k).name}`).join(', ');
