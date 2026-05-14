@@ -1453,6 +1453,20 @@ async function readMultipleRanges(ranges){
   return d.valueRanges.map(vr => vr.values || []);
 }
 
+async function getAnalyticsSheetTz(){
+  if(window._analyticsSheetTz) return window._analyticsSheetTz;
+  try{
+    const token = await getDriveToken();
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${ANALYTICS_SHEET_ID}?fields=properties.timeZone`;
+    const r = await fetch(url, { headers: { 'Authorization': 'Bearer ' + token } });
+    const d = await r.json();
+    window._analyticsSheetTz = (d && d.properties && d.properties.timeZone) || 'Australia/Sydney';
+  }catch(_){
+    window._analyticsSheetTz = 'Australia/Sydney';
+  }
+  return window._analyticsSheetTz;
+}
+
 async function loadLiveAnalytics(){
   const loading = document.getElementById('live-loading');
   const contentEl = document.getElementById('live-content');
@@ -1466,12 +1480,15 @@ async function loadLiveAnalytics(){
   if(dot) dot.style.background = '#fbbf24';
 
   try{
-    const [dashRows, analyticsRows, reactionsRows, feedbackRows, usedRows] = await readMultipleRanges([
-      'Dashboard!A1:F60',
-      'Analytics!A1:F5000',
-      'Reactions!A1:G500',
-      'Feedback!A1:G100',
-      'Used!A1:G2000'
+    const [tz, [dashRows, analyticsRows, reactionsRows, feedbackRows, usedRows]] = await Promise.all([
+      getAnalyticsSheetTz(),
+      readMultipleRanges([
+        'Dashboard!A1:F60',
+        'Analytics!A1:F5000',
+        'Reactions!A1:G500',
+        'Feedback!A1:G100',
+        'Used!A1:G2000'
+      ])
     ]);
 
     renderLiveScorecard(dashRows);
@@ -1593,14 +1610,34 @@ function campusMatchesGrowth_(rowCampus, scope){
   return false;
 }
 
+// Build the JS Date for a wall-clock that occurred in `tz`. Without a TZ library, we
+// use Intl to derive the offset: pretend the parts are UTC, ask what wall-clock that
+// instant looks like in `tz`, and the difference is the TZ offset to subtract.
+function instantFromPartsInTz_(year, month, day, hour, min, sec, tz){
+  const asIfUtc = Date.UTC(year, month-1, day, hour, min, sec);
+  try{
+    const dtf = new Intl.DateTimeFormat('en-CA', { timeZone: tz, hour12:false,
+      year:'numeric', month:'2-digit', day:'2-digit',
+      hour:'2-digit', minute:'2-digit', second:'2-digit'});
+    const p = {};
+    dtf.formatToParts(new Date(asIfUtc)).forEach(x => { if(x.type !== 'literal') p[x.type] = parseInt(x.value, 10); });
+    if(p.hour === 24) p.hour = 0;
+    const inTz = Date.UTC(p.year, p.month-1, p.day, p.hour, p.minute, p.second);
+    const offset = inTz - asIfUtc; // ms; positive when tz is ahead of UTC
+    return new Date(asIfUtc - offset);
+  }catch(_){
+    return new Date(year, month-1, day, hour, min, sec);
+  }
+}
+
 function parseGrowthTimestamp_(raw){
   const s = String(raw||'').trim();
   if(!s) return null;
-  // Sheets DD/MM/YYYY HH:MM[:SS]
+  const tz = window._analyticsSheetTz || 'Australia/Sydney';
+  // Sheets DD/MM/YYYY HH:MM[:SS] in the spreadsheet's TZ
   const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?/);
   if(m){
-    const d = new Date(Number(m[3]), Number(m[2])-1, Number(m[1]), Number(m[4]||0), Number(m[5]||0), Number(m[6]||0));
-    return isNaN(d) ? null : d;
+    return instantFromPartsInTz_(Number(m[3]), Number(m[2]), Number(m[1]), Number(m[4]||0), Number(m[5]||0), Number(m[6]||0), tz);
   }
   const d = new Date(s);
   return isNaN(d) ? null : d;
