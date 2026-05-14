@@ -1456,7 +1456,8 @@ Object.keys(wdsgrp).forEach(function(cat){var wid='wds'+window._wid++;h+='<div c
 h+='</div></div>';
 if(!window._fbData)window._fbData=[];var _fbi=window._fbData.length;window._fbData.push({campus:CN[ca],year:yl,theme:u.th,tool:s.t,phase:phaseLabel+' #'+(si+1)});
 if(!window._usedData)window._usedData=[];var _usi=window._usedData.length;window._usedData.push({campus:CN[ca],year:yl,theme:u.th,tool:s.t,phase:phaseLabel});
-h+='<div class="sg-fb"><button class="sg-used" onclick="markUsed('+_usi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+_fbi+')" class="sg-fb-btn">💬 Feedback</button></div></div>';
+var _usiDone=_isUsedLocally(_usedKey(window._usedData[_usi]));
+h+='<div class="sg-fb"><button class="sg-used'+(_usiDone?' done':'')+'" onclick="markUsed('+_usi+',this)">'+(_usiDone?'✅ Used — click to undo':'✓ I Used This')+'</button><div class="sg-react"><button onclick="openFB('+_fbi+')" class="sg-fb-btn">💬 Feedback</button></div></div>';
 h+='</div></div>';});
 
 // ACARA and Wesley curriculum toggles
@@ -1473,6 +1474,10 @@ h+='<a href="'+BK+'" target="_blank" rel="noopener noreferrer" class="bb">📅 B
 h+='</div></div>';var pv=a.dataset.lastView||'';var cv=S.v+S.ca+S.yl+S.ui;var isTabSwitch=(cv===pv);a.innerHTML=h;if(!isTabSwitch)window.scrollTo(0,0);a.dataset.lastView=cv;a.classList.remove('tab-fade');if(isTabSwitch){void a.offsetWidth;a.classList.add('tab-fade');}}
 
 
+function _usedKey(d){if(!d)return '';return [d.campus||'',d.year||'',d.theme||'',d.tool||'',d.phase||''].join('|');}
+function _usedMap(){try{return JSON.parse(localStorage.getItem('dla_used_v1')||'{}');}catch(e){return {};}}
+function _isUsedLocally(k){if(!k)return false;return !!_usedMap()[k];}
+function _setUsedLocally(k,v){if(!k)return;try{var m=_usedMap();if(v)m[k]=1;else delete m[k];localStorage.setItem('dla_used_v1',JSON.stringify(m));}catch(e){}}
 function markUsed(idx,btn){
 var d=window._usedData[idx];
 var team=d.campus+' '+d.year+' Team';
@@ -1481,6 +1486,7 @@ if(isDone){
 // Toggle OFF — undo the mark.
 var unpayload={type:'unused',v:'2',team:team,campus:d.campus,year:d.year,theme:d.theme,tool:d.tool,phase:d.phase};
 fetch(FBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(unpayload)}).catch(function(){});
+_setUsedLocally(_usedKey(d),false);
 btn.classList.remove('done');
 btn.innerHTML='✓ I Used This';
 if(window._usedUnits){
@@ -1497,6 +1503,7 @@ return;
 // Toggle ON — mark as used.
 var payload={type:'used',v:'2',team:team,campus:d.campus,year:d.year,theme:d.theme,tool:d.tool,phase:d.phase};
 fetch(FBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)}).catch(function(){});
+_setUsedLocally(_usedKey(d),true);
 btn.classList.add('done');
 btn.innerHTML='✅ Used — click to undo';
 // Local celebration heuristic — matches the server rule of "3 uses in the same unit = +3 bonus".
@@ -1866,7 +1873,8 @@ function tgSec(id){var el=document.getElementById('sc_'+id);var btn=document.get
 function openStem(){
   var d=window._stemData;if(!d)return;
   var old=document.getElementById('stemOverlay');if(old)old.remove();
-  var html='<div class="stem-modal" role="dialog" aria-modal="true" aria-labelledby="stemModalTitle"><button type="button" class="stem-modal-close" onclick="closeStem()" aria-label="Close STEM activity">✕</button><div class="stem-modal-header"><div class="stem-modal-icon" aria-hidden="true">🔬</div><div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ac);margin-bottom:4px">STEM Design Cycle</div><div id="stemModalTitle" style="font-size:18px;font-weight:700;color:#FFF;line-height:1.3">'+d.toolLabel+'</div></div></div><div class="stem-modal-body"><div class="stem-label" style="margin-bottom:12px">🔄 Empathise → Define → Ideate → Prototype → Test</div><div class="sg-desc" style="font-size:14px;line-height:1.55">'+linkifyDesc(d.desc)+'</div><div class="sg-copilot"><button class="sg-copilot-btn" onclick="openCopilotHelper('+d.cpi+',this)"><span class="sg-copilot-ico">🤖</span><span class="sg-copilot-main">How do I teach this?</span></button></div><div class="sg-fb" style="margin-top:14px;padding-top:14px;border-top:1px solid #333"><button class="sg-used" onclick="markUsed('+d.usi+',this)">✓ I Used This</button><div class="sg-react"><button onclick="openFB('+d.fbi+')" class="sg-fb-btn">💬 Feedback</button></div></div></div></div>';
+  var _stemDone=_isUsedLocally(_usedKey(window._usedData&&window._usedData[d.usi]));
+  var html='<div class="stem-modal" role="dialog" aria-modal="true" aria-labelledby="stemModalTitle"><button type="button" class="stem-modal-close" onclick="closeStem()" aria-label="Close STEM activity">✕</button><div class="stem-modal-header"><div class="stem-modal-icon" aria-hidden="true">🔬</div><div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ac);margin-bottom:4px">STEM Design Cycle</div><div id="stemModalTitle" style="font-size:18px;font-weight:700;color:#FFF;line-height:1.3">'+d.toolLabel+'</div></div></div><div class="stem-modal-body"><div class="stem-label" style="margin-bottom:12px">🔄 Empathise → Define → Ideate → Prototype → Test</div><div class="sg-desc" style="font-size:14px;line-height:1.55">'+linkifyDesc(d.desc)+'</div><div class="sg-copilot"><button class="sg-copilot-btn" onclick="openCopilotHelper('+d.cpi+',this)"><span class="sg-copilot-ico">🤖</span><span class="sg-copilot-main">How do I teach this?</span></button></div><div class="sg-fb" style="margin-top:14px;padding-top:14px;border-top:1px solid #333"><button class="sg-used'+(_stemDone?' done':'')+'" onclick="markUsed('+d.usi+',this)">'+(_stemDone?'✅ Used — click to undo':'✓ I Used This')+'</button><div class="sg-react"><button onclick="openFB('+d.fbi+')" class="sg-fb-btn">💬 Feedback</button></div></div></div></div>';
   var overlay=document.createElement('div');
   overlay.id='stemOverlay';
   overlay.className='stem-overlay';
