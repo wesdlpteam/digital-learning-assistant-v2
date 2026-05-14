@@ -27,6 +27,7 @@ function getGitHubToken_() {
 }
 
 const DLA_ALLOWED_EMAILS = [
+  'dlpteam@wesleycollege.net',
   'nathan.benn@wesleycollege.edu.au',
   'david.howard@wesleycollege.edu.au',
   'andrew.delmastro@wesleycollege.edu.au',
