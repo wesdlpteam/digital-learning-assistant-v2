@@ -1792,6 +1792,18 @@ function pushHash(){
 }
 
 function readHash(){try{
+  // If we arrived via the 404.html SPA shim (e.g. /?p=%2FEL%2FYear2),
+  // decode the route and restore the real URL before reading pathname.
+  var q=window.location.search;
+  var pm=q.match(/[?&]p=([^&]+)/);
+  if(pm){
+    var routed=decodeURIComponent(pm[1]);
+    var hm=q.match(/[?&]h=([^&]+)/);
+    var routedHash=hm?decodeURIComponent(hm[1]):window.location.hash;
+    var clean=(_basePath||'')+(routed.charAt(0)==='/'?routed:'/'+routed)+(routedHash||'');
+    history.replaceState(null,'',clean);
+  }
+
   var hash=window.location.hash.replace(/^#/,'');
   var raw='';
 
