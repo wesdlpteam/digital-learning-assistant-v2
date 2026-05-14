@@ -1496,6 +1496,7 @@ async function loadLiveAnalytics(){
     window._growthRowsCache = { analytics: analyticsRows, used: usedRows };
     renderLiveGrowth(CURRENT_GROWTH_BUCKET);
     renderLiveUsedByTeam(usedRows);
+    renderLiveUsedAudit(usedRows);
     renderLiveCampusChart(dashRows);
     renderLiveHeatmap(dashRows);
     renderLiveReactions(reactionsRows);
@@ -1832,6 +1833,85 @@ function renderLiveUsedByTeam(rows){
       </div>
     </div>`;
   }).join('');
+}
+
+let AUDIT_FILTERS = { campus:'all', year:'all', search:'' };
+
+function renderLiveUsedAudit(rows){
+  const el = document.getElementById('live-used-audit'); if(!el) return;
+  const countEl = document.getElementById('live-used-audit-count');
+  window._usedAuditRowsCache = rows || [];
+
+  // Used columns: 0 Timestamp, 1 Team, 2 Campus, 3 Year, 4 Theme, 5 Tool, 6 Phase
+  const events = (rows||[]).slice(1)
+    .filter(r => r && (r[1] || (r[2] && r[3])))
+    .map(r => ({
+      ts: parseGrowthTimestamp_(r[0]),
+      team: String(r[1]||'').trim() || (String(r[2]||'').trim()+' '+String(r[3]||'').trim()+' Team'),
+      campus: String(r[2]||'').trim(),
+      year: String(r[3]||'').trim(),
+      theme: String(r[4]||'').trim(),
+      tool: String(r[5]||'').trim(),
+      phase: String(r[6]||'').trim()
+    }));
+
+  // Populate the year-level dropdown from the data (sorted, with "all" as the first option).
+  const yearSel = document.getElementById('audit-year-filter');
+  if(yearSel){
+    const existing = AUDIT_FILTERS.year;
+    const years = Array.from(new Set(events.map(e => e.year).filter(Boolean))).sort();
+    yearSel.innerHTML = '<option value="all">All year levels</option>' + years.map(y => `<option value="${esc(y)}">${esc(y)}</option>`).join('');
+    yearSel.value = years.indexOf(existing) >= 0 ? existing : 'all';
+    AUDIT_FILTERS.year = yearSel.value;
+  }
+
+  const q = AUDIT_FILTERS.search.trim().toLowerCase();
+  const filtered = events
+    .filter(e => AUDIT_FILTERS.campus === 'all' || e.campus === AUDIT_FILTERS.campus)
+    .filter(e => AUDIT_FILTERS.year === 'all' || e.year === AUDIT_FILTERS.year)
+    .filter(e => !q || (e.theme.toLowerCase().includes(q) || e.tool.toLowerCase().includes(q) || e.phase.toLowerCase().includes(q) || e.team.toLowerCase().includes(q)))
+    .sort((a,b) => (b.ts ? b.ts.getTime() : 0) - (a.ts ? a.ts.getTime() : 0));
+
+  if(countEl) countEl.textContent = filtered.length === events.length
+    ? `${filtered.length} click${filtered.length===1?'':'s'}`
+    : `${filtered.length} of ${events.length} clicks`;
+
+  if(!filtered.length){
+    el.innerHTML = '<div style="color:var(--dim);font-size:13px;padding:8px 0">No matching clicks.</div>';
+    return;
+  }
+
+  const campusCol = {'Elsternwick':'#818cf8','Glen Waverley':'#34d399','St Kilda Rd':'#fb923c','St Kilda':'#fb923c'};
+  const cap = 300;
+  const head = filtered.slice(0, cap);
+  el.innerHTML = head.map(e => {
+    const col = campusCol[e.campus] || 'var(--lime)';
+    const dt = e.ts
+      ? e.ts.toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'2-digit'}) + ' · ' + e.ts.toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'})
+      : '—';
+    return `<div style="padding:8px 0;border-bottom:1px solid #2a2a2a;font-size:12px;line-height:1.5">
+      <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:2px">
+        <span style="color:${col};font-weight:600">${esc(e.team)}</span>
+        <span style="color:var(--dim);font-size:11px;flex-shrink:0">${esc(dt)}</span>
+      </div>
+      <div style="color:var(--text)">${esc(e.theme) || '<span style="color:var(--dim)">(no theme)</span>'}</div>
+      <div style="color:var(--dim);font-size:11px">${esc(e.tool) || '—'}${e.phase ? ' · ' + esc(e.phase) : ''}</div>
+    </div>`;
+  }).join('') + (filtered.length > cap ? `<div style="color:var(--dim);font-size:11px;padding:8px 0;text-align:center">Showing first ${cap} — narrow the filters to see the rest.</div>` : '');
+}
+
+function setAuditCampus(c){
+  AUDIT_FILTERS.campus = c;
+  document.querySelectorAll('.audit-campus').forEach(b => b.classList.toggle('active', b.dataset.campus === c));
+  if(window._usedAuditRowsCache) renderLiveUsedAudit(window._usedAuditRowsCache);
+}
+function setAuditYear(y){
+  AUDIT_FILTERS.year = y;
+  if(window._usedAuditRowsCache) renderLiveUsedAudit(window._usedAuditRowsCache);
+}
+function setAuditSearch(s){
+  AUDIT_FILTERS.search = s || '';
+  if(window._usedAuditRowsCache) renderLiveUsedAudit(window._usedAuditRowsCache);
 }
 
 function renderLiveCampusChart(rows){
