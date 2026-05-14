@@ -1007,6 +1007,15 @@ function pushToGitHub() {
       continue;
     }
 
+    // GitHub ruleset validation can time out (>10s) on the "Restrict updates to
+    // workflow files" rule even for non-workflow files. Body reads
+    // "Rule was unable to be completed in N seconds". Transient — retry.
+    if (putCode === 403 && putResp.getContentText().indexOf('Rule was unable to be completed') !== -1 && attempt < 3) {
+      Logger.log(`GitHub data.json ruleset-eval timeout on attempt ${attempt} — retrying in 5s`);
+      Utilities.sleep(5000);
+      continue;
+    }
+
     throw new Error('GitHub data.json sync failed: HTTP ' + putCode + ' — ' + putResp.getContentText().slice(0, 500));
   }
   throw new Error('GitHub data.json sync failed after 3 attempts (SHA kept conflicting)');
@@ -1054,6 +1063,11 @@ function pushLibrariesToGitHub() {
       if ((putCode === 409 || putCode === 422) && attempt < 3) {
         Logger.log(`Libraries SHA conflict on attempt ${attempt} — retrying in 3s`);
         Utilities.sleep(3000);
+        continue;
+      }
+      if (putCode === 403 && putResp.getContentText().indexOf('Rule was unable to be completed') !== -1 && attempt < 3) {
+        Logger.log(`Libraries ruleset-eval timeout on attempt ${attempt} — retrying in 5s`);
+        Utilities.sleep(5000);
         continue;
       }
       throw new Error('GitHub libraries.json sync failed: HTTP ' + putCode);
