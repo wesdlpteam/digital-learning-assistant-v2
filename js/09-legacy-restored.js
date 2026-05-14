@@ -1477,7 +1477,8 @@ async function loadLiveAnalytics(){
     renderLiveScorecard(dashRows);
     renderLiveOverview(dashRows);
     window._growthRowsCache = { analytics: analyticsRows, used: usedRows };
-    renderLiveGrowth(CURRENT_GROWTH_RANGE);
+    renderLiveGrowth(CURRENT_GROWTH_BUCKET);
+    renderLiveUsedByTeam(usedRows);
     renderLiveCampusChart(dashRows);
     renderLiveHeatmap(dashRows);
     renderLiveReactions(reactionsRows);
@@ -1562,14 +1563,14 @@ function renderLiveOverview(rows){
   ).join('');
 }
 
-let CURRENT_GROWTH_RANGE = '12w';
+let CURRENT_GROWTH_BUCKET = 'week';
 
-function setGrowthRange(range){
-  CURRENT_GROWTH_RANGE = range;
-  document.querySelectorAll('.growth-range').forEach(b => {
-    b.classList.toggle('active', b.dataset.range === range);
+function setGrowthBucket(bucket){
+  CURRENT_GROWTH_BUCKET = bucket;
+  document.querySelectorAll('.growth-bucket').forEach(b => {
+    b.classList.toggle('active', b.dataset.bucket === bucket);
   });
-  renderLiveGrowth(range);
+  renderLiveGrowth(bucket);
 }
 
 function parseGrowthTimestamp_(raw){
@@ -1585,18 +1586,28 @@ function parseGrowthTimestamp_(raw){
   return isNaN(d) ? null : d;
 }
 
-function weekKey_(date){
-  // ISO-ish Monday-anchored week. Returns YYYY-MM-DD of the Monday.
-  const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-  const day = d.getDay(); // 0 Sun .. 6 Sat
-  const offset = day === 0 ? -6 : 1 - day; // shift to Monday
-  d.setDate(d.getDate() + offset);
-  const m = String(d.getMonth()+1).padStart(2,'0');
-  const dd = String(d.getDate()).padStart(2,'0');
-  return `${d.getFullYear()}-${m}-${dd}`;
+function dayStart_(date){
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+function weekStart_(date){
+  const d = dayStart_(date);
+  const day = d.getDay();
+  d.setDate(d.getDate() + (day === 0 ? -6 : 1 - day)); // Monday
+  return d;
+}
+function monthStart_(date){
+  return new Date(date.getFullYear(), date.getMonth(), 1);
+}
+function isoKey_(date){
+  const m = String(date.getMonth()+1).padStart(2,'0');
+  const dd = String(date.getDate()).padStart(2,'0');
+  return `${date.getFullYear()}-${m}-${dd}`;
+}
+function monthKey_(date){
+  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}`;
 }
 
-function renderLiveGrowth(range){
+function renderLiveGrowth(bucket){
   const el = document.getElementById('live-growth'); if(!el) return;
   const cache = window._growthRowsCache || {};
   const analyticsRows = cache.analytics || [];
@@ -1610,37 +1621,47 @@ function renderLiveGrowth(range){
     return;
   }
 
+  // Bucket config: how many buckets back, how to compute the bucket start, how to key it, and a trend window.
   const now = new Date();
-  let weeksBack;
-  if(range === '12w') weeksBack = 12;
-  else if(range === '6m') weeksBack = 26;
-  else {
-    // All time — derive from earliest event
-    const earliest = [...viewDates, ...usedDates].reduce((a,b)=> a && a<b ? a : b);
-    weeksBack = Math.max(4, Math.ceil((now - earliest) / (7*24*3600*1000)) + 1);
+  let bucketsBack, startOf, keyOf, advance, fmtLabel, trendWindow, trendLabel;
+  if(bucket === 'day'){
+    bucketsBack = 30;
+    startOf = d => dayStart_(d);
+    keyOf   = d => isoKey_(dayStart_(d));
+    advance = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+    fmtLabel = d => d.toLocaleDateString('en-AU', { day:'numeric', month:'short' });
+    trendWindow = 7;  trendLabel = 'last 7d vs prior 7d';
+  } else if(bucket === 'month'){
+    bucketsBack = 12;
+    startOf = d => monthStart_(d);
+    keyOf   = d => monthKey_(monthStart_(d));
+    advance = (d, n) => new Date(d.getFullYear(), d.getMonth() + n, 1);
+    fmtLabel = d => d.toLocaleDateString('en-AU', { month:'short', year:'2-digit' });
+    trendWindow = 3;  trendLabel = 'last 3mo vs prior 3mo';
+  } else {
+    bucketsBack = 12;
+    startOf = d => weekStart_(d);
+    keyOf   = d => isoKey_(weekStart_(d));
+    advance = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n*7); return x; };
+    fmtLabel = d => d.toLocaleDateString('en-AU', { day:'numeric', month:'short' });
+    trendWindow = 4;  trendLabel = 'last 4w vs prior 4w';
   }
 
-  // Build week buckets ending this week.
+  const anchor = startOf(now);
   const buckets = [];
-  const cursor = new Date(now);
-  cursor.setHours(0,0,0,0);
-  const day = cursor.getDay();
-  cursor.setDate(cursor.getDate() + (day === 0 ? -6 : 1 - day)); // Monday of current week
-  for(let i = weeksBack - 1; i >= 0; i--){
-    const start = new Date(cursor);
-    start.setDate(start.getDate() - i*7);
-    buckets.push({ key: weekKey_(start), start, views: 0, used: 0 });
+  for(let i = bucketsBack - 1; i >= 0; i--){
+    const start = advance(anchor, -i);
+    buckets.push({ key: keyOf(start), start, views: 0, used: 0 });
   }
   const idxByKey = Object.fromEntries(buckets.map((b,i)=>[b.key,i]));
 
-  viewDates.forEach(d => { const k = weekKey_(d); if(k in idxByKey) buckets[idxByKey[k]].views++; });
-  usedDates.forEach(d => { const k = weekKey_(d); if(k in idxByKey) buckets[idxByKey[k]].used++; });
+  viewDates.forEach(d => { const k = keyOf(d); if(k in idxByKey) buckets[idxByKey[k]].views++; });
+  usedDates.forEach(d => { const k = keyOf(d); if(k in idxByKey) buckets[idxByKey[k]].used++; });
 
   const maxViews = Math.max(1, ...buckets.map(b=>b.views));
   const maxUsed  = Math.max(1, ...buckets.map(b=>b.used));
   const yMax = Math.max(maxViews, maxUsed);
 
-  // SVG dimensions
   const W = 760, H = 220, PAD_L = 36, PAD_R = 12, PAD_T = 14, PAD_B = 34;
   const plotW = W - PAD_L - PAD_R;
   const plotH = H - PAD_T - PAD_B;
@@ -1648,7 +1669,6 @@ function renderLiveGrowth(range){
   const xFor = i => PAD_L + (n === 1 ? plotW/2 : (i * plotW / (n-1)));
   const yFor = v => PAD_T + plotH - (v / yMax) * plotH;
 
-  // Gridlines + Y labels (5 ticks)
   let grid = '';
   for(let t = 0; t <= 4; t++){
     const y = PAD_T + (plotH * t / 4);
@@ -1657,35 +1677,30 @@ function renderLiveGrowth(range){
     grid += `<text x="${PAD_L-6}" y="${y+3}" text-anchor="end" font-size="10" fill="var(--dim)">${val}</text>`;
   }
 
-  // X labels (every ~6 buckets to avoid clutter)
   const labelStep = Math.max(1, Math.ceil(n / 8));
   let xLabels = '';
   for(let i = 0; i < n; i += labelStep){
-    const d = buckets[i].start;
-    const lbl = d.toLocaleDateString('en-AU', { day:'numeric', month:'short' });
-    xLabels += `<text x="${xFor(i)}" y="${H-PAD_B+16}" text-anchor="middle" font-size="10" fill="var(--dim)">${lbl}</text>`;
+    xLabels += `<text x="${xFor(i)}" y="${H-PAD_B+16}" text-anchor="middle" font-size="10" fill="var(--dim)">${fmtLabel(buckets[i].start)}</text>`;
   }
 
   const viewsPath = buckets.map((b,i) => `${i===0?'M':'L'} ${xFor(i).toFixed(1)} ${yFor(b.views).toFixed(1)}`).join(' ');
   const usedPath  = buckets.map((b,i) => `${i===0?'M':'L'} ${xFor(i).toFixed(1)} ${yFor(b.used ).toFixed(1)}`).join(' ');
-
-  // Area fills (below each line) for visual weight
   const viewsArea = `${viewsPath} L ${xFor(n-1).toFixed(1)} ${(PAD_T+plotH).toFixed(1)} L ${xFor(0).toFixed(1)} ${(PAD_T+plotH).toFixed(1)} Z`;
   const usedArea  = `${usedPath } L ${xFor(n-1).toFixed(1)} ${(PAD_T+plotH).toFixed(1)} L ${xFor(0).toFixed(1)} ${(PAD_T+plotH).toFixed(1)} Z`;
 
+  const dotLabel = bucket === 'month' ? 'Month' : (bucket === 'day' ? 'Day' : 'Week');
   const dots = buckets.map((b,i) => `
     <circle cx="${xFor(i).toFixed(1)}" cy="${yFor(b.views).toFixed(1)}" r="3" fill="#60B8F0">
-      <title>Week of ${b.start.toLocaleDateString('en-AU')}: ${b.views} views</title>
+      <title>${dotLabel} of ${b.start.toLocaleDateString('en-AU')}: ${b.views} views</title>
     </circle>
     <circle cx="${xFor(i).toFixed(1)}" cy="${yFor(b.used ).toFixed(1)}" r="3" fill="var(--lime)">
-      <title>Week of ${b.start.toLocaleDateString('en-AU')}: ${b.used} used</title>
+      <title>${dotLabel} of ${b.start.toLocaleDateString('en-AU')}: ${b.used} used</title>
     </circle>`).join('');
 
   const totalViews = buckets.reduce((a,b)=>a+b.views,0);
   const totalUsed  = buckets.reduce((a,b)=>a+b.used,0);
-  // Slope = avg of last 4 buckets vs prior 4 buckets, as % change.
-  const tail = buckets.slice(-4).reduce((a,b)=>a+b.views,0);
-  const head = buckets.slice(-8,-4).reduce((a,b)=>a+b.views,0);
+  const tail = buckets.slice(-trendWindow).reduce((a,b)=>a+b.views,0);
+  const head = buckets.slice(-trendWindow*2,-trendWindow).reduce((a,b)=>a+b.views,0);
   const pct = head > 0 ? Math.round(((tail - head) / head) * 100) : (tail > 0 ? 100 : 0);
   const trendCol = pct >= 0 ? 'var(--lime)' : '#FF8080';
   const trendArrow = pct >= 0 ? '▲' : '▼';
@@ -1694,7 +1709,7 @@ function renderLiveGrowth(range){
     <div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:10px;font-size:12px;color:var(--dim)">
       <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#60B8F0;margin-right:6px;vertical-align:middle"></span>Views <b style="color:var(--text)">${totalViews}</b></span>
       <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--lime);margin-right:6px;vertical-align:middle"></span>Used <b style="color:var(--text)">${totalUsed}</b></span>
-      <span style="margin-left:auto;color:${trendCol};font-weight:700">${trendArrow} ${Math.abs(pct)}% <span style="color:var(--dim);font-weight:400">views, last 4w vs prior 4w</span></span>
+      <span style="margin-left:auto;color:${trendCol};font-weight:700">${trendArrow} ${Math.abs(pct)}% <span style="color:var(--dim);font-weight:400">views, ${trendLabel}</span></span>
     </div>
     <svg viewBox="0 0 ${W} ${H}" width="100%" preserveAspectRatio="xMidYMid meet" style="display:block">
       ${grid}
@@ -1705,6 +1720,51 @@ function renderLiveGrowth(range){
       ${dots}
       ${xLabels}
     </svg>`;
+}
+
+function renderLiveUsedByTeam(rows){
+  const el = document.getElementById('live-used-by-team'); if(!el) return;
+  const countEl = document.getElementById('live-used-by-team-count');
+  // Used columns: 0 Timestamp, 1 Team, 2 Campus, 3 Year, 4 Theme, 5 Tool, 6 Phase
+  const events = (rows||[]).slice(1).filter(r => r && (r[1] || (r[2] && r[3])));
+  if(!events.length){
+    if(countEl) countEl.textContent = '';
+    el.innerHTML = '<div style="color:var(--dim);font-size:13px;padding:8px 0">No "I Used This" clicks yet.</div>';
+    return;
+  }
+  const tally = {};
+  events.forEach(r => {
+    const team = String(r[1]||'').trim() || (String(r[2]||'').trim()+' '+String(r[3]||'').trim()+' Team');
+    const campus = String(r[2]||'').trim();
+    if(!tally[team]) tally[team] = { count:0, campus, lastTs:null };
+    tally[team].count++;
+    const ts = parseGrowthTimestamp_(r[0]);
+    if(ts && (!tally[team].lastTs || ts > tally[team].lastTs)) tally[team].lastTs = ts;
+  });
+  const sorted = Object.entries(tally).map(([team,info]) => ({ team, ...info })).sort((a,b) => b.count - a.count);
+  const total = sorted.reduce((a,b) => a + b.count, 0);
+  const max = Math.max(1, ...sorted.map(t => t.count));
+  const campusCol = {'Elsternwick':'#818cf8','Glen Waverley':'#34d399','St Kilda Rd':'#fb923c','St Kilda':'#fb923c'};
+
+  if(countEl) countEl.textContent = `${sorted.length} team${sorted.length===1?'':'s'} · ${total} click${total===1?'':'s'}`;
+
+  el.innerHTML = sorted.slice(0,20).map((t, idx) => {
+    const col = campusCol[t.campus] || 'var(--lime)';
+    const pct = Math.round((t.count/max)*100);
+    const lastLbl = t.lastTs ? t.lastTs.toLocaleDateString('en-AU',{day:'numeric',month:'short'}) : '—';
+    return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <div style="width:18px;font-size:11px;color:var(--dim);text-align:right;flex-shrink:0">${idx+1}</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;margin-bottom:4px;gap:8px">
+          <span style="color:${col};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(t.team)}</span>
+          <span style="color:var(--dim);flex-shrink:0">${t.count} · last ${esc(lastLbl)}</span>
+        </div>
+        <div style="height:6px;background:var(--card2);border-radius:3px">
+          <div style="height:100%;border-radius:3px;background:${col};width:${pct}%"></div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function renderLiveCampusChart(rows){
