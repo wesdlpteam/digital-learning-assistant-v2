@@ -1477,12 +1477,21 @@ h+='</div></div>';var pv=a.dataset.lastView||'';var cv=S.v+S.ca+S.yl+S.ui;var is
 
 function _usedKey(d){if(!d)return '';return [d.campus||'',d.year||'',d.theme||'',d.tool||'',d.phase||''].join('|');}
 function _usedMap(){try{return JSON.parse(localStorage.getItem('dla_used_v1')||'{}');}catch(e){return {};}}
-// Short-lived pending-undo set. Keeps the button "not used" for ~30s after
-// the user clicks undo, even if a stale server poll still shows the row —
-// otherwise the leaderboard refresh would briefly flip the button back to
-// "done" before the unused write reaches the sheet.
+// Session-scoped pending sets. They sit above localStorage and the server
+// snapshot so that an optimistic click survives even when (a) localStorage
+// is unavailable (private window, quota), and (b) a leaderboard poll arrives
+// before the server has committed our write — that poll replaces
+// _serverUsedKeys with a snapshot that doesn't know about the click yet.
+// Pending-used outlasts the poll window; pending-unused does the same for undo.
+window._pendingUsedKeys=window._pendingUsedKeys||{};
 window._pendingUnusedKeys=window._pendingUnusedKeys||{};
+function _markPendingUsed(k){if(!k)return;window._pendingUsedKeys[k]=Date.now()+60000;}
 function _markPendingUnused(k){if(!k)return;window._pendingUnusedKeys[k]=Date.now()+30000;}
+function _isPendingUsed(k){
+  if(!k||!window._pendingUsedKeys[k])return false;
+  if(Date.now()>window._pendingUsedKeys[k]){delete window._pendingUsedKeys[k];return false;}
+  return true;
+}
 function _isPendingUnused(k){
   if(!k||!window._pendingUnusedKeys[k])return false;
   if(Date.now()>window._pendingUnusedKeys[k]){delete window._pendingUnusedKeys[k];return false;}
@@ -1491,6 +1500,7 @@ function _isPendingUnused(k){
 function _isUsedLocally(k){
   if(!k)return false;
   if(_isPendingUnused(k))return false;
+  if(_isPendingUsed(k))return true;
   if(window._serverUsedKeys && window._serverUsedKeys.has(k))return true;
   return !!_usedMap()[k];
 }
@@ -1498,7 +1508,8 @@ function _setUsedLocally(k,v){
   if(!k)return;
   try{var m=_usedMap();if(v)m[k]=1;else delete m[k];localStorage.setItem('dla_used_v1',JSON.stringify(m));}catch(e){}
   if(window._serverUsedKeys){if(v)window._serverUsedKeys.add(k);else window._serverUsedKeys.delete(k);}
-  if(!v)_markPendingUnused(k);else if(window._pendingUnusedKeys)delete window._pendingUnusedKeys[k];
+  if(v){_markPendingUsed(k);if(window._pendingUnusedKeys)delete window._pendingUnusedKeys[k];}
+  else{_markPendingUnused(k);if(window._pendingUsedKeys)delete window._pendingUsedKeys[k];}
 }
 // Walks every "I Used This" button in the DOM and re-applies the done state
 // based on the current union of server + local marks. Called after fresh
