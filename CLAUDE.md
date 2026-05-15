@@ -21,7 +21,12 @@ git add <files>; git commit -m "..."; git push
 # Apps Script deploys (each folder is its own clasp project — cd in first)
 cd gas_backend;   clasp push
 cd gas_analytics; clasp push
-# `clasp deploy` only after pushing if you need a new versioned web app URL.
+# IMPORTANT: `clasp push` only updates HEAD. The live /exec URLs (FBHOOK in
+# index.html, SCRIPT_URL in 00-config-state-utils.js) are pinned to specific
+# versioned deployments — push alone WILL NOT change what the URL serves.
+# After every push, update the live deployment to the new head:
+#   clasp deployments                                                  # find the pinned deployment ID
+#   clasp deploy --deploymentId <ID> --description "<what changed>"    # bump that deployment to head
 # clasp login state lives in ~/.clasprc.json (gitignored).
 ```
 
