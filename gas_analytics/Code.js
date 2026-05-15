@@ -317,11 +317,37 @@ function getLeaderboard_() {
           lastTheme: t.lastTheme,
           lastTool:  t.lastTool
         };
-      })
+      }),
+      usedKeys: getUsedKeys_(ss)
     };
   } catch (err) {
-    return { leaderboard: [], error: String(err) };
+    return { leaderboard: [], usedKeys: [], error: String(err) };
   }
+}
+
+// Returns the deduplicated set of "campus|year|theme|tool|phase" keys from
+// the Used sheet. The DLA page uses this to render the "I Used This" button
+// in its done state on every browser, not just the device that clicked.
+function getUsedKeys_(ss) {
+  const sheet = ensureSheet_(ss, SHEETS.USED);
+  const data = sheet.getDataRange().getValues();
+  if (data.length < 2) return [];
+  const seen = {};
+  const out = [];
+  for (let i = 1; i < data.length; i++) {
+    const r = data[i];
+    const campus = clean_(r[2]);
+    const year   = clean_(r[3]);
+    const theme  = clean_(r[4]);
+    const tool   = clean_(r[5]);
+    const phase  = clean_(r[6]);
+    if (!campus || !year || !theme) continue;
+    const k = campus + '|' + year + '|' + theme + '|' + tool + '|' + phase;
+    if (seen[k]) continue;
+    seen[k] = 1;
+    out.push(k);
+  }
+  return out;
 }
 
 // ─── Manual / one-shot helpers ─────────────────────────────────────────
