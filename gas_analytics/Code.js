@@ -125,9 +125,14 @@ function handleUsed_(ss, body) {
   recomputeLeaderboard_(ss);
 }
 
-// Removes the most recent Used row matching campus|year|theme|tool|phase so the
-// "I Used This" button can toggle off. Team is matched if present so two
-// teams sharing a unit can't undo each other's clicks.
+// Removes the most recent Used row that matches the undo request so the
+// "I Used This" button can toggle off. Tiered match — each tier loosens the
+// fields that have to line up — because older rows in the sheet predate
+// some fields (team) or have slightly different phase strings, and a strict
+// match would leave the row in place (so points wouldn't drop).
+//
+// Two teams can't share a row: each (campus, year, theme, tool, phase)
+// belongs to exactly one team's view, so dropping the team check is safe.
 function handleUnused_(ss, body) {
   const sheet = ensureSheet_(ss, SHEETS.USED);
   const campus = clean_(body.campus);
@@ -144,22 +149,57 @@ function handleUnused_(ss, body) {
   if (lastRow < 2) return;
   const data = sheet.getRange(2, 1, lastRow - 1, 7).getValues();
   // Used columns: 0 Timestamp, 1 Team, 2 Campus, 3 Year, 4 Theme, 5 Tool, 6 Phase
-  for (let i = data.length - 1; i >= 0; i--) {
-    const r = data[i];
-    if (
-      clean_(r[2]) === campus &&
-      clean_(r[3]) === year &&
-      clean_(r[4]) === theme &&
-      clean_(r[5]) === tool &&
-      clean_(r[6]) === phase &&
-      (!team || clean_(r[1]) === team)
-    ) {
-      sheet.deleteRow(i + 2);
-      recomputeLeaderboard_(ss);
-      return;
+
+  // Tiered matchers — first to find a hit wins.
+  const tiers = [
+    // 1. Exact: every field including team.
+    function(r) {
+      return clean_(r[2]) === campus &&
+             clean_(r[3]) === year &&
+             clean_(r[4]) === theme &&
+             clean_(r[5]) === tool &&
+             clean_(r[6]) === phase &&
+             (!team || clean_(r[1]) === team);
+    },
+    // 2. Drop team check (old rows may have a different/empty team field).
+    function(r) {
+      return clean_(r[2]) === campus &&
+             clean_(r[3]) === year &&
+             clean_(r[4]) === theme &&
+             clean_(r[5]) === tool &&
+             clean_(r[6]) === phase;
+    },
+    // 3. Drop phase check too (phase labels have changed historically).
+    function(r) {
+      return clean_(r[2]) === campus &&
+             clean_(r[3]) === year &&
+             clean_(r[4]) === theme &&
+             clean_(r[5]) === tool;
+    },
+    // 4. Last resort — drop tool too. Removes any row for that team+theme.
+    function(r) {
+      return clean_(r[2]) === campus &&
+             clean_(r[3]) === year &&
+             clean_(r[4]) === theme;
+    }
+  ];
+
+  for (let t = 0; t < tiers.length; t++) {
+    for (let i = data.length - 1; i >= 0; i--) {
+      if (tiers[t](data[i])) {
+        sheet.deleteRow(i + 2);
+        recomputeLeaderboard_(ss);
+        return;
+      }
     }
   }
-  // No match — leave the sheet untouched. Likely a stale undo from a refreshed page.
+
+  // No match in any tier — log so we can see what the sheet held vs. the
+  // request and refine the matcher.
+  logError_(ss, 'unused_no_match', 'unused', body, JSON.stringify({
+    campus: campus, year: year, theme: theme, tool: tool, phase: phase, team: team,
+    rowCount: data.length
+  }));
 }
 
 function handleReaction_(ss, body) {
