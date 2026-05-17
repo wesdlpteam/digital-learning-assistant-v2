@@ -312,7 +312,7 @@ const TOOL_WHITELIST = [
   // Video / audio / animation
   'garageband','scratchjr','scratch jr','scratch','stop motion studio','stop motion',
   'chatterpix','imovie','puppet pals',
-  'adobe express','adobe express podcasting','animating a character with adobe express',
+  'adobe express','podcasting using canva','animating a character with adobe express',
 
   // Subject specific (Google Earth is BANNED)
   'google maps','national geographic mapmaker','national geographic map maker','nat geo mapmaker','mapmaker',
@@ -908,7 +908,7 @@ function regenToolPriorityScore_(tool, entry, freq, isStem){
   score -= Math.min(count, 18); // underused tools rise naturally, but not by hard-forcing one platform
   if(isStem){
     if(/sphero|lego spike|micro:bit|codrone|makey makey|3d printer|tinkercad|bee-bot|beebot|indi|minecraft/.test(key)) score += 20;
-    if(/adobe express podcasting|seesaw|book creator|padlet|canva/.test(key)) score -= 18;
+    if(/seesaw|book creator|padlet|canva/.test(key)) score -= 18;
   }
   if(/where we are|place|time|migration|journey|map|geography|settlement|country|local|community/.test(unit) && /google earth|google maps|minecraft|padlet|canva|book creator/.test(key)) score += 10;
   if(/sharing the planet|sustain|habitat|ecosystem|environment|water|waste|climate|biodiversity|conservation|animal|plant/.test(unit) && /field guide|google earth|micro:bit|minecraft|book creator|canva|padlet|microsoft forms|excel/.test(key)) score += 10;
@@ -930,7 +930,7 @@ function getRegenerateCandidateTools_(entry, currentSug, sugIdx, freq){
     if(!k || k === toolKey(currentTool)) return false;
     if(usedKeys.has(k)) return false;
     if(toolContainsForbiddenKeyword(t) || toolViolatesInventoryBan(t)) return false;
-    if(!podcastAllowed && /adobe express podcasting|podcast equipment/i.test(normaliseToolName(t))) return false;
+    if(!podcastAllowed && /podcasting using canva|podcast equipment/i.test(normaliseToolName(t))) return false;
     return true;
   });
 
@@ -1068,7 +1068,7 @@ RETRY: Do NOT choose Podcasting using Canva. This regeneration is not for a podc
         lastIssue = 'candidate';
         continue;
       }
-      if(!podcastAllowed && /podcasting using canva|adobe express podcasting|podcast equipment/i.test(normaliseToolName(parsed.t))){
+      if(!podcastAllowed && /podcasting using canva|podcast equipment/i.test(normaliseToolName(parsed.t))){
         lastIssue = 'podcast';
         continue;
       }
