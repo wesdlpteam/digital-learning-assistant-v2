@@ -86,7 +86,7 @@ const APPROVED_TOOLS = `APPROVED TOOLS ONLY (Wesley College — Microsoft school
 - Robotics/STEM: Bee-Bots, Sphero Indi, Sphero BOLT, Lego Spike Prime, Micro:bits, CoDrone EDU, Makey Makey
 - Maker/A/V Hardware: 3D Printers, Merge Cubes, Podcast Equipment, iPads, Laptops
 - Core Creation: Seesaw, Canva, Book Creator, Padlet, Delightex
-- Video/Audio/Animation: GarageBand, ScratchJR, Stop Motion Studio, ChatterPix Kids, iMovie, Puppet Pals, Adobe Express, Adobe Express Podcasting, Animating a Character with Adobe Express
+- Video/Audio/Animation: GarageBand, ScratchJR, Stop Motion Studio, ChatterPix Kids, iMovie, Puppet Pals, Adobe Express, Podcasting using Canva, Animating a Character with Adobe Express
 - Subject Specific: Google Maps, National Geographic MapMaker, Field Guide to Victoria, Sky Map, Geoboard
 - Specialist: Wise Discussion Chatbots
 - Other: Clickview, Epic, PicCollage, Brushes Redux, Word Clouds ABCya, Sketchbook, Explain Everything, Freeform, Kahoot, Tinkercad, Minecraft Education

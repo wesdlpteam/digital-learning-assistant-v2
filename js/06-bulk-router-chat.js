@@ -986,7 +986,7 @@ THIS IS SUGGESTION #6 — IT MUST BE A STEM DESIGN CYCLE ACTIVITY using the cycl
 
   const podcastGuard = podcastAllowed ? `
 Podcast/audio tools are allowed for this regeneration because the current unit or activity includes audio, speaking, interview, narration or sound.` : `
-PODCAST GUARD: Do NOT choose Adobe Express Podcasting or Podcast Equipment for this regeneration. The current unit/activity does not specifically call for podcasting, interviews, audio storytelling, narration or sound work.`;
+PODCAST GUARD: Do NOT choose Podcasting using Canva or Podcast Equipment for this regeneration. The current unit/activity does not specifically call for podcasting, interviews, audio storytelling, narration or sound work.`;
 
   const prompt = `You are a Digital Learning Coach at Wesley College generating a fresh technology suggestion for an IB PYP unit.
 
@@ -1005,7 +1005,7 @@ HARD RULES:
 - Do NOT duplicate any other tool already used in this unit.
 - Choose exactly ONE tool from this candidate list: ${candidateTools.length ? candidateTools.join(', ') : '(no available candidates)'}.
 - Do NOT choose a tool outside the candidate list.
-- Do NOT default to Adobe Express Podcasting. Only use it when podcast/audio work is explicitly central to the activity.
+- Do NOT default to Podcasting using Canva. Only use it when podcast/audio work is explicitly central to the activity.
 
 OVERUSED TOOLS (avoid unless perfect fit — already appears 14+ times across library): ${overused.length ? overused.join(', ') : '(none)'}
 NEVER-USED candidate tools (fresh ideas): ${neverUsed.length ? neverUsed.join(', ') : '(none)'}
@@ -1038,7 +1038,7 @@ RETRY: Previous response proposed a tool Wesley does NOT have. Pick from this ca
 RETRY: Previous response chose a tool outside the candidate list. Pick exactly ONE of these tools and no others: ${candidateTools.join(', ')}.`;
       else if(lastIssue === 'podcast') retryNote = `
 
-RETRY: Do NOT choose Adobe Express Podcasting. This regeneration is not for a podcast, audio interview, narration or sound activity. Pick a different candidate tool: ${candidateTools.join(', ')}.`;
+RETRY: Do NOT choose Podcasting using Canva. This regeneration is not for a podcast, audio interview, narration or sound activity. Pick a different candidate tool: ${candidateTools.join(', ')}.`;
 
       const raw = await callAI([{role:'user',parts:[{text:prompt+retryNote}]}], null, OPENAI_FAST_MODEL);
       const clean = raw.replace(/```json|```/g,'').trim();
@@ -1068,7 +1068,7 @@ RETRY: Do NOT choose Adobe Express Podcasting. This regeneration is not for a po
         lastIssue = 'candidate';
         continue;
       }
-      if(!podcastAllowed && /adobe express podcasting|podcast equipment/i.test(normaliseToolName(parsed.t))){
+      if(!podcastAllowed && /podcasting using canva|adobe express podcasting|podcast equipment/i.test(normaliseToolName(parsed.t))){
         lastIssue = 'podcast';
         continue;
       }
@@ -1081,7 +1081,7 @@ RETRY: Do NOT choose Adobe Express Podcasting. This regeneration is not for a po
                       lastIssue === 'dupe' ? 'AI kept proposing tools already in this unit' :
                       lastIssue === 'unavailable' ? 'AI kept proposing tools Wesley does not have' :
                       lastIssue === 'candidate' ? 'AI kept choosing tools outside the candidate list' :
-                      lastIssue === 'podcast' ? 'AI kept defaulting to Adobe Express Podcasting for a non-audio activity' :
+                      lastIssue === 'podcast' ? 'AI kept defaulting to Podcasting using Canva for a non-audio activity' :
                       'AI failed after 5 attempts';
       throw new Error(`${problem} — try 💬 feedback with a specific tool name`);
     }
@@ -1646,7 +1646,10 @@ function normaliseToolName(t){
     'adobe express character animator':'Animating a Character with Adobe Express',
     'character animator':'Animating a Character with Adobe Express',
     'animate character':'Animating a Character with Adobe Express',
-    'adobe express podcasting':'Adobe Express Podcasting',
+    'adobe express podcasting':'Podcasting using Canva',
+    'podcasting using canva':'Podcasting using Canva',
+    'canva podcast':'Podcasting using Canva',
+    'canva podcasting':'Podcasting using Canva',
     'adobe express video':'Adobe Express Video',
     'lego spike prime':'Lego Spike Prime','lego spike essential':'Lego Spike Essential',
     'sphero bolt':'Sphero BOLT','sphero indi':'Sphero Indi',
