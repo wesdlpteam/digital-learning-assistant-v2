@@ -792,14 +792,6 @@ function openTechResult(campus,yl,theme,tool,regen){
 function escapeHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 function fetchTechSuggestion(campus,yl,theme,tool,regen){
-  var cbName='techCb_'+Date.now()+'_'+Math.floor(Math.random()*100000);
-  var timeoutId=null;
-  window[cbName]=function(resp){
-    if(timeoutId)clearTimeout(timeoutId);
-    try{delete window[cbName];}catch(e){window[cbName]=undefined;}
-    if(script&&script.parentNode)script.parentNode.removeChild(script);
-    renderTechResult(campus,yl,theme,tool,resp);
-  };
   var url=AI_HOOK
     +'?action=suggestTech'
     +'&ca='+encodeURIComponent(campus)
@@ -807,22 +799,32 @@ function fetchTechSuggestion(campus,yl,theme,tool,regen){
     +'&th='+encodeURIComponent(theme)
     +'&tool='+encodeURIComponent(tool)
     +'&regen='+(regen?'1':'0')
-    +'&cb='+encodeURIComponent(cbName)
     +'&t='+Date.now();
-  var script=document.createElement('script');
-  script.src=url;
-  script.onerror=function(){
-    if(timeoutId)clearTimeout(timeoutId);
-    try{delete window[cbName];}catch(e){window[cbName]=undefined;}
-    if(script.parentNode)script.parentNode.removeChild(script);
-    renderTechResult(campus,yl,theme,tool,{error:'Could not reach the suggestion service. Check your internet and try again.'});
-  };
-  timeoutId=setTimeout(function(){
-    try{delete window[cbName];}catch(e){window[cbName]=undefined;}
-    if(script.parentNode)script.parentNode.removeChild(script);
-    renderTechResult(campus,yl,theme,tool,{error:'The suggestion is taking longer than expected. Please try again.'});
-  },45000);
-  document.body.appendChild(script);
+  // Apps Script returns Access-Control-Allow-Origin: * on GETs, so a plain
+  // fetch works and is far more reliable than JSONP for slow cold starts
+  // (data.json load + OpenAI call can be 8–12s, which kills script tags
+  // behind some corporate proxies). AbortController gives us a real timeout.
+  var controller=(typeof AbortController!=='undefined')?new AbortController():null;
+  var timeoutId=setTimeout(function(){if(controller)controller.abort();},60000);
+  fetch(url,{method:'GET',redirect:'follow',credentials:'omit',cache:'no-store',signal:controller?controller.signal:undefined})
+    .then(function(r){
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      return r.text();
+    })
+    .then(function(txt){
+      clearTimeout(timeoutId);
+      var parsed;
+      try{parsed=JSON.parse(txt);}
+      catch(e){throw new Error('Server returned invalid JSON');}
+      renderTechResult(campus,yl,theme,tool,parsed);
+    })
+    .catch(function(err){
+      clearTimeout(timeoutId);
+      var msg='Could not reach the suggestion service. Check your internet and try again.';
+      if(err&&err.name==='AbortError')msg='The suggestion is taking longer than 60 seconds — please try again.';
+      else if(err&&err.message)msg='Could not reach the suggestion service ('+err.message+'). Please try again.';
+      renderTechResult(campus,yl,theme,tool,{error:msg});
+    });
 }
 
 function renderTechResult(campus,yl,theme,tool,resp){
