@@ -822,13 +822,22 @@ function runSurgeon(bannedTool, replacementTool) {
     yearGuidance += libraryText;
 
     for (let j = 0; j < planner.s.length; j++) {
-      let toolName = (planner.s[j].t || "").toLowerCase();
+      const originalTitle = planner.s[j].t || "";
+      const toolName = originalTitle.toLowerCase();
       if (toolName.includes(banned)) {
-        Logger.log(`Found "${bannedTool}" in [${planner.ca}] ${planner.yl} — ${planner.th}`);
+        // Detect App Smash combos so we can preserve the partner tool.
+        // A combo title uses "+", "&", " and " (case-insensitive).
+        const comboParts = originalTitle.split(/\s*\+\s*|\s*&\s*|\s+and\s+/i).map(p => p.trim()).filter(Boolean);
+        const isCombo = comboParts.length >= 2;
+        let comboPartner = null;
+        if (isCombo) {
+          comboPartner = comboParts.find(p => !p.toLowerCase().includes(banned)) || null;
+        }
+        Logger.log(`Found "${bannedTool}" in [${planner.ca}] ${planner.yl} — ${planner.th}${comboPartner ? ` (App Smash — preserving "${comboPartner}")` : ''}`);
         const otherToolsInPlanner = planner.s
           .filter((s, idx) => idx !== j && s && s.t)
           .map(s => s.t);
-        let newIdea = callOpenAIWithRetry(planner, planner.s[j].t, yearGuidance, replacementTool, otherToolsInPlanner);
+        let newIdea = callOpenAIWithRetry(planner, planner.s[j].t, yearGuidance, replacementTool, otherToolsInPlanner, 1, comboPartner);
         if (newIdea) {
           planner.s[j] = newIdea;
           needsSave = true;
@@ -848,7 +857,7 @@ function runSurgeon(bannedTool, replacementTool) {
   };
 }
 
-function callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt) {
+function callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt, comboPartner) {
   attempt = attempt || 1;
   let replacementInstruction = forcedReplacement
     ? `You MUST use "${forcedReplacement}" as the replacement tool.`
@@ -858,7 +867,17 @@ function callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, 
     ? `\nTOOLS ALREADY USED IN THIS UNIT — DO NOT PICK ANY OF THESE: ${otherToolsInPlanner.join(', ')}`
     : '';
 
-  let prompt = `You are a Digital Learning Coach at Wesley College.\n${getApprovedToolsPrompt_()}\n${REALISTIC_TOOL_USE_RULES}\nReplace "${oldTool}" for this unit:\nCampus: ${planner.ca} | Year: ${planner.yl} | Theme: "${planner.th}"\n${planner.plannerText ? `Unit summary: ${planner.plannerText}` : ''}${otherToolsList}\n${replacementInstruction}\nThe description must be highly innovative, exciting, and connect specifically to this unit's content. Use standard apostrophes (') only.\nReturn ONLY JSON: {"t": "Tool Name", "d": "Specific description for this unit.", "url": "https://..."}`;
+  // When the original suggestion was an App Smash, keep it an App Smash —
+  // swap only the banned half and preserve the partner tool.
+  const comboInstruction = comboPartner
+    ? `\nAPP SMASH PRESERVATION (HARD RULE): The original suggestion was an App Smash combining the banned tool with "${comboPartner}". The replacement MUST also be an App Smash that keeps "${comboPartner}" as the partner.\n- The "t" field MUST use the format: "<new tool> + ${comboPartner}" (literal + sign, exact partner name).\n- The description MUST explicitly describe how BOTH tools are used together and what each contributes.\n- Do NOT collapse this back to a single tool.`
+    : '';
+
+  const responseShape = comboPartner
+    ? `{"t": "<new tool> + ${comboPartner}", "d": "Specific description that uses BOTH tools.", "url": "https://..."}`
+    : `{"t": "Tool Name", "d": "Specific description for this unit.", "url": "https://..."}`;
+
+  let prompt = `You are a Digital Learning Coach at Wesley College.\n${getApprovedToolsPrompt_()}\n${REALISTIC_TOOL_USE_RULES}\nReplace "${oldTool}" for this unit:\nCampus: ${planner.ca} | Year: ${planner.yl} | Theme: "${planner.th}"\n${planner.plannerText ? `Unit summary: ${planner.plannerText}` : ''}${otherToolsList}\n${replacementInstruction}${comboInstruction}\nThe description must be highly innovative, exciting, and connect specifically to this unit's content. Use standard apostrophes (') only.\nReturn ONLY JSON: ${responseShape}`;
 
   let payload = {
     "model": OPENAI_MODEL,
@@ -883,7 +902,7 @@ function callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, 
     if (isRetriableHttpCode_(code) && attempt <= 3) {
       if (code === 429) setCooldown_(2, 'OpenAI rate limit during Surgeon replacement');
       Utilities.sleep(30000);
-      return callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt + 1);
+      return callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt + 1, comboPartner);
     }
 
     if (code === 200) {
@@ -896,20 +915,35 @@ function callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, 
       if (parsed && parsed.t && parsed.d) {
         const realism = checkRealisticToolUse_(parsed.t, parsed.d, planner);
         if (!realism.ok) {
-          if (attempt <= 3) { Utilities.sleep(3000); return callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt + 1); }
+          if (attempt <= 3) { Utilities.sleep(3000); return callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt + 1, comboPartner); }
+          return null;
+        }
+      }
+      // When we asked for an App Smash partner, enforce that the response actually kept it.
+      if (parsed && parsed.t && comboPartner) {
+        const titleHasPlus = /\+/.test(parsed.t);
+        const partnerKey = toolKey_(comboPartner);
+        const titleParts = parsed.t.split(/\s*\+\s*/).map(p => p.trim()).filter(Boolean);
+        const partnerInTitle = titleParts.some(p => toolKey_(p) === partnerKey);
+        const partnerInDesc = (parsed.d || '').toLowerCase().includes(comboPartner.toLowerCase());
+        if (!(titleHasPlus && partnerInTitle && partnerInDesc)) {
+          Logger.log(`Surgeon: combo response dropped partner "${comboPartner}" (got "${parsed.t}"). Retrying.`);
+          if (attempt <= 3) { Utilities.sleep(3000); return callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt + 1, comboPartner); }
           return null;
         }
       }
       if (parsed && parsed.t && otherToolsInPlanner && otherToolsInPlanner.length) {
-        const parsedKey = toolKey_(parsed.t);
-        const hasDupe = otherToolsInPlanner.some(t => toolKey_(t) === parsedKey);
-        if (hasDupe && attempt <= 3) { Utilities.sleep(3000); return callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt + 1); }
+        const parsedParts = parsed.t.split(/\s*\+\s*/).map(p => p.trim()).filter(Boolean);
+        const partKeys = parsedParts.length ? parsedParts.map(toolKey_) : [toolKey_(parsed.t)];
+        const allowedKey = comboPartner ? toolKey_(comboPartner) : null;
+        const hasDupe = partKeys.some(pk => pk !== allowedKey && otherToolsInPlanner.some(t => toolKey_(t) === pk));
+        if (hasDupe && attempt <= 3) { Utilities.sleep(3000); return callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt + 1, comboPartner); }
         if (hasDupe) return null;
       }
       return parsed;
     }
   } catch (e) {
-    if (attempt <= 3) { Utilities.sleep(5000); return callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt + 1); }
+    if (attempt <= 3) { Utilities.sleep(5000); return callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt + 1, comboPartner); }
   }
   return null;
 }
@@ -1368,6 +1402,46 @@ function auditAndSync() {
   pushLibrariesToGitHub();
 }
 
+// 2026-05-18: One-shot recovery helper. Finds every audited unit whose
+// first-5 digital suggestions contain fewer than 2 App Smashes (`+` in `s.t`)
+// and re-queues them for audit. Combined with v5.19's enforcement in
+// auditPlanners, this rebuilds the multi-tool App Smash combos that were lost
+// when extractUnitsFromCombinedPlanners silently wiped 85 of them on 2026-04-15.
+// Call from the GAS editor: flagUnitsMissingAppSmashes(); auditAndSync();
+function flagUnitsMissingAppSmashes(filterCa, filterYl) {
+  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  let data = JSON.parse(file.getBlob().getDataAsString());
+  let flagged = 0;
+  const flaggedSummary = [];
+
+  for (let i = 0; i < data.length; i++) {
+    const e = data[i];
+    if (filterCa && e.ca !== filterCa) continue;
+    if (filterYl && e.yl !== filterYl) continue;
+    if (!e.audited) continue;
+    if (!Array.isArray(e.s) || e.s.length < 5) continue;
+
+    const digital = e.s.slice(0, 5);
+    const appSmashCount = digital.filter(sg => sg && sg.t && /\+/.test(sg.t)).length;
+    if (appSmashCount < 2) {
+      data[i].audited = false;
+      data[i].s = [];
+      if (data[i].stemRebooted) delete data[i].stemRebooted;
+      flagged++;
+      flaggedSummary.push(`[${e.ca}] ${e.yl} — ${e.th} (had ${appSmashCount} App Smash${appSmashCount === 1 ? '' : 'es'})`);
+    }
+  }
+
+  if (flagged > 0) {
+    file.setContent(JSON.stringify(data, null, 2));
+    Logger.log(`Flagged ${flagged} units for App Smash re-audit:`);
+    flaggedSummary.forEach(line => Logger.log('  ' + line));
+  } else {
+    Logger.log('No units need flagging — every audited unit already has 2+ App Smashes.');
+  }
+  return { flagged: flagged, units: flaggedSummary };
+}
+
 function enrichAndSync() {
   enrichPlannerContext();
   pushToGitHub();
@@ -1781,18 +1855,29 @@ function extractUnitsFromCombinedPlanners(filterCa, filterYl) {
     }
 
     // Update the entry
-    data[i].ci = result.ci || '';
-    data[i].lo = result.lo.join('; ');
+    const oldCi = (entry.ci || '').trim();
+    const oldLo = (entry.lo || '').trim();
+    const newCi = (result.ci || '').trim();
+    const newLo = (result.lo || []).join('; ').trim();
+    data[i].ci = newCi;
+    data[i].lo = newLo;
     data[i].plannerContextRich = sectionContent;
 
-    // If the unit had been audited against the wrong content, queue it for re-audit
-    // by clearing the audited flag and emptying suggestions. Without this, the bad
-    // suggestions remain and the dashboard shows them as if they're correct.
-    if (entry.audited) {
+    // 2026-05-18 fix: only wipe suggestions when the freshly extracted Ci/Lo
+    // *materially differ* from what was already there. The previous logic
+    // wiped `s` for every audited unit on every re-extraction, which is what
+    // detonated 85 multi-tool App Smash suggestions on 2026-04-15 22:18.
+    // Now: if Ci/Lo are unchanged (or were previously empty), keep the
+    // existing suggestions intact so teachers don't lose curated content.
+    const ciChanged = oldCi && newCi && oldCi !== newCi;
+    const loChanged = oldLo && newLo && oldLo !== newLo;
+    if (entry.audited && (ciChanged || loChanged)) {
+      Logger.log('  Ci/Lo materially changed — wiping suggestions and queueing for re-audit.');
       data[i].audited = false;
       data[i].s = [];
-      // Also clear stemRebooted since suggestions are gone
       if (data[i].stemRebooted) delete data[i].stemRebooted;
+    } else if (entry.audited) {
+      Logger.log(`  Ci/Lo unchanged — preserving existing ${(entry.s || []).length} suggestion(s).`);
     }
 
     extractedCount++;
