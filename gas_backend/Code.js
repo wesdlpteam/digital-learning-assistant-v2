@@ -1652,8 +1652,46 @@ function auditAndSync() {
 function flagUnitsMissingAppSmashes(filterCa, filterYl) {
   const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
   let data = JSON.parse(file.getBlob().getDataAsString());
+  const folder = DriveApp.getFolderById(PLANNERS_FOLDER_ID);
   let flagged = 0;
+  let skippedNoPlanner = 0;
   const flaggedSummary = [];
+  const skippedSummary = [];
+
+  // 2026-05-18: Pre-check each candidate against the planner markdown so we
+  // don't wipe suggestions for units that auditPlanners cannot rebuild (theme
+  // not present in planner file). This was the root cause of the data-loss
+  // incident earlier today — flagging set s=[] for units that then permanently
+  // stayed un-audited because the markdown lookup failed.
+  const pypAcronyms = {
+    'who we are': 'wwa',
+    'where we are in place and time': 'wwaipat',
+    'how we express ourselves': 'hweo',
+    'how the world works': 'htww',
+    'how we organise ourselves': 'hwoo',
+    'how we organize ourselves': 'hwoo',
+    'sharing the planet': 'stp'
+  };
+
+  // Cache planner markdown reads — combined planner files are shared across
+  // multiple units, so this avoids re-reading per unit (134 candidates × full
+  // Drive blob fetch each would be ~minutes of wasted IO).
+  const mdCache = {};
+  const themeInMarkdown_ = (planner) => {
+    const caCode = campusMap[planner.ca];
+    if (!caCode) return false;
+    const cacheKey = caCode + '|' + planner.yl;
+    if (mdCache[cacheKey] === undefined) {
+      const md = readPlannerMarkdown_(folder, planner.yl, planner.th, caCode);
+      mdCache[cacheKey] = md ? { lower: md.text.toLowerCase(), raw: md.text, fileName: md.fileName } : null;
+    }
+    const cached = mdCache[cacheKey];
+    if (!cached) return false;
+    const themeLower = (planner.th || '').toLowerCase();
+    const acronym = pypAcronyms[themeLower] || '';
+    return cached.lower.includes(themeLower)
+      || (!!acronym && new RegExp('\\b' + acronym + '\\b', 'i').test(cached.raw));
+  };
 
   for (let i = 0; i < data.length; i++) {
     const e = data[i];
@@ -1664,13 +1702,20 @@ function flagUnitsMissingAppSmashes(filterCa, filterYl) {
 
     const digital = e.s.slice(0, 5);
     const appSmashCount = digital.filter(sg => sg && sg.t && /\+/.test(sg.t)).length;
-    if (appSmashCount < 2) {
-      data[i].audited = false;
-      data[i].s = [];
-      if (data[i].stemRebooted) delete data[i].stemRebooted;
-      flagged++;
-      flaggedSummary.push(`[${e.ca}] ${e.yl} — ${e.th} (had ${appSmashCount} App Smash${appSmashCount === 1 ? '' : 'es'})`);
+    if (appSmashCount >= 2) continue;
+
+    // Pre-check: only wipe if the theme can be located in the planner markdown.
+    if (!themeInMarkdown_(e)) {
+      skippedNoPlanner++;
+      skippedSummary.push(`[${e.ca}] ${e.yl} — ${e.th} (had ${appSmashCount} App Smash${appSmashCount === 1 ? '' : 'es'})`);
+      continue;
     }
+
+    data[i].audited = false;
+    data[i].s = [];
+    if (data[i].stemRebooted) delete data[i].stemRebooted;
+    flagged++;
+    flaggedSummary.push(`[${e.ca}] ${e.yl} — ${e.th} (had ${appSmashCount} App Smash${appSmashCount === 1 ? '' : 'es'})`);
   }
 
   if (flagged > 0) {
@@ -1678,9 +1723,13 @@ function flagUnitsMissingAppSmashes(filterCa, filterYl) {
     Logger.log(`Flagged ${flagged} units for App Smash re-audit:`);
     flaggedSummary.forEach(line => Logger.log('  ' + line));
   } else {
-    Logger.log('No units need flagging — every audited unit already has 2+ App Smashes.');
+    Logger.log('No units need flagging — every eligible audited unit already has 2+ App Smashes.');
   }
-  return { flagged: flagged, units: flaggedSummary };
+  if (skippedNoPlanner > 0) {
+    Logger.log(`Skipped ${skippedNoPlanner} unit(s) — theme not present in planner markdown (cannot be re-audited, suggestions preserved):`);
+    skippedSummary.forEach(line => Logger.log('  ' + line));
+  }
+  return { flagged: flagged, skipped: skippedNoPlanner, units: flaggedSummary, skippedUnits: skippedSummary };
 }
 
 function enrichAndSync() {
