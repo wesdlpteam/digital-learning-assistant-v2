@@ -359,9 +359,12 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 .tech-prompt-sub{font-size:12px;color:#86EFAC;margin-top:3px;font-weight:500}
 .tech-prompt-arrow{font-size:18px;color:#86EFAC;flex-shrink:0}
 .tech-chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
-.tech-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.4);color:#BBF7D0;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit}
-.tech-chip:hover{background:rgba(34,197,94,.22);border-color:#22C55E;color:#FFF}
-.tech-chip-x{opacity:.6;font-size:11px;padding-left:4px;border-left:1px solid rgba(34,197,94,.35);margin-left:2px}
+.tech-chip{display:inline-flex;align-items:stretch;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.4);border-radius:999px;overflow:hidden;font-family:inherit;transition:border-color .15s}
+.tech-chip:hover{border-color:#22C55E}
+.tech-chip-main{background:transparent;border:none;color:#BBF7D0;padding:5px 4px 5px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:color .15s}
+.tech-chip-main:hover{color:#FFF}
+.tech-chip-x{background:transparent;border:none;border-left:1px solid rgba(34,197,94,.4);color:#86EFAC;opacity:.7;font-size:11px;padding:5px 10px 5px 8px;cursor:pointer;font-family:inherit;transition:all .15s;display:inline-flex;align-items:center}
+.tech-chip-x:hover{opacity:1;color:#FFF;background:rgba(34,197,94,.22)}
 .tech-overlay{position:fixed !important;inset:0;width:100vw;height:100dvh;min-height:100vh;background:rgba(0,0,0,.78);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:clamp(18px,6vh,64px) 16px 16px;opacity:0;pointer-events:none;transition:opacity .2s;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .tech-overlay.open{opacity:1;pointer-events:all}
 .tech-modal{background:#1A1A1A;border:2px solid #22C55E;border-radius:20px;padding:0;width:100%;max-width:560px;max-height:calc(100dvh - 40px);overflow-y:auto;position:relative;margin:0 auto 16px;flex-shrink:0;box-shadow:0 24px 90px rgba(0,0,0,.55);outline:none}
@@ -695,10 +698,15 @@ function renderTechPickerPrompt(campus,yl,theme){
   var chips=getTechChips(campus,yl,theme);
   var chipsHtml='';
   if(chips.length){
+    var caEnc=encodeURIComponent(campus),ylEnc=encodeURIComponent(yl),thEnc=encodeURIComponent(theme);
     chipsHtml='<div class="tech-chips">';
     chips.forEach(function(t){
-      var safe=t.replace(/'/g,"\\'");
-      chipsHtml+='<button class="tech-chip" onclick="reopenTechChip(\''+encodeURIComponent(campus)+'\',\''+encodeURIComponent(yl)+'\',\''+encodeURIComponent(theme)+'\',\''+encodeURIComponent(t)+'\',event)" title="Reopen suggestion for '+t+'">🔧 '+t+'<span class="tech-chip-x" onclick="dismissTechChip(\''+encodeURIComponent(campus)+'\',\''+encodeURIComponent(yl)+'\',\''+encodeURIComponent(theme)+'\',\''+encodeURIComponent(t)+'\',event)" title="Remove">✕</span></button>';
+      var tEnc=encodeURIComponent(t);
+      var tSafe=escapeHtml(t);
+      chipsHtml+='<span class="tech-chip">'
+        +'<button type="button" class="tech-chip-main" onclick="reopenTechChip(\''+caEnc+'\',\''+ylEnc+'\',\''+thEnc+'\',\''+tEnc+'\')" title="Reopen suggestion for '+tSafe+'">🔧 '+tSafe+'</button>'
+        +'<button type="button" class="tech-chip-x" onclick="dismissTechChip(\''+caEnc+'\',\''+ylEnc+'\',\''+thEnc+'\',\''+tEnc+'\')" title="Remove" aria-label="Remove '+tSafe+'">✕</button>'
+        +'</span>';
     });
     chipsHtml+='</div>';
   }
@@ -706,13 +714,11 @@ function renderTechPickerPrompt(campus,yl,theme){
     '<div class="tech-prompt" onclick="openTechPicker(\''+encodeURIComponent(campus)+'\',\''+encodeURIComponent(yl)+'\',\''+encodeURIComponent(theme)+'\')"><div class="tech-prompt-icon">🔧</div><div class="tech-prompt-text"><div class="tech-prompt-title">Have a tech tool in mind?</div><div class="tech-prompt-sub">Pick an approved tool and we\'ll tailor a suggestion to this unit →</div></div><div class="tech-prompt-arrow">→</div></div>';
 }
 
-function reopenTechChip(campusEnc,ylEnc,themeEnc,toolEnc,e){
-  if(e){e.stopPropagation();}
+function reopenTechChip(campusEnc,ylEnc,themeEnc,toolEnc){
   var campus=decodeURIComponent(campusEnc),yl=decodeURIComponent(ylEnc),theme=decodeURIComponent(themeEnc),tool=decodeURIComponent(toolEnc);
   openTechResult(campus,yl,theme,tool,false);
 }
-function dismissTechChip(campusEnc,ylEnc,themeEnc,toolEnc,e){
-  if(e){e.stopPropagation();}
+function dismissTechChip(campusEnc,ylEnc,themeEnc,toolEnc){
   var campus=decodeURIComponent(campusEnc),yl=decodeURIComponent(ylEnc),theme=decodeURIComponent(themeEnc),tool=decodeURIComponent(toolEnc);
   removeTechChip(campus,yl,theme,tool);
   R();
