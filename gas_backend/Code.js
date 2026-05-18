@@ -699,6 +699,10 @@ function auditPlanners(filterCa, filterYl) {
 
   for (let i = 0; i < data.length; i++) {
     if (data[i].audited === true) continue;
+    // 2026-05-18: Skip units we already know are missing planner content,
+    // so they don't burn a Drive read every tick forever. Clear `auditSkipped`
+    // (and re-run audit) once the unit's theme appears in the planner markdown.
+    if (data[i].auditSkipped === true) continue;
     if (processedCount >= BATCH_LIMIT) break;
 
     let planner = data[i];
@@ -746,6 +750,10 @@ function auditPlanners(filterCa, filterYl) {
       || (acronym && new RegExp('\\b' + acronym + '\\b', 'i').test(mdResult.text));
     if (!themeFound) {
       Logger.log(`Skipping ${planner.ca} ${planner.yl} — "${planner.th}" not found in planner markdown (${mdResult.fileName}). Unit likely not yet documented.`);
+      data[i].auditSkipped = true;
+      data[i].auditSkipReason = `Theme not found in ${mdResult.fileName}`;
+      data[i].auditSkippedAt = new Date().toISOString();
+      file.setContent(JSON.stringify(data, null, 2));
       continue;
     }
 
@@ -1678,6 +1686,75 @@ function flagUnitsMissingAppSmashes(filterCa, filterYl) {
 function enrichAndSync() {
   enrichPlannerContext();
   pushToGitHub();
+}
+
+// 2026-05-18: One-shot recovery for units that lost their suggestions during
+// the App Smash flag pass. Pulls data.json from a known-good GitHub commit
+// (PRE_FLAG_SHA) and, for every unit that is currently empty AND had >=5
+// suggestions in that pre-flag snapshot, restores the old `s` array along
+// with `audited` and `stemRebooted`. Units that have been successfully
+// re-audited since (s.length > 0 now) are left untouched.
+function restoreWipedSuggestionsFromGitHub() {
+  const PRE_FLAG_SHA = '4bc1708';
+  const apiUrl = 'https://api.github.com/repos/wesdlpteam/digital-learning-assistant-v2/contents/data.json?ref=' + PRE_FLAG_SHA;
+  const token = getGitHubToken_();
+
+  Logger.log(`Fetching pre-flag data.json from ${PRE_FLAG_SHA}…`);
+  const resp = UrlFetchApp.fetch(apiUrl, {
+    headers: {
+      'Authorization': 'token ' + token,
+      'Accept': 'application/vnd.github.v3.raw',
+      'User-Agent': 'DLA-Restore'
+    },
+    muteHttpExceptions: true
+  });
+  const code = resp.getResponseCode();
+  if (code !== 200) {
+    throw new Error(`Failed to fetch pre-flag data.json (HTTP ${code}): ${resp.getContentText().slice(0, 300)}`);
+  }
+  const preData = JSON.parse(resp.getContentText());
+  Logger.log(`Loaded pre-flag snapshot: ${preData.length} units.`);
+
+  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  const currentData = JSON.parse(file.getBlob().getDataAsString());
+
+  const preMap = {};
+  preData.forEach(e => { preMap[`${e.ca}|${e.yl}|${e.th}`] = e; });
+
+  let restored = 0;
+  const restoredList = [];
+  for (let i = 0; i < currentData.length; i++) {
+    const e = currentData[i];
+    if (e.s && e.s.length > 0) continue;
+    const old = preMap[`${e.ca}|${e.yl}|${e.th}`];
+    if (!old || !old.s || old.s.length < 5) continue;
+
+    currentData[i].s = old.s;
+    currentData[i].audited = old.audited === true;
+    if (old.stemRebooted !== undefined) currentData[i].stemRebooted = old.stemRebooted;
+    if (old.plannerText && !currentData[i].plannerText) currentData[i].plannerText = old.plannerText;
+    restored++;
+    restoredList.push(`[${e.ca}] ${e.yl} — ${e.th} (${old.s.length} suggestions)`);
+  }
+
+  if (restored === 0) {
+    Logger.log('No units needed restoration — nothing to do.');
+    return { restored: 0, units: [] };
+  }
+
+  file.setContent(JSON.stringify(currentData, null, 2));
+  Logger.log(`Restored ${restored} units from ${PRE_FLAG_SHA}:`);
+  restoredList.forEach(line => Logger.log('  ' + line));
+
+  // Clear the recovery target list so any stragglers don't keep being tracked
+  PropertiesService.getScriptProperties().deleteProperty('DLA_APP_SMASH_RECOVERY_TARGETS');
+
+  if (typeof pushToGitHub === 'function') {
+    Logger.log('Pushing restored data.json to GitHub…');
+    pushToGitHub();
+  }
+
+  return { restored: restored, units: restoredList };
 }
 
 function testGWYear4HTWW() {
