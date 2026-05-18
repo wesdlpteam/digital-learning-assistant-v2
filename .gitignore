@@ -7,4 +7,7 @@ node_modules/
 
 # OS junk
 .DS_Store
-Thumbs.db 
+Thumbs.db
+
+# Claude Code workspace state
+.claude/
