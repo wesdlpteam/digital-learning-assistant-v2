@@ -2169,3 +2169,106 @@ function rebootAndSync() {
   Logger.log(JSON.stringify(result));
   return result;
 }
+
+// 2026-05-18: One-click full App Smash recovery. Flags every audited unit
+// whose first-5 digital suggestions have fewer than 2 App Smashes ("+" in
+// the title), then installs a 10-minute trigger that processes batches via
+// auditPlanners (which now enforces the v5.19 2+ App Smash rule). The
+// trigger self-deletes when there are no flagged units left to re-audit.
+// Click Run on this function once and walk away — the whole catalogue gets
+// rebuilt with multi-tool combos.
+function kickoffFullAppSmashRecovery() {
+  Logger.log('=== KICKOFF: full App Smash recovery ===');
+  PropertiesService.getScriptProperties().deleteProperty('DLA_RESUME_TIME');
+
+  // Flag the work
+  const flagResult = flagUnitsMissingAppSmashes();
+  Logger.log('Flagged: ' + JSON.stringify({ flagged: flagResult.flagged }));
+
+  if (flagResult.flagged === 0) {
+    Logger.log('Nothing to recover — every audited unit already has 2+ App Smashes.');
+    return { message: 'No units needed flagging.', flagged: 0 };
+  }
+
+  // Park the original ids of flagged units in script properties so the tick
+  // function knows when it's done (vs. picking up unrelated unaudited units).
+  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  const data = JSON.parse(file.getBlob().getDataAsString());
+  const targetKeys = data
+    .filter(e => e.audited === false && Array.isArray(e.s) && e.s.length === 0)
+    .map(e => `${e.ca}|${e.yl}|${e.th}`);
+  PropertiesService.getScriptProperties().setProperty(
+    'DLA_APP_SMASH_RECOVERY_TARGETS',
+    JSON.stringify(targetKeys)
+  );
+  Logger.log(`Parked ${targetKeys.length} target keys for the recovery run.`);
+
+  // Remove any existing tick triggers so we don't double up
+  ScriptApp.getProjectTriggers().forEach(t => {
+    if (t.getHandlerFunction() === 'appSmashRecoveryTick') ScriptApp.deleteTrigger(t);
+  });
+
+  ScriptApp.newTrigger('appSmashRecoveryTick').timeBased().everyMinutes(10).create();
+  Logger.log('Trigger installed: appSmashRecoveryTick every 10 minutes.');
+
+  // Run one tick immediately so the user sees progress without waiting 10 min
+  appSmashRecoveryTick();
+  return {
+    message: `Kicked off. ${flagResult.flagged} units flagged; first batch running now, trigger will continue every 10 min until done.`,
+    flagged: flagResult.flagged
+  };
+}
+
+function appSmashRecoveryTick() {
+  const props = PropertiesService.getScriptProperties();
+
+  // Respect any quota cooldown set by OpenAI rate-limit handling
+  const resumeTime = props.getProperty('DLA_RESUME_TIME');
+  if (resumeTime && Date.now() < parseInt(resumeTime)) {
+    Logger.log(`appSmashRecoveryTick: cooldown active until ${new Date(parseInt(resumeTime)).toLocaleString('en-AU')} — skipping this tick.`);
+    return;
+  }
+
+  // Process the next batch (auditPlanners has BATCH_LIMIT=5 baked in)
+  auditPlanners();
+
+  // Push updated data.json so the public site sees the new App Smashes as they land
+  try {
+    if (typeof pushToGitHub === 'function') pushToGitHub();
+  } catch (e) {
+    Logger.log('appSmashRecoveryTick: pushToGitHub failed: ' + e.toString());
+  }
+
+  // Are any of the originally-flagged units still un-audited?
+  const targetsRaw = props.getProperty('DLA_APP_SMASH_RECOVERY_TARGETS');
+  if (!targetsRaw) {
+    // No target list parked — treat as done
+    cleanupAppSmashRecoveryTrigger_('No target list found');
+    return;
+  }
+
+  let targets;
+  try { targets = JSON.parse(targetsRaw); } catch (e) { targets = []; }
+  const targetSet = new Set(targets);
+
+  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  const data = JSON.parse(file.getBlob().getDataAsString());
+  const remaining = data.filter(e => {
+    const key = `${e.ca}|${e.yl}|${e.th}`;
+    return targetSet.has(key) && e.audited !== true;
+  });
+
+  Logger.log(`appSmashRecoveryTick: ${remaining.length} flagged unit(s) still need audit.`);
+
+  if (remaining.length === 0) {
+    cleanupAppSmashRecoveryTrigger_(`All ${targets.length} flagged units recovered`);
+  }
+}
+
+function cleanupAppSmashRecoveryTrigger_(reason) {
+  ScriptApp.getProjectTriggers().forEach(t => {
+    if (t.getHandlerFunction() === 'appSmashRecoveryTick') ScriptApp.deleteTrigger(t);
+  });
+  PropertiesService.getScriptProperties().deleteProperty('DLA_APP_SMASH_RECOVERY_TARGETS');
+  Logger.log(`App Smash recovery complete: ${reason}. Trigger removed.`);
+}
