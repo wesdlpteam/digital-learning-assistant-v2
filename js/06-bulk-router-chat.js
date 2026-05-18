@@ -1560,11 +1560,25 @@ ${SUGGESTION_STYLE}
 
 function applyRegenAll(idx,pendingId){
   const sugs=window[pendingId]; if(!sugs) return;
-  DATA[idx].s=sugs.map(cleanSuggestionObject_);
-  DATA[idx].audited=true;
+  const cleaned=sugs.map(cleanSuggestionObject_);
+  DATA[idx].s=cleaned;
+  // 2026-05-18: Mirror gas_backend auditPlanners v5.19 rule — suggestions
+  // 1-5 must contain ≥2 App Smashes ("+" in title). If the regen result
+  // doesn't meet that bar, leave `audited` as false so the backend's next
+  // auditPlanners pass rebuilds the unit with proper combos. Otherwise the
+  // bulk-regen UI would quietly persist single-tool batches and we'd be
+  // right back where we were after the 2026-04-15 wipe.
+  const appSmashCount=cleaned.slice(0,5).filter(sg=>sg&&sg.t&&/\+/.test(sg.t)).length;
+  if(appSmashCount>=2){
+    DATA[idx].audited=true;
+  } else {
+    DATA[idx].audited=false;
+    setStatus('Saved (only '+appSmashCount+' App Smash'+(appSmashCount===1?'':'es')+' — queued for backend re-audit)');
+  }
   markEntryNeedsHumanRecheck_(idx, 'Regenerated suggestions after human verification');
   delete window[pendingId];
-  setStatus('Saved'); saveToDrive();
+  if(appSmashCount>=2) setStatus('Saved');
+  saveToDrive();
   renderEntry(idx);
 }
 

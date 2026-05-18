@@ -845,6 +845,18 @@ function runSurgeon(bannedTool, replacementTool) {
         }
       }
     }
+    // 2026-05-18: After a Surgeon swap, count App Smashes in suggestions 1-5.
+    // If we've dropped below v5.19's 2+ App Smash rule, re-queue this unit for
+    // a fresh auditPlanners pass so the combos are rebuilt rather than left
+    // single-tool. Prevents Surgeon runs from quietly eroding combos over time.
+    if (needsSave && planner.audited === true && Array.isArray(planner.s) && planner.s.length >= 5) {
+      const appSmashCount = planner.s.slice(0, 5).filter(sg => sg && sg.t && /\+/.test(sg.t)).length;
+      if (appSmashCount < 2) {
+        Logger.log(`  Post-Surgeon: only ${appSmashCount} App Smash(es) left in [${planner.ca}] ${planner.yl} — ${planner.th}. Re-queueing for audit.`);
+        planner.audited = false;
+        if (planner.stemRebooted) delete planner.stemRebooted;
+      }
+    }
     if (needsSave) {
       file.setContent(JSON.stringify(data, null, 2));
     }
