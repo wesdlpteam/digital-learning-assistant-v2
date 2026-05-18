@@ -1184,6 +1184,15 @@ async function applySugFeedbackDirect(uid, entryIdx, sugIdx){
   const isStem = sugIdx === 5;
   const currentTool = sugTool(sug);
   const currentDesc = sugDesc(sug);
+  // 2026-05-18: Detect whether the slot being regenerated is an App Smash
+  // combo. If so, the regen prompt should preserve the partner tool by
+  // default; teachers who genuinely want to collapse a combo to a single
+  // tool can do so via explicit TOOL_SWAP wording. Prevents single-slot
+  // regen from silently eroding combos.
+  const currentToolParts = currentTool.split(/\s*\+\s*|\s*&\s*|\s+and\s+/i).map(p=>p.trim()).filter(Boolean);
+  const currentIsCombo = currentToolParts.length >= 2;
+  const explicitlyAsksSingle = /\b(single tool|just one tool|one tool only|not an app ?smash|stop combining|simplify to one)\b/i.test(instruction);
+  const preserveCombo = currentIsCombo && !explicitlyAsksSingle;
 
   // ===== Conversation memory — multi-turn refinements =====
   const memKey = '_fbmem_' + uid;
@@ -1278,8 +1287,8 @@ OVERUSED TOOLS across library (avoid unless teacher specifically names them): ${
 UNDERUSED age-appropriate tools (prefer these when suitable): ${underused.length ? underused.join(', ') : '(none)'}
 
 TOOL FIELD RULE:
-- Prefer one clear tool in the "t" field.
-- If the teacher explicitly asks for an app smash, you may use "Tool A + Tool B" only when BOTH tools are age-appropriate and neither is banned.
+${preserveCombo ? `- APP SMASH PRESERVATION (HARD RULE): The current suggestion is an App Smash combining ${currentToolParts.map(p=>`"${p}"`).join(' and ')}. The "t" field of EVERY option MUST stay an App Smash in the format "Tool A + Tool B" (literal + sign). Each option's description MUST explicitly use BOTH tools together and explain what each contributes. Do NOT collapse the combo to a single tool. If the teacher's instruction names a specific tool to swap, swap only that side and keep the other partner.` : `- Prefer one clear tool in the "t" field.
+- If the teacher explicitly asks for an app smash, you may use "Tool A + Tool B" only when BOTH tools are age-appropriate and neither is banned.`}
 - Never include a banned or unavailable tool, even as part of an app smash.
 ${conversationBlock}
 
@@ -1328,11 +1337,17 @@ Return ONLY a JSON array of exactly 3 suggestions:
     const rawSugs = JSON.parse(clean.slice(si, ei+1));
     if(!rawSugs.length) throw new Error('Empty response');
 
-    // Filter out: duplicates, unavailable tools, age-inappropriate tools
+    // Filter out: duplicates, unavailable tools, age-inappropriate tools.
+    // If the original slot was an App Smash, also reject options that
+    // collapsed the combo to a single tool (so combos can't silently erode
+    // through the single-slot regen flow).
     const filtered = [];
     const rejected = [];
     rawSugs.forEach(s => {
       if(!s || !s.t) return;
+      if(preserveCombo && !/\+/.test(s.t)){
+        rejected.push({t:s.t, reason:'collapsed App Smash combo to single tool'}); return;
+      }
       if(wouldDupeToolProposalInEntry(entry, s.t, sugIdx)){ rejected.push({t:s.t, reason:'already in this unit'}); return; }
       if(toolContainsForbiddenKeyword(s.t)){ rejected.push({t:s.t, reason:'forbidden tool'}); return; }
       if(toolViolatesInventoryBan(s.t)){ rejected.push({t:s.t, reason:'not available at Wesley'}); return; }
