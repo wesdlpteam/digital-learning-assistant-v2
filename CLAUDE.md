@@ -74,6 +74,8 @@ The top of `00-config-state-utils.js` is where global constants live: `SCRIPT_UR
 ### gas_backend (`gas_backend/`)
 Single `doPost(e)` router dispatched by `body.action` (lowercased). Current actions: `runSurgeon`, `addToQueue`, `callAI`, `getPlannerContext`, `syncToolInventory`, `enrichPlanners`, `rebootMakerspace`, `resetMakerspaceFlags`, `extractUnitDetails`. Every action goes through `requireAllowedUser_` first.
 
+`doGet(e)` exposes one **public** action — `?action=suggestTech&ca=...&yl=...&th=...&tool=...&cb=<jsonpCallback>&regen=0|1` — used by `index.html`'s "Have a tool in mind?" picker. JSONP only (no Google auth, since teachers aren't signed in). Validates `tool` against the synced `DLA_TOOL_APPROVED` list, caches results per `(ca|yl|th|tool)` in Script Properties as `tech_sugg_v1_<sha1>`, and refuses calls past `TECH_SUGGEST_DAILY_CAP` (counter resets daily). Uses `gpt-4.1-mini` and returns `{description, valueAdd, steps[], fit, fitNote, generatedAt, cached}`.
+
 Required Script Properties: `OPENAI_API_KEY`, `GITHUB_TOKEN`. Optional: `DLA_SHARED_SECRET`, plus tool-inventory keys written by `syncToolInventory_`.
 
 Hardcoded Drive/Sheet IDs at the top of the file: `DATA_JSON_FILE_ID`, `LIBRARIES_JSON_FILE_ID`, `PLANNERS_FOLDER_ID`, `TECH_RULES_SHEET_ID`. The OpenAI key is **only** in Script Properties — `getKey()` on the frontend is a deliberate no-op. All AI calls go through `callAIProxy_` so the key never reaches the browser.

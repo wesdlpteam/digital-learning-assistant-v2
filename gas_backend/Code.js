@@ -277,13 +277,219 @@ function doPost(e) {
 }
 
 function doGet(e) {
-  return jsonResponse({ status: 'DLA Studio GAS v5.21 combined planner extraction online' });
+  try {
+    var params = (e && e.parameter) ? e.parameter : {};
+    var action = String(params.action || '').toLowerCase();
+    var cb = String(params.cb || params.callback || '').trim();
+
+    if (action === 'suggesttech') {
+      var result = suggestTechForPlanner_({
+        ca: params.ca || '',
+        yl: params.yl || '',
+        th: params.th || '',
+        tool: params.tool || '',
+        regen: String(params.regen || '0') === '1'
+      });
+      return cb ? jsonpResponse(cb, result) : jsonResponse(result);
+    }
+
+    var status = { status: 'DLA Studio GAS v5.21 combined planner extraction online' };
+    return cb ? jsonpResponse(cb, status) : jsonResponse(status);
+  } catch(err) {
+    var payload = { error: err && err.message ? err.message : String(err) };
+    var cbName = (e && e.parameter && (e.parameter.cb || e.parameter.callback)) || '';
+    return cbName ? jsonpResponse(cbName, payload) : jsonResponse(payload);
+  }
 }
 
 function jsonResponse(obj) {
   return ContentService
     .createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+function jsonpResponse(callback, obj) {
+  var safe = String(callback).replace(/[^A-Za-z0-9_$.]/g, '');
+  if (!safe) safe = 'callback';
+  return ContentService
+    .createTextOutput(safe + '(' + JSON.stringify(obj) + ');')
+    .setMimeType(ContentService.MimeType.JAVASCRIPT);
+}
+
+
+// ==========================================
+// PUBLIC: TEACHER-PICKED TOOL SUGGESTION
+// ==========================================
+// Lets a logged-out teacher on index.html pick an approved tool for a planner
+// and get an AI-tailored "how to use this in this unit" suggestion. Cached per
+// (ca|yl|th|tool) in ScriptProperties so repeats are free. Daily call cap
+// protects the OpenAI bill if the endpoint is ever scraped.
+var TECH_SUGGEST_DAILY_CAP = 500;
+var TECH_SUGGEST_MODEL = 'gpt-4.1-mini';
+var TECH_SUGGEST_CACHE_PREFIX = 'tech_sugg_v1_';
+
+function suggestTechForPlanner_(args) {
+  var ca = String(args.ca || '').trim();
+  var yl = String(args.yl || '').trim();
+  var th = String(args.th || '').trim();
+  var tool = String(args.tool || '').trim();
+  var regen = !!args.regen;
+
+  if (!ca || !yl || !th || !tool) {
+    return { error: 'suggestTech requires ca, yl, th, and tool' };
+  }
+
+  var approved = getApprovedToolNames_();
+  if (approved.length && !approved.some(function(t) { return t.toLowerCase() === tool.toLowerCase(); })) {
+    return { error: 'Tool not on approved list: ' + tool };
+  }
+
+  var cacheKey = TECH_SUGGEST_CACHE_PREFIX + Utilities.base64EncodeWebSafe(
+    Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_1, [ca, yl, th, tool].join('|'))
+  ).replace(/=+$/, '');
+
+  var props = PropertiesService.getScriptProperties();
+  if (!regen) {
+    var cached = props.getProperty(cacheKey);
+    if (cached) {
+      try {
+        var parsed = JSON.parse(cached);
+        parsed.cached = true;
+        return parsed;
+      } catch (e) {}
+    }
+  }
+
+  if (!underDailyCap_()) {
+    return { error: 'Service is at capacity for today. Please try again tomorrow.' };
+  }
+
+  var plannerContext = loadPlannerContextForUnit_(ca, yl, th);
+  if (!plannerContext) {
+    return { error: 'No planner context found for ' + ca + ' / ' + yl + ' / ' + th };
+  }
+
+  var systemPrompt = 'You are a digital learning coach at Wesley College (IB PYP, Melbourne) helping a primary-school teacher use a specific approved technology in a specific unit of inquiry. Output STRICT JSON only — no markdown, no commentary.';
+  var userPrompt =
+    'TOOL THE TEACHER WANTS TO USE: ' + tool + '\n' +
+    'CAMPUS: ' + ca + '\n' +
+    'YEAR LEVEL: ' + yl + '\n' +
+    'UNIT OF INQUIRY: ' + th + '\n\n' +
+    'PLANNER CONTEXT:\n' + plannerContext + '\n\n' +
+    REALISTIC_TOOL_USE_RULES + '\n\n' +
+    'Return STRICT JSON with this exact shape:\n' +
+    '{\n' +
+    '  "description": "2-4 sentences naming concrete student actions with the tool that connect to this unit\'s central idea and lines of inquiry.",\n' +
+    '  "valueAdd": "1-2 sentences on the learning value this adds (skills, engagement, output) that a non-digital task would not.",\n' +
+    '  "steps": ["3-5 short imperative steps a teacher would follow to run this lesson"],\n' +
+    '  "fit": "good" | "stretch" | "poor",\n' +
+    '  "fitNote": "If fit is stretch or poor, 1 sentence on why and what would work better. If good, leave empty."\n' +
+    '}\n' +
+    'Be honest in "fit": if this tool is a weak match for this unit, say so.';
+
+  var aiResult;
+  try {
+    aiResult = callAIProxy_({
+      model: TECH_SUGGEST_MODEL,
+      temperature: 0.4,
+      maxTokens: 700,
+      systemPrompt: systemPrompt,
+      contents: [{ role: 'user', parts: [{ text: userPrompt }] }]
+    });
+  } catch (err) {
+    return { error: 'AI request failed: ' + (err && err.message ? err.message : String(err)) };
+  }
+
+  incrementDailyCounter_();
+
+  var rawText = String(aiResult.text || '').trim();
+  var jsonStart = rawText.indexOf('{');
+  var jsonEnd = rawText.lastIndexOf('}');
+  if (jsonStart === -1 || jsonEnd === -1) {
+    return { error: 'AI did not return JSON', raw: rawText };
+  }
+  var parsedAi;
+  try {
+    parsedAi = JSON.parse(rawText.slice(jsonStart, jsonEnd + 1));
+  } catch (err) {
+    return { error: 'AI returned malformed JSON', raw: rawText };
+  }
+
+  var payload = {
+    tool: tool,
+    ca: ca,
+    yl: yl,
+    th: th,
+    description: String(parsedAi.description || '').trim(),
+    valueAdd: String(parsedAi.valueAdd || '').trim(),
+    steps: Array.isArray(parsedAi.steps) ? parsedAi.steps.map(function(s) { return String(s).trim(); }).filter(Boolean) : [],
+    fit: ['good', 'stretch', 'poor'].indexOf(String(parsedAi.fit || '').toLowerCase()) !== -1 ? String(parsedAi.fit).toLowerCase() : 'good',
+    fitNote: String(parsedAi.fitNote || '').trim(),
+    generatedAt: new Date().toISOString()
+  };
+
+  try {
+    props.setProperty(cacheKey, JSON.stringify(payload));
+  } catch (err) {
+    Logger.log('Could not cache tech suggestion (ScriptProperties full?): ' + err);
+  }
+
+  payload.cached = false;
+  return payload;
+}
+
+function getApprovedToolNames_() {
+  var props = PropertiesService.getScriptProperties();
+  var raw = props.getProperty('DLA_TOOL_APPROVED');
+  if (!raw) return [];
+  try {
+    var arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch (err) {
+    return [];
+  }
+}
+
+function loadPlannerContextForUnit_(ca, yl, th) {
+  var caCode = campusMap[ca];
+  if (!caCode) return '';
+
+  try {
+    var file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+    var data = JSON.parse(file.getBlob().getDataAsString());
+    for (var i = 0; i < data.length; i++) {
+      var e = data[i];
+      if (e.ca === ca && e.yl === yl && e.th === th) {
+        if (e.plannerContextRich && e.plannerContextRich.length > 50 && !/^ERROR/.test(e.plannerContextRich)) {
+          return e.plannerContextRich;
+        }
+        var lo = e.lo ? '\nLINES OF INQUIRY: ' + e.lo : '';
+        var ci = e.ci ? '\nCENTRAL IDEA: ' + e.ci : '';
+        return ('UNIT: ' + e.th + ci + lo).trim();
+      }
+    }
+  } catch (err) {
+    Logger.log('loadPlannerContextForUnit_ failed: ' + err);
+  }
+
+  var folder;
+  try { folder = DriveApp.getFolderById(PLANNERS_FOLDER_ID); } catch (err) { return ''; }
+  var md = readPlannerMarkdown_(folder, yl, th, caCode);
+  return md ? md.text : '';
+}
+
+function underDailyCap_() {
+  var key = 'tech_sugg_day_' + Utilities.formatDate(new Date(), 'GMT', 'yyyy-MM-dd');
+  var props = PropertiesService.getScriptProperties();
+  var n = parseInt(props.getProperty(key) || '0', 10);
+  return n < TECH_SUGGEST_DAILY_CAP;
+}
+
+function incrementDailyCounter_() {
+  var key = 'tech_sugg_day_' + Utilities.formatDate(new Date(), 'GMT', 'yyyy-MM-dd');
+  var props = PropertiesService.getScriptProperties();
+  var n = parseInt(props.getProperty(key) || '0', 10);
+  props.setProperty(key, String(n + 1));
 }
 
 

@@ -351,6 +351,51 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 .copilot-secondary:hover{background:#333;color:#FFF}
 .copilot-note{font-size:12px;color:#888;line-height:1.5;margin-top:12px}
 
+.tech-prompt{background:linear-gradient(135deg,rgba(34,197,94,.08) 0%,rgba(20,184,166,.08) 100%);border:2px solid #22C55E;border-radius:16px;padding:16px 20px;margin:20px 0 14px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .15s;user-select:none}
+.tech-prompt:hover{border-color:#4ADE80;background:linear-gradient(135deg,rgba(34,197,94,.16) 0%,rgba(20,184,166,.16) 100%);transform:scale(1.01);box-shadow:0 0 20px 0 rgba(34,197,94,.16)}
+.tech-prompt-icon{font-size:26px;flex-shrink:0;width:44px;height:44px;border-radius:12px;background:rgba(34,197,94,.15);display:flex;align-items:center;justify-content:center;border:1px solid rgba(34,197,94,.28)}
+.tech-prompt-text{flex:1}
+.tech-prompt-title{font-size:15px;font-weight:700;color:#FFF}
+.tech-prompt-sub{font-size:12px;color:#86EFAC;margin-top:3px;font-weight:500}
+.tech-prompt-arrow{font-size:18px;color:#86EFAC;flex-shrink:0}
+.tech-chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.tech-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.4);color:#BBF7D0;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit}
+.tech-chip:hover{background:rgba(34,197,94,.22);border-color:#22C55E;color:#FFF}
+.tech-chip-x{opacity:.6;font-size:11px;padding-left:4px;border-left:1px solid rgba(34,197,94,.35);margin-left:2px}
+.tech-overlay{position:fixed !important;inset:0;width:100vw;height:100dvh;min-height:100vh;background:rgba(0,0,0,.78);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:clamp(18px,6vh,64px) 16px 16px;opacity:0;pointer-events:none;transition:opacity .2s;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.tech-overlay.open{opacity:1;pointer-events:all}
+.tech-modal{background:#1A1A1A;border:2px solid #22C55E;border-radius:20px;padding:0;width:100%;max-width:560px;max-height:calc(100dvh - 40px);overflow-y:auto;position:relative;margin:0 auto 16px;flex-shrink:0;box-shadow:0 24px 90px rgba(0,0,0,.55);outline:none}
+.tech-modal-header{padding:20px 24px 14px;border-bottom:1px solid #333;display:flex;align-items:flex-start;gap:12px}
+.tech-modal-icon{width:42px;height:42px;border-radius:10px;background:rgba(34,197,94,.12);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;color:#4ADE80}
+.tech-modal-title{font-size:18px;font-weight:800;color:#FFF;line-height:1.3;letter-spacing:-.3px}
+.tech-modal-sub{font-size:12px;color:#9CA3AF;margin-top:3px;font-weight:500}
+.tech-modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:8px;border:1px solid #333;background:#222;color:#888;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all .15s;line-height:1}
+.tech-modal-close:hover{border-color:#666;color:#FFF;background:#333}
+.tech-modal-body{padding:16px 24px 22px}
+.tech-search{width:100%;background:#111;border:1px solid #333;border-radius:10px;color:#DDD;padding:10px 12px;font-family:inherit;font-size:14px;outline:none;margin-bottom:12px}
+.tech-search:focus{border-color:#22C55E}
+.tech-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.tech-tile{background:#222;border:1px solid #333;border-radius:10px;padding:10px 12px;color:#DDD;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;text-align:left;transition:all .12s;line-height:1.25}
+.tech-tile:hover{background:#2a2a2a;border-color:#22C55E;color:#FFF;transform:translateY(-1px)}
+.tech-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 16px;color:#9CA3AF;font-size:13px;gap:14px}
+.tech-spinner{width:34px;height:34px;border:3px solid rgba(34,197,94,.18);border-top-color:#22C55E;border-radius:50%;animation:techspin .9s linear infinite}
+@keyframes techspin{to{transform:rotate(360deg)}}
+.tech-fit{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px}
+.tech-fit.good{background:rgba(34,197,94,.14);color:#4ADE80;border:1px solid rgba(34,197,94,.4)}
+.tech-fit.stretch{background:rgba(245,166,35,.12);color:#F5A623;border:1px solid rgba(245,166,35,.4)}
+.tech-fit.poor{background:rgba(255,107,107,.12);color:#FF6B6B;border:1px solid rgba(255,107,107,.4)}
+.tech-fitnote{font-size:12px;color:#AAA;background:#222;border-left:3px solid #F5A623;padding:8px 12px;border-radius:6px;margin-bottom:12px;line-height:1.5}
+.tech-steps{margin:8px 0 12px 0;padding:0;list-style:none;counter-reset:techstep}
+.tech-steps li{position:relative;counter-increment:techstep;padding:6px 0 6px 32px;font-size:13px;color:#DDD;line-height:1.5}
+.tech-steps li::before{content:counter(techstep);position:absolute;left:0;top:5px;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(34,197,94,.18);color:#4ADE80;font-weight:800;font-size:11px}
+.tech-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid #333}
+.tech-btn{border:none;border-radius:10px;padding:9px 14px;font-family:inherit;font-weight:700;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;background:#252525;color:#CCC;border:1px solid #3A3A3A;transition:all .15s}
+.tech-btn:hover{background:#333;color:#FFF}
+.tech-btn.primary{background:#22C55E;color:#0a1f12;border-color:#22C55E}
+.tech-btn.primary:hover{background:#4ADE80}
+.tech-meta{font-size:11px;color:#666;margin-top:8px;text-align:right}
+.tech-error{padding:14px;border-radius:10px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.3);color:#FCA5A5;font-size:13px;line-height:1.5}
+
 </style></head><body><div id="app"></div>
 <script>
 
@@ -403,6 +448,19 @@ fetch('data.json')
   .then(r => r.json())
   .then(data => { D = data; if(typeof readHash==='function')readHash(); R(); loadLeaderboard(); })
   .catch(() => { document.getElementById('app').innerHTML = '<div style="color:#FF6B6B;padding:40px;text-align:center">⚠️ Could not load data.json — make sure it is in the same folder as this file.</div>'; });
+
+// Approved tool list for the "I have a tool in mind" picker. Sourced from
+// libraries.json so it stays in sync with what the DLA Studio considers in scope.
+window.APPROVED_TOOLS_LIST = [];
+fetch('libraries.json')
+  .then(r => r.json())
+  .then(lib => { window.APPROVED_TOOLS_LIST = (lib && lib._meta && lib._meta._inventory && lib._meta._inventory.approved) || []; })
+  .catch(() => {});
+
+// gas_backend /exec URL — used for the live "pick your own tool" suggestion.
+// JSONP path only (responses come back as JSONP callbacks). If you redeploy
+// gas_backend and the /exec URL changes, update this constant.
+const AI_HOOK = "https://script.google.com/macros/s/AKfycbzIoUL_vbTaH4P7PXuX8HeU9Xh6HuiEWJ05k7q50aJjCg7oeF-ELrlLuPx8uxPFHmE-eA/exec";
 const BK="https://outlook.office365.com/book/DigitalLearningPractice@WesleyCollegeMelbourne.onmicrosoft.com/?ismsaljsauthenabled=true";
 const ADMIN_URL="https://wesdlpteam.github.io/digital-learning-assistant-v2/DLA_Studio.html"; // Admin shortcut to the live DLA Studio.
 const TU={
@@ -515,7 +573,7 @@ function lockDlaOverlayScroll(){
   document.body.style.overflow='hidden';
 }
 function unlockDlaOverlayScrollIfClear(){
-  if(!document.getElementById('stemOverlay') && !document.getElementById('copilotOverlay')){
+  if(!document.getElementById('stemOverlay') && !document.getElementById('copilotOverlay') && !document.getElementById('techOverlay')){
     document.body.style.overflow='';
   }
 }
@@ -603,6 +661,215 @@ function closeCopilotInstructions(){
   }
 }
 // ========== END COPILOT TEACHING HELPER ==========
+
+
+// ========== TEACHER-PICKED TECH SUGGESTION ==========
+// Lets a teacher pick a specific approved tool for the current unit and get
+// a live AI-tailored suggestion. Server caches per (campus|year|theme|tool),
+// so repeat opens are instant and free. A chip is left behind on the unit
+// page after the popup closes so the teacher sees what they've explored.
+
+function techChipsKey(campus,yl,theme){
+  return 'dla_tech_chips_'+campus+'|'+yl+'|'+theme;
+}
+function getTechChips(campus,yl,theme){
+  try{
+    var raw=localStorage.getItem(techChipsKey(campus,yl,theme));
+    return raw?JSON.parse(raw):[];
+  }catch(e){return [];}
+}
+function addTechChip(campus,yl,theme,tool){
+  try{
+    var arr=getTechChips(campus,yl,theme);
+    if(arr.indexOf(tool)===-1){arr.push(tool);localStorage.setItem(techChipsKey(campus,yl,theme),JSON.stringify(arr));}
+  }catch(e){}
+}
+function removeTechChip(campus,yl,theme,tool){
+  try{
+    var arr=getTechChips(campus,yl,theme).filter(function(t){return t!==tool;});
+    localStorage.setItem(techChipsKey(campus,yl,theme),JSON.stringify(arr));
+  }catch(e){}
+}
+
+function renderTechPickerPrompt(campus,yl,theme){
+  var chips=getTechChips(campus,yl,theme);
+  var chipsHtml='';
+  if(chips.length){
+    chipsHtml='<div class="tech-chips">';
+    chips.forEach(function(t){
+      var safe=t.replace(/'/g,"\\'");
+      chipsHtml+='<button class="tech-chip" onclick="reopenTechChip(\''+encodeURIComponent(campus)+'\',\''+encodeURIComponent(yl)+'\',\''+encodeURIComponent(theme)+'\',\''+encodeURIComponent(t)+'\',event)" title="Reopen suggestion for '+t+'">🔧 '+t+'<span class="tech-chip-x" onclick="dismissTechChip(\''+encodeURIComponent(campus)+'\',\''+encodeURIComponent(yl)+'\',\''+encodeURIComponent(theme)+'\',\''+encodeURIComponent(t)+'\',event)" title="Remove">✕</span></button>';
+    });
+    chipsHtml+='</div>';
+  }
+  return chipsHtml +
+    '<div class="tech-prompt" onclick="openTechPicker(\''+encodeURIComponent(campus)+'\',\''+encodeURIComponent(yl)+'\',\''+encodeURIComponent(theme)+'\')"><div class="tech-prompt-icon">🔧</div><div class="tech-prompt-text"><div class="tech-prompt-title">Have a tech tool in mind?</div><div class="tech-prompt-sub">Pick an approved tool and we\'ll tailor a suggestion to this unit →</div></div><div class="tech-prompt-arrow">→</div></div>';
+}
+
+function reopenTechChip(campusEnc,ylEnc,themeEnc,toolEnc,e){
+  if(e){e.stopPropagation();}
+  var campus=decodeURIComponent(campusEnc),yl=decodeURIComponent(ylEnc),theme=decodeURIComponent(themeEnc),tool=decodeURIComponent(toolEnc);
+  openTechResult(campus,yl,theme,tool,false);
+}
+function dismissTechChip(campusEnc,ylEnc,themeEnc,toolEnc,e){
+  if(e){e.stopPropagation();}
+  var campus=decodeURIComponent(campusEnc),yl=decodeURIComponent(ylEnc),theme=decodeURIComponent(themeEnc),tool=decodeURIComponent(toolEnc);
+  removeTechChip(campus,yl,theme,tool);
+  R();
+}
+
+function openTechPicker(campusEnc,ylEnc,themeEnc){
+  var campus=decodeURIComponent(campusEnc),yl=decodeURIComponent(ylEnc),theme=decodeURIComponent(themeEnc);
+  var tools=window.APPROVED_TOOLS_LIST||[];
+  var old=document.getElementById('techOverlay');if(old)old.remove();
+  var body;
+  if(!tools.length){
+    body='<div class="tech-error">Tool list is still loading — please try again in a moment.</div>';
+  } else {
+    var tilesHtml=tools.slice().sort().map(function(t){
+      var safe=t.replace(/"/g,'&quot;');
+      return '<button class="tech-tile" data-tool="'+safe+'" onclick="pickTech(this,\''+encodeURIComponent(campus)+'\',\''+encodeURIComponent(yl)+'\',\''+encodeURIComponent(theme)+'\')">'+t+'</button>';
+    }).join('');
+    body='<input class="tech-search" id="techSearch" placeholder="Search tools…" oninput="filterTechTiles(this.value)" autocomplete="off"/>' +
+      '<div class="tech-grid" id="techGrid">'+tilesHtml+'</div>';
+  }
+  var html='<div class="tech-modal" role="dialog" aria-modal="true" aria-labelledby="techModalTitle">' +
+    '<button type="button" class="tech-modal-close" onclick="closeTech()" aria-label="Close">✕</button>' +
+    '<div class="tech-modal-header"><div class="tech-modal-icon" aria-hidden="true">🔧</div><div><div id="techModalTitle" class="tech-modal-title">Pick a tool for this unit</div><div class="tech-modal-sub">'+yl+' · '+theme+'</div></div></div>' +
+    '<div class="tech-modal-body">'+body+'</div></div>';
+  var overlay=document.createElement('div');
+  overlay.id='techOverlay';
+  overlay.className='tech-overlay';
+  overlay.dataset.campus=campus;overlay.dataset.yl=yl;overlay.dataset.theme=theme;
+  overlay.innerHTML=html;
+  overlay.onclick=function(ev){if(ev.target===overlay)closeTech();};
+  document.body.appendChild(overlay);
+  lockDlaOverlayScroll();
+  document.addEventListener('keydown',handleTechKey);
+  requestAnimationFrame(function(){overlay.classList.add('open');focusDlaDialog(overlay);var s=document.getElementById('techSearch');if(s)setTimeout(function(){try{s.focus();}catch(e){}},120);});
+}
+
+function filterTechTiles(q){
+  q=String(q||'').toLowerCase().trim();
+  var grid=document.getElementById('techGrid');if(!grid)return;
+  var tiles=grid.querySelectorAll('.tech-tile');
+  for(var i=0;i<tiles.length;i++){
+    var name=tiles[i].getAttribute('data-tool').toLowerCase();
+    tiles[i].style.display=(!q||name.indexOf(q)!==-1)?'':'none';
+  }
+}
+
+function pickTech(btn,campusEnc,ylEnc,themeEnc){
+  var campus=decodeURIComponent(campusEnc),yl=decodeURIComponent(ylEnc),theme=decodeURIComponent(themeEnc);
+  var tool=btn.getAttribute('data-tool');
+  openTechResult(campus,yl,theme,tool,false);
+}
+
+function openTechResult(campus,yl,theme,tool,regen){
+  var overlay=document.getElementById('techOverlay');
+  if(!overlay){
+    // No picker open (e.g. chip click) — create a fresh overlay shell
+    var oldShell=document.getElementById('techOverlay');if(oldShell)oldShell.remove();
+    overlay=document.createElement('div');
+    overlay.id='techOverlay';
+    overlay.className='tech-overlay';
+    overlay.dataset.campus=campus;overlay.dataset.yl=yl;overlay.dataset.theme=theme;
+    overlay.onclick=function(ev){if(ev.target===overlay)closeTech();};
+    document.body.appendChild(overlay);
+    lockDlaOverlayScroll();
+    document.addEventListener('keydown',handleTechKey);
+    requestAnimationFrame(function(){overlay.classList.add('open');});
+  }
+  overlay.dataset.tool=tool;
+  overlay.innerHTML='<div class="tech-modal" role="dialog" aria-modal="true" aria-labelledby="techModalTitle">' +
+    '<button type="button" class="tech-modal-close" onclick="closeTech()" aria-label="Close">✕</button>' +
+    '<div class="tech-modal-header"><div class="tech-modal-icon" aria-hidden="true">🔧</div><div><div id="techModalTitle" class="tech-modal-title">'+escapeHtml(tool)+'</div><div class="tech-modal-sub">'+escapeHtml(yl)+' · '+escapeHtml(theme)+'</div></div></div>' +
+    '<div class="tech-modal-body" id="techModalBody"><div class="tech-loading"><div class="tech-spinner" aria-hidden="true"></div><div>'+(regen?'Regenerating with fresh ideas…':'Tailoring a suggestion for this unit…')+'</div></div></div></div>';
+  focusDlaDialog(overlay);
+  fetchTechSuggestion(campus,yl,theme,tool,regen);
+}
+
+function escapeHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function fetchTechSuggestion(campus,yl,theme,tool,regen){
+  var cbName='techCb_'+Date.now()+'_'+Math.floor(Math.random()*100000);
+  var timeoutId=null;
+  window[cbName]=function(resp){
+    if(timeoutId)clearTimeout(timeoutId);
+    try{delete window[cbName];}catch(e){window[cbName]=undefined;}
+    if(script&&script.parentNode)script.parentNode.removeChild(script);
+    renderTechResult(campus,yl,theme,tool,resp);
+  };
+  var url=AI_HOOK
+    +'?action=suggestTech'
+    +'&ca='+encodeURIComponent(campus)
+    +'&yl='+encodeURIComponent(yl)
+    +'&th='+encodeURIComponent(theme)
+    +'&tool='+encodeURIComponent(tool)
+    +'&regen='+(regen?'1':'0')
+    +'&cb='+encodeURIComponent(cbName)
+    +'&t='+Date.now();
+  var script=document.createElement('script');
+  script.src=url;
+  script.onerror=function(){
+    if(timeoutId)clearTimeout(timeoutId);
+    try{delete window[cbName];}catch(e){window[cbName]=undefined;}
+    if(script.parentNode)script.parentNode.removeChild(script);
+    renderTechResult(campus,yl,theme,tool,{error:'Could not reach the suggestion service. Check your internet and try again.'});
+  };
+  timeoutId=setTimeout(function(){
+    try{delete window[cbName];}catch(e){window[cbName]=undefined;}
+    if(script.parentNode)script.parentNode.removeChild(script);
+    renderTechResult(campus,yl,theme,tool,{error:'The suggestion is taking longer than expected. Please try again.'});
+  },45000);
+  document.body.appendChild(script);
+}
+
+function renderTechResult(campus,yl,theme,tool,resp){
+  var body=document.getElementById('techModalBody');
+  if(!body)return;
+  if(resp&&resp.error){
+    body.innerHTML='<div class="tech-error">⚠️ '+escapeHtml(resp.error)+'</div>' +
+      '<div class="tech-actions"><button class="tech-btn" onclick="closeTech()">Close</button><button class="tech-btn primary" onclick="openTechResult(\''+encodeURIComponent(campus)+'\',\''+encodeURIComponent(yl)+'\',\''+encodeURIComponent(theme)+'\',\''+encodeURIComponent(tool)+'\',true)">↻ Try again</button></div>';
+    return;
+  }
+  var desc=resp.description||'';
+  var va=resp.valueAdd||'';
+  var steps=Array.isArray(resp.steps)?resp.steps:[];
+  var fit=resp.fit||'good';
+  var fitLabel=fit==='good'?'Strong fit':(fit==='stretch'?'Works with a stretch':'Weak fit');
+  var fitNote=resp.fitNote||'';
+  var cachedNote=resp.cached?'Served from cache · click ↻ to regenerate':'Fresh suggestion · '+(resp.generatedAt?new Date(resp.generatedAt).toLocaleString():'just now');
+  var stepsHtml=steps.length?'<ol class="tech-steps">'+steps.map(function(s){return '<li>'+escapeHtml(s)+'</li>';}).join('')+'</ol>':'';
+  var noteHtml=(fit!=='good'&&fitNote)?'<div class="tech-fitnote">'+escapeHtml(fitNote)+'</div>':'';
+  body.innerHTML=
+    '<div class="tech-fit '+fit+'">'+fitLabel+'</div>' +
+    noteHtml +
+    '<div class="sg-desc" style="font-size:14px;line-height:1.6;margin-bottom:12px">'+linkifyDesc(desc)+'</div>' +
+    (stepsHtml?'<div class="sg-label" style="margin:14px 0 4px;color:#4ADE80;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px">Suggested steps</div>'+stepsHtml:'') +
+    (va?'<div class="sg-label" style="margin:14px 0 4px;color:#4ADE80;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px">Value add</div><div class="vb" style="border-left-color:#22C55E">'+escapeHtml(va)+'</div>':'') +
+    '<div class="tech-actions"><button class="tech-btn primary" onclick="closeTech()">Done</button><button class="tech-btn" onclick="openTechResult(\''+encodeURIComponent(campus)+'\',\''+encodeURIComponent(yl)+'\',\''+encodeURIComponent(theme)+'\',\''+encodeURIComponent(tool)+'\',true)">↻ Regenerate</button></div>' +
+    '<div class="tech-meta">'+cachedNote+'</div>';
+  addTechChip(campus,yl,theme,tool);
+}
+
+function closeTech(){
+  var el=document.getElementById('techOverlay');
+  if(!el)return;
+  // Refresh chips on the underlying page so a new chip is visible after close
+  var campus=el.dataset.campus,yl=el.dataset.yl,theme=el.dataset.theme;
+  el.classList.remove('open');
+  setTimeout(function(){
+    if(el.parentNode)el.remove();
+    unlockDlaOverlayScrollIfClear();
+    if(!document.getElementById('stemOverlay')&&!document.getElementById('copilotOverlay'))document.removeEventListener('keydown',handleTechKey);
+    if(S.v==='detail'&&campus){R();}
+  },200);
+}
+function handleTechKey(e){
+  if(e.key==='Escape'&&document.getElementById('techOverlay'))closeTech();
+}
+// ========== END TEACHER-PICKED TECH SUGGESTION ==========
 
 
 function splitLinesOfInquiry(text){
@@ -1460,6 +1727,9 @@ var _usiKey=_usedKey(window._usedData[_usi]);
 var _usiDone=_isUsedLocally(_usiKey);
 h+='<div class="sg-fb"><button class="sg-used'+(_usiDone?' done':'')+'" data-ukey="'+encodeURIComponent(_usiKey)+'" onclick="markUsed('+_usi+',this)">'+(_usiDone?'✅ Used — click to undo':'✓ I Used This')+'</button><div class="sg-react"><button onclick="openFB('+_fbi+')" class="sg-fb-btn">💬 Feedback</button></div></div>';
 h+='</div></div>';});
+
+// "I have a tool in mind" — teacher-driven live AI suggestion
+h+=renderTechPickerPrompt(CN[ca],yl,u.th);
 
 // ACARA and Wesley curriculum toggles
 h+='<div class="tech-cur-toggle" id="techCurToggle" onclick="tgTechCur()"><span style="font-size:16px">📋</span><span style="flex:1;font-size:14px;font-weight:700;color:#38BDF8">ACARA Digital Technologies — '+yl+'</span><span style="font-size:12px;color:#888">Digital Technologies curriculum</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 8 10 12 14 8"/></svg></div>';
