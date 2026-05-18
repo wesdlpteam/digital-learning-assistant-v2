@@ -445,15 +445,27 @@ function readPlannerMarkdown_(folder, yl, th, caCode) {
 //             (testGWYear4HTWW, goNuclearGWYear4) don't accidentally
 //             audit unrelated entries that happen to sit earlier in the array.
 function auditPlanners(filterCa, filterYl) {
-  const props = PropertiesService.getScriptProperties();
-  const resumeTime = props.getProperty('DLA_RESUME_TIME');
-  if (resumeTime && Date.now() < parseInt(resumeTime)) {
-    let resumeDate = new Date(parseInt(resumeTime)).toLocaleString('en-AU');
-    Logger.log(`Quota Cooldown Active. Sleeping until ${resumeDate}`);
+  // 2026-05-18: Prevent concurrent audit runs (auditAndSync trigger +
+  // appSmashRecoveryTick can fire in the same minute and otherwise both
+  // pick the same unaudited unit, doubling OpenAI spend and racing on
+  // the data.json write). tryLock(0) returns immediately if another
+  // execution holds the lock so the second caller bails cleanly.
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(0)) {
+    Logger.log('auditPlanners: another audit run holds the lock — skipping this tick.');
     return;
   }
 
-  const folder = DriveApp.getFolderById(PLANNERS_FOLDER_ID);
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const resumeTime = props.getProperty('DLA_RESUME_TIME');
+    if (resumeTime && Date.now() < parseInt(resumeTime)) {
+      let resumeDate = new Date(parseInt(resumeTime)).toLocaleString('en-AU');
+      Logger.log(`Quota Cooldown Active. Sleeping until ${resumeDate}`);
+      return;
+    }
+
+    const folder = DriveApp.getFolderById(PLANNERS_FOLDER_ID);
   const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
   let data = JSON.parse(file.getBlob().getDataAsString());
 
@@ -771,6 +783,9 @@ ${plannerMarkdown}
       }
     }
     if (processedCount < BATCH_LIMIT) Utilities.sleep(5000);
+  }
+  } finally {
+    lock.releaseLock();
   }
 }
 
