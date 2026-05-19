@@ -1500,6 +1500,7 @@ async function loadLiveAnalytics(){
 
     // Overview
     if(typeof renderInsights === 'function') renderInsights();  // insights & suggested actions
+    if(typeof restoreCachedAISummary_ === 'function') restoreCachedAISummary_();
     renderLiveOverview(dashRows);         // → KPI strip (04-audit-analytics-live.js)
     renderLiveGrowth(CURRENT_GROWTH_BUCKET); // → ECharts growth line
     renderLiveScorecard(dashRows);

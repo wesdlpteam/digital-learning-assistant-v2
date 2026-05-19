@@ -387,6 +387,206 @@ function renderInsights(){
   `).join('') + `</div>`;
 }
 
+/* ---------- AI executive summary ----------
+   Sends a compact JSON brief (counts only, no raw rows / no PII) to the
+   gas_backend callAI proxy. Uses the fast model so this stays cheap and
+   under a couple of seconds. Caches the result in sessionStorage so the
+   user can refresh the page without burning another call. */
+function buildAISummaryBrief_(){
+  const cache         = window._growthRowsCache || {};
+  const analyticsRows = cache.analytics || [];
+  const usedRows      = cache.used      || window._usedRowsCache || [];
+  const reactionsRows = window._reactionsCache || [];
+  const feedbackRows  = window._feedbackCache  || [];
+
+  const since7  = daysAgo_(7);
+  const since30 = daysAgo_(30);
+
+  // Views
+  const viewDates = analyticsRows.slice(1).map(r => analyticsDate_(r[0])).filter(Boolean);
+  const viewsByCampus30 = {};
+  analyticsRows.slice(1).forEach(r => {
+    const d = analyticsDate_(r[0]); if(!d || d < since30) return;
+    const c = String(r[3]||'').trim(); if(!c) return;
+    viewsByCampus30[c] = (viewsByCampus30[c]||0) + 1;
+  });
+
+  // Uses
+  const usedEvents = usedRows.slice(1).filter(r => r && (r[1] || (r[2] && r[3])))
+    .map(r => ({ ts: analyticsDate_(r[0]),
+                 campus: String(r[2]||'').trim(),
+                 year:   String(r[3]||'').trim(),
+                 team:   String(r[1]||'').trim() || `${r[2]||''} ${r[3]||''} Team`,
+                 tool:   (typeof normaliseToolName === 'function') ? normaliseToolName(String(r[5]||'').trim()) : String(r[5]||'').trim() }));
+  const usedThisWk = usedEvents.filter(e => e.ts && e.ts >= since7).length;
+  const used30     = usedEvents.filter(e => e.ts && e.ts >= since30).length;
+
+  const usesByCampus30 = {}, usesByYear30 = {}, usesByTool = {}, usesByTeam = {};
+  usedEvents.forEach(e => {
+    if(!e.ts || e.ts < since30) return;
+    if(e.campus) usesByCampus30[e.campus] = (usesByCampus30[e.campus]||0) + 1;
+    if(e.year)   usesByYear30[e.year]     = (usesByYear30[e.year]||0)     + 1;
+    if(e.tool)   usesByTool[e.tool]       = (usesByTool[e.tool]||0)       + 1;
+    if(e.team)   usesByTeam[e.team]       = (usesByTeam[e.team]||0)       + 1;
+  });
+
+  // Reactions
+  const reactions = (typeof parseReactionRows === 'function') ? parseReactionRows(reactionsRows) : [];
+  const reactTally = {};
+  reactions.forEach(ev => {
+    const k = ev.tool || ev.rawTool; if(!k) return;
+    if(!reactTally[k]) reactTally[k] = { up:0, down:0 };
+    if(ev.reaction === 'up')   reactTally[k].up++;
+    if(ev.reaction === 'down') reactTally[k].down++;
+  });
+  const worstRated = Object.entries(reactTally)
+    .filter(([t,c]) => c.up + c.down >= 3)
+    .map(([t,c]) => ({ tool:t, approval:c.up/(c.up+c.down), total:c.up+c.down }))
+    .filter(r => r.approval < 0.6)
+    .sort((a,b) => a.approval - b.approval).slice(0, 5);
+
+  // Dead suggestions
+  const suggestedCount = {};
+  if(typeof DATA !== 'undefined' && Array.isArray(DATA)){
+    DATA.forEach(entry => {
+      if(!entry || !entry.audited) return;
+      const sugs = (typeof getSugs === 'function') ? getSugs(entry) : (entry.sg || []);
+      sugs.forEach(s => {
+        const raw = s && s.t ? s.t.trim() : '';
+        const tool = (typeof normaliseToolName === 'function') ? normaliseToolName(raw) : raw;
+        if(tool) suggestedCount[tool] = (suggestedCount[tool]||0) + 1;
+      });
+    });
+  }
+  const deadTools = Object.entries(suggestedCount)
+    .filter(([t,n]) => n >= 5 && !usesByTool[t])
+    .sort((a,b) => b[1] - a[1]).slice(0, 6).map(([t,n]) => ({ tool:t, suggested:n }));
+
+  // Recent feedback verbatims (cap at 5, trim length)
+  const recentFeedback = (feedbackRows||[]).slice(1)
+    .filter(r => r && r[6]).slice(-5).reverse()
+    .map(r => String(r[6]||'').slice(0, 240));
+
+  const topUsedTools = Object.entries(usesByTool).sort((a,b) => b[1]-a[1]).slice(0,8).map(([t,n]) => ({ tool:t, uses:n }));
+  const topTeams     = Object.entries(usesByTeam).sort((a,b) => b[1]-a[1]).slice(0,5).map(([t,n]) => ({ team:t, uses:n }));
+
+  return {
+    period: 'last 30 days unless noted',
+    today: new Date().toISOString().slice(0,10),
+    views: {
+      allTime: viewDates.length,
+      last30: viewDates.filter(d => d >= since30).length,
+      last7:  viewDates.filter(d => d >= since7).length,
+      byCampus30: viewsByCampus30
+    },
+    uses: {
+      allTime: usedEvents.length,
+      last30:  used30,
+      last7:   usedThisWk,
+      byCampus30: usesByCampus30,
+      byYear30:   usesByYear30,
+      topToolsLast30: topUsedTools,
+      topTeamsLast30: topTeams
+    },
+    reactionsWorstRated: worstRated,
+    deadSuggestions: deadTools,
+    recentFeedback
+  };
+}
+
+async function generateAISummary(){
+  const btn   = document.getElementById('btn-ai-summary');
+  const wrap  = document.getElementById('live-ai-summary');
+  if(!wrap) return;
+  if(typeof callAI !== 'function'){
+    wrap.style.display = 'block';
+    wrap.innerHTML = `<div class="ai-summary-card ai-error">AI proxy is not available in this session — sign in via the Studio first.</div>`;
+    return;
+  }
+  const originalLabel = btn ? btn.textContent : '';
+  if(btn){ btn.disabled = true; btn.textContent = 'Drafting…'; }
+  wrap.style.display = 'block';
+  wrap.innerHTML = `<div class="ai-summary-card ai-loading">
+    <div class="ai-spinner"></div>
+    <div>Reading the dashboard data and drafting a one-paragraph briefing…</div>
+  </div>`;
+
+  const brief = buildAISummaryBrief_();
+
+  const system = `You are a clear, calm internal analyst writing a one-paragraph executive briefing for Wesley College's Digital Learning Programs (DLP) team about adoption of the Digital Learning Assistant (DLA). Your audience is school leadership: no jargon, no AI buzzwords. Lead with the most important fact. Be specific (cite numbers from the brief). End with ONE concrete suggested action.`;
+
+  const userText = `Here is the latest analytics snapshot as JSON. Write a single tight paragraph (max ~140 words) summarising what it shows and what to do next. Use British/Australian English. Do not invent numbers — only use what is in the brief. If the data is sparse, say so plainly.
+
+If a campus or year level is missing from the byCampus/byYear blocks, that means zero — call it out only if it is meaningful.
+
+BRIEF:
+\`\`\`json
+${JSON.stringify(brief, null, 2)}
+\`\`\`
+
+Return plain prose. No headings, no bullets, no quotes.`;
+
+  try {
+    const fastModel = (typeof OPENAI_FAST_MODEL !== 'undefined' && OPENAI_FAST_MODEL) ? OPENAI_FAST_MODEL : 'gpt-4.1-mini';
+    const raw = await callAI(
+      [{ role: 'user', parts: [{ text: userText }] }],
+      system,
+      fastModel
+    );
+    const summary = String(raw || '').trim();
+    const cleaned = (typeof cleanTextCorruption_ === 'function') ? cleanTextCorruption_(summary) : summary;
+    const ts = new Date().toLocaleString('en-AU', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+    wrap.innerHTML = `
+      <div class="ai-summary-card">
+        <div class="ai-summary-head">
+          <span class="ai-summary-icon">✨</span>
+          <span class="ai-summary-title">AI executive summary</span>
+          <span class="ai-summary-ts">${esc(ts)}</span>
+        </div>
+        <div class="ai-summary-body">${esc(cleaned)}</div>
+        <div class="ai-summary-foot">
+          <span>Drafted by ${esc(fastModel)} from the cached sheet data — sense-check before sharing.</span>
+          <button class="btn-sm" onclick="generateAISummary()" style="margin-left:auto">↻ Redraft</button>
+        </div>
+      </div>`;
+    try { sessionStorage.setItem('dla_ai_summary_cache', JSON.stringify({ ts, text: cleaned, model: fastModel })); } catch(_){}
+  } catch(e){
+    console.error(e);
+    wrap.innerHTML = `<div class="ai-summary-card ai-error">
+      <b>Could not draft summary:</b> ${esc(e.message || String(e))}
+      <div style="margin-top:8px;font-size:11px;opacity:.7">If this is the first AI call this session, check you're signed in to the Studio.</div>
+    </div>`;
+  } finally {
+    if(btn){ btn.disabled = false; btn.textContent = originalLabel || '✨ AI exec summary'; }
+  }
+}
+
+// Auto-restore the most recent summary (within this browser session) so a
+// page reload doesn't make leadership think the feature is broken.
+function restoreCachedAISummary_(){
+  try {
+    const raw = sessionStorage.getItem('dla_ai_summary_cache');
+    if(!raw) return;
+    const { ts, text, model } = JSON.parse(raw);
+    if(!text) return;
+    const wrap = document.getElementById('live-ai-summary'); if(!wrap) return;
+    wrap.style.display = 'block';
+    wrap.innerHTML = `
+      <div class="ai-summary-card">
+        <div class="ai-summary-head">
+          <span class="ai-summary-icon">✨</span>
+          <span class="ai-summary-title">AI executive summary</span>
+          <span class="ai-summary-ts">${esc(ts || '')}</span>
+        </div>
+        <div class="ai-summary-body">${esc(text)}</div>
+        <div class="ai-summary-foot">
+          <span>Cached from this session · drafted by ${esc(model || 'AI')}</span>
+          <button class="btn-sm" onclick="generateAISummary()" style="margin-left:auto">↻ Redraft</button>
+        </div>
+      </div>`;
+  } catch(_){}
+}
+
 /* ---------- KPI strip (Overview) ---------- */
 function renderKpiStrip(dashRows, usedRows, analyticsRows){
   const el = document.getElementById('live-kpi-strip'); if(!el) return;

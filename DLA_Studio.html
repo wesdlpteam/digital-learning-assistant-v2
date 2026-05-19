@@ -422,8 +422,10 @@
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;flex-wrap:wrap">
               <span class="label" style="margin:0;color:#A78BFA">💡 insights &amp; suggested actions</span>
               <span id="live-insights-count" style="font-size:11px;color:var(--dim);font-weight:600;margin-left:auto"></span>
+              <button id="btn-ai-summary" class="btn-sm" onclick="generateAISummary()" style="color:#A78BFA;border-color:rgba(167,139,250,.4)">✨ AI exec summary</button>
             </div>
-            <p class="card-hint">Auto-generated from the latest sheet snapshot. Heuristics meant to prompt conversation, not directives — sense-check before acting.</p>
+            <p class="card-hint">Heuristic cards below recompute on every refresh. Click <b>AI exec summary</b> for a one-paragraph narrative across all the data.</p>
+            <div id="live-ai-summary" style="display:none"></div>
             <div id="live-insights"></div>
           </div>
 
