@@ -988,6 +988,28 @@ ${plannerMarkdown}
             break;
           }
 
+          // 2026-05-20: Audit-time Makerspace heal. The suggestion-6 prompt
+          // above produces the bland "PHYSICAL CORE" makerspace; the catchy
+          // titles live in MAKERSPACE_MEMORY (written by rebootMakerspace).
+          // If this unit has a cached catchy project, swap it in now so a
+          // re-audit (triggered by flagAppSmashViolations / surgeon /
+          // extractUnitsFromCombinedPlanners) doesn't quietly revert to bland.
+          try {
+            const memProps = PropertiesService.getScriptProperties();
+            const memString = memProps.getProperty('MAKERSPACE_MEMORY');
+            if (memString && validSugs.length >= 6) {
+              const memory = JSON.parse(memString);
+              const memKey = `${planner.ca}_${planner.yl}_${planner.th}`;
+              if (memory[memKey] && memory[memKey].t && memory[memKey].d) {
+                validSugs[5] = { t: memory[memKey].t, d: memory[memKey].d };
+                data[i].stemRebooted = true;
+                Logger.log(`Healed Makerspace from memory: ${planner.th} -> "${memory[memKey].t}"`);
+              }
+            }
+          } catch (healErr) {
+            Logger.log(`Makerspace heal failed for ${planner.th}: ${healErr}`);
+          }
+
           data[i].s = validSugs;
           data[i].plannerText = result.plannerText || "";
           data[i].audited = true;
