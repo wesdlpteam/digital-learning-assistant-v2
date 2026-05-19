@@ -4,14 +4,12 @@
       "approved": [
         "3D Printers",
         "Adobe Express",
-        "Adobe Express Podcasting",
         "Beebots",
         "Book Creator",
         "Brushes Redux",
         "Canva",
         "ChatterPix Kids",
         "Clickview",
-        "CoDrone EDU",
         "Delightex",
         "Epic",
         "Explain Everything",
@@ -31,9 +29,11 @@
         "Microsoft Forms",
         "Microsoft Word",
         "Minecraft Education",
+        "National Geographic MapMaker",
         "Padlet",
         "PicCollage",
         "Podcast Equipment",
+        "Podcasting using Canva",
         "Puppet Pals",
         "ScratchJr",
         "Seesaw",
@@ -92,10 +92,6 @@
         },
         "micro:bit": {
           "min": 3,
-          "max": 6
-        },
-        "codrone edu": {
-          "min": 4,
           "max": 6
         },
         "makey makey": {
@@ -162,7 +158,7 @@
           "min": 3,
           "max": 6
         },
-        "adobe express podcasting": {
+        "podcasting using canva": {
           "min": 0,
           "max": 6
         },
@@ -231,6 +227,10 @@
           "max": 6
         },
         "wise discussion chatbots": {
+          "min": 3,
+          "max": 6
+        },
+        "national geographic mapmaker": {
           "min": 3,
           "max": 6
         }
