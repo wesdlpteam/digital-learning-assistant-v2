@@ -7,6 +7,7 @@
 <!-- Modular Phase 1: extracted CSS and JS into external classic scripts. Behaviour unchanged from DLA_Studio_v3_with_patch9.html. -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d0d0d'/%3E%3Crect width='32' height='32' rx='8' fill='none' stroke='%23D4A017' stroke-width='1.5' opacity='0.4'/%3E%3Ctext x='16' y='23' font-family='system-ui,sans-serif' font-size='18' font-weight='900' fill='%23D4A017' text-anchor='middle' letter-spacing='-1'%3EW%3C/text%3E%3Ccircle cx='25' cy='7' r='4' fill='%23C5E84A'/%3E%3C/svg%3E">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
 <link rel="stylesheet" href="css/studio.css">
 </head>
 <body>
@@ -391,7 +392,7 @@
 
     <!-- LIVE ANALYTICS -->
     <div id="panel-live" class="panel">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;flex-wrap:wrap">
         <div class="page-title">Live Analytics</div>
         <div id="live-dot" style="width:9px;height:9px;border-radius:50%;background:var(--lime);margin-left:4px"></div>
         <button class="btn-sm" id="btn-refresh-live" onclick="loadLiveAnalytics()" style="margin-left:auto">↻ Refresh</button>
@@ -402,143 +403,197 @@
         <div style="font-size:32px;margin-bottom:12px">◉</div>
         <div style="font-size:14px;font-weight:600">Connecting to Google Sheets…</div>
       </div>
+
       <div id="live-content" style="display:none">
 
-        <!-- Weekly Scorecard -->
-        <div class="card" style="margin-bottom:14px">
-          <span class="label">weekly scorecard</span>
-          <div id="live-scorecard"></div>
+        <!-- Sub-tabs -->
+        <div class="analytics-subtabs">
+          <button class="analytics-subtab active" data-subtab="overview"   onclick="setAnalyticsSubtab('overview')">Overview</button>
+          <button class="analytics-subtab"        data-subtab="adoption"   onclick="setAnalyticsSubtab('adoption')">Adoption</button>
+          <button class="analytics-subtab"        data-subtab="engagement" onclick="setAnalyticsSubtab('engagement')">Engagement</button>
+          <button class="analytics-subtab"        data-subtab="feedback"   onclick="setAnalyticsSubtab('feedback')">Feedback &amp; Audit</button>
         </div>
 
-        <!-- Usage Overview -->
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px" id="live-overview-grid"></div>
+        <!-- ===================== OVERVIEW ===================== -->
+        <div class="analytics-subpanel" data-subpanel="overview" style="display:block">
 
-        <!-- Growth over time -->
-        <div class="card" style="margin-bottom:14px">
-          <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;flex-wrap:wrap">
-            <span class="label" style="margin:0">growth over time</span>
-            <div style="flex:1"></div>
-            <div style="display:flex;gap:6px" id="growth-bucket-filters">
-              <button class="btn-sm growth-bucket" data-bucket="day" onclick="setGrowthBucket('day')">Day</button>
-              <button class="btn-sm growth-bucket active" data-bucket="week" onclick="setGrowthBucket('week')">Week</button>
-              <button class="btn-sm growth-bucket" data-bucket="month" onclick="setGrowthBucket('month')">Month</button>
+          <!-- KPI strip -->
+          <div id="live-kpi-strip" class="kpi-strip"></div>
+
+          <!-- Growth over time -->
+          <div class="card analytics-card" style="margin-bottom:14px">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;flex-wrap:wrap">
+              <span class="label" style="margin:0">growth over time</span>
+              <div style="flex:1"></div>
+              <div style="display:flex;gap:6px" id="growth-bucket-filters">
+                <button class="btn-sm growth-bucket" data-bucket="day" onclick="setGrowthBucket('day')">Day</button>
+                <button class="btn-sm growth-bucket active" data-bucket="week" onclick="setGrowthBucket('week')">Week</button>
+                <button class="btn-sm growth-bucket" data-bucket="month" onclick="setGrowthBucket('month')">Month</button>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap" id="growth-campus-filters">
+              <button class="btn-sm growth-campus active" data-campus="all" onclick="setGrowthCampus('all')">All campuses</button>
+              <button class="btn-sm growth-campus" data-campus="Elsternwick" onclick="setGrowthCampus('Elsternwick')">Elsternwick</button>
+              <button class="btn-sm growth-campus" data-campus="Glen Waverley" onclick="setGrowthCampus('Glen Waverley')">Glen Waverley</button>
+              <button class="btn-sm growth-campus" data-campus="St Kilda Rd" onclick="setGrowthCampus('St Kilda Rd')">St Kilda Rd</button>
+            </div>
+            <p class="card-hint">Page views (blue) and tools marked as used (lime). Hover for exact counts.</p>
+            <div id="live-growth-trend" class="growth-trend"></div>
+            <div id="live-growth-empty" class="empty-msg" style="display:none"></div>
+            <div id="live-growth-chart" style="width:100%;height:280px"></div>
+          </div>
+
+          <!-- Weekly Scorecard -->
+          <div class="card analytics-card">
+            <span class="label">weekly scorecard</span>
+            <div id="live-scorecard"></div>
+          </div>
+
+        </div>
+
+        <!-- ===================== ADOPTION ===================== -->
+        <div class="analytics-subpanel" data-subpanel="adoption" style="display:none">
+
+          <!-- Reach matrix -->
+          <div class="card analytics-card" style="margin-bottom:14px">
+            <span class="label">reach — coverage by year level &amp; campus</span>
+            <p class="card-hint">Lit cells are teams that have logged at least one "I Used This". The number shows total uses by that team.</p>
+            <div id="live-reach-matrix"></div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+            <div class="card analytics-card">
+              <span class="label">views by campus</span>
+              <p class="card-hint">Total page views and average dwell time per campus.</p>
+              <div id="live-campus-chart"></div>
+            </div>
+            <div class="card analytics-card">
+              <span class="label">year-level coverage</span>
+              <p class="card-hint">Number of distinct campuses where each year level has logged use.</p>
+              <div id="live-year-coverage"></div>
             </div>
           </div>
-          <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap" id="growth-campus-filters">
-            <button class="btn-sm growth-campus active" data-campus="all" onclick="setGrowthCampus('all')">All campuses</button>
-            <button class="btn-sm growth-campus" data-campus="Elsternwick" onclick="setGrowthCampus('Elsternwick')">Elsternwick</button>
-            <button class="btn-sm growth-campus" data-campus="Glen Waverley" onclick="setGrowthCampus('Glen Waverley')">Glen Waverley</button>
-            <button class="btn-sm growth-campus" data-campus="St Kilda Rd" onclick="setGrowthCampus('St Kilda Rd')">St Kilda Rd</button>
+
+          <!-- Teams that clicked "I Used This" -->
+          <div class="card analytics-card">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
+              <span class="label" style="margin:0">staff teams who clicked "I Used This"</span>
+              <div style="flex:1"></div>
+              <span id="live-used-by-team-count" style="font-size:11px;color:var(--dim);font-weight:600"></span>
+            </div>
+            <p class="card-hint">All-time count of confirmed uses per team (campus + year level). Source: Used sheet.</p>
+            <div id="live-used-by-team"></div>
           </div>
-          <p style="font-size:12px;color:var(--dim);margin-bottom:8px">Page views (blue) and tools marked as used (lime) — switch between daily, weekly, and monthly buckets, scoped to a campus.</p>
-          <div id="live-growth"></div>
+
         </div>
 
-        <!-- Teams that clicked "I Used This" -->
-        <div class="card" style="margin-bottom:14px">
-          <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
-            <span class="label" style="margin:0">staff teams who clicked “I Used This”</span>
-            <div style="flex:1"></div>
-            <span id="live-used-by-team-count" style="font-size:11px;color:var(--dim);font-weight:600"></span>
+        <!-- ===================== ENGAGEMENT ===================== -->
+        <div class="analytics-subpanel" data-subpanel="engagement" style="display:none">
+
+          <!-- Engagement funnel -->
+          <div class="card analytics-card" style="margin-bottom:14px">
+            <span class="label">engagement funnel</span>
+            <p class="card-hint">Views → Reactions → "I Used This". The drop-off shows where teachers stop engaging.</p>
+            <div id="live-funnel"></div>
           </div>
-          <p style="font-size:12px;color:var(--dim);margin-bottom:8px">All-time count of confirmed uses per team (campus + year level). Source: Used sheet.</p>
-          <div id="live-used-by-team"></div>
+
+          <!-- Tool Rankings -->
+          <div class="card analytics-card" style="margin-bottom:14px">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;flex-wrap:wrap">
+              <span class="label" style="margin:0">🏆 tool usage rankings</span>
+              <div style="flex:1"></div>
+              <div style="display:flex;gap:6px" id="ranking-filters">
+                <button class="btn-sm ranking-scope active" data-scope="all" onclick="setRankingScope('all')">All</button>
+                <button class="btn-sm ranking-scope" data-scope="Elsternwick" onclick="setRankingScope('Elsternwick')">EL</button>
+                <button class="btn-sm ranking-scope" data-scope="Glen Waverley" onclick="setRankingScope('Glen Waverley')">GW</button>
+                <button class="btn-sm ranking-scope" data-scope="St Kilda Rd" onclick="setRankingScope('St Kilda Rd')">STK</button>
+              </div>
+            </div>
+            <p class="card-hint">Most-used tools, plus tools that get suggested often but are rarely (or never) confirmed as used.</p>
+            <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:14px">
+              <div>
+                <div class="sub-label">Most used tools</div>
+                <div id="rankings-most-used-chart"></div>
+                <div id="rankings-most-used" style="display:none"></div>
+              </div>
+              <div>
+                <div class="sub-label">Dead suggestions</div>
+                <div id="rankings-dead" class="dead-list">Tools suggested often but never clicked as used.</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+            <div class="card analytics-card">
+              <span class="label">reactions by tool</span>
+              <p class="card-hint">Top 10 tools by reaction volume. Lime = 👍, salmon = 👎.</p>
+              <div id="live-reactions"></div>
+            </div>
+            <div class="card analytics-card">
+              <span class="label">top 10 viewed pages</span>
+              <p class="card-hint">Most-visited unit pages on the public DLA.</p>
+              <div id="live-top-pages"></div>
+            </div>
+          </div>
+
+          <!-- Recently used -->
+          <div class="card analytics-card">
+            <span class="label">tools marked as used by teachers</span>
+            <p class="card-hint">Latest 15 "I Used This" events across all campuses.</p>
+            <div id="live-used"></div>
+          </div>
+
         </div>
 
-        <!-- Click audit — every individual Used row -->
-        <div class="card" style="margin-bottom:14px">
-          <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;flex-wrap:wrap">
-            <span class="label" style="margin:0">click audit — every "I Used This" row</span>
-            <div style="flex:1"></div>
-            <span id="live-used-audit-count" style="font-size:11px;color:var(--dim);font-weight:600"></span>
-          </div>
-          <p style="font-size:12px;color:var(--dim);margin-bottom:8px">Raw rows from the Used sheet, newest first. Use this to track down where a leaderboard count came from.</p>
-          <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap" id="audit-campus-filters">
-            <button class="btn-sm audit-campus active" data-campus="all" onclick="setAuditCampus('all')">All campuses</button>
-            <button class="btn-sm audit-campus" data-campus="Elsternwick" onclick="setAuditCampus('Elsternwick')">Elsternwick</button>
-            <button class="btn-sm audit-campus" data-campus="Glen Waverley" onclick="setAuditCampus('Glen Waverley')">Glen Waverley</button>
-            <button class="btn-sm audit-campus" data-campus="St Kilda Rd" onclick="setAuditCampus('St Kilda Rd')">St Kilda Rd</button>
-          </div>
-          <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center">
-            <select id="audit-year-filter" onchange="setAuditYear(this.value)" style="background:var(--card2);border:1px solid #333;color:var(--text);padding:5px 8px;border-radius:6px;font-size:12px;font-family:inherit">
-              <option value="all">All year levels</option>
-            </select>
-            <input type="search" id="audit-search" oninput="setAuditSearch(this.value)" placeholder="Search theme, tool, phase…" style="flex:1;min-width:160px;background:var(--card2);border:1px solid #333;color:var(--text);padding:5px 10px;border-radius:6px;font-size:12px;font-family:inherit">
-          </div>
-          <div id="live-used-audit" style="max-height:420px;overflow-y:auto"></div>
-        </div>
+        <!-- ===================== FEEDBACK &amp; AUDIT ===================== -->
+        <div class="analytics-subpanel" data-subpanel="feedback" style="display:none">
 
-        <!-- Views by Campus -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
-          <div class="card">
-            <span class="label">views by campus</span>
-            <div id="live-campus-chart"></div>
+          <!-- Recent thumbs-down review queue -->
+          <div class="card analytics-card thumbsdown-card" style="margin-bottom:14px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+              <span class="label" style="margin:0;color:#FF8080">👎 suggestions needing review</span>
+              <div style="flex:1"></div>
+              <span id="live-thumbsdown-count" style="font-size:11px;color:#FF8080;font-weight:700"></span>
+            </div>
+            <p class="card-hint">Recent thumbs-down reactions from teachers. Use these as the review queue for suggestions that may need rewriting or replacing.</p>
+            <div id="live-thumbsdown"></div>
           </div>
-          <div class="card">
-            <span class="label">reactions by tool</span>
-            <div id="live-reactions"></div>
-          </div>
-        </div>
 
-        <!-- Recent thumbs-down review queue -->
-        <div class="card" style="margin-bottom:14px;border-color:#FF808055;background:linear-gradient(135deg,rgba(255,128,128,.08),rgba(255,128,128,.02))">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
-            <span class="label" style="margin:0;color:#FF8080">👎 suggestions needing review</span>
-            <div style="flex:1"></div>
-            <span id="live-thumbsdown-count" style="font-size:11px;color:#FF8080;font-weight:700"></span>
-          </div>
-          <p style="font-size:12px;color:var(--dim);margin-bottom:12px">Recent thumbs-down reactions from teachers. Use these as the review queue for suggestions that may need rewriting or replacing.</p>
-          <div id="live-thumbsdown"></div>
-        </div>
-
-        <!-- Heatmap -->
-        <div class="card" style="margin-bottom:14px">
-          <span class="label">views by campus & year level</span>
-          <div id="live-heatmap" style="overflow-x:auto"></div>
-        </div>
-
-        <!-- Top pages + Feedback side by side -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
-          <div class="card">
-            <span class="label">top 10 viewed pages</span>
-            <div id="live-top-pages"></div>
-          </div>
-          <div class="card">
+          <!-- Teacher feedback -->
+          <div class="card analytics-card" style="margin-bottom:14px">
             <span class="label">teacher feedback</span>
-            <div id="live-feedback" style="max-height:400px;overflow-y:auto"></div>
+            <p class="card-hint">Latest 20 free-text feedback submissions from teachers.</p>
+            <div id="live-feedback" style="max-height:480px;overflow-y:auto"></div>
           </div>
+
+          <!-- Click audit — every individual Used row -->
+          <div class="card analytics-card">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;flex-wrap:wrap">
+              <span class="label" style="margin:0">click audit — every "I Used This" row</span>
+              <div style="flex:1"></div>
+              <span id="live-used-audit-count" style="font-size:11px;color:var(--dim);font-weight:600"></span>
+            </div>
+            <p class="card-hint">Raw rows from the Used sheet, newest first. Use this to track down where a leaderboard count came from.</p>
+            <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap" id="audit-campus-filters">
+              <button class="btn-sm audit-campus active" data-campus="all" onclick="setAuditCampus('all')">All campuses</button>
+              <button class="btn-sm audit-campus" data-campus="Elsternwick" onclick="setAuditCampus('Elsternwick')">Elsternwick</button>
+              <button class="btn-sm audit-campus" data-campus="Glen Waverley" onclick="setAuditCampus('Glen Waverley')">Glen Waverley</button>
+              <button class="btn-sm audit-campus" data-campus="St Kilda Rd" onclick="setAuditCampus('St Kilda Rd')">St Kilda Rd</button>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center">
+              <select id="audit-year-filter" onchange="setAuditYear(this.value)" style="background:var(--card2);border:1px solid #333;color:var(--text);padding:5px 8px;border-radius:6px;font-size:12px;font-family:inherit">
+                <option value="all">All year levels</option>
+              </select>
+              <input type="search" id="audit-search" oninput="setAuditSearch(this.value)" placeholder="Search theme, tool, phase…" style="flex:1;min-width:160px;background:var(--card2);border:1px solid #333;color:var(--text);padding:5px 10px;border-radius:6px;font-size:12px;font-family:inherit">
+            </div>
+            <div id="live-used-audit" style="max-height:480px;overflow-y:auto"></div>
+          </div>
+
         </div>
 
-        <!-- Tool Rankings -->
-        <div class="card" style="margin-bottom:14px">
-          <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
-            <span class="label" style="margin:0">🏆 tool usage rankings</span>
-            <div style="flex:1"></div>
-            <div style="display:flex;gap:6px" id="ranking-filters">
-              <button class="btn-sm ranking-scope active" data-scope="all" onclick="setRankingScope('all')">All</button>
-              <button class="btn-sm ranking-scope" data-scope="Elsternwick" onclick="setRankingScope('Elsternwick')">EL</button>
-              <button class="btn-sm ranking-scope" data-scope="Glen Waverley" onclick="setRankingScope('Glen Waverley')">GW</button>
-              <button class="btn-sm ranking-scope" data-scope="St Kilda Rd" onclick="setRankingScope('St Kilda Rd')">STK</button>
-            </div>
-          </div>
-          <p style="font-size:12px;color:var(--dim);margin-bottom:14px">Based on teachers clicking "✓ I Used This" on the DLA. Combines the full "Used!" sheet history.</p>
-          <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px">
-            <div>
-              <div style="font-size:10px;color:var(--dim);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Most used tools</div>
-              <div id="rankings-most-used"></div>
-            </div>
-            <div>
-              <div style="font-size:10px;color:var(--dim);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Dead suggestions</div>
-              <div id="rankings-dead" style="font-size:12px;color:var(--dim);line-height:1.6">Tools suggested often but never clicked as used.</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Recently used -->
-        <div class="card">
-          <span class="label">tools marked as used by teachers</span>
-          <div id="live-used"></div>
-        </div>
+        <!-- Hidden placeholder kept so older heatmap render calls remain harmless -->
+        <div id="live-heatmap" style="display:none"></div>
+        <div id="live-overview-grid" style="display:none"></div>
 
       </div>
     </div>

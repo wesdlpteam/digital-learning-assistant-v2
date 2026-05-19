@@ -101,3 +101,115 @@
   background:var(--gold)!important;
   border-color:var(--gold)!important;
 }
+
+/* ============================================================
+   Live Analytics — sub-tab dashboard
+   Owned by 04-audit-analytics-live.js. Keep selectors specific
+   so the styles never leak into the rest of the Studio.
+   ============================================================ */
+
+/* Sub-tab strip */
+.analytics-subtabs{
+  display:flex;gap:6px;border-bottom:1px solid var(--border);
+  margin:4px 0 18px;padding-bottom:0;flex-wrap:wrap;
+}
+.analytics-subtab{
+  padding:10px 18px;border:1px solid transparent;border-bottom:none;
+  border-radius:10px 10px 0 0;background:transparent;color:var(--dim);
+  font-family:inherit;font-size:13px;font-weight:700;letter-spacing:.2px;
+  cursor:pointer;margin-bottom:-1px;transition:all .12s;
+}
+.analytics-subtab:hover{color:var(--text);background:rgba(255,255,255,0.03)}
+.analytics-subtab.active{
+  color:var(--text);background:var(--card);
+  border-color:var(--border);border-bottom-color:var(--card);
+}
+
+/* Analytics cards — denser version of the generic .card */
+.analytics-card{padding:18px 20px;border-radius:14px;margin-bottom:14px}
+.analytics-card .label{margin-bottom:8px}
+.analytics-card .card-hint{
+  font-size:12px;color:var(--dim);line-height:1.55;margin:-2px 0 12px;
+  font-weight:500;
+}
+.analytics-card .sub-label{
+  font-size:10px;color:var(--dim);font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;margin-bottom:10px;
+}
+.analytics-card .empty-msg{
+  color:var(--dim);font-size:13px;padding:14px 0;line-height:1.5;
+}
+
+/* KPI strip */
+.kpi-strip{
+  display:grid;gap:12px;grid-template-columns:repeat(5,minmax(0,1fr));
+  margin-bottom:14px;
+}
+@media (max-width:1100px){.kpi-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi-card{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:16px 18px;position:relative;overflow:hidden;
+}
+.kpi-card::after{
+  content:'';position:absolute;left:0;right:0;top:0;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent);
+}
+.kpi-card .kpi-lbl{
+  font-size:10px;color:var(--dim);text-transform:uppercase;
+  font-weight:700;letter-spacing:1.4px;margin-bottom:8px;
+}
+.kpi-card .kpi-num{
+  font-size:32px;font-weight:900;letter-spacing:-.8px;line-height:1.1;
+}
+.kpi-card .kpi-sub{
+  font-size:11px;color:var(--dim);margin-top:4px;line-height:1.4;font-weight:500;
+}
+.kpi-card .kpi-extra{
+  display:inline-block;margin-top:6px;font-size:10px;font-weight:800;
+  letter-spacing:.4px;padding:2px 8px;border-radius:99px;
+  background:rgba(255,255,255,0.04);
+}
+
+/* Growth chart trend line */
+.growth-trend{
+  display:flex;gap:18px;flex-wrap:wrap;margin-bottom:10px;
+  font-size:12px;color:var(--dim);align-items:center;
+}
+.growth-trend b{color:var(--text);font-weight:700;margin-left:2px}
+.legend-dot{
+  display:inline-block;width:10px;height:10px;border-radius:50%;
+  margin-right:6px;vertical-align:middle;
+}
+
+/* Reach matrix */
+.reach-summary{font-size:12px;color:var(--dim);margin-bottom:10px}
+.reach-summary b{color:var(--text);font-weight:800}
+.reach-table{
+  width:100%;border-collapse:separate;border-spacing:4px;font-size:12px;
+}
+.reach-table th{
+  font-weight:700;font-size:11px;letter-spacing:.5px;
+  text-transform:uppercase;color:var(--dim);padding:6px 8px;
+  text-align:center;
+}
+.reach-table th:first-child{text-align:left;color:var(--text)}
+.reach-table tbody th{
+  text-align:left;color:var(--gold);font-size:12px;text-transform:none;
+  letter-spacing:0;font-weight:700;padding:8px 8px;
+}
+.reach-table td{
+  text-align:center;font-weight:800;font-size:14px;padding:10px 6px;
+  border-radius:8px;min-width:64px;background:var(--card2);
+}
+
+/* Dead suggestions list */
+.dead-list{font-size:12px;color:var(--dim);line-height:1.6}
+
+/* Tighter ranking rows when the chart isn't used */
+.analytics-card .rank-row{padding:7px 0}
+
+/* Thumbs-down card keeps its warning colouring */
+.thumbsdown-card{
+  border-color:rgba(255,128,128,0.35) !important;
+  background:linear-gradient(135deg,rgba(255,128,128,.06),rgba(255,128,128,.01));
+}

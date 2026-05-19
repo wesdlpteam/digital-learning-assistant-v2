@@ -1491,21 +1491,36 @@ async function loadLiveAnalytics(){
       ])
     ]);
 
-    renderLiveScorecard(dashRows);
-    renderLiveOverview(dashRows);
+    // Cache datasets first so any renderer that switches tabs/scopes can re-pull.
     window._growthRowsCache = { analytics: analyticsRows, used: usedRows };
-    renderLiveGrowth(CURRENT_GROWTH_BUCKET);
-    renderLiveUsedByTeam(usedRows);
-    renderLiveUsedAudit(usedRows);
+    window._usedRowsCache   = usedRows;
+    window._reactionsCache  = reactionsRows;
+    window._dashRowsCache   = dashRows;
+
+    // Overview
+    renderLiveOverview(dashRows);         // → KPI strip (04-audit-analytics-live.js)
+    renderLiveGrowth(CURRENT_GROWTH_BUCKET); // → ECharts growth line
+    renderLiveScorecard(dashRows);
+
+    // Adoption
+    renderLiveAdoptionExtras();           // reach matrix + year coverage
     renderLiveCampusChart(dashRows);
-    renderLiveHeatmap(dashRows);
-    renderLiveReactions(reactionsRows);
-    renderLiveThumbsDown(reactionsRows);
-    renderLiveTopPages(dashRows);
-    renderLiveFeedback(feedbackRows);
-    renderLiveUsed(usedRows);
-    window._usedRowsCache = usedRows; // cached for ranking scope switches
+    renderLiveUsedByTeam(usedRows);
+
+    // Engagement
+    renderLiveEngagementExtras();         // funnel
     renderToolRankings('all');
+    renderLiveReactions(reactionsRows);
+    renderLiveTopPages(dashRows);
+    renderLiveUsed(usedRows);
+
+    // Feedback & Audit
+    renderLiveThumbsDown(reactionsRows);
+    renderLiveFeedback(feedbackRows);
+    renderLiveUsedAudit(usedRows);
+
+    // Heatmap is replaced by the reach matrix — keep call so the host clears cleanly.
+    renderLiveHeatmap(dashRows);
 
     if(loading) loading.style.display = 'none';
     if(contentEl) contentEl.style.display = 'block';
@@ -1563,23 +1578,7 @@ function renderLiveScorecard(rows){
   }).join('');
 }
 
-function renderLiveOverview(rows){
-  const el = document.getElementById('live-overview-grid'); if(!el) return;
-  const section = findSection(rows, 'USAGE OVERVIEW');
-  if(!section.length){ el.innerHTML=''; return; }
-
-  const metrics = [];
-  for(const row of section){
-    if(row[0] && row[1]) metrics.push([row[0], row[1]]);
-  }
-  const colours = ['var(--lime)','var(--gold)','#60B8F0','#9B8BFF','#F5A623','#FF8080'];
-  el.innerHTML = metrics.slice(0,6).map(([label,val],i) =>
-    `<div class="stat-card" style="background:var(--card2)">
-      <div class="stat-num" style="color:${colours[i%colours.length]}">${esc(val)}</div>
-      <div class="stat-lbl">${esc(label)}</div>
-    </div>`
-  ).join('');
-}
+// renderLiveOverview replaced by KPI strip in 04-audit-analytics-live.js
 
 let CURRENT_GROWTH_BUCKET = 'week';
 let CURRENT_GROWTH_CAMPUS = 'all';
@@ -1665,130 +1664,7 @@ function monthKey_(date){
   return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}`;
 }
 
-function renderLiveGrowth(bucket){
-  const el = document.getElementById('live-growth'); if(!el) return;
-  const cache = window._growthRowsCache || {};
-  const analyticsRows = cache.analytics || [];
-  const usedRows = cache.used || [];
-
-  const scope = CURRENT_GROWTH_CAMPUS;
-  // Analytics columns: 0 Timestamp, 1 Session, 2 Page, 3 Campus, ...
-  // Used columns:      0 Timestamp, 1 Team,    2 Campus, ...
-  const viewDates = analyticsRows.slice(1)
-    .filter(r => campusMatchesGrowth_(r[3], scope))
-    .map(r => parseGrowthTimestamp_(r[0]))
-    .filter(Boolean);
-  const usedDates = usedRows.slice(1)
-    .filter(r => campusMatchesGrowth_(r[2], scope))
-    .map(r => parseGrowthTimestamp_(r[0]))
-    .filter(Boolean);
-
-  if(!viewDates.length && !usedDates.length){
-    const label = scope === 'all' ? 'teachers start using the DLA' : 'activity is recorded for ' + scope;
-    el.innerHTML = `<div style="color:var(--dim);font-size:13px;padding:8px 0">No timestamped activity yet — graph appears once ${label}.</div>`;
-    return;
-  }
-
-  // Bucket config: how many buckets back, how to compute the bucket start, how to key it, and a trend window.
-  const now = new Date();
-  let bucketsBack, startOf, keyOf, advance, fmtLabel, trendWindow, trendLabel;
-  if(bucket === 'day'){
-    bucketsBack = 30;
-    startOf = d => dayStart_(d);
-    keyOf   = d => isoKey_(dayStart_(d));
-    advance = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
-    fmtLabel = d => d.toLocaleDateString('en-AU', { day:'numeric', month:'short' });
-    trendWindow = 7;  trendLabel = 'last 7d vs prior 7d';
-  } else if(bucket === 'month'){
-    bucketsBack = 12;
-    startOf = d => monthStart_(d);
-    keyOf   = d => monthKey_(monthStart_(d));
-    advance = (d, n) => new Date(d.getFullYear(), d.getMonth() + n, 1);
-    fmtLabel = d => d.toLocaleDateString('en-AU', { month:'short', year:'2-digit' });
-    trendWindow = 3;  trendLabel = 'last 3mo vs prior 3mo';
-  } else {
-    bucketsBack = 12;
-    startOf = d => weekStart_(d);
-    keyOf   = d => isoKey_(weekStart_(d));
-    advance = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n*7); return x; };
-    fmtLabel = d => d.toLocaleDateString('en-AU', { day:'numeric', month:'short' });
-    trendWindow = 4;  trendLabel = 'last 4w vs prior 4w';
-  }
-
-  const anchor = startOf(now);
-  const buckets = [];
-  for(let i = bucketsBack - 1; i >= 0; i--){
-    const start = advance(anchor, -i);
-    buckets.push({ key: keyOf(start), start, views: 0, used: 0 });
-  }
-  const idxByKey = Object.fromEntries(buckets.map((b,i)=>[b.key,i]));
-
-  viewDates.forEach(d => { const k = keyOf(d); if(k in idxByKey) buckets[idxByKey[k]].views++; });
-  usedDates.forEach(d => { const k = keyOf(d); if(k in idxByKey) buckets[idxByKey[k]].used++; });
-
-  const maxViews = Math.max(1, ...buckets.map(b=>b.views));
-  const maxUsed  = Math.max(1, ...buckets.map(b=>b.used));
-  const yMax = Math.max(maxViews, maxUsed);
-
-  const W = 760, H = 220, PAD_L = 36, PAD_R = 12, PAD_T = 14, PAD_B = 34;
-  const plotW = W - PAD_L - PAD_R;
-  const plotH = H - PAD_T - PAD_B;
-  const n = buckets.length;
-  const xFor = i => PAD_L + (n === 1 ? plotW/2 : (i * plotW / (n-1)));
-  const yFor = v => PAD_T + plotH - (v / yMax) * plotH;
-
-  let grid = '';
-  for(let t = 0; t <= 4; t++){
-    const y = PAD_T + (plotH * t / 4);
-    const val = Math.round(yMax * (1 - t/4));
-    grid += `<line x1="${PAD_L}" y1="${y}" x2="${W-PAD_R}" y2="${y}" stroke="var(--border)" stroke-width="1" opacity="0.5"/>`;
-    grid += `<text x="${PAD_L-6}" y="${y+3}" text-anchor="end" font-size="10" fill="var(--dim)">${val}</text>`;
-  }
-
-  const labelStep = Math.max(1, Math.ceil(n / 8));
-  let xLabels = '';
-  for(let i = 0; i < n; i += labelStep){
-    xLabels += `<text x="${xFor(i)}" y="${H-PAD_B+16}" text-anchor="middle" font-size="10" fill="var(--dim)">${fmtLabel(buckets[i].start)}</text>`;
-  }
-
-  const viewsPath = buckets.map((b,i) => `${i===0?'M':'L'} ${xFor(i).toFixed(1)} ${yFor(b.views).toFixed(1)}`).join(' ');
-  const usedPath  = buckets.map((b,i) => `${i===0?'M':'L'} ${xFor(i).toFixed(1)} ${yFor(b.used ).toFixed(1)}`).join(' ');
-  const viewsArea = `${viewsPath} L ${xFor(n-1).toFixed(1)} ${(PAD_T+plotH).toFixed(1)} L ${xFor(0).toFixed(1)} ${(PAD_T+plotH).toFixed(1)} Z`;
-  const usedArea  = `${usedPath } L ${xFor(n-1).toFixed(1)} ${(PAD_T+plotH).toFixed(1)} L ${xFor(0).toFixed(1)} ${(PAD_T+plotH).toFixed(1)} Z`;
-
-  const dotLabel = bucket === 'month' ? 'Month' : (bucket === 'day' ? 'Day' : 'Week');
-  const dots = buckets.map((b,i) => `
-    <circle cx="${xFor(i).toFixed(1)}" cy="${yFor(b.views).toFixed(1)}" r="3" fill="#60B8F0">
-      <title>${dotLabel} of ${b.start.toLocaleDateString('en-AU')}: ${b.views} views</title>
-    </circle>
-    <circle cx="${xFor(i).toFixed(1)}" cy="${yFor(b.used ).toFixed(1)}" r="3" fill="var(--lime)">
-      <title>${dotLabel} of ${b.start.toLocaleDateString('en-AU')}: ${b.used} used</title>
-    </circle>`).join('');
-
-  const totalViews = buckets.reduce((a,b)=>a+b.views,0);
-  const totalUsed  = buckets.reduce((a,b)=>a+b.used,0);
-  const tail = buckets.slice(-trendWindow).reduce((a,b)=>a+b.views,0);
-  const head = buckets.slice(-trendWindow*2,-trendWindow).reduce((a,b)=>a+b.views,0);
-  const pct = head > 0 ? Math.round(((tail - head) / head) * 100) : (tail > 0 ? 100 : 0);
-  const trendCol = pct >= 0 ? 'var(--lime)' : '#FF8080';
-  const trendArrow = pct >= 0 ? '▲' : '▼';
-
-  el.innerHTML = `
-    <div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:10px;font-size:12px;color:var(--dim)">
-      <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#60B8F0;margin-right:6px;vertical-align:middle"></span>Views <b style="color:var(--text)">${totalViews}</b></span>
-      <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--lime);margin-right:6px;vertical-align:middle"></span>Used <b style="color:var(--text)">${totalUsed}</b></span>
-      <span style="margin-left:auto;color:${trendCol};font-weight:700">${trendArrow} ${Math.abs(pct)}% <span style="color:var(--dim);font-weight:400">views, ${trendLabel}</span></span>
-    </div>
-    <svg viewBox="0 0 ${W} ${H}" width="100%" preserveAspectRatio="xMidYMid meet" style="display:block">
-      ${grid}
-      <path d="${viewsArea}" fill="#60B8F0" opacity="0.08"/>
-      <path d="${usedArea}"  fill="var(--lime)" opacity="0.10"/>
-      <path d="${viewsPath}" fill="none" stroke="#60B8F0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="${usedPath}"  fill="none" stroke="var(--lime)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      ${dots}
-      ${xLabels}
-    </svg>`;
-}
+// renderLiveGrowth replaced by ECharts version in 04-audit-analytics-live.js
 
 function renderLiveUsedByTeam(rows){
   const el = document.getElementById('live-used-by-team'); if(!el) return;
@@ -1914,67 +1790,8 @@ function setAuditSearch(s){
   if(window._usedAuditRowsCache) renderLiveUsedAudit(window._usedAuditRowsCache);
 }
 
-function renderLiveCampusChart(rows){
-  const el = document.getElementById('live-campus-chart'); if(!el) return;
-  const section = findSection(rows, 'VIEWS BY CAMPUS');
-  
-  const data = section.slice(1).filter(r=>r[0]&&r[1]);
-  if(!data.length){ el.innerHTML='<div style="color:var(--dim);font-size:13px">No data</div>'; return; }
-
-  const max = Math.max(...data.map(r=>parseInt(r[1])||0))||1;
-  const campusCols = {'Elsternwick':'#818cf8','Glen Waverley':'#34d399','St Kilda Rd':'#fb923c','St Kilda':'#fb923c'};
-  el.innerHTML = data.map(([campus,views,avgTime]) => {
-    const col = campusCols[campus] || 'var(--lime)';
-    const pct = Math.round(((parseInt(views)||0)/max)*100);
-    return `<div style="margin-bottom:12px">
-      <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:5px">
-        <span style="color:${col}">${esc(campus)}</span>
-        <span style="color:var(--dim)">${esc(views)} views · ${esc(avgTime||'—')}s avg</span>
-      </div>
-      <div style="height:7px;background:var(--card2);border-radius:4px">
-        <div style="height:100%;border-radius:4px;background:${col};width:${pct}%"></div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function renderLiveHeatmap(rows){
-  const el = document.getElementById('live-heatmap'); if(!el) return;
-  const section = findSection(rows, 'VIEWS BY CAMPUS & YEAR LEVEL');
-  if(section.length < 2){ el.innerHTML='<div style="color:var(--dim);font-size:13px">No data</div>'; return; }
-
-  const headers = section[0]; 
-  const dataRows = section.slice(1);
-  const campusCols = ['#818cf8','#34d399','#fb923c'];
-
-  let html = `<table style="width:100%;border-collapse:collapse;font-size:13px">
-    <thead><tr>`;
-  headers.forEach((h,i) => {
-    const col = i>0 && i<4 ? campusCols[i-1] : 'var(--text)';
-    html += `<th style="padding:8px 12px;text-align:${i===0?'left':'center'};color:${col};font-weight:700;border-bottom:1.5px solid var(--border)">${esc(h)}</th>`;
-  });
-  html += '</tr></thead><tbody>';
-
-  const allVals = dataRows.flatMap(r=>r.slice(1,4).map(v=>parseInt(v)||0)).filter(v=>v>0);
-  const maxVal = Math.max(...allVals)||1;
-
-  dataRows.forEach(row => {
-    const isTotalRow = String(row[0]||'').toLowerCase()==='total';
-    html += `<tr style="${isTotalRow?'font-weight:800;background:var(--card2)':''}">`;
-    row.forEach((cell,i) => {
-      const val = parseInt(cell)||0;
-      const intensity = i>0 && i<4 && val>0 ? Math.max(0.1, val/maxVal) : 0;
-      const bg = i>0 && i<4 && val>0
-        ? `rgba(${i===1?'129,140,248':i===2?'52,211,153':'251,146,60'},${intensity*0.4})`
-        : 'transparent';
-      const align = i===0?'left':'center';
-      html += `<td style="padding:9px 12px;text-align:${align};background:${bg};border-bottom:1px solid var(--border);font-size:${isTotalRow?'14px':'13px'}">${esc(cell||'—')}</td>`;
-    });
-    html += '</tr>';
-  });
-  html += '</tbody></table>';
-  el.innerHTML = html;
-}
+// renderLiveCampusChart / renderLiveHeatmap replaced in 04-audit-analytics-live.js
+// (heatmap is superseded by the reach matrix on the Adoption sub-tab).
 
 function formatAnalyticsTimestamp(ts){
   const raw = String(ts||'').trim();
@@ -2002,35 +1819,7 @@ function parseReactionRows(rows){
   }));
 }
 
-function renderLiveReactions(rows){
-  const el = document.getElementById('live-reactions'); if(!el) return;
-  const events = parseReactionRows(rows);
-  if(!events.length){ el.innerHTML='<div style="color:var(--dim);font-size:13px">No reactions yet</div>'; return; }
-  const counts = {};
-  events.forEach(ev => {
-    const key = ev.tool || ev.rawTool || 'Unknown tool';
-    if(!counts[key]) counts[key] = {up:0, down:0};
-    if(ev.reaction === 'up') counts[key].up++;
-    if(ev.reaction === 'down') counts[key].down++;
-  });
-  const sorted = Object.entries(counts).map(([tool,c]) => [tool,c.up,c.down,c.up+c.down]).sort((a,b)=>b[3]-a[3]).slice(0,10);
-  const max = Math.max(...sorted.map(r=>r[3]||0))||1;
-  el.innerHTML = sorted.map(([tool,up,down,total]) => {
-    const u=up||0, d=down||0, t=total||u+d;
-    const pct = Math.round((t/max)*100);
-    const approvalPct = t>0?Math.round((u/t)*100):0;
-    const barCol = approvalPct>=80?'var(--lime)':approvalPct>=50?'#fbbf24':'#FF8080';
-    return `<div style="margin-bottom:10px">
-      <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;margin-bottom:4px">
-        <span>${esc(tool)}</span>
-        <span style="color:var(--dim)">👍${u} 👎${d}</span>
-      </div>
-      <div style="height:6px;background:var(--card2);border-radius:3px">
-        <div style="height:100%;border-radius:3px;background:${barCol};width:${pct}%"></div>
-      </div>
-    </div>`;
-  }).join('');
-}
+// renderLiveReactions replaced by ECharts diverging bar in 04-audit-analytics-live.js
 
 let LIVE_THUMBSDOWN_EVENTS = [];
 
@@ -2179,28 +1968,7 @@ async function draftThumbsDownReplacement(idx){
   }
 }
 
-function renderLiveTopPages(rows){
-  const el = document.getElementById('live-top-pages'); if(!el) return;
-  const section = findSection(rows, 'TOP 10 MOST VIEWED PAGES');
-  
-  const data = section.slice(2).filter(r=>r[0]&&r[1]&&r[0]!=='Page');
-  if(!data.length){ el.innerHTML='<div style="color:var(--dim);font-size:13px">No data</div>'; return; }
-
-  const max = Math.max(...data.map(r=>parseInt(r[1])||0))||1;
-  el.innerHTML = data.slice(0,10).map(([page,views,totalTime]) => {
-    const pct = Math.round(((parseInt(views)||0)/max)*100);
-    const avgSec = views&&totalTime ? Math.round((parseInt(totalTime)||0)/(parseInt(views)||1)) : 0;
-    return `<div style="margin-bottom:10px">
-      <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;margin-bottom:4px">
-        <span style="flex:1">${esc(page)}</span>
-        <span style="color:var(--dim);margin-left:8px">${esc(views)} · ${avgSec}s avg</span>
-      </div>
-      <div style="height:5px;background:var(--card2);border-radius:3px">
-        <div style="height:100%;border-radius:3px;background:#60B8F0;width:${pct}%"></div>
-      </div>
-    </div>`;
-  }).join('');
-}
+// renderLiveTopPages replaced by ECharts horizontal bar in 04-audit-analytics-live.js
 
 function renderLiveFeedback(rows){
   const el = document.getElementById('live-feedback'); if(!el) return;
@@ -2258,99 +2026,10 @@ function setRankingScope(scope){
   renderToolRankings(scope);
 }
 
-function renderToolRankings(scope){
-  const mostEl = document.getElementById('rankings-most-used');
-  const deadEl = document.getElementById('rankings-dead');
-  if(!mostEl || !deadEl) return;
-
-  const rows = window._usedRowsCache || [];
-  // Skip header row, filter for rows with a tool column
-  const usedEvents = rows.slice(1).filter(r => r && r[5]);
-
-  // Filter by campus if scope is set
-  let filtered = usedEvents;
-  if(scope !== 'all'){
-    filtered = usedEvents.filter(r => {
-      const campus = String(r[2]||'').trim();
-      if(scope === 'St Kilda Rd' && (campus === 'St Kilda' || campus === 'St Kilda Rd')) return true;
-      return campus === scope;
-    });
-  }
-
-  // ========== Most Used: count usage events per normalised tool name ==========
-  const usageCount = {};
-  filtered.forEach(r => {
-    const tool = normaliseToolName(String(r[5]||'').trim());
-    if(!tool) return;
-    usageCount[tool] = (usageCount[tool] || 0) + 1;
-  });
-
-  const mostUsed = Object.entries(usageCount)
-    .sort((a,b) => b[1] - a[1])
-    .slice(0, 15);
-
-  if(!mostUsed.length){
-    mostEl.innerHTML = '<div style="color:var(--dim);font-size:13px;padding:12px 0">No usage data yet for this scope. Teachers need to click "✓ I Used This" on the DLA to populate this.</div>';
-  } else {
-    const maxCount = mostUsed[0][1];
-    mostEl.innerHTML = mostUsed.map((item, i) => {
-      const [tool, count] = item;
-      const pct = Math.round((count / maxCount) * 100);
-      const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
-      const rankLabel = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`;
-      return `<div class="rank-row">
-        <span class="rank-num ${rankClass}">${rankLabel}</span>
-        <div class="rank-body">
-          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px">
-            <span class="rank-tool">${esc(tool)}</span>
-            <span class="rank-count">${count}×</span>
-          </div>
-          <div class="rank-bar"><div class="rank-bar-fill" style="width:${pct}%"></div></div>
-        </div>
-      </div>`;
-    }).join('');
-  }
-
-  // ========== Dead suggestions: tools suggested a lot in data.json but never (or rarely) used ==========
-  // Count how many times each tool is suggested across the library
-  const suggestedCount = {};
-  DATA.forEach(e => {
-    if(!e.audited) return;
-    // Filter by scope if set
-    if(scope !== 'all'){
-      const campus = String(e.ca||'').trim();
-      const match = scope === 'St Kilda Rd' ? (campus === 'St Kilda' || campus === 'St Kilda Rd') : campus === scope;
-      if(!match) return;
-    }
-    getSugs(e).forEach(s => {
-      const tool = normaliseToolName((s && s.t ? s.t.trim() : ''));
-      if(!tool) return;
-      suggestedCount[tool] = (suggestedCount[tool] || 0) + 1;
-    });
-  });
-
-  // Dead = suggested 3+ times but used 0 times (or suggestion:use ratio worse than 10:1)
-  const dead = Object.entries(suggestedCount)
-    .filter(([tool, sCount]) => {
-      if(sCount < 3) return false;
-      const used = usageCount[tool] || 0;
-      return used === 0 || (sCount / used >= 10);
-    })
-    .sort((a,b) => b[1] - a[1])
-    .slice(0, 8);
-
-  if(!dead.length){
-    deadEl.innerHTML = '<div style="color:var(--dim);font-size:12px;padding:10px 0">No dead tools detected. Every suggested tool is being used.</div>';
-  } else {
-    deadEl.innerHTML = dead.map(([tool, sCount]) => {
-      const used = usageCount[tool] || 0;
-      return `<div class="dead-row">
-        <div class="dead-tool">${esc(tool)}</div>
-        <div class="dead-sub">Suggested ${sCount}× · Used ${used}×</div>
-      </div>`;
-    }).join('');
-  }
-}
+// renderToolRankings replaced by ECharts horizontal bar in 04-audit-analytics-live.js.
+// setRankingScope (above) still calls renderToolRankings(scope), which now resolves
+// to the ECharts version defined earlier (since 04 loads first, the 04 binding wins
+// once these older definitions are removed).
 
 
 
