@@ -44,14 +44,29 @@ const ECHART_INSTANCES = {};
 
 function echartsReady_(){ return typeof window !== 'undefined' && window.echarts; }
 
+// Studio's CSS uses body{zoom:0.9} below 1400px. ECharts reads mouse events in
+// pre-zoom internal coords but reads the chart's bounding rect in post-zoom CSS
+// pixels, so the axis pointer drifts ~(1-zoom) to the left/right of the cursor.
+// Applying the inverse zoom to the chart host cancels the parent's scaling for
+// just that subtree, which keeps event coords consistent. Re-evaluated on every
+// mount so it adapts to the responsive breakpoints.
+function compensateBodyZoom_(el){
+  const bodyZoom = parseFloat(getComputedStyle(document.body).zoom || '1') || 1;
+  const factor = bodyZoom && bodyZoom !== 1 ? (1 / bodyZoom) : 1;
+  el.style.zoom = factor === 1 ? '' : factor.toFixed(4);
+}
+
 function mountChart_(id, option){
   if(!echartsReady_()) return null;
   const el = document.getElementById(id);
   if(!el) return null;
+  compensateBodyZoom_(el);
   let inst = ECHART_INSTANCES[id];
   if(!inst || inst.isDisposed()){
     inst = window.echarts.init(el, null, { renderer:'svg' });
     ECHART_INSTANCES[id] = inst;
+  } else {
+    inst.resize();
   }
   inst.setOption(option, true);
   return inst;
@@ -117,8 +132,11 @@ function setAnalyticsSubtab(name){
 }
 
 window.addEventListener('resize', () => {
-  Object.values(ECHART_INSTANCES).forEach(inst => {
-    if(inst && !inst.isDisposed()) inst.resize();
+  Object.entries(ECHART_INSTANCES).forEach(([id, inst]) => {
+    if(!inst || inst.isDisposed()) return;
+    const el = document.getElementById(id);
+    if(el) compensateBodyZoom_(el);
+    inst.resize();
   });
 });
 
