@@ -1495,9 +1495,11 @@ async function loadLiveAnalytics(){
     window._growthRowsCache = { analytics: analyticsRows, used: usedRows };
     window._usedRowsCache   = usedRows;
     window._reactionsCache  = reactionsRows;
+    window._feedbackCache   = feedbackRows;
     window._dashRowsCache   = dashRows;
 
     // Overview
+    if(typeof renderInsights === 'function') renderInsights();  // insights & suggested actions
     renderLiveOverview(dashRows);         // → KPI strip (04-audit-analytics-live.js)
     renderLiveGrowth(CURRENT_GROWTH_BUCKET); // → ECharts growth line
     renderLiveScorecard(dashRows);

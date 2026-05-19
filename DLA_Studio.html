@@ -417,6 +417,16 @@
         <!-- ===================== OVERVIEW ===================== -->
         <div class="analytics-subpanel" data-subpanel="overview" style="display:block">
 
+          <!-- Insights & suggested actions -->
+          <div class="card analytics-card insights-card" style="margin-bottom:14px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;flex-wrap:wrap">
+              <span class="label" style="margin:0;color:#A78BFA">💡 insights &amp; suggested actions</span>
+              <span id="live-insights-count" style="font-size:11px;color:var(--dim);font-weight:600;margin-left:auto"></span>
+            </div>
+            <p class="card-hint">Auto-generated from the latest sheet snapshot. Heuristics meant to prompt conversation, not directives — sense-check before acting.</p>
+            <div id="live-insights"></div>
+          </div>
+
           <!-- KPI strip -->
           <div id="live-kpi-strip" class="kpi-strip"></div>
 

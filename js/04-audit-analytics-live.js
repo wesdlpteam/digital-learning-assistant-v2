@@ -174,6 +174,219 @@ function teamUniverse_(){
   return set;
 }
 
+/* ---------- Insights (Overview) ----------
+   Rule-based, deterministic, free. Each rule produces zero or one card.
+   Order matters — the most important / actionable ones come first so the
+   grid layout puts them top-left. Keep each card body ≤ 200 chars so
+   leadership can skim five of them in a glance. */
+function renderInsights(){
+  const el = document.getElementById('live-insights'); if(!el) return;
+  const countEl = document.getElementById('live-insights-count');
+
+  const cache         = window._growthRowsCache || {};
+  const analyticsRows = cache.analytics || [];
+  const usedRows      = cache.used      || window._usedRowsCache || [];
+  const reactionsRows = window._reactionsCache || [];
+  const feedbackRows  = window._feedbackCache  || [];
+
+  const since7  = daysAgo_(7);
+  const since14 = daysAgo_(14);
+  const since30 = daysAgo_(30);
+
+  const viewDates = analyticsRows.slice(1).map(r => analyticsDate_(r[0])).filter(Boolean);
+  const usedEvents = usedRows.slice(1)
+    .filter(r => r && (r[1] || (r[2] && r[3])))
+    .map(r => ({
+      ts: analyticsDate_(r[0]),
+      team: String(r[1]||'').trim() || `${String(r[2]||'').trim()} ${String(r[3]||'').trim()} Team`,
+      campus: String(r[2]||'').trim(),
+      year:   String(r[3]||'').trim(),
+      tool:   (typeof normaliseToolName === 'function') ? normaliseToolName(String(r[5]||'').trim()) : String(r[5]||'').trim()
+    }));
+
+  const ins = [];
+
+  // ---- 1. Weekly velocity ----
+  const viewsThisWk = viewDates.filter(d => d >= since7).length;
+  const viewsPrevWk = viewDates.filter(d => d >= since14 && d < since7).length;
+  const growthPct   = viewsPrevWk > 0 ? Math.round(((viewsThisWk - viewsPrevWk) / viewsPrevWk) * 100) : null;
+
+  if(growthPct !== null && Math.abs(growthPct) >= 15){
+    ins.push({
+      icon: growthPct > 0 ? '📈' : '📉',
+      tone: growthPct > 0 ? 'positive' : 'warning',
+      title: growthPct > 0
+        ? `Views are up ${growthPct}% this week`
+        : `Views are down ${Math.abs(growthPct)}% this week`,
+      body: growthPct > 0
+        ? `${viewsThisWk} unit views in the last 7 days vs ${viewsPrevWk} the prior week. Good moment to surface success stories in the next staff comms.`
+        : `Engagement dipped from ${viewsPrevWk} to ${viewsThisWk} unit views. Consider a short "have you tried…" nudge to quieter teams.`
+    });
+  } else if(viewDates.length > 50 && viewsThisWk === 0){
+    ins.push({
+      icon: '⚠️', tone: 'warning',
+      title: 'No views logged this week',
+      body: 'The DLA had no recorded page views in the last 7 days. Worth confirming the public site is reachable and the link is visible to teachers.'
+    });
+  }
+
+  // ---- 2. Quiet campuses ----
+  const lastSeenByCampus = {};
+  usedEvents.forEach(e => {
+    if(!e.ts || !e.campus) return;
+    const key = e.campus.replace(/ Rd$/i, ' Rd');
+    if(!lastSeenByCampus[key] || e.ts > lastSeenByCampus[key]) lastSeenByCampus[key] = e.ts;
+  });
+  const knownCampuses = ['Elsternwick','Glen Waverley','St Kilda Rd'];
+  const quiet = knownCampuses.filter(c => {
+    const last = lastSeenByCampus[c] || lastSeenByCampus[c.replace(' Rd','')];
+    return !last || last < since14;
+  });
+  if(quiet.length && usedEvents.length > 0){
+    ins.push({
+      icon: '🔕', tone: 'warning',
+      title: `${quiet.length === 3 ? 'All campuses' : quiet.join(' + ')} quiet for 2+ weeks`,
+      body: `No "I Used This" clicks recently from ${quiet.join(', ')}. A short check-in or recap email often re-activates teams that have drifted.`,
+      action: { label: 'See click audit', target: 'feedback' }
+    });
+  }
+
+  // ---- 3. Worst-rated tool with enough reactions to be reliable ----
+  const reactions = (typeof parseReactionRows === 'function') ? parseReactionRows(reactionsRows) : [];
+  const reactCounts = {};
+  reactions.forEach(ev => {
+    const key = ev.tool || ev.rawTool; if(!key) return;
+    if(!reactCounts[key]) reactCounts[key] = { up:0, down:0 };
+    if(ev.reaction === 'up')   reactCounts[key].up++;
+    if(ev.reaction === 'down') reactCounts[key].down++;
+  });
+  const worst = Object.entries(reactCounts)
+    .map(([t,c]) => ({ tool:t, up:c.up, down:c.down, total:c.up+c.down, approval: (c.up+c.down) ? c.up/(c.up+c.down) : 1 }))
+    .filter(r => r.total >= 3 && r.approval < 0.5)
+    .sort((a,b) => b.down - a.down)[0];
+  if(worst){
+    ins.push({
+      icon: '👎', tone: 'warning',
+      title: `${worst.tool} has ${Math.round(worst.approval*100)}% approval`,
+      body: `${worst.total} teachers reacted (${worst.down} 👎, ${worst.up} 👍). Highest-priority candidate for rewriting or replacing in the suggestion library.`,
+      action: { label: 'Open review queue', target: 'feedback' }
+    });
+  }
+
+  // ---- 4. Dead suggestions ----
+  const usageCount = {};
+  usedEvents.forEach(e => { if(e.tool) usageCount[e.tool] = (usageCount[e.tool]||0) + 1; });
+  const suggestedCount = {};
+  if(typeof DATA !== 'undefined' && Array.isArray(DATA)){
+    DATA.forEach(entry => {
+      if(!entry || !entry.audited) return;
+      const sugs = (typeof getSugs === 'function') ? getSugs(entry) : (entry.sg || []);
+      sugs.forEach(s => {
+        const raw = s && s.t ? s.t.trim() : '';
+        const tool = (typeof normaliseToolName === 'function') ? normaliseToolName(raw) : raw;
+        if(tool) suggestedCount[tool] = (suggestedCount[tool]||0) + 1;
+      });
+    });
+  }
+  const deadList = Object.entries(suggestedCount)
+    .filter(([t, n]) => n >= 5 && !usageCount[t])
+    .sort((a,b) => b[1] - a[1]);
+  if(deadList.length >= 3){
+    const worstThree = deadList.slice(0,3).map(([t]) => t).join(', ');
+    ins.push({
+      icon: '🪦', tone: 'neutral',
+      title: `${deadList.length} tools suggested but never used`,
+      body: `Top offenders: ${worstThree}. These appear 5+ times in the suggestion library with zero confirmed uses — strong candidates for a Bulk AI Edit refresh.`,
+      action: { label: 'See dead list', target: 'engagement' }
+    });
+  }
+
+  // ---- 5. Champion team ----
+  const teamCounts = {};
+  usedEvents.forEach(e => { teamCounts[e.team] = (teamCounts[e.team]||0) + 1; });
+  const teamList = Object.entries(teamCounts).sort((a,b) => b[1] - a[1]);
+  if(teamList.length >= 4){
+    const [topTeam, topCount] = teamList[0];
+    const median = teamList[Math.floor(teamList.length/2)][1] || 1;
+    if(topCount >= median * 2 && topCount >= 5){
+      ins.push({
+        icon: '🌟', tone: 'positive',
+        title: `${topTeam} is leading on adoption`,
+        body: `${topCount} confirmed uses — ${(topCount/median).toFixed(1)}× the median team. Worth a conversation about what's working and sharing it back to peers.`
+      });
+    }
+  }
+
+  // ---- 6. Reach gap (campuses with views but no uses) ----
+  // Counts views-per-campus to compare against use-per-campus.
+  const viewsByCampus = {}, usesByCampus = {};
+  analyticsRows.slice(1).forEach(r => {
+    const c = String(r[3]||'').trim();
+    if(!c) return;
+    const d = analyticsDate_(r[0]);
+    if(d && d >= since30) viewsByCampus[c] = (viewsByCampus[c]||0) + 1;
+  });
+  usedEvents.forEach(e => {
+    if(!e.ts || e.ts < since30 || !e.campus) return;
+    usesByCampus[e.campus] = (usesByCampus[e.campus]||0) + 1;
+  });
+  const reachGap = Object.entries(viewsByCampus)
+    .filter(([c, v]) => v >= 20 && !(usesByCampus[c] || usesByCampus[c.replace(' Rd','')] || usesByCampus[c + ' Rd']))
+    .sort((a,b) => b[1] - a[1])[0];
+  if(reachGap){
+    ins.push({
+      icon: '🪞', tone: 'warning',
+      title: `${reachGap[0]} viewing without converting`,
+      body: `${reachGap[1]} unit views from ${reachGap[0]} in the last 30 days but zero "I Used This" clicks. The suggestions may be browsed but not acted on — worth a workshop or follow-up.`,
+      action: { label: 'See adoption tab', target: 'adoption' }
+    });
+  }
+
+  // ---- 7. Conversion rate baseline ----
+  const totalSug = Object.values(suggestedCount).reduce((a,b)=>a+b,0);
+  const totalUse = Object.values(usageCount).reduce((a,b)=>a+b,0);
+  if(totalSug > 50 && totalUse > 0){
+    const conv = (totalUse / totalSug) * 100;
+    if(conv < 3){
+      ins.push({
+        icon: '🔬', tone: 'neutral',
+        title: `Suggestion-to-use conversion: ${conv.toFixed(1)}%`,
+        body: `Only a small fraction of AI suggestions translate to confirmed uses. Normal early on, but if it stays under 3% the suggestions may not match how teachers plan — worth a small qualitative dive into the feedback log.`
+      });
+    }
+  }
+
+  // ---- 8. Healthy baseline (only if nothing else fired) ----
+  if(!ins.length){
+    if(usedEvents.length === 0){
+      ins.push({
+        icon: '👋', tone: 'neutral',
+        title: 'Waiting for the first signal',
+        body: 'No teachers have clicked "I Used This" yet. Once a few teams start engaging, this panel will surface trends, gaps, and quick wins automatically.'
+      });
+    } else {
+      ins.push({
+        icon: '✅', tone: 'positive',
+        title: 'Nothing urgent right now',
+        body: 'No engagement dips, low-approval tools, or quiet campuses detected. Keep the momentum — surface a recent win or success story in the next staff comms.'
+      });
+    }
+  }
+
+  // Render
+  if(countEl) countEl.textContent = `${ins.length} insight${ins.length === 1 ? '' : 's'}`;
+  el.innerHTML = `<div class="insights-grid">` + ins.map(i => `
+    <div class="insight-card insight-${i.tone}">
+      <div class="insight-head">
+        <span class="insight-icon">${esc(i.icon)}</span>
+        <span class="insight-title">${esc(i.title)}</span>
+      </div>
+      <div class="insight-body">${esc(i.body)}</div>
+      ${i.action ? `<button class="insight-action" onclick="setAnalyticsSubtab('${esc(i.action.target)}')">${esc(i.action.label)} →</button>` : ''}
+    </div>
+  `).join('') + `</div>`;
+}
+
 /* ---------- KPI strip (Overview) ---------- */
 function renderKpiStrip(dashRows, usedRows, analyticsRows){
   const el = document.getElementById('live-kpi-strip'); if(!el) return;

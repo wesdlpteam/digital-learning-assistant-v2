@@ -213,3 +213,59 @@
   border-color:rgba(255,128,128,0.35) !important;
   background:linear-gradient(135deg,rgba(255,128,128,.06),rgba(255,128,128,.01));
 }
+
+/* Insights panel */
+.insights-card{
+  border-color:rgba(167,139,250,0.30) !important;
+  background:linear-gradient(135deg,rgba(167,139,250,.05),rgba(99,102,241,.02));
+}
+.insights-grid{
+  display:grid;gap:10px;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+}
+.insight-card{
+  background:linear-gradient(135deg,rgba(167,139,250,.08),rgba(99,102,241,.04));
+  border:1px solid rgba(167,139,250,.22);
+  border-radius:12px;padding:14px 16px;margin-bottom:0;
+}
+.insight-card.insight-positive{
+  background:linear-gradient(135deg,rgba(197,232,74,.10),rgba(82,185,92,.03));
+  border-color:rgba(197,232,74,.30);
+}
+.insight-card.insight-positive .insight-title{color:var(--lime)}
+.insight-card.insight-positive .insight-action{
+  background:rgba(197,232,74,.18);color:var(--lime);
+  border-color:rgba(197,232,74,.40);
+}
+.insight-card.insight-positive .insight-action:hover{background:rgba(197,232,74,.30)}
+.insight-card.insight-warning{
+  background:linear-gradient(135deg,rgba(245,166,35,.10),rgba(255,128,128,.03));
+  border-color:rgba(245,166,35,.30);
+}
+.insight-card.insight-warning .insight-title{color:#F5A623}
+.insight-card.insight-warning .insight-action{
+  background:rgba(245,166,35,.18);color:#F5A623;
+  border-color:rgba(245,166,35,.40);
+}
+.insight-card.insight-warning .insight-action:hover{background:rgba(245,166,35,.30)}
+.insight-card.insight-neutral .insight-title{color:#A78BFA}
+.insight-head{
+  display:flex;align-items:center;gap:8px;margin-bottom:6px;
+}
+.insight-icon{font-size:18px;line-height:1}
+.insight-title{
+  font-size:13px;font-weight:800;color:#A78BFA;
+  line-height:1.35;letter-spacing:-.1px;
+}
+.insight-body{
+  font-size:12.5px;color:var(--text);line-height:1.55;
+  opacity:.92;
+}
+.insight-action{
+  display:inline-block;margin-top:10px;padding:5px 12px;
+  background:rgba(167,139,250,.18);color:#A78BFA;
+  border:1px solid rgba(167,139,250,.40);border-radius:6px;
+  font-size:11px;font-weight:700;cursor:pointer;text-decoration:none;
+  font-family:inherit;transition:background .12s;
+}
+.insight-action:hover{background:rgba(167,139,250,.32)}
