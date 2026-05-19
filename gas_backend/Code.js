@@ -339,6 +339,11 @@ function suggestTechForPlanner_(args) {
     return { error: 'suggestTech requires ca, yl, th, and tool' };
   }
 
+  // index.html surfaces the campus as "St Kilda Rd", but data.json + campusMap
+  // use the short form "St Kilda". Canonicalise here so the rest of the path
+  // (campusMap lookup + e.ca match in loadPlannerContextForUnit_) just works.
+  if (/^st\s*kilda(\s*(rd|road))?$/i.test(ca)) ca = 'St Kilda';
+
   var approved = getApprovedToolNames_();
   if (approved.length && !approved.some(function(t) { return t.toLowerCase() === tool.toLowerCase(); })) {
     return { error: 'Tool not on approved list: ' + tool };
