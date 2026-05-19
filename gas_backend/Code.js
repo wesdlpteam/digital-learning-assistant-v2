@@ -2515,18 +2515,82 @@ function resetMakerspaceFlags(filterCa, filterYl) {
   return { message: `Reset ${count} flags. Run Reboot Makerspace next.`, reset: count };
 }
 
-// One-click full refresh: wipes every stemRebooted flag + MAKERSPACE_MEMORY,
-// then installs a 10-minute trigger that processes 4 units per tick and
-// self-deletes when there's nothing left to do. Click Run on this function
-// once and walk away — the whole catalogue gets a fresh catchy Makerspace
-// project. Suggestions 1-5 are never touched.
-function kickoffFullMakerspaceReboot() {
-  Logger.log('=== KICKOFF: full makerspace reboot ===');
-  PropertiesService.getScriptProperties().deleteProperty('DLA_RESUME_TIME');
-  const resetResult = resetMakerspaceFlags();
-  Logger.log('Reset: ' + JSON.stringify(resetResult));
+// 2026-05-20: Free scan-and-restore. Walks every entry, and for any unit
+// where MAKERSPACE_MEMORY has a cached catchy project AND the current s[5]
+// doesn't match it, restores from memory. Catches drift the existing
+// rebootMakerspace heal misses (which only fires for !stemRebooted). Zero
+// OpenAI calls — safe to run on a frequent trigger.
+function healMakerspaceFromMemory() {
+  const props = PropertiesService.getScriptProperties();
+  const memString = props.getProperty('MAKERSPACE_MEMORY');
+  if (!memString) {
+    Logger.log('No MAKERSPACE_MEMORY — nothing to heal.');
+    return { healed: 0, message: 'No MAKERSPACE_MEMORY — nothing to heal.', units: [] };
+  }
+  const memory = JSON.parse(memString);
 
-  // Remove any existing tick triggers so we don't double up
+  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  const data = JSON.parse(file.getBlob().getDataAsString());
+  let healed = 0;
+  const healedSummary = [];
+
+  for (let i = 0; i < data.length; i++) {
+    const entry = data[i];
+    if (!entry.s || entry.s.length < 5) continue;
+    const key = `${entry.ca}_${entry.yl}_${entry.th}`;
+    const cached = memory[key];
+    if (!cached || !cached.t || !cached.d) continue;
+
+    const current = entry.s[5];
+    if (current && current.t === cached.t && current.d === cached.d) continue;
+
+    const firstFive = entry.s.slice(0, 5);
+    firstFive.push({ t: cached.t, d: cached.d });
+    data[i].s = firstFive;
+    data[i].stemRebooted = true;
+    healed++;
+    healedSummary.push(`[${entry.ca}] ${entry.yl} — ${entry.th} -> "${cached.t}"`);
+  }
+
+  if (healed > 0) {
+    file.setContent(JSON.stringify(data, null, 2));
+    Logger.log(`Healed ${healed} Makerspace suggestion(s) from memory:`);
+    healedSummary.forEach(l => Logger.log('  ' + l));
+    if (typeof pushToGitHub === 'function') pushToGitHub();
+  } else {
+    Logger.log('No Makerspace drift detected — nothing to heal.');
+  }
+
+  return { healed: healed, message: `Healed ${healed} Makerspace project${healed !== 1 ? 's' : ''} from memory.`, units: healedSummary };
+}
+
+// Idempotent: installs a daily 4am trigger that runs healMakerspaceFromMemory.
+// Removes any existing heal trigger first so repeat runs don't pile up.
+function installMakerspaceHealTrigger() {
+  ScriptApp.getProjectTriggers().forEach(t => {
+    if (t.getHandlerFunction() === 'healMakerspaceFromMemory') ScriptApp.deleteTrigger(t);
+  });
+  ScriptApp.newTrigger('healMakerspaceFromMemory').timeBased().everyDays(1).atHour(4).create();
+  Logger.log('Installed daily Makerspace heal trigger at 4am.');
+  return { message: 'Daily Makerspace heal trigger installed at 4am.' };
+}
+
+// 2026-05-20: Now an INCREMENTAL improver, not a full wipe. Heals any
+// clobbered units from memory (free) and then installs a 10-minute trigger
+// that generates catchy Makerspace projects only for units that have NEVER
+// been rebooted (audited && !stemRebooted). Already-improved units are left
+// untouched — no MAKERSPACE_MEMORY wipe, no flag reset. Trigger self-deletes
+// when nothing remains. Suggestions 1-5 are never touched.
+// To force a full regenerate from scratch, call resetMakerspaceFlags() first.
+function kickoffFullMakerspaceReboot() {
+  Logger.log('=== KICKOFF: improve old Makerspace versions ===');
+  PropertiesService.getScriptProperties().deleteProperty('DLA_RESUME_TIME');
+
+  // 1. Free heal pass: restore any drifted projects from memory
+  const healResult = healMakerspaceFromMemory();
+  Logger.log('Heal: ' + JSON.stringify({ healed: healResult.healed }));
+
+  // 2. Remove any existing tick triggers so we don't double up
   ScriptApp.getProjectTriggers().forEach(t => {
     if (t.getHandlerFunction() === 'makerspaceRebootTick') ScriptApp.deleteTrigger(t);
   });
@@ -2534,9 +2598,12 @@ function kickoffFullMakerspaceReboot() {
   ScriptApp.newTrigger('makerspaceRebootTick').timeBased().everyMinutes(10).create();
   Logger.log('Trigger installed: makerspaceRebootTick every 10 minutes.');
 
-  // Run one tick immediately so the user sees progress without waiting 10 min
+  // 3. Run one tick immediately so progress is visible without waiting
   makerspaceRebootTick();
-  return { message: 'Kicked off. First batch running now; trigger will continue every 10 min until done.' };
+  return {
+    message: `Kicked off. Healed ${healResult.healed} from memory; trigger will generate catchy versions for any un-rebooted units (4 per 10 min).`,
+    healed: healResult.healed
+  };
 }
 
 function makerspaceRebootTick() {
