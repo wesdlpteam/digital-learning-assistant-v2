@@ -176,17 +176,51 @@ function loadSnapshots(){
   } catch(e){ SNAPSHOTS = []; }
 }
 function saveSnapshotsToStorage(){
-  try {
-    if(SNAPSHOTS.length > MAX_SNAPSHOTS) SNAPSHOTS = SNAPSHOTS.slice(0, MAX_SNAPSHOTS);
-    localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(SNAPSHOTS));
-  } catch(e){ console.warn('Snapshot save failed:', e.message); }
+  if(SNAPSHOTS.length > MAX_SNAPSHOTS) SNAPSHOTS = SNAPSHOTS.slice(0, MAX_SNAPSHOTS);
+  // Try to save; if localStorage quota is exceeded, drop the oldest snapshot
+  // and retry until it fits. Previously this swallowed quota errors silently,
+  // which left new snapshots in memory but never persisted (so the panel only
+  // showed entries from before data.json grew past the per-origin quota).
+  while(SNAPSHOTS.length){
+    try {
+      localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(SNAPSHOTS));
+      return;
+    } catch(e){
+      const quota = /quota|maximum.*storage|exceeded|NS_ERROR_DOM_QUOTA/i.test((e && (e.name + ' ' + e.message)) || '');
+      if(!quota){ console.warn('Snapshot save failed:', e.message); return; }
+      const removed = SNAPSHOTS.pop();
+      console.warn('Snapshot quota exceeded; dropped oldest snapshot to make room:', removed && removed.name);
+    }
+  }
+}
+function entrySnapshotKey_(e){
+  if(!e) return '';
+  // Prefer a stable id if entries carry one; otherwise compose from the unit
+  // identity fields. ca|yl|th is unique per planner entry in this corpus.
+  if(e.id) return 'id:' + String(e.id);
+  if(e._id) return 'id:' + String(e._id);
+  return [e.ca || '', e.yl || '', e.th || ''].join('|');
 }
 function createSnapshot(name){
+  // Only the suggestions field (`s`) changes between snapshots in practice.
+  // Persisting just that field per entry keeps a 20-snapshot history well
+  // under the ~5-10MB localStorage cap, even with a multi-MB data.json.
+  const sByKey = {};
+  let dropped = 0;
+  for(const e of DATA){
+    const key = entrySnapshotKey_(e);
+    if(!key){ dropped++; continue; }
+    if(Object.prototype.hasOwnProperty.call(sByKey, key)){ dropped++; continue; }
+    sByKey[key] = JSON.parse(JSON.stringify(e.s || []));
+  }
+  if(dropped) console.warn('createSnapshot: skipped', dropped, 'entries (missing or duplicate key)');
   const snap = {
     id: 's_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
     name: name || ('Snapshot ' + new Date().toLocaleString('en-AU')),
     ts: Date.now(),
-    data: JSON.parse(JSON.stringify(DATA))
+    format: 'sugs-v1',
+    sByKey,
+    entryCount: Object.keys(sByKey).length
   };
   SNAPSHOTS.unshift(snap);
   saveSnapshotsToStorage();
@@ -195,12 +229,34 @@ function createSnapshot(name){
 function restoreSnapshot(id){
   const snap = SNAPSHOTS.find(s => s.id === id);
   if(!snap){ alert('Snapshot not found'); return; }
-  if(!confirm(`Restore "${snap.name}"?\n\nThis will replace the entire current library with the snapshot from ${new Date(snap.ts).toLocaleString('en-AU')}.\n\nA new snapshot of the CURRENT state will be saved first so you can re-undo.`)) return;
+  if(!confirm(`Restore "${snap.name}"?\n\nThis will replace the current suggestions with the snapshot from ${new Date(snap.ts).toLocaleString('en-AU')}.\n\nA new snapshot of the CURRENT state will be saved first so you can re-undo.`)) return;
   createSnapshot('Before restoring: ' + snap.name);
-  DATA.length = 0;
-  snap.data.forEach(e => DATA.push(JSON.parse(JSON.stringify(e))));
+
+  if(snap.format === 'sugs-v1' && snap.sByKey){
+    // New compact format: patch the suggestions field per entry by key.
+    let restored = 0, missing = 0;
+    for(const entry of DATA){
+      const key = entrySnapshotKey_(entry);
+      const sugs = key && snap.sByKey[key];
+      if(sugs){
+        entry.s = JSON.parse(JSON.stringify(sugs));
+        restored++;
+      } else {
+        missing++;
+      }
+    }
+    setStatus(`Restored snapshot: ${snap.name} (${restored} entries restored${missing ? `, ${missing} not in snapshot` : ''})`);
+  } else if(Array.isArray(snap.data)){
+    // Legacy full-DATA format — pre-2026-05-20 snapshots still restore.
+    DATA.length = 0;
+    snap.data.forEach(e => DATA.push(JSON.parse(JSON.stringify(e))));
+    setStatus(`Restored snapshot: ${snap.name}`);
+  } else {
+    alert('Snapshot is in an unrecognised format and cannot be restored.');
+    return;
+  }
+
   saveToDrive();
-  setStatus(`Restored snapshot: ${snap.name}`);
   if(typeof renderBrowse === 'function') renderBrowse();
   if(typeof renderAuditChart === 'function') renderAuditChart();
   if(typeof renderBulkWelcome === 'function') renderBulkWelcome();
@@ -231,7 +287,9 @@ function renderSnapshotsList(){
   container.innerHTML = SNAPSHOTS.map(snap => {
     const age = Math.round((Date.now() - snap.ts) / 60000);
     const ageStr = age < 1 ? 'just now' : age < 60 ? age + 'm ago' : age < 1440 ? Math.round(age/60) + 'h ago' : Math.round(age/1440) + 'd ago';
-    const entryCount = (snap.data || []).length;
+    const entryCount = typeof snap.entryCount === 'number'
+      ? snap.entryCount
+      : (snap.sByKey ? Object.keys(snap.sByKey).length : (snap.data || []).length);
     return `<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card2);border:1px solid var(--border);border-radius:10px;margin-bottom:6px">
       <span style="font-size:16px">📸</span>
       <div style="flex:1;min-width:0">
