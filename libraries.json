@@ -20,6 +20,7 @@
         "Geoboard",
         "Google Maps",
         "iMovie",
+        "insta360 camera",
         "iPad",
         "Kahoot",
         "Lego Spike Prime",
@@ -236,6 +237,10 @@
           "max": 6
         },
         "animating a character with adobe express": {
+          "min": 0,
+          "max": 6
+        },
+        "insta360 camera": {
           "min": 0,
           "max": 6
         }
