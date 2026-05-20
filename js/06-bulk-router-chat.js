@@ -2043,7 +2043,7 @@ async function refreshOnePlannerContext(entry){
     Array.from(panel.querySelectorAll('.card')).forEach(card => {
       if(card.id === 'realism-audit-card') return;
       const txt = (card.textContent || '').toLowerCase().replace(/\s+/g,' ');
-      if(txt.includes('snapshots & undo') || txt.includes('playbooks') || txt.includes('side-by-side campus comparison') || txt.includes('run surgeon')){
+      if(txt.includes('playbooks') || txt.includes('side-by-side campus comparison') || txt.includes('run surgeon')){
         card.style.display = 'none';
         card.setAttribute('data-bulk-quick-actions-hidden','true');
       }
