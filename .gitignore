@@ -11,3 +11,7 @@ Thumbs.db
 
 # Claude Code workspace state
 .claude/
+
+# Local data.json / libraries.json backups (timestamped, auto-generated)
+data.json.bak-*
+libraries.json.bak-*
