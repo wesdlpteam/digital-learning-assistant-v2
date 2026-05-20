@@ -4,6 +4,7 @@
       "approved": [
         "3D Printers",
         "Adobe Express",
+        "Animating a Character with Adobe Express",
         "Beebots",
         "Book Creator",
         "Brushes Redux",
@@ -232,6 +233,10 @@
         },
         "national geographic mapmaker": {
           "min": 3,
+          "max": 6
+        },
+        "animating a character with adobe express": {
+          "min": 0,
           "max": 6
         }
       }
