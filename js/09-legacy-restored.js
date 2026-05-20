@@ -3336,15 +3336,15 @@ async function buildNamedToolOpportunityChange_(entryIdx, slot, targetTool, inst
   const oldTool = sugTool(currentSug);
   const oldDesc = sugDesc(currentSug);
   const existingTools = getSugs(entry).map((s,i)=>i===slot.sugIdx?null:sugTool(s)).filter(Boolean).join(', ');
+  const plannerCtx = entry.plannerContextRich || entry.plannerText || '';
   const prompt = `You are a Digital Learning Coach at Wesley College.
 
-Task: add a stronger opportunity to use the named tool: ${targetTool}.
-Use ONLY this tool in the "t" field: ${targetTool}
+Task: add a strong opportunity to use the named tool: ${targetTool}.
 
 Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"
 Central Idea: ${entry.ci || ''}
 Lines of Inquiry: ${entry.lo || ''}
-Planner summary: ${entry.plannerText ? compactForPrompt(entry.plannerText, 900) : ''}
+Planner context: ${plannerCtx ? plannerCtx.slice(0, 1500) : 'No planner context available.'}
 
 Current suggestion slot to replace:
 Tool: ${oldTool}
@@ -3352,44 +3352,64 @@ Description: ${oldDesc}
 
 Other tools already in this unit, do not duplicate: ${existingTools || 'none'}
 
-Hard rules:
-- Return exactly this tool name in "t": ${targetTool}
+Tool rules:
+- The "t" field MUST start with exactly: ${targetTool}
+- You MAY pair the target tool with ONE secondary tool when it genuinely strengthens the activity. Use the format: "${targetTool} + SecondaryTool" (e.g. "${targetTool} + Freeform"). The secondary must be a Wesley-approved tool that is age-appropriate for ${entry.yl} (good pairings include Freeform, Padlet, Book Creator, Canva, Seesaw, iMovie, GarageBand, PicCollage). Do not pair with any tool already listed above.
+- Otherwise return just "${targetTool}" in "t".
 - Do not target the STEM Design Cycle slot; this slot has already been selected from slots 0-4.
-- Write 2-3 practical classroom sentences.
-- Say exactly what students do, what students create/produce, and how it connects to this unit.
+
+Description rules:
+- Write 2-3 vivid practical sentences.
+- Name a specific student action and the concrete product/artefact they create.
+- Anchor the action to the planner content above — refer to the unit's specific topic, concepts, or learning goals by name (drawn from the planner context, central idea, and lines of inquiry) — but NEVER quote the central idea or lines of inquiry directly.
+- If pairing tools, briefly say how the two tools work together (e.g. one captures, the other displays/collects/extends).
 - If using robotics/hardware such as Lego Spike Prime, describe a real build/code/test action, not a metaphor.
 - Keep the wording clear for a primary teacher.
 ${SUGGESTION_STYLE}
 
-Return ONLY JSON: {"t":"${targetTool}","d":"2-3 vivid practical sentences."}`;
+Return ONLY JSON: {"t":"${targetTool}" OR "${targetTool} + Secondary","d":"2-3 vivid practical sentences anchored in the planner."}`;
 
+  const targetKey = toolInventoryKey(targetTool);
   let lastIssue = '';
   for(let attempt=0; attempt<3; attempt++){
     try{
-      const retry = lastIssue ? `\n\nRETRY because the previous answer was rejected: ${lastIssue}. Use exactly ${targetTool} and make the classroom action concrete.` : '';
+      const retry = lastIssue ? `\n\nRETRY because the previous answer was rejected: ${lastIssue}. Start "t" with exactly ${targetTool}, make the classroom action concrete, and anchor it to the planner above.` : '';
       const raw = await callAI([{role:'user', parts:[{text:prompt + retry}]}], null, OPENAI_FAST_MODEL || OPENAI_MODEL);
       const clean = raw.replace(/```json|```/g,'').trim();
       const si = clean.indexOf('{'), ei = clean.lastIndexOf('}');
       if(si === -1 || ei === -1) throw new Error('AI did not return JSON.');
       const parsed = JSON.parse(clean.slice(si, ei + 1));
-      const newTool = normaliseToolName(cleanSuggestionText_(parsed.t || parsed.tool || parsed.technology || targetTool));
+      const rawT = cleanSuggestionText_(parsed.t || parsed.tool || parsed.technology || targetTool);
       const newDesc = cleanSuggestionText_(parsed.d || parsed.desc || parsed.description || '');
-      if(toolInventoryKey(newTool) !== toolInventoryKey(targetTool)){ lastIssue = `it returned ${newTool} instead of ${targetTool}`; continue; }
+      // Accept "X" or "X + Y" where X canonically equals targetTool.
+      const parts = String(rawT).split(/\s*\+\s*/).map(s => normaliseToolName(s.trim())).filter(Boolean);
+      if(!parts.length || toolInventoryKey(parts[0]) !== targetKey){
+        lastIssue = `it returned ${rawT} instead of ${targetTool}`; continue;
+      }
+      const secondaries = parts.slice(1);
+      let secondaryIssue = '';
+      for(const sec of secondaries){
+        if(toolInventoryKey(sec) === targetKey){ secondaryIssue = `duplicated ${targetTool} as secondary`; break; }
+        if(!isAiToolSafeForEntry(sec, entry)){ secondaryIssue = `secondary tool ${sec} is not approved or age-appropriate for ${entry.yl}`; break; }
+      }
+      if(secondaryIssue){ lastIssue = secondaryIssue; continue; }
+      const finalTool = secondaries.length ? `${targetTool} + ${secondaries.join(' + ')}` : targetTool;
       if(!newDesc){ lastIssue = 'missing description'; continue; }
-      if(wouldDupeToolProposalInEntry(entry, newTool, slot.sugIdx)){ lastIssue = `${newTool} already exists in this unit`; continue; }
-      if(!isAiToolSafeForEntry(newTool, entry)){ lastIssue = `${newTool} is not age-appropriate or safe for ${entry.yl}`; continue; }
-      const realism = checkRealisticToolUse(newTool, newDesc, entry);
+      if(wouldDupeToolProposalInEntry(entry, finalTool, slot.sugIdx)){ lastIssue = `${finalTool} already exists in this unit`; continue; }
+      if(!isAiToolSafeForEntry(targetTool, entry)){ lastIssue = `${targetTool} is not age-appropriate or safe for ${entry.yl}`; continue; }
+      const realism = checkRealisticToolUse(targetTool, newDesc, entry);
       if(!realism.ok){ lastIssue = `realism check failed: ${realism.reason}`; continue; }
+      const multiNote = secondaries.length ? ` (paired with ${secondaries.join(', ')})` : '';
       return {
         entryIdx,
         sugIdx: slot.sugIdx,
-        t: targetTool,
+        t: finalTool,
         d: newDesc,
-        auditReason: `Named tool opportunity: adds ${targetTool} to a suitable ${entry.yl} unit. Replaces: ${oldTool}.`,
+        auditReason: `Named tool opportunity: adds ${finalTool} to a suitable ${entry.yl} unit. Replaces: ${oldTool}.`,
         auditSource: 'bulk-named-tool-opportunity',
         improvementConfidence: 'Named tool opportunity',
         improvementScore: 4,
-        whyBetter: `Uses the coordinator-requested tool (${targetTool}) in a unit where it can create a practical student product.`,
+        whyBetter: `Uses the coordinator-requested tool (${targetTool})${multiNote} in a unit where it can create a practical student product anchored in the planner.`,
         oldTool
       };
     }catch(err){
@@ -3470,38 +3490,21 @@ async function runBulkNamedToolOpportunityFlow_(instruction, completeData, prog,
   const changes = [];
   const failures = [];
 
-  // Patch 12 emergency hardening:
-  // Do NOT make one AI call per candidate in the named-tool opportunity flow.
-  // That was too fragile in-browser and could make the page appear to crash after a prompt like
-  // “find more opportunities to use Makey Makey”. Instead, produce deterministic review drafts
-  // locally, yield to the browser frequently, and let humans review before applying.
+  // AI-driven drafts with planner context. buildNamedToolOpportunityChange_ has its
+  // own retry + deterministic fallback so a single bad response will not abort the run.
+  // Sequential with sleep(350) between calls — same shape as runBulkSameToolDescriptionRewrite_,
+  // which has proven stable in-browser at this concurrency.
   for(let idx=0; idx<selected.length; idx++){
     const c = selected[idx];
     if(bar) bar.style.width = `${25 + Math.round(((idx+1)/selected.length)*65)}%`;
-    if(lbl) lbl.textContent = `${idx+1}/${selected.length}: preparing ${targetTool} review draft…`;
+    if(lbl) lbl.textContent = `${idx+1}/${selected.length}: drafting ${targetTool} opportunity…`;
     try{
-      const entry = DATA[c.entryIdx];
-      const oldSug = getSugs(entry)[c.slot.sugIdx] || {};
-      const oldTool = sugTool(oldSug);
-      const oldDesc = sugDesc(oldSug);
-      changes.push({
-        entryIdx: c.entryIdx,
-        sugIdx: c.slot.sugIdx,
-        t: targetTool,
-        d: fallbackNamedToolOpportunityDescription_(entry, targetTool),
-        auditReason: `Named tool opportunity: adds ${targetTool}. Replaces: ${oldTool}.`,
-        auditSource: 'bulk-named-tool-opportunity-local-draft',
-        improvementConfidence: 'Local deterministic draft — review carefully',
-        improvementScore: Math.max(3, Math.min(5, Math.round((c.score || 0) / 6))),
-        whyBetter: `Creates a new reviewable ${targetTool} opportunity in a unit that does not already contain ${targetTool}.`,
-        remainingConcern: 'Local draft only; check the unit fit and classroom practicality before applying.',
-        oldTool,
-        oldDesc
-      });
+      const change = await buildNamedToolOpportunityChange_(c.entryIdx, c.slot, targetTool, enrichedInstruction);
+      if(change) changes.push(change);
     }catch(err){
       failures.push({target:c, error:err.message || String(err)});
     }
-    if(idx % 2 === 1) await sleep(35);
+    if(idx < selected.length-1) await sleep(350);
   }
 
   if(bar) bar.style.width = '100%';
