@@ -26,8 +26,13 @@ function getGitHubToken_() {
   return getRequiredScriptProperty_('GITHUB_TOKEN');
 }
 
+// Canonical DLP staff allowlist. Must stay in sync with the Studio-side
+// list in js/02-ui-load-navigation.js — drift between the two lets a user
+// either be blocked client-side but accepted server-side, or vice versa.
+// 'dlpteam@wesleycollege.edu.au' was previously '@wesleycollege.net' — wrong
+// domain; the DLA cloud resources are owned by the .edu.au team account.
 const DLA_ALLOWED_EMAILS = [
-  'dlpteam@wesleycollege.net',
+  'dlpteam@wesleycollege.edu.au',
   'nathan.benn@wesleycollege.edu.au',
   'david.howard@wesleycollege.edu.au',
   'andrew.delmastro@wesleycollege.edu.au',
@@ -1278,7 +1283,9 @@ function pushToGitHub() {
     }
 
     const body = {
-      message: 'Auto-update data.json — ' + Utilities.formatDate(new Date(), 'GMT+10', 'dd MMM HH:mm'),
+      // Use the Melbourne IANA zone so the commit timestamp respects AEDT (DST).
+      // 'GMT+10' is off by an hour for ~half the year.
+      message: 'Auto-update data.json — ' + Utilities.formatDate(new Date(), 'Australia/Melbourne', 'dd MMM HH:mm'),
       content: base64Content,
       branch: GITHUB_BRANCH,
       sha: sha
@@ -1345,7 +1352,7 @@ function pushLibrariesToGitHub() {
       }
 
       const body = {
-        message: 'Auto-update libraries.json — ' + Utilities.formatDate(new Date(), 'GMT+10', 'dd MMM HH:mm'),
+        message: 'Auto-update libraries.json — ' + Utilities.formatDate(new Date(), 'Australia/Melbourne', 'dd MMM HH:mm'),
         content: base64Content,
         branch: GITHUB_BRANCH,
         sha: sha

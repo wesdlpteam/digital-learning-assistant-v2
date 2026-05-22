@@ -92,12 +92,17 @@ async function getDriveToken(){
       callback:async (resp)=>{
         if(resp.error){ reject(new Error(resp.error)); return; }
         
-        // STRICT EMAIL ALLOWLIST — only these 5 accounts can access DLA Studio.
-        // Case-insensitive match. Any failure (network, missing email, etc.) denies access.
+        // EMAIL ALLOWLIST — gate on the Studio screen so non-DLP staff get a clear
+        // "access denied" instead of an opaque Drive failure. Note: this is UX
+        // only — anyone can read this file and bypass it in DevTools. The real
+        // gate is gas_backend Code.js DLA_ALLOWED_EMAILS, which verifies the
+        // Google access token server-side. Keep this list in sync with that one.
         const ALLOWED_EMAILS = [
+          'dlpteam@wesleycollege.edu.au',
+          'nathan.benn@wesleycollege.edu.au',
           'david.howard@wesleycollege.edu.au',
           'andrew.delmastro@wesleycollege.edu.au',
-          'nathan.benn@wesleycollege.edu.au',
+          'delmastroa@wesleycollege.edu.au',
           'kathryn.white@wesleycollege.edu.au',
           'laura.sicklemore@wesleycollege.edu.au'
         ];
@@ -274,11 +279,6 @@ Save anyway?`);
 
   startProgress();
   try{
-    
-    const payload={...DATA};
-    if(Array.isArray(DATA)){
-      
-    }
     await fetch(`https://www.googleapis.com/upload/drive/v3/files/${DRIVE_FILE_ID}?uploadType=media`,{
       method:'PATCH',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+DRIVE_TOKEN},

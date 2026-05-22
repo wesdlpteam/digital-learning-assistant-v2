@@ -230,6 +230,9 @@ Return ONLY the JSON object, no markdown fences, no extra text.`;
         if (Array.isArray(sugs) && sugs[sw.sugIdx]) {
           sugs[sw.sugIdx] = { t: parsed.t, d: parsed.d };
           if (parsed.url) sugs[sw.sugIdx].url = parsed.url;
+          // If this entry was human-verified, clear the flag — the suggestion
+          // just changed, reviewers need to re-check it.
+          markEntryNeedsHumanRecheck_(sw.dataIdx, 'Tool swapped by diversity scanner');
           completed++;
         }
       }

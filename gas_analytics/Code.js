@@ -96,8 +96,12 @@ function doGet(e) {
   if (action === 'leaderboard') {
     const data = getLeaderboard_();
     if (params.callback) {
+      // Sanitise JSONP callback name — only allow JS-identifier-safe chars.
+      // Without this, any caller can inject arbitrary JS into the response body.
+      var cbSafe = String(params.callback).replace(/[^A-Za-z0-9_$.]/g, '');
+      if (!cbSafe) cbSafe = 'callback';
       return ContentService
-        .createTextOutput(params.callback + '(' + JSON.stringify(data) + ')')
+        .createTextOutput(cbSafe + '(' + JSON.stringify(data) + ');')
         .setMimeType(ContentService.MimeType.JAVASCRIPT);
     }
     return jsonResponse_(data);
@@ -268,9 +272,15 @@ function handleAnalyticsBatch_(ss, body) {
   }
 }
 
+const FEEDBACK_MAX_LEN = 5000;
+
 function handleFeedback_(ss, body) {
   const sheet = ensureSheet_(ss, SHEETS.FEEDBACK);
-  const feedback = clean_(body.feedback);
+  // Feedback gets its own larger cap (paragraphs are legitimate). Still defang
+  // formula prefixes and hard-cap so a single huge submission can't bloat the sheet.
+  let feedback = body.feedback == null ? '' : String(body.feedback).trim();
+  if (feedback && /^[=+\-@\t\r]/.test(feedback)) feedback = "'" + feedback;
+  if (feedback.length > FEEDBACK_MAX_LEN) feedback = feedback.slice(0, FEEDBACK_MAX_LEN);
   if (!feedback) return; // refuse empty rows — root cause of the 275 phantom rows
   const ts = new Date();
   const campus = clean_(body.campus);
@@ -465,9 +475,22 @@ function safeStringify_(o) {
   try { return JSON.stringify(o); } catch (_) { return String(o); }
 }
 
+// Hard cap for any single cell we write to the sheet. Stops a single
+// bad/malicious request bloating the spreadsheet (sheets cap individual
+// cells at 50 000 chars anyway, but well before that we lose readability
+// and quota). Feedback uses its own larger cap, set in handleFeedback_.
+const CELL_MAX_LEN = 500;
+
 function clean_(v) {
   if (v === undefined || v === null) return '';
-  return String(v).trim();
+  let s = String(v).trim();
+  // Defang spreadsheet-formula prefixes. Without this, a value like
+  // "=HYPERLINK("http://evil","Click me")" submitted as a campus/year/tool
+  // would execute as a formula when written to the sheet. Prepending a
+  // single quote tells Sheets to treat the cell as literal text.
+  if (s && /^[=+\-@\t\r]/.test(s)) s = "'" + s;
+  if (s.length > CELL_MAX_LEN) s = s.slice(0, CELL_MAX_LEN);
+  return s;
 }
 
 function jsonResponse_(obj) {

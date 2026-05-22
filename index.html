@@ -407,14 +407,16 @@ function linkifyDesc(text){
   // Fix corrupted em-dashes: '?' between non-whitespace chars should be ' — '
   // e.g. "Machines'?interactive" → "Machines' — interactive", "scenario?such" → "scenario — such"
   // Skip URLs so query-string '?' like "foo.com?q=x" isn't mangled.
-  var cleaned = text.replace(/(https?:\/\/\S+)|([^\s])\?([A-Za-z])/g, function(match, url, before, after){
+  var cleaned = String(text).replace(/(https?:\/\/\S+)|([^\s])\?([A-Za-z])/g, function(match, url, before, after){
     if(url) return url; // leave URLs alone
     return before + ' — ' + after;
   });
-  // Also fix double-? variants sometimes produced: "word??word" 
+  // Also fix double-? variants sometimes produced: "word??word"
   cleaned = cleaned.replace(/([^\s])\?\?([A-Za-z])/g, '$1 — $2');
-  // Linkify URLs
-  return cleaned.replace(/(https?:\/\/[^\s)]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:var(--ac);text-decoration:underline;text-decoration-color:#555;text-underline-offset:3px;word-break:break-all">$1</a>');
+  // Escape HTML BEFORE linkifying so AI-generated descriptions can't inject markup.
+  // URLs are matched against the escaped string — http:// and / survive escaping unchanged.
+  var escaped = cleaned.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return escaped.replace(/(https?:\/\/[^\s)]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer" style="color:var(--ac);text-decoration:underline;text-decoration-color:#555;text-underline-offset:3px;word-break:break-all">$1</a>');
 }
 
 const HT={
@@ -1653,12 +1655,12 @@ h+='<div class="uc" style="background:'+tc+';color:'+(TTX[u.th]||"#FFF")+'" oncl
 else if(v==="detail"){
 const us=gu(ca,yl),u=us[ui];if(!u){S.v='units';S.ui=null;R();return;}const tc=TC[u.th]||"#888";const em=TE[u.th]||"💡";
 
-h+='<div class="dh" style="background:'+tc+';color:'+(TTX[u.th]||"#FFF")+'">'+'<div class="dh-wm">'+em+'</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;position:relative;z-index:1"><span class="tag-t">'+yl+'</span><span class="tag-t">'+CN[ca]+'</span></div><h2 class="dh-title" style="position:relative;z-index:1">'+u.th+'</h2>'+(u.ci?'<div class="dh-ci" style="position:relative;z-index:1">“'+u.ci+'”</div>':'')+'</div>';
+h+='<div class="dh" style="background:'+tc+';color:'+(TTX[u.th]||"#FFF")+'">'+'<div class="dh-wm">'+em+'</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;position:relative;z-index:1"><span class="tag-t">'+escapeHtml(yl)+'</span><span class="tag-t">'+escapeHtml(CN[ca])+'</span></div><h2 class="dh-title" style="position:relative;z-index:1">'+escapeHtml(u.th)+'</h2>'+(u.ci?'<div class="dh-ci" style="position:relative;z-index:1">“'+escapeHtml(u.ci)+'”</div>':'')+'</div>';
 
 if(u.lo && String(u.lo).trim()){
 h+='<div class="loi-box"><div class="loi-label">Lines of Inquiry</div>';
 var lois=splitLinesOfInquiry(u.lo);
-lois.forEach((l,i)=>{l=l.trim();if(l)h+='<div class="loi-item"><span class="loi-num" style="color:'+tc+'">0'+(i+1)+'</span>'+l+'</div>';});
+lois.forEach((l,i)=>{l=l.trim();if(l)h+='<div class="loi-item"><span class="loi-num" style="color:'+tc+'">0'+(i+1)+'</span>'+escapeHtml(l)+'</div>';});
 h+='</div>';
 }
 
@@ -1671,7 +1673,8 @@ window._sid=0;window._aid=0;window._wid=0;window._copilotData=[];
 if(stemSug && stemSug.t && stemSug.t.indexOf("Planner Needed")===-1){
   var stemTool=stemSug.t;var stemDesc=stemSug.d;
   var stemUrl=TU[stemTool.split(' + ')[0].trim()]||'';
-  var stemToolLabel=stemUrl?'<a href="'+stemUrl+'" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline;text-decoration-color:#55555555;text-underline-offset:3px" onclick="event.stopPropagation()">'+stemTool+'</a>':stemTool;
+  var stemToolEsc=escapeHtml(stemTool);
+  var stemToolLabel=stemUrl?'<a href="'+escapeHtml(stemUrl)+'" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline;text-decoration-color:#55555555;text-underline-offset:3px" onclick="event.stopPropagation()">'+stemToolEsc+'</a>':stemToolEsc;
   
   if(!window._fbData)window._fbData=[];var _stemFbi=window._fbData.length;window._fbData.push({campus:CN[ca],year:yl,theme:u.th,tool:stemTool,phase:'STEM Design Cycle'});
   if(!window._usedData)window._usedData=[];var _stemUsi=window._usedData.length;window._usedData.push({campus:CN[ca],year:yl,theme:u.th,tool:stemTool,phase:'STEM Design Cycle'});
@@ -1683,7 +1686,7 @@ if(stemSug && stemSug.t && stemSug.t.indexOf("Planner Needed")===-1){
   window._stemData = {tool:stemTool, toolLabel:stemToolLabel, desc:stemDesc, va:stemVa, fbi:_stemFbi, usi:_stemUsi, valueLabel:I.s, cpi:_stemCpi};
   
   // Inline teaser only - modal is created on demand, attached to body
-  h+='<div class="stem-prompt" onclick="openStem()"><div class="stem-prompt-icon">🔬</div><div class="stem-prompt-text"><div class="stem-prompt-title">Hands-on STEM activity available</div><div class="stem-prompt-sub">Tap to reveal → '+stemTool+'</div></div><div class="stem-prompt-arrow">→</div></div>';
+  h+='<div class="stem-prompt" onclick="openStem()"><div class="stem-prompt-icon">🔬</div><div class="stem-prompt-text"><div class="stem-prompt-title">Hands-on STEM activity available</div><div class="stem-prompt-sub">Tap to reveal → '+stemToolEsc+'</div></div><div class="stem-prompt-arrow">→</div></div>';
 }
 
 mainSugs.forEach((s,si)=>{
@@ -1691,7 +1694,8 @@ if(s.t.indexOf("Planner Needed")!==-1){var tmsg=encodeURIComponent("Hi Nathan, I
 const j=gS(s.t,s.d),va=gA(s.t,s.d);
 const tl=s.t.split(/[,&+]| and /).map(t=>t.trim()).filter(Boolean);
 var primaryTool=s.t.split(' + ')[0].trim();var turl=TU[primaryTool]||'';
-var toolLabel=turl?'<a href="'+turl+'" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline;text-decoration-color:#555;text-underline-offset:3px">'+s.t+'</a>':s.t;
+var sTEsc=escapeHtml(s.t);
+var toolLabel=turl?'<a href="'+escapeHtml(turl)+'" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline;text-decoration-color:#555;text-underline-offset:3px">'+sTEsc+'</a>':sTEsc;
 var phaseLabel="Suggestion";
 h+='<div class="sg"><div class="sg-head"><div class="sg-icon" style="background:'+tc+'">'+em+'</div><div class="sg-meta"><div class="sg-type">'+'Idea #'+(si+1)+' of '+mainSugs.length+'</div><div class="sg-tool">'+toolLabel+'</div></div></div><div class="sg-body">';
 h+='<div class="sg-desc">'+linkifyDesc(s.d)+'</div>';
@@ -2232,7 +2236,7 @@ function closeStem(){
 function tgATL(el,id){var d=document.getElementById("ad_"+id);var p=document.getElementById("ap_"+id);if(d.classList.contains("open")){d.classList.remove("open");p.classList.remove("open")}else{d.classList.add("open");p.classList.add("open")}}
 function tgCur(el,id){var d=document.getElementById("d_"+id);var p=document.getElementById("p_"+id);if(d.classList.contains("open")){d.classList.remove("open");p.classList.remove("open")}else{d.classList.add("open");p.classList.add("open")}}
 var _fbCurrent='';
-function openFB(idx){_fbCurrent=window._fbData[idx]||{};var ctx=(_fbCurrent.campus||'')+' · '+(_fbCurrent.year||'')+' · '+(_fbCurrent.theme||'')+' · '+(_fbCurrent.tool||'')+' · '+(_fbCurrent.phase||'');document.getElementById('fbContent').innerHTML='<div class="fb-title">💬 Suggestion Feedback</div><div class="fb-sub">Your feedback helps us improve these suggestions for everyone.</div><div class="fb-context">'+ctx+'</div><div class="fb-label">How did this go, or what would you change?</div><textarea class="fb-textarea" id="fbText" placeholder="e.g. We tried this and it worked great, but we\'d swap Canva for Book Creator next time..."></textarea><div class="fb-actions"><button class="fb-cancel" onclick="closeFB()">Cancel</button><button class="fb-submit" id="fbSubmit" onclick="submitFB()">Submit Feedback</button></div>';document.getElementById('fbOverlay').classList.add('open');}
+function openFB(idx){_fbCurrent=window._fbData[idx]||{};var ctx=[_fbCurrent.campus,_fbCurrent.year,_fbCurrent.theme,_fbCurrent.tool,_fbCurrent.phase].map(function(v){return escapeHtml(v||'');}).join(' · ');var host=document.getElementById('fbContent');if(!host)return;host.innerHTML='<div class="fb-title">💬 Suggestion Feedback</div><div class="fb-sub">Your feedback helps us improve these suggestions for everyone.</div><div class="fb-context">'+ctx+'</div><div class="fb-label">How did this go, or what would you change?</div><textarea class="fb-textarea" id="fbText" placeholder="e.g. We tried this and it worked great, but we\'d swap Canva for Book Creator next time..."></textarea><div class="fb-actions"><button class="fb-cancel" onclick="closeFB()">Cancel</button><button class="fb-submit" id="fbSubmit" onclick="submitFB()">Submit Feedback</button></div>';document.getElementById('fbOverlay').classList.add('open');}
 function closeFB(){document.getElementById('fbOverlay').classList.remove('open');}
 function submitFB(){var txt=document.getElementById('fbText').value.trim();if(!txt){document.getElementById('fbText').style.borderColor='#FF6B6B';return;}var btn=document.getElementById('fbSubmit');btn.disabled=true;btn.textContent='Sending...';var payload={type:'feedback',v:'2',campus:_fbCurrent.campus,year:_fbCurrent.year,theme:_fbCurrent.theme,tool:_fbCurrent.tool,phase:_fbCurrent.phase,feedback:txt};fetch(FBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)}).then(function(){showFBSuccess();}).catch(function(){showFBSuccess();});}
 function showFBSuccess(){document.getElementById('fbContent').innerHTML='<div class="fb-success"><div class="fb-success-icon">✅</div><div class="fb-success-msg">Thanks for your feedback!</div><div class="fb-success-sub">This helps us make better suggestions for everyone.</div><button class="fb-cancel" onclick="closeFB()" style="margin-top:20px">Close</button></div>';}
