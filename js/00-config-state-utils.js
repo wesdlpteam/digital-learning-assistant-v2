@@ -157,6 +157,30 @@ function wouldDupeToolProposalInEntry(entry, toolName, excludeSugIdx){
   });
 }
 
+// 2026-05-22: Hard rule injected into every Bulk regen prompt so AI-generated
+// arrays can't silently overwrite a unit's App Smashes. Mirrors the floor
+// enforced by gas_backend auditPlanners and the applyRegenAll audited=false
+// branch (>=2 App Smashes in slots 1-5). Pair with appSmashCountInRegen_()
+// for post-parse validation + retry.
+const APP_SMASH_REQUIREMENT = `
+APP SMASH FLOOR (HARD RULE — overrides any "one tool per slot" instruction above):
+- Suggestions 1-5 MUST include AT LEAST 2 App Smashes. Format the "t" field as "Tool A + Tool B".
+- Suggestion 6 (STEM Design Cycle) is EXCLUDED from the floor and stays a single tool.
+- Both tools in every "+" combo must be on the approved list AND age-appropriate for this year level. Neither may be banned.
+- Strong pairings: Padlet + iMovie, Book Creator + ChatterPix Kids, Seesaw + Brushes Redux, Canva + GarageBand, Adobe Express + Freeform, Delightex + Puppet Pals, PicCollage + Epic.
+- The description must explicitly use BOTH tools — describe the smash, not one tool that happens to be paired in the title.
+- If your draft has fewer than 2 App Smashes in slots 1-5, redraft before returning.`;
+
+function appSmashCountInRegen_(sugs){
+  const arr = Array.isArray(sugs) ? sugs : [];
+  let n = 0;
+  for(let i=0; i<Math.min(5, arr.length); i++){
+    const s = arr[i];
+    if(s && typeof s.t === 'string' && /\+/.test(s.t)) n++;
+  }
+  return n;
+}
+
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
 
 function recordChange(idx, oldSugs, newSugs){

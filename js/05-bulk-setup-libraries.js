@@ -679,26 +679,37 @@ async function fixAllOfType(type){
       let prompt='';
 
       if(type==='incomplete'){
-        prompt=`${buildGASRules(e.yl)}\n\nGenerate exactly 5 digital technology suggestions for this IB PYP unit.\nCampus: ${e.ca} | Year: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: "${e.ci}"`:''}${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nReturn ONLY JSON array: [{"t":"Tool Name","d":"Specific description for this unit."},...]`;
+        prompt=`${buildGASRules(e.yl)}\n\nGenerate exactly 5 digital technology suggestions for this IB PYP unit.\nCampus: ${e.ca} | Year: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: "${e.ci}"`:''}${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\n${APP_SMASH_REQUIREMENT}\nReturn ONLY JSON array: [{"t":"Tool Name or Tool A + Tool B","d":"Specific description for this unit."},...]`;
 
       } else if(type==='banned'||type==='offwhitelist'){
-        prompt=`${buildGASRules(e.yl)}\n\nReplace these non-approved suggestions for this unit. Return 6 total suggestions (the 6th must be a STEM Design Cycle activity).\nUnit: ${e.ca} | ${e.yl} | "${e.th}"${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nCurrent suggestions (keep ones that are approved, replace the rest):\n${currentSugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}\nReturn ONLY JSON array of exactly 6 (the 6th must be a STEM Design Cycle activity): [{"t":"Tool Name","d":"Specific description."},...]`;
+        prompt=`${buildGASRules(e.yl)}\n\nReplace these non-approved suggestions for this unit. Return 6 total suggestions (the 6th must be a STEM Design Cycle activity).\nUnit: ${e.ca} | ${e.yl} | "${e.th}"${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nCurrent suggestions (keep ones that are approved AND already App Smashes, replace the rest):\n${currentSugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}\n${APP_SMASH_REQUIREMENT}\nReturn ONLY JSON array of exactly 6 (the 6th must be a STEM Design Cycle activity): [{"t":"Tool Name or Tool A + Tool B","d":"Specific description."},...]`;
 
       } else if(type==='duplicate'){
-        prompt=`${buildGASRules(e.yl)}\n\nFix duplicate tools in this unit — each suggestion must use a DIFFERENT tool.\nUnit: ${e.ca} | ${e.yl} | "${e.th}"${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nCurrent suggestions (fix any duplicates, keep unique ones):\n${currentSugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}\nReturn ONLY JSON array of exactly 6 (the 6th must be a STEM Design Cycle activity) with NO repeated tools: [{"t":"Tool Name","d":"Specific description."},...]`;
+        prompt=`${buildGASRules(e.yl)}\n\nFix duplicate tools in this unit — each suggestion must use a DIFFERENT tool.\nUnit: ${e.ca} | ${e.yl} | "${e.th}"${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nCurrent suggestions (fix any duplicates, keep unique ones; preserve any existing App Smashes):\n${currentSugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}\n${APP_SMASH_REQUIREMENT}\nReturn ONLY JSON array of exactly 6 (the 6th must be a STEM Design Cycle activity) with NO repeated tools: [{"t":"Tool Name or Tool A + Tool B","d":"Specific description."},...]`;
       }
 
-      const raw=await callAI([{role:'user',parts:[{text:prompt}]}],null,OPENAI_MODEL);
-      const clean=raw.replace(/```json|```/g,'').trim();
-      const si=clean.indexOf('['),ei=clean.lastIndexOf(']');
-      if(si===-1||ei===-1) throw new Error('No JSON array in response');
-      const sugs=JSON.parse(clean.slice(si,ei+1));
-      if(!sugs.length) throw new Error('Empty suggestions returned');
-
-      // Validate no duplicates in the returned suggestions
-      const toolNames = sugs.map(s=>(s.t||'').toLowerCase().trim());
-      const uniqueTools = new Set(toolNames);
-      if(uniqueTools.size < toolNames.length) throw new Error('AI returned duplicates again — will retry on next run');
+      let sugs = null;
+      let lastSmashCount = 0;
+      for(let attempt=0; attempt<3; attempt++){
+        const retryNote = attempt>0
+          ? `\n\nRETRY ${attempt}: Your previous response had only ${lastSmashCount} App Smash${lastSmashCount===1?'':'es'} in slots 1-5. You MUST return at least 2 entries whose "t" field uses the "Tool A + Tool B" format. Both tools must be approved and age-appropriate.`
+          : '';
+        const raw=await callAI([{role:'user',parts:[{text:prompt+retryNote}]}],null,OPENAI_MODEL);
+        const clean=raw.replace(/```json|```/g,'').trim();
+        const si=clean.indexOf('['),ei=clean.lastIndexOf(']');
+        if(si===-1||ei===-1) throw new Error('No JSON array in response');
+        const parsed=JSON.parse(clean.slice(si,ei+1));
+        if(!parsed.length) throw new Error('Empty suggestions returned');
+        const toolNames = parsed.map(s=>(s.t||'').toLowerCase().trim());
+        const uniqueTools = new Set(toolNames);
+        if(uniqueTools.size < toolNames.length){ if(attempt>=2) throw new Error('AI returned duplicates again after retry'); continue; }
+        lastSmashCount = appSmashCountInRegen_(parsed);
+        if(lastSmashCount < 2 && attempt < 2) continue;
+        sugs = parsed;
+        break;
+      }
+      if(!sugs) throw new Error(`AI never met the >=2 App Smash floor (last attempt: ${lastSmashCount})`);
+      if(appSmashCountInRegen_(sugs) < 2) throw new Error(`Refusing to save — only ${appSmashCountInRegen_(sugs)} App Smash${appSmashCountInRegen_(sugs)===1?'':'es'} in slots 1-5`);
 
       recordChange(idx,getSugs(DATA[idx]),sugs);
       DATA[idx].s=sugs;

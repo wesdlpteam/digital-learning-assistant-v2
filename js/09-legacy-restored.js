@@ -1402,12 +1402,20 @@ Suggestion #6 MUST be a STEM Design Cycle activity (Empathise-Define-Ideate-Prot
 Campus: ${e.ca} | Year Level: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: "${e.ci}"`:''}${e.lo?`\nLines of Inquiry: "${e.lo}"`:''}${e.plannerText?`\nPlanner: ${e.plannerText}`:''}
 Requirements: all 5 different tools.
 ${SUGGESTION_STYLE}
-Return ONLY a JSON array, no markdown: [{"t":"Tool Name","d":"2-3 vivid sentences."},...]`;
+${APP_SMASH_REQUIREMENT}
+Return ONLY a JSON array, no markdown: [{"t":"Tool Name or Tool A + Tool B","d":"2-3 vivid sentences."},...]`;
     try{
       let sugs = null;
       let dupedTool = null;
-      for(let attempt=0; attempt<2; attempt++){
-        const retryNote = attempt>0 ? `\n\nRETRY: Your previous response used "${dupedTool}" twice. Every one of the 6 suggestions MUST use a DIFFERENT tool. #6 must be a STEM Design Cycle activity.` : '';
+      let lastSmashCount = 0;
+      let lastFailReason = '';
+      for(let attempt=0; attempt<3; attempt++){
+        let retryNote = '';
+        if(attempt>0 && lastFailReason === 'dup'){
+          retryNote = `\n\nRETRY ${attempt}: Your previous response used "${dupedTool}" twice. Every one of the 6 suggestions MUST use a DIFFERENT tool. #6 must be a STEM Design Cycle activity.`;
+        } else if(attempt>0 && lastFailReason === 'smash'){
+          retryNote = `\n\nRETRY ${attempt}: Your previous response had only ${lastSmashCount} App Smash${lastSmashCount===1?'':'es'} in slots 1-5. You MUST return at least 2 entries whose "t" field uses the "Tool A + Tool B" format.`;
+        }
         const raw=await callAI([{role:'user',parts:[{text:prompt+retryNote}]}], null, OPENAI_MODEL);
         const clean=raw.replace(/```json|```/g,'').trim();
         const si=clean.indexOf('['), ei=clean.lastIndexOf(']');
@@ -1416,11 +1424,13 @@ Return ONLY a JSON array, no markdown: [{"t":"Tool Name","d":"2-3 vivid sentence
         if(!parsed.length) throw new Error('Empty array');
         const keys=parsed.map(s=>toolKey(sugTool(s))).filter(Boolean);
         const dup=keys.find((k,i)=>keys.indexOf(k)!==i);
-        if(dup){ const dupSug=parsed.find(s=>toolKey(sugTool(s))===dup); dupedTool = dupSug ? sugTool(dupSug) : dup; continue; }
+        if(dup){ const dupSug=parsed.find(s=>toolKey(sugTool(s))===dup); dupedTool = dupSug ? sugTool(dupSug) : dup; lastFailReason='dup'; continue; }
+        lastSmashCount = appSmashCountInRegen_(parsed);
+        if(lastSmashCount < 2){ lastFailReason='smash'; continue; }
         sugs = parsed;
         break;
       }
-      if(!sugs) throw new Error(`Duplicates in batch after retry`);
+      if(!sugs) throw new Error(lastFailReason === 'smash' ? `Only ${lastSmashCount} App Smash${lastSmashCount===1?'':'es'} after 3 attempts` : 'Duplicates in batch after retry');
       DATA[idx].s=sugs; DATA[idx].audited=true; fixed++;
       saveToDrive();
     }catch(err){

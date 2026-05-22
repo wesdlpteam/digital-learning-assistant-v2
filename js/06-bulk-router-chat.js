@@ -1534,13 +1534,21 @@ Campus: ${entry.ca} | Year Level: ${entry.yl} | Theme: "${entry.th}"${entry.ci?`
 Requirements:
 - All 5 suggestions use different tools (no repeats)
 ${SUGGESTION_STYLE}
+${APP_SMASH_REQUIREMENT}
 - Return ONLY a JSON array with no markdown or backticks:
-[{"t":"Tool Name","d":"2-3 vivid sentences for this unit."},...]`;
+[{"t":"Tool Name or Tool A + Tool B","d":"2-3 vivid sentences for this unit."},...]`;
   try{
     let sugs = null;
     let dupedTool = null;
-    for(let attempt=0; attempt<2; attempt++){
-      const retryNote = attempt>0 ? `\n\nRETRY: Your previous response used "${dupedTool}" twice. Every one of the 5 suggestions MUST use a DIFFERENT tool \u2014 no repeats whatsoever.` : '';
+    let lastSmashCount = 0;
+    let lastFailReason = '';
+    for(let attempt=0; attempt<3; attempt++){
+      let retryNote = '';
+      if(attempt>0 && lastFailReason === 'dup'){
+        retryNote = `\n\nRETRY ${attempt}: Your previous response used "${dupedTool}" twice. Every one of the 5 suggestions MUST use a DIFFERENT tool \u2014 no repeats whatsoever.`;
+      } else if(attempt>0 && lastFailReason === 'smash'){
+        retryNote = `\n\nRETRY ${attempt}: Your previous response had only ${lastSmashCount} App Smash${lastSmashCount===1?'':'es'} in slots 1-5. You MUST return at least 2 entries whose "t" field uses the "Tool A + Tool B" format with both tools approved and age-appropriate.`;
+      }
       const raw=await callAI([{role:'user',parts:[{text:prompt+retryNote}]}]);
       const clean=raw.replace(/```json|```/g,'').trim();
       const si=clean.indexOf('['), ei=clean.lastIndexOf(']');
@@ -1551,12 +1559,18 @@ ${SUGGESTION_STYLE}
       if(dup){
         const dupSug=parsed.find(s=>toolKey(sugTool(s))===dup);
         dupedTool = dupSug ? sugTool(dupSug) : dup;
+        lastFailReason = 'dup';
         continue;
       }
+      lastSmashCount = appSmashCountInRegen_(parsed);
+      if(lastSmashCount < 2){ lastFailReason = 'smash'; continue; }
       sugs = parsed;
       break;
     }
-    if(!sugs) throw new Error(`AI repeated "${dupedTool}" in the batch \u2014 try again`);
+    if(!sugs){
+      if(lastFailReason === 'smash') throw new Error(`AI returned only ${lastSmashCount} App Smash${lastSmashCount===1?'':'es'} after 3 attempts \u2014 not saving. Try regen again or adjust the unit.`);
+      throw new Error(`AI repeated "${dupedTool}" in the batch \u2014 try again`);
+    }
     const pendingId='regenall_'+idx;
     window[pendingId]=sugs;
     res.innerHTML=`
@@ -1576,23 +1590,28 @@ ${SUGGESTION_STYLE}
 function applyRegenAll(idx,pendingId){
   const sugs=window[pendingId]; if(!sugs) return;
   const cleaned=sugs.map(cleanSuggestionObject_);
-  DATA[idx].s=cleaned;
-  // 2026-05-18: Mirror gas_backend auditPlanners v5.19 rule — suggestions
-  // 1-5 must contain ≥2 App Smashes ("+" in title). If the regen result
-  // doesn't meet that bar, leave `audited` as false so the backend's next
-  // auditPlanners pass rebuilds the unit with proper combos. Otherwise the
-  // bulk-regen UI would quietly persist single-tool batches and we'd be
-  // right back where we were after the 2026-04-15 wipe.
-  const appSmashCount=cleaned.slice(0,5).filter(sg=>sg&&sg.t&&/\+/.test(sg.t)).length;
-  if(appSmashCount>=2){
-    DATA[idx].audited=true;
-  } else {
-    DATA[idx].audited=false;
-    setStatus('Saved (only '+appSmashCount+' App Smash'+(appSmashCount===1?'':'es')+' — queued for backend re-audit)');
+  // 2026-05-22: Refuse to persist any regen that drops the unit below the
+  // >=2-App-Smashes-in-slots-1-5 floor. The previous "save with audited=false
+  // and let the backend re-audit" branch was the silent wipe path responsible
+  // for the 2026-04-15 incident AND the 2026-05-20 wipe (239 lost). The
+  // pending suggestions stay in window[pendingId] so the user can adjust
+  // and apply, or click Discard.
+  const appSmashCount=appSmashCountInRegen_(cleaned);
+  if(appSmashCount < 2){
+    const res=document.getElementById('regen-all-result');
+    if(res){
+      res.innerHTML = `<div style="padding:10px;border:1px solid #f87171;border-radius:8px;background:rgba(248,113,113,0.08);font-size:12px;color:#f87171;line-height:1.5">
+        <strong>App Smash floor not met</strong> — only ${appSmashCount} App Smash${appSmashCount===1?'':'es'} in slots 1-5 (need 2+). The original suggestions have been kept.<br>Click <em>Generate 6 new suggestions</em> again, or pick the smashes manually before applying.
+      </div>` + res.innerHTML;
+    }
+    setStatus(`Regen refused — only ${appSmashCount} App Smash${appSmashCount===1?'':'es'} (need 2+). Original kept.`, 'error');
+    return;
   }
+  DATA[idx].s=cleaned;
+  DATA[idx].audited=true;
   markEntryNeedsHumanRecheck_(idx, 'Regenerated suggestions after human verification');
   delete window[pendingId];
-  if(appSmashCount>=2) setStatus('Saved');
+  setStatus('Saved');
   saveToDrive();
   renderEntry(idx);
 }
