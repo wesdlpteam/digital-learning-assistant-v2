@@ -91,7 +91,15 @@ function cleanChangeObject_(c){
 }
 
 function cleanJSON(s){
-  return s.replace(/```json|```/g,'').replace(/"([^"]*)"/g,(_,inner)=>'"'+inner.replace(/\n/g,' ').replace(/\r/g,'')+'"').replace(/,\s*([\]}])/g,'$1').trim();
+  // Strip code fences, collapse newlines inside string values (so unescaped
+  // newlines from the model don't break JSON.parse), and drop trailing commas.
+  // The string-matching regex handles escaped quotes via `(?:[^"\\]|\\.)*` so
+  // AI output like `"He said \"hi\""` doesn't split at the inner quote.
+  return s
+    .replace(/```json|```/g, '')
+    .replace(/"((?:[^"\\]|\\.)*)"/g, (_, inner) => '"' + inner.replace(/[\n\r]+/g, ' ') + '"')
+    .replace(/,\s*([\]}])/g, '$1')
+    .trim();
 }
 
 function normaliseChangeIndex(v, fallback){

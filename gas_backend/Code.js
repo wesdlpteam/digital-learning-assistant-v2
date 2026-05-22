@@ -5,7 +5,15 @@ const DATA_JSON_FILE_ID = '1x6h0G43CCUiY1H635Rbv2zI8T-6-wTXV';
 const LIBRARIES_JSON_FILE_ID = '13QhwQsT_GFP8buqhJOVWwdIciwXILKnY';
 const PLANNERS_FOLDER_ID = '1NnTnbgpGFn-jzFvuoNNx2VF74QbZw-WU';
 const TECH_RULES_SHEET_ID = '1uoLwkd768PEGzyBG7U6xCqrtckZR1X-Rs5uMcYdOXSI';
+// OpenAI model policy — keep both constants here so a model upgrade is a
+// single search-and-replace. Mirror naming with js/00-config-state-utils.js
+// (Studio side) so the convention is identical across the two halves.
+//   OPENAI_MODEL       — heavy paths: planner audit, surgeon, makerspace,
+//                        unit extraction, callAIProxy default
+//   OPENAI_FAST_MODEL  — light paths: public suggestTech, anything where
+//                        latency/cost matters more than headroom
 const OPENAI_MODEL = 'gpt-4.1';
+const OPENAI_FAST_MODEL = 'gpt-4.1-mini';
 const OPENAI_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
 
 function getRequiredScriptProperty_(key) {
@@ -330,7 +338,8 @@ function jsonpResponse(callback, obj) {
 // (ca|yl|th|tool) in ScriptProperties so repeats are free. Daily call cap
 // protects the OpenAI bill if the endpoint is ever scraped.
 var TECH_SUGGEST_DAILY_CAP = 500;
-var TECH_SUGGEST_MODEL = 'gpt-4.1-mini';
+// Model lives at the top of the file as OPENAI_FAST_MODEL; reference it here
+// so any rename only touches one place.
 var TECH_SUGGEST_CACHE_PREFIX = 'tech_sugg_v1_';
 
 function suggestTechForPlanner_(args) {
@@ -400,7 +409,7 @@ function suggestTechForPlanner_(args) {
   var aiResult;
   try {
     aiResult = callAIProxy_({
-      model: TECH_SUGGEST_MODEL,
+      model: OPENAI_FAST_MODEL,
       temperature: 0.4,
       maxTokens: 700,
       systemPrompt: systemPrompt,
@@ -684,6 +693,10 @@ function auditPlanners(filterCa, filterYl) {
     const folder = DriveApp.getFolderById(PLANNERS_FOLDER_ID);
   const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
   let data = JSON.parse(file.getBlob().getDataAsString());
+  // Batch-write flag: set true whenever any entry in `data` is mutated; the
+  // single file.setContent at the end of the loop persists every change in
+  // one write instead of re-uploading the full 11 MB blob per entry.
+  let dataDirty = false;
 
   let libraryText = "";
   try {
@@ -763,7 +776,7 @@ function auditPlanners(filterCa, filterYl) {
       data[i].auditSkipped = true;
       data[i].auditSkipReason = `Theme not found in ${mdResult.fileName}`;
       data[i].auditSkippedAt = new Date().toISOString();
-      file.setContent(JSON.stringify(data, null, 2));
+      dataDirty = true;
       continue;
     }
 
@@ -910,7 +923,7 @@ ${plannerMarkdown}
             data[i].s = [];
             data[i].plannerText = "Not yet documented in PDF.";
             data[i].audited = true;
-            file.setContent(JSON.stringify(data, null, 2));
+            dataDirty = true;
             processedCount++;
             success = true;
             break;
@@ -1018,7 +1031,7 @@ ${plannerMarkdown}
           data[i].s = validSugs;
           data[i].plannerText = result.plannerText || "";
           data[i].audited = true;
-          file.setContent(JSON.stringify(data, null, 2));
+          dataDirty = true;
           processedCount++;
           success = true;
           Logger.log(`Audited: ${planner.th} — ${validSugs.length} suggestions saved`);
@@ -1030,6 +1043,13 @@ ${plannerMarkdown}
     }
     if (processedCount < BATCH_LIMIT) Utilities.sleep(5000);
   }
+    // Single end-of-batch persist: one write covers every entry mutated this
+    // tick (auditSkipped, UNIT NOT FOUND, and successful audits). Replaces
+    // 5 × 11 MB writes per batch with 1.
+    if (dataDirty) {
+      try { file.setContent(JSON.stringify(data, null, 2)); }
+      catch (writeErr) { Logger.log('auditPlanners end-of-batch save failed: ' + writeErr); }
+    }
   } finally {
     lock.releaseLock();
   }
@@ -2731,4 +2751,72 @@ function cleanupAppSmashRecoveryTrigger_(reason) {
   });
   PropertiesService.getScriptProperties().deleteProperty('DLA_APP_SMASH_RECOVERY_TARGETS');
   Logger.log(`App Smash recovery complete: ${reason}. Trigger removed.`);
+}
+
+
+// ==========================================
+// PLANNER MARKDOWN — PUA GLYPH CLEANUP
+// ==========================================
+// The WiSE PDF-export pipeline drops Unicode Private Use Area characters
+// (U+E000–U+F8FF) into the .md planner files. They render as `?` or `□` in
+// most viewers and confuse the audit prompt. Two helpers below:
+//
+//   scanPlannerPUAGlyphs()   — dry run; prints per-file counts, makes no edits
+//   cleanPlannerPUAGlyphs()  — DESTRUCTIVE; overwrites each .md file in Drive
+//                              with the PUA chars stripped. Run scan first.
+//
+// Both walk PLANNERS_FOLDER_ID. Run from the Apps Script editor.
+
+// Unicode Private Use Area block. Apps Script runs V8 so \u escapes
+// in regex character classes work (these are BMP code units).
+const PUA_GLYPH_RE_ = /[\uE000-\uF8FF]/g;
+
+function scanPlannerPUAGlyphs() {
+  const folder = DriveApp.getFolderById(PLANNERS_FOLDER_ID);
+  const iter = folder.getFiles();
+  const report = [];
+  let totalFiles = 0, totalDirty = 0, totalGlyphs = 0;
+  while (iter.hasNext()) {
+    const f = iter.next();
+    if (!/\.md$/i.test(f.getName())) continue;
+    totalFiles++;
+    const text = f.getBlob().getDataAsString();
+    const matches = text.match(PUA_GLYPH_RE_) || [];
+    if (!matches.length) continue;
+    totalDirty++;
+    totalGlyphs += matches.length;
+    report.push({ name: f.getName(), count: matches.length });
+  }
+  report.sort((a, b) => b.count - a.count);
+  Logger.log(`Scanned ${totalFiles} .md file(s); ${totalDirty} contain PUA glyphs (${totalGlyphs} total).`);
+  report.forEach(r => Logger.log(`  ${r.count.toString().padStart(4)}  ${r.name}`));
+  if (!totalDirty) Logger.log('No PUA glyphs detected — nothing to clean.');
+  return { scanned: totalFiles, dirty: totalDirty, totalGlyphs: totalGlyphs, files: report };
+}
+
+function cleanPlannerPUAGlyphs() {
+  const folder = DriveApp.getFolderById(PLANNERS_FOLDER_ID);
+  const iter = folder.getFiles();
+  const report = [];
+  let totalFiles = 0, totalCleaned = 0, totalGlyphsStripped = 0;
+  while (iter.hasNext()) {
+    const f = iter.next();
+    if (!/\.md$/i.test(f.getName())) continue;
+    totalFiles++;
+    const text = f.getBlob().getDataAsString();
+    const matches = text.match(PUA_GLYPH_RE_) || [];
+    if (!matches.length) continue;
+    // Strip (don't replace with space) — the glyphs were standalone icons,
+    // not text substitutes; surrounding whitespace is already present in the
+    // PDF-export output.
+    const cleaned = text.replace(PUA_GLYPH_RE_, '');
+    f.setContent(cleaned);
+    totalCleaned++;
+    totalGlyphsStripped += matches.length;
+    report.push({ name: f.getName(), stripped: matches.length });
+    Logger.log(`Cleaned ${matches.length} PUA glyph(s) from ${f.getName()}`);
+  }
+  Logger.log(`Scanned ${totalFiles} .md file(s); cleaned ${totalCleaned} (${totalGlyphsStripped} glyphs stripped).`);
+  if (!totalCleaned) Logger.log('Nothing to clean — every .md file is already PUA-free.');
+  return { scanned: totalFiles, cleaned: totalCleaned, stripped: totalGlyphsStripped, files: report };
 }
