@@ -3764,3 +3764,107 @@ setInterval(async()=>{
   document.addEventListener('DOMContentLoaded', installPersistentSyncControls_);
 })();
 /* ===== end DLA hotfix ===== */
+
+
+/* ===== DLA hotfix: app-smash regression guard =====
+   On 2026-05-20 at 10:37, a Bulk regen flow saved over 239 multitool entries
+   ("Tool A + Tool B" -> "Tool A"), wiping nearly every app smash across the
+   corpus. The system rule (mirrored in gas_backend auditPlanners and in
+   applyRegenAll's audited=false branch) requires >=2 App Smashes in slots
+   1-5 of each lesson. This guard wraps saveToDrive: if any entry would drop
+   below that floor in this save, the offending entry's `s` array is reverted
+   to the last-known-good baseline before the save proceeds. The user is
+   notified, but the save is NOT aborted so dependent flows (UI status,
+   post-save sync, etc.) continue cleanly. */
+(function(){
+  function entryKey_(e){ return (e && (e.ca||'') + '|' + (e.yl||'') + '|' + (e.th||'')) || ''; }
+  function appSmashCount_(sugs){
+    const arr = Array.isArray(sugs) ? sugs : [];
+    let n = 0;
+    for(let i=0; i<Math.min(5, arr.length); i++){
+      const s = arr[i];
+      if(s && typeof s.t === 'string' && /\+/.test(s.t)) n++;
+    }
+    return n;
+  }
+
+  let BASELINE = null;
+  function buildBaseline_(){
+    if(!Array.isArray(window.DATA)) return null;
+    const map = {};
+    window.DATA.forEach((e, i) => {
+      if(!e) return;
+      const k = entryKey_(e);
+      if(!k) return;
+      const cnt = appSmashCount_(e.s);
+      if(cnt >= 2){
+        try { map[k] = { idx: i, s: JSON.parse(JSON.stringify(e.s)) }; }
+        catch(err){ /* skip uncloneable entries */ }
+      }
+    });
+    return map;
+  }
+  function ensureBaseline_(){
+    if(BASELINE !== null) return;
+    if(Array.isArray(window.DATA) && window.DATA.length){
+      BASELINE = buildBaseline_();
+    }
+  }
+  setTimeout(ensureBaseline_, 1500);
+  setTimeout(ensureBaseline_, 4000);
+  setTimeout(ensureBaseline_, 10000);
+
+  setTimeout(function(){
+    try{
+      if(typeof saveToDrive !== 'function' || saveToDrive.__dlaAppSmashGuardWrapped) return;
+      const orig = saveToDrive;
+      const wrapped = async function(){
+        try{
+          ensureBaseline_();
+          if(BASELINE && Array.isArray(window.DATA)){
+            const reverted = [];
+            window.DATA.forEach((e, i) => {
+              if(!e) return;
+              const k = entryKey_(e);
+              const base = BASELINE[k];
+              if(!base) return;
+              const now = appSmashCount_(e.s);
+              if(now < 2){
+                try{
+                  window.DATA[i].s = JSON.parse(JSON.stringify(base.s));
+                  reverted.push(`${e.yl||''} - ${e.th||''} (${now} -> ${appSmashCount_(window.DATA[i].s)})`);
+                }catch(err){ /* skip */ }
+              }
+            });
+            if(reverted.length){
+              const msg = 'App-smash guard restored ' + reverted.length + ' entr' + (reverted.length===1?'y':'ies') +
+                ' whose app smashes were stripped in this session:\n\n' +
+                reverted.slice(0,10).join('\n') +
+                (reverted.length>10 ? '\n... and ' + (reverted.length-10) + ' more' : '') +
+                '\n\nSave proceeding with restored data. If this was intentional, refresh and retry.';
+              try { if(typeof setStatus === 'function') setStatus('App-smash guard restored ' + reverted.length + ' entr' + (reverted.length===1?'y':'ies'), 'error'); } catch(e){}
+              try { console.warn('[app-smash-guard]', reverted); } catch(e){}
+              try { alert(msg); } catch(e){}
+              try { if(typeof renderBrowse === 'function') renderBrowse(); } catch(e){}
+              try { if(typeof renderAuditChart === 'function') renderAuditChart(); } catch(e){}
+            }
+          }
+        }catch(err){ try { console.warn('[app-smash-guard] pre-save check failed:', err); } catch(e){} }
+
+        const out = await orig.apply(this, arguments);
+
+        try{
+          if(Array.isArray(window.DATA)){
+            const fresh = buildBaseline_();
+            if(fresh) BASELINE = fresh;
+          }
+        }catch(err){ /* baseline refresh failure is non-fatal */ }
+
+        return out;
+      };
+      wrapped.__dlaAppSmashGuardWrapped = true;
+      saveToDrive = window.saveToDrive = wrapped;
+    }catch(err){ try { console.warn('[app-smash-guard] wrap install failed:', err); } catch(e){} }
+  }, 200);
+})();
+/* ===== end DLA hotfix ===== */
