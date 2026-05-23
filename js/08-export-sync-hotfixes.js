@@ -3807,8 +3807,12 @@ setInterval(async()=>{
       const k = entryKey_(e);
       if(!k) return;
       const cnt = appSmashCount_(e.s);
-      if(cnt >= 2){
-        try { map[k] = { idx: i, s: JSON.parse(JSON.stringify(e.s)) }; }
+      // Capture entries with at least one App Smash. Storing the baseline
+      // count alongside the snapshot lets the pre-save check use a "reduced
+      // below baseline" rule instead of a hard >=2 floor, so single-smash
+      // entries are also protected from a regression to zero.
+      if(cnt >= 1){
+        try { map[k] = { idx: i, s: JSON.parse(JSON.stringify(e.s)), cnt: cnt }; }
         catch(err){ /* skip uncloneable entries */ }
       }
     });
@@ -3839,7 +3843,12 @@ setInterval(async()=>{
               const base = BASELINE[k];
               if(!base) return;
               const now = appSmashCount_(e.s);
-              if(now < 2){
+              // Restore on ANY reduction below the captured baseline count.
+              // The legacy `< 2` rule only caught regressions on entries that
+              // started with 2+ smashes; a 1-smash entry dropping to 0 slipped
+              // through. False positives (deliberate user edits that reduce a
+              // smash) are mitigated by the alert + "refresh and retry" path.
+              if(typeof base.cnt === 'number' ? (now < base.cnt) : (now < 2)){
                 try{
                   window.DATA[i].s = JSON.parse(JSON.stringify(base.s));
                   reverted.push(`${e.yl||''} - ${e.th||''} (${now} -> ${appSmashCount_(window.DATA[i].s)})`);
