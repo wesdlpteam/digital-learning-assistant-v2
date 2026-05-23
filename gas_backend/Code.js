@@ -51,11 +51,13 @@ const DLA_ALLOWED_EMAILS = [
 
 function requireAllowedUser_(body) {
   body = body || {};
-  const expectedSecret = getOptionalScriptProperty_('DLA_SHARED_SECRET');
-  const suppliedSecret = body.token || body.sharedSecret || body.authToken || '';
-  if (expectedSecret && suppliedSecret && suppliedSecret === expectedSecret) {
-    return 'shared-secret';
-  }
+  // Removed shared-secret bypass: previously, supplying body.token equal to
+  // DLA_SHARED_SECRET returned 'shared-secret' WITHOUT a Google identity check.
+  // The secret lived in localStorage on the Studio side and was XSS-leakable;
+  // an attacker holding it could call every backend action with no real user
+  // identity. Studio sign-in is Google-OAuth-only — there is no realistic
+  // path that needs the bypass (without Drive access the Studio can't load
+  // data.json anyway, so the "Google sign-in is down" escape hatch was fictional).
   const token = body.googleAccessToken || body.driveToken || body.accessToken || '';
   if (!token) {
     throw new Error('Unauthorised request: missing Google access token');
@@ -117,6 +119,22 @@ const REALISTIC_TOOL_USE_RULES = `REALISTIC CLASSROOM USE RULES (HARD RULE):
 
 function toolKey_(t) {
   return (t || '').toString().toLowerCase().trim().replace(/\s+/g, ' ');
+}
+
+// Clear the Studio-side "human verified" flags on an entry when any server
+// path mutates its suggestions. Without this, a Surgeon swap or Makerspace
+// reboot on a verified unit leaves the verified badge in place while the
+// content underneath has changed — reviewers would never know to re-check.
+// Mirrors what Studio's markEntryNeedsHumanRecheck_ does client-side.
+function clearHumanVerifiedFlags_(entry, reason) {
+  if (!entry) return false;
+  if (!(entry.humanVerified === true || entry.humanVerifiedAt || entry.human_verified === true)) return false;
+  entry.humanVerified = false;
+  entry.humanVerifiedResetAt = new Date().toISOString();
+  entry.humanVerifiedResetReason = reason || 'Suggestions changed by server-side action';
+  delete entry.humanVerifiedAt;
+  delete entry.humanVerifiedBy;
+  return true;
 }
 
 function getYearNumber_(yearLevel) {
@@ -1139,6 +1157,9 @@ function runSurgeon(bannedTool, replacementTool) {
       }
     }
     if (needsSave) {
+      // If a human had already verified this unit, the verified badge is now
+      // stale — at least one suggestion has been replaced by the Surgeon.
+      clearHumanVerifiedFlags_(planner, `Surgeon replaced "${bannedTool}"`);
       file.setContent(JSON.stringify(data, null, 2));
     }
   }
@@ -1429,6 +1450,24 @@ function autoSyncDriveToGitHub() {
     return;
   }
   try {
+    // One-time PUA glyph cleanup of the planner .md corpus, piggybacked on
+    // the existing 5-min trigger so it auto-runs once without needing manual
+    // execution from the editor. Becomes a no-op forever once the property
+    // is set. Safe to remove this block after the first successful run.
+    if (!props.getProperty('DLA_PUA_CLEANED_AT')) {
+      try {
+        const cleanResult = cleanPlannerPUAGlyphs();
+        props.setProperty('DLA_PUA_CLEANED_AT', new Date().toISOString());
+        props.setProperty('DLA_PUA_CLEANED_STATS', JSON.stringify({
+          scanned: cleanResult.scanned,
+          cleaned: cleanResult.cleaned,
+          stripped: cleanResult.stripped
+        }));
+      } catch (puaErr) {
+        Logger.log('autoSync: one-time PUA cleanup failed: ' + puaErr);
+      }
+    }
+
     autoSyncOne_(DATA_JSON_FILE_ID, PROP_LAST_PUSHED_DATA, 'data.json', pushToGitHub, props);
     autoSyncOne_(LIBRARIES_JSON_FILE_ID, PROP_LAST_PUSHED_LIBS, 'libraries.json', pushLibrariesToGitHub, props);
   } finally {
@@ -2472,6 +2511,9 @@ Return ONLY JSON in this exact format:
         firstFive.push(newProject);
         data[i].s = firstFive;
         data[i].stemRebooted = true;
+        // Suggestion 6 just changed under any human-verified badge — drop it
+        // so reviewers re-check the new makerspace project.
+        clearHumanVerifiedFlags_(data[i], 'Makerspace project rebooted');
 
         // Save to script-property memory so Drive cache hiccups can be healed
         const key = `${planner.ca}_${planner.yl}_${planner.th}`;

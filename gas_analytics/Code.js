@@ -45,6 +45,40 @@ const POINTS_PER_USED      = 1;
 const POINTS_PER_STREAK    = 3;
 const STREAK_USES_REQUIRED = 3; // Bonus fires when a team logs this many uses in one unit.
 
+// Global per-minute POST cap. Apps Script does not expose the client IP or
+// Origin header to web-app handlers, so per-IP rate-limiting isn't possible.
+// A global cap is a blunt instrument but stops runaway loops or scripted
+// abuse from burning the daily sheet-write quota and exhausting the Apps
+// Script execution budget. Real traffic (1-3 concurrent teachers × a few
+// events/min each) sits well below 200/min.
+const RATE_LIMIT_PER_MINUTE = 200;
+const RATE_LIMIT_PROP_KEY   = 'DLA_ANALYTICS_POST_TS';
+const RATE_LIMIT_WINDOW_MS  = 60 * 1000;
+
+// Returns true if this POST should proceed, false if rate-limited. Caller
+// owns the script lock so the read-modify-write is atomic.
+function withinRateLimit_() {
+  const props = PropertiesService.getScriptProperties();
+  const now = Date.now();
+  let arr = [];
+  try {
+    const raw = props.getProperty(RATE_LIMIT_PROP_KEY);
+    if (raw) arr = JSON.parse(raw);
+    if (!Array.isArray(arr)) arr = [];
+  } catch (_) { arr = []; }
+  // Drop timestamps outside the rolling window
+  const cutoff = now - RATE_LIMIT_WINDOW_MS;
+  arr = arr.filter(function(t) { return t >= cutoff; });
+  if (arr.length >= RATE_LIMIT_PER_MINUTE) {
+    // Persist the trimmed list so we don't re-trim on the next call
+    try { props.setProperty(RATE_LIMIT_PROP_KEY, JSON.stringify(arr)); } catch (_) {}
+    return false;
+  }
+  arr.push(now);
+  try { props.setProperty(RATE_LIMIT_PROP_KEY, JSON.stringify(arr)); } catch (_) {}
+  return true;
+}
+
 // ─── HTTP entry points ─────────────────────────────────────────────────
 
 function doPost(e) {
@@ -53,6 +87,13 @@ function doPost(e) {
     return jsonResponse_({ error: 'Could not acquire lock' });
   }
   try {
+    if (!withinRateLimit_()) {
+      // Don't log every rate-limited request (would itself burn quota), just
+      // the first one in each window. The client uses mode:'no-cors' so the
+      // body is never read — silent drop is fine from a UX standpoint.
+      return jsonResponse_({ error: 'rate-limited' });
+    }
+
     const raw  = (e && e.postData && e.postData.contents) || '';
     let body = {};
     try { body = JSON.parse(raw || '{}'); } catch (_) { body = {}; }
