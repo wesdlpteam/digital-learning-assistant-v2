@@ -677,6 +677,106 @@ async function rebootMakerspaceBatch(){
   }
 }
 
+// 2026-05-25: Inspire All — bulk 6-sentence regen across every unit.
+// Snapshots data.json once, then loops POSTs to regenerateAllInspiring
+// until allDone:true. Each backend call processes 12 units (~3 min) and
+// returns progress so the button can show live status. The backend skips
+// units already marked inspiringRegenAt so a mid-run failure or refresh
+// just resumes where we left off.
+async function inspireAllBatch(){
+  const ca = document.getElementById('f-campus')?.value || '';
+  const yr = document.getElementById('f-year')?.value || '';
+  const scopeLabel = ca || yr ? ` (${[ca, yr].filter(Boolean).join(' · ')})` : ' across all 3 campuses';
+  if(!confirm(`Regenerate EVERY unit${scopeLabel} in the new 6-sentence inspiring style?\n\n• data.json will be snapshotted to Drive first (rollback path)\n• Early-years units (3YO, 4YO, Prep) get hands-on + screen-free emphasis\n• ~12 units per batch, ~3 min/batch\n• Estimated total: 25-35 min\n• Progress shows on the ✨ card; safe to leave running\n\nProceed?`)) return;
+
+  const btn = document.getElementById('btn-inspire-all');
+  const statusEl = document.getElementById('inspire-all-status');
+  if(btn){ btn.disabled = true; btn.style.opacity = '0.6'; btn.textContent = '✨ Running…'; }
+  let batchNum = 0;
+  let totalFixed = 0;
+  let totalFailed = 0;
+  const allFailures = [];
+
+  try {
+    while(true){
+      batchNum++;
+      if(statusEl) statusEl.textContent = `Batch ${batchNum} running — calling backend (this batch can take up to 3 min)…`;
+      setStatus(`Inspire All: batch ${batchNum} processing…`, 'loading');
+      const payload = withGASToken({ action: 'regenerateAllInspiring', batch: 12 });
+      if(ca) payload.ca = ca;
+      if(yr) payload.yl = yr;
+      const response = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+      const result = await response.json();
+      if(result.error){
+        setStatus('Inspire All error: ' + result.error, 'error');
+        if(statusEl) statusEl.textContent = 'Failed: ' + result.error + ' — partial progress saved. Click Inspire All again to resume.';
+        return;
+      }
+      if(result.skipped){
+        setStatus('Inspire All paused: ' + (result.reason || 'unknown') + (result.until ? ' until ' + result.until : ''), 'error');
+        if(statusEl) statusEl.textContent = `Paused (${result.reason}${result.until ? ' until ' + result.until : ''}). Click Inspire All again to resume.`;
+        return;
+      }
+      totalFixed += result.fixed || 0;
+      totalFailed += result.failed || 0;
+      if(Array.isArray(result.failures)) allFailures.push(...result.failures);
+      const snapNote = result.snapshot && !result.snapshot.alreadyExisted ? ` · snapshot: ${result.snapshot.snapshotName}` : '';
+      if(statusEl) statusEl.textContent = `Batch ${batchNum} done — ${result.done}/${result.total} units regenerated, ${result.remaining} remaining${snapNote}`;
+      setStatus(`Inspire All: ${result.done}/${result.total} done (batch ${batchNum})`, 'success');
+      if(result.allDone){
+        const failNote = totalFailed > 0 ? ` (${totalFailed} failed — see console)` : '';
+        setStatus(`✨ Inspire All complete: ${totalFixed} regenerated${failNote}`, 'success');
+        if(statusEl) statusEl.textContent = `Complete — ${totalFixed} regenerated${failNote}. Reload data to see the new descriptions.`;
+        if(allFailures.length) console.warn('Inspire All failures:', allFailures);
+        // Reload data so the new descriptions appear in the Studio.
+        if(typeof loadFromDrive === 'function'){
+          await loadFromDrive();
+          if(typeof renderBrowse === 'function') renderBrowse();
+        }
+        return;
+      }
+      // Brief pause between batches so the backend lock + GitHub push settle.
+      await sleep(2500);
+    }
+  } catch(err){
+    setStatus('Inspire All failed: ' + err.message, 'error');
+    if(statusEl) statusEl.textContent = 'Failed: ' + err.message + ' — partial progress saved. Click Inspire All again to resume.';
+  } finally {
+    if(btn){ btn.disabled = false; btn.style.opacity = '1'; btn.textContent = '🚀 Inspire all' + (ca || yr ? ' (in view)' : ''); }
+  }
+}
+
+async function inspireAllReset(){
+  const ca = document.getElementById('f-campus')?.value || '';
+  const yr = document.getElementById('f-year')?.value || '';
+  const scopeLabel = ca || yr ? ` for ${[ca, yr].filter(Boolean).join(' · ')}` : ' for ALL units';
+  if(!confirm(`Reset the Inspire All flags${scopeLabel}? Next run will reprocess every unit from scratch (and create a fresh data.json snapshot). Existing suggestions stay until the regen overwrites them. Proceed?`)) return;
+  setStatus('Resetting Inspire All flags…', 'loading');
+  try {
+    const payload = withGASToken({ action: 'regenerateAllInspiringReset' });
+    if(ca) payload.ca = ca;
+    if(yr) payload.yl = yr;
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+    if(result.error){ setStatus('Reset error: ' + result.error, 'error'); return; }
+    setStatus(`Cleared inspire flags on ${result.cleared || 0} unit(s)`, 'success');
+    if(typeof loadFromDrive === 'function'){
+      await loadFromDrive();
+      if(typeof renderBrowse === 'function') renderBrowse();
+    }
+  } catch(err){
+    setStatus('Reset failed: ' + err.message, 'error');
+  }
+}
+
 async function resetMakerspaceFlagsBatch(){
   const ca = document.getElementById('browse-campus')?.value || '';
   const yr = document.getElementById('browse-year')?.value || '';
@@ -778,7 +878,23 @@ function renderBrowse(){
     <span style="font-size:12px;color:var(--dim)">${remainingCount ? `${remainingCount} still need a human check` : 'All units have been human verified'}</span>
     ${totalVerifiedCount > 0 ? `<button onclick="removeAllHumanVerified()" style="margin-left:auto;padding:5px 12px;background:transparent;border:1px solid rgba(255,128,128,0.3);color:#FF8080;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear all human verification flags so you can re-verify from scratch">Reset all verified</button>` : ''}
   </div>`;
-  document.getElementById('browse-list').innerHTML=makerspaceSummaryHtml + verificationSummaryHtml + filtered.map(({e,idx})=>{
+
+  // 2026-05-25: "Inspire All" card — bulk 6-sentence regen across every unit.
+  // Counts units already touched by the inspiringRegenAt marker so the card
+  // doubles as a progress display when the looping runner is mid-flight.
+  const filteredInspired = filtered.filter(({e}) => e.inspiringRegenAt).length;
+  const filteredInspiredTotal = filtered.length;
+  const inspiredRemaining = filteredInspiredTotal - filteredInspired;
+  const inspireScopeLabel = ca || yr ? `(${[ca, yr].filter(Boolean).join(' · ')})` : 'across all 3 campuses';
+  const inspireSummaryHtml = `<div id="inspire-all-card" class="card2" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px;border-color:rgba(56,189,248,.35);background:rgba(56,189,248,.06)">
+    <span style="font-size:18px">✨</span>
+    <span style="font-size:13px;color:var(--text);font-weight:800">${filteredInspired}/${filteredInspiredTotal} units regenerated in 6-sentence inspiring style ${inspireScopeLabel}</span>
+    <span id="inspire-all-status" style="font-size:12px;color:var(--dim)">${inspiredRemaining > 0 ? `${inspiredRemaining} still using the old 2-3 sentence descriptions` : 'All units regenerated — early-years (3YO/4YO/Prep) include hands-on / screen-free options'}</span>
+    ${inspiredRemaining > 0 ? `<button id="btn-inspire-all" onclick="inspireAllBatch()" style="margin-left:auto;padding:6px 14px;background:#38BDF8;color:#0a1f2e;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer" title="Regenerate every unit's 6 suggestions in the new 6-sentence inspiring style. Snapshots data.json first. Processes 12 units at a time, ~3 min/batch. Total run: ~25-35 min.">🚀 Inspire all${ca || yr ? ' (in view)' : ''}</button>` : ''}
+    ${filteredInspired > 0 ? `<button id="btn-inspire-reset" onclick="inspireAllReset()" style="padding:6px 12px;background:transparent;border:1px solid rgba(255,128,128,.3);color:#FF8080;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear the inspiringRegenAt flag so Inspire All can be re-run from scratch. Existing suggestions stay until the regen overwrites them.">Reset inspire flags</button>` : ''}
+  </div>`;
+
+  document.getElementById('browse-list').innerHTML=inspireSummaryHtml + makerspaceSummaryHtml + verificationSummaryHtml + filtered.map(({e,idx})=>{
     const verified = isHumanVerifiedEntry_(e);
     const flash = window._lastHumanVerifiedIdx === idx ? ' human-verify-flash' : '';
     const meta = verified ? humanVerifiedMeta_(e) : '';

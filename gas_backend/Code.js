@@ -327,6 +327,31 @@ function doPost(e) {
       return jsonResponse(result);
     }
 
+    // 2026-05-25: bulk "inspiring" regen across every unit, 6-sentence style.
+    if (action === 'regenerateallinspiring') {
+      const opts = {
+        batch: body.batch || null,
+        ca: body.ca || null,
+        yl: body.yl || null,
+        redoAll: !!body.redoAll
+      };
+      const result = regenerateAllInspiring(opts);
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
+    if (action === 'regenerateallinspiringstatus') {
+      const result = regenerateAllInspiringStatus({ ca: body.ca || null, yl: body.yl || null });
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
+    if (action === 'regenerateallinspiringreset') {
+      const result = regenerateAllInspiringReset({ ca: body.ca || null, yl: body.yl || null });
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
     return jsonResponse({ error: 'Unknown action: ' + actionRaw });
   } catch(err) {
     return jsonResponse({ error: err && err.message ? err.message : String(err) });
@@ -3313,6 +3338,336 @@ function regenerateForDiversity(opts) {
     Logger.log('regenerateForDiversity: processed ' + processed + ', fixed ' + fixed + ', failed ' + failed + ', remaining in scope ' + Math.max(0, candidates.length - processed));
     if (failures.length) Logger.log('Failures:\n' + failures.map(f => '  ' + f.ca + ' / ' + f.yl + ' / ' + f.th + ': ' + f.reason).join('\n'));
     return { processed: processed, fixed: fixed, failed: failed, remaining: Math.max(0, candidates.length - processed), failures: failures };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+
+// ==========================================
+// 2026-05-25: BULK "INSPIRING" REGEN
+// Rewrites every unit's 6 suggestions in the new 6-sentence inspiring
+// style (matches the public suggestTech endpoint introduced same day).
+// Reuses every safeguard the diversity-regen path already proved:
+//   - LockService (queues behind auditPlanners / auditAndSync)
+//   - Cooldown awareness
+//   - 3-attempt retry with validator-driven reasons
+//   - Component-level tool dedup within a unit
+//   - >=2 App Smash floor in slots 1-5
+//   - Opener differs from siblings
+//   - audited=true + inspiringRegenAt to protect from re-audit overwrite
+//   - Per-batch save + pushToGitHub heartbeat
+// Adds a one-time Drive snapshot to `data.json.pre_6sentence_<ts>` on
+// first run, and treats every unit (not just diversity-affected ones)
+// as a target. Skips units already marked inspiringRegenAt so the action
+// can be re-invoked safely to resume past the Apps Script 6-min timeout.
+// ==========================================
+
+const INSPIRING_BATCH_DEFAULT = 12;
+const INSPIRING_SNAPSHOT_PROP = 'INSPIRING_SNAPSHOT_FILE_ID';
+const INSPIRING_STARTED_AT_PROP = 'INSPIRING_STARTED_AT';
+
+function inspiringYearRule_(yl) {
+  const earlyKinder = ['3 Year Old Kinder', '4 Year Old Kinder'];
+  const prep = ['Prep'];
+  if (earlyKinder.indexOf(yl) !== -1) {
+    return 'EARLY-YEARS HANDS-ON + SCREEN-FREE PRIORITY (' + yl + '): These children are 3-4 years old. EVERY suggestion must be predominantly HANDS-ON, sensory, tactile, dramatic-play, or movement-based. Screen time must be brief, purposeful, and teacher-operated where possible. Prefer SCREEN-FREE tech when it fits the theme: Bee-Bots (physical floor robots — directional buttons, no screen), Cubetto, KIBO, Code-a-pillar, talking pegs, Makey Makey paired with real objects (fruit, foil, playdough), Sphero Indi (colour-tile programming, no app needed for basic play). When a screen tool is genuinely the best fit, the teacher operates the device and children direct what happens (e.g. teacher records audio in ChatterPix Kids while a child speaks; teacher captures children\'s block-tower in Seesaw for a class slideshow). Activities must involve children\'s WHOLE BODIES, real materials they can pick up, role-play, music, or outdoor exploration — never a child silently swiping. Allowed tool pool: Bee-Bots, Sphero Indi, Cubetto, KIBO, Code-a-pillar, Makey Makey, Merge Cubes, ChatterPix Kids, Puppet Pals, PicCollage, Seesaw, Book Creator, Brushes Redux, Freeform, Epic, Animating a Character with Adobe Express. NO Canva, Padlet, Adobe Express general editor, Minecraft, Micro:bit, Sphero BOLT, or any Year 3+ tool.';
+  }
+  if (prep.indexOf(yl) !== -1) {
+    return 'EARLY-YEARS HANDS-ON + SCREEN-FREE PRIORITY (Prep): Prep children are 5 years old and still need predominantly HANDS-ON, multisensory, play-based learning. Open with screen-free or minimal-screen options where they fit the theme: Bee-Bots (physical floor robots — programmed with directional buttons, no app), Cubetto, KIBO, Code-a-pillar, Makey Makey wired to real objects (fruit pianos, foil canvases, playdough switches), Sphero Indi colour-tile pathways laid out on the carpet. When a screen tool genuinely suits the theme, keep screen time brief and pair it with a physical artefact (e.g. a ChatterPix Kids talking-portrait of a hand-drawn animal; a Seesaw photo of a real block tower). At LEAST 2 of the 6 suggestions must be predominantly screen-free or minimal-screen tactile activities. Allowed tool pool: Bee-Bots, Sphero Indi, Cubetto, KIBO, Code-a-pillar, Makey Makey, Merge Cubes, ScratchJR, ChatterPix Kids, Puppet Pals, PicCollage, Seesaw, Book Creator, Brushes Redux, Freeform, Sketchbook, Epic, Word Clouds ABCya, Animating a Character with Adobe Express. NO Canva, Padlet, Adobe Express general editor, Minecraft, Micro:bit, Sphero BOLT, or any Year 3+ tool.';
+  }
+  // Years 1-6 reuse the diversity year rules verbatim — they\'re already
+  // pitched correctly. Only kinder + Prep get the new hands-on overlay.
+  return diversityYearRule_(yl);
+}
+
+const INSPIRING_DESCRIPTION_RULES = '\nDESCRIPTION STYLE — INSPIRING + INNOVATIVE (the whole point of this regen):\n' +
+  'Every description in slots 1-5 must be EXACTLY 6 vivid, classroom-ready sentences. Each sentence has a job:\n' +
+  '  Sentence 1: Bold creative premise — what students are actually making, investigating, or experiencing. Name the unit\'s topic explicitly (not "this unit").\n' +
+  '  Sentence 2: Connect the activity to one of the unit\'s lines of inquiry or the central idea by NAME (paraphrase if quoting feels stilted; never use banned filler like "connected to the central idea").\n' +
+  '  Sentence 3: Reveal an under-considered TWIST — a cross-disciplinary link, a role reversal (students teach a younger class, students are journalists/curators/town planners/scientists, students publish for a real external audience), an ethical/perspective-taking dimension, or a real community/expert connection.\n' +
+  '  Sentence 4: Describe the FINAL student artefact concretely — what it looks like, sounds like, or does. It must be shareable beyond the classroom (with a year-level audience, the school community, families, or a real-world stakeholder).\n' +
+  '  Sentence 5: Name a SPECIFIC advanced or under-used feature of the tool that powers the activity (not the basic feature everyone already uses). Use named features: "Canva\'s Magic Write", "Book Creator\'s comic templates", "Padlet\'s map view", "iMovie\'s split-screen", "Adobe Express Animate from Audio", "Bee-Bot\'s sequence-and-repeat function", etc.\n' +
+  '  Sentence 6: End with the inspiring "so what" — the disposition, agency, or real-world contribution the student takes away beyond the unit (action, voice, identity, civic awareness, creative confidence).\n' +
+  'STEM slot 6 (Makerspace/Physical-First): 4-5 sentences naming concrete materials (cardboard, circuits, recycled materials, Lego, paper engineering, copper tape, cup-and-string mechanisms etc.), what is prototyped, how iteration happens, and what the student demonstrates at the end. The "wow" twist still applies — propose something most teachers haven\'t tried.\n\n' +
+  'PUSH PAST THE OBVIOUS. Teachers must read these and think "I never thought of using it like that." Reject generic descriptions. Every sentence tailored to THIS unit.\n\n' +
+  'BANNED PHRASES — do not write any of these (they make suggestions feel lazy and templated):\n' +
+  '  - "connected to the central idea \'...\'"\n' +
+  '  - "linked to the line of inquiry \'...\'"\n' +
+  '  - "for this unit" / "in this unit" / "about this unit" / "this unit\'s focus"\n' +
+  '  - "share their learning" / "present their findings" / "document their learning journey"\n' +
+  '  - "create a digital product" / "make a simple product"\n' +
+  '  - "Students use [tool] to [vague verb] about [unit theme]"\n' +
+  'Name the actual topic. If the unit is about ecosystems, say "ecosystems". If it is about migration, say "migration".\n\n' +
+  'WRITING MECHANICS: Use straight apostrophes (\'), em-dashes (—), Australian English. No curly quotes. No line breaks inside JSON string values.';
+
+function inspiringBuildPrompt_(data, targetIdx, approvedToolsPrompt) {
+  const target = data[targetIdx];
+  const footprint = diversitySiblingToolFootprint_(data, targetIdx);
+  const overusedLine = footprint.overused.length
+    ? '\n- DO NOT REUSE these tools that are already heavily used by sibling units in this campus + year level (avoid adding to the over-used pile unless absolutely necessary for THIS unit): ' + footprint.overused.join(', ') + '.'
+    : '';
+  const allUsedLine = footprint.allUsed.length
+    ? '\n- For context, every tool currently used by ANY sibling unit in this campus + year level: ' + footprint.allUsed.join(', ') + '. Reach for tools NOT on this list first; only repeat from it when the alternative would be a poor pedagogical fit.'
+    : '';
+
+  return 'You are a visionary Digital Learning Coach at Wesley College (IB PYP, Melbourne). You help primary-school teachers see possibilities they would never have thought of on their own. Your job RIGHT NOW is to regenerate all 6 digital technology suggestions for ONE specific unit in the new 6-sentence inspiring style. Output STRICT JSON only.\n\n' +
+    'Campus: ' + target.ca + ' | Year Level: ' + target.yl + ' | Theme: "' + target.th + '"' +
+    (target.ci ? '\nCentral Idea: "' + target.ci + '"' : '') +
+    (target.lo ? '\nLines of Inquiry: "' + target.lo + '"' : '') +
+    (target.plannerText ? '\nPlanner context: ' + String(target.plannerText).slice(0, 4000) : '') + '\n\n' +
+    'STRUCTURE: Return exactly 6 suggestions.\n' +
+    '- Suggestions 1-5: Digital technology integrations. At LEAST 2 must be an App Smash ("Tool A + Tool B"). Each follows the 6-sentence inspiring style below.\n' +
+    '- Suggestion 6: A Makerspace/STEM Design Cycle project (Empathise-Define-Ideate-Prototype-Test, physical-first focus). 4-5 sentences.\n\n' +
+    'NO DUPLICATE TOOLS within this unit (HARD RULE): each of the 6 suggestions uses a DIFFERENT primary tool. App Smash components count — if slot 1 is "Padlet + iMovie", neither Padlet nor iMovie may appear in slots 2-6.\n\n' +
+    'APP SMASH FORMAT: "Tool 1 + Tool 2" with a literal + sign. The description must explain how BOTH tools are used together (not just one tool that happens to be paired in the title).\n\n' +
+    'DIVERSITY CONSTRAINTS:' + overusedLine + allUsedLine + '\n' +
+    '- VARY YOUR OPENER — slot 1 sets the unit\'s tone and must specifically suit THIS unit\'s theme; do not default to one canonical App Smash pair.\n' +
+    '- If multiple tools fit equally well, pick the one LEAST used in the year level.\n\n' +
+    approvedToolsPrompt + '\n' + REALISTIC_TOOL_USE_RULES + '\n\n' +
+    'YEAR LEVEL GUIDANCE FOR ' + target.yl + ':\n' + inspiringYearRule_(target.yl) + '\n' +
+    INSPIRING_DESCRIPTION_RULES + '\n\n' +
+    'Return ONLY a valid JSON object (no markdown, no backticks). Use straight apostrophes (\'). Schema:\n' +
+    '{ "s": [ { "t": "Tool Name or Tool A + Tool B", "d": "Exactly 6 inspiring sentences tailored to THIS unit (slot 6: 4-5 sentences for the STEM project)." }, ... 6 items ] }';
+}
+
+function inspiringCallOnce_(prompt) {
+  const payload = {
+    model: OPENAI_MODEL,
+    messages: [{ role: 'user', content: prompt }],
+    response_format: { type: 'json_object' },
+    temperature: 0.75,
+    max_tokens: 5000
+  };
+  const response = UrlFetchApp.fetch(OPENAI_ENDPOINT, {
+    method: 'post',
+    contentType: 'application/json',
+    headers: { Authorization: 'Bearer ' + getOpenAIKey_() },
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  });
+  const code = response.getResponseCode();
+  if (code === 429) { setCooldown_(2, 'OpenAI rate limit during inspiring regen'); return { retriable: true, error: 'HTTP 429' }; }
+  if (isRetriableHttpCode_(code)) return { retriable: true, error: 'HTTP ' + code };
+  if (code !== 200) return { retriable: false, error: 'HTTP ' + code + ': ' + response.getContentText().slice(0, 200) };
+  let rawText;
+  try {
+    const parsed = JSON.parse(response.getContentText());
+    rawText = parsed && parsed.choices && parsed.choices[0] && parsed.choices[0].message && parsed.choices[0].message.content;
+  } catch (e) { return { retriable: false, error: 'malformed OpenAI envelope' }; }
+  if (!rawText) return { retriable: false, error: 'empty content' };
+  let clean = rawText.replace(/```json|```/g, '').trim();
+  clean = clean.replace(/[‘’`´]/g, "'").replace(/[“”]/g, '"');
+  try {
+    const obj = JSON.parse(clean);
+    return { ok: true, sugs: Array.isArray(obj.s) ? obj.s : [] };
+  } catch (e) { return { retriable: true, error: 'JSON parse: ' + e.message }; }
+}
+
+function inspiringSentenceCount_(text) {
+  if (!text) return 0;
+  // Count sentence-ending punctuation outside common abbreviations. Good enough
+  // for a soft validator — we accept 5-7 sentences for slots 1-5 to allow
+  // the model a small amount of natural variation, and 3-6 for the STEM slot.
+  const t = String(text)
+    .replace(/\be\.g\./gi, 'eg').replace(/\bi\.e\./gi, 'ie').replace(/Mr\./g, 'Mr').replace(/Mrs\./g, 'Mrs').replace(/Dr\./g, 'Dr');
+  const matches = t.match(/[.!?](?=\s+[A-Z]|\s*$)/g);
+  return matches ? matches.length : 0;
+}
+
+function inspiringValidateSugs_(sugs, target, data, targetIdx) {
+  // Re-use the diversity validator first (length, t/d presence, tool dedup,
+  // >=2 App Smashes, opener differs from siblings).
+  const base = diversityValidateSugs_(sugs, target, data, targetIdx);
+  if (!base.ok) return base;
+  // Soft sentence-count check for slots 1-5 only. STEM slot is allowed to be
+  // shorter. We accept 5-8 sentences for the inspiring slots (target is 6 —
+  // the AI sometimes lands on 5 or 7 with natural prose; rejecting those
+  // would balloon retries without quality improvement).
+  for (let i = 0; i < 5; i++) {
+    const n = inspiringSentenceCount_(sugs[i].d);
+    if (n < 5) return { ok: false, reason: 'slot ' + (i + 1) + ' description is only ' + n + ' sentence(s); need ~6' };
+  }
+  return { ok: true };
+}
+
+function inspiringSnapshotDataJson_() {
+  const props = PropertiesService.getScriptProperties();
+  const existing = props.getProperty(INSPIRING_SNAPSHOT_PROP);
+  if (existing) {
+    try {
+      const f = DriveApp.getFileById(existing);
+      return { snapshotFileId: existing, snapshotName: f.getName(), alreadyExisted: true };
+    } catch (e) {
+      // Stored ID is stale (file deleted) — fall through and snapshot again.
+    }
+  }
+  const src = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  const ts = Utilities.formatDate(new Date(), 'GMT', "yyyyMMdd_HHmmss");
+  const name = 'data.json.pre_6sentence_' + ts;
+  const parent = src.getParents().hasNext() ? src.getParents().next() : DriveApp.getRootFolder();
+  const copy = src.makeCopy(name, parent);
+  props.setProperty(INSPIRING_SNAPSHOT_PROP, copy.getId());
+  props.setProperty(INSPIRING_STARTED_AT_PROP, new Date().toISOString());
+  return { snapshotFileId: copy.getId(), snapshotName: name, alreadyExisted: false };
+}
+
+function inspiringCandidateIndexes_(data, opts) {
+  opts = opts || {};
+  const out = [];
+  for (let i = 0; i < data.length; i++) {
+    const u = data[i];
+    if (!u || !u.ca || !u.yl) continue;
+    if (opts.ca && u.ca !== opts.ca) continue;
+    if (opts.yl && u.yl !== opts.yl) continue;
+    // Skip units already inspiring-regenerated, unless caller asks to redo.
+    if (!opts.redoAll && u.inspiringRegenAt) continue;
+    out.push(i);
+  }
+  return out;
+}
+
+function regenerateAllInspiringStatus(opts) {
+  opts = opts || {};
+  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  const raw = JSON.parse(file.getBlob().getDataAsString());
+  const data = Array.isArray(raw) ? raw : Object.values(raw).filter(u => u && typeof u === 'object');
+  const inScope = data.filter(u => u && u.ca && u.yl && (!opts.ca || u.ca === opts.ca) && (!opts.yl || u.yl === opts.yl));
+  const done = inScope.filter(u => u.inspiringRegenAt).length;
+  const props = PropertiesService.getScriptProperties();
+  return {
+    total: inScope.length,
+    done: done,
+    remaining: inScope.length - done,
+    snapshotFileId: props.getProperty(INSPIRING_SNAPSHOT_PROP) || null,
+    startedAt: props.getProperty(INSPIRING_STARTED_AT_PROP) || null
+  };
+}
+
+function regenerateAllInspiringReset(opts) {
+  // Clears the inspiringRegenAt marker so re-running will reprocess every
+  // unit. Also forgets the snapshot pointer so the next start creates a
+  // fresh `data.json.pre_6sentence_<ts>` copy. Does NOT touch the previous
+  // snapshot file in Drive (keep that as a manual rollback option).
+  opts = opts || {};
+  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  const raw = JSON.parse(file.getBlob().getDataAsString());
+  const isArr = Array.isArray(raw);
+  const data = isArr ? raw : Object.values(raw).filter(u => u && typeof u === 'object');
+  let cleared = 0;
+  for (let i = 0; i < data.length; i++) {
+    const u = data[i];
+    if (!u) continue;
+    if (opts.ca && u.ca !== opts.ca) continue;
+    if (opts.yl && u.yl !== opts.yl) continue;
+    if (u.inspiringRegenAt) { delete u.inspiringRegenAt; cleared++; }
+  }
+  if (cleared) {
+    const toWrite = isArr ? data : raw;
+    file.setContent(JSON.stringify(toWrite, null, 2));
+    try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e) { Logger.log('pushToGitHub after inspiring reset failed: ' + e); }
+  }
+  const props = PropertiesService.getScriptProperties();
+  props.deleteProperty(INSPIRING_SNAPSHOT_PROP);
+  props.deleteProperty(INSPIRING_STARTED_AT_PROP);
+  return { cleared: cleared };
+}
+
+function regenerateAllInspiring(opts) {
+  opts = opts || {};
+  const batch = Number.isFinite(opts.batch) ? Math.max(1, Math.min(50, Number(opts.batch))) : INSPIRING_BATCH_DEFAULT;
+
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(120000)) { Logger.log('regenerateAllInspiring: lock still held after 2 min wait — bailing.'); return { skipped: true, reason: 'lock-held' }; }
+
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const resumeTime = props.getProperty('DLA_RESUME_TIME');
+    if (resumeTime && Date.now() < parseInt(resumeTime, 10)) {
+      const until = new Date(parseInt(resumeTime, 10)).toLocaleString('en-AU');
+      Logger.log('Cooldown active until ' + until + ' — bailing.');
+      return { skipped: true, reason: 'cooldown', until: until };
+    }
+
+    // One-time snapshot on first run.
+    const snap = inspiringSnapshotDataJson_();
+
+    const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+    let raw = JSON.parse(file.getBlob().getDataAsString());
+    const isArr = Array.isArray(raw);
+    const data = isArr ? raw : Object.values(raw).filter(u => u && typeof u === 'object');
+
+    const candidates = inspiringCandidateIndexes_(data, opts);
+    const totalInScope = data.filter(u => u && u.ca && u.yl && (!opts.ca || u.ca === opts.ca) && (!opts.yl || u.yl === opts.yl)).length;
+    const alreadyDone = totalInScope - candidates.length;
+
+    Logger.log('regenerateAllInspiring: ' + candidates.length + ' remaining of ' + totalInScope + ' in scope; processing up to ' + batch + ' this run.');
+
+    if (!candidates.length) {
+      return { processed: 0, fixed: 0, failed: 0, remaining: 0, total: totalInScope, done: alreadyDone, snapshot: snap, allDone: true };
+    }
+
+    const approvedToolsPrompt = getApprovedToolsPrompt_();
+    let processed = 0, fixed = 0, failed = 0;
+    const failures = [];
+    let dataDirty = false;
+
+    for (let n = 0; n < candidates.length && processed < batch; n++) {
+      const idx = candidates[n];
+      const target = data[idx];
+      processed++;
+      const prompt = inspiringBuildPrompt_(data, idx, approvedToolsPrompt);
+      let success = false;
+      let lastReason = '';
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        const retryNote = attempt > 1 ? '\n\nRETRY ' + (attempt - 1) + ': Previous attempt failed validation (' + lastReason + '). Apply the constraints more strictly and keep every slot 1-5 description to ~6 sentences.' : '';
+        const call = inspiringCallOnce_(prompt + retryNote);
+        if (!call.ok) {
+          lastReason = call.error || 'unknown';
+          if (call.retriable && attempt < 3) { Utilities.sleep(8000); continue; }
+          break;
+        }
+        const verdict = inspiringValidateSugs_(call.sugs, target, data, idx);
+        if (!verdict.ok) {
+          lastReason = verdict.reason;
+          if (attempt < 3) { Utilities.sleep(4000); continue; }
+          break;
+        }
+        data[idx].s = call.sugs.map(s => ({ t: s.t, d: s.d }));
+        data[idx].audited = true;
+        data[idx].inspiringRegenAt = new Date().toISOString();
+        clearHumanVerifiedFlags_(data[idx], 'Regenerated by regenerateAllInspiring (6-sentence inspiring style)');
+        dataDirty = true;
+        success = true;
+        Logger.log('  [' + (n + 1) + '/' + candidates.length + '] ' + target.ca + ' ' + target.yl + ' — ' + target.th + ' -> s[0]=' + call.sugs[0].t);
+        break;
+      }
+      if (success) fixed++;
+      else { failed++; failures.push({ ca: target.ca, yl: target.yl, th: target.th, reason: lastReason }); Logger.log('  [' + (n + 1) + '/' + candidates.length + '] FAILED ' + target.ca + ' ' + target.yl + ' — ' + target.th + ' (' + lastReason + ')'); }
+      Utilities.sleep(1500);
+    }
+
+    if (dataDirty) {
+      const toWrite = isArr ? data : raw;
+      file.setContent(JSON.stringify(toWrite, null, 2));
+      try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e) { Logger.log('pushToGitHub after inspiring regen failed: ' + e); }
+    }
+
+    const remaining = Math.max(0, candidates.length - processed);
+    const doneCount = totalInScope - remaining;
+    Logger.log('regenerateAllInspiring: processed ' + processed + ', fixed ' + fixed + ', failed ' + failed + ', remaining ' + remaining + ' of ' + totalInScope);
+    if (failures.length) Logger.log('Failures:\n' + failures.map(f => '  ' + f.ca + ' / ' + f.yl + ' / ' + f.th + ': ' + f.reason).join('\n'));
+    return {
+      processed: processed,
+      fixed: fixed,
+      failed: failed,
+      remaining: remaining,
+      total: totalInScope,
+      done: doneCount,
+      snapshot: snap,
+      allDone: remaining === 0,
+      failures: failures
+    };
   } finally {
     lock.releaseLock();
   }
