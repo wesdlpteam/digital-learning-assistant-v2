@@ -301,6 +301,28 @@ function doPost(e) {
       return jsonResponse(result);
     }
 
+    // 2026-05-25: Doorway for the one-time corpus-wide diversity repair
+    // (see regenerateForDiversity above). Auth is already gated by
+    // requireAllowedUser_ at the top of doPost, so this is no looser than
+    // any other authenticated action.
+    if (action === 'regeneratefordiversitydryrun') {
+      const opts = { ca: body.ca || null, yl: body.yl || null };
+      const result = regenerateForDiversityDryRun(opts);
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
+    if (action === 'regeneratefordiversity') {
+      const opts = {
+        batch: body.batch || null,
+        ca: body.ca || null,
+        yl: body.yl || null
+      };
+      const result = regenerateForDiversity(opts);
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
     return jsonResponse({ error: 'Unknown action: ' + actionRaw });
   } catch(err) {
     return jsonResponse({ error: err && err.message ? err.message : String(err) });
