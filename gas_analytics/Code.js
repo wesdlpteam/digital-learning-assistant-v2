@@ -8,6 +8,8 @@
  * Routes events by `body.type`:
  *   used             → Used sheet, then recompute Leaderboard
  *   unused           → removes most recent matching Used row (toggle off), recomputes Leaderboard
+ *   intent           → Intent sheet (teacher plans to try a suggestion), recomputes Leaderboard
+ *   unintent         → removes most recent matching Intent row (toggle off), recomputes Leaderboard
  *   reaction         → Reactions sheet (server-side debounce: 5s same-context window)
  *   analytics_batch  → Analytics sheet (one row per event in batch)
  *   feedback         → Feedback sheet (REFUSES empty feedback text)
@@ -23,6 +25,7 @@ const SHEET_ID = '1R4P4FJlc8SyRFlVWoM0HpHmfCNMNVOpI8cuEILFxBNY';
 
 const SHEETS = {
   USED:        'Used',
+  INTENT:      'Intent',
   FEEDBACK:    'Feedback',
   REACTIONS:   'Reactions',
   ANALYTICS:   'Analytics',
@@ -33,6 +36,7 @@ const SHEETS = {
 // Headers — used both to validate sheets at startup and to repair a missing/wrong header row.
 const HEADERS = {
   Used:        ['Timestamp','Team','Campus','Year Level','Theme','Tool','Phase'],
+  Intent:      ['Timestamp','Team','Campus','Year Level','Theme','Tool','Phase'],
   Feedback:    ['Timestamp','Campus','Year Level','Theme','Tool','Phase','Feedback'],
   Reactions:   ['Timestamp','Campus','Year Level','Theme','Tool','Phase','Reaction'],
   Analytics:   ['Timestamp','Session','Page','Campus','Year Level','Time Spent (seconds)'],
@@ -41,7 +45,9 @@ const HEADERS = {
 };
 
 const REACTION_DEBOUNCE_MS = 5000;
-const POINTS_PER_USED      = 1;
+// Used is worth more than Intent because it represents follow-through, not just planning.
+const POINTS_PER_USED      = 2;
+const POINTS_PER_INTENT    = 1;
 const POINTS_PER_STREAK    = 3;
 const STREAK_USES_REQUIRED = 3; // Bonus fires when a team logs this many uses in one unit.
 
@@ -105,6 +111,10 @@ function doPost(e) {
       handleUsed_(ss, body);
     } else if (type === 'unused') {
       handleUnused_(ss, body);
+    } else if (type === 'intent') {
+      handleIntent_(ss, body);
+    } else if (type === 'unintent') {
+      handleUnintent_(ss, body);
     } else if (type === 'reaction') {
       handleReaction_(ss, body);
     } else if (type === 'analytics_batch') {
@@ -247,6 +257,75 @@ function handleUnused_(ss, body) {
   }));
 }
 
+// Intent = teacher clicked "I'm going to try this" on a suggestion.
+// Stored separately from Used so the two signals stay independent — a teacher
+// can mark intent, later mark used, and the leaderboard counts both.
+function handleIntent_(ss, body) {
+  const sheet = ensureSheet_(ss, SHEETS.INTENT);
+  const ts = new Date();
+  const campus = clean_(body.campus);
+  const year   = clean_(body.year);
+  const theme  = clean_(body.theme);
+  const tool   = clean_(body.tool);
+  const phase  = clean_(body.phase);
+  if (!campus || !year || !theme) {
+    logError_(ss, 'intent_missing_required', 'intent', body, '');
+    return;
+  }
+  const team = clean_(body.team) || (campus + ' ' + year + ' Team');
+  sheet.appendRow([ts, team, campus, year, theme, tool, phase]);
+  recomputeLeaderboard_(ss);
+}
+
+// Mirrors handleUnused_'s tiered match so an undo click reliably finds the
+// row even when stored team/phase strings have drifted from the request.
+function handleUnintent_(ss, body) {
+  const sheet = ensureSheet_(ss, SHEETS.INTENT);
+  const campus = clean_(body.campus);
+  const year   = clean_(body.year);
+  const theme  = clean_(body.theme);
+  const tool   = clean_(body.tool);
+  const phase  = clean_(body.phase);
+  const team   = clean_(body.team);
+  if (!campus || !year || !theme) {
+    logError_(ss, 'unintent_missing_required', 'unintent', body, '');
+    return;
+  }
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) return;
+  const data = sheet.getRange(2, 1, lastRow - 1, 7).getValues();
+  const tiers = [
+    function(r) {
+      return clean_(r[2]) === campus && clean_(r[3]) === year && clean_(r[4]) === theme &&
+             clean_(r[5]) === tool && clean_(r[6]) === phase && (!team || clean_(r[1]) === team);
+    },
+    function(r) {
+      return clean_(r[2]) === campus && clean_(r[3]) === year && clean_(r[4]) === theme &&
+             clean_(r[5]) === tool && clean_(r[6]) === phase;
+    },
+    function(r) {
+      return clean_(r[2]) === campus && clean_(r[3]) === year && clean_(r[4]) === theme &&
+             clean_(r[5]) === tool;
+    },
+    function(r) {
+      return clean_(r[2]) === campus && clean_(r[3]) === year && clean_(r[4]) === theme;
+    }
+  ];
+  for (let t = 0; t < tiers.length; t++) {
+    for (let i = data.length - 1; i >= 0; i--) {
+      if (tiers[t](data[i])) {
+        sheet.deleteRow(i + 2);
+        recomputeLeaderboard_(ss);
+        return;
+      }
+    }
+  }
+  logError_(ss, 'unintent_no_match', 'unintent', body, JSON.stringify({
+    campus: campus, year: year, theme: theme, tool: tool, phase: phase, team: team,
+    rowCount: data.length
+  }));
+}
+
 function handleReaction_(ss, body) {
   const sheet = ensureSheet_(ss, SHEETS.REACTIONS);
   const ts = new Date();
@@ -334,41 +413,63 @@ function handleFeedback_(ss, body) {
 
 // ─── Leaderboard ───────────────────────────────────────────────────────
 
-// Aggregates Used rows into per-team totals. Source of truth for both the
-// cached Leaderboard sheet (written by recomputeLeaderboard_) and the live
+// Aggregates Used + Intent rows into per-team totals. Source of truth for both
+// the cached Leaderboard sheet (written by recomputeLeaderboard_) and the live
 // GET endpoint (served by getLeaderboard_). Returns an array of team objects.
+// Used and Intent stack: a team that marks intent (+1) then later used (+2)
+// on the same suggestion ends up with +3 for that suggestion. Streak bonuses
+// fire only on Used rows — intents alone don't trigger a streak.
 function aggregateLeaderboard_(ss) {
-  const usedSheet = ensureSheet_(ss, SHEETS.USED);
-  const data = usedSheet.getDataRange().getValues();
-  if (data.length < 2) return [];
+  const usedSheet   = ensureSheet_(ss, SHEETS.USED);
+  const intentSheet = ensureSheet_(ss, SHEETS.INTENT);
+  const usedData   = usedSheet.getDataRange().getValues();
+  const intentData = intentSheet.getDataRange().getValues();
 
-  // Used columns: 0 Timestamp, 1 Team, 2 Campus, 3 Year, 4 Theme, 5 Tool, 6 Phase
+  // Used/Intent columns: 0 Timestamp, 1 Team, 2 Campus, 3 Year, 4 Theme, 5 Tool, 6 Phase
   const teams = {};   // key = "campus|year"           →   { campus, year, points, streaks, lastTheme, lastTool }
-  const units = {};   // key = "campus|year|theme"     →   { count, awarded }
+  const units = {};   // key = "campus|year|theme"     →   { count, awarded }   (Used-only, for streak bonus)
 
-  for (let i = 1; i < data.length; i++) {
-    const r = data[i];
+  function getOrInitTeam(campus, year) {
+    const tkey = campus + '|' + year;
+    if (!teams[tkey]) teams[tkey] = { campus: campus, year: year, points: 0, streaks: 0, lastTheme: '', lastTool: '' };
+    return teams[tkey];
+  }
+
+  // Used rows — each worth POINTS_PER_USED, and contribute to streak bonus.
+  for (let i = 1; i < usedData.length; i++) {
+    const r = usedData[i];
     const campus = clean_(r[2]);
     const year   = clean_(r[3]);
     const theme  = clean_(r[4]);
     const tool   = clean_(r[5]);
     if (!campus || !year) continue;
 
-    const tkey = campus + '|' + year;
-    if (!teams[tkey]) teams[tkey] = { campus: campus, year: year, points: 0, streaks: 0, lastTheme: '', lastTool: '' };
-    teams[tkey].points    += POINTS_PER_USED;
-    teams[tkey].lastTheme  = theme || teams[tkey].lastTheme;
-    teams[tkey].lastTool   = tool  || teams[tkey].lastTool;
+    const team = getOrInitTeam(campus, year);
+    team.points    += POINTS_PER_USED;
+    team.lastTheme  = theme || team.lastTheme;
+    team.lastTool   = tool  || team.lastTool;
 
-    // Bonus fires once a team logs STREAK_USES_REQUIRED uses in the same unit (phase ignored).
+    // Streak bonus fires once a team logs STREAK_USES_REQUIRED USED rows in the
+    // same unit (phase ignored). Intent rows don't count toward streaks — only
+    // follow-through earns the bonus.
     const ukey = campus + '|' + year + '|' + theme;
     if (!units[ukey]) units[ukey] = { count: 0, awarded: false };
     units[ukey].count += 1;
     if (units[ukey].count >= STREAK_USES_REQUIRED && !units[ukey].awarded) {
-      units[ukey].awarded   = true;
-      teams[tkey].streaks   += 1;
-      teams[tkey].points    += POINTS_PER_STREAK;
+      units[ukey].awarded = true;
+      team.streaks       += 1;
+      team.points        += POINTS_PER_STREAK;
     }
+  }
+
+  // Intent rows — each worth POINTS_PER_INTENT, stack on top of any Used points.
+  for (let i = 1; i < intentData.length; i++) {
+    const r = intentData[i];
+    const campus = clean_(r[2]);
+    const year   = clean_(r[3]);
+    if (!campus || !year) continue;
+    const team = getOrInitTeam(campus, year);
+    team.points += POINTS_PER_INTENT;
   }
 
   return Object.keys(teams).map(function(k) { return teams[k]; });
@@ -409,18 +510,19 @@ function getLeaderboard_() {
           lastTool:  t.lastTool
         };
       }),
-      usedKeys: getUsedKeys_(ss)
+      usedKeys:   getUsedKeys_(ss),
+      intentKeys: getIntentKeys_(ss)
     };
   } catch (err) {
-    return { leaderboard: [], usedKeys: [], error: String(err) };
+    return { leaderboard: [], usedKeys: [], intentKeys: [], error: String(err) };
   }
 }
 
 // Returns the deduplicated set of "campus|year|theme|tool|phase" keys from
-// the Used sheet. The DLA page uses this to render the "I Used This" button
-// in its done state on every browser, not just the device that clicked.
-function getUsedKeys_(ss) {
-  const sheet = ensureSheet_(ss, SHEETS.USED);
+// the named sheet. The DLA page uses this to render Used/Intent buttons in
+// their done state on every browser, not just the device that clicked.
+function getKeysFromSheet_(ss, sheetName) {
+  const sheet = ensureSheet_(ss, sheetName);
   const data = sheet.getDataRange().getValues();
   if (data.length < 2) return [];
   const seen = {};
@@ -440,6 +542,9 @@ function getUsedKeys_(ss) {
   }
   return out;
 }
+
+function getUsedKeys_(ss)   { return getKeysFromSheet_(ss, SHEETS.USED); }
+function getIntentKeys_(ss) { return getKeysFromSheet_(ss, SHEETS.INTENT); }
 
 // ─── Manual / one-shot helpers ─────────────────────────────────────────
 
