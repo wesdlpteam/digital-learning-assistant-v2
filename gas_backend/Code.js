@@ -3512,14 +3512,48 @@ function inspiringSnapshotDataJson_() {
   return { snapshotFileId: copy.getId(), snapshotName: name, alreadyExisted: false };
 }
 
+// A unit is eligible for inspiring regen only if it has BOTH a non-empty
+// Central Idea (ci) and Lines of Inquiry (lo). Without those the new
+// 6-sentence prompt has nothing to anchor on and would produce a weaker
+// result than the existing data; better to skip and let a human fill in
+// the planner first. Surfaced via inspiringSkippedUnits_() so the Studio
+// card can show what's been excluded.
+function inspiringHasUnitDetails_(u) {
+  if (!u) return false;
+  const ci = u.ci ? String(u.ci).trim() : '';
+  const lo = u.lo ? String(u.lo).trim() : '';
+  return !!(ci && lo);
+}
+
+function inspiringInScope_(u, opts) {
+  if (!u || !u.ca || !u.yl) return false;
+  if (opts.ca && u.ca !== opts.ca) return false;
+  if (opts.yl && u.yl !== opts.yl) return false;
+  return true;
+}
+
+function inspiringSkippedUnits_(data, opts) {
+  opts = opts || {};
+  const out = [];
+  for (let i = 0; i < data.length; i++) {
+    const u = data[i];
+    if (!inspiringInScope_(u, opts)) continue;
+    if (inspiringHasUnitDetails_(u)) continue;
+    const missing = [];
+    if (!u.ci || !String(u.ci).trim()) missing.push('Central Idea');
+    if (!u.lo || !String(u.lo).trim()) missing.push('Lines of Inquiry');
+    out.push({ ca: u.ca, yl: u.yl, th: u.th, missing: missing });
+  }
+  return out;
+}
+
 function inspiringCandidateIndexes_(data, opts) {
   opts = opts || {};
   const out = [];
   for (let i = 0; i < data.length; i++) {
     const u = data[i];
-    if (!u || !u.ca || !u.yl) continue;
-    if (opts.ca && u.ca !== opts.ca) continue;
-    if (opts.yl && u.yl !== opts.yl) continue;
+    if (!inspiringInScope_(u, opts)) continue;
+    if (!inspiringHasUnitDetails_(u)) continue;
     // Skip units already inspiring-regenerated, unless caller asks to redo.
     if (!opts.redoAll && u.inspiringRegenAt) continue;
     out.push(i);
@@ -3532,13 +3566,17 @@ function regenerateAllInspiringStatus(opts) {
   const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
   const raw = JSON.parse(file.getBlob().getDataAsString());
   const data = Array.isArray(raw) ? raw : Object.values(raw).filter(u => u && typeof u === 'object');
-  const inScope = data.filter(u => u && u.ca && u.yl && (!opts.ca || u.ca === opts.ca) && (!opts.yl || u.yl === opts.yl));
-  const done = inScope.filter(u => u.inspiringRegenAt).length;
+  const inScope = data.filter(u => inspiringInScope_(u, opts));
+  const eligible = inScope.filter(inspiringHasUnitDetails_);
+  const done = eligible.filter(u => u.inspiringRegenAt).length;
+  const skipped = inspiringSkippedUnits_(data, opts);
   const props = PropertiesService.getScriptProperties();
   return {
-    total: inScope.length,
+    total: eligible.length,
     done: done,
-    remaining: inScope.length - done,
+    remaining: eligible.length - done,
+    skipped: skipped,
+    skippedCount: skipped.length,
     snapshotFileId: props.getProperty(INSPIRING_SNAPSHOT_PROP) || null,
     startedAt: props.getProperty(INSPIRING_STARTED_AT_PROP) || null
   };
@@ -3598,13 +3636,22 @@ function regenerateAllInspiring(opts) {
     const data = isArr ? raw : Object.values(raw).filter(u => u && typeof u === 'object');
 
     const candidates = inspiringCandidateIndexes_(data, opts);
-    const totalInScope = data.filter(u => u && u.ca && u.yl && (!opts.ca || u.ca === opts.ca) && (!opts.yl || u.yl === opts.yl)).length;
+    // totalInScope counts ELIGIBLE units only (ci + lo present). Units
+    // missing planner details are reported separately via `skipped` so the
+    // Studio can flag them for manual fill-in without confusing the progress
+    // numerator/denominator.
+    const eligibleUnits = data.filter(u => inspiringInScope_(u, opts) && inspiringHasUnitDetails_(u));
+    const totalInScope = eligibleUnits.length;
+    const skipped = inspiringSkippedUnits_(data, opts);
     const alreadyDone = totalInScope - candidates.length;
 
-    Logger.log('regenerateAllInspiring: ' + candidates.length + ' remaining of ' + totalInScope + ' in scope; processing up to ' + batch + ' this run.');
+    Logger.log('regenerateAllInspiring: ' + candidates.length + ' remaining of ' + totalInScope + ' eligible (' + skipped.length + ' skipped for missing ci/lo); processing up to ' + batch + ' this run.');
+    if (skipped.length) {
+      Logger.log('Skipped units (need ci + lo before regen):\n' + skipped.map(s => '  ' + s.ca + ' / ' + s.yl + ' / ' + s.th + ' (missing: ' + s.missing.join(', ') + ')').join('\n'));
+    }
 
     if (!candidates.length) {
-      return { processed: 0, fixed: 0, failed: 0, remaining: 0, total: totalInScope, done: alreadyDone, snapshot: snap, allDone: true };
+      return { processed: 0, fixed: 0, failed: 0, remaining: 0, total: totalInScope, done: alreadyDone, skipped: skipped, skippedCount: skipped.length, snapshot: snap, allDone: true };
     }
 
     const approvedToolsPrompt = getApprovedToolsPrompt_();
@@ -3664,6 +3711,8 @@ function regenerateAllInspiring(opts) {
       remaining: remaining,
       total: totalInScope,
       done: doneCount,
+      skipped: skipped,
+      skippedCount: skipped.length,
       snapshot: snap,
       allDone: remaining === 0,
       failures: failures

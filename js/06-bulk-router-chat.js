@@ -687,7 +687,7 @@ async function inspireAllBatch(){
   const ca = document.getElementById('f-campus')?.value || '';
   const yr = document.getElementById('f-year')?.value || '';
   const scopeLabel = ca || yr ? ` (${[ca, yr].filter(Boolean).join(' · ')})` : ' across all 3 campuses';
-  if(!confirm(`Regenerate EVERY unit${scopeLabel} in the new 6-sentence inspiring style?\n\n• data.json will be snapshotted to Drive first (rollback path)\n• Early-years units (3YO, 4YO, Prep) get hands-on + screen-free emphasis\n• ~12 units per batch, ~3 min/batch\n• Estimated total: 25-35 min\n• Progress shows on the ✨ card; safe to leave running\n\nProceed?`)) return;
+  if(!confirm(`Regenerate EVERY unit${scopeLabel} in the new 6-sentence inspiring style?\n\n• Units WITHOUT a Central Idea + Lines of Inquiry are SKIPPED (the prompt has nothing to anchor on)\n• data.json will be snapshotted to Drive first (rollback path)\n• Early-years units (3YO, 4YO, Prep) get hands-on + screen-free emphasis\n• ~12 units per batch, ~3 min/batch\n• Estimated total: 25-35 min\n• Progress shows on the ✨ card; safe to leave running\n\nProceed?`)) return;
 
   const btn = document.getElementById('btn-inspire-all');
   const statusEl = document.getElementById('inspire-all-status');
@@ -725,13 +725,16 @@ async function inspireAllBatch(){
       totalFailed += result.failed || 0;
       if(Array.isArray(result.failures)) allFailures.push(...result.failures);
       const snapNote = result.snapshot && !result.snapshot.alreadyExisted ? ` · snapshot: ${result.snapshot.snapshotName}` : '';
-      if(statusEl) statusEl.textContent = `Batch ${batchNum} done — ${result.done}/${result.total} units regenerated, ${result.remaining} remaining${snapNote}`;
+      const skipNote = result.skippedCount ? ` · ${result.skippedCount} skipped (no CI/LOI)` : '';
+      if(statusEl) statusEl.textContent = `Batch ${batchNum} done — ${result.done}/${result.total} eligible units regenerated, ${result.remaining} remaining${skipNote}${snapNote}`;
       setStatus(`Inspire All: ${result.done}/${result.total} done (batch ${batchNum})`, 'success');
       if(result.allDone){
         const failNote = totalFailed > 0 ? ` (${totalFailed} failed — see console)` : '';
-        setStatus(`✨ Inspire All complete: ${totalFixed} regenerated${failNote}`, 'success');
-        if(statusEl) statusEl.textContent = `Complete — ${totalFixed} regenerated${failNote}. Reload data to see the new descriptions.`;
+        const skipMsg = result.skippedCount ? ` · ${result.skippedCount} skipped (need CI + LOI in the planner)` : '';
+        setStatus(`✨ Inspire All complete: ${totalFixed} regenerated${failNote}${skipMsg}`, 'success');
+        if(statusEl) statusEl.textContent = `Complete — ${totalFixed} regenerated${failNote}${skipMsg}. Reload data to see the new descriptions.`;
         if(allFailures.length) console.warn('Inspire All failures:', allFailures);
+        if(Array.isArray(result.skipped) && result.skipped.length) console.info('Inspire All skipped (no CI/LOI):', result.skipped);
         // Reload data so the new descriptions appear in the Studio.
         if(typeof loadFromDrive === 'function'){
           await loadFromDrive();
@@ -879,18 +882,31 @@ function renderBrowse(){
     ${totalVerifiedCount > 0 ? `<button onclick="removeAllHumanVerified()" style="margin-left:auto;padding:5px 12px;background:transparent;border:1px solid rgba(255,128,128,0.3);color:#FF8080;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear all human verification flags so you can re-verify from scratch">Reset all verified</button>` : ''}
   </div>`;
 
-  // 2026-05-25: "Inspire All" card — bulk 6-sentence regen across every unit.
-  // Counts units already touched by the inspiringRegenAt marker so the card
-  // doubles as a progress display when the looping runner is mid-flight.
-  const filteredInspired = filtered.filter(({e}) => e.inspiringRegenAt).length;
-  const filteredInspiredTotal = filtered.length;
+  // 2026-05-25: "Inspire All" card — bulk 6-sentence regen across every unit
+  // that has both Central Idea (ci) and Lines of Inquiry (lo). Units missing
+  // either anchor are counted separately as "skipped" so teachers know what
+  // to fill in manually before re-running. Counts units already touched by
+  // the inspiringRegenAt marker so the card doubles as a progress display
+  // while the looping runner is mid-flight.
+  const inspireHasDetails = (e) => !!(e && e.ci && String(e.ci).trim() && e.lo && String(e.lo).trim());
+  const inspireEligible = filtered.filter(({e}) => inspireHasDetails(e));
+  const inspireSkipped = filtered.filter(({e}) => !inspireHasDetails(e));
+  const filteredInspired = inspireEligible.filter(({e}) => e.inspiringRegenAt).length;
+  const filteredInspiredTotal = inspireEligible.length;
   const inspiredRemaining = filteredInspiredTotal - filteredInspired;
   const inspireScopeLabel = ca || yr ? `(${[ca, yr].filter(Boolean).join(' · ')})` : 'across all 3 campuses';
+  const inspireSkippedTitle = inspireSkipped.length ? inspireSkipped.map(({e}) => {
+    const m = [];
+    if(!e.ci || !String(e.ci).trim()) m.push('CI');
+    if(!e.lo || !String(e.lo).trim()) m.push('LOI');
+    return `${e.ca} · ${e.yl} · ${e.th} (missing ${m.join(' + ')})`;
+  }).join('\n') : '';
+  const inspireSkippedNote = inspireSkipped.length ? ` · <span style="color:#fbbf24;cursor:help" title="${esc(inspireSkippedTitle)}">${inspireSkipped.length} skipped (no CI/LOI)</span>` : '';
   const inspireSummaryHtml = `<div id="inspire-all-card" class="card2" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px;border-color:rgba(56,189,248,.35);background:rgba(56,189,248,.06)">
     <span style="font-size:18px">✨</span>
-    <span style="font-size:13px;color:var(--text);font-weight:800">${filteredInspired}/${filteredInspiredTotal} units regenerated in 6-sentence inspiring style ${inspireScopeLabel}</span>
-    <span id="inspire-all-status" style="font-size:12px;color:var(--dim)">${inspiredRemaining > 0 ? `${inspiredRemaining} still using the old 2-3 sentence descriptions` : 'All units regenerated — early-years (3YO/4YO/Prep) include hands-on / screen-free options'}</span>
-    ${inspiredRemaining > 0 ? `<button id="btn-inspire-all" onclick="inspireAllBatch()" style="margin-left:auto;padding:6px 14px;background:#38BDF8;color:#0a1f2e;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer" title="Regenerate every unit's 6 suggestions in the new 6-sentence inspiring style. Snapshots data.json first. Processes 12 units at a time, ~3 min/batch. Total run: ~25-35 min.">🚀 Inspire all${ca || yr ? ' (in view)' : ''}</button>` : ''}
+    <span style="font-size:13px;color:var(--text);font-weight:800">${filteredInspired}/${filteredInspiredTotal} units regenerated in 6-sentence inspiring style ${inspireScopeLabel}${inspireSkippedNote}</span>
+    <span id="inspire-all-status" style="font-size:12px;color:var(--dim)">${inspiredRemaining > 0 ? `${inspiredRemaining} still using the old 2-3 sentence descriptions` : (filteredInspiredTotal > 0 ? 'All eligible units regenerated — early-years (3YO/4YO/Prep) include hands-on / screen-free options' : 'No eligible units in view')}</span>
+    ${inspiredRemaining > 0 ? `<button id="btn-inspire-all" onclick="inspireAllBatch()" style="margin-left:auto;padding:6px 14px;background:#38BDF8;color:#0a1f2e;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer" title="Regenerate every unit's 6 suggestions in the new 6-sentence inspiring style. Snapshots data.json first. Processes 12 units at a time, ~3 min/batch. Total run: ~25-35 min. Units missing Central Idea or Lines of Inquiry are SKIPPED.">🚀 Inspire all${ca || yr ? ' (in view)' : ''}</button>` : ''}
     ${filteredInspired > 0 ? `<button id="btn-inspire-reset" onclick="inspireAllReset()" style="padding:6px 12px;background:transparent;border:1px solid rgba(255,128,128,.3);color:#FF8080;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear the inspiringRegenAt flag so Inspire All can be re-run from scratch. Existing suggestions stay until the regen overwrites them.">Reset inspire flags</button>` : ''}
   </div>`;
 
