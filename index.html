@@ -434,6 +434,21 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 .tech-btn.primary:hover{background:#4ADE80}
 .tech-meta{font-size:11px;color:#666;margin-top:8px;text-align:right}
 .tech-error{padding:14px;border-radius:10px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.3);color:#FCA5A5;font-size:13px;line-height:1.5}
+.tech-editor{margin-top:16px;border:1px solid #2D3748;border-radius:12px;background:rgba(56,189,248,.04);overflow:hidden}
+.tech-editor[open]{border-color:rgba(56,189,248,.5);background:rgba(56,189,248,.07)}
+.tech-editor-summary{cursor:pointer;padding:12px 16px;font-size:13px;font-weight:700;color:#38BDF8;list-style:none;display:flex;align-items:center;gap:8px;user-select:none}
+.tech-editor-summary::-webkit-details-marker{display:none}
+.tech-editor-summary::after{content:'▸';margin-left:auto;font-size:11px;color:#666;transition:transform .15s}
+.tech-editor[open] .tech-editor-summary::after{transform:rotate(90deg)}
+.tech-editor-summary:hover{background:rgba(56,189,248,.06)}
+.tech-editor-body{padding:4px 16px 16px}
+.tech-editor-hint{font-size:12px;color:#AAA;line-height:1.5;margin-bottom:12px;padding:8px 10px;background:#1A1A1A;border-radius:6px;border-left:3px solid #38BDF8}
+.tech-editor-hint strong{color:#FFF}
+.tech-editor-label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#888;margin:10px 0 4px}
+.tech-editor-sub{font-weight:400;text-transform:none;letter-spacing:0;color:#666}
+.tech-editor-input{width:100%;background:#0F0F0F;border:1px solid #2A2A2A;border-radius:8px;padding:9px 11px;color:#EEE;font-family:inherit;font-size:13px;line-height:1.5;resize:vertical;box-sizing:border-box}
+.tech-editor-input:focus{outline:none;border-color:#38BDF8;background:#111}
+.tech-editor-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 
 </style></head><body><div id="app"></div>
 <script>
@@ -732,29 +747,31 @@ function removeTechChip(campus,yl,theme,tool){
   }catch(e){}
 }
 
-function renderTechPickerPrompt(campus,yl,theme){
+function renderTechPickerPrompt(campus,yl,theme,ci,lo){
   var chips=getTechChips(campus,yl,theme);
   var chipsHtml='';
+  var caEnc=encodeURIComponent(campus),ylEnc=encodeURIComponent(yl),thEnc=encodeURIComponent(theme);
+  var ciEnc=encodeURIComponent(ci||''),loEnc=encodeURIComponent(lo||'');
   if(chips.length){
-    var caEnc=encodeURIComponent(campus),ylEnc=encodeURIComponent(yl),thEnc=encodeURIComponent(theme);
     chipsHtml='<div class="tech-chips">';
     chips.forEach(function(t){
       var tEnc=encodeURIComponent(t);
       var tSafe=escapeHtml(t);
       chipsHtml+='<span class="tech-chip">'
-        +'<button type="button" class="tech-chip-main" onclick="reopenTechChip(\''+caEnc+'\',\''+ylEnc+'\',\''+thEnc+'\',\''+tEnc+'\')" title="Reopen suggestion for '+tSafe+'">🔧 '+tSafe+'</button>'
+        +'<button type="button" class="tech-chip-main" onclick="reopenTechChip(\''+caEnc+'\',\''+ylEnc+'\',\''+thEnc+'\',\''+tEnc+'\',\''+ciEnc+'\',\''+loEnc+'\')" title="Reopen suggestion for '+tSafe+'">🔧 '+tSafe+'</button>'
         +'<button type="button" class="tech-chip-x" onclick="dismissTechChip(\''+caEnc+'\',\''+ylEnc+'\',\''+thEnc+'\',\''+tEnc+'\')" title="Remove" aria-label="Remove '+tSafe+'">✕</button>'
         +'</span>';
     });
     chipsHtml+='</div>';
   }
   return chipsHtml +
-    '<div class="tech-prompt" onclick="openTechPicker(\''+encodeURIComponent(campus)+'\',\''+encodeURIComponent(yl)+'\',\''+encodeURIComponent(theme)+'\')"><div class="tech-prompt-icon">🔧</div><div class="tech-prompt-text"><div class="tech-prompt-title">Have a tech tool in mind?</div><div class="tech-prompt-sub">Pick an approved tool and we\'ll tailor a suggestion to this unit →</div></div><div class="tech-prompt-arrow">→</div></div>';
+    '<div class="tech-prompt" onclick="openTechPicker(\''+caEnc+'\',\''+ylEnc+'\',\''+thEnc+'\',\''+ciEnc+'\',\''+loEnc+'\')"><div class="tech-prompt-icon">🔧</div><div class="tech-prompt-text"><div class="tech-prompt-title">Have a tech tool in mind?</div><div class="tech-prompt-sub">Pick an approved tool and we\'ll tailor a suggestion to this unit →</div></div><div class="tech-prompt-arrow">→</div></div>';
 }
 
-function reopenTechChip(campusEnc,ylEnc,themeEnc,toolEnc){
+function reopenTechChip(campusEnc,ylEnc,themeEnc,toolEnc,ciEnc,loEnc){
   var campus=decodeURIComponent(campusEnc),yl=decodeURIComponent(ylEnc),theme=decodeURIComponent(themeEnc),tool=decodeURIComponent(toolEnc);
-  openTechResult(campus,yl,theme,tool,false);
+  var ci=ciEnc?decodeURIComponent(ciEnc):'',lo=loEnc?decodeURIComponent(loEnc):'';
+  openTechResult(campus,yl,theme,tool,false,ci,lo);
 }
 function dismissTechChip(campusEnc,ylEnc,themeEnc,toolEnc){
   var campus=decodeURIComponent(campusEnc),yl=decodeURIComponent(ylEnc),theme=decodeURIComponent(themeEnc),tool=decodeURIComponent(toolEnc);
@@ -762,8 +779,9 @@ function dismissTechChip(campusEnc,ylEnc,themeEnc,toolEnc){
   R();
 }
 
-function openTechPicker(campusEnc,ylEnc,themeEnc){
+function openTechPicker(campusEnc,ylEnc,themeEnc,ciEnc,loEnc){
   var campus=decodeURIComponent(campusEnc),yl=decodeURIComponent(ylEnc),theme=decodeURIComponent(themeEnc);
+  var ci=ciEnc?decodeURIComponent(ciEnc):'',lo=loEnc?decodeURIComponent(loEnc):'';
   var tools=window.APPROVED_TOOLS_LIST||[];
   var old=document.getElementById('techOverlay');if(old)old.remove();
   var body;
@@ -785,6 +803,7 @@ function openTechPicker(campusEnc,ylEnc,themeEnc){
   overlay.id='techOverlay';
   overlay.className='tech-overlay';
   overlay.dataset.campus=campus;overlay.dataset.yl=yl;overlay.dataset.theme=theme;
+  overlay.dataset.ci=ci;overlay.dataset.lo=lo;
   overlay.innerHTML=html;
   overlay.onclick=function(ev){if(ev.target===overlay)closeTech();};
   document.body.appendChild(overlay);
@@ -806,10 +825,14 @@ function filterTechTiles(q){
 function pickTech(btn,campusEnc,ylEnc,themeEnc){
   var campus=decodeURIComponent(campusEnc),yl=decodeURIComponent(ylEnc),theme=decodeURIComponent(themeEnc);
   var tool=btn.getAttribute('data-tool');
-  openTechResult(campus,yl,theme,tool,false);
+  // Carry the picker's stored ci/lo into the result modal so the editor pre-fills.
+  var overlay=document.getElementById('techOverlay');
+  var ci=overlay&&overlay.dataset.ci?overlay.dataset.ci:'';
+  var lo=overlay&&overlay.dataset.lo?overlay.dataset.lo:'';
+  openTechResult(campus,yl,theme,tool,false,ci,lo);
 }
 
-function openTechResult(campus,yl,theme,tool,regen){
+function openTechResult(campus,yl,theme,tool,regen,ci,lo,customCi,customLo){
   var overlay=document.getElementById('techOverlay');
   if(!overlay){
     // No picker open (e.g. chip click) — create a fresh overlay shell
@@ -825,17 +848,24 @@ function openTechResult(campus,yl,theme,tool,regen){
     requestAnimationFrame(function(){overlay.classList.add('open');});
   }
   overlay.dataset.tool=tool;
+  // Persist the canonical (unit) CI/LOI plus any custom override on the
+  // overlay so renderTechResult's editable panel and the Regenerate button
+  // can re-read them without a fresh page lookup.
+  if(typeof ci==='string')overlay.dataset.ci=ci;
+  if(typeof lo==='string')overlay.dataset.lo=lo;
+  overlay.dataset.customCi=customCi||'';
+  overlay.dataset.customLo=customLo||'';
   overlay.innerHTML='<div class="tech-modal" role="dialog" aria-modal="true" aria-labelledby="techModalTitle">' +
     '<button type="button" class="tech-modal-close" onclick="closeTech()" aria-label="Close">✕</button>' +
     '<div class="tech-modal-header"><div class="tech-modal-icon" aria-hidden="true">🔧</div><div><div id="techModalTitle" class="tech-modal-title">'+escapeHtml(tool)+'</div><div class="tech-modal-sub">'+escapeHtml(yl)+' · '+escapeHtml(theme)+'</div></div></div>' +
     '<div class="tech-modal-body" id="techModalBody"><div class="tech-loading"><div class="tech-spinner" aria-hidden="true"></div><div>'+(regen?'Regenerating with fresh ideas…':'Tailoring a suggestion for this unit…')+'</div></div></div></div>';
   focusDlaDialog(overlay);
-  fetchTechSuggestion(campus,yl,theme,tool,regen);
+  fetchTechSuggestion(campus,yl,theme,tool,regen,customCi,customLo);
 }
 
 function escapeHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-function fetchTechSuggestion(campus,yl,theme,tool,regen){
+function fetchTechSuggestion(campus,yl,theme,tool,regen,customCi,customLo){
   var url=AI_HOOK
     +'?action=suggestTech'
     +'&ca='+encodeURIComponent(campus)
@@ -843,6 +873,8 @@ function fetchTechSuggestion(campus,yl,theme,tool,regen){
     +'&th='+encodeURIComponent(theme)
     +'&tool='+encodeURIComponent(tool)
     +'&regen='+(regen?'1':'0')
+    +(customCi?'&customCi='+encodeURIComponent(customCi):'')
+    +(customLo?'&customLo='+encodeURIComponent(customLo):'')
     +'&t='+Date.now();
   // Apps Script returns Access-Control-Allow-Origin: * on GETs, so a plain
   // fetch works and is far more reliable than JSONP for slow cold starts
@@ -874,9 +906,22 @@ function fetchTechSuggestion(campus,yl,theme,tool,regen){
 function renderTechResult(campus,yl,theme,tool,resp){
   var body=document.getElementById('techModalBody');
   if(!body)return;
+  var overlay=document.getElementById('techOverlay');
+  // Prefer any teacher-typed custom values still on the overlay; fall back to
+  // the canonical unit CI/LOI we plumbed in. Empty strings are fine — the
+  // editor just renders blank fields for a new unit.
+  var customCi=overlay&&overlay.dataset.customCi?overlay.dataset.customCi:'';
+  var customLo=overlay&&overlay.dataset.customLo?overlay.dataset.customLo:'';
+  var unitCi=overlay&&overlay.dataset.ci?overlay.dataset.ci:'';
+  var unitLo=overlay&&overlay.dataset.lo?overlay.dataset.lo:'';
+  var editorCi=customCi||unitCi;
+  var editorLo=customLo||unitLo;
+  var usingCustom=!!(customCi||customLo);
+  var editorPanel=buildUnitEditorPanel(campus,yl,theme,tool,editorCi,editorLo,usingCustom);
   if(resp&&resp.error){
     body.innerHTML='<div class="tech-error">⚠️ '+escapeHtml(resp.error)+'</div>' +
-      '<div class="tech-actions"><button class="tech-btn" onclick="closeTech()">Close</button><button class="tech-btn primary" onclick="openTechResult(\''+encodeURIComponent(campus)+'\',\''+encodeURIComponent(yl)+'\',\''+encodeURIComponent(theme)+'\',\''+encodeURIComponent(tool)+'\',true)">↻ Try again</button></div>';
+      '<div class="tech-actions"><button class="tech-btn" onclick="closeTech()">Close</button><button class="tech-btn primary" onclick="regenTechResultFromOverlay(true)">↻ Try again</button></div>' +
+      editorPanel;
     return;
   }
   var desc=resp.description||'';
@@ -886,6 +931,7 @@ function renderTechResult(campus,yl,theme,tool,resp){
   var fitLabel=fit==='good'?'Strong fit':(fit==='stretch'?'Works with a stretch':'Weak fit');
   var fitNote=resp.fitNote||'';
   var cachedNote=resp.cached?'Served from cache · click ↻ to regenerate':'Fresh suggestion · '+(resp.generatedAt?new Date(resp.generatedAt).toLocaleString():'just now');
+  if(usingCustom)cachedNote='Based on your edited unit details · '+cachedNote;
   var stepsHtml=steps.length?'<ol class="tech-steps">'+steps.map(function(s){return '<li>'+escapeHtml(s)+'</li>';}).join('')+'</ol>':'';
   var noteHtml=(fit!=='good'&&fitNote)?'<div class="tech-fitnote">'+escapeHtml(fitNote)+'</div>':'';
   body.innerHTML=
@@ -894,9 +940,63 @@ function renderTechResult(campus,yl,theme,tool,resp){
     '<div class="sg-desc" style="font-size:14px;line-height:1.6;margin-bottom:12px">'+linkifyDesc(desc)+'</div>' +
     (stepsHtml?'<div class="sg-label" style="margin:14px 0 4px;color:#4ADE80;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px">Suggested steps</div>'+stepsHtml:'') +
     (va?'<div class="sg-label" style="margin:14px 0 4px;color:#4ADE80;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px">Value add</div><div class="vb" style="border-left-color:#22C55E">'+escapeHtml(va)+'</div>':'') +
-    '<div class="tech-actions"><button class="tech-btn primary" onclick="closeTech()">Done</button><button class="tech-btn" onclick="openTechResult(\''+encodeURIComponent(campus)+'\',\''+encodeURIComponent(yl)+'\',\''+encodeURIComponent(theme)+'\',\''+encodeURIComponent(tool)+'\',true)">↻ Regenerate</button></div>' +
-    '<div class="tech-meta">'+cachedNote+'</div>';
+    '<div class="tech-actions"><button class="tech-btn primary" onclick="closeTech()">Done</button><button class="tech-btn" onclick="regenTechResultFromOverlay(true)">↻ Regenerate</button></div>' +
+    '<div class="tech-meta">'+cachedNote+'</div>' +
+    editorPanel;
   addTechChip(campus,yl,theme,tool);
+}
+
+// Editable Central Idea + Lines of Inquiry panel. Lets teachers refine the
+// unit context (or fill it in from scratch for a new unit) and regenerate.
+function buildUnitEditorPanel(campus,yl,theme,tool,ci,lo,startOpen){
+  var openClass=startOpen?' open':'';
+  var ciVal=escapeHtml(ci||'');
+  var loVal=escapeHtml(lo||'');
+  return '<details class="tech-editor'+openClass+'"'+(startOpen?' open':'')+'>' +
+    '<summary class="tech-editor-summary">✏️ Edit Central Idea &amp; Lines of Inquiry, then regenerate</summary>' +
+    '<div class="tech-editor-body">' +
+      '<div class="tech-editor-hint">New unit, or want a different angle? Update either field below and click <strong>Generate with my unit details</strong>. The AI will rebuild the suggestion around what you write.</div>' +
+      '<label class="tech-editor-label" for="techEdCi">Central Idea</label>' +
+      '<textarea id="techEdCi" class="tech-editor-input" rows="2" placeholder="e.g. Sharing personal stories helps us understand and value different perspectives.">'+ciVal+'</textarea>' +
+      '<label class="tech-editor-label" for="techEdLo">Lines of Inquiry <span class="tech-editor-sub">(one per line, or separated by semicolons)</span></label>' +
+      '<textarea id="techEdLo" class="tech-editor-input" rows="4" placeholder="• Where stories come from&#10;• How stories shape identity&#10;• Our responsibility as storytellers">'+loVal+'</textarea>' +
+      '<div class="tech-editor-actions">' +
+        '<button type="button" class="tech-btn primary" onclick="regenWithCustomDetails()">⚡ Generate with my unit details</button>' +
+        '<button type="button" class="tech-btn" onclick="resetCustomDetails()">Reset to planner</button>' +
+      '</div>' +
+    '</div>' +
+  '</details>';
+}
+
+function regenWithCustomDetails(){
+  var overlay=document.getElementById('techOverlay');
+  if(!overlay)return;
+  var ciEl=document.getElementById('techEdCi');
+  var loEl=document.getElementById('techEdLo');
+  var customCi=(ciEl&&ciEl.value||'').trim();
+  var customLo=(loEl&&loEl.value||'').trim();
+  if(!customCi&&!customLo){
+    // Nothing typed — fall back to a normal regenerate against the stored planner.
+    regenTechResultFromOverlay(true);
+    return;
+  }
+  var campus=overlay.dataset.campus,yl=overlay.dataset.yl,theme=overlay.dataset.theme,tool=overlay.dataset.tool;
+  // Carry the unit-level ci/lo through so resetCustomDetails can restore them.
+  openTechResult(campus,yl,theme,tool,true,overlay.dataset.ci||'',overlay.dataset.lo||'',customCi,customLo);
+}
+
+function resetCustomDetails(){
+  var overlay=document.getElementById('techOverlay');
+  if(!overlay)return;
+  var campus=overlay.dataset.campus,yl=overlay.dataset.yl,theme=overlay.dataset.theme,tool=overlay.dataset.tool;
+  openTechResult(campus,yl,theme,tool,true,overlay.dataset.ci||'',overlay.dataset.lo||'','','');
+}
+
+function regenTechResultFromOverlay(regen){
+  var overlay=document.getElementById('techOverlay');
+  if(!overlay)return;
+  var campus=overlay.dataset.campus,yl=overlay.dataset.yl,theme=overlay.dataset.theme,tool=overlay.dataset.tool;
+  openTechResult(campus,yl,theme,tool,!!regen,overlay.dataset.ci||'',overlay.dataset.lo||'',overlay.dataset.customCi||'',overlay.dataset.customLo||'');
 }
 
 function closeTech(){
@@ -1781,7 +1881,7 @@ h+='<div class="sg-fb"><button class="sg-intent'+(_iniDone?' done':'')+'" data-i
 h+='</div></div>';});
 
 // "I have a tool in mind" — teacher-driven live AI suggestion
-h+=renderTechPickerPrompt(CN[ca],yl,u.th);
+h+=renderTechPickerPrompt(CN[ca],yl,u.th,u.ci||'',u.lo||'');
 
 // ACARA and Wesley curriculum toggles
 h+='<div class="tech-cur-toggle" id="techCurToggle" onclick="tgTechCur()"><span style="font-size:16px">📋</span><span style="flex:1;font-size:14px;font-weight:700;color:#38BDF8">ACARA Digital Technologies — '+yl+'</span><span style="font-size:12px;color:#888">Digital Technologies curriculum</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 8 10 12 14 8"/></svg></div>';

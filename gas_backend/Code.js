@@ -345,7 +345,9 @@ function doGet(e) {
         yl: params.yl || '',
         th: params.th || '',
         tool: params.tool || '',
-        regen: String(params.regen || '0') === '1'
+        regen: String(params.regen || '0') === '1',
+        customCi: params.customCi || '',
+        customLo: params.customLo || ''
       });
       return cb ? jsonpResponse(cb, result) : jsonResponse(result);
     }
@@ -384,7 +386,10 @@ function jsonpResponse(callback, obj) {
 var TECH_SUGGEST_DAILY_CAP = 500;
 // Model lives at the top of the file as OPENAI_FAST_MODEL; reference it here
 // so any rename only touches one place.
-var TECH_SUGGEST_CACHE_PREFIX = 'tech_sugg_v1_';
+// v2 = 6-sentence inspiring descriptions + optional teacher-supplied CI/LOI
+// override. Bumping the prefix abandons the old 3-sentence cached results so
+// teachers don't see stale short descriptions.
+var TECH_SUGGEST_CACHE_PREFIX = 'tech_sugg_v2_';
 
 function suggestTechForPlanner_(args) {
   var ca = String(args.ca || '').trim();
@@ -392,6 +397,9 @@ function suggestTechForPlanner_(args) {
   var th = String(args.th || '').trim();
   var tool = String(args.tool || '').trim();
   var regen = !!args.regen;
+  var customCi = String(args.customCi || '').trim();
+  var customLo = String(args.customLo || '').trim();
+  var hasCustom = !!(customCi || customLo);
 
   if (!ca || !yl || !th || !tool) {
     return { error: 'suggestTech requires ca, yl, th, and tool' };
@@ -407,8 +415,12 @@ function suggestTechForPlanner_(args) {
     return { error: 'Tool not on approved list: ' + tool };
   }
 
+  // Cache key includes custom CI/LO when present so teachers' bespoke prompts
+  // don't collide with (or overwrite) the canonical planner-driven cache.
+  var keyParts = [ca, yl, th, tool];
+  if (hasCustom) keyParts.push('c:' + customCi, 'l:' + customLo);
   var cacheKey = TECH_SUGGEST_CACHE_PREFIX + Utilities.base64EncodeWebSafe(
-    Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_1, [ca, yl, th, tool].join('|'))
+    Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_1, keyParts.join('|'))
   ).replace(/=+$/, '');
 
   var props = PropertiesService.getScriptProperties();
@@ -427,12 +439,21 @@ function suggestTechForPlanner_(args) {
     return { error: 'Service is at capacity for today. Please try again tomorrow.' };
   }
 
-  var plannerContext = loadPlannerContextForUnit_(ca, yl, th);
-  if (!plannerContext) {
-    return { error: 'No planner context found for ' + ca + ' / ' + yl + ' / ' + th };
+  var plannerContext;
+  if (hasCustom) {
+    // Teacher supplied their own CI / LOI (new unit, or wants a different angle).
+    // Build context from their input rather than the stored planner.
+    var ciBlock = customCi ? 'CENTRAL IDEA: ' + customCi + '\n' : '';
+    var loBlock = customLo ? 'LINES OF INQUIRY: ' + customLo + '\n' : '';
+    plannerContext = ('UNIT: ' + th + '\n' + ciBlock + loBlock + '\n(Teacher-supplied unit details — treat as the authoritative description of this unit.)').trim();
+  } else {
+    plannerContext = loadPlannerContextForUnit_(ca, yl, th);
+    if (!plannerContext) {
+      return { error: 'No planner context found for ' + ca + ' / ' + yl + ' / ' + th };
+    }
   }
 
-  var systemPrompt = 'You are a digital learning coach at Wesley College (IB PYP, Melbourne) helping a primary-school teacher use a specific approved technology in a specific unit of inquiry. Output STRICT JSON only — no markdown, no commentary.';
+  var systemPrompt = 'You are a visionary digital learning coach at Wesley College (IB PYP, Melbourne). You help primary-school teachers see possibilities with a specific approved technology that they would not have thought of on their own. Your descriptions inspire. They blend pedagogical rigour with creative ambition. They name authentic audiences, cross-disciplinary connections, real-world impact, and student agency. Output STRICT JSON only — no markdown, no commentary.';
   var userPrompt =
     'TOOL THE TEACHER WANTS TO USE: ' + tool + '\n' +
     'CAMPUS: ' + ca + '\n' +
@@ -440,11 +461,19 @@ function suggestTechForPlanner_(args) {
     'UNIT OF INQUIRY: ' + th + '\n\n' +
     'PLANNER CONTEXT:\n' + plannerContext + '\n\n' +
     REALISTIC_TOOL_USE_RULES + '\n\n' +
+    'YOUR MISSION: Write a description that makes the teacher stop and say "I never thought of using it like that." Push the learning into territory most ' + yl + ' classrooms have not explored. Reject the obvious. Reject the generic. Every sentence must be tailored to THIS unit.\n\n' +
+    'The "description" field MUST be exactly 6 vivid, classroom-ready sentences that together do all of the following:\n' +
+    '  1. Open with the bold creative premise — what students are actually making, investigating, or experiencing (name the unit\'s topic explicitly).\n' +
+    '  2. Connect the activity directly to one of the unit\'s lines of inquiry or the central idea (name it).\n' +
+    '  3. Reveal a less-obvious twist — a cross-disciplinary link, a counter-intuitive role-reversal, an authentic external audience, a real community/expert connection, an ethical or perspective-taking dimension, or a use of the tool that most teachers don\'t know about.\n' +
+    '  4. Describe what the FINAL student artefact looks like, sounds like, or does — concrete and shareable.\n' +
+    '  5. Name a specific advanced or under-used feature of the tool that powers the activity (not the basic feature everyone already uses).\n' +
+    '  6. End with the inspiring "so what" — the disposition, agency, or real-world contribution the student takes away beyond the unit.\n\n' +
     'Return STRICT JSON with this exact shape:\n' +
     '{\n' +
-    '  "description": "2-4 sentences naming concrete student actions with the tool that connect to this unit\'s central idea and lines of inquiry.",\n' +
-    '  "valueAdd": "1-2 sentences on the learning value this adds (skills, engagement, output) that a non-digital task would not.",\n' +
-    '  "steps": ["3-5 short imperative steps a teacher would follow to run this lesson"],\n' +
+    '  "description": "Exactly 6 sentences as specified above. No bullet points, no numbering — flowing prose.",\n' +
+    '  "valueAdd": "2-3 sentences on the deeper learning value this adds (creative agency, transferable skills, authentic audience, future-of-work capability) that a non-digital or generic-digital task could not deliver.",\n' +
+    '  "steps": ["4-6 short imperative steps a teacher would follow to run this lesson, including one unexpected element"],\n' +
     '  "fit": "good" | "stretch" | "poor",\n' +
     '  "fitNote": "If fit is stretch or poor, 1 sentence on why and what would work better. If good, leave empty."\n' +
     '}\n' +
@@ -454,8 +483,8 @@ function suggestTechForPlanner_(args) {
   try {
     aiResult = callAIProxy_({
       model: OPENAI_FAST_MODEL,
-      temperature: 0.4,
-      maxTokens: 700,
+      temperature: 0.75,
+      maxTokens: 1400,
       systemPrompt: systemPrompt,
       contents: [{ role: 'user', parts: [{ text: userPrompt }] }]
     });
