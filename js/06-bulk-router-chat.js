@@ -866,6 +866,79 @@ async function inspireAllClearAbort(){
   }
 }
 
+// 2026-05-25: Teacher UOI edit proposals — admin review queue.
+// Teachers on the public site submit CI/LOI edit proposals via the
+// public submitUoiProposal endpoint. They land in DLA_UOI_PROPOSALS.
+// loadUoiProposalsBatch pulls the pending list, refreshes the card.
+window._uoiProposalsCache = null;
+
+async function loadUoiProposals(){
+  try {
+    const payload = withGASToken({ action: 'listUoiProposals', status: 'pending' });
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+    if(result.error){ console.warn('loadUoiProposals error:', result.error); return; }
+    window._uoiProposalsCache = result.proposals || [];
+    if(typeof renderBrowse === 'function') renderBrowse();
+  } catch(err){
+    console.warn('loadUoiProposals failed:', err.message);
+  }
+}
+
+async function approveUoiProposal(id){
+  if(!confirm('Approve this teacher edit?\n\n• Their Central Idea / Lines of Inquiry will be applied to data.json\n• inspiringRegenAt cleared so the next Inspire All retunes tech ideas to the new wording\n• Committed + pushed to GitHub\n\nProceed?'))return;
+  try {
+    const payload = withGASToken({ action: 'approveUoiProposal', id: id });
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+    if(result.error){ setStatus('Approve error: ' + result.error, 'error'); return; }
+    setStatus(`✓ Approved — ${result.changes ? result.changes.length : 0} field(s) updated. Run Inspire All when ready to retune tech ideas.`, 'success');
+    await loadUoiProposals();
+    if(typeof loadFromDrive === 'function'){
+      await loadFromDrive();
+      if(typeof renderBrowse === 'function') renderBrowse();
+    }
+  } catch(err){
+    setStatus('Approve failed: ' + err.message, 'error');
+  }
+}
+
+async function dismissUoiProposal(id){
+  const reason = prompt('Optional — short reason for dismissal (shown nowhere yet, just stored for audit):', '');
+  if(reason === null) return; // Cancelled
+  try {
+    const payload = withGASToken({ action: 'dismissUoiProposal', id: id, reason: reason || '' });
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+    if(result.error){ setStatus('Dismiss error: ' + result.error, 'error'); return; }
+    setStatus('Proposal dismissed.', 'success');
+    await loadUoiProposals();
+  } catch(err){
+    setStatus('Dismiss failed: ' + err.message, 'error');
+  }
+}
+
+// Auto-fetch proposals on page init so the card shows up without a manual click.
+if(typeof window !== 'undefined'){
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){ setTimeout(loadUoiProposals, 1500); });
+  } else {
+    setTimeout(loadUoiProposals, 1500);
+  }
+}
+
 async function inspireAllReset(){
   const ca = document.getElementById('f-campus')?.value || '';
   const yr = document.getElementById('f-year')?.value || '';
@@ -1026,7 +1099,42 @@ function renderBrowse(){
     ${filteredInspired > 0 ? `<button id="btn-inspire-reset" onclick="inspireAllReset()" style="padding:6px 12px;background:transparent;border:1px solid rgba(255,128,128,.3);color:#FF8080;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear the inspiringRegenAt flag on EVERY unit so Inspire All can be re-run from scratch. Existing suggestions stay until the regen overwrites them.">Reset inspire flags</button>` : ''}
   </div>`;
 
-  document.getElementById('browse-list').innerHTML=inspireSummaryHtml + makerspaceSummaryHtml + verificationSummaryHtml + filtered.map(({e,idx})=>{
+  // 2026-05-25: Teacher UOI edit proposals — admin review panel.
+  // Loaded once on page init via loadUoiProposals (cached in
+  // window._uoiProposalsCache). Card only renders when proposals exist.
+  const _proposals = Array.isArray(window._uoiProposalsCache) ? window._uoiProposalsCache : [];
+  const _proposalsScoped = _proposals.filter(p =>
+    (!ca || p.ca === ca) && (!yr || p.yl === yr)
+  );
+  const proposalReviewHtml = _proposalsScoped.length ? `<div id="uoi-proposals-card" class="card2" style="margin-bottom:10px;border-color:rgba(212,160,23,.4);background:rgba(212,160,23,.06)">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+      <span style="font-size:18px">📝</span>
+      <span style="font-size:13px;color:var(--text);font-weight:800">${_proposalsScoped.length} teacher edit proposal${_proposalsScoped.length===1?'':'s'} pending review</span>
+      <span style="font-size:12px;color:var(--dim)">Submitted from the public DLA site. Approve to apply Central Idea / Lines of Inquiry into data.json.</span>
+      <button onclick="loadUoiProposals()" style="margin-left:auto;padding:5px 10px;background:transparent;border:1px solid #888;color:#aaa;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Reload the pending proposals list from the backend">↻ Refresh</button>
+    </div>
+    ${_proposalsScoped.map(p => {
+      const submitted = p.submittedAt ? new Date(p.submittedAt).toLocaleString('en-AU') : '';
+      const ciBlock = p.ci ? `<div style="margin-top:8px"><div style="font-size:10px;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px">Proposed Central Idea</div><div style="font-size:13px;color:#EEE;line-height:1.5;background:#1a1a1a;padding:8px 10px;border-radius:6px;border-left:3px solid #FBBF24">${esc(p.ci)}</div></div>` : '';
+      const loBlock = p.lo ? `<div style="margin-top:8px"><div style="font-size:10px;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px">Proposed Lines of Inquiry</div><div style="font-size:13px;color:#EEE;line-height:1.5;background:#1a1a1a;padding:8px 10px;border-radius:6px;border-left:3px solid #A78BFA;white-space:pre-wrap">${esc(p.lo)}</div></div>` : '';
+      const noteBlock = p.note ? `<div style="margin-top:8px;font-size:12px;color:#aaa;line-height:1.5"><strong style="color:#FBBF24">Teacher note:</strong> ${esc(p.note)}</div>` : '';
+      return `<div style="padding:14px;border:1px solid rgba(212,160,23,.25);border-radius:10px;margin-bottom:10px;background:rgba(0,0,0,.18)">
+        <div style="display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:800;color:var(--text)">${esc(p.ca)} · ${esc(p.yl)} · ${esc(p.th)}</div>
+            <div style="font-size:11px;color:#888;margin-top:2px">Submitted ${submitted}</div>
+          </div>
+          <div style="display:flex;gap:6px;flex-shrink:0">
+            <button onclick="approveUoiProposal('${esc(p.id)}')" style="padding:6px 12px;background:#22C55E;color:#0a1f12;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer" title="Apply this proposal to data.json + push to GitHub">✓ Approve</button>
+            <button onclick="dismissUoiProposal('${esc(p.id)}')" style="padding:6px 12px;background:transparent;border:1px solid rgba(255,128,128,.4);color:#FF8080;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer" title="Dismiss without applying">✕ Dismiss</button>
+          </div>
+        </div>
+        ${ciBlock}${loBlock}${noteBlock}
+      </div>`;
+    }).join('')}
+  </div>` : '';
+
+  document.getElementById('browse-list').innerHTML=proposalReviewHtml + inspireSummaryHtml + makerspaceSummaryHtml + verificationSummaryHtml + filtered.map(({e,idx})=>{
     const verified = isHumanVerifiedEntry_(e);
     const flash = window._lastHumanVerifiedIdx === idx ? ' human-verify-flash' : '';
     const meta = verified ? humanVerifiedMeta_(e) : '';

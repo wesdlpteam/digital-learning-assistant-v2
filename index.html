@@ -1911,13 +1911,47 @@ h+='<div class="uc" style="background:'+tc+';color:'+(TTX[u.th]||"#FFF")+'" oncl
 else if(v==="detail"){
 const us=gu(ca,yl),u=us[ui];if(!u){S.v='units';S.ui=null;R();return;}const tc=TC[u.th]||"#888";const em=TE[u.th]||"💡";
 
+// Header is the same in both modes; the CI/LOI bodies switch between
+// display + Edit button (default) and editable textareas (edit mode).
 h+='<div class="dh" style="background:'+tc+';color:'+(TTX[u.th]||"#FFF")+'">'+'<div class="dh-wm">'+em+'</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;position:relative;z-index:1"><span class="tag-t">'+escapeHtml(yl)+'</span><span class="tag-t">'+escapeHtml(CN[ca])+'</span></div><h2 class="dh-title" style="position:relative;z-index:1">'+escapeHtml(u.th)+'</h2>'+(u.ci?'<div class="dh-ci" style="position:relative;z-index:1">“'+escapeHtml(u.ci)+'”</div>':'')+'</div>';
 
-if(u.lo && String(u.lo).trim()){
-h+='<div class="loi-box"><div class="loi-label">Lines of Inquiry</div>';
-var lois=splitLinesOfInquiry(u.lo);
-lois.forEach((l,i)=>{l=l.trim();if(l)h+='<div class="loi-item"><span class="loi-num" style="color:'+tc+'">0'+(i+1)+'</span>'+escapeHtml(l)+'</div>';});
-h+='</div>';
+var _uoiCaEnc=encodeURIComponent(CN[ca]||ca),_uoiYlEnc=encodeURIComponent(yl),_uoiThEnc=encodeURIComponent(u.th);
+var _existingProposal=getLocalUoiProposal(CN[ca]||ca,yl,u.th);
+var _pendingBanner=_existingProposal?'<div class="uoi-pending-pill" style="margin:0 0 12px">✓ Submitted for approval · '+new Date(_existingProposal.submittedAt).toLocaleDateString()+' <button title="Forget the local submitted reminder (does not withdraw from the review queue)" onclick="clearLocalProposalForUnit(\''+_uoiCaEnc+'\',\''+_uoiYlEnc+'\',\''+_uoiThEnc+'\')" aria-label="Forget reminder">×</button></div>':'';
+
+if(window._uoiEditMode){
+  // EDIT MODE — replace CI box + LOI box with a single edit form.
+  var _editCi=_existingProposal&&_existingProposal.ci?_existingProposal.ci:(u.ci||'');
+  var _editLo=_existingProposal&&_existingProposal.lo?_existingProposal.lo:(u.lo||'');
+  var _editNote=_existingProposal&&_existingProposal.note?_existingProposal.note:'';
+  h+='<div class="uoi-edit-form">'
+    +'<h3>Edit Central Idea &amp; Lines of Inquiry</h3>'
+    +'<div class="uoi-edit-hint">Your edits will be sent to the <strong>DLA team for review</strong>. They won\'t change what other teachers see on this unit until they are approved. After saving you can use your edits to generate fresh tech ideas right away.</div>'
+    +'<label for="uoi-edit-ci">Central Idea</label>'
+    +'<textarea id="uoi-edit-ci" rows="3" placeholder="e.g. Sharing personal stories helps us understand and value different perspectives.">'+escapeHtml(_editCi)+'</textarea>'
+    +'<label for="uoi-edit-lo">Lines of Inquiry <span style="font-weight:400;text-transform:none;color:#666;letter-spacing:0">(one per line, or separated by semicolons)</span></label>'
+    +'<textarea id="uoi-edit-lo" rows="5" placeholder="• Where stories come from&#10;• How stories shape identity&#10;• Our responsibility as storytellers">'+escapeHtml(_editLo)+'</textarea>'
+    +'<label for="uoi-edit-note">Note to the DLA team <span style="font-weight:400;text-transform:none;color:#666;letter-spacing:0">(optional)</span></label>'
+    +'<textarea id="uoi-edit-note" rows="2" placeholder="Why these edits? (e.g. updated for 2026 planner, central idea reworded for clarity, new line of inquiry added)">'+escapeHtml(_editNote)+'</textarea>'
+    +'<div class="uoi-edit-actions">'
+      +'<button id="uoi-edit-save" class="uoi-edit-save" onclick="submitUoiEdit(\''+_uoiCaEnc+'\',\''+_uoiYlEnc+'\',\''+_uoiThEnc+'\')">💾 Save and submit for approval</button>'
+      +'<button class="uoi-edit-cancel" onclick="cancelUoiEdit()">Cancel</button>'
+    +'</div>'
+  +'</div>';
+} else {
+  // VIEW MODE — pending banner + LOI box with edit button. Edit also lives
+  // here even when CI is missing, so teachers can ADD a CI to a sparse unit.
+  h+=_pendingBanner;
+  if(u.lo && String(u.lo).trim()){
+    h+='<div class="loi-box"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><div class="loi-label" style="margin-bottom:0">Lines of Inquiry</div><button class="uoi-edit-btn" onclick="startUoiEdit()" style="margin-left:auto" title="Propose an edit to the Central Idea or Lines of Inquiry for this unit. Sent to the DLA team for review.">✏️ Edit unit details</button></div>';
+    var lois=splitLinesOfInquiry(u.lo);
+    lois.forEach((l,i)=>{l=l.trim();if(l)h+='<div class="loi-item"><span class="loi-num" style="color:'+tc+'">0'+(i+1)+'</span>'+escapeHtml(l)+'</div>';});
+    h+='</div>';
+  } else {
+    // Sparse unit — no LOI in data.json. Still expose the edit button so
+    // teachers can propose adding one.
+    h+='<div class="loi-box" style="border-style:dashed;color:#888"><div style="display:flex;align-items:center;gap:10px"><div class="loi-label" style="margin-bottom:0">Lines of Inquiry — not yet on the planner</div><button class="uoi-edit-btn" onclick="startUoiEdit()" style="margin-left:auto" title="Propose adding a Central Idea / Lines of Inquiry for this unit. Sent to the DLA team for review.">✏️ Edit unit details</button></div></div>';
+  }
 }
 
 var curList=u.s;
