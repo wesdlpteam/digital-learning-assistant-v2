@@ -373,6 +373,16 @@ function doPost(e) {
       return jsonResponse(result);
     }
 
+    // 2026-05-25: Restore inspiringRegenAt markers on units whose slot-1
+    // descriptions look already-inspiring-style (>=5 sentences, >=600
+    // chars). Used to recover from the overzealous "Re-regen bad tools"
+    // mass-clear without spending OpenAI fees to redo the work.
+    if (action === 'inspiringrecovermarkers') {
+      const result = inspiringRecoverMarkers({ ca: body.ca || null, yl: body.yl || null });
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
     // 2026-05-25: admin review of teacher-submitted CI/LOI edit proposals.
     if (action === 'listuoiproposals') {
       const result = listUoiProposals_({ status: body.status || null });
@@ -3576,6 +3586,52 @@ function regenerateAllInspiringClearAbort() {
   PropertiesService.getScriptProperties().deleteProperty(INSPIRING_ABORT_PROP);
   Logger.log('regenerateAllInspiring: ABORT flag CLEARED. Future runs can proceed.');
   return { cleared: true };
+}
+
+// 2026-05-25: Recovery for the overzealous "Re-regen bad tools" run that
+// cleared inspiringRegenAt markers on ~120 units (the tightened validator
+// flagged most of the corpus as containing AT LEAST one rogue tool slot).
+// Re-running Inspire All on all 120 would spend a lot in OpenAI fees to
+// redo work that's already done.
+//
+// Heuristic: any unit without inspiringRegenAt whose slot-1 description
+// is >=5 sentences AND >=600 chars was almost certainly already regen'd
+// in the inspiring style — restore the marker without touching the
+// content. Conservative thresholds protect against false-positives on
+// the older 2-3 sentence corpus (avg slot-1 length there is ~250 chars).
+function inspiringRecoverMarkers(opts) {
+  opts = opts || {};
+  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  const raw = JSON.parse(file.getBlob().getDataAsString());
+  const isArr = Array.isArray(raw);
+  const data = isArr ? raw : Object.values(raw).filter(u => u && typeof u === 'object');
+  let recovered = 0;
+  const skipped = [];
+  const now = new Date().toISOString();
+  for (let i = 0; i < data.length; i++) {
+    const u = data[i];
+    if (!u || u.inspiringRegenAt) continue;
+    if (opts.ca && u.ca !== opts.ca) continue;
+    if (opts.yl && u.yl !== opts.yl) continue;
+    if (!Array.isArray(u.s) || !u.s.length) { skipped.push({ ca: u.ca, yl: u.yl, th: u.th, why: 'no suggestions' }); continue; }
+    const slot1 = (u.s[0] && u.s[0].d) ? String(u.s[0].d) : '';
+    const sentences = inspiringSentenceCount_(slot1);
+    if (sentences >= 5 && slot1.length >= 600) {
+      u.inspiringRegenAt = now;
+      u.inspiringRegenRecovered = true;
+      recovered++;
+    } else {
+      skipped.push({ ca: u.ca, yl: u.yl, th: u.th, why: 'slot1 ' + sentences + ' sentence(s) / ' + slot1.length + ' chars' });
+    }
+  }
+  if (recovered) {
+    const toWrite = isArr ? data : raw;
+    file.setContent(JSON.stringify(toWrite, null, 2));
+    try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e) { Logger.log('pushToGitHub after marker recovery failed: ' + e); }
+  }
+  Logger.log('inspiringRecoverMarkers: restored ' + recovered + ' marker(s); skipped ' + skipped.length + '.');
+  if (skipped.length) Logger.log('Skipped units (not confidently inspiring-style):\n' + skipped.map(s => '  ' + s.ca + ' / ' + s.yl + ' / ' + s.th + ' — ' + s.why).join('\n'));
+  return { recovered: recovered, skipped: skipped, skippedCount: skipped.length };
 }
 
 function inspiringYearRule_(yl) {

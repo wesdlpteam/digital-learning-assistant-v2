@@ -848,6 +848,35 @@ async function inspireAllAbort(){
   }
 }
 
+// 2026-05-25: Restore inspiringRegenAt markers on units that were
+// already regenerated but lost their marker (overzealous bad-tool
+// requeue mass-cleared most of the corpus on 2026-05-25). Heuristic:
+// units with >=5 sentence + >=600 char slot-1 descriptions are
+// almost certainly already inspiring-style — restore the marker
+// without touching the content.
+async function inspireAllRecoverMarkers(){
+  if(!confirm('Restore inspiringRegenAt markers on units that already have inspiring-style descriptions (>=5 sentences, >=600 chars in slot 1)?\n\nFixes the case where "Re-regen bad tools" cleared markers but the regen could not actually fix the units. The descriptions themselves are untouched.\n\nProceed?'))return;
+  setStatus('Scanning for recoverable markers…', 'loading');
+  try {
+    const payload = withGASToken({ action: 'inspiringRecoverMarkers' });
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+    if(result.error){ setStatus('Recover error: ' + result.error, 'error'); return; }
+    setStatus(`✓ Restored ${result.recovered} marker(s); ${result.skippedCount} units left for fresh regen.`, 'success');
+    if(Array.isArray(result.skipped) && result.skipped.length) console.info('Inspire All recover — skipped units (need fresh regen):', result.skipped);
+    if(typeof loadFromDrive === 'function'){
+      await loadFromDrive();
+      if(typeof renderBrowse === 'function') renderBrowse();
+    }
+  } catch(err){
+    setStatus('Recover failed: ' + err.message, 'error');
+  }
+}
+
 async function inspireAllClearAbort(){
   if(!confirm('Clear the abort flag so Inspire All can run again?'))return;
   try {
@@ -1094,6 +1123,7 @@ function renderBrowse(){
     <span id="inspire-all-status" style="font-size:12px;color:var(--dim)">${inspiredRemaining > 0 ? `${inspiredRemaining} still using the old 2-3 sentence descriptions` : (filteredInspiredTotal > 0 ? 'All eligible units regenerated — early-years (3YO/4YO/Prep) include hands-on / screen-free options' : 'No eligible units in view')}</span>
     ${inspiredRemaining > 0 ? `<button id="btn-inspire-all" onclick="inspireAllBatch()" style="margin-left:auto;padding:6px 14px;background:#38BDF8;color:#0a1f2e;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer" title="Regenerate every unit's 6 suggestions in the new 6-sentence inspiring style. Snapshots data.json first. Processes 8 units at a time. Units missing Central Idea or Lines of Inquiry are SKIPPED. The tightened validator now also rejects off-whitelist + banned tools.">🚀 Inspire all${ca || yr ? ' (in view)' : ''}</button>` : ''}
     ${filteredInspired > 0 ? `<button id="btn-inspire-requeue" onclick="inspireAllRequeueBadTools()" style="padding:6px 12px;background:transparent;border:1px solid #FBBF24;color:#FBBF24;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" title="Scan all inspiring-regenerated units for off-whitelist or banned tools, clear their inspiringRegenAt flag, and offer to redo just those with the tightened validator.">🔍 Re-regen bad tools</button>` : ''}
+    <button id="btn-inspire-recover" onclick="inspireAllRecoverMarkers()" style="padding:6px 12px;background:transparent;border:1px solid #4ADE80;color:#4ADE80;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" title="Recover lost inspiringRegenAt markers on units that already have inspiring-style descriptions (>=5 sentences, >=600 chars). Useful after 'Re-regen bad tools' mass-cleared markers but the regen couldn't actually fix the units.">🔄 Recover markers</button>
     <button id="btn-inspire-abort" onclick="inspireAllAbort()" style="padding:6px 12px;background:transparent;border:1px solid #DC2626;color:#DC2626;border-radius:8px;font-weight:800;font-size:11px;cursor:pointer" title="EMERGENCY STOP: sets a backend abort flag. Any in-flight or queued Inspire All batches will bail at the next unit boundary. Future runs are blocked until you click 'Clear abort'.">🛑 STOP</button>
     <button id="btn-inspire-clear-abort" onclick="inspireAllClearAbort()" style="padding:6px 12px;background:transparent;border:1px solid #888;color:#888;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear the backend abort flag so Inspire All can run again.">Clear abort</button>
     ${filteredInspired > 0 ? `<button id="btn-inspire-reset" onclick="inspireAllReset()" style="padding:6px 12px;background:transparent;border:1px solid rgba(255,128,128,.3);color:#FF8080;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear the inspiringRegenAt flag on EVERY unit so Inspire All can be re-run from scratch. Existing suggestions stay until the regen overwrites them.">Reset inspire flags</button>` : ''}
