@@ -3616,7 +3616,11 @@ function regenerateAllInspiring(opts) {
   const batch = Number.isFinite(opts.batch) ? Math.max(1, Math.min(50, Number(opts.batch))) : INSPIRING_BATCH_DEFAULT;
 
   const lock = LockService.getScriptLock();
-  if (!lock.tryLock(120000)) { Logger.log('regenerateAllInspiring: lock still held after 2 min wait — bailing.'); return { skipped: true, reason: 'lock-held' }; }
+  // Use `paused:true` (not `skipped:true`) for lock/cooldown bail-outs so it
+  // doesn't collide with the `skipped:[...]` array of CI/LOI-less units that
+  // we return on a normal successful batch — an empty array is truthy, which
+  // previously made the frontend mistake every successful batch for a pause.
+  if (!lock.tryLock(120000)) { Logger.log('regenerateAllInspiring: lock still held after 2 min wait — bailing.'); return { paused: true, reason: 'lock-held' }; }
 
   try {
     const props = PropertiesService.getScriptProperties();
@@ -3624,7 +3628,7 @@ function regenerateAllInspiring(opts) {
     if (resumeTime && Date.now() < parseInt(resumeTime, 10)) {
       const until = new Date(parseInt(resumeTime, 10)).toLocaleString('en-AU');
       Logger.log('Cooldown active until ' + until + ' — bailing.');
-      return { skipped: true, reason: 'cooldown', until: until };
+      return { paused: true, reason: 'cooldown', until: until };
     }
 
     // One-time snapshot on first run.

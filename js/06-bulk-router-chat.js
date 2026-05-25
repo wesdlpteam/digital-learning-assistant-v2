@@ -697,12 +697,33 @@ async function inspireAllBatch(){
   let totalFailed = 0;
   const allFailures = [];
 
+  // Heartbeat: each backend batch is a single long-running HTTP request
+  // (snapshot + 12 OpenAI calls + GitHub push, ~1-3 min). Without a ticking
+  // counter the page looks frozen during that wait. This timer updates the
+  // status line every second with elapsed time so the user can see work is
+  // in progress.
+  let heartbeatTimer = null;
+  const startHeartbeat = (label) => {
+    const t0 = Date.now();
+    const tick = () => {
+      if(!statusEl) return;
+      const secs = Math.floor((Date.now() - t0) / 1000);
+      const mm = String(Math.floor(secs / 60)).padStart(1, '0');
+      const ss = String(secs % 60).padStart(2, '0');
+      statusEl.textContent = `${label} — ${mm}:${ss} elapsed (each batch takes ~1-3 min)`;
+    };
+    tick();
+    heartbeatTimer = setInterval(tick, 1000);
+  };
+  const stopHeartbeat = () => { if(heartbeatTimer){ clearInterval(heartbeatTimer); heartbeatTimer = null; } };
+
   try {
     while(true){
       batchNum++;
-      if(statusEl) statusEl.textContent = `Batch ${batchNum} running — calling backend (this batch can take up to 3 min)…`;
+      const firstBatchHint = batchNum === 1 ? ' (first batch also snapshots data.json — ~30s extra)' : '';
+      startHeartbeat(`Batch ${batchNum} running${firstBatchHint}`);
       setStatus(`Inspire All: batch ${batchNum} processing…`, 'loading');
-      const payload = withGASToken({ action: 'regenerateAllInspiring', batch: 12 });
+      const payload = withGASToken({ action: 'regenerateAllInspiring', batch: 8 });
       if(ca) payload.ca = ca;
       if(yr) payload.yl = yr;
       const response = await fetch(SCRIPT_URL, {
@@ -711,14 +732,15 @@ async function inspireAllBatch(){
         body: JSON.stringify(payload)
       });
       const result = await response.json();
+      stopHeartbeat();
       if(result.error){
         setStatus('Inspire All error: ' + result.error, 'error');
         if(statusEl) statusEl.textContent = 'Failed: ' + result.error + ' — partial progress saved. Click Inspire All again to resume.';
         return;
       }
-      if(result.skipped){
+      if(result.paused){
         setStatus('Inspire All paused: ' + (result.reason || 'unknown') + (result.until ? ' until ' + result.until : ''), 'error');
-        if(statusEl) statusEl.textContent = `Paused (${result.reason}${result.until ? ' until ' + result.until : ''}). Click Inspire All again to resume.`;
+        if(statusEl) statusEl.textContent = `Paused (${result.reason || 'unknown'}${result.until ? ' until ' + result.until : ''}). Click Inspire All again to resume.`;
         return;
       }
       totalFixed += result.fixed || 0;
@@ -746,9 +768,11 @@ async function inspireAllBatch(){
       await sleep(2500);
     }
   } catch(err){
+    stopHeartbeat();
     setStatus('Inspire All failed: ' + err.message, 'error');
     if(statusEl) statusEl.textContent = 'Failed: ' + err.message + ' — partial progress saved. Click Inspire All again to resume.';
   } finally {
+    stopHeartbeat();
     if(btn){ btn.disabled = false; btn.style.opacity = '1'; btn.textContent = '🚀 Inspire all' + (ca || yr ? ' (in view)' : ''); }
   }
 }
