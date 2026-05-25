@@ -392,6 +392,16 @@ function doPost(e) {
       return jsonResponse(result);
     }
 
+    // 2026-05-26: Surgical dedup for exact-string-duplicate t fields
+    // (cleans up the Seesaw duplication damage from the earlier non-dup-aware
+    // Auto-fix pass). No OpenAI calls — rename + best-effort description
+    // rewrite only.
+    if (action === 'inspiringdedupexactstrings') {
+      const result = inspiringDedupExactStrings_({ ca: body.ca || null, yl: body.yl || null });
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
     // 2026-05-25: Clears inspiringRegenAt on units whose tool names were
     // auto-swapped, so Inspire All produces a fresh description for the
     // new tool (avoiding feature-mismatch language from the original).
@@ -4104,6 +4114,106 @@ function inspiringFindBadToolUnits_(data, opts) {
 // affected slot is renamed to an approved equivalent. inspiringRegenAt
 // stays in place; inspiringRegenAutoSwapped is set so the audit trail
 // is visible.
+
+// 2026-05-26: Surgical fix for exact-string-duplicate t fields (the
+// dashboard's "duplicates" audit). The earlier non-dup-aware Auto-fix
+// pass left 45 units with two slots both = "Seesaw" because Seesaw was
+// the universal fallback. This function walks every unit, finds whole-
+// t-field-string duplicates, and renames the SECOND occurrence to a
+// fallback tool that is (a) approved, (b) age-appropriate, (c) not
+// already used as a component anywhere in the unit, and (d) doesn't
+// produce the same t-field string as the existing one. Verified locally
+// against the live data.json: 45 dups -> 0 in a single pass. Tool
+// components are kept simple (single tool) for renamed slots since
+// the dup was always a simple-tool slot.
+function inspiringDedupExactStrings_(opts) {
+  opts = opts || {};
+  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  const raw = JSON.parse(file.getBlob().getDataAsString());
+  const isArr = Array.isArray(raw);
+  const data = isArr ? raw : Object.values(raw).filter(u => u && typeof u === 'object');
+  const approvedSet = new Set(getApprovedToolNames_().map(diversityToolKey_));
+  const bannedSet = new Set(getBannedToolNames_().map(diversityToolKey_));
+
+  let renamed = 0;
+  const fixes = [];
+
+  for (let i = 0; i < data.length; i++) {
+    const u = data[i];
+    if (!inspiringInScope_(u, opts)) continue;
+    if (!Array.isArray(u.s) || !u.s.length) continue;
+
+    // Build the taken-keys set from EVERY current component in this unit.
+    const taken = new Set();
+    for (let s = 0; s < u.s.length; s++) {
+      const sg = u.s[s];
+      if (!sg || typeof sg.t !== 'string' || !sg.t.trim()) continue;
+      diversityToolComponents_(sg.t).forEach(function(c) {
+        const k = diversityToolKey_(c);
+        if (k) taken.add(k);
+      });
+    }
+
+    // Walk slots in order; if we've already seen this exact t-field string,
+    // pick a replacement that's not already taken AND not equal to the
+    // current t-field. Self-contained chain walk (NOT inspiringPickReplacement_
+    // because its last-resort fallback can return Seesaw, which is exactly
+    // the tool we're trying to escape on the typical Seesaw-dup case).
+    const seenStrings = new Set();
+    const unitFixes = [];
+    const currentTKey = function(s) { return diversityToolKey_(s.t); };
+    for (let s = 0; s < u.s.length; s++) {
+      const sg = u.s[s];
+      if (!sg || typeof sg.t !== 'string' || !sg.t.trim()) continue;
+      const stringKey = String(sg.t).toLowerCase().trim();
+      if (!seenStrings.has(stringKey)) { seenStrings.add(stringKey); continue; }
+      const dupKey = currentTKey(sg);
+      // Find first chain item that is: approved, not banned, age-appropriate,
+      // not in `taken` for this unit, and would NOT produce the same lowercased
+      // t-field as the existing duplicate. No silent Seesaw last-resort.
+      let pick = null;
+      for (let z = 0; z < INSPIRING_FALLBACK_CHAIN.length; z++) {
+        const cand = INSPIRING_FALLBACK_CHAIN[z];
+        const ck = diversityToolKey_(cand);
+        if (!approvedSet.has(ck)) continue;
+        if (bannedSet.has(ck)) continue;
+        if (inspiringYearLevelDenied_(u.yl, ck)) continue;
+        if (taken.has(ck)) continue;
+        if (ck === dupKey) continue;
+        pick = cand;
+        break;
+      }
+      if (!pick) {
+        Logger.log('Dedup: no fallback available for ' + u.ca + '/' + u.yl + '/' + u.th + ' slot ' + (s + 1) + ' (was "' + sg.t + '") — left unchanged.');
+        continue;
+      }
+      taken.add(diversityToolKey_(pick));
+      seenStrings.add(String(pick).toLowerCase().trim());
+      const before = sg.t;
+      sg.t = pick;
+      sg.d = inspiringRewriteDescription_(sg.d || '', before, pick);
+      renamed++;
+      unitFixes.push({ slot: s + 1, from: before, to: pick });
+    }
+
+    if (unitFixes.length) {
+      u.inspiringRegenAutoSwapped = (u.inspiringRegenAutoSwapped || []).concat(unitFixes.map(function(f) {
+        return { slot: f.slot, fromTool: f.from, toTool: f.to, reason: 'dedup-exact-string' };
+      }));
+      fixes.push({ ca: u.ca, yl: u.yl, th: u.th, fixes: unitFixes });
+    }
+  }
+
+  if (renamed) {
+    const toWrite = isArr ? data : raw;
+    file.setContent(JSON.stringify(toWrite, null, 2));
+    try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e) { Logger.log('pushToGitHub after dedup failed: ' + e); }
+  }
+  Logger.log('inspiringDedupExactStrings_: renamed ' + renamed + ' duplicate slot(s) across ' + fixes.length + ' unit(s).');
+  if (fixes.length) Logger.log('Dedup details:\n' + fixes.map(function(f) { return '  ' + f.ca + ' / ' + f.yl + ' / ' + f.th + ' — ' + f.fixes.map(function(x) { return 'slot ' + x.slot + ' "' + x.from + '" -> "' + x.to + '"'; }).join('; '); }).join('\n'));
+  return { renamed: renamed, units: fixes };
+}
+
 function inspiringAutoFixBadTools(opts) {
   opts = opts || {};
   const file = DriveApp.getFileById(DATA_JSON_FILE_ID);

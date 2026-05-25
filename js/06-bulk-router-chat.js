@@ -431,8 +431,16 @@ function getIssues(){
       // STEM Design Cycle slot (#6, index 5) titles are activity names, not tech tools — skip banned-tool match.
       if(slotIdx === 5) return;
       const tool = sugTool(s);
-      const desc = sugDesc(s);
-      const bannedTool = dashboardBannedToolMatch_(tool) || dashboardBannedToolMatch_(desc);
+      // 2026-05-26: Dropped the description-side banned scan. Short banned
+      // aliases ('teams', 'flip', 'sway') were substring-matching common
+      // English words in descriptions ("teams of students", "flip through",
+      // "the way they sway"), producing dozens of false positives with zero
+      // real catches. Audit verified data.json has zero descriptions
+      // containing the full canonical banned names (Microsoft Teams,
+      // Flipgrid, etc.) where the tool field is approved — so this scan
+      // had no true positives to lose. The tool field is the authoritative
+      // source for banned-tool detection.
+      const bannedTool = dashboardBannedToolMatch_(tool);
       if(!bannedTool) return;
       const bannedKey = dashboardToolKey_(bannedTool);
       const uniqueKey = `${idx}:${slotIdx}:${bannedKey}`;
@@ -442,7 +450,7 @@ function getIssues(){
         e,
         idx,
         type:'banned',
-        detail:`${tool || bannedTool} is banned${dashboardToolKey_(tool) !== bannedKey && desc ? ' / mentioned in description' : ''}`
+        detail:`${tool || bannedTool} is banned`
       });
     });
 
@@ -882,6 +890,34 @@ async function inspireAllRequeueAutoSwapped(){
   }
 }
 
+// 2026-05-26: Surgical zero-AI dedup. For every unit with two slots
+// sharing the exact same `t` field string, renames the second
+// occurrence to the first approved fallback that's not already used
+// in the unit (and not equal to the duplicate). Best-effort rewrite
+// of description text to match. Verified locally to take 45 dups -> 0.
+async function inspireAllDedupExactStrings(){
+  if(!confirm('Surgically rename slots that have an exact-string duplicate of another slot in the same unit (e.g. two slots both reading "Seesaw")?\n\n• Picks the next available approved tool from the fallback chain that\'s NOT already in the unit\n• Best-effort: also rewrites the description text to match the new tool name\n• No OpenAI calls\n• Tested against the live data.json — produces zero duplicate audit hits\n\nProceed?'))return;
+  setStatus('Deduping exact-string duplicates…', 'loading');
+  try {
+    const payload = withGASToken({ action: 'inspiringDedupExactStrings' });
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+    if(result.error){ setStatus('Dedup error: ' + result.error, 'error'); return; }
+    setStatus(`✓ Dedup renamed ${result.renamed} duplicate slot(s) across ${Array.isArray(result.units)?result.units.length:0} unit(s).`, 'success');
+    if(Array.isArray(result.units) && result.units.length) console.info('Dedup details:', result.units);
+    if(typeof loadFromDrive === 'function'){
+      await loadFromDrive();
+      if(typeof renderBrowse === 'function') renderBrowse();
+    }
+  } catch(err){
+    setStatus('Dedup failed: ' + err.message, 'error');
+  }
+}
+
 // 2026-05-25: Zero-AI direct fix. Scans all units, renames any rogue
 // tool slot to an approved equivalent via the backend substitution
 // map. No OpenAI calls; descriptions are untouched.
@@ -1191,6 +1227,7 @@ function renderBrowse(){
   const _advancedButtons = `
     <div style="display:flex;gap:6px;flex-wrap:wrap;padding-top:10px;margin-top:10px;border-top:1px solid rgba(255,255,255,.05)">
       <button onclick="inspireAllAutoFixBadTools()" style="padding:6px 12px;background:transparent;border:1px solid #FBBF24;color:#FBBF24;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" title="Scan every unit for off-whitelist / banned / age-mismatched tool names and rename them to approved equivalents in-place. Also rewrites the tool name in the description text. No OpenAI calls. Spot-review affected units (inspiringRegenAutoSwapped is set).">🪄 Auto-fix bad tools (no AI)</button>
+      <button onclick="inspireAllDedupExactStrings()" style="padding:6px 12px;background:transparent;border:1px solid #4ADE80;color:#4ADE80;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" title="Surgical dedup: rename slots where the t field exactly matches another slot in the same unit (e.g. two Seesaws). Picks the next available approved tool from the fallback chain. No OpenAI calls. Tested locally to fix 100% of exact-string duplicates in one pass.">🧹 Dedup exact strings (no AI)</button>
       <button onclick="inspireAllRequeueAutoSwapped()" style="padding:6px 12px;background:transparent;border:1px solid #A78BFA;color:#A78BFA;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" title="Clear inspiringRegenAt on every auto-swapped unit so Inspire All can produce fresh descriptions tailored to the substituted tools (fixes feature-mismatch language + any duplicates the auto-fix introduced).">🎯 Re-regen auto-swapped (AI)</button>
       <button onclick="inspireAllRequeueBadTools()" style="padding:6px 12px;background:transparent;border:1px solid #FBBF24;color:#FBBF24;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Scan for bad-tool units, clear their inspiringRegenAt, and offer to redo just those with the AI (more expensive but produces fresh descriptions).">🔍 Re-regen with AI</button>
       <button onclick="inspireAllRecoverMarkers()" style="padding:6px 12px;background:transparent;border:1px solid #4ADE80;color:#4ADE80;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Restore inspiringRegenAt markers on units that already have inspiring-style descriptions (>=5 sentences, >=600 chars).">🔄 Recover markers</button>
