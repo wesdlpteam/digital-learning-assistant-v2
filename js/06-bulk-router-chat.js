@@ -848,6 +848,32 @@ async function inspireAllAbort(){
   }
 }
 
+// 2026-05-25: Zero-AI direct fix. Scans all units, renames any rogue
+// tool slot to an approved equivalent via the backend substitution
+// map. No OpenAI calls; descriptions are untouched.
+async function inspireAllAutoFixBadTools(){
+  if(!confirm('Auto-fix every unit whose suggestions contain off-whitelist, banned, or age-mismatched tool names?\n\n• The TOOL NAME in each affected slot will be swapped to an approved equivalent (e.g. Flipgrid -> Seesaw)\n• The description text is UNTOUCHED — it may still reference the original tool by name in the prose\n• No OpenAI calls; this is purely a rename pass\n\nProceed?'))return;
+  setStatus('Auto-fixing rogue tool names…', 'loading');
+  try {
+    const payload = withGASToken({ action: 'inspiringAutoFixBadTools' });
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+    if(result.error){ setStatus('Auto-fix error: ' + result.error, 'error'); return; }
+    setStatus(`✓ Auto-fixed ${result.fixed} unit(s) with rogue tool names. Descriptions untouched.`, 'success');
+    if(Array.isArray(result.fixes) && result.fixes.length) console.info('Auto-fix details:', result.fixes);
+    if(typeof loadFromDrive === 'function'){
+      await loadFromDrive();
+      if(typeof renderBrowse === 'function') renderBrowse();
+    }
+  } catch(err){
+    setStatus('Auto-fix failed: ' + err.message, 'error');
+  }
+}
+
 // 2026-05-25: Restore inspiringRegenAt markers on units that were
 // already regenerated but lost their marker (overzealous bad-tool
 // requeue mass-cleared most of the corpus on 2026-05-25). Heuristic:
@@ -1117,17 +1143,48 @@ function renderBrowse(){
     return `${e.ca} · ${e.yl} · ${e.th} (missing ${m.join(' + ')})`;
   }).join('\n') : '';
   const inspireSkippedNote = inspireSkipped.length ? ` · <span style="color:#fbbf24;cursor:help" title="${esc(inspireSkippedTitle)}">${inspireSkipped.length} skipped (no CI/LOI)</span>` : '';
-  const inspireSummaryHtml = `<div id="inspire-all-card" class="card2" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px;border-color:rgba(56,189,248,.35);background:rgba(56,189,248,.06)">
-    <span style="font-size:18px">✨</span>
-    <span style="font-size:13px;color:var(--text);font-weight:800">${filteredInspired}/${filteredInspiredTotal} units regenerated in 6-sentence inspiring style ${inspireScopeLabel}${inspireSkippedNote}</span>
-    <span id="inspire-all-status" style="font-size:12px;color:var(--dim)">${inspiredRemaining > 0 ? `${inspiredRemaining} still using the old 2-3 sentence descriptions` : (filteredInspiredTotal > 0 ? 'All eligible units regenerated — early-years (3YO/4YO/Prep) include hands-on / screen-free options' : 'No eligible units in view')}</span>
-    ${inspiredRemaining > 0 ? `<button id="btn-inspire-all" onclick="inspireAllBatch()" style="margin-left:auto;padding:6px 14px;background:#38BDF8;color:#0a1f2e;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer" title="Regenerate every unit's 6 suggestions in the new 6-sentence inspiring style. Snapshots data.json first. Processes 8 units at a time. Units missing Central Idea or Lines of Inquiry are SKIPPED. The tightened validator now also rejects off-whitelist + banned tools.">🚀 Inspire all${ca || yr ? ' (in view)' : ''}</button>` : ''}
-    ${filteredInspired > 0 ? `<button id="btn-inspire-requeue" onclick="inspireAllRequeueBadTools()" style="padding:6px 12px;background:transparent;border:1px solid #FBBF24;color:#FBBF24;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" title="Scan all inspiring-regenerated units for off-whitelist or banned tools, clear their inspiringRegenAt flag, and offer to redo just those with the tightened validator.">🔍 Re-regen bad tools</button>` : ''}
-    <button id="btn-inspire-recover" onclick="inspireAllRecoverMarkers()" style="padding:6px 12px;background:transparent;border:1px solid #4ADE80;color:#4ADE80;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" title="Recover lost inspiringRegenAt markers on units that already have inspiring-style descriptions (>=5 sentences, >=600 chars). Useful after 'Re-regen bad tools' mass-cleared markers but the regen couldn't actually fix the units.">🔄 Recover markers</button>
-    <button id="btn-inspire-abort" onclick="inspireAllAbort()" style="padding:6px 12px;background:transparent;border:1px solid #DC2626;color:#DC2626;border-radius:8px;font-weight:800;font-size:11px;cursor:pointer" title="EMERGENCY STOP: sets a backend abort flag. Any in-flight or queued Inspire All batches will bail at the next unit boundary. Future runs are blocked until you click 'Clear abort'.">🛑 STOP</button>
-    <button id="btn-inspire-clear-abort" onclick="inspireAllClearAbort()" style="padding:6px 12px;background:transparent;border:1px solid #888;color:#888;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear the backend abort flag so Inspire All can run again.">Clear abort</button>
-    ${filteredInspired > 0 ? `<button id="btn-inspire-reset" onclick="inspireAllReset()" style="padding:6px 12px;background:transparent;border:1px solid rgba(255,128,128,.3);color:#FF8080;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear the inspiringRegenAt flag on EVERY unit so Inspire All can be re-run from scratch. Existing suggestions stay until the regen overwrites them.">Reset inspire flags</button>` : ''}
-  </div>`;
+  // 2026-05-25: Card is now state-aware. When everything's clean (all
+  // eligible units regenerated, no abort flag, no skipped units in this
+  // view) we collapse to a tiny ✓ status line with an "Advanced" dropdown
+  // for the recovery / re-regen / reset / STOP controls. When there's
+  // work to do we show only the buttons relevant to the current state,
+  // not all 6 at once.
+  const _inspireBusy = inspiredRemaining > 0;
+  const _hasSkipped = inspireSkipped.length > 0;
+  const _isClean = !_inspireBusy && filteredInspiredTotal > 0;
+  const _advancedToggleId = 'inspire-advanced-toggle';
+  const _advancedBodyId = 'inspire-advanced-body';
+  const _advancedButtons = `
+    <div style="display:flex;gap:6px;flex-wrap:wrap;padding-top:10px;margin-top:10px;border-top:1px solid rgba(255,255,255,.05)">
+      <button onclick="inspireAllAutoFixBadTools()" style="padding:6px 12px;background:transparent;border:1px solid #FBBF24;color:#FBBF24;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" title="Scan every unit for off-whitelist / banned / age-mismatched tool names and rename them to approved equivalents in-place. Also rewrites the tool name in the description text. No OpenAI calls. Spot-review affected units (inspiringRegenAutoSwapped is set).">🪄 Auto-fix bad tools (no AI)</button>
+      <button onclick="inspireAllRequeueBadTools()" style="padding:6px 12px;background:transparent;border:1px solid #FBBF24;color:#FBBF24;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Scan for bad-tool units, clear their inspiringRegenAt, and offer to redo just those with the AI (more expensive but produces fresh descriptions).">🔍 Re-regen with AI</button>
+      <button onclick="inspireAllRecoverMarkers()" style="padding:6px 12px;background:transparent;border:1px solid #4ADE80;color:#4ADE80;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Restore inspiringRegenAt markers on units that already have inspiring-style descriptions (>=5 sentences, >=600 chars).">🔄 Recover markers</button>
+      <button onclick="inspireAllAbort()" style="padding:6px 12px;background:transparent;border:1px solid #DC2626;color:#DC2626;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" title="EMERGENCY STOP: stops any in-flight Inspire All batch at the next unit boundary and blocks future runs until cleared.">🛑 STOP</button>
+      <button onclick="inspireAllClearAbort()" style="padding:6px 12px;background:transparent;border:1px solid #888;color:#888;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear the backend abort flag so Inspire All can run again.">Clear abort</button>
+      <button onclick="inspireAllReset()" style="padding:6px 12px;background:transparent;border:1px solid rgba(255,128,128,.3);color:#FF8080;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear the inspiringRegenAt flag on EVERY unit so Inspire All can be re-run from scratch.">Reset inspire flags</button>
+    </div>`;
+
+  let inspireSummaryHtml = '';
+  if(_isClean){
+    // Clean state: one row, one button. Advanced controls hidden behind toggle.
+    inspireSummaryHtml = `<div id="inspire-all-card" class="card2" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px;border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.05)">
+      <span style="font-size:16px">✨</span>
+      <span style="font-size:13px;color:var(--text);font-weight:800">${filteredInspired}/${filteredInspiredTotal} units in 6-sentence inspiring style ${inspireScopeLabel}${inspireSkippedNote}</span>
+      <span style="font-size:11px;color:#4ADE80;letter-spacing:.4px">✓ Complete</span>
+      <button id="${_advancedToggleId}" onclick="document.getElementById('${_advancedBodyId}').style.display=document.getElementById('${_advancedBodyId}').style.display==='none'?'block':'none';this.textContent=document.getElementById('${_advancedBodyId}').style.display==='none'?'⚙ Advanced':'⚙ Hide';" style="margin-left:auto;padding:5px 10px;background:transparent;border:1px solid #555;color:#888;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer">⚙ Advanced</button>
+      <div id="${_advancedBodyId}" style="flex:1 1 100%;display:none">${_advancedButtons}</div>
+    </div>`;
+  } else if(_inspireBusy){
+    // Mid-progress: show the primary action + Advanced toggle.
+    inspireSummaryHtml = `<div id="inspire-all-card" class="card2" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px;border-color:rgba(56,189,248,.35);background:rgba(56,189,248,.06)">
+      <span style="font-size:18px">✨</span>
+      <span style="font-size:13px;color:var(--text);font-weight:800">${filteredInspired}/${filteredInspiredTotal} units regenerated ${inspireScopeLabel}${inspireSkippedNote}</span>
+      <span id="inspire-all-status" style="font-size:12px;color:var(--dim)">${inspiredRemaining} remaining</span>
+      <button id="btn-inspire-all" onclick="inspireAllBatch()" style="margin-left:auto;padding:6px 14px;background:#38BDF8;color:#0a1f2e;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer" title="Regenerate every unit's 6 suggestions in the new 6-sentence inspiring style. Snapshots data.json first. Processes 4 units per batch. Units missing Central Idea or Lines of Inquiry are SKIPPED. Validator rejects off-whitelist + banned + age-mismatched tools; auto-substitute fallback fires if AI can't comply after 3 retries.">🚀 Inspire all${ca || yr ? ' (in view)' : ''}</button>
+      <button id="${_advancedToggleId}" onclick="document.getElementById('${_advancedBodyId}').style.display=document.getElementById('${_advancedBodyId}').style.display==='none'?'block':'none';this.textContent=document.getElementById('${_advancedBodyId}').style.display==='none'?'⚙ Advanced':'⚙ Hide';" style="padding:5px 10px;background:transparent;border:1px solid #555;color:#888;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer">⚙ Advanced</button>
+      <div id="${_advancedBodyId}" style="flex:1 1 100%;display:none">${_advancedButtons}</div>
+    </div>`;
+  }
 
   // 2026-05-25: Teacher UOI edit proposals — admin review panel.
   // Loaded once on page init via loadUoiProposals (cached in

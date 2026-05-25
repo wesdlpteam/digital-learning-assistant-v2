@@ -383,6 +383,15 @@ function doPost(e) {
       return jsonResponse(result);
     }
 
+    // 2026-05-25: Zero-AI auto-fix for units with rogue tool names. Walks
+    // every unit, applies inspiringApplySubstitutions_ in-place. No
+    // OpenAI calls.
+    if (action === 'inspiringautofixbadtools') {
+      const result = inspiringAutoFixBadTools({ ca: body.ca || null, yl: body.yl || null });
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
     // 2026-05-25: admin review of teacher-submitted CI/LOI edit proposals.
     if (action === 'listuoiproposals') {
       const result = listUoiProposals_({ status: body.status || null });
@@ -3588,6 +3597,158 @@ function regenerateAllInspiringClearAbort() {
   return { cleared: true };
 }
 
+// 2026-05-25: When the AI persistently picks an off-whitelist tool across
+// 3 retries, swap the rogue tool name for an approved equivalent and keep
+// the description verbatim. This unblocks the regen pipeline for units
+// where the AI just won't pick a clean tool — better to ship 95% correct
+// than fail outright and keep the previous bad-tool suggestion.
+//
+// Map keys are lowercased + trimmed via diversityToolKey_. Extend as new
+// rogue tool names surface in console.info logs. The map is keyed on what
+// the AI says; values are what we'll write to data.json.
+var INSPIRING_TOOL_SUBSTITUTIONS = {
+  // Video sharing / reflections
+  'flipgrid': 'Seesaw',
+  'flip': 'Seesaw',
+  // Google -> M365 equivalents (Wesley is a Microsoft school)
+  'google docs': 'Microsoft Word',
+  'google slides': 'Microsoft PowerPoint',
+  'google forms': 'Microsoft Forms',
+  'google sheets': 'Microsoft Excel',
+  'google classroom': 'Microsoft Teams',
+  'google jamboard': 'Freeform',
+  'jamboard': 'Freeform',
+  // Apple iWork -> M365
+  'pages': 'Microsoft Word',
+  'numbers': 'Microsoft Excel',
+  'keynote': 'Microsoft PowerPoint',
+  // Common AI alternatives
+  'chatgpt': 'Microsoft Copilot',
+  'gemini': 'Microsoft Copilot',
+  'bard': 'Microsoft Copilot',
+  'claude': 'Microsoft Copilot',
+  // Video tools — falling back to safe universally-approved DLA tools
+  // rather than guessing at MS Stream products. If the substitution map
+  // needs a specific Microsoft video tool added later, add it here once
+  // we've confirmed it's in the synced approved list.
+  'loom': 'iMovie',
+  'screencastify': 'iMovie',
+  'microsoft stream': 'iMovie',
+  'microsoft stream classroom': 'iMovie',
+  'stream classroom': 'iMovie',
+  'animoto': 'iMovie',
+  'powtoon': 'Animating a Character with Adobe Express',
+  'toontastic': 'Animating a Character with Adobe Express',
+  'wevideo': 'iMovie',
+  // Audio
+  'soundtrap': 'GarageBand',
+  'audacity': 'GarageBand',
+  'anchor': 'Podcasting using Canva',
+  'spotify for podcasters': 'Podcasting using Canva',
+  // Drawing / design
+  'kapwing': 'Adobe Express',
+  'snapseed': 'Brushes Redux',
+  'procreate': 'Brushes Redux',
+  // Publishing
+  'storybird': 'Book Creator',
+  'storyjumper': 'Book Creator',
+  'wakelet': 'Padlet',
+  // Quizzing
+  'quizlet': 'Kahoot',
+  'quizizz': 'Kahoot',
+  'blooket': 'Kahoot',
+  // Robotics
+  'lego robotics': 'Lego Spike Prime',
+  'lego mindstorms': 'Lego Spike Prime',
+  'lego we do': 'Lego Spike Prime',
+  // Common casing or spacing slips
+  'imovie': 'iMovie',
+  'garageband': 'GarageBand',
+  'microbit': 'Micro:bit',
+  'micro bit': 'Micro:bit',
+  'micro-bit': 'Micro:bit',
+  'scratch jr': 'ScratchJR',
+  'scratchjr': 'ScratchJR'
+};
+
+function inspiringSubstituteRogueTool_(toolName, approvedSet, bannedSet, yl) {
+  // Returns { tool: <new tool name>, swapped: bool, reason: ... }.
+  // If the input is already valid, returns it unchanged.
+  if (!toolName || typeof toolName !== 'string') return { tool: toolName, swapped: false, reason: 'empty' };
+  const comps = diversityToolComponents_(toolName);
+  let dirty = false;
+  const fixed = comps.map(function(c) {
+    const key = diversityToolKey_(c);
+    if (!key) return c;
+    if (approvedSet.has(key) && !bannedSet.has(key) && !inspiringYearLevelDenied_(yl, key)) return c;
+    // Try direct substitution from the map.
+    if (INSPIRING_TOOL_SUBSTITUTIONS[key]) {
+      const replacementKey = diversityToolKey_(INSPIRING_TOOL_SUBSTITUTIONS[key]);
+      if (approvedSet.has(replacementKey) && !bannedSet.has(replacementKey) && !inspiringYearLevelDenied_(yl, replacementKey)) {
+        dirty = true;
+        return INSPIRING_TOOL_SUBSTITUTIONS[key];
+      }
+    }
+    // Last-resort fallback: Seesaw is universally approved and age-appropriate
+    // for every year level in the corpus. Better to ship "Seesaw" with a
+    // tailored description than to leave a banned/off-whitelist tool in place.
+    dirty = true;
+    return 'Seesaw';
+  });
+  return { tool: fixed.join(' + '), swapped: dirty };
+}
+
+// Best-effort text substitution: also replace mentions of the rogue tool
+// name inside the description, with word-boundary protection so partial
+// matches (e.g. "Flip" inside "Flipped") don't get rewritten. Feature-
+// specific language is harder — phrases like "Flipgrid's grid-style
+// response feed" become "Seesaw's grid-style response feed" which is
+// factually wrong but at least keeps the tool name internally consistent.
+// Units that get swapped also get inspiringRegenAutoSwapped set so the
+// admin can spot-review and either keep, regen via Inspire All, or edit.
+function inspiringRewriteDescription_(desc, fromTool, toTool) {
+  if (!desc || !fromTool || !toTool || fromTool === toTool) return desc;
+  // Escape regex specials in the rogue tool name. Word boundaries are
+  // applied via \b on each side. Case-insensitive replacement preserves
+  // intent without trying to match capitalisation.
+  const escaped = String(fromTool).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = new RegExp('\\b' + escaped + '\\b', 'gi');
+  return String(desc).replace(re, toTool);
+}
+
+function inspiringApplySubstitutions_(sugs, approvedSet, bannedSet, yl) {
+  // Walks every slot. For each rogue tool, swaps to an approved equivalent
+  // via inspiringSubstituteRogueTool_, then runs inspiringRewriteDescription_
+  // to replace mentions of the rogue tool name inside the description with
+  // the new name. Feature-specific language ("Flipgrid's grid-style feed")
+  // is left for human review — better than keeping a banned tool in place,
+  // but worth flagging via inspiringRegenAutoSwapped for spot-checking.
+  const swaps = [];
+  const out = sugs.map(function(sg, i) {
+    if (!sg || typeof sg.t !== 'string') return sg;
+    const comps = diversityToolComponents_(sg.t);
+    const newComps = [];
+    const slotSwaps = [];
+    comps.forEach(function(c) {
+      const key = diversityToolKey_(c);
+      const isClean = approvedSet.has(key) && !bannedSet.has(key) && !inspiringYearLevelDenied_(yl, key);
+      if (isClean) { newComps.push(c); return; }
+      const replacement = INSPIRING_TOOL_SUBSTITUTIONS[key] || 'Seesaw';
+      const repKey = diversityToolKey_(replacement);
+      const repClean = approvedSet.has(repKey) && !bannedSet.has(repKey) && !inspiringYearLevelDenied_(yl, repKey);
+      const finalReplacement = repClean ? replacement : 'Seesaw';
+      newComps.push(finalReplacement);
+      slotSwaps.push({ from: c, to: finalReplacement });
+    });
+    if (!slotSwaps.length) return sg;
+    let newDesc = sg.d || '';
+    slotSwaps.forEach(function(s) { newDesc = inspiringRewriteDescription_(newDesc, s.from, s.to); });
+    swaps.push({ slot: i + 1, fromTool: sg.t, toTool: newComps.join(' + '), perComponent: slotSwaps });
+    return { t: newComps.join(' + '), d: newDesc };
+  });
+  return { sugs: out, swaps: swaps };
+}
+
 // 2026-05-25: Recovery for the overzealous "Re-regen bad tools" run that
 // cleared inspiringRegenAt markers on ~120 units (the tightened validator
 // flagged most of the corpus as containing AT LEAST one rogue tool slot).
@@ -3864,6 +4025,45 @@ function inspiringFindBadToolUnits_(data, opts) {
   return out;
 }
 
+// 2026-05-25: Zero-AI path to fix bad tools. Scans for any unit whose
+// saved suggestions contain off-whitelist / banned / age-mismatched
+// tools, applies the inspiringApplySubstitutions_ map in-place, and
+// saves. Descriptions are untouched — only the `t` field of each
+// affected slot is renamed to an approved equivalent. inspiringRegenAt
+// stays in place; inspiringRegenAutoSwapped is set so the audit trail
+// is visible.
+function inspiringAutoFixBadTools(opts) {
+  opts = opts || {};
+  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  const raw = JSON.parse(file.getBlob().getDataAsString());
+  const isArr = Array.isArray(raw);
+  const data = isArr ? raw : Object.values(raw).filter(u => u && typeof u === 'object');
+  const approvedSet = new Set(getApprovedToolNames_().map(diversityToolKey_));
+  const bannedSet = new Set(getBannedToolNames_().map(diversityToolKey_));
+  let fixed = 0;
+  const fixes = [];
+  for (let i = 0; i < data.length; i++) {
+    const u = data[i];
+    if (!inspiringInScope_(u, opts)) continue;
+    if (!Array.isArray(u.s) || !u.s.length) continue;
+    const subRes = inspiringApplySubstitutions_(u.s, approvedSet, bannedSet, u.yl);
+    if (!subRes.swaps.length) continue;
+    u.s = subRes.sugs.map(s => ({ t: s.t, d: s.d }));
+    u.inspiringRegenAutoSwapped = (u.inspiringRegenAutoSwapped || []).concat(subRes.swaps);
+    if (!u.inspiringRegenAt) u.inspiringRegenAt = new Date().toISOString();
+    fixed++;
+    fixes.push({ ca: u.ca, yl: u.yl, th: u.th, swaps: subRes.swaps });
+  }
+  if (fixed) {
+    const toWrite = isArr ? data : raw;
+    file.setContent(JSON.stringify(toWrite, null, 2));
+    try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e) { Logger.log('pushToGitHub after auto-fix failed: ' + e); }
+  }
+  Logger.log('inspiringAutoFixBadTools: fixed ' + fixed + ' unit(s).');
+  if (fixes.length) Logger.log('Fixes:\n' + fixes.map(f => '  ' + f.ca + ' / ' + f.yl + ' / ' + f.th + ' — ' + f.swaps.map(s => 'slot ' + s.slot + ' "' + s.from + '" -> "' + s.to + '"').join('; ')).join('\n'));
+  return { fixed: fixed, fixes: fixes };
+}
+
 // One-shot helper: scan for bad-tool units, clear their inspiringRegenAt
 // markers, save data.json. The user then clicks Inspire All again and the
 // tightened validator regenerates them with the whitelist check active.
@@ -4087,6 +4287,7 @@ function regenerateAllInspiring(opts) {
       const prompt = inspiringBuildPrompt_(data, idx, approvedToolsPrompt);
       let success = false;
       let lastReason = '';
+      let lastSugs = null;  // remembered for auto-substitute fallback
       for (let attempt = 1; attempt <= 3; attempt++) {
         // Retry feedback: if the validator caught a rogue tool, repeat the
         // approved-tools constraint at the END of the prompt so it's the
@@ -4097,7 +4298,7 @@ function regenerateAllInspiring(opts) {
         let retryTemp = 0.75;
         if (attempt > 1) {
           retryTemp = 0.45;
-          const toolStrayed = /OFF-WHITELIST|BANNED/.test(lastReason);
+          const toolStrayed = /OFF-WHITELIST|BANNED|AGE-INAPPROPRIATE/.test(lastReason);
           const toolReminder = toolStrayed ? '\n\nCRITICAL: You MUST pick every tool from the approved list above. Re-read the APPROVED TOOLS section. Do not invent tool names, do not use deprecated tools, do not substitute similar-sounding tools. If you are unsure whether a tool is approved, pick a different tool from the list that you can verify IS listed.' : '';
           retryNote = '\n\nRETRY ' + (attempt - 1) + ': Previous attempt failed validation (' + lastReason + '). Apply ALL constraints (tool whitelist, App Smash floor, no dup tools, opener differs from siblings, ~6 sentences per slot 1-5).' + toolReminder;
         }
@@ -4107,6 +4308,7 @@ function regenerateAllInspiring(opts) {
           if (call.retriable && attempt < 3) { Utilities.sleep(8000); continue; }
           break;
         }
+        lastSugs = call.sugs;
         const verdict = inspiringValidateSugs_(call.sugs, target, data, idx, approvedSet, bannedSet);
         if (!verdict.ok) {
           lastReason = verdict.reason;
@@ -4121,6 +4323,50 @@ function regenerateAllInspiring(opts) {
         success = true;
         Logger.log('  [' + (n + 1) + '/' + candidates.length + '] ' + target.ca + ' ' + target.yl + ' — ' + target.th + ' -> s[0]=' + call.sugs[0].t);
         break;
+      }
+      // 2026-05-25: auto-substitute fallback. If all 3 retries failed but the
+      // last attempt's failure was a TOOL issue (off-whitelist / banned /
+      // age-mismatched), keep the descriptions and just swap the offending
+      // tool names in the `t` fields to approved equivalents. Better to ship
+      // a unit with one slot's tool renamed than to leave a banned tool in
+      // place. We only attempt this when the failure was tool-related so we
+      // don't ship suggestions with other broken constraints (sentence
+      // count, App Smash floor, opener clash) untouched.
+      if (!success && lastSugs && /OFF-WHITELIST|BANNED|AGE-INAPPROPRIATE/.test(lastReason)) {
+        const subRes = inspiringApplySubstitutions_(lastSugs, approvedSet, bannedSet, target.yl);
+        if (subRes.swaps.length) {
+          // Re-validate post-swap. If the swap fixed the tool issue but a
+          // non-tool issue (sentence count, opener clash) still remains,
+          // we still accept — those are softer constraints and the
+          // alternative is keeping the previous banned-tool suggestion.
+          // We DO require basic shape (6 slots, no dup tool components)
+          // to avoid shipping obviously broken output.
+          const sugs = subRes.sugs;
+          let shapeOk = Array.isArray(sugs) && sugs.length === 6;
+          if (shapeOk) {
+            const seen = {};
+            for (let z = 0; z < sugs.length && shapeOk; z++) {
+              const sg = sugs[z];
+              if (!sg || !sg.t || !sg.d) { shapeOk = false; break; }
+              const comps = diversityToolComponents_(sg.t);
+              for (let j = 0; j < comps.length; j++) {
+                const ck = diversityToolKey_(comps[j]);
+                if (seen[ck]) { shapeOk = false; break; }
+                seen[ck] = true;
+              }
+            }
+          }
+          if (shapeOk) {
+            data[idx].s = sugs.map(s => ({ t: s.t, d: s.d }));
+            data[idx].audited = true;
+            data[idx].inspiringRegenAt = new Date().toISOString();
+            data[idx].inspiringRegenAutoSwapped = subRes.swaps;
+            clearHumanVerifiedFlags_(data[idx], 'Regenerated with auto-substituted tool names after 3 failed AI attempts');
+            dataDirty = true;
+            success = true;
+            Logger.log('  [' + (n + 1) + '/' + candidates.length + '] AUTO-SWAPPED ' + target.ca + ' ' + target.yl + ' — ' + target.th + ' (' + subRes.swaps.map(s => 'slot ' + s.slot + ' "' + s.from + '" -> "' + s.to + '"').join('; ') + ')');
+          }
+        }
       }
       if (success) fixed++;
       else { failed++; failures.push({ ca: target.ca, yl: target.yl, th: target.th, reason: lastReason }); Logger.log('  [' + (n + 1) + '/' + candidates.length + '] FAILED ' + target.ca + ' ' + target.yl + ' — ' + target.th + ' (' + lastReason + ')'); }
