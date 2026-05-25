@@ -392,6 +392,15 @@ function doPost(e) {
       return jsonResponse(result);
     }
 
+    // 2026-05-25: Clears inspiringRegenAt on units whose tool names were
+    // auto-swapped, so Inspire All produces a fresh description for the
+    // new tool (avoiding feature-mismatch language from the original).
+    if (action === 'regenerateallinspiringrequeueautoswapped') {
+      const result = regenerateAllInspiringRequeueAutoSwapped({ ca: body.ca || null, yl: body.yl || null });
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
     // 2026-05-25: admin review of teacher-submitted CI/LOI edit proposals.
     if (action === 'listuoiproposals') {
       const result = listUoiProposals_({ status: body.status || null });
@@ -3716,13 +3725,66 @@ function inspiringRewriteDescription_(desc, fromTool, toTool) {
   return String(desc).replace(re, toTool);
 }
 
+// Ordered fallback chain — picked when the mapped substitution would
+// duplicate an existing tool component in the same unit. Items chosen
+// to be broadly approved and useful across the corpus.
+var INSPIRING_FALLBACK_CHAIN = [
+  'Seesaw', 'Book Creator', 'Padlet', 'Canva', 'PicCollage', 'iMovie',
+  'GarageBand', 'Brushes Redux', 'Adobe Express', 'Microsoft PowerPoint',
+  'Microsoft Word', 'Freeform'
+];
+
+function inspiringPickReplacement_(rogueKey, takenKeys, approvedSet, bannedSet, yl) {
+  // First try the mapped substitution if it's clean AND not already taken
+  // by another slot in this unit.
+  const mapped = INSPIRING_TOOL_SUBSTITUTIONS[rogueKey];
+  if (mapped) {
+    const mk = diversityToolKey_(mapped);
+    if (approvedSet.has(mk) && !bannedSet.has(mk) && !inspiringYearLevelDenied_(yl, mk) && !takenKeys.has(mk)) {
+      return mapped;
+    }
+  }
+  // Fallback chain — first item that's approved, age-appropriate, and
+  // not already used in this unit.
+  for (var i = 0; i < INSPIRING_FALLBACK_CHAIN.length; i++) {
+    var candidate = INSPIRING_FALLBACK_CHAIN[i];
+    var ck = diversityToolKey_(candidate);
+    if (!approvedSet.has(ck)) continue;
+    if (bannedSet.has(ck)) continue;
+    if (inspiringYearLevelDenied_(yl, ck)) continue;
+    if (takenKeys.has(ck)) continue;
+    return candidate;
+  }
+  // Last resort: Seesaw even if it duplicates — caller will need to
+  // resolve via a fresh Inspire All regen.
+  return 'Seesaw';
+}
+
 function inspiringApplySubstitutions_(sugs, approvedSet, bannedSet, yl) {
-  // Walks every slot. For each rogue tool, swaps to an approved equivalent
-  // via inspiringSubstituteRogueTool_, then runs inspiringRewriteDescription_
-  // to replace mentions of the rogue tool name inside the description with
-  // the new name. Feature-specific language ("Flipgrid's grid-style feed")
-  // is left for human review — better than keeping a banned tool in place,
-  // but worth flagging via inspiringRegenAutoSwapped for spot-checking.
+  // Walks every slot. For each rogue tool component, picks an approved
+  // replacement that ALSO isn't already used in another slot of the same
+  // unit (prevents the 2026-05-25 duplicate issue where Seesaw became the
+  // universal fallback and ended up in multiple slots per unit).
+  // Then runs inspiringRewriteDescription_ to replace mentions of the
+  // rogue tool name inside the description with the new name. Feature-
+  // specific language ("Flipgrid's grid-style feed") is left for human
+  // review — better than keeping a banned tool in place, but worth
+  // flagging via inspiringRegenAutoSwapped for spot-checking.
+
+  // Build the initial taken-set from CLEAN existing components across all
+  // slots. We grow this set as we substitute, so each new replacement
+  // dodges every component already present (clean or just-swapped).
+  const takenKeys = new Set();
+  sugs.forEach(function(sg) {
+    if (!sg || typeof sg.t !== 'string') return;
+    diversityToolComponents_(sg.t).forEach(function(c) {
+      const k = diversityToolKey_(c);
+      if (!k) return;
+      const clean = approvedSet.has(k) && !bannedSet.has(k) && !inspiringYearLevelDenied_(yl, k);
+      if (clean) takenKeys.add(k);
+    });
+  });
+
   const swaps = [];
   const out = sugs.map(function(sg, i) {
     if (!sg || typeof sg.t !== 'string') return sg;
@@ -3733,12 +3795,11 @@ function inspiringApplySubstitutions_(sugs, approvedSet, bannedSet, yl) {
       const key = diversityToolKey_(c);
       const isClean = approvedSet.has(key) && !bannedSet.has(key) && !inspiringYearLevelDenied_(yl, key);
       if (isClean) { newComps.push(c); return; }
-      const replacement = INSPIRING_TOOL_SUBSTITUTIONS[key] || 'Seesaw';
+      const replacement = inspiringPickReplacement_(key, takenKeys, approvedSet, bannedSet, yl);
       const repKey = diversityToolKey_(replacement);
-      const repClean = approvedSet.has(repKey) && !bannedSet.has(repKey) && !inspiringYearLevelDenied_(yl, repKey);
-      const finalReplacement = repClean ? replacement : 'Seesaw';
-      newComps.push(finalReplacement);
-      slotSwaps.push({ from: c, to: finalReplacement });
+      takenKeys.add(repKey);
+      newComps.push(replacement);
+      slotSwaps.push({ from: c, to: replacement });
     });
     if (!slotSwaps.length) return sg;
     let newDesc = sg.d || '';
@@ -4062,6 +4123,39 @@ function inspiringAutoFixBadTools(opts) {
   Logger.log('inspiringAutoFixBadTools: fixed ' + fixed + ' unit(s).');
   if (fixes.length) Logger.log('Fixes:\n' + fixes.map(f => '  ' + f.ca + ' / ' + f.yl + ' / ' + f.th + ' — ' + f.swaps.map(s => 'slot ' + s.slot + ' "' + s.from + '" -> "' + s.to + '"').join('; ')).join('\n'));
   return { fixed: fixed, fixes: fixes };
+}
+
+// 2026-05-25: Targeted requeue for units whose tool names were auto-swapped
+// (the inspiringRegenAutoSwapped audit marker is set). The auto-fix renamed
+// the rogue tool in both the `t` field and the description body, but
+// feature-specific language ("Flipgrid's grid-style feed") may still be
+// inconsistent with the substituted tool. Clearing inspiringRegenAt on
+// these units lets Inspire All regenerate them from scratch — producing
+// a fresh description tailored to the new tool — without disturbing the
+// rest of the corpus.
+function regenerateAllInspiringRequeueAutoSwapped(opts) {
+  opts = opts || {};
+  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  const raw = JSON.parse(file.getBlob().getDataAsString());
+  const isArr = Array.isArray(raw);
+  const data = isArr ? raw : Object.values(raw).filter(u => u && typeof u === 'object');
+  let cleared = 0;
+  const units = [];
+  for (let i = 0; i < data.length; i++) {
+    const u = data[i];
+    if (!inspiringInScope_(u, opts)) continue;
+    if (!u.inspiringRegenAutoSwapped) continue;
+    if (u.inspiringRegenAt) { delete u.inspiringRegenAt; cleared++; }
+    units.push({ ca: u.ca, yl: u.yl, th: u.th, swapped: u.inspiringRegenAutoSwapped });
+  }
+  if (cleared) {
+    const toWrite = isArr ? data : raw;
+    file.setContent(JSON.stringify(toWrite, null, 2));
+    try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e) { Logger.log('pushToGitHub after requeueAutoSwapped failed: ' + e); }
+  }
+  Logger.log('regenerateAllInspiringRequeueAutoSwapped: cleared inspiringRegenAt on ' + cleared + ' auto-swapped unit(s).');
+  if (units.length) Logger.log('Auto-swapped units:\n' + units.map(u => '  ' + u.ca + ' / ' + u.yl + ' / ' + u.th).join('\n'));
+  return { found: units.length, cleared: cleared, units: units };
 }
 
 // One-shot helper: scan for bad-tool units, clear their inspiringRegenAt

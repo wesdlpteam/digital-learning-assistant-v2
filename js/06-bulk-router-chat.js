@@ -848,6 +848,40 @@ async function inspireAllAbort(){
   }
 }
 
+// 2026-05-25: Requeue any unit whose tools were auto-substituted, so
+// Inspire All can produce fresh descriptions tailored to the new
+// tools (rather than the mechanical rename, which can leave feature-
+// specific language mismatched).
+async function inspireAllRequeueAutoSwapped(){
+  if(!confirm('Clear the inspiringRegenAt marker on every unit whose tools were auto-substituted, then offer to regenerate them with the AI?\n\n• Lets Inspire All produce FRESH descriptions tailored to the replacement tools\n• Fixes feature-mismatch language left over from the rename ("Flipgrid\'s grid-style feed" -> properly Seesaw-flavoured prose)\n• Also catches any duplicates the auto-fix introduced (the AI validator rejects intra-unit dups)\n• Costs OpenAI fees for those units only\n\nProceed?'))return;
+  setStatus('Requeuing auto-swapped units…', 'loading');
+  try {
+    const payload = withGASToken({ action: 'regenerateAllInspiringRequeueAutoSwapped' });
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+    if(result.error){ setStatus('Requeue error: ' + result.error, 'error'); return; }
+    if(!result.found){
+      setStatus('No auto-swapped units found — nothing to requeue.', 'success');
+      return;
+    }
+    setStatus(`Cleared inspiringRegenAt on ${result.cleared} auto-swapped unit(s).`, 'success');
+    console.info(`Auto-swapped units (${result.found}):`, result.units);
+    if(typeof loadFromDrive === 'function'){
+      await loadFromDrive();
+      if(typeof renderBrowse === 'function') renderBrowse();
+    }
+    if(confirm(`Requeued ${result.cleared} unit(s). Start Inspire All now to regenerate them with the AI?`)){
+      inspireAllBatch();
+    }
+  } catch(err){
+    setStatus('Requeue failed: ' + err.message, 'error');
+  }
+}
+
 // 2026-05-25: Zero-AI direct fix. Scans all units, renames any rogue
 // tool slot to an approved equivalent via the backend substitution
 // map. No OpenAI calls; descriptions are untouched.
@@ -1157,6 +1191,7 @@ function renderBrowse(){
   const _advancedButtons = `
     <div style="display:flex;gap:6px;flex-wrap:wrap;padding-top:10px;margin-top:10px;border-top:1px solid rgba(255,255,255,.05)">
       <button onclick="inspireAllAutoFixBadTools()" style="padding:6px 12px;background:transparent;border:1px solid #FBBF24;color:#FBBF24;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" title="Scan every unit for off-whitelist / banned / age-mismatched tool names and rename them to approved equivalents in-place. Also rewrites the tool name in the description text. No OpenAI calls. Spot-review affected units (inspiringRegenAutoSwapped is set).">🪄 Auto-fix bad tools (no AI)</button>
+      <button onclick="inspireAllRequeueAutoSwapped()" style="padding:6px 12px;background:transparent;border:1px solid #A78BFA;color:#A78BFA;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" title="Clear inspiringRegenAt on every auto-swapped unit so Inspire All can produce fresh descriptions tailored to the substituted tools (fixes feature-mismatch language + any duplicates the auto-fix introduced).">🎯 Re-regen auto-swapped (AI)</button>
       <button onclick="inspireAllRequeueBadTools()" style="padding:6px 12px;background:transparent;border:1px solid #FBBF24;color:#FBBF24;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Scan for bad-tool units, clear their inspiringRegenAt, and offer to redo just those with the AI (more expensive but produces fresh descriptions).">🔍 Re-regen with AI</button>
       <button onclick="inspireAllRecoverMarkers()" style="padding:6px 12px;background:transparent;border:1px solid #4ADE80;color:#4ADE80;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Restore inspiringRegenAt markers on units that already have inspiring-style descriptions (>=5 sentences, >=600 chars).">🔄 Recover markers</button>
       <button onclick="inspireAllAbort()" style="padding:6px 12px;background:transparent;border:1px solid #DC2626;color:#DC2626;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" title="EMERGENCY STOP: stops any in-flight Inspire All batch at the next unit boundary and blocks future runs until cleared.">🛑 STOP</button>
