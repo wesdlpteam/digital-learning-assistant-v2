@@ -3380,7 +3380,7 @@ function inspiringYearRule_(yl) {
   const earlyKinder = ['3 Year Old Kinder', '4 Year Old Kinder'];
   const prep = ['Prep'];
   if (earlyKinder.indexOf(yl) !== -1) {
-    return 'EARLY-YEARS HANDS-ON + SCREEN-FREE PRIORITY (' + yl + '): These children are 3-4 years old. EVERY suggestion must be predominantly HANDS-ON, sensory, tactile, dramatic-play, or movement-based. Screen time must be brief, purposeful, and teacher-operated where possible. Prefer SCREEN-FREE tech when it fits the theme: Bee-Bots (physical floor robots — directional buttons, no screen), Cubetto, KIBO, Code-a-pillar, talking pegs, Makey Makey paired with real objects (fruit, foil, playdough), Sphero Indi (colour-tile programming, no app needed for basic play). When a screen tool is genuinely the best fit, the teacher operates the device and children direct what happens (e.g. teacher records audio in ChatterPix Kids while a child speaks; teacher captures children\'s block-tower in Seesaw for a class slideshow). Activities must involve children\'s WHOLE BODIES, real materials they can pick up, role-play, music, or outdoor exploration — never a child silently swiping. Allowed tool pool: Bee-Bots, Sphero Indi, Cubetto, KIBO, Code-a-pillar, Makey Makey, Merge Cubes, ChatterPix Kids, Puppet Pals, PicCollage, Seesaw, Book Creator, Brushes Redux, Freeform, Epic, Animating a Character with Adobe Express. NO Canva, Padlet, Adobe Express general editor, Minecraft, Micro:bit, Sphero BOLT, or any Year 3+ tool.';
+    return 'EARLY-YEARS HANDS-ON + SCREEN-FREE PRIORITY (' + yl + '): These children are 3-4 years old. EVERY suggestion must be predominantly HANDS-ON, sensory, tactile, dramatic-play, or movement-based. Screen time must be brief, purposeful, and teacher-operated where possible. Prefer SCREEN-FREE tech when it fits the theme: Bee-Bots (physical floor robots — directional buttons, no screen), Cubetto, KIBO, Code-a-pillar, talking pegs, Makey Makey paired with real objects (fruit, foil, playdough), Sphero Indi (colour-tile programming, no app needed for basic play). When a screen tool is genuinely the best fit, the teacher operates the device and children direct what happens (e.g. teacher records audio in ChatterPix Kids while a child speaks; teacher captures children\'s block-tower in Seesaw for a class slideshow). Activities must involve children\'s WHOLE BODIES, real materials they can pick up, role-play, music, or outdoor exploration — never a child silently swiping. Allowed tool pool: Bee-Bots, Sphero Indi, Cubetto, KIBO, Code-a-pillar, Makey Makey, ChatterPix Kids, Puppet Pals, PicCollage, Seesaw, Book Creator, Brushes Redux, Freeform, Epic, Animating a Character with Adobe Express. NO Merge Cubes (AR needs steady camera + AR metaphor — not developmentally realistic), NO Canva, Padlet, Adobe Express general editor, Minecraft, Micro:bit, Sphero BOLT, or any Year 3+ tool.';
   }
   if (prep.indexOf(yl) !== -1) {
     return 'EARLY-YEARS HANDS-ON + SCREEN-FREE PRIORITY (Prep): Prep children are 5 years old and still need predominantly HANDS-ON, multisensory, play-based learning. Open with screen-free or minimal-screen options where they fit the theme: Bee-Bots (physical floor robots — programmed with directional buttons, no app), Cubetto, KIBO, Code-a-pillar, Makey Makey wired to real objects (fruit pianos, foil canvases, playdough switches), Sphero Indi colour-tile pathways laid out on the carpet. When a screen tool genuinely suits the theme, keep screen time brief and pair it with a physical artefact (e.g. a ChatterPix Kids talking-portrait of a hand-drawn animal; a Seesaw photo of a real block tower). At LEAST 2 of the 6 suggestions must be predominantly screen-free or minimal-screen tactile activities. Allowed tool pool: Bee-Bots, Sphero Indi, Cubetto, KIBO, Code-a-pillar, Makey Makey, Merge Cubes, ScratchJR, ChatterPix Kids, Puppet Pals, PicCollage, Seesaw, Book Creator, Brushes Redux, Freeform, Sketchbook, Epic, Word Clouds ABCya, Animating a Character with Adobe Express. NO Canva, Padlet, Adobe Express general editor, Minecraft, Micro:bit, Sphero BOLT, or any Year 3+ tool.';
@@ -3509,9 +3509,12 @@ function getBannedToolNames_() {
   }
 }
 
-function inspiringCheckToolMembership_(sugs, approvedSet, bannedSet) {
+function inspiringCheckToolMembership_(sugs, approvedSet, bannedSet, yl) {
   // approvedSet / bannedSet are Sets of lowercased trimmed tool names.
   // Walk every "+"-split component of every slot. First failure returned.
+  // yl is the unit's year level — used to enforce age-specific NO-lists
+  // (e.g. Merge Cubes for 3YO/4YO Kinder) that aren't covered by the
+  // global approved/banned lists.
   for (let i = 0; i < sugs.length; i++) {
     const sg = sugs[i];
     if (!sg || typeof sg.t !== 'string') continue;
@@ -3525,6 +3528,9 @@ function inspiringCheckToolMembership_(sugs, approvedSet, bannedSet) {
       if (approvedSet.size > 0 && !approvedSet.has(key)) {
         return { ok: false, reason: 'slot ' + (i + 1) + ' uses OFF-WHITELIST tool "' + comps[c] + '" — must be one of the approved tools listed in the prompt' };
       }
+      if (yl && inspiringYearLevelDenied_(yl, key)) {
+        return { ok: false, reason: 'slot ' + (i + 1) + ' uses "' + comps[c] + '" which is AGE-INAPPROPRIATE for ' + yl + ' — pick a tool from the year-level allowed pool listed in the prompt' };
+      }
     }
   }
   return { ok: true };
@@ -3536,9 +3542,10 @@ function inspiringValidateSugs_(sugs, target, data, targetIdx, approvedSet, bann
   const base = diversityValidateSugs_(sugs, target, data, targetIdx);
   if (!base.ok) return base;
   // Hard tool-list check (added 2026-05-25 after Inspire All v1 leaked
-  // off-whitelist + banned tools at temperature 0.75).
+  // off-whitelist + banned tools at temperature 0.75). Also gates against
+  // age-specific NO-lists (e.g. Merge Cubes for 3YO/4YO Kinder).
   if (approvedSet && bannedSet) {
-    const membership = inspiringCheckToolMembership_(sugs, approvedSet, bannedSet);
+    const membership = inspiringCheckToolMembership_(sugs, approvedSet, bannedSet, target && target.yl);
     if (!membership.ok) return membership;
   }
   // Soft sentence-count check for slots 1-5 only. STEM slot is allowed to be
@@ -3552,9 +3559,26 @@ function inspiringValidateSugs_(sugs, target, data, targetIdx, approvedSet, bann
   return { ok: true };
 }
 
+// Year-level NO-lists: tools that are technically on the approved list but
+// inappropriate for specific year levels (e.g. Merge Cubes needs steady AR
+// camera + the AR metaphor — not developmentally realistic for 3-4 yos).
+// Keys are lowercased tool names. Add more entries here as age-mismatch
+// issues surface in future runs.
+const INSPIRING_YEAR_LEVEL_NO_LIST = {
+  '3 Year Old Kinder': ['merge cubes'],
+  '4 Year Old Kinder': ['merge cubes']
+};
+
+function inspiringYearLevelDenied_(yl, toolKey) {
+  const list = INSPIRING_YEAR_LEVEL_NO_LIST[yl];
+  return !!(list && list.indexOf(toolKey) !== -1);
+}
+
 // Scan the live data.json for units whose current suggestions include any
-// off-whitelist or banned tool component. Used by the requeue action to
-// surface units that the first Inspire All v1 run wrote with rogue tools.
+// off-whitelist or banned tool component, OR a tool that's age-inappropriate
+// for that year level (e.g. Merge Cubes in a 3YO unit). Used by the requeue
+// action to surface units that the first Inspire All v1 run wrote with
+// rogue tools.
 function inspiringFindBadToolUnits_(data, opts) {
   opts = opts || {};
   const approvedSet = new Set(getApprovedToolNames_().map(diversityToolKey_));
@@ -3574,6 +3598,7 @@ function inspiringFindBadToolUnits_(data, opts) {
         if (!key) continue;
         if (bannedSet.has(key)) offending.push({ slot: s + 1, tool: comps[c], reason: 'banned' });
         else if (approvedSet.size > 0 && !approvedSet.has(key)) offending.push({ slot: s + 1, tool: comps[c], reason: 'off-whitelist' });
+        else if (inspiringYearLevelDenied_(u.yl, key)) offending.push({ slot: s + 1, tool: comps[c], reason: 'age-mismatch for ' + u.yl });
       }
     }
     if (offending.length) out.push({ idx: i, ca: u.ca, yl: u.yl, th: u.th, offending: offending });
