@@ -210,9 +210,11 @@ function appSmashCountInRegen_(sugs){
 
 // 2026-05-25: Per-entry version of APP_SMASH_REQUIREMENT. Shuffles the
 // example pairings list (so the model doesn't anchor on whichever pair is
-// listed first) and injects the actual openers already in use by sibling
-// units in the same campus+year level (so the model is told concretely what
-// to avoid for slot 1). Falls back to the static block if DATA isn't loaded.
+// listed first) and injects the actual openers + over-used tool components
+// already in use by sibling units in the same campus+year level (so the
+// model is told concretely what to avoid for slot 1 AND what tools are
+// already saturating the year group). Falls back to the static block if
+// DATA isn't loaded.
 function appSmashRequirementForEntry_(entry){
   if(!entry || !Array.isArray(window.DATA)) return APP_SMASH_REQUIREMENT;
   const pairs = STRONG_PAIRING_EXAMPLES.slice();
@@ -221,8 +223,12 @@ function appSmashRequirementForEntry_(entry){
     const tmp = pairs[i]; pairs[i] = pairs[j]; pairs[j] = tmp;
   }
   const siblingOpeners = siblingOpenersForEntry_(entry);
-  const avoidLine = siblingOpeners.length
+  const overused = siblingOverusedComponentsForEntry_(entry);
+  const openerLine = siblingOpeners.length
     ? `\n- DO NOT REUSE for slot 1 — other units in this campus + year level already open with these tools, so slot 1 must be a DIFFERENT App Smash pair: ${siblingOpeners.join(', ')}.`
+    : '';
+  const overusedLine = overused.length
+    ? `\n- OVER-USED across this campus + year level (avoid adding to the pile unless genuinely the best fit for THIS unit): ${overused.map(o => `${o.label} (${o.count}x)`).join(', ')}. Prefer tools NOT in this list when multiple options would suit.`
     : '';
   return `
 APP SMASH FLOOR (HARD RULE — overrides any "one tool per slot" instruction above):
@@ -230,7 +236,7 @@ APP SMASH FLOOR (HARD RULE — overrides any "one tool per slot" instruction abo
 - Suggestion 6 (STEM Design Cycle) is EXCLUDED from the floor and stays a single tool.
 - Both tools in every "+" combo must be on the approved list AND age-appropriate for this year level. Neither may be banned.
 - VARY YOUR OPENERS — slot 1 sets the unit's tone, so it should specifically suit THIS unit's content; do not default to one canonical pair across multiple units.
-- Example strong pairings (these are EXAMPLES, not a preference order — mix freely, other valid combos are equally welcome): ${pairs.join(', ')}.${avoidLine}
+- Example strong pairings (these are EXAMPLES, not a preference order — mix freely, other valid combos are equally welcome): ${pairs.join(', ')}.${openerLine}${overusedLine}
 - The description must explicitly use BOTH tools — describe the smash, not one tool that happens to be paired in the title.
 - If your draft has fewer than 2 App Smashes in slots 1-5, redraft before returning.`;
 }
@@ -253,6 +259,35 @@ function siblingOpenersForEntry_(entry){
     if(t) set.add(t);
   });
   return Array.from(set);
+}
+
+// 2026-05-25: Wider than siblingOpenersForEntry_ — counts how often each
+// tool component (after splitting "Tool A + Tool B" pairs) appears across
+// ALL slots 1-5 of sibling units in the same campus + year level. Returns
+// the components used 2+ times, sorted by count desc. Used by
+// appSmashRequirementForEntry_ to surface the corpus-wide tool saturation,
+// not just opener duplication.
+function siblingOverusedComponentsForEntry_(entry){
+  if(!entry || !Array.isArray(window.DATA)) return [];
+  const ca = entry.ca || '';
+  const yl = entry.yl || '';
+  const th = entry.th || '';
+  const counts = {};
+  window.DATA.forEach(e => {
+    if(!e || e.ca !== ca || e.yl !== yl) return;
+    if((e.th || '') === th) return;
+    if(!Array.isArray(e.s)) return;
+    for(let slot = 0; slot < 5; slot++){
+      const t = e.s[slot] && typeof e.s[slot].t === 'string' ? e.s[slot].t : '';
+      if(!t) continue;
+      t.split(/\s*\+\s*/).map(p => p.trim()).filter(Boolean).forEach(c => {
+        const k = c.toLowerCase();
+        if(!counts[k]) counts[k] = { label: c, count: 0 };
+        counts[k].count++;
+      });
+    }
+  });
+  return Object.values(counts).filter(c => c.count >= 2).sort((a, b) => b.count - a.count);
 }
 
 // 2026-05-25: Post-parse opener-diversity check. Returns the duplicated

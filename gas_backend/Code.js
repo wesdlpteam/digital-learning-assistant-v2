@@ -2862,3 +2862,366 @@ function cleanPlannerPUAGlyphs() {
   if (!totalCleaned) Logger.log('Nothing to clean — every .md file is already PUA-free.');
   return { scanned: totalFiles, cleaned: totalCleaned, stripped: totalGlyphsStripped, files: report };
 }
+
+
+// ==========================================================================
+// 2026-05-25: regenerateForDiversity
+// Repairs the corpus-wide tool-monoculture identified on 2026-05-25 (6/6 GW
+// Year 4 units opening with "Padlet + iMovie" and matching patterns across
+// every Y3-6 group + early-years Seesaw collapse). The prevention fix in the
+// Studio-side js files (commit db748e1) stops new regens from re-introducing
+// the bias, but doesn't repair the historical data — this function does.
+//
+// Run from the Apps Script editor:
+//   regenerateForDiversityDryRun()  — lists affected groups + units, no API calls
+//   regenerateForDiversity()        — regenerates every affected unit; default
+//                                     batch is 25/run to stay under the
+//                                     30-min Apps Script execution cap. Re-run
+//                                     until the dry-run reports 0 affected.
+//   regenerateForDiversity({ batch: 10, ca: 'Glen Waverley', yl: 'Year 4' })
+//                                   — scoped + smaller batch for a single
+//                                     campus+year smoke test.
+//
+// "Bias cluster" = a campus+year group where any single tool key appears in
+// 3+ slot-1 positions, in 3+ slot-2 positions, or where any tool component
+// (after splitting "Tool A + Tool B" pairs) is used in 4+ unit-slots across
+// the group. Every unit in such a group is regenerated so the model gets a
+// clean slate to diversify, not just the offending units.
+// ==========================================================================
+const DIVERSITY_OPENER_DUP_THRESHOLD = 3;
+const DIVERSITY_COMPONENT_DUP_THRESHOLD = 4;
+const DIVERSITY_DEFAULT_BATCH = 25;
+
+function diversitySlotTool_(unit, slotIdx) {
+  if (!unit || !Array.isArray(unit.s)) return '';
+  const s = unit.s[slotIdx];
+  return s && typeof s.t === 'string' ? s.t.trim() : '';
+}
+
+function diversityToolComponents_(tool) {
+  if (!tool || typeof tool !== 'string') return [];
+  return tool.split(/\s*\+\s*/).map(p => p.trim()).filter(Boolean);
+}
+
+function diversityToolKey_(tool) {
+  return String(tool || '').toLowerCase().trim();
+}
+
+function diversityGroupKey_(unit) {
+  return (unit && (unit.ca || '') + '||' + (unit.yl || '')) || '';
+}
+
+function diversityFindAffectedUnits_(data) {
+  if (!Array.isArray(data)) return { groups: {}, affectedIdx: [] };
+  const groups = {};
+  data.forEach((unit, idx) => {
+    if (!unit || !unit.ca || !unit.yl) return;
+    const k = diversityGroupKey_(unit);
+    (groups[k] = groups[k] || { ca: unit.ca, yl: unit.yl, units: [] }).units.push({ unit: unit, idx: idx });
+  });
+
+  const affectedSet = {};
+  Object.keys(groups).forEach(k => {
+    const g = groups[k];
+    if (g.units.length < DIVERSITY_OPENER_DUP_THRESHOLD) return;
+
+    // Slot-0 and slot-1 clusters
+    const slotClusters = [{}, {}];
+    g.units.forEach(({ unit, idx }) => {
+      for (let slot = 0; slot < 2; slot++) {
+        const t = diversityToolKey_(diversitySlotTool_(unit, slot));
+        if (!t) continue;
+        (slotClusters[slot][t] = slotClusters[slot][t] || []).push(idx);
+      }
+    });
+    [0, 1].forEach(slot => {
+      Object.keys(slotClusters[slot]).forEach(toolKey => {
+        if (slotClusters[slot][toolKey].length >= DIVERSITY_OPENER_DUP_THRESHOLD) {
+          // Every unit in this group becomes a regen target — even the ones
+          // that already differ, because their differing choice still has
+          // to dodge the now-larger sibling-tool footprint we'll re-pick.
+          g.units.forEach(({ idx }) => { affectedSet[idx] = true; });
+        }
+      });
+    });
+
+    // Component-level overuse across slots 1-5 (covers app-smashes like
+    // "Padlet + Canva" and "Padlet + iMovie" both contributing to Padlet's
+    // count, even if neither slot-0 nor slot-1 clusters tripped).
+    const componentCounts = {};
+    g.units.forEach(({ unit }) => {
+      for (let slot = 0; slot < 5; slot++) {
+        const tool = diversitySlotTool_(unit, slot);
+        if (!tool) continue;
+        diversityToolComponents_(tool).forEach(c => {
+          const ck = diversityToolKey_(c);
+          if (!ck) return;
+          componentCounts[ck] = (componentCounts[ck] || 0) + 1;
+        });
+      }
+    });
+    const overused = Object.keys(componentCounts).filter(c => componentCounts[c] >= DIVERSITY_COMPONENT_DUP_THRESHOLD);
+    if (overused.length) {
+      g.units.forEach(({ idx }) => { affectedSet[idx] = true; });
+    }
+  });
+
+  return { groups: groups, affectedIdx: Object.keys(affectedSet).map(n => parseInt(n, 10)).sort((a, b) => a - b) };
+}
+
+function diversitySiblingToolFootprint_(data, targetIdx) {
+  if (!Array.isArray(data) || !data[targetIdx]) return { overused: [], underused: [], allUsed: [] };
+  const target = data[targetIdx];
+  const ca = target.ca || '';
+  const yl = target.yl || '';
+
+  const componentCounts = {};
+  data.forEach((unit, idx) => {
+    if (idx === targetIdx) return;
+    if (!unit || unit.ca !== ca || unit.yl !== yl) return;
+    for (let slot = 0; slot < 5; slot++) {
+      const tool = diversitySlotTool_(unit, slot);
+      if (!tool) continue;
+      diversityToolComponents_(tool).forEach(c => {
+        const ck = diversityToolKey_(c);
+        if (!ck) return;
+        if (!componentCounts[ck]) componentCounts[ck] = { label: c, count: 0 };
+        componentCounts[ck].count++;
+      });
+    }
+  });
+
+  const entries = Object.values(componentCounts).sort((a, b) => b.count - a.count);
+  const overused = entries.filter(e => e.count >= 2).map(e => `${e.label} (used ${e.count}x)`);
+  const allUsed = entries.map(e => e.label);
+  return { overused: overused, allUsed: allUsed };
+}
+
+function diversityYearRule_(yl) {
+  const upperPrimary = ['Year 4', 'Year 5', 'Year 6'];
+  const midPrimary = ['Year 3'];
+  const kinder = ['3 Year Old Kinder', '4 Year Old Kinder'];
+  if (kinder.indexOf(yl) !== -1) {
+    return 'Kindergarten (' + yl + '): VERY simple, play-based, teacher-guided. Use only: Bee-Bots, Sphero Indi, ScratchJR, ChatterPix Kids, Puppet Pals, PicCollage, Seesaw, Book Creator, Brushes Redux, Freeform, Epic, Animating a Character with Adobe Express. Maximise diversity — 6 different tools.';
+  }
+  if (upperPrimary.indexOf(yl) !== -1) {
+    return 'Upper primary (Year 4-6): Wide tool pool. Canva, Book Creator, Padlet, Delightex, Adobe Express, Animating a Character with Adobe Express, M365 (Word/Excel/Forms), Minecraft Education, Lego Spike Prime, CoDrone EDU, Micro:bit, and all general tools are appropriate. Maximise diversity — 6 different tools.';
+  }
+  if (midPrimary.indexOf(yl) !== -1) {
+    return 'Mid primary (Year 3): Canva, Book Creator, Delightex, Adobe Express, Animating a Character with Adobe Express, Padlet, Sphero BOLT, Micro:bit, Stop Motion Studio, Scratch, Kahoot, Explain Everything, plus general tools. Maximise diversity — 6 different tools.';
+  }
+  if (yl === 'Year 2') {
+    return 'Early years (Year 2): DIVERSE mix from Prep-Year 2 pool: Seesaw, Book Creator, Delightex, Bee-Bots, Sphero Indi, ScratchJR, ChatterPix Kids, Puppet Pals, PicCollage, GarageBand, iMovie, Merge Cubes, Makey Makey, Brushes Redux, Freeform, Sketchbook, Epic, Word Clouds ABCya, Animating a Character with Adobe Express. NO Canva, Padlet, general Adobe Express editor, Minecraft, or Year 3+ tool. Maximise diversity — 6 different tools.';
+  }
+  return 'Early years (Prep-Year 1): DIVERSE mix from Prep-Year 1 pool: Seesaw, Book Creator, Delightex, Bee-Bots, Sphero Indi, ScratchJR, ChatterPix Kids, Puppet Pals, PicCollage, GarageBand, iMovie, Merge Cubes, Makey Makey, Brushes Redux, Freeform, Sketchbook, Epic, Word Clouds ABCya, Animating a Character with Adobe Express. NO Canva, Padlet, general Adobe Express editor, Minecraft, Sphero BOLT, or Year 3+ tool. Maximise diversity — 6 different tools.';
+}
+
+function diversityBuildPrompt_(data, targetIdx, approvedToolsPrompt) {
+  const target = data[targetIdx];
+  const footprint = diversitySiblingToolFootprint_(data, targetIdx);
+  const overusedLine = footprint.overused.length
+    ? '\n- DO NOT REUSE these tools that are already heavily used by sibling units in this campus + year level (avoid adding to the over-used pile unless absolutely necessary for THIS unit\'s theme): ' + footprint.overused.join(', ') + '.'
+    : '';
+  const allUsedLine = footprint.allUsed.length
+    ? '\n- For context, every tool currently used by ANY sibling unit in this campus + year level: ' + footprint.allUsed.join(', ') + '. Reach for tools NOT on this list first when they suit the theme; only repeat from this list when the alternative would be a poor pedagogical fit.'
+    : '';
+
+  return 'You are a Digital Learning Coach. Regenerate the 6 digital technology suggestions for this IB PYP unit, optimising for CORPUS-WIDE TOOL VARIETY across the year level.\n\n' +
+    'Campus: ' + target.ca + ' | Year Level: ' + target.yl + ' | Theme: "' + target.th + '"' +
+    (target.ci ? '\nCentral Idea: "' + target.ci + '"' : '') +
+    (target.lo ? '\nLines of Inquiry: "' + target.lo + '"' : '') +
+    (target.plannerText ? '\nPlanner context: ' + String(target.plannerText).slice(0, 4000) : '') + '\n\n' +
+    'STRUCTURE: Return exactly 6 suggestions.\n' +
+    '- Suggestions 1-5: Digital technology integrations. At LEAST 2 must be an App Smash ("Tool A + Tool B").\n' +
+    '- Suggestion 6: A Makerspace/STEM project (Physical-First focus, cardboard/circuitry, 3-4 sentence description).\n\n' +
+    'NO DUPLICATE TOOLS within this unit (HARD RULE): each of the 6 suggestions uses a DIFFERENT primary tool. App Smash components count — if slot 1 is "Padlet + iMovie", neither Padlet nor iMovie may appear in slots 2-6.\n\n' +
+    'APP SMASH FORMAT: "Tool 1 + Tool 2" with a literal + sign. The description must explain how BOTH tools are used together.\n\n' +
+    'DIVERSITY CONSTRAINTS FOR THIS UNIT (the reason you\'re being asked to regenerate):' + overusedLine + allUsedLine + '\n' +
+    '- VARY YOUR OPENER — slot 1 should specifically suit THIS unit\'s theme; do not default to one canonical App Smash pair.\n' +
+    '- If multiple tools fit equally well, pick the one that\'s LEAST used in the year level.\n\n' +
+    approvedToolsPrompt + '\n' + REALISTIC_TOOL_USE_RULES + '\n\n' +
+    'YEAR LEVEL GUIDANCE FOR ' + target.yl + ':\n' + diversityYearRule_(target.yl) + '\n\n' +
+    'Return ONLY a valid JSON object (no markdown, no backticks). Use straight apostrophes (\'). Schema:\n' +
+    '{ "s": [ { "t": "Tool Name or Tool A + Tool B", "d": "3-4 sentence description tailored to THIS unit." }, ... 6 items ] }';
+}
+
+function diversityValidateSugs_(sugs, target, data, targetIdx) {
+  if (!Array.isArray(sugs) || sugs.length !== 6) return { ok: false, reason: 'expected 6 suggestions, got ' + (Array.isArray(sugs) ? sugs.length : 'non-array') };
+  // Component-level dedup within the unit
+  const seen = {};
+  for (let i = 0; i < sugs.length; i++) {
+    const sg = sugs[i];
+    if (!sg || !sg.t || !sg.d) return { ok: false, reason: 'slot ' + (i + 1) + ' missing t/d' };
+    const comps = diversityToolComponents_(sg.t);
+    for (let j = 0; j < comps.length; j++) {
+      const ck = diversityToolKey_(comps[j]);
+      if (seen[ck]) return { ok: false, reason: 'duplicate tool component "' + comps[j] + '" across slots' };
+      seen[ck] = true;
+    }
+  }
+  // >=2 App Smashes in slots 1-5
+  const smashCount = sugs.slice(0, 5).filter(sg => /\+/.test(sg.t)).length;
+  if (smashCount < 2) return { ok: false, reason: 'only ' + smashCount + ' App Smash(es) in slots 1-5 (need >=2)' };
+  // Opener must not match a sibling opener
+  const opener = diversityToolKey_(sugs[0].t);
+  if (data && Array.isArray(data)) {
+    const ca = target.ca, yl = target.yl;
+    for (let k = 0; k < data.length; k++) {
+      if (k === targetIdx) continue;
+      const u = data[k];
+      if (!u || u.ca !== ca || u.yl !== yl) continue;
+      if (diversityToolKey_(diversitySlotTool_(u, 0)) === opener) return { ok: false, reason: 'opener "' + sugs[0].t + '" matches sibling unit "' + (u.th || '') + '"' };
+    }
+  }
+  return { ok: true };
+}
+
+function diversityCallOnce_(prompt) {
+  const payload = {
+    model: OPENAI_MODEL,
+    messages: [{ role: 'user', content: prompt }],
+    response_format: { type: 'json_object' },
+    temperature: 0.4,
+    max_tokens: 4096
+  };
+  const response = UrlFetchApp.fetch(OPENAI_ENDPOINT, {
+    method: 'post',
+    contentType: 'application/json',
+    headers: { Authorization: 'Bearer ' + getOpenAIKey_() },
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  });
+  const code = response.getResponseCode();
+  if (code === 429) { setCooldown_(2, 'OpenAI rate limit during diversity regen'); return { retriable: true, error: 'HTTP 429' }; }
+  if (isRetriableHttpCode_(code)) return { retriable: true, error: 'HTTP ' + code };
+  if (code !== 200) return { retriable: false, error: 'HTTP ' + code + ': ' + response.getContentText().slice(0, 200) };
+  let rawText;
+  try {
+    const parsed = JSON.parse(response.getContentText());
+    rawText = parsed && parsed.choices && parsed.choices[0] && parsed.choices[0].message && parsed.choices[0].message.content;
+  } catch (e) { return { retriable: false, error: 'malformed OpenAI envelope' }; }
+  if (!rawText) return { retriable: false, error: 'empty content' };
+  let clean = rawText.replace(/```json|```/g, '').trim();
+  clean = clean.replace(/[‘’`´]/g, "'").replace(/[“”]/g, '"');
+  try {
+    const obj = JSON.parse(clean);
+    return { ok: true, sugs: Array.isArray(obj.s) ? obj.s : [] };
+  } catch (e) { return { retriable: true, error: 'JSON parse: ' + e.message }; }
+}
+
+function regenerateForDiversityDryRun(opts) {
+  opts = opts || {};
+  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  const data = JSON.parse(file.getBlob().getDataAsString());
+  const arr = Array.isArray(data) ? data : Object.values(data).filter(u => u && typeof u === 'object');
+  const { groups, affectedIdx } = diversityFindAffectedUnits_(arr);
+  let candidates = affectedIdx;
+  if (opts.ca) candidates = candidates.filter(i => arr[i] && arr[i].ca === opts.ca);
+  if (opts.yl) candidates = candidates.filter(i => arr[i] && arr[i].yl === opts.yl);
+  const summary = {};
+  candidates.forEach(i => {
+    const u = arr[i];
+    const gk = diversityGroupKey_(u);
+    (summary[gk] = summary[gk] || { ca: u.ca, yl: u.yl, count: 0, sample: [] });
+    summary[gk].count++;
+    if (summary[gk].sample.length < 3) summary[gk].sample.push(u.th + ' (s[0]=' + diversitySlotTool_(u, 0) + ')');
+  });
+  Logger.log('--- regenerateForDiversity DRY RUN ---');
+  Logger.log('Total groups: ' + Object.keys(groups).length + ' | Affected units in scope: ' + candidates.length);
+  Object.keys(summary).sort().forEach(k => {
+    const s = summary[k];
+    Logger.log('  ' + s.ca + ' / ' + s.yl + ': ' + s.count + ' unit(s) — e.g. ' + s.sample.join('; '));
+  });
+  Logger.log('Run regenerateForDiversity(' + (opts.ca || opts.yl ? JSON.stringify(opts) : '') + ') to execute (default batch ' + DIVERSITY_DEFAULT_BATCH + ').');
+  return { totalGroups: Object.keys(groups).length, affectedInScope: candidates.length, summary: summary };
+}
+
+function regenerateForDiversity(opts) {
+  opts = opts || {};
+  const batch = Number.isFinite(opts.batch) ? Math.max(1, Math.min(50, Number(opts.batch))) : DIVERSITY_DEFAULT_BATCH;
+
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(0)) { Logger.log('regenerateForDiversity: another run holds the lock — skipping.'); return { skipped: true, reason: 'lock-held' }; }
+
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const resumeTime = props.getProperty('DLA_RESUME_TIME');
+    if (resumeTime && Date.now() < parseInt(resumeTime, 10)) {
+      const until = new Date(parseInt(resumeTime, 10)).toLocaleString('en-AU');
+      Logger.log('Cooldown active until ' + until + ' — bailing.');
+      return { skipped: true, reason: 'cooldown', until: until };
+    }
+
+    const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+    let raw = JSON.parse(file.getBlob().getDataAsString());
+    const isArr = Array.isArray(raw);
+    const data = isArr ? raw : Object.values(raw).filter(u => u && typeof u === 'object');
+
+    const { affectedIdx } = diversityFindAffectedUnits_(data);
+    let candidates = affectedIdx;
+    if (opts.ca) candidates = candidates.filter(i => data[i] && data[i].ca === opts.ca);
+    if (opts.yl) candidates = candidates.filter(i => data[i] && data[i].yl === opts.yl);
+
+    Logger.log('regenerateForDiversity: ' + candidates.length + ' affected in scope; processing up to ' + batch + ' this run.');
+    if (!candidates.length) { Logger.log('Nothing to do — corpus is already diverse for this scope.'); return { processed: 0, affected: 0, fixed: 0, failed: 0 }; }
+
+    const approvedToolsPrompt = getApprovedToolsPrompt_();
+    let processed = 0, fixed = 0, failed = 0;
+    let dataDirty = false;
+    const failures = [];
+
+    for (let n = 0; n < candidates.length && processed < batch; n++) {
+      const idx = candidates[n];
+      const target = data[idx];
+      processed++;
+      // Rebuild the prompt each call so the sibling footprint reflects any
+      // units we've already updated this run — diversity is dynamic.
+      const prompt = diversityBuildPrompt_(data, idx, approvedToolsPrompt);
+      let success = false;
+      let lastReason = '';
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        const call = diversityCallOnce_(prompt + (attempt > 1 ? '\n\nRETRY ' + (attempt - 1) + ': Previous attempt failed validation (' + lastReason + '). Apply the diversity constraints more strictly.' : ''));
+        if (!call.ok) {
+          lastReason = call.error || 'unknown';
+          if (call.retriable && attempt < 3) { Utilities.sleep(8000); continue; }
+          break;
+        }
+        const verdict = diversityValidateSugs_(call.sugs, target, data, idx);
+        if (!verdict.ok) {
+          lastReason = verdict.reason;
+          if (attempt < 3) { Utilities.sleep(4000); continue; }
+          break;
+        }
+        // Persist into the in-memory data so the next sibling regen sees the
+        // updated footprint. audited=false flags the unit for human review.
+        data[idx].s = call.sugs.map(s => ({ t: s.t, d: s.d }));
+        data[idx].audited = false;
+        data[idx].diversityRegenAt = new Date().toISOString();
+        dataDirty = true;
+        success = true;
+        Logger.log('  [' + (n + 1) + '/' + candidates.length + '] ' + target.ca + ' ' + target.yl + ' — ' + target.th + ' -> s[0]=' + call.sugs[0].t);
+        break;
+      }
+      if (success) fixed++;
+      else { failed++; failures.push({ ca: target.ca, yl: target.yl, th: target.th, reason: lastReason }); Logger.log('  [' + (n + 1) + '/' + candidates.length + '] FAILED ' + target.ca + ' ' + target.yl + ' — ' + target.th + ' (' + lastReason + ')'); }
+      Utilities.sleep(1500);
+    }
+
+    if (dataDirty) {
+      const toWrite = isArr ? data : raw;
+      if (!isArr) {
+        // raw is a {0: unit, 1: unit, ...} object — mutating data[i] mutated
+        // the same underlying unit refs since Object.values returned refs.
+        // No remap needed, just write raw back.
+      }
+      file.setContent(JSON.stringify(toWrite, null, 2));
+      try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e) { Logger.log('pushToGitHub after diversity regen failed: ' + e); }
+    }
+
+    Logger.log('regenerateForDiversity: processed ' + processed + ', fixed ' + fixed + ', failed ' + failed + ', remaining in scope ' + Math.max(0, candidates.length - processed));
+    if (failures.length) Logger.log('Failures:\n' + failures.map(f => '  ' + f.ca + ' / ' + f.yl + ' / ' + f.th + ': ' + f.reason).join('\n'));
+    return { processed: processed, fixed: fixed, failed: failed, remaining: Math.max(0, candidates.length - processed), failures: failures };
+  } finally {
+    lock.releaseLock();
+  }
+}
