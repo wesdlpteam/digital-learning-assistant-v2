@@ -3440,12 +3440,18 @@ function inspiringBuildPrompt_(data, targetIdx, approvedToolsPrompt) {
     '{ "s": [ { "t": "Tool Name or Tool A + Tool B", "d": "Exactly 6 inspiring sentences tailored to THIS unit (slot 6: 4-5 sentences for the STEM project)." }, ... 6 items ] }';
 }
 
-function inspiringCallOnce_(prompt) {
+function inspiringCallOnce_(prompt, temperature) {
+  // Default temperature 0.75 gives creativity. Caller lowers it on retries
+  // (typically to 0.45) so the model snaps back to the approved-tools list
+  // instead of inventing rogue tool names — the whitelist validator
+  // otherwise burns 3 retries × ~15s per unit and blows past the 6-min
+  // Apps Script execution limit.
+  const temp = (typeof temperature === 'number') ? temperature : 0.75;
   const payload = {
     model: OPENAI_MODEL,
     messages: [{ role: 'user', content: prompt }],
     response_format: { type: 'json_object' },
-    temperature: 0.75,
+    temperature: temp,
     max_tokens: 5000
   };
   const response = UrlFetchApp.fetch(OPENAI_ENDPOINT, {
@@ -3785,8 +3791,20 @@ function regenerateAllInspiring(opts) {
       let success = false;
       let lastReason = '';
       for (let attempt = 1; attempt <= 3; attempt++) {
-        const retryNote = attempt > 1 ? '\n\nRETRY ' + (attempt - 1) + ': Previous attempt failed validation (' + lastReason + '). Apply the constraints more strictly and keep every slot 1-5 description to ~6 sentences.' : '';
-        const call = inspiringCallOnce_(prompt + retryNote);
+        // Retry feedback: if the validator caught a rogue tool, repeat the
+        // approved-tools constraint at the END of the prompt so it's the
+        // freshest thing in the model's context. Drop temperature 0.75 -> 0.45
+        // on retries to make the model less creative about tool names — the
+        // whole point of retries is COMPLIANCE, not more creative variation.
+        let retryNote = '';
+        let retryTemp = 0.75;
+        if (attempt > 1) {
+          retryTemp = 0.45;
+          const toolStrayed = /OFF-WHITELIST|BANNED/.test(lastReason);
+          const toolReminder = toolStrayed ? '\n\nCRITICAL: You MUST pick every tool from the approved list above. Re-read the APPROVED TOOLS section. Do not invent tool names, do not use deprecated tools, do not substitute similar-sounding tools. If you are unsure whether a tool is approved, pick a different tool from the list that you can verify IS listed.' : '';
+          retryNote = '\n\nRETRY ' + (attempt - 1) + ': Previous attempt failed validation (' + lastReason + '). Apply ALL constraints (tool whitelist, App Smash floor, no dup tools, opener differs from siblings, ~6 sentences per slot 1-5).' + toolReminder;
+        }
+        const call = inspiringCallOnce_(prompt + retryNote, retryTemp);
         if (!call.ok) {
           lastReason = call.error || 'unknown';
           if (call.retriable && attempt < 3) { Utilities.sleep(8000); continue; }

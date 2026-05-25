@@ -723,7 +723,12 @@ async function inspireAllBatch(){
       const firstBatchHint = batchNum === 1 ? ' (first batch also snapshots data.json — ~30s extra)' : '';
       startHeartbeat(`Batch ${batchNum} running${firstBatchHint}`);
       setStatus(`Inspire All: batch ${batchNum} processing…`, 'loading');
-      const payload = withGASToken({ action: 'regenerateAllInspiring', batch: 8 });
+      // batch=4 keeps each backend call well under Apps Script's hard 6-min
+      // execution limit even when the whitelist validator triggers 3 retries
+      // per unit (3 retries × ~15s = 45s/unit worst case, ×4 = ~3 min + snapshot
+      // + save + push). batch=8 was hitting the 360s wall and the fetch timed
+      // out client-side at 369s after the runtime severed the connection.
+      const payload = withGASToken({ action: 'regenerateAllInspiring', batch: 4 });
       if(ca) payload.ca = ca;
       if(yr) payload.yl = yr;
       const response = await fetch(SCRIPT_URL, {
