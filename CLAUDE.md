@@ -2,6 +2,21 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Working policy — Superpowers skills are the FIRST choice
+
+**Before touching code, debugging, or claiming work is complete, invoke the relevant Superpowers skill via the Skill tool.** This is non-negotiable on this repo.
+
+- **Any bug, regression, unexpected behaviour, "it still does X" report** → `superpowers:systematic-debugging` BEFORE proposing fixes. No quick patches without Phase 1 (root cause) complete.
+- **Any new feature, refactor, or behaviour change** → `superpowers:brainstorming` first if requirements aren't crystal-clear; `superpowers:test-driven-development` while implementing.
+- **Before claiming "done", "fixed", "ready", "should work", or before a commit/push** → `superpowers:verification-before-completion`. Run actual checks, show evidence.
+- **Multi-step work** → `TodoWrite` to track progress; mark complete only when each step is truly done.
+- **Plan / spec work** → `superpowers:writing-plans` for anything beyond a one-liner.
+- **Receiving review or correction from the user** → `superpowers:receiving-code-review` — verify the technical claim before agreeing or implementing.
+
+If a Superpowers skill exists for the task in front of you, invoke it. Default to invocation; only skip when the skill demonstrably doesn't fit.
+
+This applies to the public site (`index.html`), the Studio (`DLA_Studio.html` + `js/`), and both GAS backends (`gas_backend/`, `gas_analytics/`).
+
 ## What this repo is
 
 Wesley College Digital Learning Assistant (DLA) v2. A static site hosted on GitHub Pages (`wesdlpteam/digital-learning-assistant-v2`, served from `main`) plus two Google Apps Script backends managed locally via `clasp`. There is no build step — files are edited and pushed, then GitHub Pages serves them directly.
