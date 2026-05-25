@@ -4055,10 +4055,11 @@ function inspiringYearLevelDenied_(yl, toolKey) {
 }
 
 // Scan the live data.json for units whose current suggestions include any
-// off-whitelist or banned tool component, OR a tool that's age-inappropriate
-// for that year level (e.g. Merge Cubes in a 3YO unit). Used by the requeue
-// action to surface units that the first Inspire All v1 run wrote with
-// rogue tools.
+// off-whitelist or banned tool component, a tool that's age-inappropriate
+// for that year level (e.g. Merge Cubes in a 3YO unit), OR a tool that
+// duplicates another slot in the same unit. Used by the requeue actions
+// to surface units that need the AI to regenerate them with the
+// validator's full constraint set.
 function inspiringFindBadToolUnits_(data, opts) {
   opts = opts || {};
   const approvedSet = new Set(getApprovedToolNames_().map(diversityToolKey_));
@@ -4069,6 +4070,8 @@ function inspiringFindBadToolUnits_(data, opts) {
     if (!inspiringInScope_(u, opts)) continue;
     if (!Array.isArray(u.s) || !u.s.length) continue;
     const offending = [];
+    // Track tool components across slots for intra-unit duplicate detection.
+    const componentSlots = {};
     for (let s = 0; s < u.s.length; s++) {
       const sg = u.s[s];
       if (!sg || typeof sg.t !== 'string') continue;
@@ -4079,6 +4082,14 @@ function inspiringFindBadToolUnits_(data, opts) {
         if (bannedSet.has(key)) offending.push({ slot: s + 1, tool: comps[c], reason: 'banned' });
         else if (approvedSet.size > 0 && !approvedSet.has(key)) offending.push({ slot: s + 1, tool: comps[c], reason: 'off-whitelist' });
         else if (inspiringYearLevelDenied_(u.yl, key)) offending.push({ slot: s + 1, tool: comps[c], reason: 'age-mismatch for ' + u.yl });
+        // Duplicate detection: only flag the SECOND+ occurrence within the
+        // unit so we don't double-count. First occurrence goes into the
+        // componentSlots map.
+        if (componentSlots[key] && componentSlots[key] !== (s + 1)) {
+          offending.push({ slot: s + 1, tool: comps[c], reason: 'duplicate of slot ' + componentSlots[key] });
+        } else if (!componentSlots[key]) {
+          componentSlots[key] = s + 1;
+        }
       }
     }
     if (offending.length) out.push({ idx: i, ca: u.ca, yl: u.yl, th: u.th, offending: offending });
