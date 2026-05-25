@@ -3166,8 +3166,12 @@ function regenerateForDiversity(opts) {
   opts = opts || {};
   const batch = Number.isFinite(opts.batch) ? Math.max(1, Math.min(50, Number(opts.batch))) : DIVERSITY_DEFAULT_BATCH;
 
+  // Wait up to 2 min for the script lock so we queue politely behind
+  // auditPlanners / auditAndSync runs instead of bailing instantly. Both
+  // those functions hold the script-wide LockService while making OpenAI
+  // calls and write the same data[i].s field we touch, so they DO race.
   const lock = LockService.getScriptLock();
-  if (!lock.tryLock(0)) { Logger.log('regenerateForDiversity: another run holds the lock — skipping.'); return { skipped: true, reason: 'lock-held' }; }
+  if (!lock.tryLock(120000)) { Logger.log('regenerateForDiversity: lock still held after 2 min wait — bailing.'); return { skipped: true, reason: 'lock-held' }; }
 
   try {
     const props = PropertiesService.getScriptProperties();
