@@ -12,7 +12,7 @@
 
    List-style renderers that 09 still owns:
      - renderLiveScorecard, renderLiveUsedByTeam, renderLiveUsedAudit,
-       renderLiveThumbsDown, renderLiveFeedback, renderLiveUsed
+       renderLiveFeedback, renderLiveUsed
 
    ECharts is loaded via CDN in DLA_Studio.html.
    ============================================================= */
@@ -187,7 +187,6 @@ function renderInsights(){
   const analyticsRows = cache.analytics || [];
   const usedRows      = cache.used      || window._usedRowsCache || [];
   const intentRows    = cache.intent    || window._intentRowsCache || [];
-  const reactionsRows = window._reactionsCache || [];
   const feedbackRows  = window._feedbackCache  || [];
 
   const since7  = daysAgo_(7);
@@ -261,28 +260,6 @@ function renderInsights(){
       title: `${quiet.length === 3 ? 'All campuses' : quiet.join(' + ')} quiet for 2+ weeks`,
       body: `No "I Used This" clicks recently from ${quiet.join(', ')}. A short check-in or recap email often re-activates teams that have drifted.`,
       action: { label: 'See click audit', target: 'feedback' }
-    });
-  }
-
-  // ---- 3. Worst-rated tool with enough reactions to be reliable ----
-  const reactions = (typeof parseReactionRows === 'function') ? parseReactionRows(reactionsRows) : [];
-  const reactCounts = {};
-  reactions.forEach(ev => {
-    const key = ev.tool || ev.rawTool; if(!key) return;
-    if(!reactCounts[key]) reactCounts[key] = { up:0, down:0 };
-    if(ev.reaction === 'up')   reactCounts[key].up++;
-    if(ev.reaction === 'down') reactCounts[key].down++;
-  });
-  const worst = Object.entries(reactCounts)
-    .map(([t,c]) => ({ tool:t, up:c.up, down:c.down, total:c.up+c.down, approval: (c.up+c.down) ? c.up/(c.up+c.down) : 1 }))
-    .filter(r => r.total >= 3 && r.approval < 0.5)
-    .sort((a,b) => b.down - a.down)[0];
-  if(worst){
-    ins.push({
-      icon: '👎', tone: 'warning',
-      title: `${worst.tool} has ${Math.round(worst.approval*100)}% approval`,
-      body: `${worst.total} teachers reacted (${worst.down} 👎, ${worst.up} 👍). Highest-priority candidate for rewriting or replacing in the suggestion library.`,
-      action: { label: 'Open review queue', target: 'feedback' }
     });
   }
 
@@ -459,7 +436,7 @@ function buildAISummaryBrief_(){
   const cache         = window._growthRowsCache || {};
   const analyticsRows = cache.analytics || [];
   const usedRows      = cache.used      || window._usedRowsCache || [];
-  const reactionsRows = window._reactionsCache || [];
+  const intentRows    = cache.intent    || window._intentRowsCache || [];
   const feedbackRows  = window._feedbackCache  || [];
 
   const since7  = daysAgo_(7);
@@ -493,20 +470,23 @@ function buildAISummaryBrief_(){
     if(e.team)   usesByTeam[e.team]       = (usesByTeam[e.team]||0)       + 1;
   });
 
-  // Reactions
-  const reactions = (typeof parseReactionRows === 'function') ? parseReactionRows(reactionsRows) : [];
-  const reactTally = {};
-  reactions.forEach(ev => {
-    const k = ev.tool || ev.rawTool; if(!k) return;
-    if(!reactTally[k]) reactTally[k] = { up:0, down:0 };
-    if(ev.reaction === 'up')   reactTally[k].up++;
-    if(ev.reaction === 'down') reactTally[k].down++;
-  });
-  const worstRated = Object.entries(reactTally)
-    .filter(([t,c]) => c.up + c.down >= 3)
-    .map(([t,c]) => ({ tool:t, approval:c.up/(c.up+c.down), total:c.up+c.down }))
-    .filter(r => r.approval < 0.6)
-    .sort((a,b) => a.approval - b.approval).slice(0, 5);
+  // Intents — planned but maybe not yet followed through. Mirrors uses
+  // aggregation so the AI brief can compare intent volume vs. follow-through.
+  const intentEvents = intentRows.slice(1).filter(r => r && (r[1] || (r[2] && r[3])))
+    .map(r => ({ ts: analyticsDate_(r[0]),
+                 campus: String(r[2]||'').trim(),
+                 year:   String(r[3]||'').trim(),
+                 team:   String(r[1]||'').trim() || `${r[2]||''} ${r[3]||''} Team`,
+                 tool:   (typeof normaliseToolName === 'function') ? normaliseToolName(String(r[5]||'').trim()) : String(r[5]||'').trim(),
+                 sig:    [r[2],r[3],r[4],r[5],r[6]].map(v=>String(v||'').trim()).join('|') }));
+  const intentsThisWk = intentEvents.filter(e => e.ts && e.ts >= since7).length;
+  const intents30     = intentEvents.filter(e => e.ts && e.ts >= since30).length;
+  const usedSigSet    = new Set(usedEvents.map(e => [e.campus,e.year,'',e.tool,''].join('|')));
+  // Conversion: % of intents that have a matching Used row (full sig match)
+  const usedSigs = new Set(usedRows.slice(1).filter(r => r && (r[1] || (r[2] && r[3])))
+    .map(r => [r[2],r[3],r[4],r[5],r[6]].map(v=>String(v||'').trim()).join('|')));
+  const fulfilled = intentEvents.filter(e => usedSigs.has(e.sig)).length;
+  const intentToUsePct = intentEvents.length ? Math.round((fulfilled / intentEvents.length) * 100) : null;
 
   // Dead suggestions
   const suggestedCount = {};
@@ -551,7 +531,13 @@ function buildAISummaryBrief_(){
       topToolsLast30: topUsedTools,
       topTeamsLast30: topTeams
     },
-    reactionsWorstRated: worstRated,
+    intents: {
+      allTime: intentEvents.length,
+      last30:  intents30,
+      last7:   intentsThisWk,
+      intentToUsePct: intentToUsePct,
+      fulfilled: fulfilled
+    },
     deadSuggestions: deadTools,
     recentFeedback
   };
@@ -987,67 +973,17 @@ function renderYearCoverage(usedRows){
   mountChart_(id, opt);
 }
 
-/* ---------- Reactions by tool (Engagement) — ECharts diverging bar ---------- */
-function renderReactionsBar_eChart(reactionsRows){
-  const id = 'live-reactions';
-  const events = typeof parseReactionRows === 'function' ? parseReactionRows(reactionsRows) : [];
-  if(!events.length){
-    const el = document.getElementById(id);
-    if(el) el.innerHTML = '<div class="empty-msg">No reactions yet.</div>';
-    disposeChart_(id);
-    return;
-  }
-  const counts = {};
-  events.forEach(ev => {
-    const key = ev.tool || ev.rawTool || 'Unknown tool';
-    if(!counts[key]) counts[key] = { up: 0, down: 0 };
-    if(ev.reaction === 'up')   counts[key].up++;
-    if(ev.reaction === 'down') counts[key].down++;
-  });
-  const sorted = Object.entries(counts).map(([t,c]) => [t, c.up, c.down, c.up + c.down])
-                                       .sort((a,b) => b[3] - a[3]).slice(0, 10);
-  const labels = sorted.map(r => r[0]);
-  const ups    = sorted.map(r => r[1]);
-  const downs  = sorted.map(r => -r[2]);
-
-  const opt = Object.assign(chartBase_(), {
-    grid: { left: 130, right: 28, top: 14, bottom: 30, containLabel: true },
-    legend: Object.assign(chartBase_().legend, { data: ['👍 Up','👎 Down'] }),
-    tooltip: Object.assign(chartBase_().tooltip, {
-      trigger: 'axis',
-      axisPointer: { type: 'shadow', shadowStyle: { color: 'rgba(255,255,255,0.04)' } },
-      formatter: (params) => {
-        const i = params[0].dataIndex;
-        const up = ups[i], down = -downs[i], total = up + down;
-        const approval = total > 0 ? Math.round((up / total) * 100) : 0;
-        return `<b>${labels[i]}</b><br/>👍 ${up} · 👎 ${down}<br/>Approval: <b>${approval}%</b>`;
-      }
-    }),
-    xAxis: axisStyle_({ type: 'value', axisLabel: { color: ANALYTICS_PALETTE.dim, formatter: v => Math.abs(v) } }),
-    yAxis: axisStyle_({ type: 'category', data: labels, inverse: true, axisLabel: { color: ANALYTICS_PALETTE.text, fontSize: 11, fontWeight: 600 } }),
-    series: [
-      { name:'👍 Up',   type:'bar', stack:'reactions', data: ups,   itemStyle:{ color: ANALYTICS_PALETTE.lime,   borderRadius:[0,4,4,0] }, label:{ show:true, position:'right', color: ANALYTICS_PALETTE.lime, fontSize:10 } },
-      { name:'👎 Down', type:'bar', stack:'reactions', data: downs, itemStyle:{ color: ANALYTICS_PALETTE.salmon, borderRadius:[4,0,0,4] }, label:{ show:true, position:'left',  color: ANALYTICS_PALETTE.salmon, fontSize:10, formatter: v => v.value ? Math.abs(v.value) : '' } }
-    ]
-  });
-  const host = document.getElementById(id);
-  if(host && !host.style.height) host.style.height = (Math.max(160, labels.length * 30 + 50)) + 'px';
-  mountChart_(id, opt);
-}
-
-/* ---------- Engagement funnel (Engagement) — NEW ---------- */
-// 4-stage: views → reactions → intents → uses. Intents sits between reactions
-// (a low-commitment signal) and used (full follow-through) — its slot in the
-// funnel directly visualises how many teachers go from "interested" to
-// "planning" to "did it".
-function renderEngagementFunnel(analyticsRows, reactionsRows, usedRows, intentRows){
+/* ---------- Engagement funnel (Engagement) ---------- */
+// 3-stage: views → intents → uses. Intent ("I'm going to try this") is the
+// midpoint between "saw it" and "did it" — the funnel directly visualises
+// how many teachers go from browsing to planning to following through.
+function renderEngagementFunnel(analyticsRows, usedRows, intentRows){
   const id = 'live-funnel';
-  const views     = (analyticsRows||[]).slice(1).length;
-  const reactions = (reactionsRows||[]).slice(1).filter(r => r && r[6]).length;
-  const intents   = (intentRows||window._intentRowsCache||[]).slice(1).filter(r => r && (r[1] || (r[2] && r[3]))).length;
-  const uses      = (usedRows||[]).slice(1).filter(r => r && r[5]).length;
+  const views   = (analyticsRows||[]).slice(1).length;
+  const intents = (intentRows||window._intentRowsCache||[]).slice(1).filter(r => r && (r[1] || (r[2] && r[3]))).length;
+  const uses    = (usedRows||[]).slice(1).filter(r => r && r[5]).length;
 
-  if(!views && !reactions && !intents && !uses){
+  if(!views && !intents && !uses){
     const el = document.getElementById(id);
     if(el) el.innerHTML = '<div class="empty-msg">No engagement data yet.</div>';
     disposeChart_(id);
@@ -1083,15 +1019,14 @@ function renderEngagementFunnel(analyticsRows, reactionsRows, usedRows, intentRo
       labelLine: { show: false },
       itemStyle: { borderColor: '#0d0d0d', borderWidth: 1 },
       data: [
-        { value: views,     name: `Views (${views})`,         itemStyle: { color: ANALYTICS_PALETTE.blue   } },
-        { value: reactions, name: `Reactions (${reactions})`, itemStyle: { color: ANALYTICS_PALETTE.purple } },
-        { value: intents,   name: `Intents (${intents})`,     itemStyle: { color: ANALYTICS_PALETTE.orange } },
-        { value: uses,      name: `Used (${uses})`,           itemStyle: { color: ANALYTICS_PALETTE.lime   } }
+        { value: views,   name: `Views (${views})`,     itemStyle: { color: ANALYTICS_PALETTE.blue   } },
+        { value: intents, name: `Intents (${intents})`, itemStyle: { color: ANALYTICS_PALETTE.orange } },
+        { value: uses,    name: `Used (${uses})`,       itemStyle: { color: ANALYTICS_PALETTE.lime   } }
       ]
     }]
   };
   const host = document.getElementById(id);
-  if(host && !host.style.height) host.style.height = '300px';
+  if(host && !host.style.height) host.style.height = '280px';
   mountChart_(id, opt);
 }
 
@@ -1243,7 +1178,6 @@ function renderRankingsBar_eChart(scope){
 // touching its loadLiveAnalytics dispatcher.
 function renderLiveGrowth(bucket){ renderGrowthChart_eChart(bucket); }
 function renderLiveCampusChart(rows){ renderCampusBar_eChart(rows); }
-function renderLiveReactions(rows){ renderReactionsBar_eChart(rows); }
 function renderLiveTopPages(rows){ renderTopPages_eChart(rows); }
 function renderToolRankings(scope){ renderRankingsBar_eChart(scope); }
 
@@ -1262,7 +1196,7 @@ function renderLiveAdoptionExtras(){
 }
 function renderLiveEngagementExtras(){
   const cache = window._growthRowsCache || {};
-  renderEngagementFunnel(cache.analytics || [], window._reactionsCache || [], cache.used || window._usedRowsCache || [], cache.intent || window._intentRowsCache || []);
+  renderEngagementFunnel(cache.analytics || [], cache.used || window._usedRowsCache || [], cache.intent || window._intentRowsCache || []);
 }
 
 // The campus heatmap from 09 is replaced by the reach matrix, so render a no-op.

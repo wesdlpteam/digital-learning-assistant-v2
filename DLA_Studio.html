@@ -505,7 +505,7 @@
           <!-- Engagement funnel -->
           <div class="card analytics-card" style="margin-bottom:14px">
             <span class="label">engagement funnel</span>
-            <p class="card-hint">Views → Reactions → "I Used This". The drop-off shows where teachers stop engaging.</p>
+            <p class="card-hint">Views → "I'm going to try this" → "I Used This". The drop-off shows where teachers stop engaging.</p>
             <div id="live-funnel"></div>
           </div>
 
@@ -535,17 +535,10 @@
             </div>
           </div>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
-            <div class="card analytics-card">
-              <span class="label">reactions by tool</span>
-              <p class="card-hint">Top 10 tools by reaction volume. Lime = 👍, salmon = 👎.</p>
-              <div id="live-reactions"></div>
-            </div>
-            <div class="card analytics-card">
-              <span class="label">top 10 viewed pages</span>
-              <p class="card-hint">Most-visited unit pages on the public DLA.</p>
-              <div id="live-top-pages"></div>
-            </div>
+          <div class="card analytics-card" style="margin-bottom:14px">
+            <span class="label">top 10 viewed pages</span>
+            <p class="card-hint">Most-visited unit pages on the public DLA.</p>
+            <div id="live-top-pages"></div>
           </div>
 
           <!-- Recently used -->
@@ -559,17 +552,6 @@
 
         <!-- ===================== FEEDBACK &amp; AUDIT ===================== -->
         <div class="analytics-subpanel" data-subpanel="feedback" style="display:none">
-
-          <!-- Recent thumbs-down review queue -->
-          <div class="card analytics-card thumbsdown-card" style="margin-bottom:14px">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
-              <span class="label" style="margin:0;color:#FF8080">👎 suggestions needing review</span>
-              <div style="flex:1"></div>
-              <span id="live-thumbsdown-count" style="font-size:11px;color:#FF8080;font-weight:700"></span>
-            </div>
-            <p class="card-hint">Recent thumbs-down reactions from teachers. Use these as the review queue for suggestions that may need rewriting or replacing.</p>
-            <div id="live-thumbsdown"></div>
-          </div>
 
           <!-- Teacher feedback -->
           <div class="card analytics-card" style="margin-bottom:14px">

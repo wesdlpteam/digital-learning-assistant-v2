@@ -208,12 +208,6 @@
 /* Tighter ranking rows when the chart isn't used */
 .analytics-card .rank-row{padding:7px 0}
 
-/* Thumbs-down card keeps its warning colouring */
-.thumbsdown-card{
-  border-color:rgba(255,128,128,0.35) !important;
-  background:linear-gradient(135deg,rgba(255,128,128,.06),rgba(255,128,128,.01));
-}
-
 /* Insights panel */
 .insights-card{
   border-color:rgba(167,139,250,0.30) !important;
