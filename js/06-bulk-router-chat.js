@@ -744,8 +744,12 @@ async function inspireAllBatch(){
         return;
       }
       if(result.paused){
-        setStatus('Inspire All paused: ' + (result.reason || 'unknown') + (result.until ? ' until ' + result.until : ''), 'error');
-        if(statusEl) statusEl.textContent = `Paused (${result.reason || 'unknown'}${result.until ? ' until ' + result.until : ''}). Click Inspire All again to resume.`;
+        const isAbort = result.reason === 'aborted' || result.aborted === true;
+        const msg = isAbort
+          ? 'Inspire All stopped by abort flag. Click "Clear abort flag" before resuming.'
+          : 'Inspire All paused: ' + (result.reason || 'unknown') + (result.until ? ' until ' + result.until : '');
+        setStatus(msg, isAbort ? 'success' : 'error');
+        if(statusEl) statusEl.textContent = isAbort ? 'Stopped by abort flag. Use "Clear abort flag" before resuming.' : `Paused (${result.reason || 'unknown'}${result.until ? ' until ' + result.until : ''}). Click Inspire All again to resume.`;
         return;
       }
       totalFixed += result.fixed || 0;
@@ -818,6 +822,47 @@ async function inspireAllRequeueBadTools(){
     }
   } catch(err){
     setStatus('Requeue failed: ' + err.message, 'error');
+  }
+}
+
+// 2026-05-25: Emergency kill switch. Sets the INSPIRING_ABORT Script
+// Property to '1'; every in-flight regenerateAllInspiring batch checks
+// this between units and bails. Frontend loop also reads the response
+// and stops. Must be explicitly cleared (via Clear abort button) before
+// future runs can proceed.
+async function inspireAllAbort(){
+  if(!confirm('Emergency STOP all Inspire All activity?\n\n• Stops the current batch (and any queued batches) at the next unit boundary\n• Already-saved progress stays\n• Blocks future Inspire All runs until you click "Clear abort flag"\n\nProceed?'))return;
+  try {
+    const payload = withGASToken({ action: 'regenerateAllInspiringAbort' });
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+    if(result.error){ setStatus('Abort error: ' + result.error, 'error'); return; }
+    setStatus('🛑 Inspire All abort flag set — current batch will stop at the next unit. Future runs blocked until cleared.', 'success');
+    if(typeof renderBrowse === 'function') renderBrowse();
+  } catch(err){
+    setStatus('Abort failed: ' + err.message, 'error');
+  }
+}
+
+async function inspireAllClearAbort(){
+  if(!confirm('Clear the abort flag so Inspire All can run again?'))return;
+  try {
+    const payload = withGASToken({ action: 'regenerateAllInspiringClearAbort' });
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+    if(result.error){ setStatus('Clear-abort error: ' + result.error, 'error'); return; }
+    setStatus('Abort flag cleared — Inspire All can resume.', 'success');
+    if(typeof renderBrowse === 'function') renderBrowse();
+  } catch(err){
+    setStatus('Clear-abort failed: ' + err.message, 'error');
   }
 }
 
@@ -976,6 +1021,8 @@ function renderBrowse(){
     <span id="inspire-all-status" style="font-size:12px;color:var(--dim)">${inspiredRemaining > 0 ? `${inspiredRemaining} still using the old 2-3 sentence descriptions` : (filteredInspiredTotal > 0 ? 'All eligible units regenerated — early-years (3YO/4YO/Prep) include hands-on / screen-free options' : 'No eligible units in view')}</span>
     ${inspiredRemaining > 0 ? `<button id="btn-inspire-all" onclick="inspireAllBatch()" style="margin-left:auto;padding:6px 14px;background:#38BDF8;color:#0a1f2e;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer" title="Regenerate every unit's 6 suggestions in the new 6-sentence inspiring style. Snapshots data.json first. Processes 8 units at a time. Units missing Central Idea or Lines of Inquiry are SKIPPED. The tightened validator now also rejects off-whitelist + banned tools.">🚀 Inspire all${ca || yr ? ' (in view)' : ''}</button>` : ''}
     ${filteredInspired > 0 ? `<button id="btn-inspire-requeue" onclick="inspireAllRequeueBadTools()" style="padding:6px 12px;background:transparent;border:1px solid #FBBF24;color:#FBBF24;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" title="Scan all inspiring-regenerated units for off-whitelist or banned tools, clear their inspiringRegenAt flag, and offer to redo just those with the tightened validator.">🔍 Re-regen bad tools</button>` : ''}
+    <button id="btn-inspire-abort" onclick="inspireAllAbort()" style="padding:6px 12px;background:transparent;border:1px solid #DC2626;color:#DC2626;border-radius:8px;font-weight:800;font-size:11px;cursor:pointer" title="EMERGENCY STOP: sets a backend abort flag. Any in-flight or queued Inspire All batches will bail at the next unit boundary. Future runs are blocked until you click 'Clear abort'.">🛑 STOP</button>
+    <button id="btn-inspire-clear-abort" onclick="inspireAllClearAbort()" style="padding:6px 12px;background:transparent;border:1px solid #888;color:#888;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear the backend abort flag so Inspire All can run again.">Clear abort</button>
     ${filteredInspired > 0 ? `<button id="btn-inspire-reset" onclick="inspireAllReset()" style="padding:6px 12px;background:transparent;border:1px solid rgba(255,128,128,.3);color:#FF8080;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear the inspiringRegenAt flag on EVERY unit so Inspire All can be re-run from scratch. Existing suggestions stay until the regen overwrites them.">Reset inspire flags</button>` : ''}
   </div>`;
 

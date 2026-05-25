@@ -61,11 +61,31 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 .dh-title{font-size:26px;font-weight:700;letter-spacing:-.5px;line-height:1.15}
 .dh-ci{font-size:15px;opacity:.8;margin-top:10px;line-height:1.6;font-style:italic}
 
-.loi-box{background:var(--sf);border-radius:16px;padding:20px 22px;margin-bottom:20px;border:2px solid var(--bd)}
+.loi-box{background:var(--sf);border-radius:16px;padding:20px 22px;margin-bottom:20px;border:2px solid var(--bd);position:relative}
 .loi-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--mt);margin-bottom:12px}
 .loi-item{padding:10px 0;border-bottom:1px solid var(--bd);font-size:14px;line-height:1.55;color:#EEE}
 .loi-item:last-child{border-bottom:none}
 .loi-num{font-weight:700;margin-right:8px}
+
+.uoi-edit-btn{display:inline-flex;align-items:center;gap:6px;background:rgba(56,189,248,.12);color:#38BDF8;border:1px solid rgba(56,189,248,.4);border-radius:8px;padding:6px 12px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
+.uoi-edit-btn:hover{background:rgba(56,189,248,.22)}
+.uoi-pending-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(212,160,23,.12);color:#FBBF24;border:1px solid rgba(212,160,23,.4);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;margin-left:auto}
+.uoi-pending-pill button{background:none;border:none;color:inherit;cursor:pointer;font-size:14px;line-height:1;padding:0;margin-left:4px;opacity:.7}
+.uoi-pending-pill button:hover{opacity:1}
+.uoi-edit-form{background:var(--sf);border-radius:16px;padding:22px;margin-bottom:20px;border:2px solid #38BDF8}
+.uoi-edit-form h3{font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#38BDF8;margin-bottom:6px}
+.uoi-edit-form .uoi-edit-hint{font-size:12px;color:#aaa;line-height:1.5;margin-bottom:14px;padding:10px 12px;background:#1a1a1a;border-radius:8px;border-left:3px solid #38BDF8}
+.uoi-edit-form .uoi-edit-hint strong{color:#fff}
+.uoi-edit-form label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#888;margin:14px 0 6px}
+.uoi-edit-form textarea{width:100%;background:#0F0F0F;border:1px solid #2A2A2A;border-radius:10px;padding:11px 13px;color:#EEE;font-family:inherit;font-size:14px;line-height:1.5;resize:vertical;box-sizing:border-box}
+.uoi-edit-form textarea:focus{outline:none;border-color:#38BDF8;background:#111}
+.uoi-edit-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid #333}
+.uoi-edit-actions button{border:none;border-radius:10px;padding:10px 16px;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;transition:all .15s}
+.uoi-edit-actions .uoi-edit-save{background:#22C55E;color:#0a1f12}
+.uoi-edit-actions .uoi-edit-save:hover:not(:disabled){background:#4ADE80}
+.uoi-edit-actions .uoi-edit-save:disabled{opacity:.6;cursor:not-allowed}
+.uoi-edit-actions .uoi-edit-cancel{background:#252525;color:#CCC;border:1px solid #3A3A3A}
+.uoi-edit-actions .uoi-edit-cancel:hover{background:#333;color:#FFF}
 
 .tb{display:flex;gap:6px;margin-bottom:18px;background:var(--sf);border-radius:14px;padding:5px}
 .tt{flex:1;padding:12px 8px;border:none;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:var(--mt);transition:all .2s;letter-spacing:-.2px}
@@ -1017,6 +1037,105 @@ function handleTechKey(e){
 }
 // ========== END TEACHER-PICKED TECH SUGGESTION ==========
 
+
+// ========== TEACHER UOI EDIT PROPOSAL ==========
+// Teachers click "Edit" on a unit detail page, confirm, edit CI/LOI,
+// Save -> submission goes to the DLA team's review queue (not directly
+// into data.json). After save we ask if they would like to regenerate
+// the tech suggestions immediately using their edits (the tech picker
+// accepts custom CI/LOI inline, no approval needed for that). The
+// proposal is also remembered in localStorage so they see a
+// "Submitted for approval" reminder on this unit until they clear it.
+window._uoiEditMode = false;
+
+function uoiProposalLocalKey(ca,yl,th){return 'dla_uoi_prop_v1::'+ca+'::'+yl+'::'+th;}
+
+function getLocalUoiProposal(ca,yl,th){
+  try{
+    var raw=localStorage.getItem(uoiProposalLocalKey(ca,yl,th));
+    if(!raw)return null;
+    var obj=JSON.parse(raw);
+    return (obj && typeof obj==='object') ? obj : null;
+  }catch(e){return null;}
+}
+
+function saveLocalUoiProposal(ca,yl,th,ci,lo,note){
+  try{
+    localStorage.setItem(uoiProposalLocalKey(ca,yl,th), JSON.stringify({
+      ci:String(ci||''),
+      lo:String(lo||''),
+      note:String(note||''),
+      submittedAt:new Date().toISOString()
+    }));
+  }catch(e){}
+}
+
+function clearLocalUoiProposal(ca,yl,th){
+  try{localStorage.removeItem(uoiProposalLocalKey(ca,yl,th));}catch(e){}
+}
+
+function startUoiEdit(){
+  if(!confirm('Edit the Central Idea and Lines of Inquiry for this unit?\n\nYour edits will be sent to the DLA team for review and approval. They will not change what other teachers see until they are approved. You can still use your edits to generate fresh tech ideas right away.'))return;
+  window._uoiEditMode=true;
+  R();
+  setTimeout(function(){
+    var ciEl=document.getElementById('uoi-edit-ci');
+    if(ciEl){ciEl.scrollIntoView({behavior:'smooth',block:'center'});try{ciEl.focus();}catch(e){}}
+  },80);
+}
+
+function cancelUoiEdit(){
+  window._uoiEditMode=false;
+  R();
+}
+
+function submitUoiEdit(campusEnc,ylEnc,themeEnc){
+  var campus=decodeURIComponent(campusEnc),yl=decodeURIComponent(ylEnc),theme=decodeURIComponent(themeEnc);
+  var ciEl=document.getElementById('uoi-edit-ci');
+  var loEl=document.getElementById('uoi-edit-lo');
+  var noteEl=document.getElementById('uoi-edit-note');
+  var ci=ciEl?ciEl.value.trim():'';
+  var lo=loEl?loEl.value.trim():'';
+  var note=noteEl?noteEl.value.trim():'';
+  if(!ci&&!lo){alert('Please fill in the Central Idea or Lines of Inquiry before submitting.');return;}
+  var saveBtn=document.getElementById('uoi-edit-save');
+  if(saveBtn){saveBtn.disabled=true;saveBtn.textContent='Submitting...';}
+  var url=AI_HOOK
+    +'?action=submitUoiProposal'
+    +'&ca='+encodeURIComponent(campus)
+    +'&yl='+encodeURIComponent(yl)
+    +'&th='+encodeURIComponent(theme)
+    +'&ci='+encodeURIComponent(ci)
+    +'&lo='+encodeURIComponent(lo)
+    +'&note='+encodeURIComponent(note)
+    +'&t='+Date.now();
+  fetch(url,{method:'GET',redirect:'follow',credentials:'omit',cache:'no-store'})
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
+    .then(function(txt){
+      var parsed;try{parsed=JSON.parse(txt);}catch(e){throw new Error('Server returned invalid response');}
+      if(parsed&&parsed.error)throw new Error(parsed.error);
+      saveLocalUoiProposal(campus,yl,theme,ci,lo,note);
+      window._uoiEditMode=false;
+      R();
+      setTimeout(function(){
+        if(confirm('Submitted to the DLA team for review!\n\nWould you like to generate fresh tech ideas using your edited Central Idea and Lines of Inquiry right now?\n\n(Pick any approved tool - the AI will tailor a suggestion around your wording. Your unit\'s saved suggestions do not change unless the DLA team approves.)')){
+          openTechPicker(encodeURIComponent(campus),encodeURIComponent(yl),encodeURIComponent(theme),encodeURIComponent(ci),encodeURIComponent(lo));
+        }
+      },80);
+    })
+    .catch(function(err){
+      alert('Submission failed: '+(err&&err.message?err.message:err)+'\n\nPlease try again.');
+      if(saveBtn){saveBtn.disabled=false;saveBtn.textContent='Save and submit for approval';}
+    });
+}
+
+function clearLocalProposalForUnit(campusEnc,ylEnc,themeEnc){
+  var campus=decodeURIComponent(campusEnc),yl=decodeURIComponent(ylEnc),theme=decodeURIComponent(themeEnc);
+  if(!confirm('Forget the "submitted" reminder for this unit? The DLA team will still see your submission in their review queue.'))return;
+  clearLocalUoiProposal(campus,yl,theme);
+  R();
+}
+// ========== END TEACHER UOI EDIT PROPOSAL ==========
 
 function splitLinesOfInquiry(text){
   return String(text||'')

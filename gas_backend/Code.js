@@ -361,6 +361,37 @@ function doPost(e) {
       return jsonResponse(result);
     }
 
+    if (action === 'regenerateallinspiringabort') {
+      const result = regenerateAllInspiringAbort();
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
+    if (action === 'regenerateallinspiringclearabort') {
+      const result = regenerateAllInspiringClearAbort();
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
+    // 2026-05-25: admin review of teacher-submitted CI/LOI edit proposals.
+    if (action === 'listuoiproposals') {
+      const result = listUoiProposals_({ status: body.status || null });
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
+    if (action === 'approveuoiproposal') {
+      const result = approveUoiProposal_({ id: body.id || '' });
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
+    if (action === 'dismissuoiproposal') {
+      const result = dismissUoiProposal_({ id: body.id || '', reason: body.reason || '' });
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
     return jsonResponse({ error: 'Unknown action: ' + actionRaw });
   } catch(err) {
     return jsonResponse({ error: err && err.message ? err.message : String(err) });
@@ -384,6 +415,21 @@ function doGet(e) {
         customLo: params.customLo || ''
       });
       return cb ? jsonpResponse(cb, result) : jsonResponse(result);
+    }
+
+    // 2026-05-25: Public teacher endpoint — submit a CI/LOI edit proposal
+    // for admin review. No auth (teachers aren't signed in); daily cap
+    // protects against scraping/spam. Admin reviews in DLA Studio.
+    if (action === 'submituoiproposal') {
+      var subResult = submitUoiProposal_({
+        ca: params.ca || '',
+        yl: params.yl || '',
+        th: params.th || '',
+        ci: params.ci || '',
+        lo: params.lo || '',
+        note: params.note || ''
+      });
+      return cb ? jsonpResponse(cb, subResult) : jsonResponse(subResult);
     }
 
     var status = { status: 'DLA Studio GAS v5.21 combined planner extraction online' };
@@ -616,6 +662,142 @@ function incrementDailyCounter_() {
   var props = PropertiesService.getScriptProperties();
   var n = parseInt(props.getProperty(key) || '0', 10);
   props.setProperty(key, String(n + 1));
+}
+
+
+// ==========================================
+// 2026-05-25: TEACHER UOI EDIT PROPOSALS
+// Teachers on the public site (index.html) can propose CI / LOI edits
+// for any unit. Submissions land in DLA_UOI_PROPOSALS as a JSON array.
+// Admin reviews + approves in DLA Studio; approval writes the edits
+// into data.json and triggers the normal GitHub push.
+// ==========================================
+var UOI_PROPOSAL_DAILY_CAP = 200;   // protects the bill if scraped
+var UOI_PROPOSAL_KEY = 'DLA_UOI_PROPOSALS';
+
+function loadUoiProposals_() {
+  var raw = PropertiesService.getScriptProperties().getProperty(UOI_PROPOSAL_KEY);
+  if (!raw) return [];
+  try {
+    var arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch (e) { return []; }
+}
+
+function saveUoiProposals_(arr) {
+  PropertiesService.getScriptProperties().setProperty(UOI_PROPOSAL_KEY, JSON.stringify(arr || []));
+}
+
+function underUoiDailyCap_() {
+  var key = 'uoi_prop_day_' + Utilities.formatDate(new Date(), 'GMT', 'yyyy-MM-dd');
+  var props = PropertiesService.getScriptProperties();
+  var n = parseInt(props.getProperty(key) || '0', 10);
+  return n < UOI_PROPOSAL_DAILY_CAP;
+}
+
+function incrementUoiDailyCounter_() {
+  var key = 'uoi_prop_day_' + Utilities.formatDate(new Date(), 'GMT', 'yyyy-MM-dd');
+  var props = PropertiesService.getScriptProperties();
+  var n = parseInt(props.getProperty(key) || '0', 10);
+  props.setProperty(key, String(n + 1));
+}
+
+function submitUoiProposal_(args) {
+  var ca = String(args.ca || '').trim();
+  var yl = String(args.yl || '').trim();
+  var th = String(args.th || '').trim();
+  var ci = String(args.ci || '').trim();
+  var lo = String(args.lo || '').trim();
+  var note = String(args.note || '').trim().slice(0, 500);
+  if (!ca || !yl || !th) return { error: 'Proposal requires ca, yl, and th' };
+  if (!ci && !lo) return { error: 'Proposal must include a Central Idea or Lines of Inquiry' };
+  if (ci.length > 2000 || lo.length > 4000) return { error: 'Proposal too long' };
+  if (/^st\s*kilda(\s*(rd|road))?$/i.test(ca)) ca = 'St Kilda';
+  if (!underUoiDailyCap_()) return { error: 'Submission service is at capacity for today. Please try again tomorrow.' };
+
+  var proposals = loadUoiProposals_();
+  var id = Utilities.getUuid();
+  proposals.push({
+    id: id,
+    ca: ca,
+    yl: yl,
+    th: th,
+    ci: ci,
+    lo: lo,
+    note: note,
+    submittedAt: new Date().toISOString(),
+    status: 'pending'
+  });
+  // Cap at 500 to protect the Script Properties size budget.
+  if (proposals.length > 500) proposals = proposals.slice(-500);
+  saveUoiProposals_(proposals);
+  incrementUoiDailyCounter_();
+  return { id: id, submittedAt: proposals[proposals.length - 1].submittedAt };
+}
+
+function listUoiProposals_(opts) {
+  opts = opts || {};
+  var proposals = loadUoiProposals_();
+  if (opts.status) proposals = proposals.filter(function(p) { return p.status === opts.status; });
+  // Sort newest first for the review UI.
+  proposals.sort(function(a, b) { return (b.submittedAt || '').localeCompare(a.submittedAt || ''); });
+  return { proposals: proposals, total: proposals.length };
+}
+
+function approveUoiProposal_(opts) {
+  var id = String(opts.id || '').trim();
+  if (!id) return { error: 'Proposal id required' };
+  var proposals = loadUoiProposals_();
+  var idx = -1;
+  for (var i = 0; i < proposals.length; i++) { if (proposals[i].id === id) { idx = i; break; } }
+  if (idx === -1) return { error: 'Proposal not found' };
+  var p = proposals[idx];
+
+  // Apply the edit to data.json. Only overwrite fields the teacher actually
+  // filled in — empty ci / empty lo from the form means "no change to this
+  // field", not "wipe it".
+  var file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  var data = JSON.parse(file.getBlob().getDataAsString());
+  var unit = null;
+  for (var k = 0; k < data.length; k++) {
+    var e = data[k];
+    if (e && e.ca === p.ca && e.yl === p.yl && e.th === p.th) { unit = e; break; }
+  }
+  if (!unit) return { error: 'Matching unit not found in data.json for ' + p.ca + ' / ' + p.yl + ' / ' + p.th };
+
+  var changes = [];
+  if (p.ci) { changes.push({ field: 'ci', from: unit.ci || '', to: p.ci }); unit.ci = p.ci; }
+  if (p.lo) { changes.push({ field: 'lo', from: unit.lo || '', to: p.lo }); unit.lo = p.lo; }
+  unit.uoiEditApprovedAt = new Date().toISOString();
+  // Clear inspiringRegenAt so the next Inspire All run regenerates the
+  // tech suggestions with the new wording — the previous ones were tuned
+  // to the old CI/LOI.
+  if (unit.inspiringRegenAt) delete unit.inspiringRegenAt;
+
+  file.setContent(JSON.stringify(data, null, 2));
+  try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e2) { Logger.log('pushToGitHub after UOI approval failed: ' + e2); }
+
+  p.status = 'approved';
+  p.approvedAt = new Date().toISOString();
+  proposals[idx] = p;
+  saveUoiProposals_(proposals);
+
+  return { id: id, applied: true, changes: changes, requiresRegen: true };
+}
+
+function dismissUoiProposal_(opts) {
+  var id = String(opts.id || '').trim();
+  if (!id) return { error: 'Proposal id required' };
+  var reason = String(opts.reason || '').trim().slice(0, 300);
+  var proposals = loadUoiProposals_();
+  var idx = -1;
+  for (var i = 0; i < proposals.length; i++) { if (proposals[i].id === id) { idx = i; break; } }
+  if (idx === -1) return { error: 'Proposal not found' };
+  proposals[idx].status = 'dismissed';
+  proposals[idx].dismissedAt = new Date().toISOString();
+  if (reason) proposals[idx].dismissReason = reason;
+  saveUoiProposals_(proposals);
+  return { id: id, dismissed: true };
 }
 
 
@@ -3375,6 +3557,26 @@ function regenerateForDiversity(opts) {
 const INSPIRING_BATCH_DEFAULT = 12;
 const INSPIRING_SNAPSHOT_PROP = 'INSPIRING_SNAPSHOT_FILE_ID';
 const INSPIRING_STARTED_AT_PROP = 'INSPIRING_STARTED_AT';
+// 2026-05-25: Emergency abort flag. When set to '1' in Script Properties,
+// regenerateAllInspiring bails on entry AND aborts mid-unit. Provides a kill
+// switch when the queue gets out of control or you want to stop the API spend.
+const INSPIRING_ABORT_PROP = 'INSPIRING_ABORT';
+
+function inspiringAbortRequested_() {
+  return PropertiesService.getScriptProperties().getProperty(INSPIRING_ABORT_PROP) === '1';
+}
+
+function regenerateAllInspiringAbort() {
+  PropertiesService.getScriptProperties().setProperty(INSPIRING_ABORT_PROP, '1');
+  Logger.log('regenerateAllInspiring: ABORT flag SET. All in-flight + queued runs will bail at their next checkpoint.');
+  return { aborted: true, abortedAt: new Date().toISOString() };
+}
+
+function regenerateAllInspiringClearAbort() {
+  PropertiesService.getScriptProperties().deleteProperty(INSPIRING_ABORT_PROP);
+  Logger.log('regenerateAllInspiring: ABORT flag CLEARED. Future runs can proceed.');
+  return { cleared: true };
+}
 
 function inspiringYearRule_(yl) {
   const earlyKinder = ['3 Year Old Kinder', '4 Year Old Kinder'];
@@ -3764,6 +3966,13 @@ function regenerateAllInspiring(opts) {
 
   try {
     const props = PropertiesService.getScriptProperties();
+    // Honour the emergency abort flag — bail before doing any work AND before
+    // making any AI calls. Caller must explicitly clear the flag (via
+    // regenerateAllInspiringClearAbort) before runs can resume.
+    if (inspiringAbortRequested_()) {
+      Logger.log('regenerateAllInspiring: ABORT flag set — refusing to start. Clear it via regenerateAllInspiringClearAbort.');
+      return { paused: true, reason: 'aborted', aborted: true };
+    }
     const resumeTime = props.getProperty('DLA_RESUME_TIME');
     if (resumeTime && Date.now() < parseInt(resumeTime, 10)) {
       const until = new Date(parseInt(resumeTime, 10)).toLocaleString('en-AU');
@@ -3809,6 +4018,13 @@ function regenerateAllInspiring(opts) {
     let dataDirty = false;
 
     for (let n = 0; n < candidates.length && processed < batch; n++) {
+      // Emergency abort check before EVERY unit. Cheapest possible breakout
+      // for runaway batches — caller flipped INSPIRING_ABORT to '1', we save
+      // whatever's in memory and exit. Lock release happens in finally.
+      if (inspiringAbortRequested_()) {
+        Logger.log('regenerateAllInspiring: ABORT flag detected — bailing after ' + processed + ' unit(s) this batch.');
+        break;
+      }
       const idx = candidates[n];
       const target = data[idx];
       processed++;
