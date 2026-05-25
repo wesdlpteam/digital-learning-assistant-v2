@@ -228,11 +228,25 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 .sg-intent:hover{background:#FFB840}
 .sg-intent.done{background:#F5A623;color:#111;cursor:pointer;opacity:.9}
 .sg-intent.done:hover{background:#D88E10;color:#FFF}
-/* Tech Champions ribbon — top-of-home recognition strip; pinned above the hero so leaderboard status is visible without scrolling. */
-.champ-ribbon{background:linear-gradient(90deg,rgba(245,166,35,.10) 0%,rgba(205,235,69,.06) 100%);border:1px solid rgba(245,166,35,.25);border-radius:14px;padding:10px 14px;margin:14px 0 8px;overflow-x:auto;overflow-y:hidden;white-space:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+/* Tech Champions ribbon — top-of-home recognition strip; pinned above the hero so leaderboard
+   status is visible without scrolling. Breaks out of the 700px .wp wrapper to use full viewport
+   width: calc(50% - 50vw) is 0 on narrow viewports (where .wp already fills the screen) and grows
+   negative as the viewport widens, pulling the ribbon edges out to the screen edges. */
+.champ-ribbon{
+  background:linear-gradient(90deg,rgba(245,166,35,.10) 0%,rgba(205,235,69,.06) 100%);
+  border:1px solid rgba(245,166,35,.25);
+  border-left:none;border-right:none;border-radius:0;
+  margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);
+  width:100vw;max-width:100vw;
+  /* Inner padding keeps content roughly aligned with .wp on wide viewports, with extra outer
+     padding on narrow viewports so pills don't kiss the screen edge. */
+  padding:10px clamp(14px, calc(50vw - 350px + 14px), 80px);
+  margin-top:14px;margin-bottom:14px;
+  overflow-x:auto;overflow-y:hidden;white-space:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:thin;
+}
 .champ-ribbon::-webkit-scrollbar{height:4px}
 .champ-ribbon::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
-.champ-ribbon-inner{display:inline-flex;align-items:center;gap:10px}
+.champ-ribbon-inner{display:inline-flex;align-items:center;gap:10px;min-width:100%;justify-content:flex-start}
 .champ-ribbon-label{font-size:12px;font-weight:800;color:#F5A623;letter-spacing:.6px;text-transform:uppercase;flex-shrink:0;padding-right:4px}
 .champ-pill{display:inline-flex;align-items:center;gap:7px;background:#1A1A1A;border:1px solid #2a2a2a;border-radius:99px;padding:5px 10px 5px 8px;font-size:13px;flex-shrink:0;cursor:pointer;transition:border-color .15s,transform .15s}
 .champ-pill:hover{border-color:#F5A623;transform:translateY(-1px)}
@@ -276,6 +290,12 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 .point-popup-inline::after{content:"";position:absolute;left:50%;bottom:-9px;transform:translateX(-50%) rotate(45deg);width:14px;height:14px;background:#111;border-right:2px solid #CDEB45;border-bottom:2px solid #CDEB45;border-radius:0 0 3px 0}
 .point-popup-inline.streak{border-color:#F5A623;box-shadow:0 12px 40px rgba(0,0,0,.55),0 0 40px rgba(245,166,35,.45);min-width:240px;padding:16px 24px 14px}
 .point-popup-inline.streak::after{border-right-color:#F5A623;border-bottom-color:#F5A623}
+/* Undo popup — subtler grey treatment so it reads as "click acknowledged" not "celebration". */
+.point-popup-inline.undo{border-color:#666;box-shadow:0 8px 24px rgba(0,0,0,.45);min-width:180px;padding:10px 18px 9px}
+.point-popup-inline.undo::after{border-right-color:#666;border-bottom-color:#666}
+.point-popup-inline.undo .ppi-emoji{font-size:22px;margin-bottom:2px}
+.point-popup-inline.undo .ppi-text{font-size:16px;color:#BBB}
+.point-popup-inline.undo .ppi-sub{font-size:11px}
 .ppi-emoji{font-size:30px;line-height:1;margin-bottom:4px}
 .point-popup-inline.streak .ppi-emoji{font-size:36px}
 .ppi-headline{font-size:11px;font-weight:800;letter-spacing:1.5px;color:#F5A623;text-transform:uppercase;margin-bottom:2px}
@@ -1890,6 +1910,7 @@ if(window._usedUnits){
 }
 _lbSheetRefreshPendingUntil=Date.now()+18000;
 refreshLeaderboardSoon();
+celebrateUndo(d.campus+' '+d.year,btn,2);
 return;
 }
 // Toggle ON — mark as used.
@@ -1931,6 +1952,7 @@ btn.classList.remove('done');
 btn.innerHTML='🚀 I\'m going to try this';
 _lbSheetRefreshPendingUntil=Date.now()+18000;
 refreshLeaderboardSoon();
+celebrateUndo(d.campus+' '+d.year,btn,1);
 return;
 }
 var payload={type:'intent',v:'1',team:team,campus:d.campus,year:d.year,theme:d.theme,tool:d.tool,phase:d.phase};
@@ -2014,6 +2036,24 @@ _placeInlinePopup(popup,anchor);
 setTimeout(function(){popup.classList.add('fade-out');},1800);
 setTimeout(function(){if(popup.parentNode)popup.remove();},2200);
 setTimeout(function(){if(confetti.parentNode)confetti.remove();},2000);
+}
+// Brief acknowledgement popup for undo clicks (un-intent, un-used) so the user
+// gets immediate visual confirmation that the click landed — the leaderboard
+// itself takes a few seconds to refresh from Apps Script, and silent undo
+// looked like the click was lost.
+function celebrateUndo(teamName,btn,points){
+if(!btn){btn=document.activeElement;}
+if(!btn||!btn.getBoundingClientRect){return;}
+var anchor=_positionAnchor(btn);
+var popup=document.createElement('div');
+popup.className='point-popup-inline undo';
+popup.setAttribute('role','status');
+popup.setAttribute('aria-live','polite');
+popup.innerHTML='<div class="ppi-emoji">↩️</div><div class="ppi-text">−'+points+' Point'+(points===1?'':'s')+'</div><div class="ppi-sub">Removed — '+teamName+' Team</div>';
+document.body.appendChild(popup);
+_placeInlinePopup(popup,anchor);
+setTimeout(function(){popup.classList.add('fade-out');},1500);
+setTimeout(function(){if(popup.parentNode)popup.remove();},1900);
 }
 function celebrateStreak(teamName,btn){
 if(!btn){btn=document.activeElement;}
@@ -2160,6 +2200,10 @@ function refreshLeaderboardSoon(){
   setTimeout(function(){loadLeaderboard(true);},1800);
   setTimeout(function(){loadLeaderboard(true);},6000);
   setTimeout(function(){loadLeaderboard(true);},15000);
+  // Final safety-net retry — Apps Script can occasionally take 20+ seconds to
+  // commit a write under load. Without this, an undo click might show the old
+  // count for the full 30 seconds until the next user-triggered refresh.
+  setTimeout(function(){loadLeaderboard(true);},30000);
 }
 // Compact top-of-home recognition strip — top 3 teams across all campuses.
 // Sits above the hero so leaderboard status is visible without scrolling.
@@ -2178,7 +2222,7 @@ function renderChampionsRibbon(){
   sorted.forEach(function(t,i){
     var campusShort=normaliseCampusName(t.campus);
     var yr=normaliseYearName(t.year);
-    h+='<span class="champ-pill" onclick="document.querySelector(\'.lb-section\')&&document.querySelector(\'.lb-section\').scrollIntoView({behavior:\'smooth\',block:\'start\'})"><span class="champ-medal">'+medals[i]+'</span><span class="champ-team">'+escapeHtml(campusShort)+' · '+escapeHtml(yr)+'</span><span class="champ-pts">'+(Number(t.points)||0)+' pts</span></span>';
+    h+='<span class="champ-pill" onclick="document.querySelector(\'.lb-section\')&&document.querySelector(\'.lb-section\').scrollIntoView({behavior:\'smooth\',block:\'start\'})"><span class="champ-medal">'+medals[i]+'</span><span class="champ-team">'+escapeHtml(campusShort)+' · '+escapeHtml(yr)+'</span><span class="champ-pts">'+(Number(t.points)||0)+'</span></span>';
   });
   h+='</div></div>';
   return h;
