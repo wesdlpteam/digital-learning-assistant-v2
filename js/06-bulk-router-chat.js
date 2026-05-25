@@ -777,6 +777,45 @@ async function inspireAllBatch(){
   }
 }
 
+// 2026-05-25: First Inspire All run leaked off-whitelist + banned tools at
+// temperature 0.75 because the inherited validator didn't check the tool
+// list. The backend now hard-validates approved/banned membership. This
+// helper finds any units the first run wrote with rogue tools and clears
+// their inspiringRegenAt so Inspire All redoes ONLY those.
+async function inspireAllRequeueBadTools(){
+  const ca = document.getElementById('f-campus')?.value || '';
+  const yr = document.getElementById('f-year')?.value || '';
+  const scopeLabel = ca || yr ? ` for ${[ca, yr].filter(Boolean).join(' · ')}` : '';
+  setStatus('Scanning for off-whitelist / banned tools…', 'loading');
+  try {
+    const payload = withGASToken({ action: 'regenerateAllInspiringRequeueBadTools' });
+    if(ca) payload.ca = ca;
+    if(yr) payload.yl = yr;
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+    if(result.error){ setStatus('Requeue error: ' + result.error, 'error'); return; }
+    if(!result.found){
+      setStatus(`No off-whitelist or banned tools found${scopeLabel}.`, 'success');
+      return;
+    }
+    setStatus(`Cleared inspiringRegenAt on ${result.cleared} unit(s) with rogue tools — click Inspire All to redo them`, 'success');
+    console.info(`Inspire All bad-tool units (${result.found}):`, result.units);
+    if(typeof loadFromDrive === 'function'){
+      await loadFromDrive();
+      if(typeof renderBrowse === 'function') renderBrowse();
+    }
+    if(confirm(`Found ${result.found} unit(s) with off-whitelist or banned tools (cleared their flags). Click OK to start Inspire All now and regenerate them with the tightened validator. The full list is in the browser console.`)){
+      inspireAllBatch();
+    }
+  } catch(err){
+    setStatus('Requeue failed: ' + err.message, 'error');
+  }
+}
+
 async function inspireAllReset(){
   const ca = document.getElementById('f-campus')?.value || '';
   const yr = document.getElementById('f-year')?.value || '';
@@ -930,8 +969,9 @@ function renderBrowse(){
     <span style="font-size:18px">✨</span>
     <span style="font-size:13px;color:var(--text);font-weight:800">${filteredInspired}/${filteredInspiredTotal} units regenerated in 6-sentence inspiring style ${inspireScopeLabel}${inspireSkippedNote}</span>
     <span id="inspire-all-status" style="font-size:12px;color:var(--dim)">${inspiredRemaining > 0 ? `${inspiredRemaining} still using the old 2-3 sentence descriptions` : (filteredInspiredTotal > 0 ? 'All eligible units regenerated — early-years (3YO/4YO/Prep) include hands-on / screen-free options' : 'No eligible units in view')}</span>
-    ${inspiredRemaining > 0 ? `<button id="btn-inspire-all" onclick="inspireAllBatch()" style="margin-left:auto;padding:6px 14px;background:#38BDF8;color:#0a1f2e;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer" title="Regenerate every unit's 6 suggestions in the new 6-sentence inspiring style. Snapshots data.json first. Processes 12 units at a time, ~3 min/batch. Total run: ~25-35 min. Units missing Central Idea or Lines of Inquiry are SKIPPED.">🚀 Inspire all${ca || yr ? ' (in view)' : ''}</button>` : ''}
-    ${filteredInspired > 0 ? `<button id="btn-inspire-reset" onclick="inspireAllReset()" style="padding:6px 12px;background:transparent;border:1px solid rgba(255,128,128,.3);color:#FF8080;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear the inspiringRegenAt flag so Inspire All can be re-run from scratch. Existing suggestions stay until the regen overwrites them.">Reset inspire flags</button>` : ''}
+    ${inspiredRemaining > 0 ? `<button id="btn-inspire-all" onclick="inspireAllBatch()" style="margin-left:auto;padding:6px 14px;background:#38BDF8;color:#0a1f2e;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer" title="Regenerate every unit's 6 suggestions in the new 6-sentence inspiring style. Snapshots data.json first. Processes 8 units at a time. Units missing Central Idea or Lines of Inquiry are SKIPPED. The tightened validator now also rejects off-whitelist + banned tools.">🚀 Inspire all${ca || yr ? ' (in view)' : ''}</button>` : ''}
+    ${filteredInspired > 0 ? `<button id="btn-inspire-requeue" onclick="inspireAllRequeueBadTools()" style="padding:6px 12px;background:transparent;border:1px solid #FBBF24;color:#FBBF24;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" title="Scan all inspiring-regenerated units for off-whitelist or banned tools, clear their inspiringRegenAt flag, and offer to redo just those with the tightened validator.">🔍 Re-regen bad tools</button>` : ''}
+    ${filteredInspired > 0 ? `<button id="btn-inspire-reset" onclick="inspireAllReset()" style="padding:6px 12px;background:transparent;border:1px solid rgba(255,128,128,.3);color:#FF8080;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear the inspiringRegenAt flag on EVERY unit so Inspire All can be re-run from scratch. Existing suggestions stay until the regen overwrites them.">Reset inspire flags</button>` : ''}
   </div>`;
 
   document.getElementById('browse-list').innerHTML=inspireSummaryHtml + makerspaceSummaryHtml + verificationSummaryHtml + filtered.map(({e,idx})=>{

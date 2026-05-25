@@ -352,6 +352,15 @@ function doPost(e) {
       return jsonResponse(result);
     }
 
+    // 2026-05-25: clears inspiringRegenAt for units whose current saved
+    // suggestions contain off-whitelist or banned tools, so Inspire All
+    // (now with whitelist validator) can redo only those.
+    if (action === 'regenerateallinspiringrequeuebadtools') {
+      const result = regenerateAllInspiringRequeueBadTools({ ca: body.ca || null, yl: body.yl || null });
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
     return jsonResponse({ error: 'Unknown action: ' + actionRaw });
   } catch(err) {
     return jsonResponse({ error: err && err.message ? err.message : String(err) });
@@ -3475,11 +3484,57 @@ function inspiringSentenceCount_(text) {
   return matches ? matches.length : 0;
 }
 
-function inspiringValidateSugs_(sugs, target, data, targetIdx) {
+// 2026-05-25: Added to gate inspiring regen against off-whitelist / banned
+// tools. The existing diversity validator deliberately didn't whitelist-check
+// because temperature 0.4 + heavy prompt rarely produced rogue tools. At
+// temperature 0.75 (inspiring prompt) the AI gets more inventive about tool
+// names — first Inspire All run produced 8 off-whitelist + 15 banned tools
+// across the corpus, so we now hard-validate every component against the
+// synced DLA_TOOL_APPROVED / DLA_TOOL_BANNED Script Properties.
+function getBannedToolNames_() {
+  var props = PropertiesService.getScriptProperties();
+  var raw = props.getProperty('DLA_TOOL_BANNED');
+  if (!raw) return [];
+  try {
+    var arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch (err) {
+    return [];
+  }
+}
+
+function inspiringCheckToolMembership_(sugs, approvedSet, bannedSet) {
+  // approvedSet / bannedSet are Sets of lowercased trimmed tool names.
+  // Walk every "+"-split component of every slot. First failure returned.
+  for (let i = 0; i < sugs.length; i++) {
+    const sg = sugs[i];
+    if (!sg || typeof sg.t !== 'string') continue;
+    const comps = diversityToolComponents_(sg.t);
+    for (let c = 0; c < comps.length; c++) {
+      const key = diversityToolKey_(comps[c]);
+      if (!key) continue;
+      if (bannedSet.has(key)) {
+        return { ok: false, reason: 'slot ' + (i + 1) + ' uses BANNED tool "' + comps[c] + '" — pick a different approved tool' };
+      }
+      if (approvedSet.size > 0 && !approvedSet.has(key)) {
+        return { ok: false, reason: 'slot ' + (i + 1) + ' uses OFF-WHITELIST tool "' + comps[c] + '" — must be one of the approved tools listed in the prompt' };
+      }
+    }
+  }
+  return { ok: true };
+}
+
+function inspiringValidateSugs_(sugs, target, data, targetIdx, approvedSet, bannedSet) {
   // Re-use the diversity validator first (length, t/d presence, tool dedup,
   // >=2 App Smashes, opener differs from siblings).
   const base = diversityValidateSugs_(sugs, target, data, targetIdx);
   if (!base.ok) return base;
+  // Hard tool-list check (added 2026-05-25 after Inspire All v1 leaked
+  // off-whitelist + banned tools at temperature 0.75).
+  if (approvedSet && bannedSet) {
+    const membership = inspiringCheckToolMembership_(sugs, approvedSet, bannedSet);
+    if (!membership.ok) return membership;
+  }
   // Soft sentence-count check for slots 1-5 only. STEM slot is allowed to be
   // shorter. We accept 5-8 sentences for the inspiring slots (target is 6 —
   // the AI sometimes lands on 5 or 7 with natural prose; rejecting those
@@ -3489,6 +3544,60 @@ function inspiringValidateSugs_(sugs, target, data, targetIdx) {
     if (n < 5) return { ok: false, reason: 'slot ' + (i + 1) + ' description is only ' + n + ' sentence(s); need ~6' };
   }
   return { ok: true };
+}
+
+// Scan the live data.json for units whose current suggestions include any
+// off-whitelist or banned tool component. Used by the requeue action to
+// surface units that the first Inspire All v1 run wrote with rogue tools.
+function inspiringFindBadToolUnits_(data, opts) {
+  opts = opts || {};
+  const approvedSet = new Set(getApprovedToolNames_().map(diversityToolKey_));
+  const bannedSet = new Set(getBannedToolNames_().map(diversityToolKey_));
+  const out = [];
+  for (let i = 0; i < data.length; i++) {
+    const u = data[i];
+    if (!inspiringInScope_(u, opts)) continue;
+    if (!Array.isArray(u.s) || !u.s.length) continue;
+    const offending = [];
+    for (let s = 0; s < u.s.length; s++) {
+      const sg = u.s[s];
+      if (!sg || typeof sg.t !== 'string') continue;
+      const comps = diversityToolComponents_(sg.t);
+      for (let c = 0; c < comps.length; c++) {
+        const key = diversityToolKey_(comps[c]);
+        if (!key) continue;
+        if (bannedSet.has(key)) offending.push({ slot: s + 1, tool: comps[c], reason: 'banned' });
+        else if (approvedSet.size > 0 && !approvedSet.has(key)) offending.push({ slot: s + 1, tool: comps[c], reason: 'off-whitelist' });
+      }
+    }
+    if (offending.length) out.push({ idx: i, ca: u.ca, yl: u.yl, th: u.th, offending: offending });
+  }
+  return out;
+}
+
+// One-shot helper: scan for bad-tool units, clear their inspiringRegenAt
+// markers, save data.json. The user then clicks Inspire All again and the
+// tightened validator regenerates them with the whitelist check active.
+function regenerateAllInspiringRequeueBadTools(opts) {
+  opts = opts || {};
+  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  const raw = JSON.parse(file.getBlob().getDataAsString());
+  const isArr = Array.isArray(raw);
+  const data = isArr ? raw : Object.values(raw).filter(u => u && typeof u === 'object');
+  const bad = inspiringFindBadToolUnits_(data, opts);
+  let cleared = 0;
+  for (let n = 0; n < bad.length; n++) {
+    const u = data[bad[n].idx];
+    if (u && u.inspiringRegenAt) { delete u.inspiringRegenAt; cleared++; }
+  }
+  if (cleared) {
+    const toWrite = isArr ? data : raw;
+    file.setContent(JSON.stringify(toWrite, null, 2));
+    try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e) { Logger.log('pushToGitHub after requeueBadTools failed: ' + e); }
+  }
+  Logger.log('regenerateAllInspiringRequeueBadTools: flagged ' + bad.length + ' unit(s) with off-whitelist or banned tools; cleared ' + cleared + ' inspiringRegenAt marker(s).');
+  if (bad.length) Logger.log('Bad-tool units:\n' + bad.map(b => '  ' + b.ca + ' / ' + b.yl + ' / ' + b.th + ' — ' + b.offending.map(o => 'slot ' + o.slot + ' "' + o.tool + '" (' + o.reason + ')').join('; ')).join('\n'));
+  return { found: bad.length, cleared: cleared, units: bad };
 }
 
 function inspiringSnapshotDataJson_() {
@@ -3659,6 +3768,11 @@ function regenerateAllInspiring(opts) {
     }
 
     const approvedToolsPrompt = getApprovedToolsPrompt_();
+    // Build approved + banned tool sets once per batch invocation so the
+    // validator can hard-reject any rogue tool the AI invents. Keys are
+    // lowercased + trimmed via diversityToolKey_.
+    const approvedSet = new Set(getApprovedToolNames_().map(diversityToolKey_));
+    const bannedSet = new Set(getBannedToolNames_().map(diversityToolKey_));
     let processed = 0, fixed = 0, failed = 0;
     const failures = [];
     let dataDirty = false;
@@ -3678,7 +3792,7 @@ function regenerateAllInspiring(opts) {
           if (call.retriable && attempt < 3) { Utilities.sleep(8000); continue; }
           break;
         }
-        const verdict = inspiringValidateSugs_(call.sugs, target, data, idx);
+        const verdict = inspiringValidateSugs_(call.sugs, target, data, idx, approvedSet, bannedSet);
         if (!verdict.ok) {
           lastReason = verdict.reason;
           if (attempt < 3) { Utilities.sleep(4000); continue; }
