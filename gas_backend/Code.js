@@ -51,13 +51,17 @@ const DLA_ALLOWED_EMAILS = [
 
 function requireAllowedUser_(body) {
   body = body || {};
-  // Removed shared-secret bypass: previously, supplying body.token equal to
-  // DLA_SHARED_SECRET returned 'shared-secret' WITHOUT a Google identity check.
-  // The secret lived in localStorage on the Studio side and was XSS-leakable;
-  // an attacker holding it could call every backend action with no real user
-  // identity. Studio sign-in is Google-OAuth-only — there is no realistic
-  // path that needs the bypass (without Drive access the Studio can't load
-  // data.json anyway, so the "Google sign-in is down" escape hatch was fictional).
+  // Shared-secret fast path. If DLA_SHARED_SECRET is set in Script Properties
+  // and the caller supplies a matching token, skip the Google userinfo
+  // verification (a ~500ms-2s round-trip per backend call). Removing this
+  // bypass was tried 2026-05-25 and made Studio adjustments noticeably slow,
+  // so it's back. Keep DLA_SHARED_SECRET out of source control and avoid
+  // XSS sinks on the Studio side (the secret lives in localStorage).
+  const expectedSecret = getOptionalScriptProperty_('DLA_SHARED_SECRET');
+  const suppliedSecret = body.token || body.sharedSecret || body.authToken || '';
+  if (expectedSecret && suppliedSecret && suppliedSecret === expectedSecret) {
+    return 'shared-secret';
+  }
   const token = body.googleAccessToken || body.driveToken || body.accessToken || '';
   if (!token) {
     throw new Error('Unauthorised request: missing Google access token');
