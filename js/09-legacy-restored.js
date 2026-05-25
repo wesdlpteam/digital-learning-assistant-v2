@@ -1401,12 +1401,13 @@ Suggestion #6 MUST be a STEM Design Cycle activity (Empathise-Define-Ideate-Prot
 Campus: ${e.ca} | Year Level: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: "${e.ci}"`:''}${e.lo?`\nLines of Inquiry: "${e.lo}"`:''}${e.plannerText?`\nPlanner: ${e.plannerText}`:''}
 Requirements: all 5 different tools.
 ${SUGGESTION_STYLE}
-${APP_SMASH_REQUIREMENT}
+${appSmashRequirementForEntry_(e)}
 Return ONLY a JSON array, no markdown: [{"t":"Tool Name or Tool A + Tool B","d":"2-3 vivid sentences."},...]`;
     try{
       let sugs = null;
       let dupedTool = null;
       let lastSmashCount = 0;
+      let lastDupOpener = '';
       let lastFailReason = '';
       for(let attempt=0; attempt<3; attempt++){
         let retryNote = '';
@@ -1414,6 +1415,8 @@ Return ONLY a JSON array, no markdown: [{"t":"Tool Name or Tool A + Tool B","d":
           retryNote = `\n\nRETRY ${attempt}: Your previous response used "${dupedTool}" twice. Every one of the 6 suggestions MUST use a DIFFERENT tool. #6 must be a STEM Design Cycle activity.`;
         } else if(attempt>0 && lastFailReason === 'smash'){
           retryNote = `\n\nRETRY ${attempt}: Your previous response had only ${lastSmashCount} App Smash${lastSmashCount===1?'':'es'} in slots 1-5. You MUST return at least 2 entries whose "t" field uses the "Tool A + Tool B" format.`;
+        } else if(attempt>0 && lastFailReason === 'opener-dup'){
+          retryNote = `\n\nRETRY ${attempt}: Your previous response used "${lastDupOpener}" as the slot-1 App Smash, but another unit in this campus + year level already opens with that exact pair. Slot 1 MUST be a DIFFERENT App Smash pair that specifically suits THIS unit's theme.`;
         }
         const raw=await callAI([{role:'user',parts:[{text:prompt+retryNote}]}], null, OPENAI_MODEL);
         const clean=raw.replace(/```json|```/g,'').trim();
@@ -1426,10 +1429,15 @@ Return ONLY a JSON array, no markdown: [{"t":"Tool Name or Tool A + Tool B","d":
         if(dup){ const dupSug=parsed.find(s=>toolKey(sugTool(s))===dup); dupedTool = dupSug ? sugTool(dupSug) : dup; lastFailReason='dup'; continue; }
         lastSmashCount = appSmashCountInRegen_(parsed);
         if(lastSmashCount < 2){ lastFailReason='smash'; continue; }
+        const openerDup = openerDupesSiblingInYear_(e, parsed);
+        if(openerDup){ lastDupOpener = openerDup; lastFailReason='opener-dup'; continue; }
         sugs = parsed;
         break;
       }
-      if(!sugs) throw new Error(lastFailReason === 'smash' ? `Only ${lastSmashCount} App Smash${lastSmashCount===1?'':'es'} after 3 attempts` : 'Duplicates in batch after retry');
+      if(!sugs) throw new Error(
+        lastFailReason === 'smash' ? `Only ${lastSmashCount} App Smash${lastSmashCount===1?'':'es'} after 3 attempts`
+        : lastFailReason === 'opener-dup' ? `Opener stayed identical to a sibling unit ("${lastDupOpener}") after 3 attempts`
+        : 'Duplicates in batch after retry');
       DATA[idx].s=sugs; DATA[idx].audited=true; fixed++;
       saveToDrive();
     }catch(err){

@@ -69,12 +69,13 @@ Campus: ${e.ca} | Year Level: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: 
 All 6 suggestions MUST use DIFFERENT tools
 Suggestion #6 MUST be a STEM Design Cycle activity (Empathise → Define → Ideate → Prototype → Test) that connects specifically to the unit theme \u2014 no duplicates.
 ${SUGGESTION_STYLE}
-${APP_SMASH_REQUIREMENT}
+${appSmashRequirementForEntry_(e)}
 Return ONLY a JSON array: [{"t":"Tool Name or Tool A + Tool B","d":"2-3 vivid sentences for this unit."},...]`;
     try{
       let sugs = null;
       let dupedTool = null;
       let lastSmashCount = 0;
+      let lastDupOpener = '';
       let lastFailReason = '';
       for(let attempt=0; attempt<3; attempt++){
         let retryNote = '';
@@ -82,6 +83,8 @@ Return ONLY a JSON array: [{"t":"Tool Name or Tool A + Tool B","d":"2-3 vivid se
           retryNote = `\n\nRETRY ${attempt}: Your previous response used "${dupedTool}" twice. Every one of the 6 suggestions MUST use a DIFFERENT tool. #6 must be a STEM Design Cycle activity.`;
         } else if(attempt>0 && lastFailReason === 'smash'){
           retryNote = `\n\nRETRY ${attempt}: Your previous response had only ${lastSmashCount} App Smash${lastSmashCount===1?'':'es'} in slots 1-5. You MUST return at least 2 entries whose "t" field uses the "Tool A + Tool B" format.`;
+        } else if(attempt>0 && lastFailReason === 'opener-dup'){
+          retryNote = `\n\nRETRY ${attempt}: Your previous response used "${lastDupOpener}" as the slot-1 App Smash, but another unit in this campus + year level already opens with that exact pair. Slot 1 MUST be a DIFFERENT App Smash pair that specifically suits THIS unit's theme.`;
         }
         const raw=await callAI([{role:'user',parts:[{text:prompt+retryNote}]}],null,OPENAI_MODEL);
         const clean=raw.replace(/```json|```/g,'').trim();
@@ -93,10 +96,15 @@ Return ONLY a JSON array: [{"t":"Tool Name or Tool A + Tool B","d":"2-3 vivid se
         if(dup){ const dupSug=parsed.find(s=>toolKey(sugTool(s))===dup); dupedTool = dupSug ? sugTool(dupSug) : dup; lastFailReason='dup'; continue; }
         lastSmashCount = appSmashCountInRegen_(parsed);
         if(lastSmashCount < 2){ lastFailReason='smash'; continue; }
+        const openerDup = openerDupesSiblingInYear_(e, parsed);
+        if(openerDup){ lastDupOpener = openerDup; lastFailReason='opener-dup'; continue; }
         sugs = parsed;
         break;
       }
-      if(!sugs) throw new Error(lastFailReason === 'smash' ? `Only ${lastSmashCount} App Smash${lastSmashCount===1?'':'es'} after 3 attempts` : 'Duplicates in batch after retry');
+      if(!sugs) throw new Error(
+        lastFailReason === 'smash' ? `Only ${lastSmashCount} App Smash${lastSmashCount===1?'':'es'} after 3 attempts`
+        : lastFailReason === 'opener-dup' ? `Opener stayed identical to a sibling unit ("${lastDupOpener}") after 3 attempts`
+        : 'Duplicates in batch after retry');
       recordChange(idx, getSugs(DATA[idx]), sugs);
       DATA[idx].s=sugs; DATA[idx].audited=true; fixed++;
       saveToDrive();
@@ -3885,5 +3893,64 @@ setInterval(async()=>{
       saveToDrive = window.saveToDrive = wrapped;
     }catch(err){ try { console.warn('[app-smash-guard] wrap install failed:', err); } catch(e){} }
   }, 200);
+})();
+/* ===== end DLA hotfix ===== */
+
+
+/* ===== DLA hotfix: opener-bias monitor =====
+   On 2026-05-25 the corpus was found to have 6/6 GW Year 4 units (and most
+   Y3-6 units across all campuses) opening with the identical "Padlet +
+   iMovie" App Smash, caused by prompt anchoring in APP_SMASH_REQUIREMENT
+   (Padlet + iMovie listed first in "Strong pairings"). The prompt has been
+   de-biased and the 4 regen call sites now reject duplicate openers via
+   openerDupesSiblingInYear_(). This monitor is the tripwire: after every
+   save, count how many units in each campus+year share their slot-1 tool
+   label, and warn (console + status bar) if any group has 3+ identical
+   openers. Warn-only — does NOT auto-revert (unlike the wipe-guard above),
+   because cross-unit opener choice is a legitimate user decision and a
+   false-positive revert would frustrate manual editing. */
+(function(){
+  function openerOf_(e){
+    const s0 = e && Array.isArray(e.s) && e.s[0];
+    return s0 && typeof s0.t === 'string' ? s0.t.trim() : '';
+  }
+  function findOpenerClusters_(){
+    if(!Array.isArray(window.DATA)) return [];
+    const groups = {};
+    window.DATA.forEach(e => {
+      if(!e) return;
+      const opener = openerOf_(e);
+      if(!opener) return;
+      const k = (e.ca||'') + '|' + (e.yl||'');
+      const gk = k + '||' + opener.toLowerCase();
+      (groups[gk] = groups[gk] || { ca: e.ca||'', yl: e.yl||'', opener: opener, count: 0 }).count++;
+    });
+    return Object.values(groups).filter(g => g.count >= 3);
+  }
+
+  setTimeout(function(){
+    try{
+      if(typeof saveToDrive !== 'function' || saveToDrive.__dlaOpenerBiasMonitorWrapped) return;
+      const orig = saveToDrive;
+      const wrapped = async function(){
+        const out = await orig.apply(this, arguments);
+        try{
+          const clusters = findOpenerClusters_();
+          if(clusters.length){
+            const summary = clusters
+              .sort((a,b) => b.count - a.count)
+              .map(c => `${c.ca} ${c.yl}: ${c.count}x "${c.opener}"`);
+            try { console.warn('[opener-bias-monitor] duplicate openers detected:', summary); } catch(e){}
+            try { if(typeof setStatus === 'function') setStatus('Opener-bias monitor: ' + clusters.length + ' year group' + (clusters.length===1?'':'s') + ' have 3+ identical slot-1 tools (see console)', 'error'); } catch(e){}
+          }
+        }catch(err){ try { console.warn('[opener-bias-monitor] post-save check failed:', err); } catch(e){} }
+        return out;
+      };
+      wrapped.__dlaOpenerBiasMonitorWrapped = true;
+      // Preserve the wipe-guard flag so it isn't re-wrapped on top of itself.
+      if(orig.__dlaAppSmashGuardWrapped) wrapped.__dlaAppSmashGuardWrapped = true;
+      saveToDrive = window.saveToDrive = wrapped;
+    }catch(err){ try { console.warn('[opener-bias-monitor] wrap install failed:', err); } catch(e){} }
+  }, 400);
 })();
 /* ===== end DLA hotfix ===== */

@@ -170,12 +170,31 @@ function wouldDupeToolProposalInEntry(entry, toolName, excludeSugIdx){
 // enforced by gas_backend auditPlanners and the applyRegenAll audited=false
 // branch (>=2 App Smashes in slots 1-5). Pair with appSmashCountInRegen_()
 // for post-parse validation + retry.
+//
+// 2026-05-25: De-biased. Old version listed "Padlet + iMovie" first in a
+// fixed "Strong pairings" list, which the model anchored on so heavily that
+// 6/6 GW Year 4 openers (and most Y3-6 openers across all campuses) became
+// identical. The static const is kept for any caller that doesn't have an
+// entry context, but the 4 known Bulk regen sites should call
+// appSmashRequirementForEntry_(entry) instead, which shuffles the example
+// pairings and injects a per-call sibling-avoid list. Pair with
+// openerDupesSiblingInYear_() for post-parse opener-diversity retries.
+const STRONG_PAIRING_EXAMPLES = [
+  'Padlet + iMovie',
+  'Book Creator + ChatterPix Kids',
+  'Seesaw + Brushes Redux',
+  'Canva + GarageBand',
+  'Adobe Express + Freeform',
+  'Delightex + Puppet Pals',
+  'PicCollage + Epic',
+];
 const APP_SMASH_REQUIREMENT = `
 APP SMASH FLOOR (HARD RULE — overrides any "one tool per slot" instruction above):
 - Suggestions 1-5 MUST include AT LEAST 2 App Smashes. Format the "t" field as "Tool A + Tool B".
 - Suggestion 6 (STEM Design Cycle) is EXCLUDED from the floor and stays a single tool.
 - Both tools in every "+" combo must be on the approved list AND age-appropriate for this year level. Neither may be banned.
-- Strong pairings: Padlet + iMovie, Book Creator + ChatterPix Kids, Seesaw + Brushes Redux, Canva + GarageBand, Adobe Express + Freeform, Delightex + Puppet Pals, PicCollage + Epic.
+- VARY YOUR OPENERS — slot 1 sets the unit's tone, so it should specifically suit THIS unit's content; do not default to one canonical pair across multiple units.
+- Example strong pairings (these are EXAMPLES, not a preference order — mix freely, other valid combos are equally welcome): ${STRONG_PAIRING_EXAMPLES.join(', ')}.
 - The description must explicitly use BOTH tools — describe the smash, not one tool that happens to be paired in the title.
 - If your draft has fewer than 2 App Smashes in slots 1-5, redraft before returning.`;
 
@@ -187,6 +206,65 @@ function appSmashCountInRegen_(sugs){
     if(s && typeof s.t === 'string' && /\+/.test(s.t)) n++;
   }
   return n;
+}
+
+// 2026-05-25: Per-entry version of APP_SMASH_REQUIREMENT. Shuffles the
+// example pairings list (so the model doesn't anchor on whichever pair is
+// listed first) and injects the actual openers already in use by sibling
+// units in the same campus+year level (so the model is told concretely what
+// to avoid for slot 1). Falls back to the static block if DATA isn't loaded.
+function appSmashRequirementForEntry_(entry){
+  if(!entry || !Array.isArray(window.DATA)) return APP_SMASH_REQUIREMENT;
+  const pairs = STRONG_PAIRING_EXAMPLES.slice();
+  for(let i = pairs.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    const tmp = pairs[i]; pairs[i] = pairs[j]; pairs[j] = tmp;
+  }
+  const siblingOpeners = siblingOpenersForEntry_(entry);
+  const avoidLine = siblingOpeners.length
+    ? `\n- DO NOT REUSE for slot 1 — other units in this campus + year level already open with these tools, so slot 1 must be a DIFFERENT App Smash pair: ${siblingOpeners.join(', ')}.`
+    : '';
+  return `
+APP SMASH FLOOR (HARD RULE — overrides any "one tool per slot" instruction above):
+- Suggestions 1-5 MUST include AT LEAST 2 App Smashes. Format the "t" field as "Tool A + Tool B".
+- Suggestion 6 (STEM Design Cycle) is EXCLUDED from the floor and stays a single tool.
+- Both tools in every "+" combo must be on the approved list AND age-appropriate for this year level. Neither may be banned.
+- VARY YOUR OPENERS — slot 1 sets the unit's tone, so it should specifically suit THIS unit's content; do not default to one canonical pair across multiple units.
+- Example strong pairings (these are EXAMPLES, not a preference order — mix freely, other valid combos are equally welcome): ${pairs.join(', ')}.${avoidLine}
+- The description must explicitly use BOTH tools — describe the smash, not one tool that happens to be paired in the title.
+- If your draft has fewer than 2 App Smashes in slots 1-5, redraft before returning.`;
+}
+
+// 2026-05-25: Collect the distinct slot-1 tool labels currently in use by
+// other units in the same campus + year level. Used for prompt injection and
+// for the post-parse opener-diversity check. Matching by (ca|yl|th) follows
+// the convention noted in CLAUDE.md that ca|yl|th is unique per entry.
+function siblingOpenersForEntry_(entry){
+  if(!entry || !Array.isArray(window.DATA)) return [];
+  const ca = entry.ca || '';
+  const yl = entry.yl || '';
+  const th = entry.th || '';
+  const set = new Set();
+  window.DATA.forEach(e => {
+    if(!e || e.ca !== ca || e.yl !== yl) return;
+    if((e.th || '') === th) return;
+    const s0 = Array.isArray(e.s) && e.s[0];
+    const t = s0 && typeof s0.t === 'string' ? s0.t.trim() : '';
+    if(t) set.add(t);
+  });
+  return Array.from(set);
+}
+
+// 2026-05-25: Post-parse opener-diversity check. Returns the duplicated
+// slot-1 tool label if `sugs[0].t` matches any sibling's slot-1 tool in the
+// same campus+year level, else null. Wire into the regen retry loops
+// alongside the existing appSmashCountInRegen_() smash-floor check.
+function openerDupesSiblingInYear_(entry, sugs){
+  if(!entry || !Array.isArray(sugs) || !sugs.length) return null;
+  const opener = sugs[0] && typeof sugs[0].t === 'string' ? sugs[0].t.trim() : '';
+  if(!opener) return null;
+  const siblings = siblingOpenersForEntry_(entry).map(s => s.toLowerCase());
+  return siblings.includes(opener.toLowerCase()) ? opener : null;
 }
 
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
