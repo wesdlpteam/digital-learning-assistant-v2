@@ -1501,9 +1501,21 @@ async function loadLiveAnalytics(){
       ])
     ]);
 
+    // Intent sheet is fetched separately and tolerated as missing — it only
+    // auto-creates the first time a teacher clicks "I'm going to try this",
+    // so on a fresh deploy a batched read would 400 and break the whole dashboard.
+    let intentRows = [];
+    try {
+      intentRows = await readSheetRange('Intent!A1:G2000');
+    } catch (intentErr) {
+      console.info('Intent sheet not yet present (will appear after first click):', intentErr && intentErr.message || intentErr);
+      intentRows = [];
+    }
+
     // Cache datasets first so any renderer that switches tabs/scopes can re-pull.
-    window._growthRowsCache = { analytics: analyticsRows, used: usedRows };
+    window._growthRowsCache = { analytics: analyticsRows, used: usedRows, intent: intentRows };
     window._usedRowsCache   = usedRows;
+    window._intentRowsCache = intentRows;
     window._reactionsCache  = reactionsRows;
     window._feedbackCache   = feedbackRows;
     window._dashRowsCache   = dashRows;

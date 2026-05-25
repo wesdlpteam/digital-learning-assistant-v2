@@ -186,6 +186,7 @@ function renderInsights(){
   const cache         = window._growthRowsCache || {};
   const analyticsRows = cache.analytics || [];
   const usedRows      = cache.used      || window._usedRowsCache || [];
+  const intentRows    = cache.intent    || window._intentRowsCache || [];
   const reactionsRows = window._reactionsCache || [];
   const feedbackRows  = window._feedbackCache  || [];
 
@@ -201,8 +202,20 @@ function renderInsights(){
       team: String(r[1]||'').trim() || `${String(r[2]||'').trim()} ${String(r[3]||'').trim()} Team`,
       campus: String(r[2]||'').trim(),
       year:   String(r[3]||'').trim(),
-      tool:   (typeof normaliseToolName === 'function') ? normaliseToolName(String(r[5]||'').trim()) : String(r[5]||'').trim()
+      tool:   (typeof normaliseToolName === 'function') ? normaliseToolName(String(r[5]||'').trim()) : String(r[5]||'').trim(),
+      sig:    [r[2],r[3],r[4],r[5],r[6]].map(v=>String(v||'').trim()).join('|')
     }));
+  const intentEvents = intentRows.slice(1)
+    .filter(r => r && (r[1] || (r[2] && r[3])))
+    .map(r => ({
+      ts: analyticsDate_(r[0]),
+      team: String(r[1]||'').trim() || `${String(r[2]||'').trim()} ${String(r[3]||'').trim()} Team`,
+      campus: String(r[2]||'').trim(),
+      year:   String(r[3]||'').trim(),
+      tool:   (typeof normaliseToolName === 'function') ? normaliseToolName(String(r[5]||'').trim()) : String(r[5]||'').trim(),
+      sig:    [r[2],r[3],r[4],r[5],r[6]].map(v=>String(v||'').trim()).join('|')
+    }));
+  const usedSigSet = new Set(usedEvents.map(e => e.sig));
 
   const ins = [];
 
@@ -334,11 +347,55 @@ function renderInsights(){
     .filter(([c, v]) => v >= 20 && !(usesByCampus[c] || usesByCampus[c.replace(' Rd','')] || usesByCampus[c + ' Rd']))
     .sort((a,b) => b[1] - a[1])[0];
   if(reachGap){
+    // Refine the call to action based on whether anyone from this campus has
+    // actually clicked "I'm going to try this". An unfulfilled intent is a
+    // qualitatively different problem from "they're just browsing" — different
+    // intervention.
+    const campusIntents30 = intentEvents.filter(e => e.ts && e.ts >= since30 &&
+      (e.campus === reachGap[0] || e.campus === reachGap[0].replace(' Rd','') || e.campus + ' Rd' === reachGap[0])).length;
+    if(campusIntents30 > 0){
+      ins.push({
+        icon: '🚧', tone: 'warning',
+        title: `${reachGap[0]} is planning but not following through`,
+        body: `${reachGap[1]} unit views and ${campusIntents30} "going to try" click${campusIntents30===1?'':'s'} from ${reachGap[0]} in the last 30 days, but zero "I Used This". Worth a direct conversation about what's getting in the way — the intent is there.`,
+        action: { label: 'See adoption tab', target: 'adoption' }
+      });
+    } else {
+      ins.push({
+        icon: '🪞', tone: 'warning',
+        title: `${reachGap[0]} viewing without converting`,
+        body: `${reachGap[1]} unit views from ${reachGap[0]} in the last 30 days but zero "I Used This" or "going to try" clicks. The suggestions may be browsed but not acted on — worth a workshop or follow-up.`,
+        action: { label: 'See adoption tab', target: 'adoption' }
+      });
+    }
+  }
+
+  // ---- 6b. Intent without follow-through ----
+  // Surface teams who said they'd try something 7+ days ago and still haven't
+  // marked it used. The 7-day cushion gives teachers time to actually try;
+  // anything still unfulfilled past that window is a high-value "did the
+  // lesson land?" check-in opportunity.
+  const sevenDayCushion = daysAgo_(7);
+  const teamPending = {};
+  intentEvents.forEach(e => {
+    if(!e.ts || e.ts > sevenDayCushion) return;            // too recent — give them time
+    if(usedSigSet.has(e.sig))           return;            // already followed through
+    if(!e.team)                          return;
+    if(!teamPending[e.team]) teamPending[e.team] = { count: 0, oldest: e.ts };
+    teamPending[e.team].count += 1;
+    if(e.ts < teamPending[e.team].oldest) teamPending[e.team].oldest = e.ts;
+  });
+  const topPending = Object.entries(teamPending)
+    .filter(([,p]) => p.count >= 2)
+    .sort((a,b) => b[1].count - a[1].count)[0];
+  if(topPending){
+    const [pendingTeam, info] = topPending;
+    const daysOld = Math.max(7, Math.round((Date.now() - info.oldest.getTime()) / 86400000));
     ins.push({
-      icon: '🪞', tone: 'warning',
-      title: `${reachGap[0]} viewing without converting`,
-      body: `${reachGap[1]} unit views from ${reachGap[0]} in the last 30 days but zero "I Used This" clicks. The suggestions may be browsed but not acted on — worth a workshop or follow-up.`,
-      action: { label: 'See adoption tab', target: 'adoption' }
+      icon: '🟡', tone: 'warning',
+      title: `${pendingTeam} has ${info.count} open "going to try"`,
+      body: `${info.count} suggestion${info.count===1?'':'s'} marked as planned 7+ days ago (oldest: ${daysOld} days) with no Used follow-through. A quick "how did that go?" message often closes the loop.`,
+      action: { label: 'See engagement tab', target: 'engagement' }
     });
   }
 
@@ -358,11 +415,17 @@ function renderInsights(){
 
   // ---- 8. Healthy baseline (only if nothing else fired) ----
   if(!ins.length){
-    if(usedEvents.length === 0){
+    if(usedEvents.length === 0 && intentEvents.length === 0){
       ins.push({
         icon: '👋', tone: 'neutral',
         title: 'Waiting for the first signal',
-        body: 'No teachers have clicked "I Used This" yet. Once a few teams start engaging, this panel will surface trends, gaps, and quick wins automatically.'
+        body: 'No teachers have clicked "I\'m going to try this" or "I Used This" yet. Once a few teams start engaging, this panel will surface trends, gaps, and quick wins automatically.'
+      });
+    } else if(usedEvents.length === 0 && intentEvents.length > 0){
+      ins.push({
+        icon: '🌱', tone: 'neutral',
+        title: 'Intents are landing — waiting on first Used click',
+        body: `${intentEvents.length} teacher${intentEvents.length===1?'':'s'} have flagged ideas to try, but no one has marked one as Used yet. Healthy starting state — check back in a fortnight to see the conversion rate.`
       });
     } else {
       ins.push({
@@ -588,37 +651,61 @@ function restoreCachedAISummary_(){
 }
 
 /* ---------- KPI strip (Overview) ---------- */
-function renderKpiStrip(dashRows, usedRows, analyticsRows){
+function renderKpiStrip(dashRows, usedRows, analyticsRows, intentRows){
   const el = document.getElementById('live-kpi-strip'); if(!el) return;
 
   const used = (usedRows||[]).slice(1).filter(r => r && (r[1] || (r[2] && r[3])));
+  const intents = (intentRows||window._intentRowsCache||[]).slice(1).filter(r => r && (r[1] || (r[2] && r[3])));
   const views = (analyticsRows||[]).slice(1);
 
   const since7  = daysAgo_(7);
   const since14 = daysAgo_(14);
 
   const isAfter = (d, since) => d && d >= since;
-  const usedDates = used.map(r => ({ d: analyticsDate_(r[0]), team: teamKey_(r[2], r[3]) })).filter(x => x.d);
+  const usedDates   = used.map(r => ({ d: analyticsDate_(r[0]), team: teamKey_(r[2], r[3]) })).filter(x => x.d);
+  const intentDates = intents.map(r => ({ d: analyticsDate_(r[0]), team: teamKey_(r[2], r[3]) })).filter(x => x.d);
   const viewDates = views.map(r => analyticsDate_(r[0])).filter(Boolean);
 
-  const usesThisWeek = usedDates.filter(x => isAfter(x.d, since7)).length;
-  const usesTotal    = used.length;
+  const usesThisWeek    = usedDates.filter(x => isAfter(x.d, since7)).length;
+  const intentsThisWeek = intentDates.filter(x => isAfter(x.d, since7)).length;
+  const usesTotal       = used.length;
+  const intentsTotal    = intents.length;
 
-  const activeTeamsThisWeek = new Set(usedDates.filter(x => isAfter(x.d, since7)).map(x => x.team));
+  // Intent → Use conversion: % of intents that have a matching Used row at any time.
+  // Uses (campus|year|theme|tool|phase) key, mirroring the analytics aggregator's
+  // suggestion identity. A clean intent-with-follow-through signal — more meaningful
+  // than raw counts because it shows whether teachers are doing what they planned.
+  const sigKey = (r) => [r[2],r[3],r[4],r[5],r[6]].map(v=>String(v||'').trim()).join('|');
+  const usedKeySet = new Set(used.map(sigKey));
+  const intentKeys = intents.map(sigKey);
+  const fulfilled = intentKeys.filter(k => usedKeySet.has(k)).length;
+  const convPct = intentKeys.length ? Math.round((fulfilled / intentKeys.length) * 100) : 0;
+
+  const activeTeamsThisWeek = new Set([
+    ...usedDates.filter(x => isAfter(x.d, since7)).map(x => x.team),
+    ...intentDates.filter(x => isAfter(x.d, since7)).map(x => x.team)
+  ]);
   const teamUniverse = teamUniverse_();
   const reachPct = teamUniverse.size ? Math.round((activeTeamsThisWeek.size / teamUniverse.size) * 100) : 0;
-
-  const avgPerActive = activeTeamsThisWeek.size ? (usesThisWeek / activeTeamsThisWeek.size).toFixed(1) : '0';
 
   const viewsThisWk = viewDates.filter(d => isAfter(d, since7)).length;
   const viewsPrevWk = viewDates.filter(d => d >= since14 && d < since7).length;
   const growth = viewsPrevWk > 0 ? Math.round(((viewsThisWk - viewsPrevWk) / viewsPrevWk) * 100) : (viewsThisWk > 0 ? 100 : 0);
 
+  // Convert tile colour: green when teachers are following through, orange when
+  // intent is racing ahead of action, dim when there's no data yet.
+  const convCol = !intentKeys.length ? ANALYTICS_PALETTE.dim
+                : convPct >= 50      ? ANALYTICS_PALETTE.green
+                : convPct >= 25      ? ANALYTICS_PALETTE.orange
+                                     : ANALYTICS_PALETTE.salmon;
+
   const kpis = [
     { num: activeTeamsThisWeek.size, sub: `of ${teamUniverse.size} teams this week`, lbl: 'Active teams', col: ANALYTICS_PALETTE.lime, extra: `${reachPct}% reach` },
-    { num: usesThisWeek,             sub: 'tools marked used (7d)',                 lbl: 'Uses this week',   col: ANALYTICS_PALETTE.blue },
-    { num: usesTotal,                sub: 'all-time confirmed uses',                 lbl: 'Total uses',       col: ANALYTICS_PALETTE.gold },
-    { num: avgPerActive,             sub: 'uses per active team (7d)',               lbl: 'Avg per team',     col: ANALYTICS_PALETTE.purple },
+    { num: intentsThisWeek,          sub: 'planned to try (7d)',                     lbl: 'Intents this week', col: ANALYTICS_PALETTE.orange, extra: intentsTotal ? `${intentsTotal} all-time` : '' },
+    { num: usesThisWeek,             sub: 'tools marked used (7d)',                  lbl: 'Uses this week',   col: ANALYTICS_PALETTE.blue,   extra: usesTotal ? `${usesTotal} all-time` : '' },
+    { num: intentKeys.length ? convPct + '%' : '—',
+      sub: intentKeys.length ? `${fulfilled} of ${intentKeys.length} intents followed through` : 'no intents logged yet',
+      lbl: 'Intent → Use', col: convCol },
     { num: (growth >= 0 ? '▲ ' : '▼ ') + Math.abs(growth) + '%', sub: 'views, 7d vs prior 7d', lbl: 'Weekly growth', col: growth >= 0 ? ANALYTICS_PALETTE.lime : ANALYTICS_PALETTE.salmon }
   ];
 
@@ -949,13 +1036,18 @@ function renderReactionsBar_eChart(reactionsRows){
 }
 
 /* ---------- Engagement funnel (Engagement) — NEW ---------- */
-function renderEngagementFunnel(analyticsRows, reactionsRows, usedRows){
+// 4-stage: views → reactions → intents → uses. Intents sits between reactions
+// (a low-commitment signal) and used (full follow-through) — its slot in the
+// funnel directly visualises how many teachers go from "interested" to
+// "planning" to "did it".
+function renderEngagementFunnel(analyticsRows, reactionsRows, usedRows, intentRows){
   const id = 'live-funnel';
   const views     = (analyticsRows||[]).slice(1).length;
   const reactions = (reactionsRows||[]).slice(1).filter(r => r && r[6]).length;
+  const intents   = (intentRows||window._intentRowsCache||[]).slice(1).filter(r => r && (r[1] || (r[2] && r[3]))).length;
   const uses      = (usedRows||[]).slice(1).filter(r => r && r[5]).length;
 
-  if(!views && !reactions && !uses){
+  if(!views && !reactions && !intents && !uses){
     const el = document.getElementById(id);
     if(el) el.innerHTML = '<div class="empty-msg">No engagement data yet.</div>';
     disposeChart_(id);
@@ -991,14 +1083,15 @@ function renderEngagementFunnel(analyticsRows, reactionsRows, usedRows){
       labelLine: { show: false },
       itemStyle: { borderColor: '#0d0d0d', borderWidth: 1 },
       data: [
-        { value: views,     name: `Views (${views})`,            itemStyle: { color: ANALYTICS_PALETTE.blue   } },
-        { value: reactions, name: `Reactions (${reactions})`,    itemStyle: { color: ANALYTICS_PALETTE.purple } },
-        { value: uses,      name: `Used (${uses})`,              itemStyle: { color: ANALYTICS_PALETTE.lime   } }
+        { value: views,     name: `Views (${views})`,         itemStyle: { color: ANALYTICS_PALETTE.blue   } },
+        { value: reactions, name: `Reactions (${reactions})`, itemStyle: { color: ANALYTICS_PALETTE.purple } },
+        { value: intents,   name: `Intents (${intents})`,     itemStyle: { color: ANALYTICS_PALETTE.orange } },
+        { value: uses,      name: `Used (${uses})`,           itemStyle: { color: ANALYTICS_PALETTE.lime   } }
       ]
     }]
   };
   const host = document.getElementById(id);
-  if(host && !host.style.height) host.style.height = '260px';
+  if(host && !host.style.height) host.style.height = '300px';
   mountChart_(id, opt);
 }
 
@@ -1158,7 +1251,7 @@ function renderToolRankings(scope){ renderRankingsBar_eChart(scope); }
 // renderLiveOverview to pull richer numbers — same call site, deeper content.
 function renderLiveOverview(rows){
   const cache = window._growthRowsCache || {};
-  renderKpiStrip(rows, cache.used || window._usedRowsCache || [], cache.analytics || []);
+  renderKpiStrip(rows, cache.used || window._usedRowsCache || [], cache.analytics || [], cache.intent || window._intentRowsCache || []);
 }
 
 // Adoption + Engagement extras the dispatcher calls.
@@ -1169,7 +1262,7 @@ function renderLiveAdoptionExtras(){
 }
 function renderLiveEngagementExtras(){
   const cache = window._growthRowsCache || {};
-  renderEngagementFunnel(cache.analytics || [], window._reactionsCache || [], cache.used || window._usedRowsCache || []);
+  renderEngagementFunnel(cache.analytics || [], window._reactionsCache || [], cache.used || window._usedRowsCache || [], cache.intent || window._intentRowsCache || []);
 }
 
 // The campus heatmap from 09 is replaced by the reach matrix, so render a no-op.
