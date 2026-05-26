@@ -172,7 +172,11 @@ async function loadFromDrive(){
   try{
     const tok=await getDriveToken();
     DRIVE_FILE_ID='1x6h0G43CCUiY1H635Rbv2zI8T-6-wTXV';
-    const r2=await fetch(`https://www.googleapis.com/drive/v3/files/${DRIVE_FILE_ID}?alt=media&supportsAllDrives=true`,{headers:{'Authorization':'Bearer '+tok}});
+    // 2026-05-26: Cache-bust query param + no-cache header. Without these
+    // Google's CDN happily serves a stale media response for several minutes
+    // after the underlying file changes — manifested as "fixes didn't stick"
+    // when in fact Drive was already clean.
+    const r2=await fetch(`https://www.googleapis.com/drive/v3/files/${DRIVE_FILE_ID}?alt=media&supportsAllDrives=true&_=${Date.now()}`,{headers:{'Authorization':'Bearer '+tok,'Cache-Control':'no-cache'}});
     if(!r2.ok) throw new Error(`Failed to load canonical data.json (HTTP ${r2.status})`);
     ingest(await r2.json());
     LIBRARIES_READY = false;
@@ -329,8 +333,13 @@ async function reloadFromDrive(){
   setStatus('Reloading…','loading');
   startProgress();
   try{
-    const r=await fetch(`https://www.googleapis.com/drive/v3/files/${DRIVE_FILE_ID}?alt=media`,{
-      headers:{'Authorization':'Bearer '+DRIVE_TOKEN}
+    // 2026-05-26: Cache-bust query param + no-cache header. Without these
+    // Google's CDN serves a stale media response after recent Drive writes,
+    // making reloadFromDrive return data that doesn't reflect the current
+    // file. This was the root cause of the 2026-05-26 "fixes don't stick"
+    // debug — Drive was clean, but the CDN kept replaying the pre-fix blob.
+    const r=await fetch(`https://www.googleapis.com/drive/v3/files/${DRIVE_FILE_ID}?alt=media&_=${Date.now()}`,{
+      headers:{'Authorization':'Bearer '+DRIVE_TOKEN,'Cache-Control':'no-cache'}
     });
     const arr=await r.json();
     // 2026-05-26: Route through ingest() so the localStorage cache is also
