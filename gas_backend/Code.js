@@ -4054,9 +4054,15 @@ function inspiringValidateSugs_(sugs, target, data, targetIdx, approvedSet, bann
 // camera + the AR metaphor — not developmentally realistic for 3-4 yos).
 // Keys are lowercased tool names. Add more entries here as age-mismatch
 // issues surface in future runs.
+// 2026-05-26: Expanded to match the kinder + Prep allowed pools from
+// diversityYearRule_ / inspiringYearRule_. Without this, the dedup
+// fallback chain happily picked Padlet/Canva/iMovie etc. for kinder
+// units even though those aren't developmentally appropriate for 3-5
+// year olds. Keys are diversityToolKey_ output (lowercased+trimmed).
 const INSPIRING_YEAR_LEVEL_NO_LIST = {
-  '3 Year Old Kinder': ['merge cubes'],
-  '4 Year Old Kinder': ['merge cubes']
+  '3 Year Old Kinder': ['merge cubes', 'padlet', 'canva', 'imovie', 'garageband', 'adobe express', 'microsoft word', 'microsoft excel', 'microsoft forms', 'sketchbook', 'tinkercad', 'delightex', 'word clouds abcya', 'kahoot', 'clickview', 'scratchjr', 'stop motion studio', 'wise discussion chatbots', 'national geographic mapmaker', 'field guide to victoria', 'sky map', 'geoboard', 'google maps', 'sphero bolt', 'lego spike prime', 'minecraft education', 'micro:bit', 'podcasting using canva', 'podcast equipment', '3d printers', 'insta360 camera', 'explain everything'],
+  '4 Year Old Kinder': ['merge cubes', 'padlet', 'canva', 'imovie', 'garageband', 'adobe express', 'microsoft word', 'microsoft excel', 'microsoft forms', 'sketchbook', 'tinkercad', 'delightex', 'word clouds abcya', 'kahoot', 'clickview', 'scratchjr', 'stop motion studio', 'wise discussion chatbots', 'national geographic mapmaker', 'field guide to victoria', 'sky map', 'geoboard', 'google maps', 'sphero bolt', 'lego spike prime', 'minecraft education', 'micro:bit', 'podcasting using canva', 'podcast equipment', '3d printers', 'insta360 camera', 'explain everything'],
+  'Prep': ['padlet', 'canva', 'adobe express', 'microsoft word', 'microsoft excel', 'microsoft forms', 'tinkercad', 'delightex', 'kahoot', 'clickview', 'wise discussion chatbots', 'national geographic mapmaker', 'field guide to victoria', 'sky map', 'geoboard', 'google maps', 'sphero bolt', 'lego spike prime', 'minecraft education', 'micro:bit', 'podcasting using canva', 'podcast equipment', '3d printers', 'insta360 camera', 'explain everything']
 };
 
 function inspiringYearLevelDenied_(yl, toolKey) {
