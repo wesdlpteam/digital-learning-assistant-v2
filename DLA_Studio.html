@@ -287,6 +287,22 @@
         <div id="realism-audit-result"></div>
       </div>
 
+      <!-- Tool-reuse Audit (intra-unit component dupes) -->
+      <div class="card" id="component-dup-audit-card" style="margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;flex-wrap:wrap">
+          <span class="label" style="margin:0">🧹 Tool-reuse audit</span>
+          <div style="flex:1"></div>
+          <button class="btn-sm" id="btn-component-dup-scan" onclick="renderComponentDupAuditList()" style="color:var(--lime);border-color:var(--lime)">Scan for tool reuse</button>
+          <button class="btn-sm" id="btn-component-dup-fix" onclick="scanAndFixComponentDupes()" style="color:var(--gold);border-color:var(--gold)" disabled>✨ Regenerate all flagged</button>
+        </div>
+        <p style="font-size:12px;color:var(--dim);margin-bottom:12px;line-height:1.6">Finds units where the same tool appears in more than one of slots 1-5 (e.g. Seesaw in slots 2 AND 4) or where both halves of an App Smash pair are the same tool (e.g. "Seesaw + Seesaw"). Auto-regen re-rolls each flagged unit through GPT-4.1 with the component-dup validator active; a snapshot is taken first so you can undo.</p>
+        <div id="component-dup-audit-progress" style="display:none;margin-bottom:10px">
+          <div style="font-size:11px;color:var(--dim);margin-bottom:4px" id="component-dup-audit-label">Starting…</div>
+          <div style="height:6px;background:var(--card2);border-radius:3px;overflow:hidden"><div id="component-dup-audit-bar" style="height:100%;width:0;background:var(--gold);transition:width .2s"></div></div>
+        </div>
+        <div id="component-dup-audit-result"></div>
+      </div>
+
       <!-- Tool Inventory -->
       <div class="card" style="margin-bottom:14px">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">

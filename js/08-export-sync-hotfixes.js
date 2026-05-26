@@ -123,6 +123,139 @@ Return ONLY a JSON array: [{"t":"Tool Name or Tool A + Tool B","d":"2-3 vivid se
   renderDashboard();
 }
 
+// 2026-05-26: Auto-scan-and-fix for intra-unit tool component dupes (the
+// 13 existing units that the prevention-only commit 243c330 doesn't migrate).
+// Mirrors runBulkRegen's per-unit retry loop shape but builds `targets` from
+// componentDupesInRegen_() instead of a campus+year filter. Per-unit
+// saveToDrive() makes it resumable if the laptop sleeps mid-run.
+function findComponentDupeTargets_(){
+  if(!Array.isArray(DATA)) return [];
+  const out = [];
+  DATA.forEach((e, idx) => {
+    if(!e || !Array.isArray(e.s) || !e.s.length) return;
+    const offender = componentDupesInRegen_(e.s);
+    if(offender) out.push({ e, idx, offender });
+  });
+  return out;
+}
+
+function renderComponentDupAuditList(){
+  const host = document.getElementById('component-dup-audit-result');
+  if(!host) return;
+  const targets = findComponentDupeTargets_();
+  const fixBtn = document.getElementById('btn-component-dup-fix');
+  if(fixBtn) fixBtn.disabled = !targets.length;
+  if(!targets.length){
+    host.innerHTML = `<div style="font-size:12px;color:var(--lime);padding:10px;background:var(--card2);border-radius:6px">✓ No intra-unit tool reuse found across ${Array.isArray(DATA)?DATA.length:0} entries.</div>`;
+    return;
+  }
+  const rows = targets.map(({e, offender}) => {
+    const slots = (Array.isArray(e.s) ? e.s.slice(0, 5) : []).map((s, i) => {
+      const t = s && typeof s.t === 'string' ? s.t : '';
+      const hit = t && new RegExp('(^|\\s\\+\\s)' + offender.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(\\s\\+\\s|$)', 'i').test(t);
+      return `<span style="font-size:11px;padding:2px 6px;background:${hit?'rgba(248,113,113,.15)':'var(--card2)'};color:${hit?'#FF8080':'var(--dim)'};border-radius:4px;margin-right:4px">${i+1}: ${esc(t||'—')}</span>`;
+    }).join('');
+    return `<div style="padding:8px 10px;background:var(--card2);border-radius:6px;margin-bottom:6px;font-size:12px;border-left:2px solid #FF8080">
+      <div style="font-weight:700;margin-bottom:4px">${esc(e.ca)} · ${esc(e.yl)} · ${esc(e.th)}</div>
+      <div style="font-size:11px;color:var(--dim);margin-bottom:6px">Repeated component: <strong style="color:#FF8080">${esc(offender)}</strong></div>
+      <div>${slots}</div>
+    </div>`;
+  }).join('');
+  host.innerHTML = `
+    <div style="font-size:12px;color:#FF8080;margin-bottom:10px;padding:8px 10px;background:rgba(248,113,113,.08);border-radius:6px">
+      Found <strong>${targets.length}</strong> unit${targets.length===1?'':'s'} where a tool component repeats across slots 1-5 (or both halves of a "+" pair are the same tool).
+    </div>
+    ${rows}`;
+}
+
+async function scanAndFixComponentDupes(){
+  const targets = findComponentDupeTargets_();
+  if(!targets.length){
+    setStatus('No intra-unit tool reuse found — nothing to fix','success');
+    renderComponentDupAuditList();
+    return;
+  }
+  const confirmed = confirm(`Regenerate ${targets.length} unit${targets.length===1?'':'s'} with repeated tools?\n\nEach will be re-rolled through GPT-4.1 with the new component-dup validator. The per-unit change history lets you undo individual ones if needed.`);
+  if(!confirmed) return;
+  if(typeof createManualSnapshot === 'function'){ try{ createManualSnapshot(); }catch(e){} }
+  const btn = document.getElementById('btn-component-dup-fix');
+  const scanBtn = document.getElementById('btn-component-dup-scan');
+  const lbl = document.getElementById('component-dup-audit-label');
+  const bar = document.getElementById('component-dup-audit-bar');
+  const prog = document.getElementById('component-dup-audit-progress');
+  if(btn) btn.disabled = true;
+  if(scanBtn) scanBtn.disabled = true;
+  if(prog) prog.style.display = 'block';
+  let done = 0, fixed = 0, failed = 0;
+  for(const {e, idx} of targets){
+    done++;
+    if(bar) bar.style.width = `${Math.round((done/targets.length)*100)}%`;
+    if(lbl) lbl.textContent = `${done}/${targets.length}: ${e.yl} — ${e.th}`;
+    const prompt = `Generate exactly 6 digital technology suggestions for this IB PYP unit at Wesley College (Microsoft school).
+Campus: ${e.ca} | Year Level: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: "${e.ci}"`:''}${e.plannerText?`\nPlanner context: ${e.plannerText}`:''}
+All 6 suggestions MUST use DIFFERENT tools
+Suggestion #6 MUST be a STEM Design Cycle activity (Empathise → Define → Ideate → Prototype → Test) that connects specifically to the unit theme — no duplicates.
+${SUGGESTION_STYLE}
+${appSmashRequirementForEntry_(e)}
+Return ONLY a JSON array: [{"t":"Tool Name or Tool A + Tool B","d":"2-3 vivid sentences for this unit."},...]`;
+    try{
+      let sugs = null;
+      let dupedTool = null;
+      let lastSmashCount = 0;
+      let lastDupOpener = '';
+      let lastDupComponent = '';
+      let lastFailReason = '';
+      for(let attempt=0; attempt<3; attempt++){
+        let retryNote = '';
+        if(attempt>0 && lastFailReason === 'dup'){
+          retryNote = `\n\nRETRY ${attempt}: Your previous response used "${dupedTool}" twice. Every one of the 6 suggestions MUST use a DIFFERENT tool. #6 must be a STEM Design Cycle activity.`;
+        } else if(attempt>0 && lastFailReason === 'smash'){
+          retryNote = `\n\nRETRY ${attempt}: Your previous response had only ${lastSmashCount} App Smash${lastSmashCount===1?'':'es'} in slots 1-5. You MUST return at least 2 entries whose "t" field uses the "Tool A + Tool B" format.`;
+        } else if(attempt>0 && lastFailReason === 'opener-dup'){
+          retryNote = `\n\nRETRY ${attempt}: Your previous response used "${lastDupOpener}" as the slot-1 App Smash, but another unit in this campus + year level already opens with that exact pair. Slot 1 MUST be a DIFFERENT App Smash pair that specifically suits THIS unit's theme.`;
+        } else if(attempt>0 && lastFailReason === 'component-dup'){
+          retryNote = `\n\nRETRY ${attempt}: Your previous response reused "${lastDupComponent}" across slots 1-5 (either appearing in two different slots, or paired with itself as "${lastDupComponent} + ${lastDupComponent}"). Every tool component may appear AT MOST ONCE in slots 1-5, and both halves of every "+" pair MUST be DIFFERENT tools.`;
+        }
+        const raw = await callAI([{role:'user',parts:[{text:prompt+retryNote}]}], null, OPENAI_MODEL);
+        const clean = raw.replace(/```json|```/g,'').trim();
+        const si = clean.indexOf('['), ei = clean.lastIndexOf(']');
+        if(si===-1||ei===-1) throw new Error('No JSON');
+        const parsed = JSON.parse(clean.slice(si, ei+1));
+        const keys = parsed.map(s => toolKey(sugTool(s))).filter(Boolean);
+        const dup = keys.find((k, i) => keys.indexOf(k) !== i);
+        if(dup){ const dupSug = parsed.find(s => toolKey(sugTool(s)) === dup); dupedTool = dupSug ? sugTool(dupSug) : dup; lastFailReason = 'dup'; continue; }
+        const compDup = componentDupesInRegen_(parsed);
+        if(compDup){ lastDupComponent = compDup; lastFailReason = 'component-dup'; continue; }
+        lastSmashCount = appSmashCountInRegen_(parsed);
+        if(lastSmashCount < 2){ lastFailReason = 'smash'; continue; }
+        const openerDup = openerDupesSiblingInYear_(e, parsed);
+        if(openerDup){ lastDupOpener = openerDup; lastFailReason = 'opener-dup'; continue; }
+        sugs = parsed;
+        break;
+      }
+      if(!sugs) throw new Error(
+        lastFailReason === 'smash' ? `Only ${lastSmashCount} App Smash${lastSmashCount===1?'':'es'} after 3 attempts`
+        : lastFailReason === 'opener-dup' ? `Opener stayed identical to a sibling unit ("${lastDupOpener}") after 3 attempts`
+        : lastFailReason === 'component-dup' ? `Tool component "${lastDupComponent}" kept repeating across slots 1-5 after 3 attempts`
+        : 'Duplicates in batch after retry');
+      recordChange(idx, getSugs(DATA[idx]), sugs);
+      DATA[idx].s = sugs;
+      DATA[idx].audited = true;
+      fixed++;
+      saveToDrive();
+    }catch(err){
+      failed++;
+      console.error('scanAndFixComponentDupes error for entry', idx, err);
+    }
+    if(done<targets.length) await sleep(2000);
+  }
+  if(lbl) lbl.textContent = `Done — ${fixed} regenerated, ${failed} failed`;
+  if(scanBtn) scanBtn.disabled = false;
+  setStatus(`Tool-reuse fix complete — ${fixed} entries updated${failed?`, ${failed} still failing (open & re-run individually)`:''}`);
+  renderComponentDupAuditList();
+  if(typeof renderDashboard === 'function') renderDashboard();
+}
+
 function updateCompareThemes(){
   const yr=document.getElementById('compare-year')?.value||'';
   const sel=document.getElementById('compare-theme'); if(!sel) return;
