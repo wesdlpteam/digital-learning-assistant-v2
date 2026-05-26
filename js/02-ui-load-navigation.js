@@ -333,7 +333,13 @@ async function reloadFromDrive(){
       headers:{'Authorization':'Bearer '+DRIVE_TOKEN}
     });
     const arr=await r.json();
-    DATA=Array.isArray(arr)?arr:Object.values(arr);
+    // 2026-05-26: Route through ingest() so the localStorage cache is also
+    // refreshed. Previously this set DATA in-memory but left dla_data
+    // pointing at the stale pre-reload snapshot, which meant the next
+    // page refresh would re-load the OLD data (showing already-fixed
+    // issues like duplicate counts that didn't reflect Drive's truth).
+    // ingest() default writes to cache; renderDashboard runs below.
+    ingest(arr);
     const meta=await getDriveFileModified();
     if(meta) LAST_KNOWN_MODIFIED=meta.modifiedTime;
     const now=new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
