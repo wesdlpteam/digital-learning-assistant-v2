@@ -2205,6 +2205,21 @@ function normCa(ca){
 }
 
 function normaliseToolName(t){
+  // 2026-05-26: Compound App Smash tools ("Tool A + Tool B") must NOT be
+  // truncated by the startsWith fallback patterns further down (e.g.
+  // "Seesaw + Seesaw" was matching `startsWith('seesaw')` and collapsing to
+  // just "Seesaw", which silently turned compound t-fields into duplicates
+  // at load time via dqSanitiseDataSet_'s ingest hook). Recurse on each
+  // component and rejoin.
+  if(t){
+    const raw0 = String(t).trim();
+    if(raw0.indexOf('+') !== -1){
+      const parts = raw0.split(/\s*\+\s*/).map(p => p.trim()).filter(Boolean);
+      if(parts.length > 1){
+        return parts.map(p => normaliseToolName(p)).filter(Boolean).join(' + ');
+      }
+    }
+  }
   // Canonical forms for known variants
   const map = {
     'bee-bot':'Beebots','bee-bots':'Beebots','beebot':'Beebots','beebots':'Beebots',
