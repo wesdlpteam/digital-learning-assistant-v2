@@ -4461,6 +4461,18 @@ function inspiringSkippedUnits_(data, opts) {
 
 function inspiringCandidateIndexes_(data, opts) {
   opts = opts || {};
+  // 2026-05-26: opts.indices short-circuit for Bulk paths that target
+  // specific units (vs the ca/yl filter for whole-campus sweeps). When
+  // present, those ARE the candidates — bypasses inspiringInScope_ and
+  // the inspiringRegenAt-skip (caller is being explicit). Units missing
+  // ci/lo are still filtered out (they'd fail the prompt anyway) and
+  // surface in the existing `skipped` array on the response.
+  if (Array.isArray(opts.indices) && opts.indices.length) {
+    return opts.indices.filter(function (i) {
+      return Number.isInteger(i) && i >= 0 && i < data.length &&
+        data[i] && inspiringHasUnitDetails_(data[i]);
+    });
+  }
   const out = [];
   for (let i = 0; i < data.length; i++) {
     const u = data[i];
