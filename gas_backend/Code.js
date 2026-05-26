@@ -4070,37 +4070,123 @@ function inspiringYearLevelDenied_(yl, toolKey) {
 // duplicates another slot in the same unit. Used by the requeue actions
 // to surface units that need the AI to regenerate them with the
 // validator's full constraint set.
+// 2026-05-26: Dashboard-parity matchers. The Studio's getIssues() uses
+// dashboardToolKey_ (strip non-alphanum + lowercase + trim) plus
+// SUBSTRING comparison. The backend's diversityToolKey_ just lowercases
+// — much stricter. That mismatch caused inspiringFindBadToolUnits_ to
+// flag 130 units when the dashboard reported 0 off-whitelist hits.
+// Port the dashboard's logic verbatim so the AI requeue scan finds
+// exactly what the dashboard finds and nothing more.
+function dashboardKey_(toolName) {
+  return String(toolName || '')
+    .toLowerCase()
+    .replace(/[’']/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+var DASHBOARD_FALLBACK_WHITELIST = [
+  'microsoft word','microsoft excel','microsoft forms','word','excel','forms',
+  'wise','schoolbox','wise discussion chatbots','schoolbox discussion chatbots',
+  'beebot','beebots','bee-bot','bee-bots','sphero indi','sphero bolt','sphero',
+  'lego spike prime','lego spike','lego','micro:bit','microbit','codrone','makey makey',
+  '3d printer','merge cube','merge cubes','podcast equipment','rodecaster','ipad','laptop',
+  'seesaw','canva','book creator','padlet',
+  'garageband','scratchjr','scratch jr','scratch','stop motion studio','stop motion',
+  'chatterpix','imovie','puppet pals',
+  'adobe express','podcasting using canva','animating a character with adobe express',
+  'google maps','national geographic mapmaker','national geographic map maker','nat geo mapmaker','mapmaker',
+  'field guide to victoria','field guide','sky map','geoboard',
+  'clickview','epic','piccollage','brushes redux','word clouds','abcya',
+  'sketchbook','explain everything','freeform','delightex',
+  'kahoot','tinkercad','minecraft','minecraft education',
+  'insta360','rugged robot','smart bricks','indi robot','edison',
+  'cubetto','pico vr','pico','merge explorer'
+];
+
+var DASHBOARD_STATIC_BANNED_TOOLS = [
+  'wevideo', 'we video', 'classvr', 'class vr',
+  'flipgrid', 'flip',
+  'google earth', 'google slides', 'google docs', 'google sheets',
+  'google streetview', 'google street view', 'google syncview',
+  'microsoft teams', 'teams',
+  'microsoft powerpoint', 'powerpoint',
+  'microsoft onenote', 'onenote',
+  'microsoft sway', 'sway',
+  'lego spike essential',
+  'green screen', 'green screen kits',
+  'digital camera', 'digital cameras',
+  'apple keynote', 'keynote',
+  'banqer',
+  'chatgpt', 'claude', 'gemini', 'copilot'
+];
+
+function dashboardBannedHit_(toolName, bannedList) {
+  const key = dashboardKey_(toolName);
+  if (!key) return null;
+  const candidates = (bannedList || []).concat(DASHBOARD_STATIC_BANNED_TOOLS);
+  for (var i = 0; i < candidates.length; i++) {
+    const bk = dashboardKey_(candidates[i]);
+    if (!bk) continue;
+    if (key === bk || key.indexOf(bk) !== -1 || bk.indexOf(key) !== -1) return candidates[i];
+  }
+  return null;
+}
+
+function dashboardWhitelisted_(toolName, bannedList, approvedList) {
+  if (!toolName) return true;
+  const key = dashboardKey_(toolName);
+  if (dashboardBannedHit_(toolName, bannedList)) return false;
+  if (/^(national geographic mapmaker|national geographic map maker|nat geo mapmaker|mapmaker)$/.test(key)) return true;
+  const synced = approvedList || [];
+  for (var i = 0; i < synced.length; i++) {
+    const ak = dashboardKey_(synced[i]);
+    if (!ak) continue;
+    if (key === ak || key.indexOf(ak) !== -1 || ak.indexOf(key) !== -1) return true;
+  }
+  for (var j = 0; j < DASHBOARD_FALLBACK_WHITELIST.length; j++) {
+    const wk = dashboardKey_(DASHBOARD_FALLBACK_WHITELIST[j]);
+    if (!wk) continue;
+    if (key === wk || key.indexOf(wk) !== -1 || wk.indexOf(key) !== -1) return true;
+  }
+  return false;
+}
+
 function inspiringFindBadToolUnits_(data, opts) {
   opts = opts || {};
-  const approvedSet = new Set(getApprovedToolNames_().map(diversityToolKey_));
-  const bannedSet = new Set(getBannedToolNames_().map(diversityToolKey_));
+  const approvedList = getApprovedToolNames_();
+  const bannedList = getBannedToolNames_();
   const out = [];
   for (let i = 0; i < data.length; i++) {
     const u = data[i];
     if (!inspiringInScope_(u, opts)) continue;
     if (!Array.isArray(u.s) || !u.s.length) continue;
     const offending = [];
-    // 2026-05-26: Duplicate detection is now WHOLE-T-FIELD match to mirror
-    // the Studio dashboard's getIssues() logic exactly. Earlier component-
-    // level detection was over-broad and flagged ~130 units because almost
-    // every unit reuses a common tool (Seesaw, Book Creator) across two
-    // slots even when the full t-field strings differ. That sent the
-    // AI requeue path into a near-corpus regen at large API cost.
+    // All checks now mirror the Studio dashboard's getIssues() — banned
+    // and off-whitelist via dashboard-style substring + dashboardKey_,
+    // duplicates via whole-t-field match (lowercased+trimmed). The
+    // age-mismatch check uses inspiringYearLevelDenied_ which is a
+    // backend-only safety net for Merge Cubes in Kinder.
     const seenTFields = {};
     for (let s = 0; s < u.s.length; s++) {
       const sg = u.s[s];
       if (!sg || typeof sg.t !== 'string') continue;
       const comps = diversityToolComponents_(sg.t);
-      // Component-level checks (banned / off-whitelist / age-mismatch) stay
-      // — a single rogue component in a compound t-field IS a real issue.
-      for (let c = 0; c < comps.length; c++) {
-        const key = diversityToolKey_(comps[c]);
-        if (!key) continue;
-        if (bannedSet.has(key)) offending.push({ slot: s + 1, tool: comps[c], reason: 'banned' });
-        else if (approvedSet.size > 0 && !approvedSet.has(key)) offending.push({ slot: s + 1, tool: comps[c], reason: 'off-whitelist' });
-        else if (inspiringYearLevelDenied_(u.yl, key)) offending.push({ slot: s + 1, tool: comps[c], reason: 'age-mismatch for ' + u.yl });
+      // STEM Design Cycle slot (index 5) is exempt from banned + off-whitelist
+      // checks — its t field is an activity name, not a tech tool.
+      if (s !== 5) {
+        const tBanHit = dashboardBannedHit_(sg.t, bannedList);
+        if (tBanHit) offending.push({ slot: s + 1, tool: sg.t, reason: 'banned (' + tBanHit + ')' });
+        else if (!dashboardWhitelisted_(sg.t, bannedList, approvedList)) {
+          offending.push({ slot: s + 1, tool: sg.t, reason: 'off-whitelist' });
+        }
+        for (let c = 0; c < comps.length; c++) {
+          const compKey = diversityToolKey_(comps[c]);
+          if (compKey && inspiringYearLevelDenied_(u.yl, compKey)) {
+            offending.push({ slot: s + 1, tool: comps[c], reason: 'age-mismatch for ' + u.yl });
+          }
+        }
       }
-      // Whole-t-field duplicate check (matches dashboard's getIssues).
       const tKey = String(sg.t).toLowerCase().trim();
       if (!tKey) continue;
       if (seenTFields[tKey] && seenTFields[tKey] !== (s + 1)) {
