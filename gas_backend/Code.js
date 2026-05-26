@@ -4080,26 +4080,33 @@ function inspiringFindBadToolUnits_(data, opts) {
     if (!inspiringInScope_(u, opts)) continue;
     if (!Array.isArray(u.s) || !u.s.length) continue;
     const offending = [];
-    // Track tool components across slots for intra-unit duplicate detection.
-    const componentSlots = {};
+    // 2026-05-26: Duplicate detection is now WHOLE-T-FIELD match to mirror
+    // the Studio dashboard's getIssues() logic exactly. Earlier component-
+    // level detection was over-broad and flagged ~130 units because almost
+    // every unit reuses a common tool (Seesaw, Book Creator) across two
+    // slots even when the full t-field strings differ. That sent the
+    // AI requeue path into a near-corpus regen at large API cost.
+    const seenTFields = {};
     for (let s = 0; s < u.s.length; s++) {
       const sg = u.s[s];
       if (!sg || typeof sg.t !== 'string') continue;
       const comps = diversityToolComponents_(sg.t);
+      // Component-level checks (banned / off-whitelist / age-mismatch) stay
+      // — a single rogue component in a compound t-field IS a real issue.
       for (let c = 0; c < comps.length; c++) {
         const key = diversityToolKey_(comps[c]);
         if (!key) continue;
         if (bannedSet.has(key)) offending.push({ slot: s + 1, tool: comps[c], reason: 'banned' });
         else if (approvedSet.size > 0 && !approvedSet.has(key)) offending.push({ slot: s + 1, tool: comps[c], reason: 'off-whitelist' });
         else if (inspiringYearLevelDenied_(u.yl, key)) offending.push({ slot: s + 1, tool: comps[c], reason: 'age-mismatch for ' + u.yl });
-        // Duplicate detection: only flag the SECOND+ occurrence within the
-        // unit so we don't double-count. First occurrence goes into the
-        // componentSlots map.
-        if (componentSlots[key] && componentSlots[key] !== (s + 1)) {
-          offending.push({ slot: s + 1, tool: comps[c], reason: 'duplicate of slot ' + componentSlots[key] });
-        } else if (!componentSlots[key]) {
-          componentSlots[key] = s + 1;
-        }
+      }
+      // Whole-t-field duplicate check (matches dashboard's getIssues).
+      const tKey = String(sg.t).toLowerCase().trim();
+      if (!tKey) continue;
+      if (seenTFields[tKey] && seenTFields[tKey] !== (s + 1)) {
+        offending.push({ slot: s + 1, tool: sg.t, reason: 'duplicate t-field of slot ' + seenTFields[tKey] });
+      } else if (!seenTFields[tKey]) {
+        seenTFields[tKey] = s + 1;
       }
     }
     if (offending.length) out.push({ idx: i, ca: u.ca, yl: u.yl, th: u.th, offending: offending });
