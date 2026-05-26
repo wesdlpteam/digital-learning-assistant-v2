@@ -692,6 +692,7 @@ async function fixAllOfType(type){
       let sugs = null;
       let lastSmashCount = 0;
       let lastDupOpener = '';
+      let lastDupComponent = '';
       let lastFailReason = '';
       for(let attempt=0; attempt<3; attempt++){
         let retryNote = '';
@@ -699,6 +700,8 @@ async function fixAllOfType(type){
           retryNote = `\n\nRETRY ${attempt}: Your previous response had only ${lastSmashCount} App Smash${lastSmashCount===1?'':'es'} in slots 1-5. You MUST return at least 2 entries whose "t" field uses the "Tool A + Tool B" format. Both tools must be approved and age-appropriate.`;
         } else if(attempt>0 && lastFailReason === 'opener-dup'){
           retryNote = `\n\nRETRY ${attempt}: Your previous response used "${lastDupOpener}" as the slot-1 App Smash, but another unit in this campus + year level already opens with that exact pair. Slot 1 MUST be a DIFFERENT App Smash pair that specifically suits THIS unit's theme.`;
+        } else if(attempt>0 && lastFailReason === 'component-dup'){
+          retryNote = `\n\nRETRY ${attempt}: Your previous response reused "${lastDupComponent}" across slots 1-5 (either appearing in two different slots, or paired with itself as "${lastDupComponent} + ${lastDupComponent}"). Every tool component may appear AT MOST ONCE in slots 1-5, and both halves of every "+" pair MUST be DIFFERENT tools.`;
         }
         const raw=await callAI([{role:'user',parts:[{text:prompt+retryNote}]}],null,OPENAI_MODEL);
         const clean=raw.replace(/```json|```/g,'').trim();
@@ -709,6 +712,13 @@ async function fixAllOfType(type){
         const toolNames = parsed.map(s=>(s.t||'').toLowerCase().trim());
         const uniqueTools = new Set(toolNames);
         if(uniqueTools.size < toolNames.length){ if(attempt>=2) throw new Error('AI returned duplicates again after retry'); continue; }
+        const compDup = componentDupesInRegen_(parsed);
+        if(compDup){
+          lastDupComponent = compDup;
+          lastFailReason = 'component-dup';
+          if(attempt >= 2) throw new Error(`Tool component "${lastDupComponent}" kept repeating across slots 1-5 after 3 attempts`);
+          continue;
+        }
         lastSmashCount = appSmashCountInRegen_(parsed);
         if(lastSmashCount < 2){ lastFailReason = 'smash'; if(attempt < 2) continue; }
         const openerDup = openerDupesSiblingInYear_(e, parsed);
@@ -716,7 +726,10 @@ async function fixAllOfType(type){
         sugs = parsed;
         break;
       }
-      if(!sugs) throw new Error(`AI never met the >=2 App Smash floor (last attempt: ${lastSmashCount})`);
+      if(!sugs) throw new Error(
+        lastFailReason === 'component-dup' ? `Tool component "${lastDupComponent}" kept repeating across slots 1-5 after 3 attempts`
+        : lastFailReason === 'opener-dup' ? `Opener stayed identical to a sibling unit ("${lastDupOpener}") after 3 attempts`
+        : `AI never met the >=2 App Smash floor (last attempt: ${lastSmashCount})`);
       if(appSmashCountInRegen_(sugs) < 2) throw new Error(`Refusing to save — only ${appSmashCountInRegen_(sugs)} App Smash${appSmashCountInRegen_(sugs)===1?'':'es'} in slots 1-5`);
 
       recordChange(idx,getSugs(DATA[idx]),sugs);

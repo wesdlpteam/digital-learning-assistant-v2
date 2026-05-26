@@ -1408,6 +1408,7 @@ Return ONLY a JSON array, no markdown: [{"t":"Tool Name or Tool A + Tool B","d":
       let dupedTool = null;
       let lastSmashCount = 0;
       let lastDupOpener = '';
+      let lastDupComponent = '';
       let lastFailReason = '';
       for(let attempt=0; attempt<3; attempt++){
         let retryNote = '';
@@ -1417,6 +1418,8 @@ Return ONLY a JSON array, no markdown: [{"t":"Tool Name or Tool A + Tool B","d":
           retryNote = `\n\nRETRY ${attempt}: Your previous response had only ${lastSmashCount} App Smash${lastSmashCount===1?'':'es'} in slots 1-5. You MUST return at least 2 entries whose "t" field uses the "Tool A + Tool B" format.`;
         } else if(attempt>0 && lastFailReason === 'opener-dup'){
           retryNote = `\n\nRETRY ${attempt}: Your previous response used "${lastDupOpener}" as the slot-1 App Smash, but another unit in this campus + year level already opens with that exact pair. Slot 1 MUST be a DIFFERENT App Smash pair that specifically suits THIS unit's theme.`;
+        } else if(attempt>0 && lastFailReason === 'component-dup'){
+          retryNote = `\n\nRETRY ${attempt}: Your previous response reused "${lastDupComponent}" across slots 1-5 (either appearing in two different slots, or paired with itself as "${lastDupComponent} + ${lastDupComponent}"). Every tool component may appear AT MOST ONCE in slots 1-5, and both halves of every "+" pair MUST be DIFFERENT tools.`;
         }
         const raw=await callAI([{role:'user',parts:[{text:prompt+retryNote}]}], null, OPENAI_MODEL);
         const clean=raw.replace(/```json|```/g,'').trim();
@@ -1427,6 +1430,8 @@ Return ONLY a JSON array, no markdown: [{"t":"Tool Name or Tool A + Tool B","d":
         const keys=parsed.map(s=>toolKey(sugTool(s))).filter(Boolean);
         const dup=keys.find((k,i)=>keys.indexOf(k)!==i);
         if(dup){ const dupSug=parsed.find(s=>toolKey(sugTool(s))===dup); dupedTool = dupSug ? sugTool(dupSug) : dup; lastFailReason='dup'; continue; }
+        const compDup = componentDupesInRegen_(parsed);
+        if(compDup){ lastDupComponent = compDup; lastFailReason='component-dup'; continue; }
         lastSmashCount = appSmashCountInRegen_(parsed);
         if(lastSmashCount < 2){ lastFailReason='smash'; continue; }
         const openerDup = openerDupesSiblingInYear_(e, parsed);
@@ -1437,6 +1442,7 @@ Return ONLY a JSON array, no markdown: [{"t":"Tool Name or Tool A + Tool B","d":
       if(!sugs) throw new Error(
         lastFailReason === 'smash' ? `Only ${lastSmashCount} App Smash${lastSmashCount===1?'':'es'} after 3 attempts`
         : lastFailReason === 'opener-dup' ? `Opener stayed identical to a sibling unit ("${lastDupOpener}") after 3 attempts`
+        : lastFailReason === 'component-dup' ? `Tool component "${lastDupComponent}" kept repeating across slots 1-5 after 3 attempts`
         : 'Duplicates in batch after retry');
       DATA[idx].s=sugs; DATA[idx].audited=true; fixed++;
       saveToDrive();

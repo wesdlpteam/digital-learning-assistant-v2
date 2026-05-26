@@ -2060,6 +2060,7 @@ ${appSmashRequirementForEntry_(entry)}
     let dupedTool = null;
     let lastSmashCount = 0;
     let lastDupOpener = '';
+    let lastDupComponent = '';
     let lastFailReason = '';
     for(let attempt=0; attempt<3; attempt++){
       let retryNote = '';
@@ -2069,6 +2070,8 @@ ${appSmashRequirementForEntry_(entry)}
         retryNote = `\n\nRETRY ${attempt}: Your previous response had only ${lastSmashCount} App Smash${lastSmashCount===1?'':'es'} in slots 1-5. You MUST return at least 2 entries whose "t" field uses the "Tool A + Tool B" format with both tools approved and age-appropriate.`;
       } else if(attempt>0 && lastFailReason === 'opener-dup'){
         retryNote = `\n\nRETRY ${attempt}: Your previous response used "${lastDupOpener}" as the slot-1 App Smash, but another unit in this campus + year level already opens with that exact pair. Slot 1 MUST be a DIFFERENT App Smash pair that specifically suits THIS unit's theme.`;
+      } else if(attempt>0 && lastFailReason === 'component-dup'){
+        retryNote = `\n\nRETRY ${attempt}: Your previous response reused "${lastDupComponent}" across slots 1-5 (either appearing in two different slots, or paired with itself as "${lastDupComponent} + ${lastDupComponent}"). Every tool component may appear AT MOST ONCE in slots 1-5, and both halves of every "+" pair MUST be DIFFERENT tools.`;
       }
       const raw=await callAI([{role:'user',parts:[{text:prompt+retryNote}]}]);
       const clean=raw.replace(/```json|```/g,'').trim();
@@ -2083,6 +2086,8 @@ ${appSmashRequirementForEntry_(entry)}
         lastFailReason = 'dup';
         continue;
       }
+      const compDup = componentDupesInRegen_(parsed);
+      if(compDup){ lastDupComponent = compDup; lastFailReason = 'component-dup'; continue; }
       lastSmashCount = appSmashCountInRegen_(parsed);
       if(lastSmashCount < 2){ lastFailReason = 'smash'; continue; }
       const openerDup = openerDupesSiblingInYear_(entry, parsed);
@@ -2093,6 +2098,7 @@ ${appSmashRequirementForEntry_(entry)}
     if(!sugs){
       if(lastFailReason === 'smash') throw new Error(`AI returned only ${lastSmashCount} App Smash${lastSmashCount===1?'':'es'} after 3 attempts \u2014 not saving. Try regen again or adjust the unit.`);
       if(lastFailReason === 'opener-dup') throw new Error(`AI kept reusing "${lastDupOpener}" as the opener after 3 attempts \u2014 try regen again or adjust manually.`);
+      if(lastFailReason === 'component-dup') throw new Error(`AI kept reusing tool component "${lastDupComponent}" across slots 1-5 after 3 attempts \u2014 try regen again or adjust manually.`);
       throw new Error(`AI repeated "${dupedTool}" in the batch \u2014 try again`);
     }
     const pendingId='regenall_'+idx;

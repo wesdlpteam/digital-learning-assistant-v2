@@ -193,6 +193,8 @@ APP SMASH FLOOR (HARD RULE — overrides any "one tool per slot" instruction abo
 - Suggestions 1-5 MUST include AT LEAST 2 App Smashes. Format the "t" field as "Tool A + Tool B".
 - Suggestion 6 (STEM Design Cycle) is EXCLUDED from the floor and stays a single tool.
 - Both tools in every "+" combo must be on the approved list AND age-appropriate for this year level. Neither may be banned.
+- BOTH HALVES OF EVERY "+" PAIR MUST BE DIFFERENT TOOLS. Never return "Seesaw + Seesaw" or any "Tool X + Tool X" — that is not an App Smash.
+- NO REPEATED TOOLS ACROSS SLOTS 1-5: each tool may appear in AT MOST ONE slot, whether alone or as part of a pair. If slot 1 is "Seesaw + Padlet", slots 2-5 must use NEITHER Seesaw NOR Padlet (not solo, not in a different pair). The end result is up to 9 distinct tool components across slots 1-5.
 - VARY YOUR OPENERS — slot 1 sets the unit's tone, so it should specifically suit THIS unit's content; do not default to one canonical pair across multiple units.
 - Example strong pairings (these are EXAMPLES, not a preference order — mix freely, other valid combos are equally welcome): ${STRONG_PAIRING_EXAMPLES.join(', ')}.
 - The description must explicitly use BOTH tools — describe the smash, not one tool that happens to be paired in the title.
@@ -206,6 +208,52 @@ function appSmashCountInRegen_(sugs){
     if(s && typeof s.t === 'string' && /\+/.test(s.t)) n++;
   }
   return n;
+}
+
+// 2026-05-26: Component-level dedup for the regen retry loops. The pre-existing
+// dedup in 05/06/08/09 compares the WHOLE `t` string via toolKey() — so
+// "Seesaw", "Seesaw + Padlet", and "Seesaw + Book Creator" are three distinct
+// keys and the same component can repeat freely across slots 1-5 (observed:
+// GW 3YOK "Who We Are" had Seesaw in slots 2,3,5). Likewise "Seesaw + Seesaw"
+// is a unique whole-string so the existing dedup never trips it (observed in
+// 3 audited units). This helper splits each `t` on '+' and reports the first
+// offending tool component if either (a) a single slot pairs a tool with
+// itself, or (b) the same component appears in 2+ of slots 1-5. Returns null
+// if clean.
+function componentDupesInRegen_(sugs){
+  const arr = Array.isArray(sugs) ? sugs : [];
+  for(let i=0; i<Math.min(5, arr.length); i++){
+    const s = arr[i];
+    const t = s && typeof s.t === 'string' ? s.t : '';
+    if(!t) continue;
+    const parts = t.split(/\s*\+\s*/).map(p => p.trim()).filter(Boolean);
+    if(parts.length > 1){
+      const seen = new Set();
+      for(const p of parts){
+        const k = p.toLowerCase();
+        if(seen.has(k)) return p;
+        seen.add(k);
+      }
+    }
+  }
+  const counts = {};
+  for(let i=0; i<Math.min(5, arr.length); i++){
+    const s = arr[i];
+    const t = s && typeof s.t === 'string' ? s.t : '';
+    if(!t) continue;
+    const seenInSlot = new Set();
+    t.split(/\s*\+\s*/).map(p => p.trim()).filter(Boolean).forEach(p => {
+      const k = p.toLowerCase();
+      if(seenInSlot.has(k)) return;
+      seenInSlot.add(k);
+      if(!counts[k]) counts[k] = { label: p, slots: 0 };
+      counts[k].slots++;
+    });
+  }
+  for(const k in counts){
+    if(counts[k].slots >= 2) return counts[k].label;
+  }
+  return null;
 }
 
 // 2026-05-25: Per-entry version of APP_SMASH_REQUIREMENT. Shuffles the
@@ -235,6 +283,8 @@ APP SMASH FLOOR (HARD RULE — overrides any "one tool per slot" instruction abo
 - Suggestions 1-5 MUST include AT LEAST 2 App Smashes. Format the "t" field as "Tool A + Tool B".
 - Suggestion 6 (STEM Design Cycle) is EXCLUDED from the floor and stays a single tool.
 - Both tools in every "+" combo must be on the approved list AND age-appropriate for this year level. Neither may be banned.
+- BOTH HALVES OF EVERY "+" PAIR MUST BE DIFFERENT TOOLS. Never return "Seesaw + Seesaw" or any "Tool X + Tool X" — that is not an App Smash.
+- NO REPEATED TOOLS ACROSS SLOTS 1-5: each tool may appear in AT MOST ONE slot, whether alone or as part of a pair. If slot 1 is "Seesaw + Padlet", slots 2-5 must use NEITHER Seesaw NOR Padlet (not solo, not in a different pair). The end result is up to 9 distinct tool components across slots 1-5.
 - VARY YOUR OPENERS — slot 1 sets the unit's tone, so it should specifically suit THIS unit's content; do not default to one canonical pair across multiple units.
 - Example strong pairings (these are EXAMPLES, not a preference order — mix freely, other valid combos are equally welcome): ${pairs.join(', ')}.${openerLine}${overusedLine}
 - The description must explicitly use BOTH tools — describe the smash, not one tool that happens to be paired in the title.
