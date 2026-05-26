@@ -4726,3 +4726,122 @@ function regenerateAllInspiring(opts) {
     lock.releaseLock();
   }
 }
+
+// 2026-05-26: Single-unit preview-mode regen. Reuses the inner loop body
+// of regenerateAllInspiring (3 attempts -> auto-substitute fallback) but
+// writes the result to data[idx]._pendingRegen instead of data[idx].s, so
+// the Studio's regenAll preview pane can show the candidate before Apply.
+// Returns no body (no-cors POST); the frontend polls Drive for the marker.
+function regenerateOneInspiring_(body) {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(120000)) {
+    Logger.log('regenerateOneInspiring_: lock held — bailing');
+    return { paused: true, reason: 'lock-held' };
+  }
+  try {
+    if (inspiringAbortRequested_()) return { paused: true, reason: 'aborted' };
+
+    const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+    let raw = JSON.parse(file.getBlob().getDataAsString());
+    const isArr = Array.isArray(raw);
+    const data = isArr ? raw : Object.values(raw).filter(function (u) { return u && typeof u === 'object'; });
+
+    // Re-resolve idx by (ca, yl, th) to survive concurrent edits.
+    let idx = -1;
+    const hintIdx = parseInt(body.idx, 10);
+    const ca = String(body.ca || '');
+    const yl = String(body.yl || '');
+    const th = String(body.th || '');
+    if (Number.isInteger(hintIdx) && hintIdx >= 0 && hintIdx < data.length &&
+        data[hintIdx] && data[hintIdx].ca === ca && data[hintIdx].yl === yl && data[hintIdx].th === th) {
+      idx = hintIdx;
+    } else {
+      for (let i = 0; i < data.length; i++) {
+        if (data[i] && data[i].ca === ca && data[i].yl === yl && data[i].th === th) { idx = i; break; }
+      }
+    }
+    if (idx === -1) {
+      Logger.log('regenerateOneInspiring_: unit not found ' + ca + ' / ' + yl + ' / ' + th);
+      return { error: 'unit-not-found' };
+    }
+    const target = data[idx];
+    if (!inspiringHasUnitDetails_(target)) return { error: 'missing-ci-or-lo' };
+
+    const approvedToolsPrompt = getApprovedToolsPrompt_();
+    const approvedSet = new Set(getApprovedToolNames_().map(diversityToolKey_));
+    const bannedSet = new Set(getBannedToolNames_().map(diversityToolKey_));
+
+    const prompt = inspiringBuildPrompt_(data, idx, approvedToolsPrompt);
+    let lastReason = '';
+    let lastSugs = null;
+    let success = false;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      let retryNote = '';
+      let retryTemp = 0.75;
+      if (attempt > 1) {
+        retryTemp = 0.45;
+        const toolStrayed = /OFF-WHITELIST|BANNED|AGE-INAPPROPRIATE/.test(lastReason);
+        const toolReminder = toolStrayed ? '\n\nCRITICAL: You MUST pick every tool from the approved list above. Re-read the APPROVED TOOLS section. Do not invent tool names, do not use deprecated tools, do not substitute similar-sounding tools. If you are unsure whether a tool is approved, pick a different tool from the list that you can verify IS listed.' : '';
+        retryNote = '\n\nRETRY ' + (attempt - 1) + ': Previous attempt failed validation (' + lastReason + '). Apply ALL constraints (tool whitelist, App Smash floor, no dup tools, opener differs from siblings, ~6 sentences per slot 1-5).' + toolReminder;
+      }
+      const call = inspiringCallOnce_(prompt + retryNote, retryTemp);
+      if (!call.ok) { lastReason = call.error || 'unknown'; if (call.retriable && attempt < 3) { Utilities.sleep(8000); continue; } break; }
+      lastSugs = call.sugs;
+      const verdict = inspiringValidateSugs_(call.sugs, target, data, idx, approvedSet, bannedSet);
+      if (!verdict.ok) { lastReason = verdict.reason; if (attempt < 3) { Utilities.sleep(4000); continue; } break; }
+      // Successful 3-attempt validation. Write preview marker.
+      data[idx]._pendingRegen = {
+        sugs: call.sugs.map(function (s) { return { t: s.t, d: s.d }; }),
+        ts: new Date().toISOString(),
+        autoSwapped: null
+      };
+      success = true;
+      break;
+    }
+
+    // Auto-substitute fallback for tool-only failures.
+    if (!success && lastSugs && /OFF-WHITELIST|BANNED|AGE-INAPPROPRIATE/.test(lastReason)) {
+      const subRes = inspiringApplySubstitutions_(lastSugs, approvedSet, bannedSet, target.yl);
+      if (subRes.swaps.length) {
+        const sugs = subRes.sugs;
+        let shapeOk = Array.isArray(sugs) && sugs.length === 6;
+        if (shapeOk) {
+          const seen = {};
+          for (let z = 0; z < sugs.length && shapeOk; z++) {
+            const sg = sugs[z];
+            if (!sg || !sg.t || !sg.d) { shapeOk = false; break; }
+            const comps = diversityToolComponents_(sg.t);
+            for (let j = 0; j < comps.length; j++) {
+              const ck = diversityToolKey_(comps[j]);
+              if (seen[ck]) { shapeOk = false; break; }
+              seen[ck] = true;
+            }
+          }
+        }
+        if (shapeOk) {
+          data[idx]._pendingRegen = {
+            sugs: sugs.map(function (s) { return { t: s.t, d: s.d }; }),
+            ts: new Date().toISOString(),
+            autoSwapped: subRes.swaps
+          };
+          success = true;
+          Logger.log('regenerateOneInspiring_: AUTO-SWAPPED ' + target.ca + ' / ' + target.yl + ' / ' + target.th);
+        }
+      }
+    }
+
+    if (!success) {
+      Logger.log('regenerateOneInspiring_: FAILED ' + target.ca + ' / ' + target.yl + ' / ' + target.th + ' (' + lastReason + ')');
+      return { error: 'regen-failed', reason: lastReason };
+    }
+
+    // Save data.json back to Drive. Preview marker is in place.
+    file.setContent(JSON.stringify(isArr ? data : raw, null, 2));
+    return { ok: true, idx: idx, autoSwapped: !!data[idx]._pendingRegen.autoSwapped };
+  } catch (err) {
+    Logger.log('regenerateOneInspiring_: exception ' + err);
+    return { error: 'exception', message: String(err) };
+  } finally {
+    lock.releaseLock();
+  }
+}
