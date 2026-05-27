@@ -373,6 +373,12 @@ function doPost(e) {
       return jsonResponse(result);
     }
 
+    if (action === 'regenerateallinspiringrequeuey3plus') {
+      const result = regenerateAllInspiringRequeueY3Plus({});
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
     if (action === 'regenerateallinspiringrequeuebadtools') {
       const result = regenerateAllInspiringRequeueBadTools({ ca: body.ca || null, yl: body.yl || null });
       result.user = verifiedEmail;
@@ -4202,6 +4208,43 @@ function regenerateAllInspiringRequeueBadDescriptions(opts) {
   Logger.log('regenerateAllInspiringRequeueBadDescriptions: cleared ' + matched.length + ' inspiringRegenAt marker(s) for description-side off-whitelist mentions.');
   if (matched.length) Logger.log('Cleared units:\n' + matched.map(m => '  ' + m.ca + ' / ' + m.yl + ' / ' + m.th + ' — matched: ' + m.hit).join('\n'));
   return { cleared: matched.length, units: matched };
+}
+
+// 2026-05-27: Clears inspiringRegenAt on every Year 3-6 unit so the next
+// Inspire All run reprocesses them under the new Year 3+ Minecraft/Micro:bit
+// nudge. The original sweep produced only 4/134 Minecraft picks and 4/134
+// Micro:bit picks under the neutral "allow, don't push" wording; this
+// requeue lifts the pickup rate after the prompt nudge went live.
+function regenerateAllInspiringRequeueY3Plus(opts) {
+  opts = opts || {};
+  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  const raw = JSON.parse(file.getBlob().getDataAsString());
+  const isArr = Array.isArray(raw);
+  const data = isArr ? raw : Object.values(raw).filter(u => u && typeof u === 'object');
+
+  const isY3Plus = (yl) => {
+    if (!yl) return false;
+    const m = String(yl).match(/^Year\s*(\d+)$/i);
+    return m && parseInt(m[1], 10) >= 3;
+  };
+
+  const cleared = [];
+  for (let i = 0; i < data.length; i++) {
+    const u = data[i];
+    if (!u || !isY3Plus(u.yl)) continue;
+    if (!u.inspiringRegenAt) continue;
+    delete u.inspiringRegenAt;
+    if (u.inspiringRegenAutoSwapped) delete u.inspiringRegenAutoSwapped;
+    cleared.push({ idx: i, ca: u.ca, yl: u.yl, th: u.th });
+  }
+
+  if (cleared.length) {
+    const toWrite = isArr ? data : raw;
+    file.setContent(JSON.stringify(toWrite, null, 2));
+    try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e) { Logger.log('pushToGitHub after requeueY3Plus failed: ' + e); }
+  }
+  Logger.log('regenerateAllInspiringRequeueY3Plus: cleared ' + cleared.length + ' Year 3-6 inspiringRegenAt marker(s).');
+  return { cleared: cleared.length, units: cleared };
 }
 
 function regenerateAllInspiringRequeueBadTools(opts) {

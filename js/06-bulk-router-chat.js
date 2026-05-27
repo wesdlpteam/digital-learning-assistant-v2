@@ -982,6 +982,35 @@ async function inspireAllRequeueBadDescriptions(){
   }
 }
 
+// 2026-05-27: Re-sweep Year 3-6 units to lift Minecraft + Micro:bit
+// pickup with the Y3+ STEM PRIORITY nudge active (added to the inspiring
+// prompt the same day). Clears inspiringRegenAt markers on every Y3-6
+// unit, then auto-launches Inspire All to regenerate them.
+async function inspireAllRequeueY3Plus(){
+  if(!confirm('Re-sweep every Year 3-6 unit (about 72 units) with the new Year 3+ Minecraft/Micro:bit nudge?\n\n• Clears inspiringRegenAt on Y3-Y6 units only — Kinder, Prep, Y1, Y2 stay untouched.\n• Then auto-launches Inspire All to regenerate them.\n• ~30s per unit × 72 = approximately 25-35 minutes total.\n• Resumable if the laptop sleeps — same per-unit marker discipline.\n• Estimated lift: Minecraft + Micro:bit picks rise from 4 each to roughly 15-25 each.\n\nProceed?')) return;
+  setStatus('Clearing Y3+ markers…', 'loading');
+  try {
+    const payload = withGASToken({ action: 'regenerateAllInspiringRequeueY3Plus' });
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+    if(result.error){ setStatus('Requeue error: ' + result.error, 'error'); return; }
+    if(!result.cleared){ setStatus('No Y3-6 units have inspiringRegenAt set — nothing to clear.', 'success'); return; }
+    setStatus(`Cleared inspiringRegenAt on ${result.cleared} Year 3-6 unit(s) — launching Inspire All…`, 'success');
+    console.info('Y3+ requeue units:', result.units);
+    if(typeof loadFromDrive === 'function'){
+      await loadFromDrive();
+      if(typeof renderBrowse === 'function') renderBrowse();
+    }
+    inspireAllBatch();
+  } catch(err){
+    setStatus('Y3+ requeue failed: ' + err.message, 'error');
+  }
+}
+
 // 2026-05-25: Emergency kill switch. Sets the INSPIRING_ABORT Script
 // Property to '1'; every in-flight regenerateAllInspiring batch checks
 // this between units and bails. Frontend loop also reads the response
@@ -1387,6 +1416,7 @@ function renderBrowse(){
       <button onclick="inspireAllRequeueAutoSwapped()" style="padding:6px 12px;background:transparent;border:1px solid #A78BFA;color:#A78BFA;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" title="Clear inspiringRegenAt on every auto-swapped unit so Inspire All can produce fresh descriptions tailored to the substituted tools (fixes feature-mismatch language + any duplicates the auto-fix introduced).">🎯 Re-regen auto-swapped (AI)</button>
       <button onclick="inspireAllRequeueBadTools()" style="padding:6px 12px;background:transparent;border:1px solid #FBBF24;color:#FBBF24;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Scan for bad-tool units, clear their inspiringRegenAt, and offer to redo just those with the AI (more expensive but produces fresh descriptions).">🔍 Re-regen with AI</button>
       <button onclick="inspireAllRequeueBadDescriptions()" style="padding:6px 12px;background:transparent;border:1px solid #F97316;color:#F97316;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Scan slot DESCRIPTIONS for off-whitelist tool names (Clips iOS app, Microsoft Sway, Notability, iMotion, Keynote, Flipgrid, WeVideo, Google Slides, OneNote). Word-bounded so common phrases like 'video clips' don't false-positive. Clears their inspiringRegenAt and lets you click Inspire All to redo only those.">📝 Re-regen for bad description tools</button>
+      <button onclick="inspireAllRequeueY3Plus()" style="padding:6px 12px;background:transparent;border:1px solid #22C55E;color:#22C55E;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear inspiringRegenAt on every Year 3-6 unit, then auto-launch Inspire All. Used after the Y3+ Minecraft/Micro:bit nudge went live — the existing 4/134 pickup rate is from the pre-nudge prompt; this re-sweep lifts it. ~25-35 min total.">🪨 Re-sweep Year 3+ (Minecraft/Micro:bit nudge)</button>
       <button onclick="inspireAllRecoverMarkers()" style="padding:6px 12px;background:transparent;border:1px solid #4ADE80;color:#4ADE80;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Restore inspiringRegenAt markers on units that already have inspiring-style descriptions (>=5 sentences, >=600 chars).">🔄 Recover markers</button>
       <button onclick="inspireAllAbort()" style="padding:6px 12px;background:transparent;border:1px solid #DC2626;color:#DC2626;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" title="EMERGENCY STOP: stops any in-flight Inspire All batch at the next unit boundary and blocks future runs until cleared.">🛑 STOP</button>
       <button onclick="inspireAllClearAbort()" style="padding:6px 12px;background:transparent;border:1px solid #888;color:#888;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear the backend abort flag so Inspire All can run again.">Clear abort</button>
