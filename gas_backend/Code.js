@@ -3343,9 +3343,6 @@ function diversityValidateSugs_(sugs, target, data, targetIdx) {
       seen[ck] = true;
     }
   }
-  // >=2 App Smashes in slots 1-5
-  const smashCount = sugs.slice(0, 5).filter(sg => /\+/.test(sg.t)).length;
-  if (smashCount < 2) return { ok: false, reason: 'only ' + smashCount + ' App Smash(es) in slots 1-5 (need >=2)' };
   // Opener must not match a sibling opener
   const opener = diversityToolKey_(sugs[0].t);
   if (data && Array.isArray(data)) {
@@ -3557,7 +3554,6 @@ function regenerateForDiversity(opts) {
 //   - Cooldown awareness
 //   - 3-attempt retry with validator-driven reasons
 //   - Component-level tool dedup within a unit
-//   - >=2 App Smash floor in slots 1-5
 //   - Opener differs from siblings
 //   - audited=true + inspiringRegenAt to protect from re-audit overwrite
 //   - Per-batch save + pushToGitHub heartbeat
@@ -4036,7 +4032,7 @@ function inspiringCheckToolMembership_(sugs, approvedSet, bannedSet, yl) {
 
 function inspiringValidateSugs_(sugs, target, data, targetIdx, approvedSet, bannedSet) {
   // Re-use the diversity validator first (length, t/d presence, tool dedup,
-  // >=2 App Smashes, opener differs from siblings).
+  // opener differs from siblings).
   const base = diversityValidateSugs_(sugs, target, data, targetIdx);
   if (!base.ok) return base;
   // Hard tool-list check (added 2026-05-25 after Inspire All v1 leaked
@@ -4634,7 +4630,7 @@ function regenerateAllInspiring(opts) {
           retryTemp = 0.45;
           const toolStrayed = /OFF-WHITELIST|BANNED|AGE-INAPPROPRIATE/.test(lastReason);
           const toolReminder = toolStrayed ? '\n\nCRITICAL: You MUST pick every tool from the approved list above. Re-read the APPROVED TOOLS section. Do not invent tool names, do not use deprecated tools, do not substitute similar-sounding tools. If you are unsure whether a tool is approved, pick a different tool from the list that you can verify IS listed.' : '';
-          retryNote = '\n\nRETRY ' + (attempt - 1) + ': Previous attempt failed validation (' + lastReason + '). Apply ALL constraints (tool whitelist, App Smash floor, no dup tools, opener differs from siblings, ~6 sentences per slot 1-5).' + toolReminder;
+          retryNote = '\n\nRETRY ' + (attempt - 1) + ': Previous attempt failed validation (' + lastReason + '). Apply ALL constraints (tool whitelist, no dup tools, opener differs from siblings, ~6 sentences per slot 1-5).' + toolReminder;
         }
         const call = inspiringCallOnce_(prompt + retryNote, retryTemp);
         if (!call.ok) {
@@ -4665,7 +4661,7 @@ function regenerateAllInspiring(opts) {
       // a unit with one slot's tool renamed than to leave a banned tool in
       // place. We only attempt this when the failure was tool-related so we
       // don't ship suggestions with other broken constraints (sentence
-      // count, App Smash floor, opener clash) untouched.
+      // count, opener clash) untouched.
       if (!success && lastSugs && /OFF-WHITELIST|BANNED|AGE-INAPPROPRIATE/.test(lastReason)) {
         const subRes = inspiringApplySubstitutions_(lastSugs, approvedSet, bannedSet, target.yl);
         if (subRes.swaps.length) {
@@ -4790,7 +4786,7 @@ function regenerateOneInspiring_(body) {
         retryTemp = 0.45;
         const toolStrayed = /OFF-WHITELIST|BANNED|AGE-INAPPROPRIATE/.test(lastReason);
         const toolReminder = toolStrayed ? '\n\nCRITICAL: You MUST pick every tool from the approved list above. Re-read the APPROVED TOOLS section. Do not invent tool names, do not use deprecated tools, do not substitute similar-sounding tools. If you are unsure whether a tool is approved, pick a different tool from the list that you can verify IS listed.' : '';
-        retryNote = '\n\nRETRY ' + (attempt - 1) + ': Previous attempt failed validation (' + lastReason + '). Apply ALL constraints (tool whitelist, App Smash floor, no dup tools, opener differs from siblings, ~6 sentences per slot 1-5).' + toolReminder;
+        retryNote = '\n\nRETRY ' + (attempt - 1) + ': Previous attempt failed validation (' + lastReason + '). Apply ALL constraints (tool whitelist, no dup tools, opener differs from siblings, ~6 sentences per slot 1-5).' + toolReminder;
       }
       const call = inspiringCallOnce_(prompt + retryNote, retryTemp);
       if (!call.ok) { lastReason = call.error || 'unknown'; if (call.retriable && attempt < 3) { Utilities.sleep(8000); continue; } break; }
