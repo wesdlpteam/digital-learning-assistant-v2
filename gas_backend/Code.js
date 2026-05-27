@@ -997,11 +997,11 @@ function readPlannerMarkdown_(folder, yl, th, caCode) {
 //             (testGWYear4HTWW, goNuclearGWYear4) don't accidentally
 //             audit unrelated entries that happen to sit earlier in the array.
 function auditPlanners(filterCa, filterYl) {
-  // 2026-05-18: Prevent concurrent audit runs (auditAndSync trigger +
-  // appSmashRecoveryTick can fire in the same minute and otherwise both
-  // pick the same unaudited unit, doubling OpenAI spend and racing on
-  // the data.json write). tryLock(0) returns immediately if another
-  // execution holds the lock so the second caller bails cleanly.
+  // 2026-05-18: Prevent concurrent audit runs (the auditAndSync trigger
+  // can otherwise fire while a manual run is in flight, doubling OpenAI
+  // spend and racing on the data.json write). tryLock(0) returns
+  // immediately if another execution holds the lock so the second caller
+  // bails cleanly.
   const lock = LockService.getScriptLock();
   if (!lock.tryLock(0)) {
     Logger.log('auditPlanners: another audit run holds the lock — skipping this tick.');
@@ -1946,95 +1946,6 @@ function auditAndSync() {
   pushLibrariesToGitHub();
 }
 
-// 2026-05-18: One-shot recovery helper. Finds every audited unit whose
-// first-5 digital suggestions contain fewer than 2 App Smashes (`+` in `s.t`)
-// and re-queues them for audit. Combined with v5.19's enforcement in
-// auditPlanners, this rebuilds the multi-tool App Smash combos that were lost
-// when extractUnitsFromCombinedPlanners silently wiped 85 of them on 2026-04-15.
-// Call from the GAS editor: flagUnitsMissingAppSmashes(); auditAndSync();
-function flagUnitsMissingAppSmashes(filterCa, filterYl) {
-  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
-  let data = JSON.parse(file.getBlob().getDataAsString());
-  const folder = DriveApp.getFolderById(PLANNERS_FOLDER_ID);
-  let flagged = 0;
-  let skippedNoPlanner = 0;
-  const flaggedSummary = [];
-  const skippedSummary = [];
-
-  // 2026-05-18: Pre-check each candidate against the planner markdown so we
-  // don't wipe suggestions for units that auditPlanners cannot rebuild (theme
-  // not present in planner file). This was the root cause of the data-loss
-  // incident earlier today — flagging set s=[] for units that then permanently
-  // stayed un-audited because the markdown lookup failed.
-  const pypAcronyms = {
-    'who we are': 'wwa',
-    'where we are in place and time': 'wwaipat',
-    'how we express ourselves': 'hweo',
-    'how the world works': 'htww',
-    'how we organise ourselves': 'hwoo',
-    'how we organize ourselves': 'hwoo',
-    'sharing the planet': 'stp'
-  };
-
-  // Cache planner markdown reads — combined planner files are shared across
-  // multiple units, so this avoids re-reading per unit (134 candidates × full
-  // Drive blob fetch each would be ~minutes of wasted IO).
-  const mdCache = {};
-  const themeInMarkdown_ = (planner) => {
-    const caCode = campusMap[planner.ca];
-    if (!caCode) return false;
-    const cacheKey = caCode + '|' + planner.yl;
-    if (mdCache[cacheKey] === undefined) {
-      const md = readPlannerMarkdown_(folder, planner.yl, planner.th, caCode);
-      mdCache[cacheKey] = md ? { lower: md.text.toLowerCase(), raw: md.text, fileName: md.fileName } : null;
-    }
-    const cached = mdCache[cacheKey];
-    if (!cached) return false;
-    const themeLower = (planner.th || '').toLowerCase();
-    const acronym = pypAcronyms[themeLower] || '';
-    return cached.lower.includes(themeLower)
-      || (!!acronym && new RegExp('\\b' + acronym + '\\b', 'i').test(cached.raw));
-  };
-
-  for (let i = 0; i < data.length; i++) {
-    const e = data[i];
-    if (filterCa && e.ca !== filterCa) continue;
-    if (filterYl && e.yl !== filterYl) continue;
-    if (!e.audited) continue;
-    if (!Array.isArray(e.s) || e.s.length < 5) continue;
-
-    const digital = e.s.slice(0, 5);
-    const appSmashCount = digital.filter(sg => sg && sg.t && /\+/.test(sg.t)).length;
-    if (appSmashCount >= 2) continue;
-
-    // Pre-check: only wipe if the theme can be located in the planner markdown.
-    if (!themeInMarkdown_(e)) {
-      skippedNoPlanner++;
-      skippedSummary.push(`[${e.ca}] ${e.yl} — ${e.th} (had ${appSmashCount} App Smash${appSmashCount === 1 ? '' : 'es'})`);
-      continue;
-    }
-
-    data[i].audited = false;
-    data[i].s = [];
-    if (data[i].stemRebooted) delete data[i].stemRebooted;
-    flagged++;
-    flaggedSummary.push(`[${e.ca}] ${e.yl} — ${e.th} (had ${appSmashCount} App Smash${appSmashCount === 1 ? '' : 'es'})`);
-  }
-
-  if (flagged > 0) {
-    file.setContent(JSON.stringify(data, null, 2));
-    Logger.log(`Flagged ${flagged} units for App Smash re-audit:`);
-    flaggedSummary.forEach(line => Logger.log('  ' + line));
-  } else {
-    Logger.log('No units need flagging — every eligible audited unit already has 2+ App Smashes.');
-  }
-  if (skippedNoPlanner > 0) {
-    Logger.log(`Skipped ${skippedNoPlanner} unit(s) — theme not present in planner markdown (cannot be re-audited, suggestions preserved):`);
-    skippedSummary.forEach(line => Logger.log('  ' + line));
-  }
-  return { flagged: flagged, skipped: skippedNoPlanner, units: flaggedSummary, skippedUnits: skippedSummary };
-}
-
 function enrichAndSync() {
   enrichPlannerContext();
   pushToGitHub();
@@ -2902,110 +2813,6 @@ function rebootAndSync() {
   return result;
 }
 
-// 2026-05-18: One-click full App Smash recovery. Flags every audited unit
-// whose first-5 digital suggestions have fewer than 2 App Smashes ("+" in
-// the title), then installs a 10-minute trigger that processes batches via
-// auditPlanners (which now enforces the v5.19 2+ App Smash rule). The
-// trigger self-deletes when there are no flagged units left to re-audit.
-// Click Run on this function once and walk away — the whole catalogue gets
-// rebuilt with multi-tool combos.
-function kickoffFullAppSmashRecovery() {
-  Logger.log('=== KICKOFF: full App Smash recovery ===');
-  PropertiesService.getScriptProperties().deleteProperty('DLA_RESUME_TIME');
-
-  // Flag the work
-  const flagResult = flagUnitsMissingAppSmashes();
-  Logger.log('Flagged: ' + JSON.stringify({ flagged: flagResult.flagged }));
-
-  if (flagResult.flagged === 0) {
-    Logger.log('Nothing to recover — every audited unit already has 2+ App Smashes.');
-    return { message: 'No units needed flagging.', flagged: 0 };
-  }
-
-  // Park the original ids of flagged units in script properties so the tick
-  // function knows when it's done (vs. picking up unrelated unaudited units).
-  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
-  const data = JSON.parse(file.getBlob().getDataAsString());
-  const targetKeys = data
-    .filter(e => e.audited === false && Array.isArray(e.s) && e.s.length === 0)
-    .map(e => `${e.ca}|${e.yl}|${e.th}`);
-  PropertiesService.getScriptProperties().setProperty(
-    'DLA_APP_SMASH_RECOVERY_TARGETS',
-    JSON.stringify(targetKeys)
-  );
-  Logger.log(`Parked ${targetKeys.length} target keys for the recovery run.`);
-
-  // Remove any existing tick triggers so we don't double up
-  ScriptApp.getProjectTriggers().forEach(t => {
-    if (t.getHandlerFunction() === 'appSmashRecoveryTick') ScriptApp.deleteTrigger(t);
-  });
-
-  ScriptApp.newTrigger('appSmashRecoveryTick').timeBased().everyMinutes(10).create();
-  Logger.log('Trigger installed: appSmashRecoveryTick every 10 minutes.');
-
-  // Run one tick immediately so the user sees progress without waiting 10 min
-  appSmashRecoveryTick();
-  return {
-    message: `Kicked off. ${flagResult.flagged} units flagged; first batch running now, trigger will continue every 10 min until done.`,
-    flagged: flagResult.flagged
-  };
-}
-
-function appSmashRecoveryTick() {
-  const props = PropertiesService.getScriptProperties();
-
-  // Respect any quota cooldown set by OpenAI rate-limit handling
-  const resumeTime = props.getProperty('DLA_RESUME_TIME');
-  if (resumeTime && Date.now() < parseInt(resumeTime)) {
-    Logger.log(`appSmashRecoveryTick: cooldown active until ${new Date(parseInt(resumeTime)).toLocaleString('en-AU')} — skipping this tick.`);
-    return;
-  }
-
-  // Process the next batch (auditPlanners has BATCH_LIMIT=5 baked in)
-  auditPlanners();
-
-  // Push updated data.json so the public site sees the new App Smashes as they land
-  try {
-    if (typeof pushToGitHub === 'function') pushToGitHub();
-  } catch (e) {
-    Logger.log('appSmashRecoveryTick: pushToGitHub failed: ' + e.toString());
-  }
-
-  // Are any of the originally-flagged units still un-audited?
-  const targetsRaw = props.getProperty('DLA_APP_SMASH_RECOVERY_TARGETS');
-  if (!targetsRaw) {
-    // No target list parked — treat as done
-    cleanupAppSmashRecoveryTrigger_('No target list found');
-    return;
-  }
-
-  let targets;
-  try { targets = JSON.parse(targetsRaw); } catch (e) { targets = []; }
-  const targetSet = new Set(targets);
-
-  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
-  const data = JSON.parse(file.getBlob().getDataAsString());
-  const remaining = data.filter(e => {
-    const key = `${e.ca}|${e.yl}|${e.th}`;
-    return targetSet.has(key) && e.audited !== true;
-  });
-
-  Logger.log(`appSmashRecoveryTick: ${remaining.length} flagged unit(s) still need audit.`);
-
-  if (remaining.length === 0) {
-    cleanupAppSmashRecoveryTrigger_(`All ${targets.length} flagged units recovered`);
-  }
-}
-
-function cleanupAppSmashRecoveryTrigger_(reason) {
-  ScriptApp.getProjectTriggers().forEach(t => {
-    if (t.getHandlerFunction() === 'appSmashRecoveryTick') ScriptApp.deleteTrigger(t);
-  });
-  PropertiesService.getScriptProperties().deleteProperty('DLA_APP_SMASH_RECOVERY_TARGETS');
-  Logger.log(`App Smash recovery complete: ${reason}. Trigger removed.`);
-}
-
-
 // ==========================================
 // PLANNER MARKDOWN — PUA GLYPH CLEANUP
 // ==========================================
@@ -3372,10 +3179,9 @@ function regenerateForDiversity(opts) {
 
     // Backfill protection for units regenerated by earlier runs of this
     // function. Pre-2026-05-25 the function set audited=false, which left
-    // those units exposed to the auditAndSync / appSmashRecoveryTick
-    // triggers re-auditing them with a non-sibling-aware prompt and
-    // overwriting the diversity work. Any unit with diversityRegenAt set
-    // should be audited=true to be safe.
+    // those units exposed to the auditAndSync trigger re-auditing them
+    // with a non-sibling-aware prompt and overwriting the diversity work.
+    // Any unit with diversityRegenAt set should be audited=true to be safe.
     let backfilled = 0;
     for (let k = 0; k < data.length; k++) {
       if (data[k] && data[k].diversityRegenAt && data[k].audited !== true) {
@@ -3430,9 +3236,9 @@ function regenerateForDiversity(opts) {
         }
         // Persist into the in-memory data so the next sibling regen sees the
         // updated footprint. audited=true PROTECTS the diversity work from
-        // being overwritten by auditPlanners (run via auditAndSync /
-        // appSmashRecoveryTick triggers every 5-10 min, which re-audits any
-        // audited!==true unit with a non-sibling-aware prompt). The
+        // being overwritten by auditPlanners (run via the auditAndSync
+        // trigger, which re-audits any audited!==true unit with a
+        // non-sibling-aware prompt). The
         // diversityRegenAt timestamp + cleared humanVerified flags surface
         // these units in the Studio's "needs review" view so a human can
         // confirm the new suggestions without the audit trigger reverting
