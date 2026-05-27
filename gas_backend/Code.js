@@ -109,7 +109,7 @@ const APPROVED_TOOLS = `APPROVED TOOLS ONLY (Wesley College — Microsoft school
 - Subject Specific: Google Maps, National Geographic MapMaker, Field Guide to Victoria, Sky Map, Geoboard
 - Specialist: Wise Discussion Chatbots
 - Other: Clickview, Epic, PicCollage, Brushes Redux, Word Clouds ABCya, Sketchbook, Explain Everything, Freeform, Kahoot, Tinkercad, Minecraft Education
-PROHIBITED: Microsoft Teams, PowerPoint, Google Earth, Digital Cameras, Green Screen Kits, Lego Spike Essential, Banqer, Google Suite (Docs/Slides/Sheets), WeVideo, OneNote, Sway, Apple Keynote, ClassVR, Flipgrid, Flip, ChatGPT, Claude, Gemini, Copilot, Google Streetview, any tool NOT on the above list.
+PROHIBITED: Microsoft Teams, PowerPoint, Google Earth, Digital Cameras, Green Screen Kits, Lego Spike Essential, Banqer, Google Suite (Docs/Slides/Sheets), WeVideo, OneNote, Sway, Apple Keynote, ClassVR, Flipgrid, Flip, ChatGPT, Claude, Gemini, Copilot, any tool NOT on the above list.
 HARDWARE RULES: Instead of Digital Cameras, suggest using the iPad Camera app. Instead of Green Screen Kits, suggest using Canva's 'Remove Background' feature.`;
 
 const REALISTIC_TOOL_USE_RULES = `REALISTIC CLASSROOM USE RULES (HARD RULE):
@@ -119,6 +119,8 @@ const REALISTIC_TOOL_USE_RULES = `REALISTIC CLASSROOM USE RULES (HARD RULE):
 - Robotics and drones should only be used when the unit genuinely involves movement, mapping, forces, systems, navigation, data collection, automation, measurement, environments or spatial thinking.
 - CoDrone EDU rule: only Year 4+; it must involve actual drone actions such as flight paths, take-off/landing, waypoints, altitude, obstacle courses, mapping, aerial observation or sensor/data collection. Do NOT suggest CoDrone for body systems, emotions, wellbeing, fitness challenges, storytelling-only tasks, or purely abstract concepts.
 - Bad example: CoDrone EDU drones model body systems or wellbeing. A flying drone cannot meaningfully model a circulatory system.
+- Google Maps rule: students do NOT have a login, so they can only VIEW Google Maps — exploring the world map, using Street View walkthroughs, comparing places, finding distances/scale, identifying landmarks. They CANNOT create custom maps, drop pins, save layers, edit "My Maps", or share editable maps. Any activity that requires student-built/annotated maps MUST use National Geographic MapMaker instead. Street View counts as a Google Maps viewing mode — use it freely.
+- iPad rule: "iPad" by itself is a platform, not a tool. ONLY pick "iPad" as the t-field when the activity uses an iPad built-in feature that has no dedicated approved tool — specifically the Camera (photos/video), Voice Memos, Notes sketch, or generic device behaviours. NEVER use "iPad" as a wrapper for a third-party app that isn't on the approved tools list (no Clips, no Notability, no iMotion, no specific iOS app names). If the activity needs a specific app, pick that app from the approved list as the t-field instead.
 - If the real classroom task is unclear, choose a different tool.`;
 
 function toolKey_(t) {
@@ -1157,7 +1159,7 @@ RULES FOR AGE-APPROPRIATE COMPLEXITY:
 
 RULES FOR SUGGESTIONS 1-5 (Digital):
 - ONE TOOL PER SLOT: Each suggestion uses a single approved tool. No "+" pairings.
-- WHITELIST: Only use tools from the APPROVED TOOLS list below. Do NOT use Google Streetview, Google Street View, Google Slides, Flip, or any other tool not explicitly listed.
+- WHITELIST: Only use tools from the APPROVED TOOLS list below. Do NOT use Google Slides, Flip, or any other tool not explicitly listed. Google Street View is permitted as a viewing mode INSIDE Google Maps (set t to "Google Maps" and describe the Street View walkthrough in the description).
 
 NO DUPLICATE TOOLS (HARD RULE):
 - Each of the 6 suggestions MUST use a DIFFERENT tool.
