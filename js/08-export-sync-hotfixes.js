@@ -3218,11 +3218,24 @@ setInterval(async()=>{
     let tool = dqTool_(originalTool);
     let desc = dqText_(originalDesc);
 
-    if(dqKey_(tool) === dqKey_('Google Maps') && dqDescriptionSuggestsAnnotatedMap_(desc)){
-      tool = NATGEO_TOOL;
-    }
-    if(dqKey_(tool) === dqKey_('Google Maps')) desc = dqRewriteMapDescription_(tool, desc);
-    if(dqKey_(tool) === dqKey_(NATGEO_TOOL)) desc = dqRewriteMapDescription_(tool, desc);
+    // 2026-05-27: REMOVED — auto-rename of Google Maps → National Geographic
+    // MapMaker when descriptions mention "annotate/label/layer". This rename
+    // ran on EVERY save AND every ingest, and never checked whether MapMaker
+    // was already in another slot of the same unit — guaranteed to create
+    // intra-unit duplicates whenever the sweep produced slot 1=Google Maps
+    // + slot 3=MapMaker (the natural pattern for WWAIPAT units). Was the
+    // root cause of the multi-day "phantom MapMaker dups" puzzle.
+    // The new prompt rule (Google Maps view-only, deployed in
+    // REALISTIC_TOOL_USE_RULES on 2026-05-27) prevents the issue at source:
+    // Google Maps suggestions are constrained to viewing/Street View, and
+    // any task that requires student-built maps must use MapMaker from the
+    // start. No post-save mutation needed.
+    //
+    // Also removed: the auto-rewrite of map descriptions
+    // (dqRewriteMapDescription_ injection of "Students add labels..." /
+    // "Students use Street View..." sentences). That tooling mutated AI
+    // output on every save, which masked prompt-quality regressions and
+    // produced descriptions the AI never wrote.
 
     out.t = tool;
     out.d = desc;
