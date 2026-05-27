@@ -1,5 +1,12 @@
 function detectBulkPlatform(){}
 
+// 2026-05-28: Surgeon now reads a JSON response (was no-cors), shows the
+// count of requeued units, and prompts the user to immediately kick off
+// Inspire All to regenerate them through the full inspiring pipeline.
+// Backend behaviour also changed: Surgeon no longer runs its own AI prompt
+// per slot — it just clears inspiringRegenAt on every unit containing the
+// banned tool, then returns. The inspiring path picks them up with full
+// whitelist + auto-substitute + sibling-dup + library-lesson handling.
 async function runSurgeon(){
   const bannedEl = document.getElementById('surgeon-banned');
   const replacementEl = document.getElementById('surgeon-replacement');
@@ -15,30 +22,167 @@ async function runSurgeon(){
 
   btn.disabled = true;
   statusEl.style.color = '#fbbf24';
-  statusEl.textContent = 'Running…';
+  statusEl.textContent = 'Scanning corpus for "' + bannedTool + '"…';
   startProgress();
 
   try{
     const r = await fetch(SCRIPT_URL, {
       method:'POST',
-      mode:'no-cors',
-      headers:{'Content-Type':'text/plain'},
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
       body: JSON.stringify(withGASToken(payload))
     });
-    // no-cors means we can't read the response — assume success and reload
+    const result = await r.json();
+    stopProgress();
+    if(result.error){
+      statusEl.style.color = '#f87171';
+      statusEl.textContent = '✗ ' + (result.reason || result.error);
+      btn.disabled = false;
+      return;
+    }
+    const requeued = result.requeued || 0;
+    if(requeued === 0){
+      statusEl.style.color = 'var(--lime)';
+      statusEl.textContent = `✓ No units use "${bannedTool}" — nothing to regenerate.`;
+      btn.disabled = false;
+      return;
+    }
     statusEl.style.color = 'var(--lime)';
-    statusEl.textContent = '✓ Surgeon running — reloading data in 10s…';
-    setStatus('Surgeon sent — waiting for GAS to process');
-    await new Promise(res=>setTimeout(res, 10000));
+    statusEl.textContent = `✓ ${result.message || (requeued + ' units requeued')}`;
+    const proceed = confirm(`Surgeon found "${bannedTool}" in ${requeued} unit${requeued !== 1 ? 's' : ''} and cleared their inspiringRegenAt markers.\n\nKick off Inspire All now to regenerate them through the full inspiring pipeline (whitelist + auto-substitute + library lessons)?\n\nThe sweep is resumable — safe to refresh / close the laptop.`);
     await loadFromDrive();
+    if(proceed && typeof inspireAllBatch === 'function'){
+      await inspireAllBatch();
+    } else if(proceed){
+      setStatus('Inspire All function not loaded — run it manually from the Inspire All card.', 'error');
+    }
   }catch(e){
+    stopProgress();
     statusEl.style.color = '#f87171';
     statusEl.textContent = '✗ ' + e.message;
   }
   btn.disabled = false;
 }
 
+// 2026-05-28: Rewired to the server-side inspiring pipeline via the same
+// regenerateAllInspiring batch poller that Inspire All uses. Replaces the
+// previous client-side per-unit loop, which:
+//   (a) used a custom SUGGESTION_STYLE prompt that drifted from the
+//       6-sentence inspiring style of Inspire All
+//   (b) was NOT resumable — a laptop sleep mid-loop lost everything past
+//       the last per-unit saveToDrive
+// New behaviour: heartbeat-driven batch poll, snapshot-on-first-batch,
+// per-unit inspiringRegenAt markers (free resumability), and scope-filtered
+// to the selected campus + year level. Pass redoAll:true so units that
+// were inspiring-regenerated in a prior sweep also get refreshed.
 async function runBulkRegen(){
+  const ca=document.getElementById('bulk-regen-campus')?.value||'';
+  const yr=document.getElementById('bulk-regen-year')?.value||'';
+  const targets=DATA.map((e,idx)=>({e,idx})).filter(({e})=>{
+    if(ca&&e.ca!==ca) return false;
+    if(yr&&e.yl!==yr) return false;
+    return getSugs(e).filter(isRealSug).length>=6;
+  });
+  if(!targets.length){ setStatus('No entries match the selected filters','error'); return; }
+
+  const scopeLabel = [ca, yr].filter(Boolean).join(' · ') || 'the whole corpus';
+  const confirmed=confirm(`Regenerate ${targets.length} entr${targets.length!==1?'ies':'y'} in ${scopeLabel} through the inspiring 6-sentence pipeline?\n\n• Same whitelist + age + sibling-dup + auto-substitute validators as Inspire All\n• Library lessons (Minecraft / Micro:bit / Sphero) considered when the theme fits\n• Snapshot taken to Drive on the first batch (rollback path)\n• Per-unit markers — safe to refresh / close laptop; click again to resume\n• ~4 units per batch, ~1-3 min/batch\n\nProceed?`);
+  if(!confirmed) return;
+
+  const btn=document.getElementById('btn-bulk-regen');
+  const prog=document.getElementById('bulk-regen-progress');
+  const bar=document.getElementById('bulk-regen-bar');
+  const lbl=document.getElementById('bulk-regen-label');
+  const res=document.getElementById('bulk-regen-result');
+  if(!btn || !prog || !bar || !lbl || !res){ setStatus('Bulk regenerate panel is not available in this Studio view','error'); return; }
+  btn.disabled=true; prog.style.display='block'; res.innerHTML='';
+  bar.style.width='0%';
+  lbl.textContent='Starting batch 1…';
+
+  let heartbeatTimer = null;
+  const startHeartbeat = (label) => {
+    const t0 = Date.now();
+    const tick = () => {
+      const secs = Math.floor((Date.now() - t0) / 1000);
+      const mm = String(Math.floor(secs / 60)).padStart(1, '0');
+      const ss = String(secs % 60).padStart(2, '0');
+      lbl.textContent = `${label} — ${mm}:${ss} elapsed`;
+    };
+    tick();
+    heartbeatTimer = setInterval(tick, 1000);
+  };
+  const stopHeartbeat = () => { if(heartbeatTimer){ clearInterval(heartbeatTimer); heartbeatTimer = null; } };
+
+  let batchNum = 0;
+  let totalFixed = 0;
+  let totalFailed = 0;
+  const allFailures = [];
+
+  try {
+    while(true){
+      batchNum++;
+      const firstBatchHint = batchNum === 1 ? ' (first batch also snapshots data.json)' : '';
+      startHeartbeat(`Batch ${batchNum} running${firstBatchHint}`);
+      setStatus(`Bulk Regen: batch ${batchNum} processing…`, 'loading');
+      const payload = withGASToken({ action: 'regenerateAllInspiring', batch: 4, redoAll: true });
+      if(ca) payload.ca = ca;
+      if(yr) payload.yl = yr;
+      const response = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+      const result = await response.json();
+      stopHeartbeat();
+      if(result.error){
+        setStatus('Bulk Regen error: ' + result.error, 'error');
+        lbl.textContent = 'Failed: ' + result.error + ' — partial progress saved. Click again to resume.';
+        btn.disabled = false;
+        return;
+      }
+      if(result.paused){
+        const isAbort = result.reason === 'aborted' || result.aborted === true;
+        const msg = isAbort
+          ? 'Bulk Regen stopped by abort flag. Clear the abort flag before resuming.'
+          : 'Bulk Regen paused: ' + (result.reason || 'unknown') + (result.until ? ' until ' + result.until : '');
+        setStatus(msg, isAbort ? 'success' : 'error');
+        lbl.textContent = isAbort ? 'Stopped by abort flag — use "Clear abort flag" before resuming.' : `Paused (${result.reason || 'unknown'}). Click again to resume.`;
+        btn.disabled = false;
+        return;
+      }
+      totalFixed += result.fixed || 0;
+      totalFailed += result.failed || 0;
+      if(Array.isArray(result.failures)) allFailures.push(...result.failures);
+      const pct = result.total ? Math.round((result.done / result.total) * 100) : 0;
+      bar.style.width = `${pct}%`;
+      lbl.textContent = `Batch ${batchNum} done — ${result.done}/${result.total} regenerated, ${result.remaining} remaining`;
+      setStatus(`Bulk Regen: ${result.done}/${result.total} done (batch ${batchNum})`, 'success');
+      if(result.allDone){
+        const failNote = totalFailed > 0 ? ` (${totalFailed} failed — see console)` : '';
+        const skipMsg = result.skippedCount ? ` · ${result.skippedCount} skipped (need CI + LOI)` : '';
+        setStatus(`✨ Bulk Regen complete — ${totalFixed} regenerated${failNote}${skipMsg}`, 'success');
+        lbl.textContent = `Complete — ${totalFixed} regenerated${failNote}${skipMsg}. Reload data to see the new descriptions.`;
+        if(allFailures.length) console.warn('Bulk Regen failures:', allFailures);
+        if(typeof loadFromDrive === 'function'){
+          await loadFromDrive();
+          if(typeof renderDashboard === 'function') renderDashboard();
+        }
+        btn.disabled = false;
+        return;
+      }
+      await sleep(2500);
+    }
+  } catch(err){
+    stopHeartbeat();
+    setStatus('Bulk Regen failed: ' + err.message, 'error');
+    lbl.textContent = 'Failed: ' + err.message + ' — partial progress saved. Click again to resume.';
+    btn.disabled = false;
+  }
+}
+
+// 2026-05-28: Legacy client-side runBulkRegen kept here as dead code while
+// the new server-side path stabilises. Renamed so the new function above
+// is what the bulk-regen button calls. This stub never runs.
+async function _legacyRunBulkRegen_unused(){
   const ca=document.getElementById('bulk-regen-campus')?.value||'';
   const yr=document.getElementById('bulk-regen-year')?.value||'';
   const targets=DATA.map((e,idx)=>({e,idx})).filter(({e})=>{

@@ -342,6 +342,27 @@ function doPost(e) {
       return jsonResponse(result);
     }
 
+    // 2026-05-28: single-unit inspiring regen for the per-entry "Generate 6
+    // new suggestions" Bulk-section button. Wraps regenerateOneInspiring_
+    // (preview-mode: writes data[idx]._pendingRegen on Drive AND returns the
+    // 6 sugs in the response so the Studio can render the preview pane
+    // without polling Drive).
+    if (action === 'regenerateoneinspiring') {
+      const result = regenerateOneInspiring_(body);
+      if (result && typeof result === 'object') result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
+    // 2026-05-28: single-slot inspiring regen for the per-suggestion ↻ button.
+    // Replaces ONE slot in a unit while keeping the other 5 unchanged, but
+    // runs the result through the same whitelist + age + sibling-dup
+    // validators that regenerateAllInspiring uses.
+    if (action === 'regenerateoneinspiringslot') {
+      const result = regenerateOneInspiringSlot_(body);
+      if (result && typeof result === 'object') result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
     // 2026-05-27: one-time sweep — regenerate every unit still holding a
     // "+" App Smash in slots 1-5, routed through the same Inspire All
     // batch + status + abort infrastructure as the regenerateallinspiring action.
@@ -1363,68 +1384,58 @@ ${plannerMarkdown}
 // ==========================================
 // 2. THE SURGEON
 // ==========================================
+// 2026-05-28: Surgeon now converges with the inspiring pipeline. Instead of
+// running its own per-slot OpenAI prompt (which produced 2-3 sentence drift
+// vs. the 6-sentence inspiring style elsewhere), it scans the corpus, clears
+// inspiringRegenAt on every unit containing the banned tool, and returns the
+// affected unit list so the Studio can immediately kick off an Inspire All
+// sweep. That sweep re-regenerates each affected unit through the same
+// whitelist + auto-substitute + sibling-dup + library-lesson pipeline used
+// by every other Bulk-section action — single source of truth for quality.
+//
+// `replacementTool` is accepted for backwards compatibility but no longer
+// applied; the inspiring pipeline picks contextually from the approved list.
+// For the "Google Maps -> Street View / MapMaker" case, the model decides
+// based on lesson context per the rule added to inspiringBuildPrompt_.
 function runSurgeon(bannedTool, replacementTool) {
   const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
-  let data = JSON.parse(file.getBlob().getDataAsString());
-  let totalSwaps = 0;
-  const banned = bannedTool.toLowerCase();
+  let raw = JSON.parse(file.getBlob().getDataAsString());
+  const isArr = Array.isArray(raw);
+  const data = isArr ? raw : Object.values(raw).filter(function (u) { return u && typeof u === 'object'; });
+  const banned = String(bannedTool || '').toLowerCase().trim();
+  if (!banned) return { error: 'no-banned-tool' };
 
-  let libraryText = "";
-  try {
-    libraryText += inspiringLessonsLibraryText_();
-  } catch(e) {
-    Logger.log("Could not load libraries.json for Surgeon.");
-  }
+  let requeued = 0;
+  const affected = [];
 
   for (let i = 0; i < data.length; i++) {
-    let planner = data[i];
-    if (!planner.s) continue;
-    let needsSave = false;
-
-    let upperPrimary = ["Year 4", "Year 5", "Year 6"];
-    let yearGuidance = "";
-    if (planner.yl === "3 Year Old Kinder" || planner.yl === "4 Year Old Kinder") {
-      yearGuidance = `Kindergarten (${planner.yl}): 3-4 year olds. Use only simple, play-based tools: Bee-Bots, Sphero Indi, ScratchJR, ChatterPix Kids, Puppet Pals, PicCollage, Seesaw, Book Creator, Brushes Redux, Freeform, Epic, Animating a Character with Adobe Express (teacher-guided). Teacher-guided, no reading/typing required.`;
-    } else if (upperPrimary.includes(planner.yl)) {
-      yearGuidance = "Upper primary (Year 4-6): Canva, Adobe Express, Animating a Character with Adobe Express, Delightex, or Book Creator are appropriate.";
-    } else if (planner.yl === "Prep" || planner.yl === "Year 1") {
-      yearGuidance = `Early years (Prep, Year 1): prefer Seesaw, Canva, Delightex, Book Creator, or Animating a Character with Adobe Express (teacher-guided). NO SPHERO BOLT. NO MINECRAFT.`;
-    } else if (planner.yl === "Year 2") {
-      yearGuidance = `Early years (Year 2): prefer Seesaw, Canva, Delightex, Book Creator, or Animating a Character with Adobe Express (teacher-guided). NO SPHERO BOLT.`;
-    } else {
-      yearGuidance = "Mid primary (Year 3): Canva, Book Creator, Delightex, Adobe Express, or Animating a Character with Adobe Express.";
-    }
-    yearGuidance += "\nPRESENTATION RULE: All presentation suggestions MUST use either Canva or Adobe Express. PowerPoint is BANNED.";
-    yearGuidance += libraryText;
-
+    const planner = data[i];
+    if (!planner || !Array.isArray(planner.s)) continue;
+    let hit = false;
     for (let j = 0; j < planner.s.length; j++) {
-      const originalTitle = planner.s[j].t || "";
-      const toolName = originalTitle.toLowerCase();
-      if (toolName.includes(banned)) {
-        Logger.log(`Found "${bannedTool}" in [${planner.ca}] ${planner.yl} — ${planner.th}`);
-        const otherToolsInPlanner = planner.s
-          .filter((s, idx) => idx !== j && s && s.t)
-          .map(s => s.t);
-        let newIdea = callOpenAIWithRetry(planner, planner.s[j].t, yearGuidance, replacementTool, otherToolsInPlanner, 1);
-        if (newIdea) {
-          planner.s[j] = newIdea;
-          needsSave = true;
-          totalSwaps++;
-        }
-      }
+      const sg = planner.s[j];
+      if (!sg || typeof sg.t !== 'string') continue;
+      if (sg.t.toLowerCase().indexOf(banned) !== -1) { hit = true; break; }
     }
-    if (needsSave) {
-      // If a human had already verified this unit, the verified badge is now
-      // stale — at least one suggestion has been replaced by the Surgeon.
-      clearHumanVerifiedFlags_(planner, `Surgeon replaced "${bannedTool}"`);
-      file.setContent(JSON.stringify(data, null, 2));
-    }
+    if (!hit) continue;
+    delete planner.inspiringRegenAt;
+    delete planner.inspiringRegenAutoSwapped;
+    clearHumanVerifiedFlags_(planner, 'Surgeon requeued for "' + bannedTool + '" replacement');
+    affected.push({ ca: planner.ca, yl: planner.yl, th: planner.th });
+    requeued++;
   }
 
-  Logger.log(`Surgery Complete. Replaced "${bannedTool}" in ${totalSwaps} spots.`);
+  if (requeued > 0) {
+    file.setContent(JSON.stringify(isArr ? data : raw, null, 2));
+  }
+
+  Logger.log('Surgeon requeued ' + requeued + ' units for "' + bannedTool + '"');
   return {
-    message: `Surgeon complete — replaced "${bannedTool}" in ${totalSwaps} suggestion${totalSwaps !== 1 ? 's' : ''}`,
-    swaps: totalSwaps
+    message: 'Surgeon requeued ' + requeued + ' unit' + (requeued !== 1 ? 's' : '') + ' containing "' + bannedTool + '" — Inspire All will regenerate them with full validators + auto-substitute.',
+    requeued: requeued,
+    affected: affected,
+    bannedTool: bannedTool,
+    replacementTool: replacementTool || null
   };
 }
 
@@ -3679,6 +3690,11 @@ function inspiringBuildPrompt_(data, targetIdx, approvedToolsPrompt) {
   const stemNudgeLine = (yr >= 3)
     ? '\n- STEM PRIORITY (Year 3+): Wesley invests heavily in Minecraft Education and Micro:bit. When this unit\'s central idea connects to construction, sustainability, ecosystems, environmental design, narrative world-building, simulation, exploration, coding-with-physical-feedback, sensors, data, or measurement, ACTIVELY consider whether a Minecraft library lesson, a custom Minecraft activity, a Micro:bit library lesson, or a custom Micro:bit project would be the single most engaging tool for one of the 6 slots. Don\'t force-fit them — but don\'t default to easier picks (Canva, Padlet, Seesaw) when one of these would deliver more student impact for this specific theme.'
     : '';
+  // 2026-05-28: Maps tool choice. Wesley is a Microsoft school — students
+  // cannot sign in to Google Maps to mark journeys or annotate routes.
+  // Google Maps is therefore OFF the approved list. Replace it with the
+  // right tool for the lesson's intent.
+  const mapsToolRule = '\n- MAPS TOOL CHOICE: Google Maps is NOT approved at Wesley (students cannot sign in to mark journeys). If a lesson centres on seeing or exploring a real-world place in first-person view (e.g. virtual field trip, landmark walk-around, "visit" a habitat or culture), use Google Street View. If a lesson centres on marking journeys, plotting routes, annotating regions, or building a labelled map (e.g. trade routes, migration paths, biome boundaries, historical journeys), use National Geographic MapMaker. Never suggest Google Maps.';
 
   return 'You are a visionary Digital Learning Coach at Wesley College (IB PYP, Melbourne). You help primary-school teachers see possibilities they would never have thought of on their own. Your job RIGHT NOW is to regenerate all 6 digital technology suggestions for ONE specific unit in the new 6-sentence inspiring style. Output STRICT JSON only.\n\n' +
     'Campus: ' + target.ca + ' | Year Level: ' + target.yl + ' | Theme: "' + target.th + '"' +
@@ -3692,7 +3708,7 @@ function inspiringBuildPrompt_(data, targetIdx, approvedToolsPrompt) {
     'NO DUPLICATE TOOLS within this unit (HARD RULE): each of the 6 suggestions uses a DIFFERENT tool. No "+" pairings — every suggestion stands on one tool.\n\n' +
     'DIVERSITY CONSTRAINTS:' + overusedLine + allUsedLine + '\n' +
     '- VARY YOUR OPENER — slot 1 sets the unit\'s tone and must specifically suit THIS unit\'s theme; do not default to one canonical tool across units.\n' +
-    '- If multiple tools fit equally well, pick the one LEAST used in the year level.' + stemNudgeLine + '\n\n' +
+    '- If multiple tools fit equally well, pick the one LEAST used in the year level.' + stemNudgeLine + mapsToolRule + '\n\n' +
     approvedToolsPrompt + '\n' + REALISTIC_TOOL_USE_RULES + '\n\n' +
     'YEAR LEVEL GUIDANCE FOR ' + target.yl + ':\n' + inspiringYearRule_(target.yl) + '\n' +
     inspiringLessonsLibraryText_() + '\n' +
@@ -4743,11 +4759,208 @@ function regenerateOneInspiring_(body) {
 
     // Save data.json back to Drive. Preview marker is in place.
     file.setContent(JSON.stringify(isArr ? data : raw, null, 2));
-    return { ok: true, idx: idx, autoSwapped: !!data[idx]._pendingRegen.autoSwapped };
+    return {
+      ok: true,
+      idx: idx,
+      sugs: data[idx]._pendingRegen.sugs,
+      autoSwapped: data[idx]._pendingRegen.autoSwapped || null,
+      ca: target.ca,
+      yl: target.yl,
+      th: target.th
+    };
   } catch (err) {
     Logger.log('regenerateOneInspiring_: exception ' + err);
     return { error: 'exception', message: String(err) };
   } finally {
     lock.releaseLock();
+  }
+}
+
+// 2026-05-28: Single-slot inspiring regen for the per-suggestion ↻ button.
+// Regenerates ONE suggestion (slot `sugIdx`) for the unit at (ca, yl, th)
+// while keeping the other 5 slots unchanged. Runs the result through the
+// same whitelist + age + sibling-dup + intra-unit-dup validators as the
+// whole-unit inspiring path, and uses inspiringApplySubstitutions_ as the
+// fallback when the model gets stuck on a rogue tool. Returns the new
+// {t,d} to the client — does NOT persist; the Studio routes the answer
+// through showChangesPopup for human approval before writing.
+function regenerateOneInspiringSlot_(body) {
+  try {
+    const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+    const raw = JSON.parse(file.getBlob().getDataAsString());
+    const isArr = Array.isArray(raw);
+    const data = isArr ? raw : Object.values(raw).filter(function (u) { return u && typeof u === 'object'; });
+
+    const ca = String(body.ca || '');
+    const yl = String(body.yl || '');
+    const th = String(body.th || '');
+    const sugIdx = parseInt(body.sugIdx, 10);
+    if (!Number.isInteger(sugIdx) || sugIdx < 0 || sugIdx > 5) {
+      return { error: 'bad-sugIdx', reason: 'sugIdx must be 0-5' };
+    }
+    let idx = -1;
+    const hintIdx = parseInt(body.idx, 10);
+    if (Number.isInteger(hintIdx) && hintIdx >= 0 && hintIdx < data.length &&
+        data[hintIdx] && data[hintIdx].ca === ca && data[hintIdx].yl === yl && data[hintIdx].th === th) {
+      idx = hintIdx;
+    } else {
+      for (let i = 0; i < data.length; i++) {
+        if (data[i] && data[i].ca === ca && data[i].yl === yl && data[i].th === th) { idx = i; break; }
+      }
+    }
+    if (idx === -1) return { error: 'unit-not-found' };
+
+    const target = data[idx];
+    if (!inspiringHasUnitDetails_(target)) return { error: 'missing-ci-or-lo' };
+    const currentSugs = Array.isArray(target.s) ? target.s.slice() : [];
+    if (currentSugs.length !== 6) return { error: 'unit-not-6-slot', reason: 'unit must already have 6 suggestions to use slot regen' };
+
+    const approvedToolsPrompt = getApprovedToolsPrompt_();
+    const approvedSet = new Set(getApprovedToolNames_().map(diversityToolKey_));
+    const bannedSet = new Set(getBannedToolNames_().map(diversityToolKey_));
+
+    // Build the "other 5 slots" tool footprint so the model knows what NOT to repeat.
+    const otherTools = [];
+    const otherKeys = new Set();
+    for (let i = 0; i < 6; i++) {
+      if (i === sugIdx) continue;
+      const sg = currentSugs[i];
+      if (!sg || !sg.t) continue;
+      otherTools.push(sg.t);
+      diversityToolComponents_(sg.t).forEach(function (c) {
+        const k = diversityToolKey_(c);
+        if (k) otherKeys.add(k);
+      });
+    }
+
+    const isStemSlot = (sugIdx === 5);
+    const sentenceRule = isStemSlot
+      ? 'Exactly 4-5 sentences for this STEM Design Cycle (Empathise-Define-Ideate-Prototype-Test) project.'
+      : 'Exactly 6 inspiring sentences in the Wesley DLA style — vivid, specific to THIS unit, no generic edu-speak.';
+    const slotRoleLine = isStemSlot
+      ? 'This is the unit\'s STEM Design Cycle / Makerspace slot. Pick a physical-first Micro:bit, Minecraft Education library lesson, 3D Printers, Lego Spike Prime, Sphero, Makey Makey, or Merge Cubes project that ties the design-cycle stages to THIS theme.'
+      : 'This is slot ' + (sugIdx + 1) + ' of 6. Pick a single approved tool that opens a fresh angle on the unit theme.';
+
+    const siblingFootprint = diversitySiblingToolFootprint_(data, idx);
+    const overusedLine = siblingFootprint.overused.length
+      ? '\n- DO NOT REUSE these tools already heavily used by sibling units in this campus + year level: ' + siblingFootprint.overused.join(', ') + '.'
+      : '';
+
+    const prompt = 'You are a visionary Digital Learning Coach at Wesley College (IB PYP, Melbourne). You are regenerating ONE digital technology suggestion for a single unit. Output STRICT JSON only.\n\n' +
+      'Campus: ' + target.ca + ' | Year Level: ' + target.yl + ' | Theme: "' + target.th + '"' +
+      (target.ci ? '\nCentral Idea: "' + target.ci + '"' : '') +
+      (target.lo ? '\nLines of Inquiry: "' + target.lo + '"' : '') +
+      (target.plannerText ? '\nPlanner context: ' + String(target.plannerText).slice(0, 4000) : '') + '\n\n' +
+      slotRoleLine + '\n' +
+      sentenceRule + '\n\n' +
+      'TOOLS ALREADY USED IN THIS UNIT (slots you are NOT replacing): ' + (otherTools.length ? otherTools.join(', ') : '(none)') + '.\n' +
+      'HARD RULE: Your replacement MUST use a tool that is NOT in the list above (no duplicates within the unit). No "+" pairings — pick exactly ONE approved tool.' + overusedLine + '\n\n' +
+      approvedToolsPrompt + '\n' + REALISTIC_TOOL_USE_RULES + '\n\n' +
+      'YEAR LEVEL GUIDANCE FOR ' + target.yl + ':\n' + inspiringYearRule_(target.yl) + '\n' +
+      inspiringLessonsLibraryText_() + '\n' +
+      INSPIRING_DESCRIPTION_RULES + '\n\n' +
+      'Return ONLY a valid JSON object (no markdown, no backticks). Use straight apostrophes (\'). Wrap the single suggestion inside an "s" array so the schema is:\n' +
+      '{ "s": [ { "t": "Tool Name (or \\"Minecraft: <Title>\\" / \\"Micro:bit: <Title>\\" when picking a library lesson)", "d": "' + (isStemSlot ? '4-5' : '6') + ' inspiring sentences tailored to THIS unit." } ] }';
+
+    let lastReason = '';
+    let lastSug = null;
+    let success = false;
+    let outSug = null;
+    let autoSwapped = null;
+
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      let retryNote = '';
+      let retryTemp = 0.7;
+      if (attempt > 1) {
+        retryTemp = 0.45;
+        const toolStrayed = /OFF-WHITELIST|BANNED|AGE-INAPPROPRIATE/.test(lastReason);
+        const toolReminder = toolStrayed ? '\n\nCRITICAL: Re-read the APPROVED TOOLS list. Pick a tool that IS on that list and is NOT already used in another slot.' : '';
+        retryNote = '\n\nRETRY ' + (attempt - 1) + ': Previous attempt failed validation (' + lastReason + ').' + toolReminder;
+      }
+      const call = inspiringCallOnce_(prompt + retryNote, retryTemp);
+      if (!call.ok) {
+        lastReason = call.error || 'unknown';
+        if (call.retriable && attempt < 3) { Utilities.sleep(6000); continue; }
+        break;
+      }
+      // inspiringCallOnce_ unwraps obj.s to call.sugs. Our prompt requests a
+      // single-item s array, so call.sugs[0] holds {t,d}.
+      const parsed = (call.sugs && call.sugs.length > 0) ? call.sugs[0] : null;
+      if (!parsed || !parsed.t || !parsed.d) {
+        lastReason = 'response missing {t,d}';
+        if (attempt < 3) { Utilities.sleep(3000); continue; }
+        break;
+      }
+      lastSug = parsed;
+
+      // Validate single slot using the existing membership helper. We wrap our
+      // single sug in an array so the helper's per-slot loop runs once.
+      const membership = inspiringCheckToolMembership_([parsed], approvedSet, bannedSet, target.yl);
+      if (!membership.ok) {
+        lastReason = membership.reason;
+        if (attempt < 3) { Utilities.sleep(3000); continue; }
+        break;
+      }
+      // Intra-unit duplicate check: the new sug's components must not collide
+      // with any of the other 5 slots.
+      let dup = false;
+      const comps = diversityToolComponents_(parsed.t);
+      for (let c = 0; c < comps.length; c++) {
+        if (otherKeys.has(diversityToolKey_(comps[c]))) { dup = true; break; }
+      }
+      if (dup) {
+        lastReason = 'replacement duplicates a tool already used in another slot of this unit';
+        if (attempt < 3) { Utilities.sleep(3000); continue; }
+        break;
+      }
+      outSug = { t: cleanTextCorruption_(parsed.t), d: cleanTextCorruption_(parsed.d) };
+      success = true;
+      break;
+    }
+
+    // Auto-substitute fallback for tool-only failures.
+    if (!success && lastSug && /OFF-WHITELIST|BANNED|AGE-INAPPROPRIATE/.test(lastReason)) {
+      // Build a synthetic 6-slot array with the failed sug in our slot and the
+      // existing 5 in their slots. Run inspiringApplySubstitutions_ — it picks
+      // a replacement that dodges every other slot's tool components.
+      const synthetic = currentSugs.slice();
+      synthetic[sugIdx] = lastSug;
+      const subRes = inspiringApplySubstitutions_(synthetic, approvedSet, bannedSet, target.yl);
+      const swapped = (subRes.swaps || []).find(function (sw) { return sw.slot === sugIdx + 1 || sw.slotIdx === sugIdx; });
+      if (subRes.sugs && subRes.sugs[sugIdx] && subRes.sugs[sugIdx].t && subRes.sugs[sugIdx].d) {
+        const candidate = subRes.sugs[sugIdx];
+        // Verify the auto-swap doesn't collide with other slots.
+        let collide = false;
+        diversityToolComponents_(candidate.t).forEach(function (c) {
+          if (otherKeys.has(diversityToolKey_(c))) collide = true;
+        });
+        if (!collide) {
+          outSug = { t: cleanTextCorruption_(candidate.t), d: cleanTextCorruption_(candidate.d) };
+          autoSwapped = swapped || subRes.swaps || true;
+          success = true;
+          Logger.log('regenerateOneInspiringSlot_: AUTO-SWAPPED ' + target.ca + ' / ' + target.yl + ' / ' + target.th + ' slot ' + (sugIdx + 1));
+        }
+      }
+    }
+
+    if (!success) {
+      Logger.log('regenerateOneInspiringSlot_: FAILED ' + target.ca + ' / ' + target.yl + ' / ' + target.th + ' slot ' + (sugIdx + 1) + ' (' + lastReason + ')');
+      return { error: 'regen-failed', reason: lastReason };
+    }
+
+    return {
+      ok: true,
+      idx: idx,
+      sugIdx: sugIdx,
+      t: outSug.t,
+      d: outSug.d,
+      autoSwapped: autoSwapped,
+      ca: target.ca,
+      yl: target.yl,
+      th: target.th
+    };
+  } catch (err) {
+    Logger.log('regenerateOneInspiringSlot_: exception ' + err);
+    return { error: 'exception', message: String(err) };
   }
 }

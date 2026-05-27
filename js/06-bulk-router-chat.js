@@ -1664,7 +1664,61 @@ function getRegenerateCandidateTools_(entry, currentSug, sugIdx, freq){
   return [...mixedTop.slice(0, 12), ...rest.slice(0, 4)];
 }
 
+// 2026-05-28: Rewired to the server-side regenerateOneInspiringSlot action.
+// Replaces the previous ~150-line client-side prompt builder + 5-attempt
+// loop. The server runs the same whitelist + age + intra-unit-dup
+// validators + auto-substitute fallback as the rest of the inspiring
+// pipeline, and injects the library lesson text so the model can surface
+// named Minecraft / Micro:bit lessons. Same UX: shows the suggestion via
+// showChangesPopup for human approval before writing.
 async function regenSingleSug(entryIdx, sugIdx){
+  const uid = `s${entryIdx}_${sugIdx}`;
+  const btn = document.getElementById(uid+'-regen');
+  if(btn){ btn.textContent='…'; btn.disabled=true; }
+  startProgress();
+
+  const entry = DATA[entryIdx];
+  const currentSug = getSugs(entry)[sugIdx];
+  const currentTool = sugTool(currentSug);
+  try{
+    const payload = withGASToken({
+      action: 'regenerateOneInspiringSlot',
+      ca: entry.ca,
+      yl: entry.yl,
+      th: entry.th,
+      idx: entryIdx,
+      sugIdx: sugIdx
+    });
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+    if(result.error){
+      throw new Error(result.reason || result.error);
+    }
+    if(!result.t || !result.d){
+      throw new Error('Server returned no suggestion');
+    }
+    const reason = result.autoSwapped
+      ? 'Single slot regen — server auto-substituted an off-whitelist pick'
+      : 'Single slot regen via inspiring pipeline';
+    window._snapshotReason = `Before regenerating ${currentTool || 'suggestion'} in ${entry.yl} ${entry.th}`;
+    showChangesPopup([{ entryIdx, sugIdx, t: result.t, d: result.d, reason }]);
+    setStatus('Regenerated draft ready for review');
+  }catch(e){
+    setStatus('Regen failed: '+e.message, 'error');
+  }finally{
+    stopProgress();
+    if(btn){ btn.textContent='↻'; btn.disabled=false; }
+  }
+}
+
+// 2026-05-28: Legacy client-side regenSingleSug body kept here as a
+// no-op-wrapped function in case anything still calls it. The new body
+// above replaces this one; this stub never runs.
+async function _legacyRegenSingleSug_unused(entryIdx, sugIdx){
   const uid = `s${entryIdx}_${sugIdx}`;
   const btn = document.getElementById(uid+'-regen');
   if(btn){ btn.textContent='Scanning…'; btn.disabled=true; }
@@ -2250,58 +2304,45 @@ async function regenAll(){
   const res=document.getElementById('regen-all-result');
   btn.disabled=true; btn.textContent='Generating…';
   startProgress();
-  res.innerHTML='<div style="font-size:12px;color:#fbbf24">Generating 5 suggestions…</div>';
-  const prompt=`Generate exactly 6 digital technology suggestions for this IB PYP unit.
-Suggestion #6 MUST be a STEM Design Cycle activity (Empathise-Define-Ideate-Prototype-Test).
-Campus: ${entry.ca} | Year Level: ${entry.yl} | Theme: "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${entry.lo?`\nLines of Inquiry: "${entry.lo}"`:''}${entry.plannerText?`\nPlanner: ${entry.plannerText}`:''}
-Requirements:
-- Every suggestion uses ONE approved tool (no "+" pairings). All 6 suggestions MUST use DIFFERENT tools.
-${SUGGESTION_STYLE}
-- Return ONLY a JSON array with no markdown or backticks:
-[{"t":"Tool Name","d":"2-3 vivid sentences for this unit."},...]`;
+  res.innerHTML='<div style="font-size:12px;color:#fbbf24">Generating 6 inspiring suggestions (whitelist + library lessons + auto-substitute)…</div>';
+  // 2026-05-28: Rewired to server-side regenerateOneInspiring. Same whitelist
+  // + age + sibling-dup + auto-substitute + library-lesson pipeline as
+  // Inspire All. Replaces the old client-side 3-attempt SUGGESTION_STYLE loop.
   try{
-    let sugs = null;
-    let dupedTool = null;
-    let lastDupOpener = '';
-    let lastFailReason = '';
-    for(let attempt=0; attempt<3; attempt++){
-      let retryNote = '';
-      if(attempt>0 && lastFailReason === 'dup'){
-        retryNote = `\n\nRETRY ${attempt}: Your previous response used "${dupedTool}" twice. Every one of the 6 suggestions MUST use a DIFFERENT tool \u2014 no repeats whatsoever.`;
-      } else if(attempt>0 && lastFailReason === 'opener-dup'){
-        retryNote = `\n\nRETRY ${attempt}: Your previous response used "${lastDupOpener}" as the slot-1 tool, but another unit in this campus + year level already opens with that tool. Slot 1 MUST be a DIFFERENT tool that specifically suits THIS unit's theme.`;
-      }
-      const raw=await callAI([{role:'user',parts:[{text:prompt+retryNote}]}]);
-      const clean=raw.replace(/```json|```/g,'').trim();
-      const si=clean.indexOf('['), ei=clean.lastIndexOf(']');
-      if(si===-1||ei===-1) throw new Error('No JSON array in response');
-      const parsed=JSON.parse(clean.slice(si,ei+1));
-      const keys=parsed.map(s=>toolKey(sugTool(s))).filter(Boolean);
-      const dup=keys.find((k,i)=>keys.indexOf(k)!==i);
-      if(dup){
-        const dupSug=parsed.find(s=>toolKey(sugTool(s))===dup);
-        dupedTool = dupSug ? sugTool(dupSug) : dup;
-        lastFailReason = 'dup';
-        continue;
-      }
-      const openerDup = openerDupesSiblingInYear_(entry, parsed);
-      if(openerDup){ lastDupOpener = openerDup; lastFailReason = 'opener-dup'; continue; }
-      sugs = parsed;
-      break;
+    const payload = withGASToken({
+      action: 'regenerateOneInspiring',
+      ca: entry.ca,
+      yl: entry.yl,
+      th: entry.th,
+      idx: idx
+    });
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+    if(result.error){
+      throw new Error(result.reason || result.error);
     }
-    if(!sugs){
-      if(lastFailReason === 'opener-dup') throw new Error(`AI kept reusing "${lastDupOpener}" as the opener after 3 attempts \u2014 try regen again or adjust manually.`);
-      throw new Error(`AI repeated "${dupedTool}" in the batch \u2014 try again`);
+    const sugs = result.sugs;
+    if(!Array.isArray(sugs) || sugs.length !== 6){
+      throw new Error('Server returned ' + (Array.isArray(sugs) ? sugs.length : 'no') + ' suggestions; expected 6');
     }
+    const autoSwappedNote = result.autoSwapped
+      ? `<div style="font-size:11px;color:#fbbf24;margin-bottom:8px">\u26a0 One or more tools were auto-substituted \u2014 review carefully.</div>`
+      : '';
     const pendingId='regenall_'+idx;
     window[pendingId]=sugs;
     res.innerHTML=`
       <div style="font-size:10px;color:var(--mint);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Preview — apply to save</div>
+      ${autoSwappedNote}
       ${sugs.map(s=>`<div class="preview-ok"><div class="preview-tool">${esc(s.t)}</div><div class="preview-desc">${esc(s.d)}</div></div>`).join('')}
       <div style="display:flex;gap:8px;margin-top:12px">
         <button class="btn-pri" onclick="applyRegenAll(${idx},'${pendingId}')">Apply all</button>
         <button class="btn-sm" onclick="document.getElementById('regen-all-result').innerHTML='';document.getElementById('btn-regen-all').disabled=false;document.getElementById('btn-regen-all').textContent='Generate 6 new suggestions'">Discard</button>
       </div>`;
+    stopProgress();
   }catch(e){
     res.innerHTML=`<div style="font-size:12px;color:#f87171">${esc(e.message)}</div>`;
     stopProgress();
