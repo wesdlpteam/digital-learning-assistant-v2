@@ -367,6 +367,12 @@ function doPost(e) {
     // 2026-05-25: clears inspiringRegenAt for units whose current saved
     // suggestions contain off-whitelist or banned tools, so Inspire All
     // (now with whitelist validator) can redo only those.
+    if (action === 'regenerateallinspiringrequeuebaddescriptions') {
+      const result = regenerateAllInspiringRequeueBadDescriptions({ ca: body.ca || null, yl: body.yl || null });
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
     if (action === 'regenerateallinspiringrequeuebadtools') {
       const result = regenerateAllInspiringRequeueBadTools({ ca: body.ca || null, yl: body.yl || null });
       result.user = verifiedEmail;
@@ -3656,6 +3662,17 @@ function inspiringBuildPrompt_(data, targetIdx, approvedToolsPrompt) {
   const allUsedLine = footprint.allUsed.length
     ? '\n- For context, every tool currently used by ANY sibling unit in this campus + year level: ' + footprint.allUsed.join(', ') + '. Reach for tools NOT on this list first; only repeat from it when the alternative would be a poor pedagogical fit.'
     : '';
+  // 2026-05-27: For Year 3+ units, actively encourage Minecraft Education
+  // and Micro:bit picks where they fit. The neutral "allow, don't push"
+  // wording produced only 4 picks each across 134 units — too low for
+  // Wesley's STEM-heavy program. This is still permissive (no rule that
+  // says "MUST pick one"), just a thumb-on-the-scale for unit themes that
+  // genuinely connect to construction, environment, simulation, narrative
+  // world-building, sustainability, or physical-feedback coding.
+  const yr = getYearNumber_(target.yl);
+  const stemNudgeLine = (yr >= 3)
+    ? '\n- STEM PRIORITY (Year 3+): Wesley invests heavily in Minecraft Education and Micro:bit. When this unit\'s central idea connects to construction, sustainability, ecosystems, environmental design, narrative world-building, simulation, exploration, coding-with-physical-feedback, sensors, data, or measurement, ACTIVELY consider whether a Minecraft library lesson, a custom Minecraft activity, a Micro:bit library lesson, or a custom Micro:bit project would be the single most engaging tool for one of the 6 slots. Don\'t force-fit them — but don\'t default to easier picks (Canva, Padlet, Seesaw) when one of these would deliver more student impact for this specific theme.'
+    : '';
 
   return 'You are a visionary Digital Learning Coach at Wesley College (IB PYP, Melbourne). You help primary-school teachers see possibilities they would never have thought of on their own. Your job RIGHT NOW is to regenerate all 6 digital technology suggestions for ONE specific unit in the new 6-sentence inspiring style. Output STRICT JSON only.\n\n' +
     'Campus: ' + target.ca + ' | Year Level: ' + target.yl + ' | Theme: "' + target.th + '"' +
@@ -3669,7 +3686,7 @@ function inspiringBuildPrompt_(data, targetIdx, approvedToolsPrompt) {
     'NO DUPLICATE TOOLS within this unit (HARD RULE): each of the 6 suggestions uses a DIFFERENT tool. No "+" pairings — every suggestion stands on one tool.\n\n' +
     'DIVERSITY CONSTRAINTS:' + overusedLine + allUsedLine + '\n' +
     '- VARY YOUR OPENER — slot 1 sets the unit\'s tone and must specifically suit THIS unit\'s theme; do not default to one canonical tool across units.\n' +
-    '- If multiple tools fit equally well, pick the one LEAST used in the year level.\n\n' +
+    '- If multiple tools fit equally well, pick the one LEAST used in the year level.' + stemNudgeLine + '\n\n' +
     approvedToolsPrompt + '\n' + REALISTIC_TOOL_USE_RULES + '\n\n' +
     'YEAR LEVEL GUIDANCE FOR ' + target.yl + ':\n' + inspiringYearRule_(target.yl) + '\n' +
     inspiringLessonsLibraryText_() + '\n' +
@@ -4129,6 +4146,64 @@ function regenerateAllInspiringRequeueAutoSwapped(opts) {
 // One-shot helper: scan for bad-tool units, clear their inspiringRegenAt
 // markers, save data.json. The user then clicks Inspire All again and the
 // tightened validator regenerates them with the whitelist check active.
+// 2026-05-27: Scans every inspired unit's slot DESCRIPTIONS for off-whitelist
+// tool name mentions (Clips iOS app, Microsoft Sway, Notability, iMotion,
+// Keynote, Flipgrid, WeVideo, Google Slides). For matches, clears
+// inspiringRegenAt so the next Inspire All run reprocesses them under the
+// current prompt (which bans these tools in t-fields and now in
+// REALISTIC_TOOL_USE_RULES rejects them in descriptions too). Patterns are
+// word-bounded to avoid false positives ("video clips" → Clips, "sway
+// gently" → Sway).
+function regenerateAllInspiringRequeueBadDescriptions(opts) {
+  opts = opts || {};
+  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  const raw = JSON.parse(file.getBlob().getDataAsString());
+  const isArr = Array.isArray(raw);
+  const data = isArr ? raw : Object.values(raw).filter(u => u && typeof u === 'object');
+
+  const patterns = [
+    { name: 'Clips (iOS)', re: /\bClips\s+app\b|\b(?:using|in|open|the)\s+Clips\b(?!\s*(?:of|from|and|to))/i },
+    { name: 'Microsoft Sway', re: /\bMicrosoft\s+Sway\b|\bSway\s+(?:app|presentation|slides?)\b|\b(?:using|in)\s+Sway\b/i },
+    { name: 'iMotion', re: /\biMotion\b/i },
+    { name: 'Notability', re: /\bNotability\b/i },
+    { name: 'Keynote', re: /\bApple\s+Keynote\b|\bKeynote\s+(?:app|presentation|slides?)\b/i },
+    { name: 'Flipgrid/Flip', re: /\bFlipgrid\b|\bthe\s+Flip\s+app\b/i },
+    { name: 'WeVideo', re: /\bWeVideo\b/i },
+    { name: 'Google Slides', re: /\bGoogle\s+Slides\b/i },
+    { name: 'Google Docs', re: /\bGoogle\s+Docs\b/i },
+    { name: 'OneNote', re: /\b(?:Microsoft\s+)?OneNote\b/i }
+  ];
+
+  const matched = [];
+  for (let i = 0; i < data.length; i++) {
+    const u = data[i];
+    if (!u || !Array.isArray(u.s)) continue;
+    if (!u.inspiringRegenAt) continue;
+    let hit = null;
+    for (const sg of u.s) {
+      if (!sg || !sg.d) continue;
+      for (const p of patterns) {
+        if (p.re.test(sg.d)) { hit = p.name; break; }
+      }
+      if (hit) break;
+    }
+    if (hit) {
+      delete u.inspiringRegenAt;
+      if (u.inspiringRegenAutoSwapped) delete u.inspiringRegenAutoSwapped;
+      matched.push({ idx: i, ca: u.ca, yl: u.yl, th: u.th, hit: hit });
+    }
+  }
+
+  if (matched.length) {
+    const toWrite = isArr ? data : raw;
+    file.setContent(JSON.stringify(toWrite, null, 2));
+    try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e) { Logger.log('pushToGitHub after requeueBadDescriptions failed: ' + e); }
+  }
+  Logger.log('regenerateAllInspiringRequeueBadDescriptions: cleared ' + matched.length + ' inspiringRegenAt marker(s) for description-side off-whitelist mentions.');
+  if (matched.length) Logger.log('Cleared units:\n' + matched.map(m => '  ' + m.ca + ' / ' + m.yl + ' / ' + m.th + ' — matched: ' + m.hit).join('\n'));
+  return { cleared: matched.length, units: matched };
+}
+
 function regenerateAllInspiringRequeueBadTools(opts) {
   opts = opts || {};
   const file = DriveApp.getFileById(DATA_JSON_FILE_ID);

@@ -947,6 +947,41 @@ async function inspireAllRequeueBadTools(){
   }
 }
 
+// 2026-05-27: Companion to inspireAllRequeueBadTools — scans every
+// inspired unit's slot DESCRIPTIONS for off-whitelist tool name mentions
+// (Clips iOS, Microsoft Sway, Notability, etc.) and clears their
+// inspiringRegenAt markers so Inspire All redoes just those. Catches the
+// gap where the t-field is approved but the description name-drops an
+// unapproved tool ("use the iPad camera and Clips app...").
+async function inspireAllRequeueBadDescriptions(){
+  setStatus('Scanning descriptions for off-whitelist tool mentions…', 'loading');
+  try {
+    const payload = withGASToken({ action: 'regenerateAllInspiringRequeueBadDescriptions' });
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+    if(result.error){ setStatus('Requeue error: ' + result.error, 'error'); return; }
+    if(!result.cleared){
+      setStatus('No description-side off-whitelist mentions found.', 'success');
+      return;
+    }
+    setStatus(`Cleared inspiringRegenAt on ${result.cleared} unit(s) with rogue tool mentions in descriptions — click Inspire All to redo them`, 'success');
+    console.info('Inspire All bad-description units:', result.units);
+    if(typeof loadFromDrive === 'function'){
+      await loadFromDrive();
+      if(typeof renderBrowse === 'function') renderBrowse();
+    }
+    if(confirm(`Found ${result.cleared} unit(s) with off-whitelist tool names buried in their descriptions (Clips app, Sway, Notability, etc.). Markers cleared. Click OK to start Inspire All now and regenerate them under the new prompt that rejects these. Full list is in the browser console.`)){
+      inspireAllBatch();
+    }
+  } catch(err){
+    setStatus('Requeue failed: ' + err.message, 'error');
+  }
+}
+
 // 2026-05-25: Emergency kill switch. Sets the INSPIRING_ABORT Script
 // Property to '1'; every in-flight regenerateAllInspiring batch checks
 // this between units and bails. Frontend loop also reads the response
@@ -1351,6 +1386,7 @@ function renderBrowse(){
       <button onclick="inspireAllDedupExactStrings()" style="padding:6px 12px;background:transparent;border:1px solid #4ADE80;color:#4ADE80;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" title="Surgical dedup: rename slots where the t field exactly matches another slot in the same unit (e.g. two Seesaws). Picks the next available approved tool from the fallback chain. No OpenAI calls. Tested locally to fix 100% of exact-string duplicates in one pass.">🧹 Dedup exact strings (no AI)</button>
       <button onclick="inspireAllRequeueAutoSwapped()" style="padding:6px 12px;background:transparent;border:1px solid #A78BFA;color:#A78BFA;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" title="Clear inspiringRegenAt on every auto-swapped unit so Inspire All can produce fresh descriptions tailored to the substituted tools (fixes feature-mismatch language + any duplicates the auto-fix introduced).">🎯 Re-regen auto-swapped (AI)</button>
       <button onclick="inspireAllRequeueBadTools()" style="padding:6px 12px;background:transparent;border:1px solid #FBBF24;color:#FBBF24;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Scan for bad-tool units, clear their inspiringRegenAt, and offer to redo just those with the AI (more expensive but produces fresh descriptions).">🔍 Re-regen with AI</button>
+      <button onclick="inspireAllRequeueBadDescriptions()" style="padding:6px 12px;background:transparent;border:1px solid #F97316;color:#F97316;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Scan slot DESCRIPTIONS for off-whitelist tool names (Clips iOS app, Microsoft Sway, Notability, iMotion, Keynote, Flipgrid, WeVideo, Google Slides, OneNote). Word-bounded so common phrases like 'video clips' don't false-positive. Clears their inspiringRegenAt and lets you click Inspire All to redo only those.">📝 Re-regen for bad description tools</button>
       <button onclick="inspireAllRecoverMarkers()" style="padding:6px 12px;background:transparent;border:1px solid #4ADE80;color:#4ADE80;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Restore inspiringRegenAt markers on units that already have inspiring-style descriptions (>=5 sentences, >=600 chars).">🔄 Recover markers</button>
       <button onclick="inspireAllAbort()" style="padding:6px 12px;background:transparent;border:1px solid #DC2626;color:#DC2626;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" title="EMERGENCY STOP: stops any in-flight Inspire All batch at the next unit boundary and blocks future runs until cleared.">🛑 STOP</button>
       <button onclick="inspireAllClearAbort()" style="padding:6px 12px;background:transparent;border:1px solid #888;color:#888;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear the backend abort flag so Inspire All can run again.">Clear abort</button>
