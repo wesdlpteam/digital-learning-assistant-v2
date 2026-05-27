@@ -1377,6 +1377,22 @@ function renderBrowse(){
     </div>`;
   }
 
+  // 2026-05-27: Standalone App Smash sweep card. Fires when the main
+  // Inspire All card above didn't render (no eligible units in scope)
+  // but there are still legacy "+" units somewhere in the corpus that
+  // need cleaning up. Sweep targets ALL of DATA regardless of filter
+  // scope, so it's safe to show even when the user is filtered down
+  // to a slice that has no eligible units.
+  let sweepStandaloneHtml = '';
+  if(!inspireSummaryHtml && _appSmashTargets.length){
+    sweepStandaloneHtml = `<div id="sweep-appsmashes-card" class="card2" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px;border-color:rgba(249,115,22,.35);background:rgba(249,115,22,.06)">
+      <span style="font-size:18px">🔥</span>
+      <span style="font-size:13px;color:var(--text);font-weight:800">${_appSmashTargets.length} unit${_appSmashTargets.length===1?'':'s'} still hold "+" App Smash suggestions across the whole corpus</span>
+      <span id="inspire-all-status" style="font-size:12px;color:var(--dim)">Click Sweep to regenerate them all in the new single-tool style</span>
+      ${sweepButtonHtml}
+    </div>`;
+  }
+
   // 2026-05-25: Teacher UOI edit proposals — admin review panel.
   // Loaded once on page init via loadUoiProposals (cached in
   // window._uoiProposalsCache). Card only renders when proposals exist.
@@ -1412,7 +1428,7 @@ function renderBrowse(){
     }).join('')}
   </div>` : '';
 
-  document.getElementById('browse-list').innerHTML=proposalReviewHtml + inspireSummaryHtml + makerspaceSummaryHtml + verificationSummaryHtml + filtered.map(({e,idx})=>{
+  document.getElementById('browse-list').innerHTML=proposalReviewHtml + inspireSummaryHtml + sweepStandaloneHtml + makerspaceSummaryHtml + verificationSummaryHtml + filtered.map(({e,idx})=>{
     const verified = isHumanVerifiedEntry_(e);
     const flash = window._lastHumanVerifiedIdx === idx ? ' human-verify-flash' : '';
     const meta = verified ? humanVerifiedMeta_(e) : '';
