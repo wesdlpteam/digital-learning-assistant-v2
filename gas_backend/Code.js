@@ -1027,16 +1027,7 @@ function auditPlanners(filterCa, filterYl) {
 
   let libraryText = "";
   try {
-    const libFile = DriveApp.getFileById(LIBRARIES_JSON_FILE_ID);
-    const libraries = JSON.parse(libFile.getBlob().getDataAsString());
-    if (libraries.minecraft && libraries.minecraft.length > 0) {
-      libraryText += "\nAPPROVED MINECRAFT LESSONS LIBRARY:\nIf you choose to suggest Minecraft Education, you MUST select exactly one from this list. Format the tool name as 'Minecraft: [Title]'. You MUST output the exact URL provided in your JSON.\nUse the Teaching notes (when shown) to ground the description in concrete lesson stages and connect them to the unit.\n" +
-      libraries.minecraft.map(m => `- [Ages ${m.ages}] ${m.title}: ${m.desc || ''} (URL: ${m.url || 'No URL'})${m.teaching_notes ? '\n    Teaching notes: ' + m.teaching_notes : ''}`).join("\n");
-    }
-    if (libraries.microbit && libraries.microbit.length > 0) {
-      libraryText += "\n\nAPPROVED MICRO:BIT LESSONS LIBRARY:\nIf you choose to suggest Micro:bits, you MUST select exactly one from this list. Format the tool name as 'Micro:bit: [Title]'. You MUST output the exact URL provided in your JSON.\nUse the Teaching notes (when shown) to ground the description in concrete lesson stages and connect them to the unit.\n" +
-      libraries.microbit.map(m => `- [Ages ${m.ages}] ${m.title} (URL: ${m.url || 'No URL'})${m.desc ? ' — ' + m.desc : ''}${m.teaching_notes ? '\n    Teaching notes: ' + m.teaching_notes : ''}`).join("\n");
-    }
+    libraryText += inspiringLessonsLibraryText_();
   } catch(e) {
     Logger.log("Could not load libraries.json. Make sure LIBRARIES_JSON_FILE_ID is correct.");
   }
@@ -1148,26 +1139,19 @@ function auditPlanners(filterCa, filterYl) {
 Analyze the unit planner below for: "${planner.th}".
 
 TASK: Generate exactly 6 highly innovative suggestions for ${planner.yl}.
-- Suggestions 1-5: Digital technology integrations. AT LEAST TWO MUST be an "App Smash".
+- Suggestions 1-5: Single-tool digital technology integrations — one approved tool per slot.
 - Suggestion 6: A Makerspace/STEM project (Physical-First focus).
 
 RULES FOR AGE-APPROPRIATE COMPLEXITY:
 - CALIBRATE FOR ${planner.yl}: Adjust the complexity to the age group (Kinder: simple play-based, teacher-guided; Prep-2: play; 3-4: multi-step; 5-6: logic/impact).
 
 RULES FOR SUGGESTIONS 1-5 (Digital):
-- TITLE SYNC RULE: The "t" field MUST list all tools mentioned in the description. If you use Book Creator and Seesaw, the title MUST be "Book Creator + Seesaw". Do not omit the second tool.
+- ONE TOOL PER SLOT: Each suggestion uses a single approved tool. No "+" pairings.
 - WHITELIST: Only use tools from the APPROVED TOOLS list below. Do NOT use Google Streetview, Google Street View, Google Slides, Flip, or any other tool not explicitly listed.
-- APP SMASH RULE (HARD RULE): AT LEAST 2 of suggestions 1-5 MUST be an App Smash.
-  - An App Smash combines two different tools where Tool 2 adds a capability Tool 1 lacks.
-  - The "t" field MUST use the exact format: "Tool 1 + Tool 2" (with a literal + sign between the two tool names).
-  - Examples: "Book Creator + Canva", "Seesaw + ChatterPix Kids", "Padlet + iMovie"
-  - WRONG formats: "Book Creator with Canva", "Book Creator and Canva", "Book Creator / Canva", "Book Creator (with Canva)"
-  - The description must explain how BOTH tools are used together and what the second tool adds.
 
 NO DUPLICATE TOOLS (HARD RULE):
-- Each of the 6 suggestions MUST use a DIFFERENT primary tool.
+- Each of the 6 suggestions MUST use a DIFFERENT tool.
 - Do NOT repeat the same tool (e.g. Canva, Book Creator) across multiple suggestions.
-- App Smash combinations count as using both tools — neither tool may appear again in another suggestion.
 
 RULES FOR SUGGESTION 6 (Makerspace):
 - PHYSICAL CORE: Must involve construction (cardboard, circuitry, etc.).
@@ -1199,7 +1183,7 @@ ${plannerMarkdown}
 {
   "s": [
     {
-      "t": "Tool Name (If App Smash, you MUST write Tool 1 + Tool 2)", 
+      "t": "Tool Name (or 'Minecraft: <Title>' / 'Micro:bit: <Title>' when picking a library lesson)",
       "d": "A detailed 3-4 sentence description calibrated for ${planner.yl}.", 
       "url": ""
     }
@@ -1394,16 +1378,7 @@ function runSurgeon(bannedTool, replacementTool) {
 
   let libraryText = "";
   try {
-    const libFile = DriveApp.getFileById(LIBRARIES_JSON_FILE_ID);
-    const libraries = JSON.parse(libFile.getBlob().getDataAsString());
-    if (libraries.minecraft && libraries.minecraft.length > 0) {
-      libraryText += "\nAPPROVED MINECRAFT LESSONS LIBRARY:\nIf you choose to suggest Minecraft Education, you MUST select exactly one from this list. Format the tool name as 'Minecraft: [Title]'. You MUST output the exact URL provided in your JSON.\nUse the Teaching notes (when shown) to ground the description in concrete lesson stages and connect them to the unit.\n" +
-      libraries.minecraft.map(m => `- [Ages ${m.ages}] ${m.title}: ${m.desc || ''} (URL: ${m.url || 'No URL'})${m.teaching_notes ? '\n    Teaching notes: ' + m.teaching_notes : ''}`).join("\n");
-    }
-    if (libraries.microbit && libraries.microbit.length > 0) {
-      libraryText += "\n\nAPPROVED MICRO:BIT LESSONS LIBRARY:\nIf you choose to suggest Micro:bits, you MUST select exactly one from this list. Format the tool name as 'Micro:bit: [Title]'. You MUST output the exact URL provided in your JSON.\nUse the Teaching notes (when shown) to ground the description in concrete lesson stages and connect them to the unit.\n" +
-      libraries.microbit.map(m => `- [Ages ${m.ages}] ${m.title} (URL: ${m.url || 'No URL'})${m.desc ? ' — ' + m.desc : ''}${m.teaching_notes ? '\n    Teaching notes: ' + m.teaching_notes : ''}`).join("\n");
-    }
+    libraryText += inspiringLessonsLibraryText_();
   } catch(e) {
     Logger.log("Could not load libraries.json for Surgeon.");
   }
@@ -3341,17 +3316,17 @@ function diversityBuildPrompt_(data, targetIdx, approvedToolsPrompt) {
     (target.lo ? '\nLines of Inquiry: "' + target.lo + '"' : '') +
     (target.plannerText ? '\nPlanner context: ' + String(target.plannerText).slice(0, 4000) : '') + '\n\n' +
     'STRUCTURE: Return exactly 6 suggestions.\n' +
-    '- Suggestions 1-5: Digital technology integrations. At LEAST 2 must be an App Smash ("Tool A + Tool B").\n' +
+    '- Suggestions 1-5: Single-tool digital technology integrations — one approved tool per slot. No "+" pairings.\n' +
     '- Suggestion 6: A Makerspace/STEM project (Physical-First focus, cardboard/circuitry, 3-4 sentence description).\n\n' +
-    'NO DUPLICATE TOOLS within this unit (HARD RULE): each of the 6 suggestions uses a DIFFERENT primary tool. App Smash components count — if slot 1 is "Padlet + iMovie", neither Padlet nor iMovie may appear in slots 2-6.\n\n' +
-    'APP SMASH FORMAT: "Tool 1 + Tool 2" with a literal + sign. The description must explain how BOTH tools are used together.\n\n' +
+    'NO DUPLICATE TOOLS within this unit (HARD RULE): each of the 6 suggestions uses a DIFFERENT tool.\n\n' +
     'DIVERSITY CONSTRAINTS FOR THIS UNIT (the reason you\'re being asked to regenerate):' + overusedLine + allUsedLine + '\n' +
-    '- VARY YOUR OPENER — slot 1 should specifically suit THIS unit\'s theme; do not default to one canonical App Smash pair.\n' +
+    '- VARY YOUR OPENER — slot 1 should specifically suit THIS unit\'s theme; do not default to one canonical tool across units.\n' +
     '- If multiple tools fit equally well, pick the one that\'s LEAST used in the year level.\n\n' +
     approvedToolsPrompt + '\n' + REALISTIC_TOOL_USE_RULES + '\n\n' +
-    'YEAR LEVEL GUIDANCE FOR ' + target.yl + ':\n' + diversityYearRule_(target.yl) + '\n\n' +
+    'YEAR LEVEL GUIDANCE FOR ' + target.yl + ':\n' + diversityYearRule_(target.yl) + '\n' +
+    inspiringLessonsLibraryText_() + '\n\n' +
     'Return ONLY a valid JSON object (no markdown, no backticks). Use straight apostrophes (\'). Schema:\n' +
-    '{ "s": [ { "t": "Tool Name or Tool A + Tool B", "d": "3-4 sentence description tailored to THIS unit." }, ... 6 items ] }';
+    '{ "s": [ { "t": "Tool Name (or \\"Minecraft: <Title>\\" / \\"Micro:bit: <Title>\\" when picking a library lesson)", "d": "3-4 sentence description tailored to THIS unit." }, ... 6 items ] }';
 }
 
 function diversityValidateSugs_(sugs, target, data, targetIdx) {
