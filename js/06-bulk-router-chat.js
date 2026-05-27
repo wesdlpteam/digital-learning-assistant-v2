@@ -794,6 +794,116 @@ async function inspireAllBatch(){
   }
 }
 
+// 2026-05-27: Client-side mirror of inspiringFindUnitsWithAppSmashes_ —
+// counts units whose slots 1-5 contain any "+" in t. Used to gate +
+// label the Sweep button on the Inspire All card. Slot 6 (STEM) is
+// intentionally excluded; it was never an App Smash slot.
+function findAppSmashUnitsLocal_(){
+  if(!Array.isArray(window.DATA)) return [];
+  const out = [];
+  for(let i=0; i<DATA.length; i++){
+    const u = DATA[i];
+    if(!u || !Array.isArray(u.s)) continue;
+    for(let s=0; s<5 && s<u.s.length; s++){
+      const sg = u.s[s];
+      if(sg && typeof sg.t === 'string' && sg.t.indexOf('+') !== -1){ out.push(i); break; }
+    }
+  }
+  return out;
+}
+
+// 2026-05-27: One-time sweep. Routes the affected units through the same
+// regenerateAllInspiring batch infrastructure as Inspire All (same lock,
+// snapshot, marker discipline, status endpoint, abort flag). Resumable
+// per existing per-unit timestamp markers if the laptop sleeps.
+async function sweepAppSmashesBatch(){
+  const targets = findAppSmashUnitsLocal_();
+  if(!targets.length){
+    alert('No App Smash units found — every unit already uses single-tool suggestions.');
+    return;
+  }
+  const estMin = Math.max(1, Math.ceil(targets.length / 4 * 1.5));
+  if(!confirm(`Regenerate ${targets.length} unit${targets.length===1?'':'s'} still holding "+" App Smash suggestions?\n\n• Every "+" suggestion becomes a single-tool 6-sentence suggestion in the inspiring style.\n• Routed through the same regenerateAllInspiring pipeline as Inspire All — resumable if your laptop sleeps.\n• ~4 units per batch, ~1-3 min per batch.\n• Estimated total: ~${estMin} min.\n• Progress shows on the ✨ card; safe to leave running.\n\nProceed?`)) return;
+
+  const btn = document.getElementById('btn-sweep-appsmashes');
+  const statusEl = document.getElementById('inspire-all-status');
+  if(btn){ btn.disabled = true; btn.style.opacity = '0.6'; btn.textContent = '🔥 Sweeping…'; }
+  let batchNum = 0;
+  let totalFixed = 0;
+  let totalFailed = 0;
+  const allFailures = [];
+
+  let heartbeatTimer = null;
+  const startHeartbeat = (label) => {
+    const t0 = Date.now();
+    const tick = () => {
+      if(!statusEl) return;
+      const secs = Math.floor((Date.now() - t0) / 1000);
+      const mm = String(Math.floor(secs / 60)).padStart(1, '0');
+      const ss = String(secs % 60).padStart(2, '0');
+      statusEl.textContent = `${label} — ${mm}:${ss} elapsed (each batch takes ~1-3 min)`;
+    };
+    tick();
+    heartbeatTimer = setInterval(tick, 1000);
+  };
+  const stopHeartbeat = () => { if(heartbeatTimer){ clearInterval(heartbeatTimer); heartbeatTimer = null; } };
+
+  try {
+    while(true){
+      batchNum++;
+      const firstBatchHint = batchNum === 1 ? ' (first batch also snapshots data.json — ~30s extra)' : '';
+      startHeartbeat(`Sweep batch ${batchNum} running${firstBatchHint}`);
+      setStatus(`App Smash sweep: batch ${batchNum} processing…`, 'loading');
+      const payload = withGASToken({ action: 'regenerateAllInspiringSweepAppSmashes', batch: 4 });
+      const response = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+      const result = await response.json();
+      stopHeartbeat();
+      if(result.error){
+        setStatus('Sweep error: ' + result.error, 'error');
+        if(statusEl) statusEl.textContent = 'Failed: ' + result.error + ' — partial progress saved. Click Sweep again to resume.';
+        return;
+      }
+      if(result.paused){
+        const isAbort = result.reason === 'aborted' || result.aborted === true;
+        const msg = isAbort
+          ? 'Sweep stopped by abort flag. Click "Clear abort flag" before resuming.'
+          : 'Sweep paused: ' + (result.reason || 'unknown') + (result.until ? ' until ' + result.until : '');
+        setStatus(msg, isAbort ? 'success' : 'error');
+        if(statusEl) statusEl.textContent = isAbort ? 'Stopped by abort flag. Use "Clear abort flag" before resuming.' : `Paused (${result.reason || 'unknown'}${result.until ? ' until ' + result.until : ''}). Click Sweep again to resume.`;
+        return;
+      }
+      totalFixed += result.fixed || 0;
+      totalFailed += result.failed || 0;
+      if(Array.isArray(result.failures)) allFailures.push(...result.failures);
+      if(statusEl) statusEl.textContent = `Sweep batch ${batchNum} done — ${result.done || totalFixed}/${result.total || targets.length} swept`;
+      setStatus(`App Smash sweep: ${result.done || totalFixed}/${result.total || targets.length} done (batch ${batchNum})`, 'success');
+      if(result.allDone){
+        const failNote = totalFailed > 0 ? ` (${totalFailed} failed — see console)` : '';
+        setStatus(`🔥 App Smash sweep complete: ${totalFixed} regenerated${failNote}`, 'success');
+        if(statusEl) statusEl.textContent = `Sweep complete — ${totalFixed} regenerated${failNote}. Reloading data…`;
+        if(allFailures.length) console.warn('App Smash sweep failures:', allFailures);
+        if(typeof loadFromDrive === 'function'){
+          await loadFromDrive();
+          if(typeof renderBrowse === 'function') renderBrowse();
+        }
+        return;
+      }
+      await sleep(2500);
+    }
+  } catch(err){
+    stopHeartbeat();
+    setStatus('Sweep failed: ' + err.message, 'error');
+    if(statusEl) statusEl.textContent = 'Failed: ' + err.message + ' — partial progress saved. Click Sweep again to resume.';
+  } finally {
+    stopHeartbeat();
+    if(btn){ btn.disabled = false; btn.style.opacity = '1'; btn.textContent = `🔥 Sweep App Smashes (${findAppSmashUnitsLocal_().length})`; }
+  }
+}
+
 // 2026-05-25: First Inspire All run leaked off-whitelist + banned tools at
 // temperature 0.75 because the inherited validator didn't check the tool
 // list. The backend now hard-validates approved/banned membership. This
@@ -1213,6 +1323,13 @@ function renderBrowse(){
     return `${e.ca} · ${e.yl} · ${e.th} (missing ${m.join(' + ')})`;
   }).join('\n') : '';
   const inspireSkippedNote = inspireSkipped.length ? ` · <span style="color:#fbbf24;cursor:help" title="${esc(inspireSkippedTitle)}">${inspireSkipped.length} skipped (no CI/LOI)</span>` : '';
+  // 2026-05-27: App Smash sweep button — appears whenever any unit
+  // still has a "+" in slots 1-5. Routes through the same
+  // regenerateAllInspiring batch infrastructure as Inspire All.
+  const _appSmashTargets = (typeof findAppSmashUnitsLocal_ === 'function') ? findAppSmashUnitsLocal_() : [];
+  const sweepButtonHtml = _appSmashTargets.length
+    ? `<button id="btn-sweep-appsmashes" onclick="sweepAppSmashesBatch()" style="padding:6px 14px;background:#F97316;color:#1a0e00;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer" title="Regenerate every unit still holding a '+' App Smash suggestion. One-time sweep — routed through regenerateAllInspiring with the new single-tool prompt.">🔥 Sweep App Smashes (${_appSmashTargets.length})</button>`
+    : '';
   // 2026-05-25: Card is now state-aware. When everything's clean (all
   // eligible units regenerated, no abort flag, no skipped units in this
   // view) we collapse to a tiny ✓ status line with an "Advanced" dropdown
@@ -1243,7 +1360,8 @@ function renderBrowse(){
       <span style="font-size:16px">✨</span>
       <span style="font-size:13px;color:var(--text);font-weight:800">${filteredInspired}/${filteredInspiredTotal} units in 6-sentence inspiring style ${inspireScopeLabel}${inspireSkippedNote}</span>
       <span style="font-size:11px;color:#4ADE80;letter-spacing:.4px">✓ Complete</span>
-      <button id="${_advancedToggleId}" onclick="document.getElementById('${_advancedBodyId}').style.display=document.getElementById('${_advancedBodyId}').style.display==='none'?'block':'none';this.textContent=document.getElementById('${_advancedBodyId}').style.display==='none'?'⚙ Advanced':'⚙ Hide';" style="margin-left:auto;padding:5px 10px;background:transparent;border:1px solid #555;color:#888;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer">⚙ Advanced</button>
+      ${sweepButtonHtml ? `<span id="inspire-all-status" style="font-size:12px;color:var(--dim);margin-left:auto"></span>${sweepButtonHtml}` : ''}
+      <button id="${_advancedToggleId}" onclick="document.getElementById('${_advancedBodyId}').style.display=document.getElementById('${_advancedBodyId}').style.display==='none'?'block':'none';this.textContent=document.getElementById('${_advancedBodyId}').style.display==='none'?'⚙ Advanced':'⚙ Hide';" style="${sweepButtonHtml ? '' : 'margin-left:auto;'}padding:5px 10px;background:transparent;border:1px solid #555;color:#888;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer">⚙ Advanced</button>
       <div id="${_advancedBodyId}" style="flex:1 1 100%;display:none">${_advancedButtons}</div>
     </div>`;
   } else if(_inspireBusy){
@@ -1253,6 +1371,7 @@ function renderBrowse(){
       <span style="font-size:13px;color:var(--text);font-weight:800">${filteredInspired}/${filteredInspiredTotal} units regenerated ${inspireScopeLabel}${inspireSkippedNote}</span>
       <span id="inspire-all-status" style="font-size:12px;color:var(--dim)">${inspiredRemaining} remaining</span>
       <button id="btn-inspire-all" onclick="inspireAllBatch()" style="margin-left:auto;padding:6px 14px;background:#38BDF8;color:#0a1f2e;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer" title="Regenerate every unit's 6 suggestions in the new 6-sentence inspiring style. Snapshots data.json first. Processes 4 units per batch. Units missing Central Idea or Lines of Inquiry are SKIPPED. Validator rejects off-whitelist + banned + age-mismatched tools; auto-substitute fallback fires if AI can't comply after 3 retries.">🚀 Inspire all${ca || yr ? ' (in view)' : ''}</button>
+      ${sweepButtonHtml}
       <button id="${_advancedToggleId}" onclick="document.getElementById('${_advancedBodyId}').style.display=document.getElementById('${_advancedBodyId}').style.display==='none'?'block':'none';this.textContent=document.getElementById('${_advancedBodyId}').style.display==='none'?'⚙ Advanced':'⚙ Hide';" style="padding:5px 10px;background:transparent;border:1px solid #555;color:#888;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer">⚙ Advanced</button>
       <div id="${_advancedBodyId}" style="flex:1 1 100%;display:none">${_advancedButtons}</div>
     </div>`;
