@@ -2050,28 +2050,21 @@ async function regenAll(){
 Suggestion #6 MUST be a STEM Design Cycle activity (Empathise-Define-Ideate-Prototype-Test).
 Campus: ${entry.ca} | Year Level: ${entry.yl} | Theme: "${entry.th}"${entry.ci?`\nCentral Idea: "${entry.ci}"`:''}${entry.lo?`\nLines of Inquiry: "${entry.lo}"`:''}${entry.plannerText?`\nPlanner: ${entry.plannerText}`:''}
 Requirements:
-- All 5 suggestions use different tools (no repeats)
+- Every suggestion uses ONE approved tool (no "+" pairings). All 6 suggestions MUST use DIFFERENT tools.
 ${SUGGESTION_STYLE}
-${appSmashRequirementForEntry_(entry)}
 - Return ONLY a JSON array with no markdown or backticks:
-[{"t":"Tool Name or Tool A + Tool B","d":"2-3 vivid sentences for this unit."},...]`;
+[{"t":"Tool Name","d":"2-3 vivid sentences for this unit."},...]`;
   try{
     let sugs = null;
     let dupedTool = null;
-    let lastSmashCount = 0;
     let lastDupOpener = '';
-    let lastDupComponent = '';
     let lastFailReason = '';
     for(let attempt=0; attempt<3; attempt++){
       let retryNote = '';
       if(attempt>0 && lastFailReason === 'dup'){
-        retryNote = `\n\nRETRY ${attempt}: Your previous response used "${dupedTool}" twice. Every one of the 5 suggestions MUST use a DIFFERENT tool \u2014 no repeats whatsoever.`;
-      } else if(attempt>0 && lastFailReason === 'smash'){
-        retryNote = `\n\nRETRY ${attempt}: Your previous response had only ${lastSmashCount} App Smash${lastSmashCount===1?'':'es'} in slots 1-5. You MUST return at least 2 entries whose "t" field uses the "Tool A + Tool B" format with both tools approved and age-appropriate.`;
+        retryNote = `\n\nRETRY ${attempt}: Your previous response used "${dupedTool}" twice. Every one of the 6 suggestions MUST use a DIFFERENT tool \u2014 no repeats whatsoever.`;
       } else if(attempt>0 && lastFailReason === 'opener-dup'){
-        retryNote = `\n\nRETRY ${attempt}: Your previous response used "${lastDupOpener}" as the slot-1 App Smash, but another unit in this campus + year level already opens with that exact pair. Slot 1 MUST be a DIFFERENT App Smash pair that specifically suits THIS unit's theme.`;
-      } else if(attempt>0 && lastFailReason === 'component-dup'){
-        retryNote = `\n\nRETRY ${attempt}: Your previous response reused "${lastDupComponent}" across slots 1-5 (either appearing in two different slots, or paired with itself as "${lastDupComponent} + ${lastDupComponent}"). Every tool component may appear AT MOST ONCE in slots 1-5, and both halves of every "+" pair MUST be DIFFERENT tools.`;
+        retryNote = `\n\nRETRY ${attempt}: Your previous response used "${lastDupOpener}" as the slot-1 tool, but another unit in this campus + year level already opens with that tool. Slot 1 MUST be a DIFFERENT tool that specifically suits THIS unit's theme.`;
       }
       const raw=await callAI([{role:'user',parts:[{text:prompt+retryNote}]}]);
       const clean=raw.replace(/```json|```/g,'').trim();
@@ -2086,19 +2079,13 @@ ${appSmashRequirementForEntry_(entry)}
         lastFailReason = 'dup';
         continue;
       }
-      const compDup = componentDupesInRegen_(parsed);
-      if(compDup){ lastDupComponent = compDup; lastFailReason = 'component-dup'; continue; }
-      lastSmashCount = appSmashCountInRegen_(parsed);
-      if(lastSmashCount < 2){ lastFailReason = 'smash'; continue; }
       const openerDup = openerDupesSiblingInYear_(entry, parsed);
       if(openerDup){ lastDupOpener = openerDup; lastFailReason = 'opener-dup'; continue; }
       sugs = parsed;
       break;
     }
     if(!sugs){
-      if(lastFailReason === 'smash') throw new Error(`AI returned only ${lastSmashCount} App Smash${lastSmashCount===1?'':'es'} after 3 attempts \u2014 not saving. Try regen again or adjust the unit.`);
       if(lastFailReason === 'opener-dup') throw new Error(`AI kept reusing "${lastDupOpener}" as the opener after 3 attempts \u2014 try regen again or adjust manually.`);
-      if(lastFailReason === 'component-dup') throw new Error(`AI kept reusing tool component "${lastDupComponent}" across slots 1-5 after 3 attempts \u2014 try regen again or adjust manually.`);
       throw new Error(`AI repeated "${dupedTool}" in the batch \u2014 try again`);
     }
     const pendingId='regenall_'+idx;
@@ -2120,23 +2107,6 @@ ${appSmashRequirementForEntry_(entry)}
 function applyRegenAll(idx,pendingId){
   const sugs=window[pendingId]; if(!sugs) return;
   const cleaned=sugs.map(cleanSuggestionObject_);
-  // 2026-05-22: Refuse to persist any regen that drops the unit below the
-  // >=2-App-Smashes-in-slots-1-5 floor. The previous "save with audited=false
-  // and let the backend re-audit" branch was the silent wipe path responsible
-  // for the 2026-04-15 incident AND the 2026-05-20 wipe (239 lost). The
-  // pending suggestions stay in window[pendingId] so the user can adjust
-  // and apply, or click Discard.
-  const appSmashCount=appSmashCountInRegen_(cleaned);
-  if(appSmashCount < 2){
-    const res=document.getElementById('regen-all-result');
-    if(res){
-      res.innerHTML = `<div style="padding:10px;border:1px solid #f87171;border-radius:8px;background:rgba(248,113,113,0.08);font-size:12px;color:#f87171;line-height:1.5">
-        <strong>App Smash floor not met</strong> — only ${appSmashCount} App Smash${appSmashCount===1?'':'es'} in slots 1-5 (need 2+). The original suggestions have been kept.<br>Click <em>Generate 6 new suggestions</em> again, or pick the smashes manually before applying.
-      </div>` + res.innerHTML;
-    }
-    setStatus(`Regen refused — only ${appSmashCount} App Smash${appSmashCount===1?'':'es'} (need 2+). Original kept.`, 'error');
-    return;
-  }
   DATA[idx].s=cleaned;
   DATA[idx].audited=true;
   markEntryNeedsHumanRecheck_(idx, 'Regenerated suggestions after human verification');
