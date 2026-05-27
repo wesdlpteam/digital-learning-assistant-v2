@@ -3900,6 +3900,38 @@ const INSPIRING_DESCRIPTION_RULES = '\nDESCRIPTION STYLE — INSPIRING + INNOVAT
   'Name the actual topic. If the unit is about ecosystems, say "ecosystems". If it is about migration, say "migration".\n\n' +
   'WRITING MECHANICS: Use straight apostrophes (\'), em-dashes (—), Australian English. No curly quotes. No line breaks inside JSON string values.';
 
+// 2026-05-27: Cached per-execution loader for the Minecraft + Micro:bit
+// lesson libraries from libraries.json. Used by inspiringBuildPrompt_ and
+// auditPlanners' prompt builder so both 6-sentence generators surface the
+// curated lessons. Falls back to '' if libraries.json is unreachable.
+var _INSPIRING_LESSONS_CACHE = null;
+function inspiringLessonsLibraryText_() {
+  if (_INSPIRING_LESSONS_CACHE !== null) return _INSPIRING_LESSONS_CACHE;
+  try {
+    const libFile = DriveApp.getFileById(LIBRARIES_JSON_FILE_ID);
+    const libraries = JSON.parse(libFile.getBlob().getDataAsString());
+    let out = '';
+    if (libraries.minecraft && libraries.minecraft.length > 0) {
+      out += '\n\nAPPROVED MINECRAFT EDUCATION LESSONS LIBRARY:\n' +
+        libraries.minecraft.map(m => `- [Ages ${m.ages}] ${m.title}: ${m.desc || ''} (URL: ${m.url || 'No URL'})${m.teaching_notes ? '\n    Teaching notes: ' + m.teaching_notes : ''}`).join('\n') +
+        '\n\nYou may suggest Minecraft Education in TWO ways:\n' +
+        '1. PREFERRED — pick a library lesson when one connects naturally to THIS unit\'s central idea. Set "t": "Minecraft: <exact title>" and include the exact URL in sentence 1 of "d". Use any Teaching notes shown to ground later sentences in concrete lesson stages.\n' +
+        '2. CUSTOM — if no library lesson fits the central idea but Minecraft is still the right tool, design a custom Minecraft activity for THIS unit. Set "t": "Minecraft Education" (no colon, no title) and build the 6 sentences around the UOI directly.';
+    }
+    if (libraries.microbit && libraries.microbit.length > 0) {
+      out += '\n\nAPPROVED MICRO:BIT LESSONS LIBRARY:\n' +
+        libraries.microbit.map(m => `- [Ages ${m.ages}] ${m.title} (URL: ${m.url || 'No URL'})${m.desc ? ' — ' + m.desc : ''}${m.teaching_notes ? '\n    Teaching notes: ' + m.teaching_notes : ''}`).join('\n') +
+        '\n\nSame two-mode rule as Minecraft: "Micro:bit: <Title>" + URL when a library lesson fits; plain "Micro:bit" with a custom unit-specific activity when none does.';
+    }
+    _INSPIRING_LESSONS_CACHE = out;
+    return out;
+  } catch (e) {
+    Logger.log('inspiringLessonsLibraryText_: could not load libraries.json — ' + e.toString());
+    _INSPIRING_LESSONS_CACHE = '';
+    return '';
+  }
+}
+
 function inspiringBuildPrompt_(data, targetIdx, approvedToolsPrompt) {
   const target = data[targetIdx];
   const footprint = diversitySiblingToolFootprint_(data, targetIdx);
