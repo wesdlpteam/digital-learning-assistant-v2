@@ -3948,18 +3948,19 @@ function inspiringBuildPrompt_(data, targetIdx, approvedToolsPrompt) {
     (target.lo ? '\nLines of Inquiry: "' + target.lo + '"' : '') +
     (target.plannerText ? '\nPlanner context: ' + String(target.plannerText).slice(0, 4000) : '') + '\n\n' +
     'STRUCTURE: Return exactly 6 suggestions.\n' +
-    '- Suggestions 1-5: Digital technology integrations. At LEAST 2 must be an App Smash ("Tool A + Tool B"). Each follows the 6-sentence inspiring style below.\n' +
+    '- Suggestions 1-5: Single-tool digital integrations — one approved tool per slot. Each follows the 6-sentence inspiring style below.\n' +
+    '- Slot 1 sets the unit\'s tone — pick the tool that opens THIS unit\'s central idea in the most surprising, specific way.\n' +
     '- Suggestion 6: A Makerspace/STEM Design Cycle project (Empathise-Define-Ideate-Prototype-Test, physical-first focus). 4-5 sentences.\n\n' +
-    'NO DUPLICATE TOOLS within this unit (HARD RULE): each of the 6 suggestions uses a DIFFERENT primary tool. App Smash components count — if slot 1 is "Padlet + iMovie", neither Padlet nor iMovie may appear in slots 2-6.\n\n' +
-    'APP SMASH FORMAT: "Tool 1 + Tool 2" with a literal + sign. The description must explain how BOTH tools are used together (not just one tool that happens to be paired in the title).\n\n' +
+    'NO DUPLICATE TOOLS within this unit (HARD RULE): each of the 6 suggestions uses a DIFFERENT tool. No "+" pairings — every suggestion stands on one tool.\n\n' +
     'DIVERSITY CONSTRAINTS:' + overusedLine + allUsedLine + '\n' +
-    '- VARY YOUR OPENER — slot 1 sets the unit\'s tone and must specifically suit THIS unit\'s theme; do not default to one canonical App Smash pair.\n' +
+    '- VARY YOUR OPENER — slot 1 sets the unit\'s tone and must specifically suit THIS unit\'s theme; do not default to one canonical tool across units.\n' +
     '- If multiple tools fit equally well, pick the one LEAST used in the year level.\n\n' +
     approvedToolsPrompt + '\n' + REALISTIC_TOOL_USE_RULES + '\n\n' +
     'YEAR LEVEL GUIDANCE FOR ' + target.yl + ':\n' + inspiringYearRule_(target.yl) + '\n' +
+    inspiringLessonsLibraryText_() + '\n' +
     INSPIRING_DESCRIPTION_RULES + '\n\n' +
     'Return ONLY a valid JSON object (no markdown, no backticks). Use straight apostrophes (\'). Schema:\n' +
-    '{ "s": [ { "t": "Tool Name or Tool A + Tool B", "d": "Exactly 6 inspiring sentences tailored to THIS unit (slot 6: 4-5 sentences for the STEM project)." }, ... 6 items ] }';
+    '{ "s": [ { "t": "Tool Name (or \\"Minecraft: <Title>\\" / \\"Micro:bit: <Title>\\" when picking a library lesson)", "d": "Exactly 6 inspiring sentences tailored to THIS unit (slot 6: 4-5 sentences for the STEM project)." }, ... 6 items ] }';
 }
 
 function inspiringCallOnce_(prompt, temperature) {
