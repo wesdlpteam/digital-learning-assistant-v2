@@ -798,8 +798,12 @@ async function inspireAllBatch(){
 // counts units whose slots 1-5 contain any "+" in t. Used to gate +
 // label the Sweep button on the Inspire All card. Slot 6 (STEM) is
 // intentionally excluded; it was never an App Smash slot.
+//
+// Note: uses bare `DATA` (the top-level `let` in 00-config-state-utils.js),
+// not `window.DATA`. `let` at the top of a classic script binds to the
+// script scope, not the window object — `window.DATA` is undefined.
 function findAppSmashUnitsLocal_(){
-  if(!Array.isArray(window.DATA)) return [];
+  if(!Array.isArray(DATA)) return [];
   const out = [];
   for(let i=0; i<DATA.length; i++){
     const u = DATA[i];
