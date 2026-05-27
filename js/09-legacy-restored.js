@@ -64,23 +64,14 @@ function computeStats(){
       // Strategy: normalise the FULL name first. If it resolves to a known tool, use it directly.
       // Only split into parts for genuine multi-tool combinations (& + or App Smash patterns).
       let parts = [];
-      // Check for "App Smash" pattern: "Tool (App Smash with OtherTool)"
-      const appSmashParen = raw.match(/^(.+?)\s*\(\s*App\s*Smash\s+with\s+(.+?)\s*\)/i);
-      const appSmashPlus = raw.match(/^(.+?)\s*[+]\s*(.+?)\s+App\s*Smash/i);
-      if(appSmashParen){
-        parts = [appSmashParen[1].trim(), appSmashParen[2].trim()];
-      } else if(appSmashPlus){
-        parts = [appSmashPlus[1].trim(), appSmashPlus[2].trim()];
+      // Try normalising the whole name first — catches "Minecraft: Area and Volume" → "Minecraft Education"
+      const wholeNorm = normaliseToolName(raw);
+      if(wholeNorm !== raw){
+        // Normalisation matched — use the single normalised name
+        parts = [raw]; // will be normalised again below
       } else {
-        // Try normalising the whole name first — catches "Minecraft: Area and Volume" → "Minecraft Education"
-        const wholeNorm = normaliseToolName(raw);
-        if(wholeNorm !== raw){
-          // Normalisation matched — use the single normalised name
-          parts = [raw]; // will be normalised again below
-        } else {
-          // No match — try splitting on & and + only (NOT "and" — too aggressive)
-          parts = raw.split(/\s*[&+]\s*/).map(t=>t.trim()).filter(Boolean);
-        }
+        // No match — try splitting on & and + only (NOT "and" — too aggressive)
+        parts = raw.split(/\s*[&+]\s*/).map(t=>t.trim()).filter(Boolean);
       }
       const nca=normCa(e.ca);
       parts.forEach(rawT=>{
