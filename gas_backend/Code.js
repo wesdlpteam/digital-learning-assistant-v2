@@ -1278,37 +1278,6 @@ ${plannerMarkdown}
             break;
           }
 
-          // v5.19: Validate App Smash count — at least 2 of suggestions 1-5 must have "+" in the title
-          const digitalSugs = validSugs.slice(0, 5);
-          const appSmashCount = digitalSugs.filter(sg => /\+/.test(sg.t)).length;
-          if (appSmashCount < 2) {
-            Logger.log(`${planner.th}: only ${appSmashCount} App Smash(es) found in suggestions 1-5 (need 2+). Titles: ${digitalSugs.map(sg => sg.t).join(' | ')}. Retrying.`);
-            if (attempt < 3) { Utilities.sleep(5000); continue; }
-            Logger.log(`${planner.th}: skipped — insufficient App Smashes after 3 attempts.`);
-            break;
-          }
-
-          // v5.19: Validate title sync — if description mentions 2+ tools, title must have "+"
-          let titleSyncFail = false;
-          digitalSugs.forEach((sg, idx) => {
-            const titleHasPlus = /\+/.test(sg.t);
-            const desc = (sg.d || '').toLowerCase();
-            const titleTools = sg.t.split(/\s*\+\s*/).map(t => t.trim().toLowerCase()).filter(Boolean);
-            // Check: if title has "+", both tools should appear in description
-            if (titleHasPlus && titleTools.length >= 2) {
-              const secondToolInDesc = desc.includes(titleTools[1]) || desc.includes(titleTools[1].replace(/\s+/g, ''));
-              if (!secondToolInDesc) {
-                Logger.log(`${planner.th}: suggestion ${idx + 1} title has "${sg.t}" but description doesn't mention "${titleTools[1]}". Retrying.`);
-                titleSyncFail = true;
-              }
-            }
-          });
-          if (titleSyncFail) {
-            if (attempt < 3) { Utilities.sleep(5000); continue; }
-            Logger.log(`${planner.th}: skipped — title sync failures after 3 attempts.`);
-            break;
-          }
-
           const unrealistic = validSugs.map((sg, idx) => ({ idx: idx, result: checkRealisticToolUse_(sg.t, sg.d, planner) })).find(x => !x.result.ok);
           if (unrealistic) {
             Logger.log(`${planner.th}: unrealistic suggestion #${unrealistic.idx + 1}: ${unrealistic.result.reason}. Retrying.`);
@@ -1408,36 +1377,16 @@ function runSurgeon(bannedTool, replacementTool) {
       const originalTitle = planner.s[j].t || "";
       const toolName = originalTitle.toLowerCase();
       if (toolName.includes(banned)) {
-        // Detect App Smash combos so we can preserve the partner tool.
-        // A combo title uses "+", "&", " and " (case-insensitive).
-        const comboParts = originalTitle.split(/\s*\+\s*|\s*&\s*|\s+and\s+/i).map(p => p.trim()).filter(Boolean);
-        const isCombo = comboParts.length >= 2;
-        let comboPartner = null;
-        if (isCombo) {
-          comboPartner = comboParts.find(p => !p.toLowerCase().includes(banned)) || null;
-        }
-        Logger.log(`Found "${bannedTool}" in [${planner.ca}] ${planner.yl} — ${planner.th}${comboPartner ? ` (App Smash — preserving "${comboPartner}")` : ''}`);
+        Logger.log(`Found "${bannedTool}" in [${planner.ca}] ${planner.yl} — ${planner.th}`);
         const otherToolsInPlanner = planner.s
           .filter((s, idx) => idx !== j && s && s.t)
           .map(s => s.t);
-        let newIdea = callOpenAIWithRetry(planner, planner.s[j].t, yearGuidance, replacementTool, otherToolsInPlanner, 1, comboPartner);
+        let newIdea = callOpenAIWithRetry(planner, planner.s[j].t, yearGuidance, replacementTool, otherToolsInPlanner, 1);
         if (newIdea) {
           planner.s[j] = newIdea;
           needsSave = true;
           totalSwaps++;
         }
-      }
-    }
-    // 2026-05-18: After a Surgeon swap, count App Smashes in suggestions 1-5.
-    // If we've dropped below v5.19's 2+ App Smash rule, re-queue this unit for
-    // a fresh auditPlanners pass so the combos are rebuilt rather than left
-    // single-tool. Prevents Surgeon runs from quietly eroding combos over time.
-    if (needsSave && planner.audited === true && Array.isArray(planner.s) && planner.s.length >= 5) {
-      const appSmashCount = planner.s.slice(0, 5).filter(sg => sg && sg.t && /\+/.test(sg.t)).length;
-      if (appSmashCount < 2) {
-        Logger.log(`  Post-Surgeon: only ${appSmashCount} App Smash(es) left in [${planner.ca}] ${planner.yl} — ${planner.th}. Re-queueing for audit.`);
-        planner.audited = false;
-        if (planner.stemRebooted) delete planner.stemRebooted;
       }
     }
     if (needsSave) {
@@ -1455,7 +1404,7 @@ function runSurgeon(bannedTool, replacementTool) {
   };
 }
 
-function callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt, comboPartner) {
+function callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt) {
   attempt = attempt || 1;
   let replacementInstruction = forcedReplacement
     ? `You MUST use "${forcedReplacement}" as the replacement tool.`
@@ -1465,17 +1414,9 @@ function callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, 
     ? `\nTOOLS ALREADY USED IN THIS UNIT — DO NOT PICK ANY OF THESE: ${otherToolsInPlanner.join(', ')}`
     : '';
 
-  // When the original suggestion was an App Smash, keep it an App Smash —
-  // swap only the banned half and preserve the partner tool.
-  const comboInstruction = comboPartner
-    ? `\nAPP SMASH PRESERVATION (HARD RULE): The original suggestion was an App Smash combining the banned tool with "${comboPartner}". The replacement MUST also be an App Smash that keeps "${comboPartner}" as the partner.\n- The "t" field MUST use the format: "<new tool> + ${comboPartner}" (literal + sign, exact partner name).\n- The description MUST explicitly describe how BOTH tools are used together and what each contributes.\n- Do NOT collapse this back to a single tool.`
-    : '';
+  const responseShape = `{"t": "Tool Name", "d": "Specific description for this unit.", "url": "https://..."}`;
 
-  const responseShape = comboPartner
-    ? `{"t": "<new tool> + ${comboPartner}", "d": "Specific description that uses BOTH tools.", "url": "https://..."}`
-    : `{"t": "Tool Name", "d": "Specific description for this unit.", "url": "https://..."}`;
-
-  let prompt = `You are a Digital Learning Coach at Wesley College.\n${getApprovedToolsPrompt_()}\n${REALISTIC_TOOL_USE_RULES}\nReplace "${oldTool}" for this unit:\nCampus: ${planner.ca} | Year: ${planner.yl} | Theme: "${planner.th}"\n${planner.plannerText ? `Unit summary: ${planner.plannerText}` : ''}${otherToolsList}\n${replacementInstruction}${comboInstruction}\nThe description must be highly innovative, exciting, and connect specifically to this unit's content. Use standard apostrophes (') only.\nReturn ONLY JSON: ${responseShape}`;
+  let prompt = `You are a Digital Learning Coach at Wesley College.\n${getApprovedToolsPrompt_()}\n${REALISTIC_TOOL_USE_RULES}\nReplace "${oldTool}" for this unit:\nCampus: ${planner.ca} | Year: ${planner.yl} | Theme: "${planner.th}"\n${planner.plannerText ? `Unit summary: ${planner.plannerText}` : ''}${otherToolsList}\n${replacementInstruction}\nThe description must be highly innovative, exciting, and connect specifically to this unit's content. Use standard apostrophes (') only.\nReturn ONLY JSON: ${responseShape}`;
 
   let payload = {
     "model": OPENAI_MODEL,
@@ -1500,7 +1441,7 @@ function callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, 
     if (isRetriableHttpCode_(code) && attempt <= 3) {
       if (code === 429) setCooldown_(2, 'OpenAI rate limit during Surgeon replacement');
       Utilities.sleep(30000);
-      return callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt + 1, comboPartner);
+      return callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt + 1);
     }
 
     if (code === 200) {
@@ -1513,35 +1454,20 @@ function callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, 
       if (parsed && parsed.t && parsed.d) {
         const realism = checkRealisticToolUse_(parsed.t, parsed.d, planner);
         if (!realism.ok) {
-          if (attempt <= 3) { Utilities.sleep(3000); return callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt + 1, comboPartner); }
-          return null;
-        }
-      }
-      // When we asked for an App Smash partner, enforce that the response actually kept it.
-      if (parsed && parsed.t && comboPartner) {
-        const titleHasPlus = /\+/.test(parsed.t);
-        const partnerKey = toolKey_(comboPartner);
-        const titleParts = parsed.t.split(/\s*\+\s*/).map(p => p.trim()).filter(Boolean);
-        const partnerInTitle = titleParts.some(p => toolKey_(p) === partnerKey);
-        const partnerInDesc = (parsed.d || '').toLowerCase().includes(comboPartner.toLowerCase());
-        if (!(titleHasPlus && partnerInTitle && partnerInDesc)) {
-          Logger.log(`Surgeon: combo response dropped partner "${comboPartner}" (got "${parsed.t}"). Retrying.`);
-          if (attempt <= 3) { Utilities.sleep(3000); return callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt + 1, comboPartner); }
+          if (attempt <= 3) { Utilities.sleep(3000); return callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt + 1); }
           return null;
         }
       }
       if (parsed && parsed.t && otherToolsInPlanner && otherToolsInPlanner.length) {
-        const parsedParts = parsed.t.split(/\s*\+\s*/).map(p => p.trim()).filter(Boolean);
-        const partKeys = parsedParts.length ? parsedParts.map(toolKey_) : [toolKey_(parsed.t)];
-        const allowedKey = comboPartner ? toolKey_(comboPartner) : null;
-        const hasDupe = partKeys.some(pk => pk !== allowedKey && otherToolsInPlanner.some(t => toolKey_(t) === pk));
-        if (hasDupe && attempt <= 3) { Utilities.sleep(3000); return callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt + 1, comboPartner); }
+        const parsedKey = toolKey_(parsed.t);
+        const hasDupe = parsedKey && otherToolsInPlanner.some(t => toolKey_(t) === parsedKey);
+        if (hasDupe && attempt <= 3) { Utilities.sleep(3000); return callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt + 1); }
         if (hasDupe) return null;
       }
       return parsed;
     }
   } catch (e) {
-    if (attempt <= 3) { Utilities.sleep(5000); return callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt + 1, comboPartner); }
+    if (attempt <= 3) { Utilities.sleep(5000); return callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt + 1); }
   }
   return null;
 }
