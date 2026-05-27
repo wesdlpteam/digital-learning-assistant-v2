@@ -517,7 +517,27 @@ setInterval(async()=>{
         };
         new Promise(waitForGSI).then(()=>getDriveToken()).then(tok=>{
           DRIVE_TOKEN=tok;
-          getDriveFileModified().then(meta=>{ if(meta) LAST_KNOWN_MODIFIED=meta.modifiedTime; });
+          // 2026-05-27: Compare Drive's current modifiedTime against the
+          // mtime that was stamped onto the cache when it was last written.
+          // If Drive is newer (e.g. a gas_backend Inspire All / Sweep ran
+          // while the tab was closed, or another curator saved from a
+          // different session), auto-reload so the user never sees stale
+          // counts/dups again. Was the root cause of the multi-day
+          // "phantom National Geographic MapMaker dups" puzzle.
+          getDriveFileModified().then(meta=>{
+            if(!meta) return;
+            const cachedMtime = localStorage.getItem('dla_data_mtime');
+            const driveMtime = meta.modifiedTime;
+            if(cachedMtime && cachedMtime !== driveMtime){
+              setStatus('Drive has newer data — refreshing…', 'loading');
+              reloadFromDrive();
+            } else {
+              LAST_KNOWN_MODIFIED = driveMtime;
+              // Backfill the cache stamp on sessions that pre-date this
+              // fix so the next staleness check has a baseline.
+              if(!cachedMtime){ try{ localStorage.setItem('dla_data_mtime', driveMtime); }catch(e){} }
+            }
+          });
           ensureLibrariesLoaded().catch(e => console.warn('Libraries preload failed:', e));
           startConflictPolling();
           setStatus('Session restored — connected to Drive');

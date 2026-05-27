@@ -178,6 +178,13 @@ async function loadFromDrive(){
     // when in fact Drive was already clean.
     const r2=await fetch(`https://www.googleapis.com/drive/v3/files/${DRIVE_FILE_ID}?alt=media&supportsAllDrives=true&_=${Date.now()}`,{headers:{'Authorization':'Bearer '+tok,'Cache-Control':'no-cache'}});
     if(!r2.ok) throw new Error(`Failed to load canonical data.json (HTTP ${r2.status})`);
+    // 2026-05-27: Fetch mtime BEFORE ingest so the cache stamp written
+    // by ingest is fresh. Same reason as reloadFromDrive — otherwise
+    // the next session's init-time staleness check has nothing valid
+    // to compare against.
+    DRIVE_TOKEN = tok;
+    const initMeta = await getDriveFileModified();
+    if(initMeta) LAST_KNOWN_MODIFIED = initMeta.modifiedTime;
     ingest(await r2.json());
     LIBRARIES_READY = false;
     ensureLibrariesLoaded().catch(e => console.warn('Libraries preload failed:', e)); // Load lesson libraries after Drive auth
@@ -207,6 +214,13 @@ function ingest(arr, skipCache){
     try{
       localStorage.setItem('dla_data', JSON.stringify(DATA));
       if(DRIVE_FILE_ID) localStorage.setItem('dla_file_id', DRIVE_FILE_ID);
+      // 2026-05-27: Stamp the cache with Drive's modifiedTime so the
+      // init flow can detect staleness across sessions (e.g. when the
+      // gas_backend Inspire All / Sweep writes to Drive while the
+      // Studio tab is closed, localStorage stays at the old version).
+      // Best-effort — if we don't have a fresh mtime yet, leave any
+      // existing one in place rather than blanking it.
+      if(LAST_KNOWN_MODIFIED) localStorage.setItem('dla_data_mtime', LAST_KNOWN_MODIFIED);
     }catch(e){ /* storage full — skip cache */ }
   }
   
@@ -293,7 +307,10 @@ Save anyway?`);
     if(updated) LAST_KNOWN_MODIFIED=updated.modifiedTime;
     const now=new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
     setStatus(`Saved to Drive at ${now}`);
-    try{ localStorage.setItem('dla_data', JSON.stringify(DATA)); }catch(e){}
+    try{
+      localStorage.setItem('dla_data', JSON.stringify(DATA));
+      if(LAST_KNOWN_MODIFIED) localStorage.setItem('dla_data_mtime', LAST_KNOWN_MODIFIED);
+    }catch(e){}
     updateConflictBar(null);
   stopProgress();
   }catch(e){ stopProgress(); setStatus('Drive save failed: '+e.message,'error'); }
@@ -342,15 +359,18 @@ async function reloadFromDrive(){
       headers:{'Authorization':'Bearer '+DRIVE_TOKEN,'Cache-Control':'no-cache'}
     });
     const arr=await r.json();
-    // 2026-05-26: Route through ingest() so the localStorage cache is also
-    // refreshed. Previously this set DATA in-memory but left dla_data
-    // pointing at the stale pre-reload snapshot, which meant the next
-    // page refresh would re-load the OLD data (showing already-fixed
-    // issues like duplicate counts that didn't reflect Drive's truth).
-    // ingest() default writes to cache; renderDashboard runs below.
-    ingest(arr);
+    // 2026-05-27: Fetch fresh mtime BEFORE ingest so the cache stamp
+    // written by ingest reflects Drive's truth-at-fetch-time, not the
+    // previously-stamped LAST_KNOWN_MODIFIED. Without this, the cache
+    // mtime stays stale and the next init-time staleness check
+    // re-triggers an unnecessary reload on every page open.
     const meta=await getDriveFileModified();
     if(meta) LAST_KNOWN_MODIFIED=meta.modifiedTime;
+    // Route through ingest() so the localStorage cache (including its
+    // mtime stamp) is refreshed. Previously this set DATA in-memory but
+    // left dla_data pointing at the stale pre-reload snapshot, which
+    // meant the next page refresh would re-load the OLD data.
+    ingest(arr);
     const now=new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
     setStatus(`Reloaded at ${now} — showing latest version`);
     renderDashboard();
