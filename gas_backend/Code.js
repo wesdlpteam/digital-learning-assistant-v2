@@ -340,6 +340,16 @@ function doPost(e) {
       return jsonResponse(result);
     }
 
+    // 2026-05-27: one-time sweep — regenerate every unit still holding a
+    // "+" App Smash in slots 1-5, routed through the same Inspire All
+    // batch + status + abort infrastructure as the regenerateallinspiring action.
+    if (action === 'regenerateallinspiringsweepappsmashes') {
+      const opts = { batch: body.batch || null };
+      const result = regenerateAllInspiringSweepAppSmashes(opts);
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
     if (action === 'regenerateallinspiringstatus') {
       const result = regenerateAllInspiringStatus({ ca: body.ca || null, yl: body.yl || null });
       result.user = verifiedEmail;
@@ -4240,6 +4250,46 @@ function regenerateAllInspiringStatus(opts) {
     snapshotFileId: props.getProperty(INSPIRING_SNAPSHOT_PROP) || null,
     startedAt: props.getProperty(INSPIRING_STARTED_AT_PROP) || null
   };
+}
+
+// 2026-05-27: One-time sweep helper. Returns the indices of every unit
+// whose slots 1-5 contain any "+" in `s[i].t` — i.e. a legacy App Smash
+// suggestion that needs to be regenerated under the new single-tool rule.
+// Slot 6 (STEM) is intentionally excluded; it was never an App Smash slot.
+function inspiringFindUnitsWithAppSmashes_(data) {
+  const out = [];
+  if (!Array.isArray(data)) return out;
+  for (let i = 0; i < data.length; i++) {
+    const u = data[i];
+    if (!u || !Array.isArray(u.s)) continue;
+    for (let s = 0; s < 5 && s < u.s.length; s++) {
+      const sg = u.s[s];
+      if (sg && typeof sg.t === 'string' && sg.t.indexOf('+') !== -1) {
+        out.push(i);
+        break;
+      }
+    }
+  }
+  return out;
+}
+
+// 2026-05-27: Wrapper that targets the App Smash sweep through the existing
+// regenerateAllInspiring batch infrastructure. Builds the index list from
+// the current Drive snapshot, then delegates. Reuses the existing per-unit
+// timestamp marker, snapshot discipline, abort hook, and status endpoint.
+// Also bypasses the inspiringRegenAt skip (caller is explicit) so units
+// already touched by Inspire All but still holding a "+" get re-processed.
+function regenerateAllInspiringSweepAppSmashes(opts) {
+  opts = opts || {};
+  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  const raw = JSON.parse(file.getBlob().getDataAsString());
+  const data = Array.isArray(raw) ? raw : Object.values(raw).filter(u => u && typeof u === 'object');
+  const indices = inspiringFindUnitsWithAppSmashes_(data);
+  if (!indices.length) {
+    return { allDone: true, processed: 0, attempted: 0, errors: [], message: 'No App Smash units found.' };
+  }
+  Logger.log('regenerateAllInspiringSweepAppSmashes: targeting ' + indices.length + ' unit(s) with "+" in slots 1-5.');
+  return regenerateAllInspiring(Object.assign({}, opts, { indices: indices, redoAll: true }));
 }
 
 function regenerateAllInspiringReset(opts) {
