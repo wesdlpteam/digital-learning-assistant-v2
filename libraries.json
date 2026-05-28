@@ -18,7 +18,7 @@
         "Freeform",
         "GarageBand",
         "Geoboard",
-        "Google Street View",
+        "Google Maps",
         "iMovie",
         "insta360 camera",
         "iPad",
@@ -54,7 +54,6 @@
         "ClassVR",
         "Digital Cameras",
         "Google Earth",
-        "Google Maps",
         "Google Suite",
         "Green Screen",
         "Lego Spike Essential",
@@ -165,7 +164,7 @@
           "min": 2,
           "max": 6
         },
-        "google street view": {
+        "google maps": {
           "min": 0,
           "max": 6
         },
@@ -226,7 +225,7 @@
           "max": 6
         },
         "minecraft education": {
-          "min": 4,
+          "min": 2,
           "max": 6
         },
         "wise discussion chatbots": {
