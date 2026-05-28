@@ -3519,6 +3519,98 @@ function inspiringRewriteDescription_(desc, fromTool, toTool) {
   return String(desc).replace(re, toTool);
 }
 
+// 2026-05-29: URL-evidence map. When the AI's t-field has been auto-
+// substituted to Seesaw (the universal fallback at line ~3453), the
+// description rewrite uses a \\b<from>\\b regex which can't catch URLs.
+// Result: t="Seesaw" but d still links to education.minecraft.net.
+// This map lets the substitute path use the URL in d as authoritative
+// evidence of the lesson's real tool — if d contains a Minecraft URL,
+// the card IS a Minecraft Education card, force t to that and skip
+// the Seesaw fallback. Keys are canonical approved tool names; values
+// are case-insensitive URL host/path substrings.
+var INSPIRING_TOOL_URL_HINTS = {
+  'Seesaw': ['seesaw.me', 'web.seesaw.me', 'app.seesaw.me'],
+  'Minecraft Education': ['education.minecraft.net', 'minecraft.net/en-us/lessons', 'minecraft.net/lessons', 'aka.ms/minecraft'],
+  'Micro:bit': ['microbit.org'],
+  'Adobe Express': ['adobe.com/express', 'express.adobe.com', 'adobesparkpost.app.link', 'new.express.adobe.com'],
+  'Animating a Character with Adobe Express': ['adobe.com/express/feature/animate-from-audio', 'new.express.adobe.com/tools/animate-from-audio'],
+  'Sphero BOLT': ['edu.sphero.com', 'sphero.com'],
+  'Sphero Indi': ['edu.sphero.com/products/indi', 'sphero.com/products/indi'],
+  'Book Creator': ['bookcreator.com'],
+  'ScratchJr': ['scratchjr.org'],
+  'Tinkercad': ['tinkercad.com'],
+  'Canva': ['canva.com'],
+  'Clickview': ['clickview.com.au', 'clickview.net', 'clickview.co'],
+  'Kahoot': ['kahoot.com', 'kahoot.it', 'create.kahoot.it'],
+  'Padlet': ['padlet.com'],
+  'Lego Spike Prime': ['education.lego.com/en-us/products/lego-education-spike-prime', 'education.lego.com/en-us/lessons'],
+  'Stop Motion Studio': ['stopmotionstudio.com', 'cateater.com'],
+  'iMovie': ['apple.com/imovie', 'support.apple.com/imovie'],
+  'GarageBand': ['apple.com/garageband', 'support.apple.com/garageband'],
+  'National Geographic MapMaker': ['mapmaker.nationalgeographic.org', 'mapmaker.geo.nationalgeographic'],
+  'Google Maps': ['google.com/maps', 'maps.google.com', 'maps.app.goo.gl'],
+  'Field Guide to Victoria': ['fieldguide.museum.vic.gov.au'],
+  'Merge Cubes': ['mergeedu.com', 'miniverse.io'],
+  'Delightex': ['delightex.com', 'cospaces.io'],
+  'Explain Everything': ['explaineverything.com'],
+  'Epic': ['getepic.com'],
+  'PicCollage': ['pic-collage.com', 'piccollage.com'],
+  'Brushes Redux': ['brushesapp.com'],
+  'Sketchbook': ['sketchbook.com'],
+  'Geoboard': ['mathlearningcenter.org/apps/geoboard'],
+  'ChatterPix Kids': ['duckduckmoose.com'],
+  'Word Clouds ABCya': ['abcya.com/word_clouds', 'abcya.com/games/word_clouds'],
+  'Beebots': ['tts-group.co.uk', 'bee-bot'],
+  'Freeform': ['apple.com/freeform', 'support.apple.com/freeform'],
+  'Puppet Pals': ['polishedplay.com']
+};
+
+// Returns the canonical approved tool name whose URL hint matches anywhere
+// in `desc`, or null if no match. If multiple tools' hints match, returns
+// the FIRST one in INSPIRING_TOOL_URL_HINTS iteration order — we expect
+// only one tool's URL to appear in a single suggestion description, so
+// ambiguity is rare. Skips any candidate that's banned or denied for the
+// year level. Used by inspiringApplySubstitutions_ as the URL-evidence
+// backstop before falling through to the Seesaw default.
+function inspiringToolFromDescriptionUrl_(desc, approvedSet, bannedSet, yl) {
+  if (!desc) return null;
+  const low = String(desc).toLowerCase();
+  const keys = Object.keys(INSPIRING_TOOL_URL_HINTS);
+  for (let i = 0; i < keys.length; i++) {
+    const tool = keys[i];
+    const hints = INSPIRING_TOOL_URL_HINTS[tool] || [];
+    for (let j = 0; j < hints.length; j++) {
+      if (low.indexOf(hints[j]) !== -1) {
+        const k = diversityToolKey_(tool);
+        if (!approvedSet.has(k)) break;
+        if (bannedSet.has(k)) break;
+        if (inspiringYearLevelDenied_(yl, k)) break;
+        return tool;
+      }
+    }
+  }
+  return null;
+}
+
+// 2026-05-29: Canonical-case normaliser. When the AI returns an approved
+// tool with non-canonical casing ("BeeBots" instead of "Beebots"), the
+// validator accepts it (case-insensitive key match) but line 4566 saved
+// the AI's casing verbatim. That polluted t with 70+ casing variants of
+// otherwise-valid tool names. Run this on every t-component just before
+// saving to data.json so the data stays canonical.
+function inspiringCanonicaliseToolCasing_(toolName, approvedList) {
+  if (!toolName || typeof toolName !== 'string') return toolName;
+  const comps = diversityToolComponents_(toolName);
+  const canonical = comps.map(function(c) {
+    const k = diversityToolKey_(c);
+    for (let i = 0; i < approvedList.length; i++) {
+      if (diversityToolKey_(approvedList[i]) === k) return approvedList[i];
+    }
+    return c;
+  });
+  return canonical.join(' + ');
+}
+
 // Ordered fallback chain — picked when the mapped substitution would
 // duplicate an existing tool component in the same unit. Items chosen
 // to be broadly approved and useful across the corpus.
@@ -3582,6 +3674,22 @@ function inspiringApplySubstitutions_(sugs, approvedSet, bannedSet, yl) {
   const swaps = [];
   const out = sugs.map(function(sg, i) {
     if (!sg || typeof sg.t !== 'string') return sg;
+
+    // 2026-05-29: URL-evidence backstop. Before doing per-component
+    // substitution (which may fall through to the universal Seesaw
+    // fallback), check whether the description's URL identifies a
+    // specific approved tool. If so, force t to that tool's canonical
+    // name and skip the per-component logic. URLs are authoritative
+    // truth — the lesson is whatever its URL says it is. This catches
+    // the dominant pattern where t was rewritten to Seesaw but d still
+    // links to education.minecraft.net / microbit.org / etc.
+    const urlTool = inspiringToolFromDescriptionUrl_(sg.d, approvedSet, bannedSet, yl);
+    if (urlTool && diversityToolKey_(urlTool) !== diversityToolKey_(sg.t)) {
+      takenKeys.add(diversityToolKey_(urlTool));
+      swaps.push({ slot: i + 1, fromTool: sg.t, toTool: urlTool, perComponent: [{ from: sg.t, to: urlTool }], urlEvidence: true });
+      return { t: urlTool, d: sg.d };
+    }
+
     const comps = diversityToolComponents_(sg.t);
     const newComps = [];
     const slotSwaps = [];
@@ -4806,7 +4914,12 @@ function regenerateAllInspiring(opts) {
           if (attempt < 3) { Utilities.sleep(4000); continue; }
           break;
         }
-        data[idx].s = call.sugs.map(s => ({ t: s.t, d: s.d }));
+        // 2026-05-29: Canonical-case normalise t before save. The validator
+        // accepts case-insensitively (diversityToolKey_ lowercases), so the
+        // AI's "BeeBots" passes through unchanged into data.json. Normalise
+        // to the approved-list casing so the saved data stays canonical.
+        const _approvedNamesList = getApprovedToolNames_();
+        data[idx].s = call.sugs.map(s => ({ t: inspiringCanonicaliseToolCasing_(s.t, _approvedNamesList), d: s.d }));
         data[idx].audited = true;
         data[idx].inspiringRegenAt = new Date().toISOString();
         clearHumanVerifiedFlags_(data[idx], 'Regenerated by regenerateAllInspiring (6-sentence inspiring style)');
@@ -4848,7 +4961,8 @@ function regenerateAllInspiring(opts) {
             }
           }
           if (shapeOk) {
-            data[idx].s = sugs.map(s => ({ t: s.t, d: s.d }));
+            const _approvedNamesListSwap = getApprovedToolNames_();
+            data[idx].s = sugs.map(s => ({ t: inspiringCanonicaliseToolCasing_(s.t, _approvedNamesListSwap), d: s.d }));
             data[idx].audited = true;
             data[idx].inspiringRegenAt = new Date().toISOString();
             data[idx].inspiringRegenAutoSwapped = subRes.swaps;
