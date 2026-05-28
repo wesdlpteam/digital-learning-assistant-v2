@@ -75,11 +75,14 @@ function runDiversityScan() {
     }))
     .sort((a, b) => b.count - a.count);
 
-  const OVERUSED_PCT = 50;
+  // Aggressive thresholds: clicking "Diversify [Tool]" should feel like a real
+  // broadening pass across the library, not a small nudge. Flag any tool in
+  // >20% of filtered entries and plan swaps until it sits at ~10%.
+  const OVERUSED_PCT = 20;
+  const TARGET_PCT = 10;
   const overused = sorted.filter(t => t.pct > OVERUSED_PCT);
-  const TARGET_PCT = 35; // bring overused down to ~35%
 
-  // Build the underused pool (age-appropriate, not banned, used ≤2 times)
+  // Build the underused pool (age-appropriate, not banned, used <=2 times).
   const yearForAge = yr || 'Year 3';
   const ageTools = getAgeAppropriateTools(yearForAge);
   const underused = ageTools.filter(t => {
@@ -87,14 +90,29 @@ function runDiversityScan() {
     return k && (!toolEntryCount[k] || toolEntryCount[k] <= 2) && !toolContainsForbiddenKeyword(t) && !toolViolatesInventoryBan(t);
   });
 
-  // Build swap plan for overused tools
+  // Fisher-Yates shuffle — used to randomise the underused pool per diversify
+  // pass so the round-robin below doesn't always start from the same tool.
+  const shuffled_ = arr => {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+
+  // Build swap plan for each overused tool. Cross-swap tool variety is
+  // enforced via round-robin: shuffle the underused pool once per
+  // overused-tool group, then each swap picks the underused tool with the
+  // lowest planned-use count so far (skipping any tool already present in
+  // the candidate entry). Replaces the previous random-from-top-6 draw that
+  // could pick the same tool for every swap in a batch.
   _diversifySwaps = [];
   overused.forEach(ot => {
     const targetCount = Math.max(1, Math.ceil(filtered.length * TARGET_PCT / 100));
     const swapsNeeded = Math.max(0, ot.count - targetCount);
     if (swapsNeeded === 0) return;
 
-    // Find candidate entries — prefer entries where this tool appears and has other overused tools too
     const candidates = [];
     filtered.forEach((e, fi) => {
       const sugs = getSugs(e).filter(isRealSug);
@@ -106,14 +124,19 @@ function runDiversityScan() {
       });
     });
 
-    // Take only as many as needed, from the end (arbitrary but stable)
+    const shuffledPool = shuffled_(underused);
+    const usageCount = new Map();
+    shuffledPool.forEach(t => usageCount.set(toolKey(t), 0));
+
     const toSwap = candidates.slice(-swapsNeeded);
     toSwap.forEach(c => {
-      // Pick an underused tool not already in that entry
       const usedInEntry = new Set(getSugs(c.entry).map(s => toolKey(sugTool(s))).filter(Boolean));
-      const available = underused.filter(t => !usedInEntry.has(toolKey(t)));
-      const replacement = available.length ? available[Math.floor(Math.random() * Math.min(available.length, 6))] : null;
+      const picks = shuffledPool
+        .filter(t => !usedInEntry.has(toolKey(t)))
+        .sort((a, b) => (usageCount.get(toolKey(a)) || 0) - (usageCount.get(toolKey(b)) || 0));
+      const replacement = picks[0] || null;
       if (replacement) {
+        usageCount.set(toolKey(replacement), (usageCount.get(toolKey(replacement)) || 0) + 1);
         _diversifySwaps.push({
           dataIdx: c.dataIdx,
           sugIdx: c.sugIdx,
