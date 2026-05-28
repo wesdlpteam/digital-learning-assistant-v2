@@ -839,13 +839,41 @@ function mcProductForEntry_(entry){
   if(/area|volume|geometry|measurement|scale|coordinate|data|math/.test(t)) return 'a labelled screenshot set explaining the measurements, model or data they used';
   return 'a short evidence note connecting the Minecraft task back to the unit';
 }
+function mcCleanLessonDesc_(d){
+  // Sanitise the per-lesson description from libraries.json so it can be
+  // dropped into a sentence after "In the lesson, ...". Strips trailing
+  // punctuation, lowercases the leading letter so the sentence reads
+  // naturally, and word-boundary-truncates so the whole rendered
+  // description stays under the 560-char quality bar.
+  if(!d) return '';
+  let t = String(d).replace(/\s+/g,' ').trim();
+  t = t.replace(/[.!?…]+$/,'');
+  t = t.charAt(0).toLowerCase() + t.slice(1);
+  if(t.length > 110){
+    const cut = t.lastIndexOf(' ', 110);
+    t = (cut > 0 ? t.slice(0, cut) : t.slice(0, 110));
+  }
+  return t;
+}
 function mcLessonDesc_(entry,l){
   const title = mcCleanTitle_(l&&l.title);
   const url = mcCleanUrl_(l&&l.url||'');
   const focus = mcFocusPhraseForEntry_(entry);
   const product = mcProductForEntry_(entry);
-  const link = url ? ' ('+url+')' : '';
-  return 'Students use the verified Minecraft Education lesson “'+title+'”'+link+' to explore '+focus+'. They capture 2–3 screenshots or signs from the world and turn them into '+product+'.';
+  const lessonDescClean = mcCleanLessonDesc_(l&&l.desc);
+  const urlBit = url ? ' ('+url+')' : '';
+  const lessonBit = lessonDescClean ? ' In the lesson, '+lessonDescClean+'.' : '';
+  const tail = ' Here they apply it to '+focus+', capturing 2–3 screenshots or signs from the world that they turn into '+product+'.';
+  // Richer 3-sentence form weaves the lesson's own description in.
+  let out = 'Students use the verified Minecraft Education lesson “'+title+'”'+urlBit+'.'+lessonBit+tail;
+  if(out.length <= 540) return out;
+  // Fallback: original 2-sentence template (URL inline) when the richer
+  // version would exceed the quality bar.
+  out = 'Students use the verified Minecraft Education lesson “'+title+'”'+urlBit+' to explore '+focus+'. They capture 2–3 screenshots or signs from the world and turn them into '+product+'.';
+  if(out.length <= 540) return out;
+  // Last resort: drop URL from inline text (the Verified lesson link badge
+  // still shows it on the review card and on the public site's tool entry).
+  return 'Students use the verified Minecraft Education lesson “'+title+'” to explore '+focus+'. They capture 2–3 screenshots or signs from the world and turn them into '+product+'.';
 }
 function normaliseMinecraftChangeForEntry_(change){
   const c = cleanChangeObject_(change || {});
