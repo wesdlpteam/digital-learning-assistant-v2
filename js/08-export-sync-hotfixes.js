@@ -213,7 +213,7 @@ Campus: ${e.ca} | Year Level: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: 
 Every suggestion uses ONE approved tool (no "+" pairings). All 6 suggestions MUST use DIFFERENT tools.
 Suggestion #6 MUST be a STEM Design Cycle activity (Empathise → Define → Ideate → Prototype → Test) that connects specifically to the unit theme \u2014 no duplicates.
 ${SUGGESTION_STYLE}
-Return ONLY a JSON array: [{"t":"Tool Name","d":"2-3 vivid sentences for this unit."},...]`;
+Return ONLY a JSON array: [{"t":"Tool Name","d":"~6 vivid practical sentences (500-800 chars) following the writing-style and depth rules above."},...]`;
     try{
       let sugs = null;
       let dupedTool = null;

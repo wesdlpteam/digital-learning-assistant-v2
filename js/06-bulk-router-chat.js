@@ -1790,7 +1790,7 @@ NEVER-USED candidate tools (fresh ideas): ${neverUsed.length ? neverUsed.join(',
 Generate ONE fresh suggestion that is genuinely age-appropriate for ${entry.yl} and connects to this unit's theme.
 ${SUGGESTION_STYLE}
 
-Return ONLY JSON: {"t":"Tool Name","d":"2-3 vivid sentences connecting to this unit."}`;
+Return ONLY JSON: {"t":"Tool Name","d":"~6 vivid practical sentences (500-800 chars) connecting to this unit, following the writing-style and depth rules above."}`;
 
   try{
     if(!candidateTools.length) throw new Error('No available age-appropriate tools left for this unit after excluding repeats and banned tools');
@@ -2103,16 +2103,10 @@ GENERAL RULES:
 - Each of the 3 options must be MEANINGFULLY different from the others — different tools, OR different angles on the same tool.
 ${SUGGESTION_STYLE}
 
-DEPTH OVERRIDE FOR THIS REFINEMENT (supersedes EVERY sentence-count cap in the writing-style guide above — including the Minecraft 2-sentence rule and the Micro:bit / Adobe Express 3-4 sentence rule):
-The teacher is comparing each new suggestion side-by-side with the CURRENT suggestion description shown earlier in this prompt. The replacement MUST match that depth, not feel thinner. For each option's "d" field write ~6 vivid practical sentences (target 500-800 characters) that follow every OTHER writing-style rule above — name what students DO, name what they CREATE, weave the unit connection, name the tool's specific features, and ground the activity in 2-3 concrete examples.
-NO EXCEPTIONS BY TOOL CATEGORY — this applies to:
-- Minecraft Education suggestions: ~6 sentences. Still pick a verified Minecraft library lesson and include its direct URL, but expand the description to the full depth — name the lesson, describe the classroom flow, the concrete student artefact, and how the build connects to the unit, across ~6 sentences. Do NOT use the old 2-sentence Minecraft cap.
-- Micro:bit, Adobe Express and other verified-library lessons: ~6 sentences. Still include the lesson URL inline and name the platform-specific feature, but write to the same ~6 sentence depth as a strong app-smash suggestion. Do NOT use the old 3-4 sentence cap.
-- App Smash / multi-tool combos: ~6 sentences with each tool's contribution explicit.
-- Single mainstream tools (Canva, Book Creator, Padlet, Seesaw, etc.): ~6 sentences as above.
+SIDE-BY-SIDE REMINDER: Each new suggestion is shown side-by-side with the CURRENT suggestion description above. The replacement MUST match its depth (~6 vivid practical sentences, 500-800 chars). The DESCRIPTION QUALITY RULES above already enforce this for every tool category — do NOT shorten any category, including Minecraft Education and verified-library lessons.
 
 Return ONLY a JSON array of exactly 3 suggestions:
-[{"t":"Tool Name","d":"~6 vivid practical sentences (or the cap that applies to this tool category) matching the depth of the current description."},{"t":"Tool Name","d":"~6 vivid practical sentences (or the cap that applies to this tool category) matching the depth of the current description."},{"t":"Tool Name","d":"~6 vivid practical sentences (or the cap that applies to this tool category) matching the depth of the current description."}]`;
+[{"t":"Tool Name","d":"~6 vivid practical sentences (500-800 chars) matching the depth of the current description and following all writing-style rules above."},{"t":"Tool Name","d":"~6 vivid practical sentences (500-800 chars) matching the depth of the current description and following all writing-style rules above."},{"t":"Tool Name","d":"~6 vivid practical sentences (500-800 chars) matching the depth of the current description and following all writing-style rules above."}]`;
 
   try{
     const raw = await callAI([{role:'user',parts:[{text:prompt}]}], null, OPENAI_FAST_MODEL);

@@ -1167,7 +1167,7 @@ Problem flagged: ${reason}
 
 Create ONE replacement STEM Design Cycle activity that is realistic for this year level. It must include tangible making/prototyping materials and a clear Empathise → Define → Ideate → Prototype → Test cycle. It may include age-appropriate technology only when the tech is genuinely useful.
 ${REALISTIC_TOOL_USE_RULES}
-Return ONLY JSON: {"t":"Project name","d":"2-3 practical sentences describing exactly what students build, test and improve."}`
+Return ONLY JSON: {"t":"Project name","d":"~6 vivid practical sentences (500-800 chars) describing exactly what students build, test and improve, following the writing-style rules above."}`
   : `You are replacing one unrealistic, vague, weakly connected, banned or not age-appropriate digital learning suggestion for an IB PYP unit.
 Campus: ${entry.ca}
 Year level: ${entry.yl}
@@ -1183,7 +1183,7 @@ ${constraints}
 ${SUGGESTION_STYLE}
 ${REALISTIC_TOOL_USE_RULES}
 
-Create ONE replacement suggestion that is classroom-realistic, age-appropriate, and directly connected to the unit. If the current tool is actually appropriate, you may keep the same tool but must substantially improve the description so the classroom activity is practical and specific. Return ONLY JSON: {"t":"Tool Name","d":"2-3 practical sentences describing exactly what students do and create.","url":"optional direct lesson URL"}`;
+Create ONE replacement suggestion that is classroom-realistic, age-appropriate, and directly connected to the unit. If the current tool is actually appropriate, you may keep the same tool but must substantially improve the description so the classroom activity is practical and specific. Return ONLY JSON: {"t":"Tool Name","d":"~6 vivid practical sentences (500-800 chars) following the writing-style and depth rules above.","url":"optional direct lesson URL"}`;
 
   const raw = await callAI([{role:'user',parts:[{text:prompt}]}], null, OPENAI_FAST_MODEL || OPENAI_MODEL);
   const clean = raw.replace(/```json|```/g,'').trim();
@@ -1317,7 +1317,7 @@ Problem flagged: ${reason || 'May be unrealistic or not age appropriate.'}
 
 Create ONE replacement STEM Design Cycle activity that is realistic for this year level. It must include tangible making/prototyping materials and a clear Empathise → Define → Ideate → Prototype → Test cycle. It may include age-appropriate technology only when the tech is genuinely useful.
 ${REALISTIC_TOOL_USE_RULES}
-Return ONLY JSON: {"t":"Project name","d":"2-3 practical sentences describing exactly what students build, test and improve."}`
+Return ONLY JSON: {"t":"Project name","d":"~6 vivid practical sentences (500-800 chars) describing exactly what students build, test and improve, following the writing-style rules above."}`
   : `You are replacing one unrealistic or not age-appropriate digital learning suggestion for an IB PYP unit.
 Campus: ${entry.ca}
 Year level: ${entry.yl}
@@ -1332,7 +1332,7 @@ Other tools already used in this unit — avoid duplicates: ${otherTools || 'non
 ${constraints}
 ${SUGGESTION_STYLE}
 
-Create ONE replacement suggestion that is classroom-realistic, age-appropriate, and directly connected to the unit. Return ONLY JSON: {"t":"Tool Name","d":"2-3 practical sentences describing exactly what students do and create.","url":"optional direct lesson URL"}`;
+Create ONE replacement suggestion that is classroom-realistic, age-appropriate, and directly connected to the unit. Return ONLY JSON: {"t":"Tool Name","d":"~6 vivid practical sentences (500-800 chars) following the writing-style and depth rules above.","url":"optional direct lesson URL"}`;
 
   startProgress();
   setStatus(`Drafting replacement for ${entry.yl} — ${entry.th}…`, 'loading');
@@ -1392,7 +1392,7 @@ Suggestion #6 MUST be a STEM Design Cycle activity (Empathise-Define-Ideate-Prot
 Campus: ${e.ca} | Year Level: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: "${e.ci}"`:''}${e.lo?`\nLines of Inquiry: "${e.lo}"`:''}${e.plannerText?`\nPlanner: ${e.plannerText}`:''}
 Requirements: every suggestion uses ONE approved tool (no "+" pairings), all 6 use DIFFERENT tools.
 ${SUGGESTION_STYLE}
-Return ONLY a JSON array, no markdown: [{"t":"Tool Name","d":"2-3 vivid sentences."},...]`;
+Return ONLY a JSON array, no markdown: [{"t":"Tool Name","d":"~6 vivid practical sentences (500-800 chars) following the writing-style and depth rules above."},...]`;
     try{
       let sugs = null;
       let dupedTool = null;
@@ -3206,7 +3206,7 @@ Tool rules:
 - Do not target the STEM Design Cycle slot; this slot has already been selected from slots 0-4.
 
 Description rules:
-- Write 2-3 vivid practical sentences.
+- Write ~6 vivid practical sentences (500-800 chars) following the DESCRIPTION QUALITY RULES below.
 - Name a specific student action and the concrete product/artefact they create.
 - Anchor the action to the planner content above — refer to the unit's specific topic, concepts, or learning goals by name (drawn from the planner context, central idea, and lines of inquiry) — but NEVER quote the central idea or lines of inquiry directly.
 - If pairing tools, briefly say how the two tools work together (e.g. one captures, the other displays/collects/extends).
@@ -3214,7 +3214,7 @@ Description rules:
 - Keep the wording clear for a primary teacher.
 ${SUGGESTION_STYLE}
 
-Return ONLY JSON: {"t":"${targetTool}" OR "${targetTool} + Secondary","d":"2-3 vivid practical sentences anchored in the planner."}`;
+Return ONLY JSON: {"t":"${targetTool}" OR "${targetTool} + Secondary","d":"~6 vivid practical sentences (500-800 chars) anchored in the planner, following the rules above."}`;
 
   const targetKey = toolInventoryKey(targetTool);
   let lastIssue = '';

@@ -63,7 +63,7 @@ Issue to fix: ${reason || instruction || 'The description is vague or too brief.
 Current tool: ${oldTool}
 Current description: ${oldDesc}
 
-Rewrite the description into 2-3 vivid, practical sentences. The central idea, lines of inquiry, and planner context above tell you what the unit is ABOUT — use that topic by name in your description, but NEVER quote the central idea or lines of inquiry directly.
+Rewrite the description into ~6 vivid, practical sentences (target 500-800 characters) that follow the DESCRIPTION QUALITY RULES below. The central idea, lines of inquiry, and planner context above tell you what the unit is ABOUT — use that topic by name in your description, but NEVER quote the central idea or lines of inquiry directly.
 
 ${SUGGESTION_STYLE}
 
@@ -309,12 +309,12 @@ Hard rules:
 - Choose exactly ONE tool from the allowed replacement tools list above.
 - Do NOT use ${targetTool}, ${oldTool}, Seesaw, or any existing tool already in this unit.
 - Do NOT target the STEM Design Cycle slot; this current slot is safe and already selected.
-- Write 2-3 practical classroom sentences.
+- Write ~6 vivid practical sentences (500-800 chars) following the DESCRIPTION QUALITY RULES below.
 - Say exactly what students do, what students create/produce, and how it connects to the unit.
 - Keep the wording clear for a primary teacher.
 ${SUGGESTION_STYLE}
 
-Return ONLY JSON: {"t":"Tool Name from allowed list","d":"2-3 vivid practical sentences."}`;
+Return ONLY JSON: {"t":"Tool Name from allowed list","d":"~6 vivid practical sentences (500-800 chars) following the writing-style and depth rules above."}`;
 
   for(let attempt=0; attempt<3; attempt++){
     try{
@@ -1155,15 +1155,12 @@ TARGET COUNT (HARD RULE): The coordinator explicitly asked for ${explicitCount} 
   const isMinecraftPlatform = !!(platform && /minecraft/i.test(platform.name || ''));
   const platformHeading = isMinecraftPlatform ? 'MINECRAFT EDUCATION MODE' : `LESSON LIBRARY — ${platform ? platform.name.toUpperCase() : ''}`;
   const platformMatchingRule = isMinecraftPlatform
-    ? `MATCHING RULE: Propose Minecraft Education only when a verified Minecraft library lesson genuinely strengthens the unit. Every proposal must name a real Minecraft lesson from the library and include its URL. Keep every Minecraft description to exactly 2 short classroom sentences; use clean punctuation with no stray question marks. Do not paste the lesson overview, standards text, NGSS codes, or library description. Sentence 1 names the lesson and classroom purpose; sentence 2 names the student evidence/product. Do NOT use vague filler such as "launchpad", "unit-connected build", or "build or investigation". Do NOT create original Minecraft build/challenge ideas, and do NOT invent fake lesson titles or fake URLs. Avoid maths-only lessons like Area and Volume unless the unit genuinely involves maths, measurement, geometry, spatial design, scale, mapping or data.${targetBlock}`
+    ? `MATCHING RULE: Propose Minecraft Education only when a verified Minecraft library lesson genuinely strengthens the unit. Every proposal must name a real Minecraft lesson from the library and include its URL inline in the description. Write ~6 vivid practical sentences (500-800 chars) matching the depth of every other tool category — the old 2-sentence Minecraft cap is removed; never default to 2 sentences. Use clean punctuation with no stray question marks. Do NOT paste, paraphrase or copy verbatim the lesson overview, standards text, NGSS codes, or library description — write in your own words. Cover across the ~6 sentences: the lesson name and classroom purpose, what students DO in Minecraft (concrete actions like build, code with Code Builder/Agent, place blocks, capture screenshots, annotate signs), the platform-specific feature(s) the lesson hinges on (Code Builder, Agent commands, NPC dialogue, redstone, structure blocks), the concrete student evidence/product (annotated build screenshots, signposted world tour, short screencast, captioned map, reflection slide), the unit-specific anchor using the central idea or a Line of Inquiry by name (never "this unit"/"the unit focus"), and how the work is shared or assessed. Do NOT use vague filler such as "launchpad", "unit-connected build", or "build or investigation". Do NOT create original Minecraft build/challenge ideas, and do NOT invent fake lesson titles or fake URLs. Avoid maths-only lessons like Area and Volume unless the unit genuinely involves maths, measurement, geometry, spatial design, scale, mapping or data.${targetBlock}`
     : `MATCHING RULE: Propose changes wherever a specific ${platform ? platform.name : 'platform'} lesson genuinely connects to the unit's activities or central idea. Be thorough — scan every candidate entry and propose ${platform ? platform.name : 'the platform'} wherever there is a reasonable curriculum connection. Name the specific lesson in every proposal AND include its URL inline.
 
-DESCRIPTION STYLE (CRITICAL — do NOT default to the Minecraft 2-sentence cap):
-- Write 3-4 vivid, practical sentences that match the richness of a strong app-smash suggestion. Use the full DESCRIPTION QUALITY RULES from SUGGESTION_STYLE below.
-- Sentence 1 names the specific ${platform ? platform.name : 'platform'} lesson and what students DO (concrete verbs — sense, measure, code, prototype, log, broadcast, calibrate, debug, iterate).
-- Sentence 2 names the ${platform ? platform.name : 'platform'}-specific feature/affordance the lesson hinges on. ${isMinecraftPlatform ? '' : `For Micro:bit specifically: name the actual sensors or inputs used (accelerometer, light/temperature sensor, compass, radio, A/B buttons, LED matrix, MakeCode blocks, Python editor) — never just "the device" or "a simple device". `}For any platform, name the real classroom feature, not a black-box reference.
-- Sentence 3 names the concrete student artefact/product (data log, working prototype, paired-device alert system, sensor map, annotated MakeCode screenshot, brief calibration report) and ties it to a SPECIFIC aspect of the unit using the unit theme, central idea or a Line of Inquiry by name. Never use "this unit" / "the unit focus" as a placeholder.
-- Sentence 4 (use when teaching notes give you stages): show the pedagogical arc — explore → prototype → test/iterate → present/justify — using the Teaching notes from the library entry to ground specific lesson stages and the planner content to ground the curricular connection.
+DESCRIPTION STYLE (CRITICAL — match the full depth of every other tool category; the old Minecraft 2-sentence cap and the old 3-4 sentence verified-library cap are both removed):
+- Write ~6 vivid, practical sentences (target 500-800 characters) that match the richness of a strong app-smash / Inspire All suggestion. Use the full DESCRIPTION QUALITY RULES from SUGGESTION_STYLE below.
+- Cover across the ~6 sentences: (a) the specific ${platform ? platform.name : 'platform'} lesson name and what students DO (concrete verbs — sense, measure, code, prototype, log, broadcast, calibrate, debug, iterate); (b) the ${platform ? platform.name : 'platform'}-specific feature/affordance the lesson hinges on${isMinecraftPlatform ? '' : ` (for Micro:bit specifically name the actual sensors or inputs used — accelerometer, light/temperature sensor, compass, radio, A/B buttons, LED matrix, MakeCode blocks, Python editor — never just "the device" or "a simple device")`} — name the real classroom feature, not a black-box reference; (c) the concrete student artefact/product (data log, working prototype, paired-device alert system, sensor map, annotated MakeCode screenshot, brief calibration report) tied to a SPECIFIC aspect of the unit using the unit theme, central idea or a Line of Inquiry by name (never "this unit" / "the unit focus"); (d) the pedagogical arc — explore → prototype → test/iterate → present/justify — grounded in the library lesson's teaching notes and the planner content; (e) 2-3 concrete topical examples ("such as ...", "for example ...") drawn from the planner rather than abstract categories; (f) how the work is shared, presented or assessed.
 - Use the planner snippet shown for each candidate entry to reference the actual assessment task, LoI elaboration, or weekly activity. Do not write a description that could apply to any unit.${targetBlock}`;
   const platformSection = platform ? `
 
@@ -1303,7 +1300,7 @@ When choosing WHICH tool to use as a replacement:
 Analyse ALL ${analysisData.length} candidate entries and propose changes wherever the instruction applies.${candidateNote}
 
 Output ONLY the APPLY_CHANGES block — no preamble:
-APPLY_CHANGES:[{"entryIdx":3,"sugIdx":1,"t":"Tool Name","d":"2-3 vivid sentences..."},...]
+APPLY_CHANGES:[{"entryIdx":3,"sugIdx":1,"t":"Tool Name","d":"~6 vivid practical sentences (500-800 chars) following the writing-style and depth rules below..."},...]
 
 ${SUGGESTION_STYLE}
 The JSON must be complete and valid. Include ALL proposed changes in one array.
