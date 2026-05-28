@@ -4404,9 +4404,19 @@ function kickoffServerSideRegen(opts) {
     auditSet[t.ca + '||' + t.yl + '||' + t.th] = true;
   });
 
+  // 2026-05-29: 24-hour skip-recent-regen guard. Without it, an accidental
+  // re-fire of kickoff between tick fires undoes any progress the trigger
+  // has just made (it clears inspiringRegenAt on units that were JUST
+  // successfully regenerated). 24h is long enough to redo yesterday's bad
+  // data but short enough that successful runs from earlier today stay
+  // protected. Skips do NOT count as targets — they're effectively done.
+  const RECENT_REGEN_SKIP_MS = 24 * 60 * 60 * 1000;
+  const nowMs = Date.now();
+
   let clearedAutoSwapped = 0;
   let clearedAudit = 0;
   let alreadyQueued = 0;
+  let skippedRecent = 0;
   const targets = [];
   for (let i = 0; i < data.length; i++) {
     const u = data[i];
@@ -4416,6 +4426,13 @@ function kickoffServerSideRegen(opts) {
     const isAuditTarget = !!auditSet[k];
     if (!isAutoSwapped && !isAuditTarget) continue;
     if (u.inspiringRegenAt) {
+      const regenTs = Date.parse(u.inspiringRegenAt);
+      if (!isNaN(regenTs) && (nowMs - regenTs) < RECENT_REGEN_SKIP_MS) {
+        // Regenerated within the last 24h — leave alone. Protects against
+        // accidental kickoff re-fires undoing in-flight progress.
+        skippedRecent++;
+        continue;
+      }
       delete u.inspiringRegenAt;
       if (isAutoSwapped) clearedAutoSwapped++;
       else clearedAudit++;
@@ -4444,14 +4461,15 @@ function kickoffServerSideRegen(opts) {
   // the trigger's first fire (~10 min).
   serverSideRegenTick();
 
-  Logger.log('kickoffServerSideRegen: ' + totalRequeued + ' requeued, ' + alreadyQueued + ' already-queued, ' + targets.length + ' total target unit(s).');
+  Logger.log('kickoffServerSideRegen: ' + totalRequeued + ' requeued, ' + alreadyQueued + ' already-queued, ' + skippedRecent + ' skipped (regen <24h ago), ' + targets.length + ' total target unit(s) in this batch.');
   return {
-    message: 'Server-side regen kicked off. ' + targets.length + ' unit(s) in scope (' + totalRequeued + ' requeued, ' + alreadyQueued + ' already queued). Tick every ' + SERVER_REGEN_TICK_MINUTES + ' min, batch ' + SERVER_REGEN_TICK_BATCH + '. Trigger auto-removes when done.',
+    message: 'Server-side regen kicked off. ' + targets.length + ' unit(s) in scope (' + totalRequeued + ' requeued, ' + alreadyQueued + ' already queued, ' + skippedRecent + ' skipped as already regenerated <24h ago). Tick every ' + SERVER_REGEN_TICK_MINUTES + ' min, batch ' + SERVER_REGEN_TICK_BATCH + '. Trigger auto-removes when done.',
     totalTargets: targets.length,
     requeued: totalRequeued,
     clearedAutoSwapped: clearedAutoSwapped,
     clearedAudit: clearedAudit,
     alreadyQueued: alreadyQueued,
+    skippedRecent: skippedRecent,
     tickHandler: SERVER_REGEN_TICK_HANDLER,
     tickMinutes: SERVER_REGEN_TICK_MINUTES,
     tickBatch: SERVER_REGEN_TICK_BATCH,
