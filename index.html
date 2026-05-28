@@ -86,6 +86,17 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 .uoi-edit-actions .uoi-edit-save:disabled{opacity:.6;cursor:not-allowed}
 .uoi-edit-actions .uoi-edit-cancel{background:#252525;color:#CCC;border:1px solid #3A3A3A}
 .uoi-edit-actions .uoi-edit-cancel:hover{background:#333;color:#FFF}
+.tech-modal.uoi-modal{border-color:#38BDF8;max-width:620px}
+.tech-modal.uoi-modal .tech-modal-icon{background:rgba(56,189,248,.12);color:#38BDF8}
+.tech-modal.uoi-modal .uoi-edit-form{background:transparent;border:none;padding:0;margin:0;border-radius:0}
+.uoi-loi-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.uoi-loi-num{flex-shrink:0;width:26px;color:#38BDF8;font-weight:800;font-size:13px;letter-spacing:.3px}
+.uoi-loi-input{flex:1;background:#0F0F0F;border:1px solid #2A2A2A;border-radius:10px;padding:10px 13px;color:#EEE;font-family:inherit;font-size:14px;line-height:1.4;box-sizing:border-box}
+.uoi-loi-input:focus{outline:none;border-color:#38BDF8;background:#111}
+.uoi-loi-remove{flex-shrink:0;width:30px;height:34px;border-radius:8px;border:1px solid #333;background:#222;color:#888;cursor:pointer;font-size:16px;line-height:1;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.uoi-loi-remove:hover{border-color:#EF4444;color:#EF4444;background:#1a1010}
+.uoi-loi-add{margin-top:6px;background:transparent;border:1px dashed #38BDF8;color:#38BDF8;border-radius:10px;padding:10px 14px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;width:100%}
+.uoi-loi-add:hover{background:rgba(56,189,248,.1)}
 
 .tb{display:flex;gap:6px;margin-bottom:18px;background:var(--sf);border-radius:14px;padding:5px}
 .tt{flex:1;padding:12px 8px;border:none;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:var(--mt);transition:all .2s;letter-spacing:-.2px}
@@ -1046,7 +1057,6 @@ function handleTechKey(e){
 // accepts custom CI/LOI inline, no approval needed for that). The
 // proposal is also remembered in localStorage so they see a
 // "Submitted for approval" reminder on this unit until they clear it.
-window._uoiEditMode = false;
 
 function uoiProposalLocalKey(ca,yl,th){return 'dla_uoi_prop_v1::'+ca+'::'+yl+'::'+th;}
 
@@ -1076,28 +1086,132 @@ function clearLocalUoiProposal(ca,yl,th){
 
 function startUoiEdit(){
   if(!confirm('Edit the Central Idea and Lines of Inquiry for this unit?\n\nYour edits will be sent to the DLA team for review and approval. They will not change what other teachers see until they are approved. You can still use your edits to generate fresh tech ideas right away.'))return;
-  window._uoiEditMode=true;
-  R();
-  setTimeout(function(){
+  if(S.v!=='detail'||S.ca==null||S.yl==null||S.ui==null)return;
+  var us=gu(S.ca,S.yl); var u=us[S.ui]; if(!u)return;
+  var campus=CN[S.ca]||S.ca, yl=S.yl, theme=u.th;
+  var existing=getLocalUoiProposal(campus,yl,theme);
+  var startCi=existing&&existing.ci?existing.ci:(u.ci||'');
+  var startLoText=existing&&existing.lo?existing.lo:(u.lo||'');
+  var startNote=existing&&existing.note?existing.note:'';
+  var startLois=splitLinesOfInquiry(startLoText);
+  while(startLois.length<3) startLois.push('');
+
+  var old=document.getElementById('uoiEditOverlay');if(old)old.remove();
+
+  function pad2(n){n=String(n);return n.length<2?'0'+n:n;}
+  var loiInputsHtml='';
+  startLois.forEach(function(text,i){
+    loiInputsHtml+=
+      '<div class="uoi-loi-row">'
+        +'<div class="uoi-loi-num">'+pad2(i+1)+'</div>'
+        +'<input type="text" class="uoi-loi-input" placeholder="Line of inquiry '+(i+1)+'" value="'+escapeHtml(text)+'">'
+        +'<button type="button" class="uoi-loi-remove" onclick="removeUoiLoiInput(this)" title="Remove this line of inquiry" aria-label="Remove">×</button>'
+      +'</div>';
+  });
+
+  var caEnc=encodeURIComponent(campus),ylEnc=encodeURIComponent(yl),thEnc=encodeURIComponent(theme);
+  var html=
+    '<div class="tech-modal uoi-modal" role="dialog" aria-modal="true" aria-labelledby="uoiModalTitle">'
+      +'<button type="button" class="tech-modal-close" onclick="closeUoiEdit()" aria-label="Close">✕</button>'
+      +'<div class="tech-modal-header">'
+        +'<div class="tech-modal-icon" aria-hidden="true">✏️</div>'
+        +'<div><div id="uoiModalTitle" class="tech-modal-title">Edit Central Idea &amp; Lines of Inquiry</div>'
+        +'<div class="tech-modal-sub">'+escapeHtml(yl)+' · '+escapeHtml(theme)+'</div></div>'
+      +'</div>'
+      +'<div class="tech-modal-body">'
+        +'<div class="uoi-edit-form">'
+          +'<div class="uoi-edit-hint">Your edits will be sent to the <strong>DLA team for review</strong>. They won\'t change what other teachers see on this unit until they are approved. After saving, you can generate fresh tech ideas using your edits right away.</div>'
+          +'<label for="uoi-edit-ci">Central Idea</label>'
+          +'<textarea id="uoi-edit-ci" rows="3" placeholder="e.g. Sharing personal stories helps us understand and value different perspectives.">'+escapeHtml(startCi)+'</textarea>'
+          +'<label>Lines of Inquiry</label>'
+          +'<div id="uoi-loi-list">'+loiInputsHtml+'</div>'
+          +'<button type="button" class="uoi-loi-add" onclick="addUoiLoiInput()">+ Add another line of inquiry</button>'
+          +'<label for="uoi-edit-note">Note to the DLA team <span style="font-weight:400;text-transform:none;color:#666;letter-spacing:0">(optional)</span></label>'
+          +'<textarea id="uoi-edit-note" rows="2" placeholder="Why these edits? (e.g. updated for 2026 planner, central idea reworded for clarity, new line of inquiry added)">'+escapeHtml(startNote)+'</textarea>'
+          +'<div class="uoi-edit-actions">'
+            +'<button id="uoi-edit-save" class="uoi-edit-save" onclick="submitUoiEdit(\''+caEnc+'\',\''+ylEnc+'\',\''+thEnc+'\')">💾 Save and submit for approval</button>'
+            +'<button class="uoi-edit-cancel" onclick="closeUoiEdit()">Cancel</button>'
+          +'</div>'
+        +'</div>'
+      +'</div>'
+    +'</div>';
+
+  var overlay=document.createElement('div');
+  overlay.id='uoiEditOverlay';
+  overlay.className='tech-overlay';
+  overlay.innerHTML=html;
+  overlay.onclick=function(ev){if(ev.target===overlay)closeUoiEdit();};
+  document.body.appendChild(overlay);
+  if(typeof lockDlaOverlayScroll==='function')lockDlaOverlayScroll();
+  document.addEventListener('keydown',handleUoiEditKey);
+  requestAnimationFrame(function(){
+    overlay.classList.add('open');
     var ciEl=document.getElementById('uoi-edit-ci');
-    if(ciEl){ciEl.scrollIntoView({behavior:'smooth',block:'center'});try{ciEl.focus();}catch(e){}}
-  },80);
+    if(ciEl){try{ciEl.focus();}catch(e){}}
+  });
 }
 
-function cancelUoiEdit(){
-  window._uoiEditMode=false;
-  R();
+function closeUoiEdit(){
+  var el=document.getElementById('uoiEditOverlay');
+  if(!el)return;
+  el.classList.remove('open');
+  setTimeout(function(){
+    if(el.parentNode)el.remove();
+    if(typeof unlockDlaOverlayScrollIfClear==='function')unlockDlaOverlayScrollIfClear();
+    document.removeEventListener('keydown',handleUoiEditKey);
+  },200);
+}
+
+function handleUoiEditKey(ev){
+  if(ev.key==='Escape'){ev.preventDefault();closeUoiEdit();}
+}
+
+function renumberUoiLois(){
+  var list=document.getElementById('uoi-loi-list');if(!list)return;
+  var rows=list.querySelectorAll('.uoi-loi-row');
+  rows.forEach(function(row,i){
+    var n=String(i+1);if(n.length<2)n='0'+n;
+    var num=row.querySelector('.uoi-loi-num');if(num)num.textContent=n;
+    var input=row.querySelector('.uoi-loi-input');if(input)input.placeholder='Line of inquiry '+(i+1);
+  });
+}
+
+function addUoiLoiInput(){
+  var list=document.getElementById('uoi-loi-list');if(!list)return;
+  var n=list.querySelectorAll('.uoi-loi-row').length+1;
+  var nPad=String(n);if(nPad.length<2)nPad='0'+nPad;
+  var row=document.createElement('div');
+  row.className='uoi-loi-row';
+  row.innerHTML=
+    '<div class="uoi-loi-num">'+nPad+'</div>'
+    +'<input type="text" class="uoi-loi-input" placeholder="Line of inquiry '+n+'" value="">'
+    +'<button type="button" class="uoi-loi-remove" onclick="removeUoiLoiInput(this)" title="Remove this line of inquiry" aria-label="Remove">×</button>';
+  list.appendChild(row);
+  var input=row.querySelector('.uoi-loi-input');if(input)try{input.focus();}catch(e){}
+}
+
+function removeUoiLoiInput(btn){
+  var row=btn.closest('.uoi-loi-row');if(!row)return;
+  var list=document.getElementById('uoi-loi-list');if(!list)return;
+  if(list.querySelectorAll('.uoi-loi-row').length<=1){
+    var input=row.querySelector('.uoi-loi-input');if(input)input.value='';
+    return;
+  }
+  row.remove();
+  renumberUoiLois();
 }
 
 function submitUoiEdit(campusEnc,ylEnc,themeEnc){
   var campus=decodeURIComponent(campusEnc),yl=decodeURIComponent(ylEnc),theme=decodeURIComponent(themeEnc);
   var ciEl=document.getElementById('uoi-edit-ci');
-  var loEl=document.getElementById('uoi-edit-lo');
   var noteEl=document.getElementById('uoi-edit-note');
   var ci=ciEl?ciEl.value.trim():'';
-  var lo=loEl?loEl.value.trim():'';
   var note=noteEl?noteEl.value.trim():'';
-  if(!ci&&!lo){alert('Please fill in the Central Idea or Lines of Inquiry before submitting.');return;}
+  var loiInputs=document.querySelectorAll('#uoi-loi-list .uoi-loi-input');
+  var loiVals=[];
+  loiInputs.forEach(function(inp){var v=String(inp.value||'').trim();if(v)loiVals.push(v);});
+  var lo=loiVals.join('\n');
+  if(!ci&&!lo){alert('Please fill in the Central Idea or at least one Line of Inquiry before submitting.');return;}
   var saveBtn=document.getElementById('uoi-edit-save');
   if(saveBtn){saveBtn.disabled=true;saveBtn.textContent='Submitting...';}
   var url=AI_HOOK
@@ -1115,7 +1229,7 @@ function submitUoiEdit(campusEnc,ylEnc,themeEnc){
       var parsed;try{parsed=JSON.parse(txt);}catch(e){throw new Error('Server returned invalid response');}
       if(parsed&&parsed.error)throw new Error(parsed.error);
       saveLocalUoiProposal(campus,yl,theme,ci,lo,note);
-      window._uoiEditMode=false;
+      closeUoiEdit();
       R();
       setTimeout(function(){
         if(confirm('Submitted to the DLA team for review!\n\nWould you like to generate fresh tech ideas using your edited Central Idea and Lines of Inquiry right now?\n\n(Pick any approved tool - the AI will tailor a suggestion around your wording. Your unit\'s saved suggestions do not change unless the DLA team approves.)')){
@@ -1125,7 +1239,7 @@ function submitUoiEdit(campusEnc,ylEnc,themeEnc){
     })
     .catch(function(err){
       alert('Submission failed: '+(err&&err.message?err.message:err)+'\n\nPlease try again.');
-      if(saveBtn){saveBtn.disabled=false;saveBtn.textContent='Save and submit for approval';}
+      if(saveBtn){saveBtn.disabled=false;saveBtn.textContent='💾 Save and submit for approval';}
     });
 }
 
@@ -1919,39 +2033,16 @@ var _uoiCaEnc=encodeURIComponent(CN[ca]||ca),_uoiYlEnc=encodeURIComponent(yl),_u
 var _existingProposal=getLocalUoiProposal(CN[ca]||ca,yl,u.th);
 var _pendingBanner=_existingProposal?'<div class="uoi-pending-pill" style="margin:0 0 12px">✓ Submitted for approval · '+new Date(_existingProposal.submittedAt).toLocaleDateString()+' <button title="Forget the local submitted reminder (does not withdraw from the review queue)" onclick="clearLocalProposalForUnit(\''+_uoiCaEnc+'\',\''+_uoiYlEnc+'\',\''+_uoiThEnc+'\')" aria-label="Forget reminder">×</button></div>':'';
 
-if(window._uoiEditMode){
-  // EDIT MODE — replace CI box + LOI box with a single edit form.
-  var _editCi=_existingProposal&&_existingProposal.ci?_existingProposal.ci:(u.ci||'');
-  var _editLo=_existingProposal&&_existingProposal.lo?_existingProposal.lo:(u.lo||'');
-  var _editNote=_existingProposal&&_existingProposal.note?_existingProposal.note:'';
-  h+='<div class="uoi-edit-form">'
-    +'<h3>Edit Central Idea &amp; Lines of Inquiry</h3>'
-    +'<div class="uoi-edit-hint">Your edits will be sent to the <strong>DLA team for review</strong>. They won\'t change what other teachers see on this unit until they are approved. After saving you can use your edits to generate fresh tech ideas right away.</div>'
-    +'<label for="uoi-edit-ci">Central Idea</label>'
-    +'<textarea id="uoi-edit-ci" rows="3" placeholder="e.g. Sharing personal stories helps us understand and value different perspectives.">'+escapeHtml(_editCi)+'</textarea>'
-    +'<label for="uoi-edit-lo">Lines of Inquiry <span style="font-weight:400;text-transform:none;color:#666;letter-spacing:0">(one per line, or separated by semicolons)</span></label>'
-    +'<textarea id="uoi-edit-lo" rows="5" placeholder="• Where stories come from&#10;• How stories shape identity&#10;• Our responsibility as storytellers">'+escapeHtml(_editLo)+'</textarea>'
-    +'<label for="uoi-edit-note">Note to the DLA team <span style="font-weight:400;text-transform:none;color:#666;letter-spacing:0">(optional)</span></label>'
-    +'<textarea id="uoi-edit-note" rows="2" placeholder="Why these edits? (e.g. updated for 2026 planner, central idea reworded for clarity, new line of inquiry added)">'+escapeHtml(_editNote)+'</textarea>'
-    +'<div class="uoi-edit-actions">'
-      +'<button id="uoi-edit-save" class="uoi-edit-save" onclick="submitUoiEdit(\''+_uoiCaEnc+'\',\''+_uoiYlEnc+'\',\''+_uoiThEnc+'\')">💾 Save and submit for approval</button>'
-      +'<button class="uoi-edit-cancel" onclick="cancelUoiEdit()">Cancel</button>'
-    +'</div>'
-  +'</div>';
+h+=_pendingBanner;
+if(u.lo && String(u.lo).trim()){
+  h+='<div class="loi-box"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><div class="loi-label" style="margin-bottom:0">Lines of Inquiry</div><button class="uoi-edit-btn" onclick="startUoiEdit()" style="margin-left:auto" title="Propose an edit to the Central Idea or Lines of Inquiry for this unit. Sent to the DLA team for review.">✏️ Edit unit details</button></div>';
+  var lois=splitLinesOfInquiry(u.lo);
+  lois.forEach((l,i)=>{l=l.trim();if(l)h+='<div class="loi-item"><span class="loi-num" style="color:'+tc+'">0'+(i+1)+'</span>'+escapeHtml(l)+'</div>';});
+  h+='</div>';
 } else {
-  // VIEW MODE — pending banner + LOI box with edit button. Edit also lives
-  // here even when CI is missing, so teachers can ADD a CI to a sparse unit.
-  h+=_pendingBanner;
-  if(u.lo && String(u.lo).trim()){
-    h+='<div class="loi-box"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><div class="loi-label" style="margin-bottom:0">Lines of Inquiry</div><button class="uoi-edit-btn" onclick="startUoiEdit()" style="margin-left:auto" title="Propose an edit to the Central Idea or Lines of Inquiry for this unit. Sent to the DLA team for review.">✏️ Edit unit details</button></div>';
-    var lois=splitLinesOfInquiry(u.lo);
-    lois.forEach((l,i)=>{l=l.trim();if(l)h+='<div class="loi-item"><span class="loi-num" style="color:'+tc+'">0'+(i+1)+'</span>'+escapeHtml(l)+'</div>';});
-    h+='</div>';
-  } else {
-    // Sparse unit — no LOI in data.json. Still expose the edit button so
-    // teachers can propose adding one.
-    h+='<div class="loi-box" style="border-style:dashed;color:#888"><div style="display:flex;align-items:center;gap:10px"><div class="loi-label" style="margin-bottom:0">Lines of Inquiry — not yet on the planner</div><button class="uoi-edit-btn" onclick="startUoiEdit()" style="margin-left:auto" title="Propose adding a Central Idea / Lines of Inquiry for this unit. Sent to the DLA team for review.">✏️ Edit unit details</button></div></div>';
-  }
+  // Sparse unit — no LOI in data.json. Still expose the edit button so
+  // teachers can propose adding one.
+  h+='<div class="loi-box" style="border-style:dashed;color:#888"><div style="display:flex;align-items:center;gap:10px"><div class="loi-label" style="margin-bottom:0">Lines of Inquiry — not yet on the planner</div><button class="uoi-edit-btn" onclick="startUoiEdit()" style="margin-left:auto" title="Propose adding a Central Idea / Lines of Inquiry for this unit. Sent to the DLA team for review.">✏️ Edit unit details</button></div></div>';
 }
 
 var curList=u.s;
