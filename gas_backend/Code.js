@@ -4969,7 +4969,7 @@ function regenerateAllInspiring(opts) {
             clearHumanVerifiedFlags_(data[idx], 'Regenerated with auto-substituted tool names after 3 failed AI attempts');
             dataDirty = true;
             success = true;
-            Logger.log('  [' + (n + 1) + '/' + candidates.length + '] AUTO-SWAPPED ' + target.ca + ' ' + target.yl + ' — ' + target.th + ' (' + subRes.swaps.map(s => 'slot ' + s.slot + ' "' + s.from + '" -> "' + s.to + '"').join('; ') + ')');
+            Logger.log('  [' + (n + 1) + '/' + candidates.length + '] AUTO-SWAPPED ' + target.ca + ' ' + target.yl + ' — ' + target.th + ' (' + subRes.swaps.map(s => 'slot ' + s.slot + ' "' + (s.fromTool || (s.perComponent && s.perComponent[0] && s.perComponent[0].from) || '?') + '" -> "' + (s.toTool || (s.perComponent && s.perComponent[0] && s.perComponent[0].to) || '?') + '"' + (s.urlEvidence ? ' [url-evidence]' : '')).join('; ') + ')');
           }
         }
       }
