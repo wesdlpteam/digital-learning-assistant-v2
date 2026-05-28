@@ -2103,8 +2103,15 @@ GENERAL RULES:
 - Each of the 3 options must be MEANINGFULLY different from the others — different tools, OR different angles on the same tool.
 ${SUGGESTION_STYLE}
 
+DEPTH OVERRIDE FOR THIS REFINEMENT (supersedes the 2-3 sentence cap in the writing-style guide above):
+The teacher is comparing each new suggestion side-by-side with the CURRENT suggestion description shown earlier in this prompt. The replacement MUST match that depth, not feel thinner. For each option's "d" field write ~6 vivid practical sentences (target 500-800 characters) that follow every writing-style rule above — name what students DO, name what they CREATE, weave the unit connection, name the tool's specific features, and ground the activity in 2-3 concrete examples. Do NOT shorten to 2-3 sentences.
+EXCEPTIONS (keep these caps from the writing-style guide):
+- Minecraft Education suggestions: still exactly 2 sentences (45-70 words) per the Minecraft rule above.
+- Other verified-library lessons (Micro:bit, Adobe Express, future curated libraries): still 3-4 sentences (70-130 words) per the verified-library rule above.
+- App Smash / multi-tool combos: ~6 sentences, with each tool's contribution explicit.
+
 Return ONLY a JSON array of exactly 3 suggestions:
-[{"t":"Tool Name","d":"2-3 vivid sentences."},{"t":"Tool Name","d":"2-3 vivid sentences."},{"t":"Tool Name","d":"2-3 vivid sentences."}]`;
+[{"t":"Tool Name","d":"~6 vivid practical sentences (or the cap that applies to this tool category) matching the depth of the current description."},{"t":"Tool Name","d":"~6 vivid practical sentences (or the cap that applies to this tool category) matching the depth of the current description."},{"t":"Tool Name","d":"~6 vivid practical sentences (or the cap that applies to this tool category) matching the depth of the current description."}]`;
 
   try{
     const raw = await callAI([{role:'user',parts:[{text:prompt}]}], null, OPENAI_FAST_MODEL);
