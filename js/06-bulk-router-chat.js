@@ -2103,12 +2103,13 @@ GENERAL RULES:
 - Each of the 3 options must be MEANINGFULLY different from the others — different tools, OR different angles on the same tool.
 ${SUGGESTION_STYLE}
 
-DEPTH OVERRIDE FOR THIS REFINEMENT (supersedes the 2-3 sentence cap in the writing-style guide above):
-The teacher is comparing each new suggestion side-by-side with the CURRENT suggestion description shown earlier in this prompt. The replacement MUST match that depth, not feel thinner. For each option's "d" field write ~6 vivid practical sentences (target 500-800 characters) that follow every writing-style rule above — name what students DO, name what they CREATE, weave the unit connection, name the tool's specific features, and ground the activity in 2-3 concrete examples. Do NOT shorten to 2-3 sentences.
-EXCEPTIONS (keep these caps from the writing-style guide):
-- Minecraft Education suggestions: still exactly 2 sentences (45-70 words) per the Minecraft rule above.
-- Other verified-library lessons (Micro:bit, Adobe Express, future curated libraries): still 3-4 sentences (70-130 words) per the verified-library rule above.
-- App Smash / multi-tool combos: ~6 sentences, with each tool's contribution explicit.
+DEPTH OVERRIDE FOR THIS REFINEMENT (supersedes EVERY sentence-count cap in the writing-style guide above — including the Minecraft 2-sentence rule and the Micro:bit / Adobe Express 3-4 sentence rule):
+The teacher is comparing each new suggestion side-by-side with the CURRENT suggestion description shown earlier in this prompt. The replacement MUST match that depth, not feel thinner. For each option's "d" field write ~6 vivid practical sentences (target 500-800 characters) that follow every OTHER writing-style rule above — name what students DO, name what they CREATE, weave the unit connection, name the tool's specific features, and ground the activity in 2-3 concrete examples.
+NO EXCEPTIONS BY TOOL CATEGORY — this applies to:
+- Minecraft Education suggestions: ~6 sentences. Still pick a verified Minecraft library lesson and include its direct URL, but expand the description to the full depth — name the lesson, describe the classroom flow, the concrete student artefact, and how the build connects to the unit, across ~6 sentences. Do NOT use the old 2-sentence Minecraft cap.
+- Micro:bit, Adobe Express and other verified-library lessons: ~6 sentences. Still include the lesson URL inline and name the platform-specific feature, but write to the same ~6 sentence depth as a strong app-smash suggestion. Do NOT use the old 3-4 sentence cap.
+- App Smash / multi-tool combos: ~6 sentences with each tool's contribution explicit.
+- Single mainstream tools (Canva, Book Creator, Padlet, Seesaw, etc.): ~6 sentences as above.
 
 Return ONLY a JSON array of exactly 3 suggestions:
 [{"t":"Tool Name","d":"~6 vivid practical sentences (or the cap that applies to this tool category) matching the depth of the current description."},{"t":"Tool Name","d":"~6 vivid practical sentences (or the cap that applies to this tool category) matching the depth of the current description."},{"t":"Tool Name","d":"~6 vivid practical sentences (or the cap that applies to this tool category) matching the depth of the current description."}]`;
