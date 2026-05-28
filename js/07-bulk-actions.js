@@ -926,7 +926,19 @@ async function runBulkMinecraftOpportunityFlow_(instruction,completeData,prog,lb
   const specificLesson = mcSpecificLessonFromInstruction_(instruction);
   const specificLessonTitle = specificLesson ? mcCleanTitle_(specificLesson.title || 'the selected Minecraft lesson') : '';
   completeData.forEach(({e,i})=>{if(!isAiToolSafeForEntry('Minecraft Education',e)){age++;return;} if(entryAlreadyHasTool_(e,'Minecraft Education')){existing++;return;} const slot=mcChooseSlot_(e,instruction); if(!slot){noslot++;return;} cand.push({entryIdx:i,...slot});});
-  const usedE=new Set(), usedL=new Set(), changes=[]; const wantLib=target;
+  // Per-teacher-cohort lesson dedup: a verified lesson can repeat across the
+  // three Wesley campuses (e.g. GW Y6 and Coode Y6 may both get "Alternative
+  // Energy") but must not repeat within the same campus + year-level (the
+  // group of teachers who see the same suggestion set in their planner).
+  const usedE = new Set();
+  const usedLByCY = new Map(); // (entry.ca|entry.yl) -> Set of lesson-title keys
+  function usedLForEntry(entry){
+    const key = (entry && entry.ca || '') + '|' + (entry && entry.yl || '');
+    let s = usedLByCY.get(key);
+    if(!s){ s = new Set(); usedLByCY.set(key, s); }
+    return s;
+  }
+  const changes=[]; const wantLib=target;
   let lib=[];
   if(specificLesson){
     // When a teacher names one Minecraft lesson, this flow must test ONLY that lesson.
@@ -943,39 +955,38 @@ async function runBulkMinecraftOpportunityFlow_(instruction,completeData,prog,lb
   for(const c of lib){
     if(changes.length>=wantLib)break;
     if(usedE.has(c.entryIdx))continue;
+    const entry = DATA[c.entryIdx];
     let lesson;
     if(specificLesson){
       lesson = c.lesson;
     } else {
-      const fit = mcBestLesson_(DATA[c.entryIdx], usedL);
+      const fit = mcBestLesson_(entry, usedLForEntry(entry));
       if(!fit)continue;
       lesson = fit.lesson;
     }
     const ch=mcChange_(c,'lesson',lesson);
     if(specificLesson){ch.auditReason='Specific verified Minecraft lesson “'+specificLessonTitle+'” replacing '+c.oldTool;}
-    if(!checkRealisticToolUse(ch.t,ch.d,DATA[c.entryIdx]).ok)continue;
+    if(!checkRealisticToolUse(ch.t,ch.d,entry).ok)continue;
     changes.push(ch);
     usedE.add(c.entryIdx);
-    if(!specificLesson) usedL.add(dlaTextForFit_(lesson.title||''));
+    if(!specificLesson) usedLForEntry(entry).add(dlaTextForFit_(lesson.title||''));
   }
   // Verified-only mode: do not generate original Minecraft build/challenge fallbacks.
   // For a named lesson, do not backfill with other lessons just to reach the requested count.
-  // Backfill ALSO honours usedL — never reuse the same verified lesson across
-  // multiple units in a single scan, even if we fall short of the target. The
-  // previous "allow reuse to hit target" behaviour produced N copies of the
-  // top-scoring lesson (e.g. all "Alternative Energy"). The "found N out of
-  // M" UI message below explains the shortfall to the teacher.
+  // Backfill ALSO uses the per-campus-year dedup set so a lesson can repeat
+  // across campuses but never within one campus + year-level cohort.
   if(!specificLesson && changes.length<target){
     for(const c of lib){
       if(changes.length>=target)break;
       if(usedE.has(c.entryIdx))continue;
-      const fit = mcBestLesson_(DATA[c.entryIdx], usedL);
+      const entry = DATA[c.entryIdx];
+      const fit = mcBestLesson_(entry, usedLForEntry(entry));
       if(!fit)continue;
       const ch=mcChange_(c,'lesson',fit.lesson);
-      if(checkRealisticToolUse(ch.t,ch.d,DATA[c.entryIdx]).ok){
+      if(checkRealisticToolUse(ch.t,ch.d,entry).ok){
         changes.push(ch);
         usedE.add(c.entryIdx);
-        usedL.add(dlaTextForFit_(fit.lesson.title||''));
+        usedLForEntry(entry).add(dlaTextForFit_(fit.lesson.title||''));
       }
     }
   }
