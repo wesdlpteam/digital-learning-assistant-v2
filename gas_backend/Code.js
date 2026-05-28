@@ -456,6 +456,27 @@ function doPost(e) {
       return jsonResponse(result);
     }
 
+    // 2026-05-28: server-side fire-and-forget regen runner. Tags both
+    // inspiringRegenAutoSwapped units AND the hardcoded audit-findings
+    // list for cleanup, installs a 10-min tick trigger that drains via
+    // regenerateAllInspiring. User can close their laptop after firing.
+    if (action === 'kickoffserversideregen') {
+      const result = kickoffServerSideRegen({});
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
+    if (action === 'serversideregenstatus') {
+      const result = serverSideRegenStatus();
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
+    if (action === 'serversideregenabort') {
+      const removed = removeServerSideRegenTrigger_();
+      return jsonResponse({ message: 'Removed ' + removed + ' server-side regen trigger(s).', removed: removed, user: verifiedEmail });
+    }
+
     // 2026-05-25: admin review of teacher-submitted CI/LOI edit proposals.
     if (action === 'listuoiproposals') {
       const result = listUoiProposals_({ status: body.status || null });
@@ -3425,7 +3446,32 @@ var INSPIRING_TOOL_SUBSTITUTIONS = {
   'micro bit': 'Micro:bit',
   'micro-bit': 'Micro:bit',
   'scratch jr': 'ScratchJR',
-  'scratchjr': 'ScratchJR'
+  'scratchjr': 'ScratchJR',
+  // 2026-05-28: AI-slip aliases — the validator does strict equality on
+  // lowercased tool names, so common AI variants ("Minecraft Education
+  // Edition", "Beebot") fall through to the universal-Seesaw fallback in
+  // inspiringSubstituteRogueTool_, producing t="Seesaw" cards whose
+  // descriptions still link to Minecraft / Bee-Bot pages. Mapping the
+  // common variants here promotes them to the canonical approved name
+  // instead. See audit_findings.json (2026-05-28 run) for the source bug.
+  'minecraft': 'Minecraft Education',
+  'minecraft education edition': 'Minecraft Education',
+  'minecraft: education edition': 'Minecraft Education',
+  'minecraft education: lessons': 'Minecraft Education',
+  'minecraft edu': 'Minecraft Education',
+  'minecraft for education': 'Minecraft Education',
+  'beebot': 'Beebots',
+  'bee-bot': 'Beebots',
+  'bee bot': 'Beebots',
+  'bee-bots': 'Beebots',
+  'adobe spark': 'Adobe Express',
+  'adobe creative cloud express': 'Adobe Express',
+  'adobe express animate from audio': 'Animating a Character with Adobe Express',
+  'animate from audio': 'Animating a Character with Adobe Express',
+  'book creator app': 'Book Creator',
+  'stop motion': 'Stop Motion Studio',
+  'stopmotion': 'Stop Motion Studio',
+  'stop motion studio app': 'Stop Motion Studio'
 };
 
 function inspiringSubstituteRogueTool_(toolName, approvedSet, bannedSet, yl) {
@@ -4163,6 +4209,203 @@ function regenerateAllInspiringRequeueAutoSwapped(opts) {
   Logger.log('regenerateAllInspiringRequeueAutoSwapped: cleared inspiringRegenAt on ' + cleared + ' auto-swapped unit(s).');
   if (units.length) Logger.log('Auto-swapped units:\n' + units.map(u => '  ' + u.ca + ' / ' + u.yl + ' / ' + u.th).join('\n'));
   return { found: units.length, cleared: cleared, units: units };
+}
+
+// ============================================================================
+// Server-side bulk regen runner (Nathan's request 2026-05-28 — fire and walk
+// away). Targets two populations: (a) units stamped with
+// inspiringRegenAutoSwapped (system knows it patched t while leaving the
+// original tool's URL/text in d), and (b) the 50 distinct units surfaced
+// by the 2026-05-28 audit_suggestions.py run (URL/name/age mismatches
+// that didn't necessarily trigger the auto-swap stamp).
+//
+// Flow: kickoffServerSideRegen clears inspiringRegenAt on every target,
+// saves+pushes once, then installs a 10-minute tick trigger that drains
+// the queue via regenerateAllInspiring (which already saves+pushes per
+// batch and respects the cooldown / abort flag). When remaining hits 0,
+// the trigger removes itself. Idempotent — safe to call kickoff again.
+// ============================================================================
+var SERVER_REGEN_TICK_HANDLER = 'serverSideRegenTick';
+var SERVER_REGEN_TICK_MINUTES = 10;
+var SERVER_REGEN_TICK_BATCH = 8;
+// 50 distinct units extracted from audit_findings.json (2026-05-28).
+// Hardcoded because this is a one-off cleanup list; after the regen sweep
+// these units will have fresh content and the list is moot.
+var SERVER_REGEN_AUDIT_TARGETS = [
+  { ca: 'Elsternwick', yl: 'Prep', th: 'How We Express Ourselves' },
+  { ca: 'Elsternwick', yl: 'Prep', th: 'How We Organise Ourselves' },
+  { ca: 'Elsternwick', yl: 'Prep', th: 'Sharing the Planet' },
+  { ca: 'Elsternwick', yl: 'Prep', th: 'Who We Are' },
+  { ca: 'Elsternwick', yl: 'Year 2', th: 'How We Organise Ourselves' },
+  { ca: 'Elsternwick', yl: 'Year 3', th: 'How the World Works' },
+  { ca: 'Elsternwick', yl: 'Year 3', th: 'Sharing the Planet' },
+  { ca: 'Elsternwick', yl: 'Year 3', th: 'Who We Are' },
+  { ca: 'Elsternwick', yl: 'Year 4', th: 'How We Express Ourselves' },
+  { ca: 'Elsternwick', yl: 'Year 4', th: 'How We Organise Ourselves' },
+  { ca: 'Elsternwick', yl: 'Year 4', th: 'Where We Are in Place and Time' },
+  { ca: 'Elsternwick', yl: 'Year 5', th: 'How the World Works' },
+  { ca: 'Elsternwick', yl: 'Year 5', th: 'Sharing the Planet' },
+  { ca: 'Elsternwick', yl: 'Year 5', th: 'Where We Are in Place and Time' },
+  { ca: 'Elsternwick', yl: 'Year 6', th: 'How the World Works' },
+  { ca: 'Elsternwick', yl: 'Year 6', th: 'Sharing the Planet' },
+  { ca: 'Glen Waverley', yl: 'Prep', th: 'How We Express Ourselves' },
+  { ca: 'Glen Waverley', yl: 'Prep', th: 'How We Organise Ourselves' },
+  { ca: 'Glen Waverley', yl: 'Prep', th: 'Where We Are in Place and Time' },
+  { ca: 'Glen Waverley', yl: 'Prep', th: 'Who We Are' },
+  { ca: 'Glen Waverley', yl: 'Year 1', th: 'How We Express Ourselves' },
+  { ca: 'Glen Waverley', yl: 'Year 1', th: 'Where We Are in Place and Time' },
+  { ca: 'Glen Waverley', yl: 'Year 2', th: 'Who We Are' },
+  { ca: 'Glen Waverley', yl: 'Year 3', th: 'How We Organise Ourselves' },
+  { ca: 'Glen Waverley', yl: 'Year 3', th: 'Sharing the Planet' },
+  { ca: 'Glen Waverley', yl: 'Year 3', th: 'Who We Are' },
+  { ca: 'Glen Waverley', yl: 'Year 4', th: 'How the World Works' },
+  { ca: 'Glen Waverley', yl: 'Year 5', th: 'How the World Works' },
+  { ca: 'Glen Waverley', yl: 'Year 5', th: 'Sharing the Planet' },
+  { ca: 'Glen Waverley', yl: 'Year 6', th: 'How We Express Ourselves' },
+  { ca: 'Glen Waverley', yl: 'Year 6', th: 'How We Organise Ourselves' },
+  { ca: 'Glen Waverley', yl: 'Year 6', th: 'How the World Works' },
+  { ca: 'Glen Waverley', yl: 'Year 6', th: 'Sharing the Planet' },
+  { ca: 'Glen Waverley', yl: 'Year 6', th: 'Where We Are in Place and Time' },
+  { ca: 'St Kilda', yl: 'Prep', th: 'How We Express Ourselves' },
+  { ca: 'St Kilda', yl: 'Prep', th: 'How We Organise Ourselves' },
+  { ca: 'St Kilda', yl: 'Prep', th: 'How the World Works' },
+  { ca: 'St Kilda', yl: 'Prep', th: 'Sharing the Planet' },
+  { ca: 'St Kilda', yl: 'Prep', th: 'Where We Are in Place and Time' },
+  { ca: 'St Kilda', yl: 'Year 1', th: 'Where We Are in Place and Time' },
+  { ca: 'St Kilda', yl: 'Year 3', th: 'Who We Are' },
+  { ca: 'St Kilda', yl: 'Year 4', th: 'Who We Are' },
+  { ca: 'St Kilda', yl: 'Year 5', th: 'How We Express Ourselves' },
+  { ca: 'St Kilda', yl: 'Year 5', th: 'How the World Works' },
+  { ca: 'St Kilda', yl: 'Year 5', th: 'Sharing the Planet' },
+  { ca: 'St Kilda', yl: 'Year 6', th: 'Sharing the Planet' },
+  { ca: 'St Kilda', yl: 'Year 6', th: 'Where We Are in Place and Time' },
+  { ca: 'Glen Waverley', yl: '4 Year Old Kinder', th: 'Who We Are' },
+  { ca: 'Glen Waverley', yl: '4 Year Old Kinder', th: 'Where We Are in Place and Time' },
+  { ca: 'Glen Waverley', yl: '4 Year Old Kinder', th: 'How We Express Ourselves' }
+];
+
+function kickoffServerSideRegen(opts) {
+  opts = opts || {};
+  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  const raw = JSON.parse(file.getBlob().getDataAsString());
+  const isArr = Array.isArray(raw);
+  const data = isArr ? raw : Object.values(raw).filter(u => u && typeof u === 'object');
+
+  const auditSet = {};
+  SERVER_REGEN_AUDIT_TARGETS.forEach(function(t) {
+    auditSet[t.ca + '||' + t.yl + '||' + t.th] = true;
+  });
+
+  let clearedAutoSwapped = 0;
+  let clearedAudit = 0;
+  let alreadyQueued = 0;
+  const targets = [];
+  for (let i = 0; i < data.length; i++) {
+    const u = data[i];
+    if (!u || !u.ca || !u.yl || !u.th) continue;
+    const k = u.ca + '||' + u.yl + '||' + u.th;
+    const isAutoSwapped = !!u.inspiringRegenAutoSwapped;
+    const isAuditTarget = !!auditSet[k];
+    if (!isAutoSwapped && !isAuditTarget) continue;
+    if (u.inspiringRegenAt) {
+      delete u.inspiringRegenAt;
+      if (isAutoSwapped) clearedAutoSwapped++;
+      else clearedAudit++;
+      targets.push({ ca: u.ca, yl: u.yl, th: u.th, status: 'requeued', autoSwapped: isAutoSwapped, audit: isAuditTarget });
+    } else {
+      alreadyQueued++;
+      targets.push({ ca: u.ca, yl: u.yl, th: u.th, status: 'already-queued', autoSwapped: isAutoSwapped, audit: isAuditTarget });
+    }
+  }
+
+  const totalRequeued = clearedAutoSwapped + clearedAudit;
+  if (totalRequeued > 0) {
+    const toWrite = isArr ? data : raw;
+    file.setContent(JSON.stringify(toWrite, null, 2));
+    try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e) { Logger.log('pushToGitHub after kickoffServerSideRegen failed: ' + e); }
+  }
+
+  removeServerSideRegenTrigger_();
+  ScriptApp.newTrigger(SERVER_REGEN_TICK_HANDLER)
+    .timeBased()
+    .everyMinutes(SERVER_REGEN_TICK_MINUTES)
+    .create();
+  Logger.log('Server-side regen trigger installed: ' + SERVER_REGEN_TICK_HANDLER + ' every ' + SERVER_REGEN_TICK_MINUTES + ' minute(s).');
+
+  // First tick now so progress starts immediately instead of waiting for
+  // the trigger's first fire (~10 min).
+  serverSideRegenTick();
+
+  Logger.log('kickoffServerSideRegen: ' + totalRequeued + ' requeued, ' + alreadyQueued + ' already-queued, ' + targets.length + ' total target unit(s).');
+  return {
+    message: 'Server-side regen kicked off. ' + targets.length + ' unit(s) in scope (' + totalRequeued + ' requeued, ' + alreadyQueued + ' already queued). Tick every ' + SERVER_REGEN_TICK_MINUTES + ' min, batch ' + SERVER_REGEN_TICK_BATCH + '. Trigger auto-removes when done.',
+    totalTargets: targets.length,
+    requeued: totalRequeued,
+    clearedAutoSwapped: clearedAutoSwapped,
+    clearedAudit: clearedAudit,
+    alreadyQueued: alreadyQueued,
+    tickHandler: SERVER_REGEN_TICK_HANDLER,
+    tickMinutes: SERVER_REGEN_TICK_MINUTES,
+    tickBatch: SERVER_REGEN_TICK_BATCH,
+    units: targets
+  };
+}
+
+function serverSideRegenTick() {
+  try {
+    const result = regenerateAllInspiring({ batch: SERVER_REGEN_TICK_BATCH });
+    Logger.log('serverSideRegenTick: processed=' + result.processed + ' fixed=' + result.fixed + ' failed=' + result.failed + ' remaining=' + result.remaining + (result.paused ? ' PAUSED:' + result.reason : ''));
+    if (result && result.remaining === 0 && !result.paused) {
+      const removed = removeServerSideRegenTrigger_();
+      Logger.log('serverSideRegenTick: queue drained, removed ' + removed + ' trigger(s).');
+    }
+  } catch (e) {
+    // Don't tear down the trigger on transient errors — let the next tick
+    // retry. A hung run gets killed by the GAS 6-min hard limit which
+    // surfaces here as an exception.
+    Logger.log('serverSideRegenTick error (will retry next tick): ' + (e && e.stack ? e.stack : e));
+  }
+}
+
+function removeServerSideRegenTrigger_() {
+  const triggers = ScriptApp.getProjectTriggers();
+  let removed = 0;
+  for (let i = 0; i < triggers.length; i++) {
+    if (triggers[i].getHandlerFunction() === SERVER_REGEN_TICK_HANDLER) {
+      ScriptApp.deleteTrigger(triggers[i]);
+      removed++;
+    }
+  }
+  return removed;
+}
+
+function serverSideRegenStatus() {
+  const triggers = ScriptApp.getProjectTriggers().filter(function(t) {
+    return t.getHandlerFunction() === SERVER_REGEN_TICK_HANDLER;
+  });
+  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  const raw = JSON.parse(file.getBlob().getDataAsString());
+  const isArr = Array.isArray(raw);
+  const data = isArr ? raw : Object.values(raw).filter(u => u && typeof u === 'object');
+  const auditSet = {};
+  SERVER_REGEN_AUDIT_TARGETS.forEach(function(t) { auditSet[t.ca + '||' + t.yl + '||' + t.th] = true; });
+  let pending = 0;
+  let done = 0;
+  for (let i = 0; i < data.length; i++) {
+    const u = data[i];
+    if (!u || !u.ca || !u.yl || !u.th) continue;
+    const k = u.ca + '||' + u.yl + '||' + u.th;
+    if (!u.inspiringRegenAutoSwapped && !auditSet[k]) continue;
+    if (u.inspiringRegenAt) done++;
+    else pending++;
+  }
+  return {
+    triggerInstalled: triggers.length > 0,
+    triggerHandler: SERVER_REGEN_TICK_HANDLER,
+    pending: pending,
+    done: done,
+    total: pending + done
+  };
 }
 
 // One-shot helper: scan for bad-tool units, clear their inspiringRegenAt
