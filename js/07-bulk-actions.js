@@ -840,19 +840,38 @@ function mcProductForEntry_(entry){
   return 'a short evidence note connecting the Minecraft task back to the unit';
 }
 function mcCleanLessonDesc_(d){
-  // Sanitise the per-lesson description from libraries.json so it can be
-  // dropped into a sentence after "In the lesson, ...". Strips trailing
-  // punctuation, lowercases the leading letter so the sentence reads
-  // naturally, and word-boundary-truncates so the whole rendered
-  // description stays under the 560-char quality bar.
+  // Sanitise the per-lesson description from libraries.json for use as a
+  // standalone "Lesson focus: ..." sentence in the visible suggestion.
+  //
+  // Critical rules learned from the 2026-05-28 regression:
+  // - DO NOT lowercase the leading letter. Many descs are imperative
+  //   ("Explore hydropower...", "Design a pixel art image...") and reading
+  //   them as commands inside "Lesson focus: ..." is grammatical; lowercasing
+  //   turned them into subject-less fragments ("explore hydropower...").
+  // - DO NOT truncate mid-word. If the desc is longer than the soft cap,
+  //   cut at the last sentence boundary that fits; if none fits, return ''.
+  //   Truncating mid-word produced visible artefacts like "play a." in place
+  //   of "play a part in alternative energy".
   if(!d) return '';
   let t = String(d).replace(/\s+/g,' ').trim();
-  t = t.replace(/[.!?…]+$/,'');
-  t = t.charAt(0).toLowerCase() + t.slice(1);
-  if(t.length > 110){
-    const cut = t.lastIndexOf(' ', 110);
-    t = (cut > 0 ? t.slice(0, cut) : t.slice(0, 110));
+  const SOFT_MAX = 150;
+  if(t.length > SOFT_MAX){
+    // Walk backward from SOFT_MAX looking for ". " / "! " / "? ".
+    let cut = -1;
+    for(let i = SOFT_MAX; i >= 50; i--){
+      const ch = t.charAt(i);
+      if((ch==='.'||ch==='!'||ch==='?') && (i===t.length-1 || /\s/.test(t.charAt(i+1)))){
+        cut = i + 1; // include the punctuation
+        break;
+      }
+    }
+    if(cut > 50) t = t.slice(0, cut).trim();
+    else return ''; // No clean cut available; caller will fall back.
   }
+  if(!/[.!?]$/.test(t)) t += '.';
+  // First letter stays as the source has it; capitalise if it's lowercase
+  // so it reads as a proper sentence after the "Lesson focus: " intro.
+  if(t && /[a-z]/.test(t.charAt(0))) t = t.charAt(0).toUpperCase() + t.slice(1);
   return t;
 }
 function mcLessonDesc_(entry,l){
@@ -862,17 +881,20 @@ function mcLessonDesc_(entry,l){
   const product = mcProductForEntry_(entry);
   const lessonDescClean = mcCleanLessonDesc_(l&&l.desc);
   const urlBit = url ? ' ('+url+')' : '';
-  const lessonBit = lessonDescClean ? ' In the lesson, '+lessonDescClean+'.' : '';
-  const tail = ' Here they apply it to '+focus+', capturing 2–3 screenshots or signs from the world that they turn into '+product+'.';
+  const lessonBit = lessonDescClean ? ' Lesson focus: '+lessonDescClean : '';
+  const tail = ' Here they apply it to '+focus+' and turn 2–3 screenshots from the world into '+product+'.';
   // Richer 3-sentence form weaves the lesson's own description in.
   let out = 'Students use the verified Minecraft Education lesson “'+title+'”'+urlBit+'.'+lessonBit+tail;
   if(out.length <= 540) return out;
-  // Fallback: original 2-sentence template (URL inline) when the richer
-  // version would exceed the quality bar.
+  // Fallback 1: drop the inline URL (the Verified lesson link badge still
+  // shows it on the review card and via change.url on the public site).
+  out = 'Students use the verified Minecraft Education lesson “'+title+'”.'+lessonBit+tail;
+  if(out.length <= 540) return out;
+  // Fallback 2: drop the lesson-focus sentence too — revert to the previous
+  // 2-sentence shape with URL preserved.
   out = 'Students use the verified Minecraft Education lesson “'+title+'”'+urlBit+' to explore '+focus+'. They capture 2–3 screenshots or signs from the world and turn them into '+product+'.';
   if(out.length <= 540) return out;
-  // Last resort: drop URL from inline text (the Verified lesson link badge
-  // still shows it on the review card and on the public site's tool entry).
+  // Fallback 3: last resort — drop URL too.
   return 'Students use the verified Minecraft Education lesson “'+title+'” to explore '+focus+'. They capture 2–3 screenshots or signs from the world and turn them into '+product+'.';
 }
 function normaliseMinecraftChangeForEntry_(change){
@@ -911,12 +933,49 @@ async function runBulkMinecraftOpportunityFlow_(instruction,completeData,prog,lb
     // It may reuse the same verified lesson across multiple units; it must not silently substitute others.
     lib = cand.map(c=>{const fit=mcLessonFitForEntry_(specificLesson, DATA[c.entryIdx]); if(!fit){nofit++; return null;} return {...c,lesson:specificLesson,score:c.score+fit.score};}).filter(Boolean).sort((a,b)=>b.score-a.score);
   } else {
-    lib = cand.map(c=>{const fit=mcBestLesson_(DATA[c.entryIdx],usedL); return fit?{...c,lesson:fit.lesson,score:c.score+fit.score}:null;}).filter(Boolean).sort((a,b)=>b.score-a.score);
+    // Non-specific mode: rank candidates by the unit's intrinsic Minecraft-fit
+    // only. Lesson selection happens per-iteration inside the main loop below
+    // so the usedL dedup set is honoured — previously every candidate locked
+    // in the same top-scoring lesson here (e.g. "Alternative Energy" assigned
+    // to every unit) because usedL was still empty at this point.
+    lib = cand.slice().sort((a,b)=>b.score-a.score);
   }
-  for(const c of lib){if(changes.length>=wantLib)break; if(usedE.has(c.entryIdx))continue; const ch=mcChange_(c,'lesson',c.lesson); if(specificLesson){ch.auditReason='Specific verified Minecraft lesson “'+specificLessonTitle+'” replacing '+c.oldTool;} if(!checkRealisticToolUse(ch.t,ch.d,DATA[c.entryIdx]).ok)continue; changes.push(ch); usedE.add(c.entryIdx); if(!specificLesson) usedL.add(dlaTextForFit_(c.lesson.title||''));}
+  for(const c of lib){
+    if(changes.length>=wantLib)break;
+    if(usedE.has(c.entryIdx))continue;
+    let lesson;
+    if(specificLesson){
+      lesson = c.lesson;
+    } else {
+      const fit = mcBestLesson_(DATA[c.entryIdx], usedL);
+      if(!fit)continue;
+      lesson = fit.lesson;
+    }
+    const ch=mcChange_(c,'lesson',lesson);
+    if(specificLesson){ch.auditReason='Specific verified Minecraft lesson “'+specificLessonTitle+'” replacing '+c.oldTool;}
+    if(!checkRealisticToolUse(ch.t,ch.d,DATA[c.entryIdx]).ok)continue;
+    changes.push(ch);
+    usedE.add(c.entryIdx);
+    if(!specificLesson) usedL.add(dlaTextForFit_(lesson.title||''));
+  }
   // Verified-only mode: do not generate original Minecraft build/challenge fallbacks.
   // For a named lesson, do not backfill with other lessons just to reach the requested count.
-  if(!specificLesson && changes.length<target){for(const c of lib){if(changes.length>=target)break; if(usedE.has(c.entryIdx))continue; const ch=mcChange_(c,'lesson',c.lesson); if(checkRealisticToolUse(ch.t,ch.d,DATA[c.entryIdx]).ok){changes.push(ch);usedE.add(c.entryIdx);}}}
+  // Backfill loop also picks lessons per-iteration. It allows lesson reuse
+  // (passes null instead of usedL) since the main loop has already exhausted
+  // unique-lesson variety.
+  if(!specificLesson && changes.length<target){
+    for(const c of lib){
+      if(changes.length>=target)break;
+      if(usedE.has(c.entryIdx))continue;
+      const fit = mcBestLesson_(DATA[c.entryIdx], null);
+      if(!fit)continue;
+      const ch=mcChange_(c,'lesson',fit.lesson);
+      if(checkRealisticToolUse(ch.t,ch.d,DATA[c.entryIdx]).ok){
+        changes.push(ch);
+        usedE.add(c.entryIdx);
+      }
+    }
+  }
   if(bar)bar.style.width='100%'; if(prog)prog.style.display='none'; updateReasoningStep(3,'done');updateReasoningStep(4,'done');updateReasoningStep(5,'done'); setTimeout(hideReasoningSteps,1000); if(bulkChatHistory.length&&bulkChatHistory[bulkChatHistory.length-1].content.includes('Analysing all entries'))bulkChatHistory.pop();
   const vc=changes.filter(c=>c.auditSource==='bulk-minecraft-targeted-library').length;
   if(changes.length){
