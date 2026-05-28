@@ -960,19 +960,22 @@ async function runBulkMinecraftOpportunityFlow_(instruction,completeData,prog,lb
   }
   // Verified-only mode: do not generate original Minecraft build/challenge fallbacks.
   // For a named lesson, do not backfill with other lessons just to reach the requested count.
-  // Backfill loop also picks lessons per-iteration. It allows lesson reuse
-  // (passes null instead of usedL) since the main loop has already exhausted
-  // unique-lesson variety.
+  // Backfill ALSO honours usedL — never reuse the same verified lesson across
+  // multiple units in a single scan, even if we fall short of the target. The
+  // previous "allow reuse to hit target" behaviour produced N copies of the
+  // top-scoring lesson (e.g. all "Alternative Energy"). The "found N out of
+  // M" UI message below explains the shortfall to the teacher.
   if(!specificLesson && changes.length<target){
     for(const c of lib){
       if(changes.length>=target)break;
       if(usedE.has(c.entryIdx))continue;
-      const fit = mcBestLesson_(DATA[c.entryIdx], null);
+      const fit = mcBestLesson_(DATA[c.entryIdx], usedL);
       if(!fit)continue;
       const ch=mcChange_(c,'lesson',fit.lesson);
       if(checkRealisticToolUse(ch.t,ch.d,DATA[c.entryIdx]).ok){
         changes.push(ch);
         usedE.add(c.entryIdx);
+        usedL.add(dlaTextForFit_(fit.lesson.title||''));
       }
     }
   }
