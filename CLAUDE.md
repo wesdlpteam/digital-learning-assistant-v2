@@ -17,6 +17,15 @@ If a Superpowers skill exists for the task in front of you, invoke it. Default t
 
 This applies to the public site (`index.html`), the Studio (`DLA_Studio.html` + `js/`), and both GAS backends (`gas_backend/`, `gas_analytics/`).
 
+## Talking to Nathan — plain English, not developer-speak
+
+Nathan is not a coder. When you explain what you changed or added, or when you ask a clarifying question:
+
+- Describe it in terms of what a teacher/curator sees and does on the site, not function names, file paths, or code structure. Lead with the user-facing behaviour ("the Edit Unit Details button now opens a popup with three boxes"), not the implementation ("rewrote `startUoiEdit` to build a `tech-overlay`").
+- Frame clarifying questions as concrete user-facing choices Nathan can picture, not as technical questions. "Should the popup close automatically after Save, or stay open with a 'submitted' message?" beats "Should `submitUoiEdit` call `closeUoiEdit()` synchronously?".
+- Avoid jargon (modal, callback, endpoint, payload, regex, DOM, state, branch, merge, PR, refactor, etc.) unless Nathan used the word first. If a technical word is unavoidable, give a one-line plain gloss in parentheses.
+- Code identifiers, file paths and line numbers can still appear when they genuinely help (e.g. so Nathan can find the right file in the workspace), but the *first* sentence of any change summary should be readable without them.
+
 ## What this repo is
 
 Wesley College Digital Learning Assistant (DLA) v2. A static site hosted on GitHub Pages (`wesdlpteam/digital-learning-assistant-v2`, served from `main`) plus two Google Apps Script backends managed locally via `clasp`. There is no build step — files are edited and pushed, then GitHub Pages serves them directly.
