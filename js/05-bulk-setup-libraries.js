@@ -494,17 +494,21 @@ function minecraftDescriptionQuality_(desc){
 }
 
 function checkMinecraftEducationFit(toolName, desc, entry){
-  const lesson = findCuratedLessonMention_('minecraft', toolName, desc);
-  if(!lesson){
-    return { ok:false, reason:'Minecraft Education suggestions must use a verified lesson from the curated Minecraft library and include the real lesson title or URL.' };
-  }
+  // 2026-05-28: Wesley relaxed the verified-lesson-only requirement for
+  // Minecraft. Original AI-generated Minecraft classroom activities are now
+  // allowed; the curated library is a reference, not a gate. If the AI
+  // chooses to anchor on a verified lesson, the lesson-specific maths-only
+  // and identity/wellbeing safety checks still apply.
   const quality = minecraftDescriptionQuality_(desc);
   if(!quality.ok) return quality;
-  if(curatedLessonLooksMathOnly_(lesson) && !unitHasMathMeasurementContext_(entry)){
-    return { ok:false, reason:`Minecraft lesson "${lesson.title}" appears to be maths/measurement-focused and does not fit this unit context.` };
-  }
-  if(/\barea\b/i.test(lesson.title || '') && /\bvolume\b/i.test(lesson.title || '') && unitHasIdentityWellbeingContext_(entry) && !unitHasMathMeasurementContext_(entry)){
-    return { ok:false, reason:`Minecraft lesson "${lesson.title}" is an Area and Volume maths lesson, not a fit for this identity/wellbeing unit.` };
+  const lesson = findCuratedLessonMention_('minecraft', toolName, desc);
+  if(lesson){
+    if(curatedLessonLooksMathOnly_(lesson) && !unitHasMathMeasurementContext_(entry)){
+      return { ok:false, reason:`Minecraft lesson "${lesson.title}" appears to be maths/measurement-focused and does not fit this unit context.` };
+    }
+    if(/\barea\b/i.test(lesson.title || '') && /\bvolume\b/i.test(lesson.title || '') && unitHasIdentityWellbeingContext_(entry) && !unitHasMathMeasurementContext_(entry)){
+      return { ok:false, reason:`Minecraft lesson "${lesson.title}" is an Area and Volume maths lesson, not a fit for this identity/wellbeing unit.` };
+    }
   }
   return { ok:true, reason:'' };
 }
@@ -1076,8 +1080,8 @@ function buildLibraryContextCompact(key){
     return bits.join(' | ');
   }).join('\n');
   if(key === 'minecraft'){
-    return `${meta.name.toUpperCase()} — VERIFIED LESSON LIBRARY (${lessons.length} lessons):
-Use VERIFIED Minecraft library lessons only. Do NOT create original/made-up Minecraft ideas, invent lesson titles, or invent URLs. If the teacher names a specific lesson, use ONLY that exact lesson and do not substitute other Minecraft lessons. Every Minecraft proposal must name a real lesson from this list and include its real URL. Respect lesson age ranges. Avoid maths-only lessons like Area and Volume unless the unit genuinely involves maths/measurement/spatial design.
+    return `${meta.name.toUpperCase()} — Reference library (${lessons.length} lessons available):
+The verified Minecraft Education lessons below are a STARTING POINT, not a hard constraint. You may propose original classroom-Minecraft activities that genuinely fit the unit's central idea and lines of inquiry — students don't have to follow a published lesson. If you DO reference a verified lesson, use its real title and URL (do not invent titles or URLs), and avoid maths-only lessons like Area and Volume unless the unit involves maths/measurement/spatial design. Respect each lesson's age range where mentioned.
 ${lines}`;
   }
   return `${meta.name.toUpperCase()} — VERIFIED LESSON LIBRARY (${lessons.length} lessons):\nUse ONLY these verified lessons. Do NOT invent lesson titles. Respect lesson age ranges. Include the lesson URL in the description.\n${lines}`;

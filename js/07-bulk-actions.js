@@ -1054,11 +1054,12 @@ async function startBulkAnalysis(){
     return;
   }
 
-  if(bulkInstructionTargetsMinecraftOpportunities_(enrichedInstruction)){
-    await runBulkMinecraftOpportunityFlow_(enrichedInstruction, completeData, prog, lbl, bar);
-    return;
-  }
-  
+  // Minecraft "Scan for opportunities" used to route to a verified-library-only
+  // specialised flow (runBulkMinecraftOpportunityFlow_), but Wesley decided
+  // 2026-05-28 that the curated lesson library wasn't producing connected
+  // enough suggestions for our PYP units. Minecraft now falls through to the
+  // generic AI flow below and is treated like any other tool.
+
   setTimeout(() => updateReasoningStep(0, 'done'), 400);
   setTimeout(() => updateReasoningStep(1, 'active'), 450);
   
