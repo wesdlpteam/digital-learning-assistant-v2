@@ -310,15 +310,27 @@ async function runBulkDiversifyFlow_(toolName, completeData, prog, lbl, bar){
     list.forEach(t => pooledTools.add(t));
   });
   const targetKey = toolInventoryKey(toolName);
-  const underused = Array.from(pooledTools).filter(t => {
+  // Eligibility filter only — age-appropriate, not the target tool itself,
+  // not banned or forbidden. No usage threshold here.
+  const eligible = Array.from(pooledTools).filter(t => {
     const k = toolInventoryKey(t);
-    if(!k) return false;
-    if(k === targetKey) return false;
-    if(toolEntryCount[k] && toolEntryCount[k] > 2) return false;
+    if(!k || k === targetKey) return false;
     if(typeof toolContainsForbiddenKeyword === 'function' && toolContainsForbiddenKeyword(t)) return false;
     if(typeof toolViolatesInventoryBan === 'function' && toolViolatesInventoryBan(t)) return false;
     return true;
   });
+  // Rank ascending by current library usage and take the bottom 60% as the
+  // diverse pool, with a hard floor of 8 tools. The previous binary
+  // "used <=2 times" filter often left only 1-2 survivors in libraries where
+  // the popular tools dominate, which let the round-robin plan every swap
+  // with the same single survivor (Nathan saw "5 swaps, all Animating a
+  // Character with Adobe Express"). Dynamic ranking keeps the pool meaningful
+  // while still preferring the truly underused tools first.
+  const ranked = eligible
+    .map(t => ({ t, count: toolEntryCount[toolInventoryKey(t)] || 0 }))
+    .sort((a, b) => a.count - b.count);
+  const poolCutoff = Math.max(8, Math.ceil(ranked.length * 0.6));
+  const underused = ranked.slice(0, poolCutoff).map(r => r.t);
 
   if(!underused.length){
     if(prog) prog.style.display = 'none';
@@ -447,7 +459,9 @@ Return ONLY the JSON object, no markdown fences, no extra text.`;
       .map(([t, n]) => `${esc(t)} (${n})`)
       .join(', ');
     const failNote = failures.length ? `<br><span style="font-size:12px;color:#F5A623">${failures.length} swap${failures.length!==1?'s':''} failed and were skipped.</span>` : '';
-    bulkChatAddMessage('assistant', `✅ <strong>${changes.length} diversify swap${changes.length!==1?'s':''}</strong> ready for review.<br><br>Replacement spread: ${spreadStr}.${cappedNote}${failNote}`);
+    const poolPreview = underused.slice(0, 10).map(t => esc(t)).join(', ');
+    const poolMoreNote = underused.length > 10 ? ` (+${underused.length - 10} more)` : '';
+    bulkChatAddMessage('assistant', `🎯 <strong>Diversify flow</strong> — ${changes.length} swap${changes.length!==1?'s':''} ready for review.<br><br>Replacement spread: ${spreadStr}.<br><span style="font-size:12px;color:var(--dim)">Underused pool considered (least-used first): ${poolPreview}${poolMoreNote}.</span>${cappedNote}${failNote}`);
     bulkChatMemory.push({ role: 'assistant', content: `Proposed ${changes.length} diversify swaps for ${toolName}.` });
     window._snapshotReason = `Before diversifying ${toolName} (${changes.length} swaps)`;
     showChangesPopup(changes);
