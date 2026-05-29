@@ -3592,6 +3592,37 @@ function inspiringToolFromDescriptionUrl_(desc, approvedSet, bannedSet, yl) {
   return null;
 }
 
+// 2026-05-29 round 3: Strip URLs for tools that aren't allowed at this
+// year level. After the substitute path swaps "Minecraft Education" to
+// Seesaw in a Prep unit's t-field, the description rewrite catches the
+// tool name but the embedded URL (education.minecraft.net) stays — so
+// the Seesaw card still links to a Minecraft lesson the AI authored
+// originally. This strips those URLs so the description is internally
+// consistent. Catches the "Glen Waverley / Prep / How We Organise
+// Ourselves" pattern from the 2026-05-29 final audit.
+function inspiringStripDeniedUrls_(desc, approvedSet, bannedSet, yl) {
+  if (!desc) return desc;
+  let result = String(desc);
+  const tools = Object.keys(INSPIRING_TOOL_URL_HINTS);
+  for (let i = 0; i < tools.length; i++) {
+    const tool = tools[i];
+    const k = diversityToolKey_(tool);
+    const validHere = approvedSet.has(k) && !bannedSet.has(k) && !inspiringYearLevelDenied_(yl, k);
+    if (validHere) continue;
+    const hints = INSPIRING_TOOL_URL_HINTS[tool] || [];
+    for (let j = 0; j < hints.length; j++) {
+      const hintEscaped = hints[j].replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      // Remove "(https://...host.../...)" with surrounding space/paren
+      const reParen = new RegExp('\\s*\\(\\s*https?:\\/\\/[^\\s\\)]*' + hintEscaped + '[^\\s\\)]*\\s*\\)', 'gi');
+      result = result.replace(reParen, '');
+      // Also catch bare URLs not wrapped in parens
+      const reBare = new RegExp('\\s*https?:\\/\\/[^\\s\\)]*' + hintEscaped + '[^\\s\\)]*', 'gi');
+      result = result.replace(reBare, '');
+    }
+  }
+  return result.replace(/\s{2,}/g, ' ').trim();
+}
+
 // 2026-05-29: Canonical-case normaliser. When the AI returns an approved
 // tool with non-canonical casing ("BeeBots" instead of "Beebots"), the
 // validator accepts it (case-insensitive key match) but line 4566 saved
@@ -3706,6 +3737,11 @@ function inspiringApplySubstitutions_(sugs, approvedSet, bannedSet, yl) {
     if (!slotSwaps.length) return sg;
     let newDesc = sg.d || '';
     slotSwaps.forEach(function(s) { newDesc = inspiringRewriteDescription_(newDesc, s.from, s.to); });
+    // 2026-05-29 round 3: strip URLs to tools that aren't valid at this
+    // year level. Without this, Prep/Kinder cards swapped from Minecraft
+    // to Seesaw keep their education.minecraft.net link, producing a
+    // "Seesaw lesson (https://education.minecraft.net/...)" mismatch.
+    newDesc = inspiringStripDeniedUrls_(newDesc, approvedSet, bannedSet, yl);
     swaps.push({ slot: i + 1, fromTool: sg.t, toTool: newComps.join(' + '), perComponent: slotSwaps });
     return { t: newComps.join(' + '), d: newDesc };
   });
@@ -4917,7 +4953,14 @@ function regenerateAllInspiring(opts) {
           retryTemp = 0.45;
           const toolStrayed = /OFF-WHITELIST|BANNED|AGE-INAPPROPRIATE/.test(lastReason);
           const toolReminder = toolStrayed ? '\n\nCRITICAL: You MUST pick every tool from the approved list above. Re-read the APPROVED TOOLS section. Do not invent tool names, do not use deprecated tools, do not substitute similar-sounding tools. If you are unsure whether a tool is approved, pick a different tool from the list that you can verify IS listed.' : '';
-          retryNote = '\n\nRETRY ' + (attempt - 1) + ': Previous attempt failed validation (' + lastReason + '). Apply ALL constraints (tool whitelist, no dup tools, opener differs from siblings, ~6 sentences per slot 1-5).' + toolReminder;
+          // 2026-05-29 round 3: when the failure is an opener-conflict
+          // with a sibling unit, tell the AI explicitly which tool not
+          // to use as slot 1's opener. Without this hint the AI keeps
+          // picking the same age-appropriate tool (BeeBots for Prep,
+          // ChatterPix Kids for Y1) that collides with siblings.
+          const openerConflictMatch = lastReason.match(/opener\s+"([^"]+)"\s+matches\s+sibling/i);
+          const openerReminder = openerConflictMatch ? '\n\nCRITICAL: Slot 1 (the opener) must NOT use "' + openerConflictMatch[1] + '" — another unit in this year level already uses it as their opener. Pick a DIFFERENT approved tool for slot 1 that is age-appropriate for this year level.' : '';
+          retryNote = '\n\nRETRY ' + (attempt - 1) + ': Previous attempt failed validation (' + lastReason + '). Apply ALL constraints (tool whitelist, no dup tools, opener differs from siblings, ~6 sentences per slot 1-5).' + toolReminder + openerReminder;
         }
         const call = inspiringCallOnce_(prompt + retryNote, retryTemp);
         if (!call.ok) {
