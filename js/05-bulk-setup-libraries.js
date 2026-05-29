@@ -174,8 +174,9 @@ const DEFAULT_APPROVED_TOOLS = [
   // Video / audio / animation
   'GarageBand', 'ScratchJR', 'Stop Motion Studio', 'ChatterPix Kids', 'iMovie',
   'Puppet Pals', 'Adobe Express', 'Podcasting using Canva', 'Animating a Character with Adobe Express',
-  // Subject specific (Google Earth is BANNED)
-  'Google Maps', 'National Geographic MapMaker', 'Field Guide to Victoria', 'Sky Map', 'Geoboard',
+  // Subject specific (Google Earth + Google Maps are BANNED — students do not have
+  // Google accounts so cannot edit maps; the approved tool is Google Street View only)
+  'Google Street View', 'National Geographic MapMaker', 'Field Guide to Victoria', 'Sky Map', 'Geoboard',
   // Other
   'Clickview', 'Epic', 'PicCollage', 'Brushes Redux', 'Word Clouds ABCya',
   'Sketchbook', 'Explain Everything', 'Freeform', 'Delightex', 'Kahoot', 'Tinkercad',
@@ -192,7 +193,7 @@ const DEFAULT_BANNED_TOOLS = [
   // Hardware banned
   'ClassVR', 'Green Screen Kits', 'Digital Cameras', 'Lego Spike Essential',
   // Other banned
-  'WeVideo', 'Flipgrid', 'Google Earth', 'Banqer', 'Apple Keynote'
+  'WeVideo', 'Flipgrid', 'Google Earth', 'Google Maps', 'Banqer', 'Apple Keynote'
 ];
 
 const DEFAULT_TOOL_AGE_RANGES = {
@@ -200,7 +201,7 @@ const DEFAULT_TOOL_AGE_RANGES = {
   'Seesaw': {min:-2,max:6}, 'Epic': {min:-2,max:6}, 'PicCollage': {min:-2,max:6},
   'Freeform': {min:-2,max:6}, 'Brushes Redux': {min:-2,max:6}, 'Book Creator': {min:-2,max:6},
   // All other Prep–Year 6
-  'GarageBand': {min:0,max:6}, 'iMovie': {min:0,max:6}, 'Google Maps': {min:0,max:6},
+  'GarageBand': {min:0,max:6}, 'iMovie': {min:0,max:6}, 'Google Street View': {min:0,max:6},
   'Google Earth': {min:0,max:6}, 'Clickview': {min:0,max:6}, 'Green Screen': {min:0,max:6},
   'iPads': {min:0,max:6}, 'Laptops': {min:0,max:6}, 'Digital Cameras': {min:0,max:6},
   'Sketchbook': {min:0,max:6},
@@ -327,7 +328,7 @@ const TOOL_AGE_GUIDE = `TOOL AGE GUIDE (HARD RULE — match Australian year leve
 - Year 4+: Microsoft Teams, Lego Spike Prime, CoDrone EDU, Minecraft Education (with scaffolding for Year 4)
 - Year 5+: 3D Printers, Python-based coding
 - Kinder-Year 6: Seesaw, Epic, PicCollage, Freeform, Brushes Redux, Book Creator
-- Prep-Year 6: GarageBand, iMovie, Google Maps, Google Earth, Clickview, Green Screen, iPads, Laptops, Digital Cameras, Sketchbook
+- Prep-Year 6: GarageBand, iMovie, Google Street View, Clickview, Green Screen, iPads, Laptops, Digital Cameras, Sketchbook
 NEVER propose a tool for a year level below its minimum age.`;
 
 // Map year level string → numeric year for age filtering
@@ -352,8 +353,8 @@ function getAgeAppropriateTools(yearLevel){
   const ALL = [
     // All ages
     {n:'Seesaw',      min:0}, {n:'Epic',         min:0}, {n:'GarageBand',   min:0},
-    {n:'iMovie',      min:0}, {n:'PicCollage',   min:0}, {n:'Google Maps',  min:0},
-    {n:'Google Earth',min:0}, {n:'Clickview',    min:0}, {n:'Green Screen', min:0},
+    {n:'iMovie',      min:0}, {n:'PicCollage',   min:0}, {n:'Google Street View', min:0},
+    {n:'Clickview',   min:0}, {n:'Green Screen', min:0},
     {n:'iPads',       min:0}, {n:'Freeform',     min:0}, {n:'Sketchbook',   min:0},
     {n:'Brushes Redux',min:0},{n:'Delightex',    min:0}, {n:'Merge Cubes',  min:0},
     {n:'Makey Makey', min:0}, {n:'Word Clouds ABCya', min:0},
