@@ -241,6 +241,226 @@ function bulkInstructionTargetsToolRemoval_(instruction){
   return !!bulkDetectRemovalTool_(instruction);
 }
 
+// ========== DIVERSIFY FLOW ==========
+// Detects "Diversify Seesaw suggestions across the library" (fired by the
+// dashboard insight tile when a tool is overused, or typed directly into the
+// Bulk chat) and routes it to runBulkDiversifyFlow_ below. Distinct from the
+// removal flow because "diversify" misses the replace/swap/remove verbs the
+// removal detector requires; previously it fell through to the generic
+// GPT-4.1 flow which returned ~3 conservative proposals and often used the
+// same replacement tool for every entry.
+function bulkInstructionTargetsDiversify_(instruction){
+  const text = String(instruction || '').toLowerCase().replace(/[’']/g, '');
+  if(!/\b(?:diversif|spread\s+(?:out\s+)?the\s+use\s+of|reduce\s+the\s+use\s+of)\b/i.test(text)) return '';
+  // Reuse bulkDetectRemovalTool_'s alias scanner by prepending a removal verb
+  // so its existing alias map (Seesaw, Book Creator, Canva, Padlet, Micro:bit,
+  // Adobe Express, Sphero, Wise, etc.) fires.
+  return bulkDetectRemovalTool_('replace ' + text);
+}
+
+async function runBulkDiversifyFlow_(toolName, completeData, prog, lbl, bar){
+  updateReasoningStep(0, 'done');
+  updateReasoningStep(1, 'done');
+  updateReasoningStep(2, 'done');
+  updateReasoningStep(3, 'done');
+  updateReasoningStep(4, 'active', `Drafting diverse replacements for ${toolName}`);
+  if(lbl) lbl.textContent = `Finding every entry that uses ${toolName}…`;
+  if(bar) bar.style.width = '15%';
+
+  // 1) Every non-STEM slot currently using toolName.
+  const candidates = [];
+  completeData.forEach(({ e, i }) => {
+    getSugs(e).forEach((sug, si) => {
+      if(si === 5) return;
+      if(!isRealSug(sug)) return;
+      if(bulkSuggestionUsesTool_(sug, toolName)){
+        candidates.push({ entryIdx: i, entry: e, sugIdx: si, sug });
+      }
+    });
+  });
+
+  if(!candidates.length){
+    if(prog) prog.style.display = 'none';
+    updateReasoningStep(4, 'done');
+    setTimeout(hideReasoningSteps, 600);
+    bulkChatAddMessage('assistant', `✓ I could not find any non-STEM suggestions currently using <strong>${esc(toolName)}</strong> to diversify.`);
+    bulkChatState = 'idle';
+    stopProgress();
+    return true;
+  }
+
+  // 2) Library-wide tool frequency to define the underused pool.
+  const toolEntryCount = {};
+  completeData.forEach(({ e }) => {
+    const seen = new Set();
+    getSugs(e).filter(isRealSug).forEach(s => {
+      const k = toolInventoryKey(sugTool(s));
+      if(!k || seen.has(k)) return;
+      seen.add(k);
+      toolEntryCount[k] = (toolEntryCount[k] || 0) + 1;
+    });
+  });
+
+  // 3) Build an age-appropriate underused pool spanning the year levels we saw.
+  const yearSet = new Set();
+  candidates.forEach(c => yearSet.add(c.entry.yl));
+  const pooledTools = new Set();
+  yearSet.forEach(yl => {
+    const list = (typeof getAgeAppropriateTools === 'function') ? (getAgeAppropriateTools(yl) || []) : [];
+    list.forEach(t => pooledTools.add(t));
+  });
+  const targetKey = toolInventoryKey(toolName);
+  const underused = Array.from(pooledTools).filter(t => {
+    const k = toolInventoryKey(t);
+    if(!k) return false;
+    if(k === targetKey) return false;
+    if(toolEntryCount[k] && toolEntryCount[k] > 2) return false;
+    if(typeof toolContainsForbiddenKeyword === 'function' && toolContainsForbiddenKeyword(t)) return false;
+    if(typeof toolViolatesInventoryBan === 'function' && toolViolatesInventoryBan(t)) return false;
+    return true;
+  });
+
+  if(!underused.length){
+    if(prog) prog.style.display = 'none';
+    updateReasoningStep(4, 'done');
+    setTimeout(hideReasoningSteps, 600);
+    bulkChatAddMessage('assistant', `⚠️ I found ${candidates.length} ${esc(toolName)} slot${candidates.length!==1?'s':''}, but no age-appropriate underused tools are available in the Tool Inventory to swap in. Check the inventory for ${esc(toolName)}'s typical year levels.`);
+    bulkChatState = 'idle';
+    stopProgress();
+    return true;
+  }
+
+  // 4) Round-robin assign replacement tools across the batch so we don't get
+  //    "Canva 10 times in a row" — every underused tool gets used in turn
+  //    before any is repeated. Skips tools already present in each entry.
+  const shuffled = (arr => {
+    const a = arr.slice();
+    for(let i = a.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  })(underused);
+  const usageCount = new Map();
+  shuffled.forEach(t => usageCount.set(toolInventoryKey(t), 0));
+
+  const plan = [];
+  candidates.forEach(c => {
+    const usedInEntry = new Set(getSugs(c.entry).map(s => toolInventoryKey(sugTool(s))).filter(Boolean));
+    const picks = shuffled
+      .filter(t => !usedInEntry.has(toolInventoryKey(t)))
+      .sort((a, b) => (usageCount.get(toolInventoryKey(a)) || 0) - (usageCount.get(toolInventoryKey(b)) || 0));
+    const replacement = picks[0];
+    if(replacement){
+      usageCount.set(toolInventoryKey(replacement), (usageCount.get(toolInventoryKey(replacement)) || 0) + 1);
+      plan.push({ ...c, newTool: replacement });
+    }
+  });
+
+  if(!plan.length){
+    if(prog) prog.style.display = 'none';
+    updateReasoningStep(4, 'done');
+    setTimeout(hideReasoningSteps, 600);
+    bulkChatAddMessage('assistant', `⚠️ I found ${candidates.length} ${esc(toolName)} slot${candidates.length!==1?'s':''}, but every age-appropriate underused tool is already used in those same entries. Check the Tool Inventory.`);
+    bulkChatState = 'idle';
+    stopProgress();
+    return true;
+  }
+
+  // 5) Cap per click so we don't kick off ~80 AI calls in one go.
+  const PER_BATCH_CAP = 35;
+  const toDraft = plan.slice(0, PER_BATCH_CAP);
+  const cappedNote = plan.length > toDraft.length
+    ? `<br><span style="font-size:12px;color:var(--dim)">I drafted the first ${toDraft.length} of ${plan.length} diversify swaps to avoid overloading the AI. Apply these, then re-run “Diversify ${esc(toolName)}” for the rest.</span>` : '';
+
+  // 6) One AI call per swap to write the 6-sentence description for the new tool.
+  const changes = [];
+  const failures = [];
+  for(let i = 0; i < toDraft.length; i++){
+    const sw = toDraft[i];
+    const pct = Math.round(((i + 1) / toDraft.length) * 100);
+    if(bar) bar.style.width = `${15 + Math.round(pct * 0.75)}%`;
+    if(lbl) lbl.textContent = `${i + 1}/${toDraft.length}: ${sw.entry.yl} — ${sw.entry.th} — ${toolName} → ${sw.newTool}`;
+    try {
+      const entry = sw.entry;
+      const plannerCtx = entry.plannerContextRich || entry.plannerText || '';
+      const yl = entry.yl || '';
+      const constraintBlock = (typeof buildToolConstraints === 'function') ? buildToolConstraints(yl) : '';
+      const prompt = `You are a Digital Learning Coach at Wesley College (IB PYP, Melbourne).
+Rewrite this technology suggestion for a different tool to broaden tool variety across the library.
+
+UNIT: ${entry.th || ''}
+YEAR LEVEL: ${yl}
+CAMPUS: ${entry.ca || ''}
+${plannerCtx ? 'PLANNER CONTEXT: ' + plannerCtx.slice(0, 8000) : ''}
+
+OLD TOOL: ${toolName}
+OLD DESCRIPTION: ${sugDesc(sw.sug)}
+
+NEW TOOL TO USE: ${sw.newTool}
+${constraintBlock}
+
+${SUGGESTION_STYLE}
+
+Write ONE JSON object: {"t":"${sw.newTool}","d":"..."}
+The description must be for ${sw.newTool} specifically, naming its real features and concrete student actions, following all writing-style and depth rules above.
+Return ONLY the JSON object, no markdown fences, no extra text.`;
+      const raw = await callAI([{ role: 'user', parts: [{ text: prompt }] }], '', OPENAI_FAST_MODEL || OPENAI_MODEL);
+      const cleaned = String(raw || '').replace(/```json|```/g, '').trim();
+      const si = cleaned.indexOf('{'), ei = cleaned.lastIndexOf('}');
+      if(si === -1 || ei === -1) throw new Error('AI did not return JSON.');
+      const parsed = JSON.parse(cleaned.slice(si, ei + 1));
+      if(!parsed.t || !parsed.d) throw new Error('AI returned malformed JSON (missing t or d).');
+      const change = {
+        entryIdx: sw.entryIdx,
+        sugIdx: sw.sugIdx,
+        t: parsed.t,
+        d: parsed.d,
+        auditReason: `Diversify ${toolName} (currently overused) — swap to ${sw.newTool} for variety.`,
+        auditSource: 'bulk-chat-diversify',
+        improvementConfidence: 'Diversify swap',
+        improvementScore: 4,
+        whyBetter: `Replaces ${toolName} with ${sw.newTool}, which is currently underused across the library.`,
+        remainingConcern: ''
+      };
+      if(parsed.url) change.url = parsed.url;
+      changes.push(change);
+    } catch(err){
+      failures.push({ swap: sw, error: err && err.message ? err.message : String(err) });
+    }
+    if(i < toDraft.length - 1) await sleep(350);
+  }
+
+  if(prog) prog.style.display = 'none';
+  updateReasoningStep(4, 'done');
+  updateReasoningStep(5, 'done');
+  setTimeout(hideReasoningSteps, 1200);
+  if(bulkChatHistory.length && bulkChatHistory[bulkChatHistory.length - 1].content.includes('Analysing all entries')){
+    bulkChatHistory.pop();
+  }
+
+  if(changes.length){
+    const spread = {};
+    changes.forEach(c => { spread[c.t] = (spread[c.t] || 0) + 1; });
+    const spreadStr = Object.entries(spread)
+      .sort((a, b) => b[1] - a[1])
+      .map(([t, n]) => `${esc(t)} (${n})`)
+      .join(', ');
+    const failNote = failures.length ? `<br><span style="font-size:12px;color:#F5A623">${failures.length} swap${failures.length!==1?'s':''} failed and were skipped.</span>` : '';
+    bulkChatAddMessage('assistant', `✅ <strong>${changes.length} diversify swap${changes.length!==1?'s':''}</strong> ready for review.<br><br>Replacement spread: ${spreadStr}.${cappedNote}${failNote}`);
+    bulkChatMemory.push({ role: 'assistant', content: `Proposed ${changes.length} diversify swaps for ${toolName}.` });
+    window._snapshotReason = `Before diversifying ${toolName} (${changes.length} swaps)`;
+    showChangesPopup(changes);
+    bulkChatState = 'done';
+  } else {
+    const first = (failures[0] && failures[0].error) || 'No usable drafts were returned.';
+    bulkChatAddMessage('assistant', `⚠️ I planned ${plan.length} ${esc(toolName)} swap${plan.length!==1?'s':''}, but could not draft usable replacements. First issue: ${esc(first)}`);
+    bulkChatState = 'idle';
+  }
+  stopProgress();
+  return true;
+}
+
 function bulkReplacementToolContext_(toolName){
   const t = toolInventoryKey(toolName);
   if(t === toolInventoryKey('Seesaw')){
@@ -1035,6 +1255,17 @@ async function startBulkAnalysis(){
   // and bulk up the detail/action/product/unit connection for that exact suggestion.
   if(bulkInstructionIsDescriptionOnly_(enrichedInstruction)){
     await runBulkSameToolDescriptionRewrite_(enrichedInstruction, completeData, prog, lbl, bar);
+    return;
+  }
+
+  // Diversify intent: "Diversify Seesaw suggestions across the library" (fired
+  // by the dashboard insight tile when a tool is overused, or typed directly).
+  // Detected BEFORE the removal flow because "diversify" misses removal verbs
+  // and the generic GPT flow returns ~3 conservative proposals with no
+  // cross-batch tool variety.
+  const diversifyTool = bulkInstructionTargetsDiversify_(enrichedInstruction);
+  if(diversifyTool){
+    await runBulkDiversifyFlow_(diversifyTool, completeData, prog, lbl, bar);
     return;
   }
 

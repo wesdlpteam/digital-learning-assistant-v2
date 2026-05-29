@@ -2823,6 +2823,7 @@ function bulkInstructionCanSkipClarification_(instruction, platform){
   // High-confidence deterministic flows should not ask GPT-4.1-mini to reinterpret the request.
   // These intents are handled by local routing inside startBulkAnalysis().
   if(bulkInstructionIsDescriptionOnly_(text)) return true;
+  if(typeof bulkInstructionTargetsDiversify_ === 'function' && bulkInstructionTargetsDiversify_(text)) return true;
   if(bulkInstructionTargetsToolRemoval_(text)) return true;
   if(bulkInstructionTargetsNamedToolOpportunity_(text)) return true;
   if(typeof bulkInstructionTargetsWiseOpportunities_ === 'function' && bulkInstructionTargetsWiseOpportunities_(text)) return true;
