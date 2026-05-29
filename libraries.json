@@ -18,7 +18,7 @@
         "Freeform",
         "GarageBand",
         "Geoboard",
-        "Google Street View",
+        "Google Maps",
         "iMovie",
         "insta360 camera",
         "iPad",
@@ -54,7 +54,6 @@
         "ClassVR",
         "Digital Cameras",
         "Google Earth",
-        "Google Maps",
         "Google Suite",
         "Green Screen",
         "Lego Spike Essential",
@@ -106,7 +105,7 @@
           "max": 6
         },
         "merge cubes": {
-          "min": 0,
+          "min": 3,
           "max": 6
         },
         "podcast equipment": {
