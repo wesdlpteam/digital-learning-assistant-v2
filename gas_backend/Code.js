@@ -4372,6 +4372,12 @@ function regenerateAllInspiringRequeueAutoSwapped(opts) {
 var SERVER_REGEN_TICK_HANDLER = 'serverSideRegenTick';
 var SERVER_REGEN_TICK_MINUTES = 10;
 var SERVER_REGEN_TICK_BATCH = 8;
+// Stamped on every successful regen + auto-swap. Bump when changing the
+// substitute / URL-backstop / save logic so kickoff knows "this unit was
+// regenerated under the current code; don't redo it". Replaces the prior
+// 24h time-based guard, which couldn't distinguish yesterday's bad data
+// from this morning's good runs because both fit inside 24h.
+var INSPIRING_REGEN_VERSION = 'r3-2026-05-29';
 // 50 distinct units extracted from audit_findings.json (2026-05-28).
 // Hardcoded because this is a one-off cleanup list; after the regen sweep
 // these units will have fresh content and the list is moot.
@@ -4440,19 +4446,18 @@ function kickoffServerSideRegen(opts) {
     auditSet[t.ca + '||' + t.yl + '||' + t.th] = true;
   });
 
-  // 2026-05-29: 24-hour skip-recent-regen guard. Without it, an accidental
-  // re-fire of kickoff between tick fires undoes any progress the trigger
-  // has just made (it clears inspiringRegenAt on units that were JUST
-  // successfully regenerated). 24h is long enough to redo yesterday's bad
-  // data but short enough that successful runs from earlier today stay
-  // protected. Skips do NOT count as targets — they're effectively done.
-  const RECENT_REGEN_SKIP_MS = 24 * 60 * 60 * 1000;
-  const nowMs = Date.now();
-
+  // 2026-05-29 round 3: version-stamp guard. Replaces the prior 24h
+  // time-based guard, which couldn't distinguish yesterday's bad data
+  // (within 24h) from this morning's good runs. Now a unit is skipped
+  // only if it was regenerated under THIS version of the code (stamped
+  // on save via inspiringRegenAtVersion === INSPIRING_REGEN_VERSION).
+  // Anything older — including any prior-version success — gets
+  // re-queued for fresh AI generation under the current substitute /
+  // URL-backstop / strip-denied-urls logic.
   let clearedAutoSwapped = 0;
   let clearedAudit = 0;
   let alreadyQueued = 0;
-  let skippedRecent = 0;
+  let skippedCurrentVersion = 0;
   const targets = [];
   for (let i = 0; i < data.length; i++) {
     const u = data[i];
@@ -4461,15 +4466,16 @@ function kickoffServerSideRegen(opts) {
     const isAutoSwapped = !!u.inspiringRegenAutoSwapped;
     const isAuditTarget = !!auditSet[k];
     if (!isAutoSwapped && !isAuditTarget) continue;
+    if (u.inspiringRegenAt && u.inspiringRegenAtVersion === INSPIRING_REGEN_VERSION) {
+      // Already regenerated under the current code — leave alone.
+      // Future code versions will re-queue this when the version stamp
+      // changes, so this is forward-compatible.
+      skippedCurrentVersion++;
+      continue;
+    }
     if (u.inspiringRegenAt) {
-      const regenTs = Date.parse(u.inspiringRegenAt);
-      if (!isNaN(regenTs) && (nowMs - regenTs) < RECENT_REGEN_SKIP_MS) {
-        // Regenerated within the last 24h — leave alone. Protects against
-        // accidental kickoff re-fires undoing in-flight progress.
-        skippedRecent++;
-        continue;
-      }
       delete u.inspiringRegenAt;
+      delete u.inspiringRegenAtVersion;
       if (isAutoSwapped) clearedAutoSwapped++;
       else clearedAudit++;
       targets.push({ ca: u.ca, yl: u.yl, th: u.th, status: 'requeued', autoSwapped: isAutoSwapped, audit: isAuditTarget });
@@ -4497,15 +4503,16 @@ function kickoffServerSideRegen(opts) {
   // the trigger's first fire (~10 min).
   serverSideRegenTick();
 
-  Logger.log('kickoffServerSideRegen: ' + totalRequeued + ' requeued, ' + alreadyQueued + ' already-queued, ' + skippedRecent + ' skipped (regen <24h ago), ' + targets.length + ' total target unit(s) in this batch.');
+  Logger.log('kickoffServerSideRegen: ' + totalRequeued + ' requeued, ' + alreadyQueued + ' already-queued, ' + skippedCurrentVersion + ' skipped (regen already at version ' + INSPIRING_REGEN_VERSION + '), ' + targets.length + ' total target unit(s) in this batch.');
   return {
-    message: 'Server-side regen kicked off. ' + targets.length + ' unit(s) in scope (' + totalRequeued + ' requeued, ' + alreadyQueued + ' already queued, ' + skippedRecent + ' skipped as already regenerated <24h ago). Tick every ' + SERVER_REGEN_TICK_MINUTES + ' min, batch ' + SERVER_REGEN_TICK_BATCH + '. Trigger auto-removes when done.',
+    message: 'Server-side regen kicked off. ' + targets.length + ' unit(s) in scope (' + totalRequeued + ' requeued, ' + alreadyQueued + ' already queued, ' + skippedCurrentVersion + ' skipped as already regenerated under code version ' + INSPIRING_REGEN_VERSION + '). Tick every ' + SERVER_REGEN_TICK_MINUTES + ' min, batch ' + SERVER_REGEN_TICK_BATCH + '. Trigger auto-removes when done.',
     totalTargets: targets.length,
     requeued: totalRequeued,
     clearedAutoSwapped: clearedAutoSwapped,
     clearedAudit: clearedAudit,
     alreadyQueued: alreadyQueued,
-    skippedRecent: skippedRecent,
+    skippedCurrentVersion: skippedCurrentVersion,
+    codeVersion: INSPIRING_REGEN_VERSION,
     tickHandler: SERVER_REGEN_TICK_HANDLER,
     tickMinutes: SERVER_REGEN_TICK_MINUTES,
     tickBatch: SERVER_REGEN_TICK_BATCH,
@@ -4983,6 +4990,7 @@ function regenerateAllInspiring(opts) {
         data[idx].s = call.sugs.map(s => ({ t: inspiringCanonicaliseToolCasing_(s.t, _approvedNamesList), d: s.d }));
         data[idx].audited = true;
         data[idx].inspiringRegenAt = new Date().toISOString();
+        data[idx].inspiringRegenAtVersion = INSPIRING_REGEN_VERSION;
         clearHumanVerifiedFlags_(data[idx], 'Regenerated by regenerateAllInspiring (6-sentence inspiring style)');
         dataDirty = true;
         success = true;
@@ -5026,6 +5034,7 @@ function regenerateAllInspiring(opts) {
             data[idx].s = sugs.map(s => ({ t: inspiringCanonicaliseToolCasing_(s.t, _approvedNamesListSwap), d: s.d }));
             data[idx].audited = true;
             data[idx].inspiringRegenAt = new Date().toISOString();
+            data[idx].inspiringRegenAtVersion = INSPIRING_REGEN_VERSION;
             data[idx].inspiringRegenAutoSwapped = subRes.swaps;
             clearHumanVerifiedFlags_(data[idx], 'Regenerated with auto-substituted tool names after 3 failed AI attempts');
             dataDirty = true;
