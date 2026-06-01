@@ -42,6 +42,7 @@
         "Seesaw",
         "Sketchbook",
         "Sky Map",
+        "Slow Motion Physical Analysis",
         "Sphero BOLT",
         "Sphero Indi",
         "Stop Motion Studio",
@@ -253,6 +254,10 @@
         "seek by inaturalist": {
           "min": -2,
           "max": 3
+        },
+        "slow motion physical analysis": {
+          "min": -2,
+          "max": 1
         }
       }
     },
