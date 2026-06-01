@@ -189,6 +189,9 @@ function invUpdateToolAge(tool, edge, value){
   TOOL_INVENTORY.ageRanges[key] = next;
   renderToolInventory();
   saveLibraries();
+  // Re-scan the dashboard against the new range straight away (the dashboard
+  // reads ageRanges live, so this just makes the recheck instant when visible).
+  if(typeof renderDashboard === 'function') renderDashboard();
   setStatus(`Updated ${tool} age range to ${ageRangeLabel(next)}`);
 }
 
