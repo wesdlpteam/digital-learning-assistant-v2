@@ -38,12 +38,14 @@
         "Podcasting using Canva",
         "Puppet Pals",
         "ScratchJr",
+        "Seek by iNaturalist",
         "Seesaw",
         "Sketchbook",
         "Sky Map",
         "Sphero BOLT",
         "Sphero Indi",
         "Stop Motion Studio",
+        "Tablet Magnifiers",
         "Tinkercad",
         "Wise Discussion Chatbots",
         "Word Clouds ABCya"
@@ -97,7 +99,7 @@
           "max": 6
         },
         "makey makey": {
-          "min": 0,
+          "min": -2,
           "max": 6
         },
         "3d printers": {
@@ -121,7 +123,7 @@
           "max": 6
         },
         "book creator": {
-          "min": 2,
+          "min": -2,
           "max": 6
         },
         "padlet": {
@@ -137,7 +139,7 @@
           "max": 2
         },
         "stop motion studio": {
-          "min": 3,
+          "min": -2,
           "max": 6
         },
         "chatterpix kids": {
@@ -243,6 +245,14 @@
         "apple clips": {
           "min": 0,
           "max": 1
+        },
+        "tablet magnifiers": {
+          "min": -2,
+          "max": 1
+        },
+        "seek by inaturalist": {
+          "min": -2,
+          "max": 3
         }
       }
     },
