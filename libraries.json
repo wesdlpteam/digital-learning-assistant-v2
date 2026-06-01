@@ -22,7 +22,6 @@
         "Google Maps",
         "iMovie",
         "insta360 camera",
-        "iPad",
         "Kahoot",
         "Lego Spike Prime",
         "Makey Makey",
@@ -70,11 +69,11 @@
           "max": 6
         },
         "excel": {
-          "min": 0,
+          "min": 3,
           "max": 6
         },
         "forms": {
-          "min": 0,
+          "min": 2,
           "max": 6
         },
         "beebots": {
@@ -82,7 +81,7 @@
           "max": 2
         },
         "sphero indi": {
-          "min": 0,
+          "min": -2,
           "max": 2
         },
         "sphero bolt": {
@@ -113,12 +112,8 @@
           "min": 2,
           "max": 6
         },
-        "ipad": {
-          "min": 0,
-          "max": 6
-        },
         "seesaw": {
-          "min": 0,
+          "min": -2,
           "max": 4
         },
         "canva": {
@@ -134,7 +129,7 @@
           "max": 6
         },
         "garageband": {
-          "min": 0,
+          "min": -2,
           "max": 6
         },
         "scratchjr": {
@@ -146,7 +141,7 @@
           "max": 6
         },
         "chatterpix kids": {
-          "min": 0,
+          "min": -2,
           "max": 2
         },
         "imovie": {
@@ -154,7 +149,7 @@
           "max": 6
         },
         "puppet pals": {
-          "min": 0,
+          "min": -2,
           "max": 2
         },
         "adobe express": {
@@ -190,11 +185,11 @@
           "max": 6
         },
         "piccollage": {
-          "min": 0,
+          "min": -2,
           "max": 6
         },
         "brushes redux": {
-          "min": 0,
+          "min": -2,
           "max": 6
         },
         "word clouds abcya": {
@@ -202,7 +197,7 @@
           "max": 6
         },
         "sketchbook": {
-          "min": 0,
+          "min": -2,
           "max": 6
         },
         "explain everything": {
@@ -210,11 +205,11 @@
           "max": 6
         },
         "freeform": {
-          "min": 0,
+          "min": -2,
           "max": 6
         },
         "delightex": {
-          "min": 0,
+          "min": 2,
           "max": 6
         },
         "kahoot": {
