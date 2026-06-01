@@ -450,6 +450,9 @@ function switchTab(tab,btn){
   const panel=document.getElementById('panel-'+tab);
   if(panel) panel.classList.add('active');
   PREV_TAB=tab; CURRENT_ENTRY_IDX=null;
+  // Always re-scan the dashboard when it's shown so whitelist/banned/age changes
+  // made on the Bulk tab are reflected immediately (no stale "off whitelist" flags).
+  if(tab==='dashboard' && typeof renderDashboard==='function') renderDashboard();
   if(tab==='browse') renderBrowse();
   if(tab==='audit') renderAudit();
   if(tab==='live') loadLiveAnalytics();

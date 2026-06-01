@@ -855,6 +855,9 @@ setInterval(async()=>{
     invCleanup(safeList);
     input.value = '';
     renderToolInventory();
+    // Re-scan the dashboard immediately so a newly whitelisted/banned tool stops
+    // showing the stale "off whitelist" flag without needing a full page reload.
+    if(typeof renderDashboard === 'function') renderDashboard();
     invPersist();
     if(typeof setStatus === 'function') setStatus(`Added "${display}" to ${safeList === 'approved' ? 'whitelist' : 'banned list'}`);
     return false;
@@ -870,6 +873,8 @@ setInterval(async()=>{
     if(safeList === 'approved') delete TOOL_INVENTORY.ageRanges[key];
     invCleanup('banned');
     renderToolInventory();
+    // Re-scan the dashboard so removing a tool updates the flags right away.
+    if(typeof renderDashboard === 'function') renderDashboard();
     invPersist();
     const removed = before - TOOL_INVENTORY[safeList].length;
     if(typeof setStatus === 'function') setStatus(removed ? `Removed "${invCanonicalDisplay(tool) || tool}" from ${safeList === 'approved' ? 'whitelist' : 'banned list'}` : `"${tool}" was already removed`);

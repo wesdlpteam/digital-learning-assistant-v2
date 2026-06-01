@@ -307,10 +307,10 @@
             <div style="display:grid;grid-template-columns:minmax(170px,1fr) 105px 105px auto;gap:6px;margin-bottom:8px;align-items:center">
               <input id="inv-whitelist-input" class="inp" placeholder="e.g. Sphero BOLT" style="margin-bottom:0;font-size:12px;padding:6px 10px" onkeydown="if(event.key==='Enter'){event.preventDefault();invAddTool('approved')}">
               <select id="inv-whitelist-min" class="inp" title="Minimum year level" style="margin-bottom:0;font-size:12px;padding:6px 8px">
-                <option value="0">Prep</option><option value="1">Year 1</option><option value="2">Year 2</option><option value="3">Year 3</option><option value="4">Year 4</option><option value="5">Year 5</option><option value="6">Year 6</option>
+                <option value="-2" selected>3 Year Old Kinder</option><option value="-1">4 Year Old Kinder</option><option value="0">Prep</option><option value="1">Year 1</option><option value="2">Year 2</option><option value="3">Year 3</option><option value="4">Year 4</option><option value="5">Year 5</option><option value="6">Year 6</option>
               </select>
               <select id="inv-whitelist-max" class="inp" title="Maximum year level" style="margin-bottom:0;font-size:12px;padding:6px 8px">
-                <option value="0">Prep</option><option value="1">Year 1</option><option value="2">Year 2</option><option value="3">Year 3</option><option value="4">Year 4</option><option value="5">Year 5</option><option value="6" selected>Year 6</option>
+                <option value="-2">3 Year Old Kinder</option><option value="-1">4 Year Old Kinder</option><option value="0">Prep</option><option value="1">Year 1</option><option value="2">Year 2</option><option value="3">Year 3</option><option value="4">Year 4</option><option value="5">Year 5</option><option value="6" selected>Year 6</option>
               </select>
               <button id="inv-whitelist-add" data-inv-add="approved" type="button" class="btn-sm" onclick="invAddTool('approved')" style="color:var(--lime);border-color:var(--lime);padding:6px 12px">+ Add</button>
             </div>
@@ -646,15 +646,15 @@
 
 <!-- ?v=APP_VERSION cache-busts the code files. Bump this to match APP_VERSION
      in js/00-config-state-utils.js on every deploy so browsers fetch fresh code. -->
-<script src="js/00-config-state-utils.js?v=5.19"></script>
-<script src="js/01-inventory-helpers.js?v=5.19"></script>
-<script src="js/02-ui-load-navigation.js?v=5.19"></script>
-<script src="js/03-dashboard-browse-entry.js?v=5.19"></script>
-<script src="js/04-audit-analytics-live.js?v=5.19"></script>
-<script src="js/05-bulk-setup-libraries.js?v=5.19"></script>
-<script src="js/06-bulk-router-chat.js?v=5.19"></script>
-<script src="js/07-bulk-actions.js?v=5.19"></script>
-<script src="js/09-legacy-restored.js?v=5.19"></script>
-<script src="js/08-export-sync-hotfixes.js?v=5.19"></script>
+<script src="js/00-config-state-utils.js?v=5.20"></script>
+<script src="js/01-inventory-helpers.js?v=5.20"></script>
+<script src="js/02-ui-load-navigation.js?v=5.20"></script>
+<script src="js/03-dashboard-browse-entry.js?v=5.20"></script>
+<script src="js/04-audit-analytics-live.js?v=5.20"></script>
+<script src="js/05-bulk-setup-libraries.js?v=5.20"></script>
+<script src="js/06-bulk-router-chat.js?v=5.20"></script>
+<script src="js/07-bulk-actions.js?v=5.20"></script>
+<script src="js/09-legacy-restored.js?v=5.20"></script>
+<script src="js/08-export-sync-hotfixes.js?v=5.20"></script>
 </body>
 </html>
