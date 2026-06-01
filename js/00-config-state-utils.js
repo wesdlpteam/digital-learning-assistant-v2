@@ -1,4 +1,34 @@
 let DATA = [];
+// App version. BUMP THIS on every deploy, and keep it identical to the ?v=
+// stamp on the <script src="js/..."> tags in DLA_Studio.html. Bumping the
+// number changes every code file's web address, which forces browsers to
+// download the new code instead of reusing a stale cached copy.
+const APP_VERSION = '5.17';
+
+// Reliable "get the latest version" action used by the ↻ latest button.
+// Reloads the whole app from the network with a one-off unique address so the
+// browser cannot reuse a cached page; the fresh page then pulls the
+// version-stamped (and therefore fresh) code files.
+function forceLatestVersion(){
+  const base = location.href.split('#')[0].split('?')[0];
+  location.replace(base + '?v=' + Date.now());
+}
+
+// Show the running code's version in the bottom-left + setup labels so the
+// curator can tell at a glance whether they are on the latest version.
+function stampVersionLabels(){
+  try{
+    const a = document.getElementById('dla-version-label');
+    if(a) a.textContent = '● DLA Studio v' + APP_VERSION;
+    const b = document.getElementById('setup-version-label');
+    if(b) b.textContent = 'v' + APP_VERSION;
+  }catch(e){}
+}
+if(typeof document !== 'undefined'){
+  if(document.readyState !== 'loading') stampVersionLabels();
+  else document.addEventListener('DOMContentLoaded', stampVersionLabels);
+}
+
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzIoUL_vbTaH4P7PXuX8HeU9Xh6HuiEWJ05k7q50aJjCg7oeF-ELrlLuPx8uxPFHmE-eA/exec';
 let DRIVE_TOKEN = null;
 let CURRENT_USER_EMAIL = '';
