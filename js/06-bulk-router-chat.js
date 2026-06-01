@@ -555,6 +555,17 @@ function filterIssueType(label){
 }
 
 function renderDashboard(){
+  // The "wrong year level" check needs the Tool Inventory age ranges, which load
+  // from libraries.json after sign-in. At boot the dashboard can render before
+  // that finishes — making every tool look unconstrained and the count read 0.
+  // If the age ranges aren't loaded yet, load them once and re-count when ready.
+  if(typeof ensureLibrariesLoaded === 'function' && !window._dashAgeReloaded){
+    const _ar = (typeof TOOL_INVENTORY!=='undefined' && TOOL_INVENTORY && TOOL_INVENTORY.ageRanges) ? TOOL_INVENTORY.ageRanges : null;
+    if(!_ar || Object.keys(_ar).length === 0){
+      window._dashAgeReloaded = true;
+      ensureLibrariesLoaded().then(()=>{ renderDashboard(); }).catch(()=>{});
+    }
+  }
   const {incomplete,banned,duplicates,offWhitelist,missingPlanner,ageMismatch}=getIssues();
   const total=incomplete.length+banned.length+duplicates.length+offWhitelist.length+missingPlanner.length+ageMismatch.length;
   document.getElementById('db-sub').textContent=`${DATA.length} entries across ${[...new Set(DATA.map(e=>e.ca))].length} campuses — ${total} issue${total!==1?'s':''} found`;
