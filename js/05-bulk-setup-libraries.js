@@ -651,8 +651,8 @@ ${SUGGESTION_STYLE}`;
 
 
 async function fixAllOfType(type){
-  const {incomplete,banned,duplicates,offWhitelist}=getIssues();
-  const typeMap={incomplete,banned,duplicate:duplicates,offwhitelist:offWhitelist};
+  const {incomplete,banned,duplicates,offWhitelist,ageMismatch}=getIssues();
+  const typeMap={incomplete,banned,duplicate:duplicates,offwhitelist:offWhitelist,agemismatch:ageMismatch};
   const issues=typeMap[type]||[];
   if(!issues.length) return;
 
@@ -686,6 +686,15 @@ async function fixAllOfType(type){
 
       } else if(type==='duplicate'){
         prompt=`${buildGASRules(e.yl)}\n\nFix duplicate tools in this unit — each suggestion must use a DIFFERENT tool.\nUnit: ${e.ca} | ${e.yl} | "${e.th}"${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nCurrent suggestions:\n${currentSugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}\nEvery suggestion uses ONE approved tool (no "+" pairings). All 6 must use DIFFERENT tools.\nReturn ONLY JSON array of exactly 6 (the 6th must be a STEM Design Cycle activity) with NO repeated tools: [{"t":"Tool Name","d":"Specific description."},...]`;
+
+      } else if(type==='agemismatch'){
+        const yv = yearLevelValueFromLabel(e.yl);
+        const badList = currentSugs
+          .map((s,i)=>({i, tool:sugTool(s), range:toolAgeRangeFor(sugTool(s))}))
+          .filter(x=> x.tool && x.range && yv!==null && (yv < x.range.min || yv > x.range.max));
+        const badDesc = badList.map(x=>`#${x.i+1} ${x.tool} (allowed ${ageRangeLabel(x.range)})`).join('; ');
+        const allowed = approvedToolsForYear_(yv);
+        prompt=`${buildGASRules(e.yl)}\n\nSome suggestions in this unit use a tool whose allowed year-level range does NOT include ${e.yl}. Replace ONLY those tools; keep every other suggestion exactly as it is. Return 6 total suggestions (the 6th must be a STEM Design Cycle activity).\nUnit: ${e.ca} | ${e.yl} | "${e.th}"${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nCurrent suggestions:\n${currentSugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}\nTools to REPLACE (wrong year level for ${e.yl}): ${badDesc}\nEach replacement MUST be an approved tool whose age range includes ${e.yl}. Approved tools that fit ${e.yl}: ${allowed.join(', ')}.\nEvery suggestion uses ONE approved tool (no "+" pairings). All 6 must use DIFFERENT tools.\nReturn ONLY JSON array of exactly 6 (the 6th must be a STEM Design Cycle activity): [{"t":"Tool Name","d":"Specific description."},...]`;
       }
 
       let sugs = null;
