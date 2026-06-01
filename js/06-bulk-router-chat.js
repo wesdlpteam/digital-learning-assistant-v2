@@ -441,8 +441,45 @@ function isWhitelisted(toolName){
   });
 }
 
+// ===== Age-range scan helpers (wrong-year-level dashboard flag) =====
+// Convert a unit's year-level label (e.yl, e.g. "Year 2", "Prep",
+// "3 Year Old Kinder") to the numeric value used by ageRanges (-2..6).
+// Returns null when the label can't be resolved to a SINGLE year, so callers
+// skip the unit instead of risking a false flag (e.g. a combined "Year 5/6").
+function yearLevelValueFromLabel(label){
+  const raw = String(label == null ? '' : label).trim();
+  if(!raw) return null;
+  const exact = YEAR_LEVEL_CHOICES.find(y => y.label.toLowerCase() === raw.toLowerCase());
+  if(exact) return exact.value;
+  const lower = raw.toLowerCase();
+  if(/3\s*year\s*old/.test(lower)) return -2;
+  if(/4\s*year\s*old/.test(lower)) return -1;
+  if(/\bprep\b|\bfoundation\b/.test(lower)) return 0;
+  const digits = lower.match(/[0-6]/g) || [];
+  const uniq = [...new Set(digits)];
+  if(uniq.length === 1) return Number(uniq[0]);
+  return null; // no digit, or ambiguous combined level → skip
+}
+
+// Look up a tool's allowed age range from the live inventory.
+// Returns {min,max} or null when the tool has no range set (unconstrained).
+function toolAgeRangeFor(tool){
+  const key = toolInventoryKey(tool);
+  if(!key) return null;
+  const ranges = (typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY && TOOL_INVENTORY.ageRanges) ? TOOL_INVENTORY.ageRanges : null;
+  if(!ranges || !ranges[key]) return null;
+  return normaliseAgeRange(ranges[key]);
+}
+
+// Approved tools whose age range includes the given year value (for Fix All).
+function approvedToolsForYear_(yv){
+  const approved = (typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY && Array.isArray(TOOL_INVENTORY.approved)) ? TOOL_INVENTORY.approved : [];
+  if(yv === null) return approved.slice();
+  return approved.filter(name => { const r = toolAgeRangeFor(name); return !r || (yv >= r.min && yv <= r.max); });
+}
+
 function getIssues(){
-  const incomplete=[], banned=[], duplicates=[], offWhitelist=[], missingPlanner=[];
+  const incomplete=[], banned=[], duplicates=[], offWhitelist=[], missingPlanner=[], ageMismatch=[];
   DATA.forEach((e,idx)=>{
     const sugs=getSugs(e);
     const realSugs=sugs.filter(isRealSug);
@@ -482,23 +519,30 @@ function getIssues(){
     tools.forEach(t=>{ if(seen.has(t)) duplicates.push({e,idx,type:'duplicate',detail:`"${sugTool(realSugs[tools.indexOf(t)])}" appears twice`}); seen.add(t); });
 
     realSugs.forEach((s, slotIdx)=>{
-      // STEM Design Cycle slot (#6, index 5) is exempt from whitelist check
+      // STEM Design Cycle slot (#6, index 5) is exempt from whitelist + age checks
       if(slotIdx === 5) return;
       const t=sugTool(s);
       if(t && dashboardBannedToolMatch_(t)) return;
       if(t&&!isWhitelisted(t))
         offWhitelist.push({e,idx,type:'offwhitelist',detail:`"${t}" not in approved list`});
+      if(t){
+        const _yv = yearLevelValueFromLabel(e.yl);
+        const _range = toolAgeRangeFor(t);
+        if(_yv !== null && _range && (_yv < _range.min || _yv > _range.max)){
+          ageMismatch.push({e,idx,type:'agemismatch',detail:`"${t}" is for ${ageRangeLabel(_range)}, this unit is ${e.yl}`});
+        }
+      }
     });
 
     if(!e.plannerText || e.plannerText.trim().length < 20)
       missingPlanner.push({e,idx,type:'missingplanner',detail:'No planner summary'});
   });
-  return {incomplete,banned,duplicates,offWhitelist,missingPlanner};
+  return {incomplete,banned,duplicates,offWhitelist,missingPlanner,ageMismatch};
 }
 
 function filterIssueType(label){
   
-  const map={'banned':'banned','off whitelist':'offwhitelist','duplicates':'duplicate','no planner':'incomplete','no planner summary':'missingplanner'};
+  const map={'banned':'banned','off whitelist':'offwhitelist','duplicates':'duplicate','no planner':'incomplete','no planner summary':'missingplanner','wrong year level':'agemismatch'};
   const type=map[label];
   const el=document.getElementById('issues-list');
   if(!el) return;
@@ -511,8 +555,8 @@ function filterIssueType(label){
 }
 
 function renderDashboard(){
-  const {incomplete,banned,duplicates,offWhitelist,missingPlanner}=getIssues();
-  const total=incomplete.length+banned.length+duplicates.length+offWhitelist.length+missingPlanner.length;
+  const {incomplete,banned,duplicates,offWhitelist,missingPlanner,ageMismatch}=getIssues();
+  const total=incomplete.length+banned.length+duplicates.length+offWhitelist.length+missingPlanner.length+ageMismatch.length;
   document.getElementById('db-sub').textContent=`${DATA.length} entries across ${[...new Set(DATA.map(e=>e.ca))].length} campuses — ${total} issue${total!==1?'s':''} found`;
   const statDefs=[
     {label:'total entries',val:DATA.length,bg:'#C5E84A',col:'#111'},
@@ -520,6 +564,7 @@ function renderDashboard(){
     {label:'banned tools',val:banned.length,bg:banned.length>0?'#FF8080':'#1a1a1a',col:banned.length>0?'#111':'#888'},
     {label:'duplicates',val:duplicates.length,bg:duplicates.length>0?'#9B8BFF':'#1a1a1a',col:duplicates.length>0?'#fff':'#888'},
     {label:'off whitelist',val:offWhitelist.length,bg:offWhitelist.length>0?'#60B8F0':'#1a1a1a',col:offWhitelist.length>0?'#111':'#888'},
+    {label:'wrong year level',val:ageMismatch.length,bg:ageMismatch.length>0?'#E85D9B':'#1a1a1a',col:ageMismatch.length>0?'#111':'#888'},
     {label:'no planner',val:missingPlanner.length,bg:missingPlanner.length>0?'#D4A017':'#1a1a1a',col:missingPlanner.length>0?'#111':'#888'},
   ];
   document.getElementById('stat-cards').innerHTML=statDefs.map(({label,val,bg,col})=>`<div class="stat-card" style="background:${bg};border-color:transparent;cursor:pointer" onclick="filterIssueType('${label}')"><div class="stat-num" style="color:${col}">${val}</div><div class="stat-lbl" style="color:${col}">${label}</div></div>`).join('');
@@ -527,6 +572,7 @@ function renderDashboard(){
   const all=[
     ...banned,
     ...offWhitelist,
+    ...ageMismatch,
     ...duplicates,
     ...incomplete,
     ...missingPlanner,
@@ -540,6 +586,7 @@ function renderDashboard(){
     if(duplicates.length>0) fixBtns.push({count:duplicates.length, label:'Fix duplicates', color:'#9B8BFF', type:'duplicate', fn:"fixAllOfType('duplicate')"});
     if(banned.length>0) fixBtns.push({count:banned.length, label:'Fix banned tools', color:'#FF8080', type:'banned', fn:"fixAllOfType('banned')"});
     if(offWhitelist.length>0) fixBtns.push({count:offWhitelist.length, label:'Fix off-list', color:'#60B8F0', type:'offwhitelist', fn:"fixAllOfType('offwhitelist')"});
+    if(ageMismatch.length>0) fixBtns.push({count:ageMismatch.length, label:'Fix wrong year level', color:'#E85D9B', type:'agemismatch', fn:"fixAllOfType('agemismatch')"});
 
     if(fixBtns.length > 0){
       fixBar.innerHTML=`
@@ -562,9 +609,9 @@ function renderDashboard(){
   }
   document.getElementById('issues-list').innerHTML=all.length
     ? all.map(({e,idx,type,detail})=>{
-        const badgeBg={'banned':'#FF8080','incomplete':'#F5A623','duplicate':'#9B8BFF','offwhitelist':'#60B8F0','missingplanner':'#D4A017'}[type]||'#888';
-        const badgeCol={'banned':'#111','incomplete':'#111','duplicate':'#fff','offwhitelist':'#111','missingplanner':'#111'}[type]||'#fff';
-        const label={'banned':'banned','incomplete':'no planner','duplicate':'duplicate','offwhitelist':'off-list','missingplanner':'no planner'}[type]||type;
+        const badgeBg={'banned':'#FF8080','incomplete':'#F5A623','duplicate':'#9B8BFF','offwhitelist':'#60B8F0','missingplanner':'#D4A017','agemismatch':'#E85D9B'}[type]||'#888';
+        const badgeCol={'banned':'#111','incomplete':'#111','duplicate':'#fff','offwhitelist':'#111','missingplanner':'#111','agemismatch':'#111'}[type]||'#fff';
+        const label={'banned':'banned','incomplete':'no planner','duplicate':'duplicate','offwhitelist':'off-list','missingplanner':'no planner','agemismatch':'year level'}[type]||type;
         return `<div class="row" onclick="openEntry(${idx})">
           <span style="font-size:11px;padding:4px 11px;border-radius:20px;background:${badgeBg};color:${badgeCol};font-weight:800;letter-spacing:.3px;flex-shrink:0">${label}</span>
           <span style="font-size:13px;color:#9ab89a;width:110px;flex-shrink:0">${esc(e.ca)}</span>
