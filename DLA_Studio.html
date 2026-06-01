@@ -318,7 +318,13 @@
             <div id="inv-whitelist-pills" style="display:flex;flex-direction:column;gap:6px;min-height:32px"></div>
           </div>
 
-          <div>
+          <!-- Banned editing box hidden 2026-06-01: the whitelist is the single source of
+               truth. The banned safety net (active block on tools like ClassVR + the dashboard
+               flag) still runs behind the scenes; this only removes the box from the curator
+               UI. The #inv-banned-pills element is kept (hidden) on purpose — renderToolInventory
+               bails out if it's missing, which would also blank the whitelist. To bring the box
+               back, delete the inline display:none below. -->
+          <div style="display:none" data-banned-card="hidden">
             <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
               <span style="font-size:12px;font-weight:700;color:#FF8080">⛔ BANNED</span>
               <span id="inv-banned-count" style="font-size:10px;color:var(--dim);font-weight:600"></span>
