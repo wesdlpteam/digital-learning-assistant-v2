@@ -5,6 +5,7 @@
         "3D Printers",
         "Adobe Express",
         "Animating a Character with Adobe Express",
+        "Apple Clips",
         "Beebots",
         "Book Creator",
         "Brushes Redux",
@@ -243,6 +244,10 @@
         "insta360 camera": {
           "min": 0,
           "max": 6
+        },
+        "apple clips": {
+          "min": 0,
+          "max": 1
         }
       }
     },
