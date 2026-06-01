@@ -930,6 +930,10 @@ async function ensureLibrariesLoaded(force){
   LIBRARIES_LOADING_PROMISE = loadLibraries().then(() => {
     LIBRARIES_READY = true;
     normaliseToolInventory();
+    // The dashboard can render before tool age ranges have loaded, leaving the
+    // "wrong year level" count stuck at a stale 0. Now that the ranges are
+    // ready, redraw it so the count is correct.
+    if(typeof renderDashboard === 'function'){ try { renderDashboard(); } catch(e){} }
     return librariesHaveLessons();
   }).catch(e => {
     LIBRARIES_READY = false;
