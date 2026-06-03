@@ -661,7 +661,11 @@ async function fixAllOfType(type){
   const lbl=document.getElementById('fix-all-label');
   if(prog) prog.style.display='block';
 
-  let done=0, fixed=0, failed=0;
+  let done=0, fixed=0, failed=0, fixedSinceSave=0;
+  // Save progress in small batches so an interruption (closed tab, sleeping
+  // laptop) loses at most this many units of work instead of the whole run.
+  // A re-run re-scans first, so anything already saved is skipped automatically.
+  const SAVE_BATCH=5;
 
   const byEntry={};
   issues.forEach(iss=>{ if(!byEntry[iss.idx]) byEntry[iss.idx]=[]; byEntry[iss.idx].push(iss); });
@@ -727,6 +731,7 @@ async function fixAllOfType(type){
       DATA[idx].s=sugs;
       DATA[idx].audited=false;
       fixed++;
+      fixedSinceSave++;
       if(lbl) lbl.textContent=`${done}/${entries.length}: ✓ ${e.yl} — ${e.th}`;
     }catch(err){
       failed++;
@@ -734,11 +739,20 @@ async function fixAllOfType(type){
       if(lbl) lbl.textContent=`${done}/${entries.length}: ✗ ${e.yl} — ${e.th} (${err.message})`;
       await sleep(1000);
     }
+    // Persist the batch as soon as it fills up so completed units survive an
+    // interruption. saveToDrive uploads the whole corpus, so we batch rather
+    // than save every unit to keep the upload count (and conflict checks) sane.
+    if(fixedSinceSave>=SAVE_BATCH){
+      if(lbl) lbl.textContent=`Saving progress — ${fixed} fixed so far…`;
+      await saveToDrive();
+      fixedSinceSave=0;
+    }
     if(done<entries.length) await sleep(2000);
   }
 
   if(lbl) lbl.textContent=`Saving ${fixed} fix${fixed!==1?'es':''}…`;
-  if(fixed>0) await saveToDrive();
+  // Save the final partial batch (anything fixed since the last batch save).
+  if(fixedSinceSave>0) await saveToDrive();
   if(lbl) lbl.textContent=`Done — ${fixed} fixed, ${failed} failed`;
   renderDashboard();
   setStatus(`Fixed ${fixed} ${type} issue${fixed!==1?'s':''}`);
