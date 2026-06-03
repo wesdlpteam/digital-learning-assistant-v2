@@ -2938,10 +2938,13 @@ async function refreshOnePlannerContext(entry){
     if(type === 'opportunity'){
       const tool = bulkQAGet_('bulk-qa-tool');
       const scope = bulkQANormaliseScope_(bulkQAGet_('bulk-qa-scope'));
+      const target = bulkQAGet_('bulk-qa-target');
       if(!tool){ alert('Choose a tool first, e.g. Book Creator or Makey Makey.'); return; }
+      // A leading number is read by startBulkAnalysis as a HARD TARGET ("do not stop at 5 or 6").
+      const countPhrase = target ? `${target} more opportunities` : 'more opportunities';
       const prompt = scope
-        ? `Find more opportunities in ${scope} to use ${tool}`
-        : `Find more opportunities to use ${tool}`;
+        ? `Find ${countPhrase} in ${scope} to use ${tool}`
+        : `Find ${countPhrase} to use ${tool}`;
       bulkQASetInput_(prompt);
       bulkQASetAdvancedOpen_(true);
       return;
@@ -3012,6 +3015,14 @@ async function refreshOnePlannerContext(entry){
             <select id="bulk-qa-tool" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:6px">${bulkQAToolOptions_()}</select>
             <select id="bulk-qa-scope" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:8px">
               <option value="">All eligible years</option>${bulkQAYearScopeOptions_()}
+            </select>
+            <select id="bulk-qa-target" class="inp" style="font-size:12px;padding:8px 10px;margin-bottom:8px" title="How many suggestions to aim for. The AI is told not to stop early until it reaches this many genuine matches.">
+              <option value="">No target (let the AI decide)</option>
+              <option value="5">Target: 5 suggestions</option>
+              <option value="10">Target: 10 suggestions</option>
+              <option value="15">Target: 15 suggestions</option>
+              <option value="20">Target: 20 suggestions</option>
+              <option value="30">Target: 30 suggestions</option>
             </select>
             <div style="display:flex;gap:6px;flex-wrap:wrap">
               <button type="button" class="btn-sm" onclick="bulkQuickActionFill('opportunity')">Fill prompt</button>
