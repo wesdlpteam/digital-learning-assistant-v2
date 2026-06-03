@@ -1345,6 +1345,28 @@ async function startBulkAnalysis(){
   }
   analysisData = analysisData.slice(0, 140); // defensive cap; current library is ~127 entries
 
+  // Top up missing planner content for in-scope units (read-only, targeted) so each
+  // suggestion can be grounded in real planner text rather than just the central idea /
+  // lines of inquiry. fetchPlannerContext is in-memory cached and read-only (getPlannerContext
+  // backend action) — nothing is written to data.json, so this is safe to interrupt.
+  const fetchedCtx = {};
+  if(typeof fetchPlannerContext === 'function'){
+    const needCtx = analysisData
+      .filter(({e}) => !(e.plannerContextRich || e.plannerText))
+      .slice(0, 40); // perf cap: top up at most 40 units per scan
+    if(needCtx.length){
+      if(lbl) lbl.textContent = `Loading planner detail for ${needCtx.length} unit${needCtx.length!==1?'s':''}…`;
+      const CONCURRENCY = 5;
+      for(let n = 0; n < needCtx.length; n += CONCURRENCY){
+        const batch = needCtx.slice(n, n + CONCURRENCY);
+        await Promise.all(batch.map(async ({e, i:idx}) => {
+          try { const ctx = await fetchPlannerContext(e); if(ctx) fetchedCtx[idx] = ctx; }
+          catch(err){ /* read-only top-up; ignore one failure and proceed */ }
+        }));
+      }
+    }
+  }
+
   const toolIndex = {};
   analysisData.forEach(({e,i})=>{
     getSugs(e).forEach((s,si)=>{
@@ -1457,8 +1479,9 @@ The coordinator is asking you to scan the library for places where a specific to
       const desc = dLimit > 0 ? compactForPrompt(sugDesc(s), dLimit) : '';
       return `s${si}:${tool}${desc ? ' — '+desc : ''}`;
     }).join(' | ');
-    // Use enriched planner context (plannerContextRich) when available — much richer than plannerText
-    const richCtx = e.plannerContextRich || e.plannerText || '';
+    // Use enriched planner context (plannerContextRich) when available — much richer than plannerText.
+    // fetchedCtx[i] is the read-only top-up fetched above for units that had neither field loaded.
+    const richCtx = e.plannerContextRich || e.plannerText || fetchedCtx[i] || '';
     let richLimit;
     if(isCuratedLibraryRun){
       richLimit = richCtx === e.plannerContextRich ? 1800 : 600;
@@ -1497,6 +1520,12 @@ DUPLICATE PREVENTION (HARD RULE):
 - Do NOT propose a change that would use the same tool as another suggestion already in the same entry.
 - If an entry already contains the tool you're proposing, SKIP that entry entirely.
 - Do NOT propose two different changes for the same entry that would both use the same tool.
+
+ACTIVITY VARIETY ACROSS UNITS (HARD RULE):
+- Every proposal must describe a genuinely DISTINCT activity. Do NOT reuse the same core activity, student product, or framing for more than one unit.
+- Even when the SAME tool is used across many units (e.g. a single-tool opportunity scan), each unit's activity MUST be different and anchored to THAT unit's own central idea, lines of inquiry and planner content — never a copy-paste with the unit name swapped in.
+- You can see every proposal you are about to make in one list. Before finalising, re-read them and ensure no two descriptions are near-duplicates; if two would be similar, change one so each unit gets its own distinct activity.
+- When the coordinator has NOT named a specific tool, also spread proposals across DIFFERENT tools (see the TOOL DIVERSITY RULE below) instead of repeating one tool.
 
 DESCRIPTION-AWARE EDITING:
 - Each eligible slot below includes its current tool and a short version of its current description.
@@ -1586,6 +1615,7 @@ ${fullContext}`;
     // Parse APPLY_CHANGES
     const changeMatch = response.match(/APPLY_CHANGES:\s*([\s\S]*)/s);
     let changes = null;
+    let recoveredPartial = false; // true if the array was truncated and we salvaged objects
     if(changeMatch){
       try{
         const jsonStr = changeMatch[1].trim();
@@ -1597,6 +1627,7 @@ ${fullContext}`;
           const raw = JSON.parse(cleanJSON(arrStr.slice(0, arrEnd+1)));
           changes = normaliseChanges(raw);
         } else {
+          recoveredPartial = true;
           const recovered = [];
           let depth = 0, objStart = -1;
           for(let i = 0; i < arrStr.length; i++){
@@ -1626,6 +1657,7 @@ ${fullContext}`;
 
     // Hard filter for negative instructions — AI sometimes ignores "don't use X" even when told explicitly
     let filteredStem = 0;  // hoisted — needed by both the filter block and the result display
+    let filteredNegative = 0, filteredForbidden = 0, filteredBanned = 0, filteredUnsafe = 0, filteredRealism = 0; // hoisted for the result-display breakdown
     if(changes && changes.length){
       const negativePatterns = [
         /(?:do\s*not|don't|never|avoid|exclude|not\s+to|but\s+not|without\s+using|except\s+for)\s+(?:use\s+|using\s+|swap\s+with\s+|replace\s+with\s+|suggest\s+)?([a-z][a-z0-9:'\s-]+?)(?:\.|,|;|$|\)|\s+or\s+|\s+and\s+(?:not|don't)\s+|\n)/gi,
@@ -1652,9 +1684,9 @@ ${fullContext}`;
           }
           return true;
         });
-        const filteredOut = before - changes.length;
-        if(filteredOut > 0){
-          console.log(`Bulk AI: filtered out ${filteredOut} proposal(s) violating negative instruction. Banned from instruction:`, [...bannedFromInstruction]);
+        filteredNegative = before - changes.length;
+        if(filteredNegative > 0){
+          console.log(`Bulk AI: filtered out ${filteredNegative} proposal(s) violating negative instruction. Banned from instruction:`, [...bannedFromInstruction]);
         }
       }
 
@@ -1669,7 +1701,7 @@ ${fullContext}`;
         }
         return true;
       });
-      const filteredForbidden = beforeForbid - changes.length;
+      filteredForbidden = beforeForbid - changes.length;
       if(filteredForbidden > 0){
         console.log(`Bulk AI: filtered out ${filteredForbidden} proposal(s) with forbidden tools`);
       }
@@ -1678,7 +1710,7 @@ ${fullContext}`;
       if(TOOL_INVENTORY.banned && TOOL_INVENTORY.banned.length){
         const beforeBanned = changes.length;
         changes = changes.filter(c => !toolViolatesInventoryBan(c.t || ''));
-        const filteredBanned = beforeBanned - changes.length;
+        filteredBanned = beforeBanned - changes.length;
         if(filteredBanned > 0){
           console.log(`Bulk AI: filtered out ${filteredBanned} proposal(s) using user-banned tools`);
         }
@@ -1695,7 +1727,7 @@ ${fullContext}`;
         }
         return true;
       });
-      const filteredUnsafe = beforeSafeTool - changes.length;
+      filteredUnsafe = beforeSafeTool - changes.length;
       if(filteredUnsafe > 0){ console.log(`Bulk AI: filtered out ${filteredUnsafe} unsafe / age-inappropriate proposal(s)`); }
 
       // Fifth filter: reject unrealistic hardware/tool uses (e.g. CoDrone used as a metaphor for body systems)
@@ -1710,7 +1742,7 @@ ${fullContext}`;
         }
         return true;
       });
-      const filteredRealism = beforeRealism - changes.length;
+      filteredRealism = beforeRealism - changes.length;
       if(filteredRealism > 0){ console.log(`Bulk AI: filtered out ${filteredRealism} unrealistic proposal(s)`); }
 
       // Sixth filter: PROTECT STEM SUGGESTION 6 (sugIdx:5) — never allow replacement of the Design Cycle slot
@@ -1772,7 +1804,17 @@ ${fullContext}`;
       setTimeout(hideReasoningSteps, 1200);
       const dupeNote = skippedDupes ? ` (${skippedDupes} duplicate${skippedDupes!==1?'s':''} filtered out)` : '';
       const stemNote = filteredStem ? ` <span style="color:var(--purple);font-size:11px">· ${filteredStem} STEM Suggestion 6 proposal${filteredStem!==1?'s':''} blocked (Suggestion 6 protected)</span>` : '';
-      const filterNote = (rawAiCount > changes.length) ? ` <span style="color:var(--dim);font-size:11px">· GPT proposed ${rawAiCount}, ${rawAiCount - changes.length} removed by filters</span>` : '';
+      const filterNote = (rawAiCount > changes.length) ? ` <span style="color:var(--dim);font-size:11px">· the AI proposed ${rawAiCount}, ${rawAiCount - changes.length} removed by safety checks</span>` : '';
+      const reasonBits = [];
+      if(skippedDupes) reasonBits.push(`${skippedDupes} duplicate${skippedDupes!==1?'s':''}`);
+      if(filteredUnsafe) reasonBits.push(`${filteredUnsafe} not age-appropriate`);
+      if(filteredRealism) reasonBits.push(`${filteredRealism} unrealistic for the tool`);
+      if(filteredBanned) reasonBits.push(`${filteredBanned} on the banned list`);
+      if(filteredNegative) reasonBits.push(`${filteredNegative} you asked to avoid`);
+      if(filteredForbidden) reasonBits.push(`${filteredForbidden} not an approved tool`);
+      if(filteredStem) reasonBits.push(`${filteredStem} protected STEM slot`);
+      const reasonNote = reasonBits.length ? `<br><span style="color:var(--dim);font-size:11px">Set aside: ${reasonBits.join(', ')}.</span>` : '';
+      const truncatedNote = recoveredPartial ? `<br><span style="color:var(--orange);font-size:11px">⚠ The AI's reply looked cut off, so some proposals may be missing — re-run if you need the full set.</span>` : '';
       const targetWarn = (explicitCount && rawAiCount < explicitCount - 1)
         ? `<div style="margin-top:8px;padding:8px 12px;background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.35);border-radius:8px;font-size:12px;color:var(--orange)">⚠ You asked for <strong>${explicitCount}</strong> but GPT only returned <strong>${rawAiCount}</strong>. Try rephrasing as "scan EVERY entry and find at least ${explicitCount}" or click ↻ and retry — GPT-4.1 sometimes responds conservatively on the first pass.</div>`
         : '';
@@ -1787,7 +1829,7 @@ ${fullContext}`;
       const moreCount = Object.keys(byTool).length - 5;
       const moreStr = moreCount > 0 ? `<br>• <em>+ ${moreCount} more tools</em>` : '';
 
-      const resultMsg = `✅ <strong>${changes.length} proposed change${changes.length!==1?'s':''}</strong>${dupeNote}${stemNote}${filterNote}<br><br><div style="font-size:12px;color:var(--lime)">Breakdown:</div>${toolBreakdown}${moreStr}${targetWarn}<br><br>💡 <em>I'll remember this — after reviewing, just type a refinement like "do the same for Year 3 only" or "replace the Minecraft ones with something else".</em>`;
+      const resultMsg = `✅ <strong>${changes.length} proposed change${changes.length!==1?'s':''}</strong>${dupeNote}${stemNote}${filterNote}${reasonNote}${truncatedNote}<br><br><div style="font-size:12px;color:var(--lime)">Breakdown:</div>${toolBreakdown}${moreStr}${targetWarn}<br><br>💡 <em>I'll remember this — after reviewing, just type a refinement like "do the same for Year 3 only" or "replace the Minecraft ones with something else".</em>`;
       bulkChatAddMessage('assistant', resultMsg);
       bulkChatMemory.push({ role: 'assistant', content: `Proposed ${changes.length} changes${dupeNote}. Breakdown: ${Object.entries(byTool).map(([t,n])=>`${n}x ${t}`).join(', ')}` });
       window._snapshotReason = `Before: ${bulkChatContext.rawInstruction ? bulkChatContext.rawInstruction.slice(0, 60) : 'bulk edit'}`;
