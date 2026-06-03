@@ -265,7 +265,7 @@
         </div>
         <div id="bulk-reasoning" style="display:none;padding:10px 20px;background:var(--card2);border-top:1px solid var(--border);max-height:180px;overflow-y:auto"></div>
         <div style="display:flex;gap:10px;padding:14px 20px;background:var(--card);align-items:center">
-          <button class="btn-sm" id="btn-bulk-reset" onclick="bulkChatReset()" style="padding:8px 10px;flex-shrink:0" title="Start new conversation">↻</button>
+          <button class="btn-sm" id="btn-bulk-reset" onclick="bulkChatReset()" style="padding:8px 10px;flex-shrink:0;white-space:nowrap" title="Clear this conversation and start a brand-new request">🆕 New</button>
           <button class="btn-sm" id="btn-bulk-voice" onclick="toggleBulkVoice()" style="padding:8px 10px;flex-shrink:0" title="Speak your request (uses browser speech recognition)">🎤</button>
           <input id="bulk-chat-input" class="inp" placeholder="Describe the change you want to make…" style="flex:1;margin-bottom:0;font-size:13px" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();bulkChatSend()}">
           <button class="btn-pri" onclick="bulkChatSend()" id="btn-bulk-chat-send" style="padding:12px 20px;white-space:nowrap">Send →</button>

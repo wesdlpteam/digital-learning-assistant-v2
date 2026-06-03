@@ -2790,17 +2790,18 @@ function bulkChatEffectiveInstruction_(rawInstruction){
   const userTurns = bulkChatUserTurns_();
   const priorTurns = userTurns.slice(0, -1);
   const isFollowUp = !!(bulkChatContext && bulkChatContext.isFollowUp);
-  const refersBack = /\b(it|that|this|same|previous|above|those|them|connect|connected|relevant planners|all relevant planners|planners|units|entries)\b/i.test(raw);
+  if(!(isFollowUp && priorTurns.length)) return raw;
 
-  if(isFollowUp && priorTurns.length && refersBack){
+  const refersBack = /\b(it|that|this|same|previous|above|those|them|connect|connected|relevant planners|all relevant planners|planners|units|entries|instead|too|also|as well|now)\b/i.test(raw);
+  // A follow-up that does not itself state a fresh, complete action (find/replace/improve/
+  // place/scan a specific tool) is almost certainly a refinement of the previous request,
+  // so carry the earlier turns forward rather than treating it as a brand-new instruction.
+  const hasOwnAction = /\b(find|add|replace|swap|remove|improve|place|scan|suggest|propose)\b/i.test(raw);
+  const isShort = raw.length < 160;
+
+  if(refersBack || isShort || !hasOwnAction){
     return priorTurns.join('\n') + '\n\nFollow-up instruction: ' + raw;
   }
-
-  // If a follow-up is short and does not name the platform/lesson again, carry the previous user request forward.
-  if(isFollowUp && priorTurns.length && raw.length < 120 && !/\b(minecraft|micro:?bit|wise|sphero|canva|book creator|lesson|tool|app)\b/i.test(raw)){
-    return priorTurns.join('\n') + '\n\nFollow-up instruction: ' + raw;
-  }
-
   return raw;
 }
 
