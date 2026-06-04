@@ -394,6 +394,12 @@ function doPost(e) {
       return jsonResponse(result);
     }
 
+    if (action === 'sweeptwistlabels') {
+      const result = sweepTwistLabels();
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
     if (action === 'regenerateallinspiringrequeuey3plus') {
       const result = regenerateAllInspiringRequeueY3Plus({});
       result.user = verifiedEmail;
@@ -4639,6 +4645,41 @@ function regenerateAllInspiringRequeueBadDescriptions(opts) {
   Logger.log('regenerateAllInspiringRequeueBadDescriptions: cleared ' + matched.length + ' inspiringRegenAt marker(s) for description-side off-whitelist mentions.');
   if (matched.length) Logger.log('Cleared units:\n' + matched.map(m => '  ' + m.ca + ' / ' + m.yl + ' / ' + m.th + ' — matched: ' + m.hit).join('\n'));
   return { cleared: matched.length, units: matched };
+}
+
+// 2026-06-04: One-pass cleanup that strips a leftover "The twist:" label from the
+// saved descriptions of every unit. Mirrors the read/modify/setContent/pushToGitHub
+// pattern of the requeue helpers but EDITS text in place (no AI, no regen).
+// Idempotent — re-running on already-clean data changes nothing.
+function sweepTwistLabels() {
+  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  const raw = JSON.parse(file.getBlob().getDataAsString());
+  const isArr = Array.isArray(raw);
+  const data = isArr ? raw : Object.values(raw).filter(u => u && typeof u === 'object');
+  // Mirror of stripTwistLabel_'s opener so we only touch descriptions that
+  // actually carry a "twist" label (avoids rewriting every description's spacing).
+  const labelRe = /(^|[.!?]\s+)(?:and |but )?(?:here(?:'|’)?s |here is )?the (?:real |big )?twist(?:\s*[:—]\s*|\s+is(?:\s+that)?\s+)/i;
+  let unitsChanged = 0, sugsChanged = 0;
+  const units = [];
+  for (let i = 0; i < data.length; i++) {
+    const u = data[i];
+    if (!u || !Array.isArray(u.s)) continue;
+    let unitHit = false;
+    for (const sg of u.s) {
+      if (!sg || typeof sg.d !== 'string') continue;
+      if (!labelRe.test(sg.d)) continue;
+      const cleaned = stripTwistLabel_(sg.d);
+      if (cleaned !== sg.d) { sg.d = cleaned; sugsChanged++; unitHit = true; }
+    }
+    if (unitHit) { unitsChanged++; units.push({ idx: i, ca: u.ca, yl: u.yl, th: u.th }); }
+  }
+  if (sugsChanged) {
+    const toWrite = isArr ? data : raw;
+    file.setContent(JSON.stringify(toWrite, null, 2));
+    try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e) { Logger.log('pushToGitHub after sweepTwistLabels failed: ' + e); }
+  }
+  Logger.log('sweepTwistLabels: cleaned ' + sugsChanged + ' suggestion(s) across ' + unitsChanged + ' unit(s).');
+  return { ok: true, unitsChanged: unitsChanged, sugsChanged: sugsChanged, units: units };
 }
 
 // 2026-05-27: Clears inspiringRegenAt on every Year 3-6 unit so the next

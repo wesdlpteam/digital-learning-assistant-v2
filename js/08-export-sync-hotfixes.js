@@ -63,6 +63,37 @@ async function runSurgeon(){
   btn.disabled = false;
 }
 
+// 2026-06-04: One-click cleanup that strips leftover "The twist:" wording from
+// already-saved suggestions (server-side sweepTwistLabels action). No AI, no cost,
+// idempotent. Mirrors runSurgeon's readable-fetch + status-span pattern.
+async function runTwistSweep(){
+  const btn = document.getElementById('btn-twist-sweep');
+  const statusEl = document.getElementById('twist-sweep-status');
+  if(btn) btn.disabled = true;
+  if(statusEl){ statusEl.style.color = '#fbbf24'; statusEl.textContent = 'Cleaning saved suggestions…'; }
+  startProgress();
+  try{
+    const r = await fetch(SCRIPT_URL, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify(withGASToken({ action:'sweepTwistLabels' }))
+    });
+    const result = await r.json();
+    stopProgress();
+    if(result.error){
+      if(statusEl){ statusEl.style.color = '#f87171'; statusEl.textContent = '✗ ' + (result.reason || result.message || result.error); }
+    } else if(result.sugsChanged > 0){
+      if(statusEl){ statusEl.style.color = 'var(--lime)'; statusEl.textContent = `✓ Cleaned ${result.sugsChanged} suggestion${result.sugsChanged===1?'':'s'} across ${result.unitsChanged} unit${result.unitsChanged===1?'':'s'}. Use ↻ to reload and see them.`; }
+    } else {
+      if(statusEl){ statusEl.style.color = 'var(--lime)'; statusEl.textContent = '✓ Nothing to clean — no "The twist" wording found.'; }
+    }
+  }catch(e){
+    stopProgress();
+    if(statusEl){ statusEl.style.color = '#f87171'; statusEl.textContent = '✗ ' + e.message; }
+  }
+  if(btn) btn.disabled = false;
+}
+
 // 2026-05-28: Rewired to the server-side inspiring pipeline via the same
 // regenerateAllInspiring batch poller that Inspire All uses. Replaces the
 // previous client-side per-unit loop, which:

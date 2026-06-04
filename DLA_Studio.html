@@ -381,6 +381,16 @@
         </div>
       </div>
 
+      <!-- Clean up "The twist" wording -->
+      <div class="card" style="margin-bottom:14px">
+        <span class="label">Clean up "The twist" wording</span>
+        <p style="font-size:13px;color:var(--dim);margin-bottom:14px;line-height:1.6">One-pass cleanup that removes any leftover "The twist:" wording from already-saved suggestions across every unit. No AI and no cost — safe to run more than once.</p>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <button class="btn-pri" id="btn-twist-sweep" onclick="runTwistSweep()">Clean up now →</button>
+          <span id="twist-sweep-status" style="font-size:13px;font-weight:600"></span>
+        </div>
+      </div>
+
       <!-- Side-by-side campus comparison -->
       <div class="card">
         <span class="label">Side-by-side campus comparison</span>
@@ -652,15 +662,15 @@
 
 <!-- ?v=APP_VERSION cache-busts the code files. Bump this to match APP_VERSION
      in js/00-config-state-utils.js on every deploy so browsers fetch fresh code. -->
-<script src="js/00-config-state-utils.js?v=5.24"></script>
-<script src="js/01-inventory-helpers.js?v=5.24"></script>
-<script src="js/02-ui-load-navigation.js?v=5.24"></script>
-<script src="js/03-dashboard-browse-entry.js?v=5.24"></script>
-<script src="js/04-audit-analytics-live.js?v=5.24"></script>
-<script src="js/05-bulk-setup-libraries.js?v=5.24"></script>
-<script src="js/06-bulk-router-chat.js?v=5.24"></script>
-<script src="js/07-bulk-actions.js?v=5.24"></script>
-<script src="js/09-legacy-restored.js?v=5.24"></script>
-<script src="js/08-export-sync-hotfixes.js?v=5.24"></script>
+<script src="js/00-config-state-utils.js?v=5.25"></script>
+<script src="js/01-inventory-helpers.js?v=5.25"></script>
+<script src="js/02-ui-load-navigation.js?v=5.25"></script>
+<script src="js/03-dashboard-browse-entry.js?v=5.25"></script>
+<script src="js/04-audit-analytics-live.js?v=5.25"></script>
+<script src="js/05-bulk-setup-libraries.js?v=5.25"></script>
+<script src="js/06-bulk-router-chat.js?v=5.25"></script>
+<script src="js/07-bulk-actions.js?v=5.25"></script>
+<script src="js/09-legacy-restored.js?v=5.25"></script>
+<script src="js/08-export-sync-hotfixes.js?v=5.25"></script>
 </body>
 </html>
