@@ -5292,6 +5292,74 @@ function regenerateOneInspiringSlot_(body) {
       ? 'This is the unit\'s STEM Design Cycle / Makerspace slot. Pick a physical-first Micro:bit, Minecraft Education library lesson, 3D Printers, Lego Spike Prime, Sphero, Makey Makey, or Merge Cubes project that ties the design-cycle stages to THIS theme.'
       : 'This is slot ' + (sugIdx + 1) + ' of 6. Pick a single approved tool that opens a fresh angle on the unit theme.';
 
+    // ── Curator-picked tool path (2026-06-04) ──────────────────────────────
+    // When the Studio picker supplies forcedTool, honour it exactly: validate
+    // membership + age, block intra-unit duplicates, then ask the model ONLY to
+    // write the activity for this tool. No tool-selection loop, no auto-swap.
+    const forcedTool = (typeof body.forcedTool === 'string') ? body.forcedTool.trim() : '';
+    if (forcedTool) {
+      const fMembership = inspiringCheckToolMembership_([{ t: forcedTool, d: '' }], approvedSet, bannedSet, target.yl);
+      if (!fMembership.ok) {
+        return { error: 'forced-tool-invalid', reason: forcedTool + ' is not allowed here: ' + fMembership.reason };
+      }
+      let fDup = false;
+      diversityToolComponents_(forcedTool).forEach(function (c) {
+        if (otherKeys.has(diversityToolKey_(c))) fDup = true;
+      });
+      if (fDup) {
+        return { error: 'forced-tool-duplicate', reason: forcedTool + ' is already used in another slot of this unit — pick a different tool' };
+      }
+
+      const fPrompt = 'You are a visionary Digital Learning Coach at Wesley College (IB PYP, Melbourne). You are rewriting ONE digital technology suggestion for a single unit. Output STRICT JSON only.\n\n' +
+        'Campus: ' + target.ca + ' | Year Level: ' + target.yl + ' | Theme: "' + target.th + '"' +
+        (target.ci ? '\nCentral Idea: "' + target.ci + '"' : '') +
+        (target.lo ? '\nLines of Inquiry: "' + target.lo + '"' : '') +
+        (target.plannerText ? '\nPlanner context: ' + String(target.plannerText).slice(0, 4000) : '') + '\n\n' +
+        slotRoleLine + '\n' + sentenceRule + '\n\n' +
+        'YOU MUST USE EXACTLY THIS TOOL: "' + forcedTool + '". Do not substitute, rename, abbreviate, or pair it with any other tool. Build the entire activity around "' + forcedTool + '".\n' +
+        'TOOLS ALREADY USED IN OTHER SLOTS OF THIS UNIT (do not reuse their ideas): ' + (otherTools.length ? otherTools.join(', ') : '(none)') + '.\n\n' +
+        'YEAR LEVEL GUIDANCE FOR ' + target.yl + ':\n' + inspiringYearRule_(target.yl) + '\n' +
+        inspiringLessonsLibraryText_() + '\n' +
+        INSPIRING_DESCRIPTION_RULES + '\n\n' +
+        'Return ONLY a valid JSON object (no markdown, no backticks). Use straight apostrophes (\'). Wrap the single suggestion inside an "s" array so the schema is:\n' +
+        '{ "s": [ { "t": "' + forcedTool + '", "d": "' + (isStemSlot ? '4-5' : '6') + ' inspiring sentences tailored to THIS unit, all built around ' + forcedTool + '." } ] }';
+
+      let fParsed = null;
+      let fReason = '';
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        const call = inspiringCallOnce_(fPrompt, attempt > 1 ? 0.5 : 0.7);
+        if (!call.ok) {
+          fReason = call.error || 'unknown';
+          if (call.retriable && attempt < 3) { Utilities.sleep(6000); continue; }
+          break;
+        }
+        const p = (call.sugs && call.sugs.length > 0) ? call.sugs[0] : null;
+        if (!p || !p.d) {
+          fReason = 'response missing description';
+          if (attempt < 3) { Utilities.sleep(3000); continue; }
+          break;
+        }
+        fParsed = p;
+        break;
+      }
+      if (!fParsed) {
+        Logger.log('regenerateOneInspiringSlot_: FORCED-TOOL FAILED ' + target.ca + ' / ' + target.yl + ' / ' + target.th + ' slot ' + (sugIdx + 1) + ' tool=' + forcedTool + ' (' + fReason + ')');
+        return { error: 'regen-failed', reason: fReason };
+      }
+      return {
+        ok: true,
+        idx: idx,
+        sugIdx: sugIdx,
+        t: cleanTextCorruption_(forcedTool),
+        d: cleanTextCorruption_(fParsed.d),
+        autoSwapped: false,
+        ca: target.ca,
+        yl: target.yl,
+        th: target.th
+      };
+    }
+    // ── end curator-picked tool path ───────────────────────────────────────
+
     const siblingFootprint = diversitySiblingToolFootprint_(data, idx);
     const overusedLine = siblingFootprint.overused.length
       ? '\n- DO NOT REUSE these tools already heavily used by sibling units in this campus + year level: ' + siblingFootprint.overused.join(', ') + '.'
