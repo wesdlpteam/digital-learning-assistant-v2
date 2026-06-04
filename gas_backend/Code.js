@@ -577,9 +577,12 @@ var TECH_SUGGEST_DAILY_CAP = 500;
 // Model lives at the top of the file as OPENAI_FAST_MODEL; reference it here
 // so any rename only touches one place.
 // v2 = 6-sentence inspiring descriptions + optional teacher-supplied CI/LOI
-// override. Bumping the prefix abandons the old 3-sentence cached results so
-// teachers don't see stale short descriptions.
-var TECH_SUGGEST_CACHE_PREFIX = 'tech_sugg_v2_';
+// override. Bumping the prefix abandons the old cached results so teachers
+// don't see stale ones.
+// v3 = context now anchored on the unit's Central Idea + Lines of Inquiry
+// (not the unreliable whole-year plannerContextRich "soup"), plus an explicit
+// honesty rule that flags a poor fit instead of forcing a contrived activity.
+var TECH_SUGGEST_CACHE_PREFIX = 'tech_sugg_v3_';
 
 function suggestTechForPlanner_(args) {
   var ca = String(args.ca || '').trim();
@@ -651,7 +654,8 @@ function suggestTechForPlanner_(args) {
     'UNIT OF INQUIRY: ' + th + '\n\n' +
     'PLANNER CONTEXT:\n' + plannerContext + '\n\n' +
     REALISTIC_TOOL_USE_RULES + '\n\n' +
-    'YOUR MISSION: Write a description that makes the teacher stop and say "I never thought of using it like that." Push the learning into territory most ' + yl + ' classrooms have not explored. Reject the obvious. Reject the generic. Every sentence must be tailored to THIS unit.\n\n' +
+    'FIT CHECK FIRST (HONESTY OVERRIDES AMBITION): Before writing anything, judge whether ' + tool + ' genuinely suits THIS unit\'s central idea and lines of inquiry. A tool is a POOR fit when its core function has little to do with the unit\'s topic — for example a robotics or construction kit for a discussion-, literacy-, ethics- or economics-driven unit. If it is a poor fit, set "fit" to "poor" and DO NOT invent a forced or contrived activity to make it look good: instead use the "description" to tell the teacher plainly, in 2-3 honest sentences, that ' + tool + ' is not a strong fit for this unit and name the kind of tool or approach that would suit it better. Never dress up a poor fit as a strong one. Only write the ambitious 6-sentence activity below when the fit is "good" or "stretch".\n\n' +
+    'YOUR MISSION (for a good or stretch fit): Write a description that makes the teacher stop and say "I never thought of using it like that." Push the learning into territory most ' + yl + ' classrooms have not explored. Reject the obvious. Reject the generic. Every sentence must be tailored to THIS unit.\n\n' +
     'The "description" field MUST be exactly 6 vivid, classroom-ready sentences that together do all of the following:\n' +
     '  1. Open with the bold creative premise — what students are actually making, investigating, or experiencing (name the unit\'s topic explicitly).\n' +
     '  2. Connect the activity directly to one of the unit\'s lines of inquiry or the central idea (name it).\n' +
@@ -662,13 +666,13 @@ function suggestTechForPlanner_(args) {
     'SINGLE-TOOL REALITY CHECK (HARD RULE): the whole activity must be genuinely achievable using ONLY ' + tool + '. Do not describe steps that need another app or device unless that capability is built into ' + tool + ' itself. If your idea would need a second app, scope it down to what ' + tool + ' actually does.\n\n' +
     'Return STRICT JSON with this exact shape:\n' +
     '{\n' +
-    '  "description": "Exactly 6 sentences as specified above. No bullet points, no numbering — flowing prose.",\n' +
-    '  "valueAdd": "2-3 sentences on the deeper learning value this adds (creative agency, transferable skills, authentic audience, future-of-work capability) that a non-digital or generic-digital task could not deliver.",\n' +
-    '  "steps": ["4-6 short imperative steps a teacher would follow to run this lesson, including one unexpected element"],\n' +
+    '  "description": "For a good/stretch fit: exactly 6 sentences as specified above, flowing prose, no bullet points or numbering. For a POOR fit: 2-3 honest sentences explaining why this tool does not suit this unit and what kind of tool or approach would fit better — do NOT describe a contrived activity.",\n' +
+    '  "valueAdd": "For a good/stretch fit: 2-3 sentences on the deeper learning value this adds (creative agency, transferable skills, authentic audience, future-of-work capability) that a non-digital or generic-digital task could not deliver. For a poor fit: leave empty.",\n' +
+    '  "steps": ["For a good/stretch fit: 4-6 short imperative steps a teacher would follow, including one unexpected element. For a poor fit: empty array."],\n' +
     '  "fit": "good" | "stretch" | "poor",\n' +
     '  "fitNote": "If fit is stretch or poor, 1 sentence on why and what would work better. If good, leave empty."\n' +
     '}\n' +
-    'Be honest in "fit": if this tool is a weak match for this unit, say so.';
+    'Be honest in "fit": forcing a weak tool onto a unit wastes the teacher\'s time. If this tool is a weak match for this unit\'s central idea and lines of inquiry, say so and mark it "poor".';
 
   var aiResult;
   try {
@@ -743,12 +747,26 @@ function loadPlannerContextForUnit_(ca, yl, th) {
     for (var i = 0; i < data.length; i++) {
       var e = data[i];
       if (e.ca === ca && e.yl === yl && e.th === th) {
+        // The per-unit Central Idea + Lines of Inquiry are the ONLY fields we
+        // trust as authoritative for a single unit. plannerContextRich is the
+        // whole year-level planner ("the soup" of every theme in that year)
+        // copied onto each unit, so it routinely describes a DIFFERENT unit's
+        // topic. Feeding it to the AI is exactly what produced off-topic
+        // suggestions (e.g. a Year 5 money & economics unit getting a
+        // natural-disasters / design-thinking lesson). Anchor on ci/lo instead.
+        var ci = (e.ci || '').trim();
+        var lo = (e.lo || '').trim();
+        if (ci || lo) {
+          return ('UNIT: ' + e.th +
+            (ci ? '\nCENTRAL IDEA: ' + ci : '') +
+            (lo ? '\nLINES OF INQUIRY: ' + lo : '')).trim();
+        }
+        // No structured ci/lo on record — fall back to the planner blob only as
+        // a last resort (better some context than none for this rare case).
         if (e.plannerContextRich && e.plannerContextRich.length > 50 && !/^ERROR/.test(e.plannerContextRich)) {
           return e.plannerContextRich;
         }
-        var lo = e.lo ? '\nLINES OF INQUIRY: ' + e.lo : '';
-        var ci = e.ci ? '\nCENTRAL IDEA: ' + e.ci : '';
-        return ('UNIT: ' + e.th + ci + lo).trim();
+        break;
       }
     }
   } catch (err) {
@@ -2324,26 +2342,47 @@ function _splitCombinedPlannerByTheme_(markdown) {
   return sections;
 }
 
-function _matchSectionToTheme_(sections, themeName) {
-  // Theme markers may be the full name ("How the World Works"), an acronym ("HTWW"),
-  // or a slight variant ("WWAIPAT"). Match flexibly.
-  const themeLower = String(themeName || '').toLowerCase();
-  const acronyms = {
-    'who we are': ['wwa'],
-    'where we are in place and time': ['wwaipat', 'where we are in place'],
-    'how we express ourselves': ['hweo', 'how we express'],
-    'how the world works': ['htww', 'how the world'],
-    'how we organise ourselves': ['hwoo', 'how we organise', 'how we organize'],
-    'how we organize ourselves': ['hwoo', 'how we organise', 'how we organize'],
-    'sharing the planet': ['stp', 'sharing the planet']
-  };
-  const aliases = [themeLower, ...(acronyms[themeLower] || [])];
+function _canonTheme_(label) {
+  // Map a theme label (full name, acronym, or variant) to a canonical PYP theme
+  // code. Acronyms are matched on WORD BOUNDARIES so "WWA" (Who We Are) is not
+  // seen inside "WWAIPAT" (Where We Are In Place And Time).
+  const s = ' ' + String(label || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim() + ' ';
+  if (s.indexOf(' how we organise') !== -1 || s.indexOf(' how we organize') !== -1 || /\bhwoo\b/.test(s)) return 'HWOO';
+  if (s.indexOf(' how we express') !== -1 || /\bhweo\b/.test(s)) return 'HWEO';
+  if (s.indexOf(' how the world') !== -1 || /\bhtww\b/.test(s)) return 'HTWW';
+  if (s.indexOf(' where we are in place') !== -1 || /\bwwaipat\b/.test(s) || /\bwwpt\b/.test(s)) return 'WWAIPAT';
+  if (s.indexOf(' who we are') !== -1 || /\bwwa\b/.test(s)) return 'WWA';
+  if (s.indexOf(' sharing the planet') !== -1 || /\bstp\b/.test(s)) return 'STP';
+  return null;
+}
 
-  for (const section of sections) {
-    const sectionTheme = String(section.themeRaw || '').toLowerCase();
-    if (!sectionTheme) continue;
-    for (const alias of aliases) {
-      if (alias && sectionTheme.includes(alias)) return section;
+function _matchSectionToTheme_(sections, themeName) {
+  // Match by canonical PYP theme so near-collisions don't fool us. The old logic
+  // did a loose `sectionTheme.includes(alias)` first-match-wins scan, which:
+  //   - confused HWEO (Express) with HWOO (Organise) — one transposed letter —
+  //     and handed the first section in the file to the wrong unit, and
+  //   - matched the short acronym "wwa" inside "wwaipat".
+  // That mis-assignment is the root cause behind off-topic tech suggestions
+  // (e.g. a money/economics unit inheriting a design/natural-disasters planner).
+  const targetCanon = _canonTheme_(themeName);
+
+  // Primary pass: exact canonical-theme equality.
+  if (targetCanon) {
+    for (const section of sections) {
+      if (_canonTheme_(section.themeRaw) === targetCanon) return section;
+    }
+  }
+
+  // Fallback (only for odd/unlabelled section headers): loose FULL-NAME inclusion
+  // in either direction — never a bare short acronym, so the substring collisions
+  // above can't sneak back in.
+  const themeLower = String(themeName || '').toLowerCase().trim();
+  if (themeLower) {
+    for (const section of sections) {
+      const sectionTheme = String(section.themeRaw || '').toLowerCase().trim();
+      if (sectionTheme && (sectionTheme.indexOf(themeLower) !== -1 || themeLower.indexOf(sectionTheme) !== -1)) {
+        return section;
+      }
     }
   }
   return null;
