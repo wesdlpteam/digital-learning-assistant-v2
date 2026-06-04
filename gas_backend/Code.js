@@ -649,10 +649,11 @@ function suggestTechForPlanner_(args) {
     'The "description" field MUST be exactly 6 vivid, classroom-ready sentences that together do all of the following:\n' +
     '  1. Open with the bold creative premise — what students are actually making, investigating, or experiencing (name the unit\'s topic explicitly).\n' +
     '  2. Connect the activity directly to one of the unit\'s lines of inquiry or the central idea (name it).\n' +
-    '  3. Reveal a less-obvious twist — a cross-disciplinary link, a counter-intuitive role-reversal, an authentic external audience, a real community/expert connection, an ethical or perspective-taking dimension, or a use of the tool that most teachers don\'t know about.\n' +
+    '  3. Add an unexpected angle — a cross-disciplinary link, a counter-intuitive role-reversal, an authentic external audience, a real community/expert connection, an ethical or perspective-taking dimension, or a use of the tool that most teachers don\'t know about. Write it as a natural sentence; do NOT announce it with a label such as "The twist:".\n' +
     '  4. Describe what the FINAL student artefact looks like, sounds like, or does — concrete and shareable.\n' +
     '  5. Name a specific advanced or under-used feature of the tool that powers the activity (not the basic feature everyone already uses).\n' +
     '  6. End with the inspiring "so what" — the disposition, agency, or real-world contribution the student takes away beyond the unit.\n\n' +
+    'SINGLE-TOOL REALITY CHECK (HARD RULE): the whole activity must be genuinely achievable using ONLY ' + tool + '. Do not describe steps that need another app or device unless that capability is built into ' + tool + ' itself. If your idea would need a second app, scope it down to what ' + tool + ' actually does.\n\n' +
     'Return STRICT JSON with this exact shape:\n' +
     '{\n' +
     '  "description": "Exactly 6 sentences as specified above. No bullet points, no numbering — flowing prose.",\n' +
@@ -696,7 +697,7 @@ function suggestTechForPlanner_(args) {
     ca: ca,
     yl: yl,
     th: th,
-    description: String(parsedAi.description || '').trim(),
+    description: stripTwistLabel_(String(parsedAi.description || '').trim()),
     valueAdd: String(parsedAi.valueAdd || '').trim(),
     steps: Array.isArray(parsedAi.steps) ? parsedAi.steps.map(function(s) { return String(s).trim(); }).filter(Boolean) : [],
     fit: ['good', 'stretch', 'poor'].indexOf(String(parsedAi.fit || '').toLowerCase()) !== -1 ? String(parsedAi.fit).toLowerCase() : 'good',
@@ -3812,12 +3813,13 @@ const INSPIRING_DESCRIPTION_RULES = '\nDESCRIPTION STYLE — INSPIRING + INNOVAT
   'Every description in slots 1-5 must be EXACTLY 6 vivid, classroom-ready sentences. Each sentence has a job:\n' +
   '  Sentence 1: Bold creative premise — what students are actually making, investigating, or experiencing. Name the unit\'s topic explicitly (not "this unit").\n' +
   '  Sentence 2: Connect the activity to one of the unit\'s lines of inquiry or the central idea by NAME (paraphrase if quoting feels stilted; never use banned filler like "connected to the central idea").\n' +
-  '  Sentence 3: Reveal an under-considered TWIST — a cross-disciplinary link, a role reversal (students teach a younger class, students are journalists/curators/town planners/scientists, students publish for a real external audience), an ethical/perspective-taking dimension, or a real community/expert connection.\n' +
+  '  Sentence 3: Add an unexpected angle that lifts the activity beyond the obvious — a cross-disciplinary link, a role reversal (students teach a younger class, become journalists/curators/town planners/scientists, or publish for a real external audience), an ethical/perspective-taking dimension, or a real community/expert connection. Write it as a natural sentence; do NOT announce it with a label such as "The twist:" or "Here\'s the twist".\n' +
   '  Sentence 4: Describe the FINAL student artefact concretely — what it looks like, sounds like, or does. It must be shareable beyond the classroom (with a year-level audience, the school community, families, or a real-world stakeholder).\n' +
   '  Sentence 5: Name a SPECIFIC advanced or under-used feature of the tool that powers the activity (not the basic feature everyone already uses). Use named features: "Canva\'s Magic Write", "Book Creator\'s comic templates", "Padlet\'s map view", "iMovie\'s split-screen", "Adobe Express Animate from Audio", "Bee-Bot\'s sequence-and-repeat function", etc.\n' +
   '  Sentence 6: End with the inspiring "so what" — the disposition, agency, or real-world contribution the student takes away beyond the unit (action, voice, identity, civic awareness, creative confidence).\n' +
-  'STEM slot 6 (Makerspace/Physical-First): 4-5 sentences naming concrete materials (cardboard, circuits, recycled materials, Lego, paper engineering, copper tape, cup-and-string mechanisms etc.), what is prototyped, how iteration happens, and what the student demonstrates at the end. The "wow" twist still applies — propose something most teachers haven\'t tried.\n\n' +
+  'STEM slot 6 (Makerspace/Physical-First): 4-5 sentences naming concrete materials (cardboard, circuits, recycled materials, Lego, paper engineering, copper tape, cup-and-string mechanisms etc.), what is prototyped, how iteration happens, and what the student demonstrates at the end. Still propose something most teachers haven\'t tried.\n\n' +
   'PUSH PAST THE OBVIOUS. Teachers must read these and think "I never thought of using it like that." Reject generic descriptions. Every sentence tailored to THIS unit.\n\n' +
+  'SINGLE-TOOL REALITY CHECK (HARD RULE): the ENTIRE activity must be genuinely achievable using ONLY the one named tool. Do not describe steps that secretly need a second app or device — no separate video editor, camera app, maps tool, audio recorder, slideshow app, etc. — unless that capability is built into the named tool itself. If your idea would need another app, either choose a different single tool that can do the whole thing, or scope the activity down to what THIS tool actually does. The named tool is what students use end-to-end, not a label on a multi-app project.\n\n' +
   'BANNED PHRASES — do not write any of these (they make suggestions feel lazy and templated):\n' +
   '  - "connected to the central idea \'...\'"\n' +
   '  - "linked to the line of inquiry \'...\'"\n' +
@@ -3825,6 +3827,7 @@ const INSPIRING_DESCRIPTION_RULES = '\nDESCRIPTION STYLE — INSPIRING + INNOVAT
   '  - "share their learning" / "present their findings" / "document their learning journey"\n' +
   '  - "create a digital product" / "make a simple product"\n' +
   '  - "Students use [tool] to [vague verb] about [unit theme]"\n' +
+  '  - "The twist" / "The twist:" / "Here\'s the twist" / "the real twist" — never announce a twist by name; write the idea as a plain sentence.\n' +
   'Name the actual topic. If the unit is about ecosystems, say "ecosystems". If it is about migration, say "migration".\n\n' +
   'WRITING MECHANICS: Use straight apostrophes (\'), em-dashes (—), Australian English. No curly quotes. No line breaks inside JSON string values.';
 
@@ -5235,6 +5238,19 @@ function cleanTextCorruption_(value) {
   return s;
 }
 
+// 2026-06-04: Safety net for the recurring "The twist:" label. The model invents
+// this label from the prompt's creative-angle instruction. The prompt wording is
+// the primary fix; this strips any stray labelled opener ("The twist:", "Here's
+// the twist —", "The twist is that") and re-capitalises the next word. Only the
+// labelled-opener forms match, so ordinary prose using the word "twist" is left
+// untouched (covered by strip-twist.test.js).
+function stripTwistLabel_(value) {
+  let s = String(value || '');
+  s = s.replace(/(^|[.!?]\s+)(?:and |but )?(?:here(?:'|’)?s |here is )?the (?:real |big )?twist(?:\s*[:—]\s*|\s+is(?:\s+that)?\s+)/gi, function (m, lead) { return lead; });
+  s = s.replace(/(^|[.!?]\s+)([a-z])/g, function (m, lead, ch) { return lead + ch.toUpperCase(); });
+  return s.replace(/ {2,}/g, ' ').trim();
+}
+
 function regenerateOneInspiringSlot_(body) {
   try {
     const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
@@ -5351,7 +5367,7 @@ function regenerateOneInspiringSlot_(body) {
         idx: idx,
         sugIdx: sugIdx,
         t: cleanTextCorruption_(forcedTool),
-        d: cleanTextCorruption_(fParsed.d),
+        d: cleanTextCorruption_(stripTwistLabel_(fParsed.d)),
         autoSwapped: false,
         ca: target.ca,
         yl: target.yl,
@@ -5432,7 +5448,7 @@ function regenerateOneInspiringSlot_(body) {
         if (attempt < 3) { Utilities.sleep(3000); continue; }
         break;
       }
-      outSug = { t: cleanTextCorruption_(parsed.t), d: cleanTextCorruption_(parsed.d) };
+      outSug = { t: cleanTextCorruption_(parsed.t), d: cleanTextCorruption_(stripTwistLabel_(parsed.d)) };
       success = true;
       break;
     }
@@ -5454,7 +5470,7 @@ function regenerateOneInspiringSlot_(body) {
           if (otherKeys.has(diversityToolKey_(c))) collide = true;
         });
         if (!collide) {
-          outSug = { t: cleanTextCorruption_(candidate.t), d: cleanTextCorruption_(candidate.d) };
+          outSug = { t: cleanTextCorruption_(candidate.t), d: cleanTextCorruption_(stripTwistLabel_(candidate.d)) };
           autoSwapped = swapped || subRes.swaps || true;
           success = true;
           Logger.log('regenerateOneInspiringSlot_: AUTO-SWAPPED ' + target.ca + ' / ' + target.yl + ' / ' + target.th + ' slot ' + (sugIdx + 1));
