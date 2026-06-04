@@ -1446,7 +1446,7 @@ The coordinator explicitly named the tool "${namedOpportunityTool}". This is alr
 - Scan every candidate entry below${targetYears.length ? ` (${targetYears.join(', ')} only)` : ''} and find genuine unit fits.
 - SKIP entries that already contain ${namedOpportunityTool}; the candidate list has already been pre-filtered for this.
 - Replace the weakest non-STEM suggestion slot only: sugIdx 0, 1, 2, 3 or 4. Never target sugIdx 5.
-- Write a practical classroom description that says what students do, what they make, and why it connects to the unit.
+- DESCRIPTION DEPTH (CRITICAL — match the full depth of every other suggestion; do NOT under-write to 2-3 sentences): write ~6 vivid, practical sentences (target 500-800 characters) following the DESCRIPTION QUALITY RULES in SUGGESTION_STYLE below. Across the ~6 sentences cover: what students DO (concrete verbs), the specific ${namedOpportunityTool} feature/affordance they use (name it — never a black box), the concrete artefact/product they create, the unit-specific anchor (name the actual topic, central idea or a Line of Inquiry — never "this unit" / "the unit focus"), 2-3 concrete topical examples drawn from the planner, and how the work is shared or assessed.
 - If the tool is a familiar creation tool such as Book Creator, Canva, Seesaw or Padlet, treat it as a classroom tool, not as a curated lesson library.
 - ${explicitCount ? `TARGET: The coordinator asked for ${explicitCount}. Aim for at least ${explicitCount} proposals if there are enough genuine matches.` : 'Aim for 6-12 strong proposals if there are enough genuine matches.'}` : '';
 
@@ -1459,7 +1459,7 @@ The coordinator is asking you to scan the library for places where a specific to
 - SKIP any entry that already has the requested tool in one of its suggestion slots — do not propose it again
 - Propose changes wherever there is a reasonable curriculum connection — not just perfect matches
 - ${explicitCount ? `TARGET: The coordinator asked for ${explicitCount}. Aim for at least ${explicitCount} proposals — do not stop early.` : 'Aim for 8-20 proposals rather than 2-3'}
-- For each proposal, briefly explain the specific curriculum connection in the description
+- DESCRIPTION DEPTH (CRITICAL — match the full depth of every other suggestion; do NOT under-write to 2-3 sentences): for each proposal write ~6 vivid, practical sentences (target 500-800 characters) following the DESCRIPTION QUALITY RULES in SUGGESTION_STYLE below — name what students DO, the specific tool feature/affordance, the concrete product they create, the unit-specific anchor (the actual topic / central idea / a Line of Inquiry, never "this unit"), 2-3 concrete topical examples from the planner, and how the work is shared or assessed.
 - Still respect the TOOL AGE GUIDE and duplicate prevention rules` : '';
 
   const compactOpportunityMode = isOpportunityStyle || (platformSection + namedToolSection + opportunitySection).length > 3000;
