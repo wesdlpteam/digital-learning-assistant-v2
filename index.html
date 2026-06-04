@@ -965,12 +965,36 @@ function renderTechResult(campus,yl,theme,tool,resp){
   if(usingCustom)cachedNote='Based on your edited unit details · '+cachedNote;
   var stepsHtml=steps.length?'<ol class="tech-steps">'+steps.map(function(s){return '<li>'+escapeHtml(s)+'</li>';}).join('')+'</ol>':'';
   var noteHtml=(fit!=='good'&&fitNote)?'<div class="tech-fitnote">'+escapeHtml(fitNote)+'</div>':'';
+  // 2026-06-04: Render the teacher-picked result as a full suggestion card —
+  // icon+tool header, value-add, and the same engagement buttons as a normal
+  // unit suggestion (How do I teach this / try / used / feedback). Each button
+  // is wired by pushing one entry into the shared global arrays and reusing the
+  // existing handlers. centralIdea/linesOfInquiry come from editorCi/editorLo.
+  var tc=(window.TC&&TC[theme])||'#888';var em=(window.TE&&TE[theme])||'💡';
+  var phaseLabel='Teacher-picked tool';
+  if(!window._copilotData)window._copilotData=[];
+  if(!window._fbData)window._fbData=[];
+  if(!window._usedData)window._usedData=[];
+  if(!window._intentData)window._intentData=[];
+  var _cpi=window._copilotData.length;window._copilotData.push({campus:campus,year:yl,theme:theme,centralIdea:editorCi,linesOfInquiry:editorLo,tool:tool,description:desc,phase:phaseLabel,resources:[]});
+  var _fbi=window._fbData.length;window._fbData.push({campus:campus,year:yl,theme:theme,tool:tool,phase:phaseLabel});
+  var _usi=window._usedData.length;window._usedData.push({campus:campus,year:yl,theme:theme,tool:tool,phase:phaseLabel});
+  var _ini=window._intentData.length;window._intentData.push({campus:campus,year:yl,theme:theme,tool:tool,phase:phaseLabel});
+  var _usiKey=_usedKey(window._usedData[_usi]);var _usiDone=_isUsedLocally(_usiKey);
+  var _iniKey=_intentKey(window._intentData[_ini]);var _iniDone=_isIntentLocally(_iniKey);
   body.innerHTML=
-    '<div class="tech-fit '+fit+'">'+fitLabel+'</div>' +
-    noteHtml +
-    '<div class="sg-desc" style="font-size:14px;line-height:1.6;margin-bottom:12px">'+linkifyDesc(desc)+'</div>' +
-    (stepsHtml?'<div class="sg-label" style="margin:14px 0 4px;color:#4ADE80;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px">Suggested steps</div>'+stepsHtml:'') +
-    (va?'<div class="sg-label" style="margin:14px 0 4px;color:#4ADE80;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px">Value add</div><div class="vb" style="border-left-color:#22C55E">'+escapeHtml(va)+'</div>':'') +
+    '<div class="sg" style="margin-bottom:14px">' +
+      '<div class="sg-head"><div class="sg-icon" style="background:'+tc+'">'+em+'</div><div class="sg-meta"><div class="sg-type">Your chosen tool</div><div class="sg-tool">'+escapeHtml(tool)+'</div></div></div>' +
+      '<div class="sg-body">' +
+        '<div class="tech-fit '+fit+'" style="margin-bottom:10px">'+fitLabel+'</div>' +
+        noteHtml +
+        '<div class="sg-desc">'+linkifyDesc(desc)+'</div>' +
+        (stepsHtml?'<div class="sg-label" style="margin:14px 0 4px;color:#4ADE80;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px">Suggested steps</div>'+stepsHtml:'') +
+        (va?'<div class="sg-section"><div class="sg-label">Value Add</div><div class="vb" style="border-left-color:'+tc+'">'+escapeHtml(va)+'</div></div>':'') +
+        '<div class="sg-copilot"><button class="sg-copilot-btn" onclick="openCopilotHelper('+_cpi+',this)"><span class="sg-copilot-ico">🤖</span><span class="sg-copilot-main">How do I teach this?</span></button></div>' +
+        '<div class="sg-fb"><button class="sg-intent'+(_iniDone?' done':'')+'" data-ikey="'+encodeURIComponent(_iniKey)+'" onclick="markIntent('+_ini+',this)">'+(_iniDone?'🟡 Planned — click to undo':'🚀 I\'m going to try this')+'</button><button class="sg-used'+(_usiDone?' done':'')+'" data-ukey="'+encodeURIComponent(_usiKey)+'" onclick="markUsed('+_usi+',this)">'+(_usiDone?'✅ Used — click to undo':'✓ I Used This')+'</button><div class="sg-react"><button onclick="openFB('+_fbi+')" class="sg-fb-btn">💬 Feedback</button></div></div>' +
+      '</div>' +
+    '</div>' +
     '<div class="tech-actions"><button class="tech-btn primary" onclick="closeTech()">Done</button><button class="tech-btn" onclick="regenTechResultFromOverlay(true)">↻ Regenerate</button></div>' +
     '<div class="tech-meta">'+cachedNote+'</div>' +
     editorPanel;
