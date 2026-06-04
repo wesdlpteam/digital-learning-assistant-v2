@@ -1752,12 +1752,46 @@ function getRegenerateCandidateTools_(entry, currentSug, sugIdx, freq){
 // pipeline, and injects the library lesson text so the model can surface
 // named Minecraft / Micro:bit lessons. Same UX: shows the suggestion via
 // showChangesPopup for human approval before writing.
-async function regenSingleSug(entryIdx, sugIdx){
+// 2026-06-04: regenSingleSug now opens a chooser (AI vs pick-a-tool). Both
+// routes share runSlotRegen_, which posts to the server-side
+// regenerateOneInspiringSlot action and shows the draft via showChangesPopup
+// for human approval before writing.
+function regenSingleSug(entryIdx, sugIdx){
+  const entry = DATA[entryIdx];
+  const currentSug = getSugs(entry)[sugIdx];
+  const currentTool = sugTool(currentSug) || 'this tool';
+  const existing = document.getElementById('regen-chooser-overlay');
+  if(existing) existing.remove();
+  const overlay = document.createElement('div');
+  overlay.id = 'regen-chooser-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1100;display:flex;align-items:center;justify-content:center;padding:20px';
+  overlay.innerHTML = `
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;max-width:440px;width:100%;box-sizing:border-box">
+      <h3 style="font-size:18px;font-weight:900;margin:0 0 6px">Replace ${esc(currentTool)}?</h3>
+      <p style="font-size:13px;color:var(--dim);margin:0 0 18px">Let the AI pick a fresh tool, or choose one yourself.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn-pri" id="regen-chooser-ai" style="flex:1;min-width:150px">✨ Let AI choose</button>
+        <button class="btn" id="regen-chooser-pick" style="flex:1;min-width:150px">📋 Choose a tool myself</button>
+      </div>
+      <div style="text-align:center;margin-top:14px">
+        <button class="btn-sm" id="regen-chooser-cancel" style="border:none">Cancel</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', (ev)=>{ if(ev.target===overlay) overlay.remove(); });
+  document.getElementById('regen-chooser-cancel').onclick = ()=> overlay.remove();
+  document.getElementById('regen-chooser-ai').onclick = ()=>{ overlay.remove(); regenSlotWithAI(entryIdx, sugIdx); };
+  document.getElementById('regen-chooser-pick').onclick = ()=>{ overlay.remove(); openSlotToolPicker(entryIdx, sugIdx); };
+}
+
+function regenSlotWithAI(entryIdx, sugIdx){ return runSlotRegen_(entryIdx, sugIdx, null); }
+function regenSlotWithTool(entryIdx, sugIdx, toolName){ return runSlotRegen_(entryIdx, sugIdx, toolName); }
+
+async function runSlotRegen_(entryIdx, sugIdx, forcedTool){
   const uid = `s${entryIdx}_${sugIdx}`;
   const btn = document.getElementById(uid+'-regen');
   if(btn){ btn.textContent='…'; btn.disabled=true; }
   startProgress();
-
   const entry = DATA[entryIdx];
   const currentSug = getSugs(entry)[sugIdx];
   const currentTool = sugTool(currentSug);
@@ -1770,6 +1804,7 @@ async function regenSingleSug(entryIdx, sugIdx){
       idx: entryIdx,
       sugIdx: sugIdx
     });
+    if(forcedTool) payload.forcedTool = forcedTool;
     const response = await fetch(SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -1777,14 +1812,16 @@ async function regenSingleSug(entryIdx, sugIdx){
     });
     const result = await response.json();
     if(result.error){
-      throw new Error(result.reason || result.error);
+      throw new Error(result.reason || result.message || result.error);
     }
     if(!result.t || !result.d){
       throw new Error('Server returned no suggestion');
     }
-    const reason = result.autoSwapped
-      ? 'Single slot regen — server auto-substituted an off-whitelist pick'
-      : 'Single slot regen via inspiring pipeline';
+    const reason = forcedTool
+      ? `Single slot regen — curator chose ${forcedTool}`
+      : (result.autoSwapped
+          ? 'Single slot regen — server auto-substituted an off-whitelist pick'
+          : 'Single slot regen via inspiring pipeline');
     window._snapshotReason = `Before regenerating ${currentTool || 'suggestion'} in ${entry.yl} ${entry.th}`;
     showChangesPopup([{ entryIdx, sugIdx, t: result.t, d: result.d, reason }]);
     setStatus('Regenerated draft ready for review');
@@ -1794,6 +1831,71 @@ async function regenSingleSug(entryIdx, sugIdx){
     stopProgress();
     if(btn){ btn.textContent='↻'; btn.disabled=false; }
   }
+}
+
+// 2026-06-04: Year-appropriate approved-tool grid for "Choose a tool myself".
+// Tools already used in OTHER slots of this unit are disabled (matches the
+// server's intra-unit duplicate guard). Clicking a tool runs a forced-tool regen.
+function openSlotToolPicker(entryIdx, sugIdx){
+  const entry = DATA[entryIdx];
+  const sugs = getSugs(entry);
+  const currentTool = sugTool(sugs[sugIdx]) || '';
+  const usedKeys = new Set(
+    sugs.map((s, i) => (i === sugIdx ? null : toolKey(sugTool(s)))).filter(Boolean)
+  );
+  const tools = (getAgeAppropriateTools(entry.yl) || []).slice().sort((a, b) => a.localeCompare(b));
+
+  const existing = document.getElementById('slot-tool-picker-overlay');
+  if(existing) existing.remove();
+  const overlay = document.createElement('div');
+  overlay.id = 'slot-tool-picker-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1100;display:flex;align-items:center;justify-content:center;padding:20px';
+
+  const tiles = tools.map(name => {
+    const used = usedKeys.has(toolKey(name));
+    const sameAsCurrent = toolKey(name) === toolKey(currentTool);
+    const dis = used ? ' disabled title="Already used elsewhere in this unit"' : '';
+    const suffix = used ? ' • in use' : (sameAsCurrent ? ' (current)' : '');
+    return `<button class="fb-chip" data-tool="${esc(name)}"${dis}>${esc(name)}${suffix}</button>`;
+  }).join('');
+
+  const grid = tools.length
+    ? `<div id="slot-tool-grid" style="display:flex;flex-wrap:wrap;gap:8px;overflow-y:auto;max-height:46vh;align-content:flex-start;padding:2px">${tiles}</div>`
+    : `<div style="color:var(--dim);font-size:13px;padding:18px 0">No approved tools available for ${esc(entry.yl)}. Check the Tool Inventory, or use "Let AI choose".</div>`;
+
+  overlay.innerHTML = `
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;max-width:680px;width:100%;max-height:86vh;display:flex;flex-direction:column;box-sizing:border-box">
+      <h3 style="font-size:18px;font-weight:900;margin:0 0 4px">Choose a replacement tool</h3>
+      <p style="font-size:13px;color:var(--dim);margin:0 0 14px">Approved tools for ${esc(entry.yl)}. Greyed-out tools are already used elsewhere in this unit. The AI writes a fresh activity around your pick.</p>
+      <input id="slot-tool-search" class="inp" placeholder="Search tools…" autocomplete="off" style="margin-bottom:14px">
+      ${grid}
+      <div style="display:flex;justify-content:flex-end;margin-top:16px">
+        <button class="btn" id="slot-tool-cancel">Cancel</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', (ev)=>{ if(ev.target===overlay) overlay.remove(); });
+  document.getElementById('slot-tool-cancel').onclick = ()=> overlay.remove();
+
+  const search = document.getElementById('slot-tool-search');
+  if(search){
+    search.focus();
+    search.addEventListener('input', ()=>{
+      const q = search.value.trim().toLowerCase();
+      overlay.querySelectorAll('#slot-tool-grid .fb-chip').forEach(chip => {
+        const name = (chip.getAttribute('data-tool') || '').toLowerCase();
+        chip.style.display = name.includes(q) ? '' : 'none';
+      });
+    });
+  }
+  overlay.querySelectorAll('#slot-tool-grid .fb-chip').forEach(chip => {
+    if(chip.disabled) return;
+    chip.onclick = ()=>{
+      const tool = chip.getAttribute('data-tool');
+      overlay.remove();
+      regenSlotWithTool(entryIdx, sugIdx, tool);
+    };
+  });
 }
 
 // 2026-05-28: Legacy client-side regenSingleSug body kept here as a
