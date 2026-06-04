@@ -3,7 +3,7 @@ let DATA = [];
 // stamp on the <script src="js/..."> tags in DLA_Studio.html. Bumping the
 // number changes every code file's web address, which forces browsers to
 // download the new code instead of reusing a stale cached copy.
-const APP_VERSION = '5.22';
+const APP_VERSION = '5.23';
 
 // Reliable "get the latest version" action used by the ↻ latest button.
 // Reloads the whole app from the network with a one-off unique address so the
