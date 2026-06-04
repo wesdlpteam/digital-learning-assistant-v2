@@ -5211,6 +5211,30 @@ function regenerateOneInspiring_(body) {
 // fallback when the model gets stuck on a rogue tool. Returns the new
 // {t,d} to the client — does NOT persist; the Studio routes the answer
 // through showChangesPopup for human approval before writing.
+// 2026-06-04: Backend port of the front-end cleanTextCorruption_
+// (js/00-config-state-utils.js). regenerateOneInspiringSlot_ calls it on the
+// success path; without a server-side definition the call threw ReferenceError
+// and surfaced to the Studio as "Regen failed: exception". This is a verbatim
+// port of the client cleaner so server-cleaned text matches the front-end.
+function cleanTextCorruption_(value) {
+  let s = String(value || '');
+  const urls = [];
+  s = s.replace(/https?:\/\/\S+/g, function (url) {
+    const token = '__DLA_URL_' + urls.length + '__';
+    urls.push(url);
+    return token;
+  });
+  s = s.replace(/�/g, '');
+  s = s.replace(/\b(students|learners|teachers|teams|groups|children|communities|families|parents|humans|elephants|animals)\?\s*([a-z])/gi, '$1’ $2');
+  s = s.replace(/\b(student|learner|teacher|team|group|child|community|family|parent|human|elephant|animal|school|unit|world)\?\s*([a-z])/gi, '$1’s $2');
+  s = s.replace(/([A-Za-z])\?([A-Za-z])/g, '$1’$2');
+  s = s.replace(/([A-Za-z0-9)\]\}"”’])\s+\?\s+([A-Za-z0-9(\[\{"“])/g, '$1 — $2');
+  s = s.replace(/\s+([,.;:])/g, '$1');
+  s = s.replace(/ {2,}/g, ' ');
+  s = s.replace(/__DLA_URL_(\d+)__/g, function (_, i) { return urls[Number(i)] || ''; });
+  return s;
+}
+
 function regenerateOneInspiringSlot_(body) {
   try {
     const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
