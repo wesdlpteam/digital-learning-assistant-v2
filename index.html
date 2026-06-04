@@ -957,13 +957,11 @@ function renderTechResult(campus,yl,theme,tool,resp){
   }
   var desc=resp.description||'';
   var va=resp.valueAdd||'';
-  var steps=Array.isArray(resp.steps)?resp.steps:[];
   var fit=resp.fit||'good';
   var fitLabel=fit==='good'?'Strong fit':(fit==='stretch'?'Works with a stretch':'Weak fit');
   var fitNote=resp.fitNote||'';
   var cachedNote=resp.cached?'Served from cache · click ↻ to regenerate':'Fresh suggestion · '+(resp.generatedAt?new Date(resp.generatedAt).toLocaleString():'just now');
   if(usingCustom)cachedNote='Based on your edited unit details · '+cachedNote;
-  var stepsHtml=steps.length?'<ol class="tech-steps">'+steps.map(function(s){return '<li>'+escapeHtml(s)+'</li>';}).join('')+'</ol>':'';
   var noteHtml=(fit!=='good'&&fitNote)?'<div class="tech-fitnote">'+escapeHtml(fitNote)+'</div>':'';
   // 2026-06-04: Render the teacher-picked result as a full suggestion card —
   // icon+tool header, value-add, and the same engagement buttons as a normal
@@ -989,7 +987,6 @@ function renderTechResult(campus,yl,theme,tool,resp){
         '<div class="tech-fit '+fit+'" style="margin-bottom:10px">'+fitLabel+'</div>' +
         noteHtml +
         '<div class="sg-desc">'+linkifyDesc(desc)+'</div>' +
-        (stepsHtml?'<div class="sg-label" style="margin:14px 0 4px;color:#4ADE80;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px">Suggested steps</div>'+stepsHtml:'') +
         (va?'<div class="sg-section"><div class="sg-label">Value Add</div><div class="vb" style="border-left-color:'+tc+'">'+escapeHtml(va)+'</div></div>':'') +
         '<div class="sg-copilot"><button class="sg-copilot-btn" onclick="openCopilotHelper('+_cpi+',this)"><span class="sg-copilot-ico">🤖</span><span class="sg-copilot-main">How do I teach this?</span></button></div>' +
         '<div class="sg-fb"><button class="sg-intent'+(_iniDone?' done':'')+'" data-ikey="'+encodeURIComponent(_iniKey)+'" onclick="markIntent('+_ini+',this)">'+(_iniDone?'🟡 Planned — click to undo':'🚀 I\'m going to try this')+'</button><button class="sg-used'+(_usiDone?' done':'')+'" data-ukey="'+encodeURIComponent(_usiKey)+'" onclick="markUsed('+_usi+',this)">'+(_usiDone?'✅ Used — click to undo':'✓ I Used This')+'</button><div class="sg-react"><button onclick="openFB('+_fbi+')" class="sg-fb-btn">💬 Feedback</button></div></div>' +
