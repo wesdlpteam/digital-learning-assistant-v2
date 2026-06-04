@@ -483,6 +483,16 @@ function doPost(e) {
       return jsonResponse({ message: 'Removed ' + removed + ' server-side regen trigger(s).', removed: removed, user: verifiedEmail });
     }
 
+    // 2026-06-04: repair units whose `s` was contaminated by wrong planner
+    // text ("the soup"). Clears the bad plannerText + requeues, then a
+    // self-removing trigger regenerates their suggestions from verified ci/lo.
+    // Fire-and-forget — the server finishes it; the laptop can be closed.
+    if (action === 'repaircontaminated') {
+      const result = kickoffRepairContaminated({});
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
     // 2026-05-25: admin review of teacher-submitted CI/LOI edit proposals.
     if (action === 'listuoiproposals') {
       const result = listUoiProposals_({ status: body.status || null });
@@ -5578,4 +5588,160 @@ function regenerateOneInspiringSlot_(body) {
     Logger.log('regenerateOneInspiringSlot_: exception ' + err);
     return { error: 'exception', message: String(err) };
   }
+}
+
+// ==========================================
+// CONTAMINATED-SUGGESTION REPAIR (2026-06-04)
+// ==========================================
+// A few units inherited the WRONG unit's planner text ("the soup"): their
+// plannerContextRich / plannerText describe a different theme, which leaked
+// off-topic suggestions into their `s` array (e.g. the Year 5 money/economics
+// unit showing "Rescue Rover Rally: Design a Disaster Response Fleet"). The
+// public tech picker was fixed separately to anchor on ci/lo; this repair
+// cleans the stored `s` lists for the affected units.
+//
+// Per-unit repair: (1) best-effort overwrite plannerContextRich with the
+// CORRECT section from the combined planner (via the hardened
+// _matchSectionToTheme_), (2) CLEAR the contaminated plannerText so the regen
+// prompt relies on the unit's verified ci/lo, (3) requeue by deleting the
+// inspiringRegenAt stamp. Then a self-rescheduling, self-removing trigger
+// regenerates the suggestions SCOPED to just these units (so it never touches
+// the rest of the corpus). Runs entirely server-side: kick it off once and the
+// laptop can be turned off — the GAS trigger does the rest.
+var REPAIR_CONTAM_TICK_HANDLER = 'repairContaminatedTick';
+var REPAIR_CONTAM_TICK_MINUTES = 5;
+var REPAIR_CONTAM_MAX_TICKS = 6; // safety stop so a never-succeeding unit can't loop the trigger forever
+var REPAIR_CONTAM_TARGETS = [
+  { ca: 'Glen Waverley', yl: 'Year 5', th: 'How We Organise Ourselves' },
+  { ca: 'St Kilda', yl: 'Year 3', th: 'How We Organise Ourselves' }
+];
+
+function _repairContamKey_(u) { return u.ca + '||' + u.yl + '||' + u.th; }
+
+function kickoffRepairContaminated(opts) {
+  opts = opts || {};
+  var file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  var raw = JSON.parse(file.getBlob().getDataAsString());
+  var isArr = Array.isArray(raw);
+  var data = isArr ? raw : Object.values(raw).filter(function (u) { return u && typeof u === 'object'; });
+
+  var targetSet = {};
+  REPAIR_CONTAM_TARGETS.forEach(function (t) { targetSet[t.ca + '||' + t.yl + '||' + t.th] = true; });
+
+  var folder = null;
+  try { folder = DriveApp.getFolderById(PLANNERS_FOLDER_ID); } catch (e) { folder = null; }
+
+  var repaired = [];
+  for (var i = 0; i < data.length; i++) {
+    var u = data[i];
+    if (!u || !u.ca || !u.yl || !u.th) continue;
+    if (!targetSet[_repairContamKey_(u)]) continue;
+
+    var pcrFixed = false;
+    // (1) Best-effort: replace the soup with the correct unit-scoped section.
+    if (folder) {
+      try {
+        var caCode = campusMap[u.ca];
+        if (caCode) {
+          var md = readPlannerMarkdown_(folder, u.yl, u.th, caCode);
+          if (md && md.text) {
+            var sections = _splitCombinedPlannerByTheme_(md.text);
+            if (sections.length > 1) {
+              var match = _matchSectionToTheme_(sections, u.th);
+              if (match && match.content) { u.plannerContextRich = match.content; pcrFixed = true; }
+            }
+          }
+        }
+      } catch (e) {
+        Logger.log('kickoffRepairContaminated: section re-match failed for ' + _repairContamKey_(u) + ': ' + e);
+      }
+    }
+    // (2) Clear the contaminated summary — the regen prompt will rely on the
+    //     unit's verified Central Idea + Lines of Inquiry instead.
+    u.plannerText = '';
+    // (3) Requeue for regeneration under the current code version.
+    delete u.inspiringRegenAt;
+    delete u.inspiringRegenAtVersion;
+    repaired.push({ ca: u.ca, yl: u.yl, th: u.th, plannerContextRichFixed: pcrFixed });
+  }
+
+  if (repaired.length) {
+    var toWrite = isArr ? data : raw;
+    file.setContent(JSON.stringify(toWrite, null, 2));
+    try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e) { Logger.log('pushToGitHub after kickoffRepairContaminated failed: ' + e); }
+  }
+
+  PropertiesService.getScriptProperties().setProperty('REPAIR_CONTAM_TICKS', '0');
+  removeRepairContaminatedTrigger_();
+  ScriptApp.newTrigger(REPAIR_CONTAM_TICK_HANDLER)
+    .timeBased()
+    .everyMinutes(REPAIR_CONTAM_TICK_MINUTES)
+    .create();
+  Logger.log('Repair trigger installed: ' + REPAIR_CONTAM_TICK_HANDLER + ' every ' + REPAIR_CONTAM_TICK_MINUTES + ' min.');
+
+  // First tick now so the regen starts immediately instead of waiting ~5 min.
+  repairContaminatedTick();
+
+  Logger.log('kickoffRepairContaminated: repaired (plannerText cleared + requeued) ' + repaired.length + ' unit(s).');
+  return {
+    message: 'Contaminated-unit repair kicked off for ' + repaired.length + ' unit(s). plannerText cleared + requeued; a server-side trigger regenerates their suggestions and auto-removes when done. Safe to close the laptop.',
+    repaired: repaired,
+    targetsConfigured: REPAIR_CONTAM_TARGETS.length,
+    tickHandler: REPAIR_CONTAM_TICK_HANDLER,
+    tickMinutes: REPAIR_CONTAM_TICK_MINUTES
+  };
+}
+
+function repairContaminatedTick() {
+  try {
+    var props = PropertiesService.getScriptProperties();
+    var ticks = parseInt(props.getProperty('REPAIR_CONTAM_TICKS') || '0', 10) + 1;
+    props.setProperty('REPAIR_CONTAM_TICKS', String(ticks));
+
+    var file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+    var raw = JSON.parse(file.getBlob().getDataAsString());
+    var data = Array.isArray(raw) ? raw : Object.values(raw).filter(function (u) { return u && typeof u === 'object'; });
+
+    var targetSet = {};
+    REPAIR_CONTAM_TARGETS.forEach(function (t) { targetSet[t.ca + '||' + t.yl + '||' + t.th] = true; });
+
+    var pending = [];
+    for (var i = 0; i < data.length; i++) {
+      var u = data[i];
+      if (!u || !targetSet[_repairContamKey_(u)]) continue;
+      // "Done" = regenerated under the current code version.
+      if (u.inspiringRegenAt && u.inspiringRegenAtVersion === INSPIRING_REGEN_VERSION) continue;
+      pending.push(i);
+    }
+
+    if (!pending.length) {
+      var removed = removeRepairContaminatedTrigger_();
+      Logger.log('repairContaminatedTick: all targets regenerated, removed ' + removed + ' trigger(s).');
+      return;
+    }
+    if (ticks > REPAIR_CONTAM_MAX_TICKS) {
+      var removed2 = removeRepairContaminatedTrigger_();
+      Logger.log('repairContaminatedTick: hit max ticks (' + REPAIR_CONTAM_MAX_TICKS + ') with ' + pending.length + ' still pending; removed ' + removed2 + ' trigger(s) to avoid looping.');
+      return;
+    }
+
+    Logger.log('repairContaminatedTick: regenerating ' + pending.length + ' target unit(s) (tick ' + ticks + ').');
+    // Scoped to exactly our target indices so the rest of the corpus is untouched.
+    var result = regenerateAllInspiring({ indices: pending, batch: pending.length });
+    Logger.log('repairContaminatedTick: processed=' + result.processed + ' fixed=' + result.fixed + ' failed=' + result.failed + (result.paused ? ' PAUSED:' + result.reason : ''));
+  } catch (e) {
+    Logger.log('repairContaminatedTick error (will retry next tick): ' + (e && e.stack ? e.stack : e));
+  }
+}
+
+function removeRepairContaminatedTrigger_() {
+  var triggers = ScriptApp.getProjectTriggers();
+  var removed = 0;
+  for (var i = 0; i < triggers.length; i++) {
+    if (triggers[i].getHandlerFunction() === REPAIR_CONTAM_TICK_HANDLER) {
+      ScriptApp.deleteTrigger(triggers[i]);
+      removed++;
+    }
+  }
+  return removed;
 }
