@@ -159,9 +159,9 @@ const REALISTIC_TOOL_USE_RULES = `REALISTIC CLASSROOM USE RULES (HARD RULE):
 // proposing mismatched use-cases — e.g. using Tinkercad to "swap materials", which it
 // cannot simulate). Keyed by the lowercased tool name (matched via toolInventoryKey, so
 // canonical names and variants both resolve). `good`/`avoid` are optional.
-// NOTE: "Delightex" and "Wise Discussion Chatbots" are intentionally absent pending
-// confirmation of their real classroom use — a missing note just falls back to generic
-// behaviour, it does not break anything.
+// NOTE: "Wise Discussion Chatbots" is intentionally absent pending confirmation of its
+// real classroom use — a missing note just falls back to generic behaviour, it does not
+// break anything.
 const TOOL_AFFORDANCE_NOTES = {
   tinkercad: {
     is: 'a 3D design app for modelling solid objects that can be 3D-printed in plastic',
@@ -214,6 +214,11 @@ const TOOL_AFFORDANCE_NOTES = {
     is: 'an educational video library for watching and analysing curated clips',
     good: 'watching and responding to a relevant educational video, sometimes with built-in questions',
     avoid: 'it is for watching video, not making it — to create video use iMovie, Apple Clips or Stop Motion Studio.'
+  },
+  delightex: {
+    is: 'a 3D and VR scene-building platform (formerly CoSpaces Edu) where students build virtual worlds and code them with blocks (CoBlocks)',
+    good: 'building an interactive 3D or VR scene, virtual tour or simple game, and coding how objects move and respond',
+    avoid: 'it builds virtual on-screen 3D/VR scenes — not physical making or 3D printing (use Tinkercad or the 3D Printers for that).'
   },
   epic: {
     is: 'a childrens digital library of ebooks and audiobooks',
