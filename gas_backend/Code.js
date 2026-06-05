@@ -493,6 +493,15 @@ function doPost(e) {
       return jsonResponse(result);
     }
 
+    // 2026-06-05: corrective second pass — restores the planner summary (fixes
+    // the "missing planner" badge), purges the cached disaster STEM project,
+    // and regenerates the 6th slot from correct context. Server-side.
+    if (action === 'finishrepaircontaminated') {
+      const result = finishRepairContaminated({});
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
     // 2026-05-25: admin review of teacher-submitted CI/LOI edit proposals.
     if (action === 'listuoiproposals') {
       const result = listUoiProposals_({ status: body.status || null });
@@ -5656,9 +5665,11 @@ function kickoffRepairContaminated(opts) {
         Logger.log('kickoffRepairContaminated: section re-match failed for ' + _repairContamKey_(u) + ': ' + e);
       }
     }
-    // (2) Clear the contaminated summary — the regen prompt will rely on the
-    //     unit's verified Central Idea + Lines of Inquiry instead.
-    u.plannerText = '';
+    // (2) Replace the contaminated summary with a correct one built from the
+    //     unit's verified Central Idea + Lines of Inquiry. NOTE: setting this
+    //     to '' tripped the Studio's "missing planner" badge (js/06 flags an
+    //     empty plannerText) — never leave it empty.
+    u.plannerText = _repairContamPlannerText_(u) || '';
     // (3) Requeue for regeneration under the current code version.
     delete u.inspiringRegenAt;
     delete u.inspiringRegenAtVersion;
@@ -5744,4 +5755,81 @@ function removeRepairContaminatedTrigger_() {
     }
   }
   return removed;
+}
+
+// Build a correct, on-topic planner summary from the unit's VERIFIED ci/lo.
+// Used so a repaired unit never ends up with an empty plannerText (which the
+// Studio flags as "missing planner") and so the makerspace reboot reads
+// correct context.
+function _repairContamPlannerText_(u) {
+  var ci = (u && u.ci ? String(u.ci) : '').trim();
+  var lo = (u && u.lo ? String(u.lo) : '').trim();
+  var parts = [];
+  if (ci) parts.push(ci);
+  if (lo) parts.push('Lines of inquiry: ' + lo);
+  return parts.join(' ').trim();
+}
+
+// 2026-06-05: Corrective second pass for the soup-contaminated units. The first
+// repair (kickoffRepairContaminated) cleaned suggestions 1-5 but (a) left
+// plannerText empty → Studio "missing planner" badge, and (b) could NOT clean
+// the 6th "STEM Design Cycle" slot, because that slot is cached in
+// MAKERSPACE_MEMORY and restored by the healMakerspaceFromMemory background
+// process (byte-identical "Rescue Rover Rally" kept coming back). This pass:
+//   1. restores a correct plannerText (from ci/lo) — fixes the badge,
+//   2. clears stemRebooted + purges the cached disaster project for ONLY the
+//      target units (no collateral on siblings) — stops the heal restoring it,
+//   3. calls rebootMakerspace per unit to regenerate the 6th slot from the
+//      now-correct planner summary and cache the NEW project.
+// Fully server-side; run once (re-runnable if a rate-limit cooldown interrupts).
+function finishRepairContaminated(opts) {
+  opts = opts || {};
+  var props = PropertiesService.getScriptProperties();
+  var file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  var data = JSON.parse(file.getBlob().getDataAsString());
+
+  var targetSet = {};
+  REPAIR_CONTAM_TARGETS.forEach(function (t) { targetSet[t.ca + '||' + t.yl + '||' + t.th] = true; });
+
+  // Step 1 — scoped to target units only.
+  var memString = props.getProperty('MAKERSPACE_MEMORY');
+  var memory = memString ? JSON.parse(memString) : {};
+  var memDirty = false;
+  var touched = [];
+  for (var i = 0; i < data.length; i++) {
+    var u = data[i];
+    if (!u || !u.ca || !u.yl || !u.th) continue;
+    if (!targetSet[u.ca + '||' + u.yl + '||' + u.th]) continue;
+    var pt = _repairContamPlannerText_(u);
+    if (pt) u.plannerText = pt;                 // fixes "missing planner"
+    if (u.stemRebooted) u.stemRebooted = false; // unlock the STEM slot for reboot
+    var memKey = u.ca + '_' + u.yl + '_' + u.th;
+    if (Object.prototype.hasOwnProperty.call(memory, memKey)) { delete memory[memKey]; memDirty = true; } // purge cached disaster project
+    touched.push({ ca: u.ca, yl: u.yl, th: u.th, plannerTextLen: (u.plannerText || '').length });
+  }
+  if (memDirty) props.setProperty('MAKERSPACE_MEMORY', JSON.stringify(memory));
+  file.setContent(JSON.stringify(data, null, 2));
+  try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e) { Logger.log('finishRepairContaminated step1 push failed: ' + e); }
+
+  // Step 2 — regenerate the 6th (STEM Design Cycle) slot per unit. rebootMakerspace
+  // re-reads Drive (sees the corrected plannerText + cleared stemRebooted),
+  // generates ONE fresh project, keeps slots 1-5, caches the new project, pushes.
+  var reboots = [];
+  for (var j = 0; j < REPAIR_CONTAM_TARGETS.length; j++) {
+    var t = REPAIR_CONTAM_TARGETS[j];
+    try {
+      var r = rebootMakerspace(t.ca, t.yl, t.th);
+      reboots.push({ ca: t.ca, yl: t.yl, th: t.th, result: r });
+    } catch (e) {
+      Logger.log('finishRepairContaminated: rebootMakerspace failed for ' + t.ca + '/' + t.yl + '/' + t.th + ': ' + e);
+      reboots.push({ ca: t.ca, yl: t.yl, th: t.th, error: String(e) });
+    }
+  }
+
+  Logger.log('finishRepairContaminated: restored planner summary + unlocked STEM for ' + touched.length + ' unit(s); rebooted ' + reboots.length + '.');
+  return {
+    message: 'Finished repair: restored planner summary, purged the cached disaster STEM project, and regenerated the 6th slot for ' + touched.length + ' unit(s). Re-run if it reports a rate-limit cooldown.',
+    touched: touched,
+    reboots: reboots
+  };
 }
