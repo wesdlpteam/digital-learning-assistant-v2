@@ -154,22 +154,239 @@ const REALISTIC_TOOL_USE_RULES = `REALISTIC CLASSROOM USE RULES (HARD RULE):
 - If you cannot explain exactly what students will do with the hardware/software, choose a different tool.`;
 
 // ===== Per-tool "what this tool is really for" notes (2026-06-05) =====
-// Short, accurate affordance notes injected into suggestion prompts AND enforced by
-// checkRealisticToolUse, so the system stops proposing mismatched use-cases (e.g. using
-// Tinkercad to "swap materials" — it cannot simulate material properties). Add entries
-// here as misuses are found; keyed by toolInventoryKey(toolName).
+// Short, accurate affordance notes covering the approved tool inventory. Injected into
+// suggestion prompts so the AI uses each tool for what it is genuinely for (and stops
+// proposing mismatched use-cases — e.g. using Tinkercad to "swap materials", which it
+// cannot simulate). Keyed by the lowercased tool name (matched via toolInventoryKey, so
+// canonical names and variants both resolve). `good`/`avoid` are optional.
+// NOTE: "Delightex" and "Wise Discussion Chatbots" are intentionally absent pending
+// confirmation of their real classroom use — a missing note just falls back to generic
+// behaviour, it does not break anything.
 const TOOL_AFFORDANCE_NOTES = {
   tinkercad: {
     is: 'a 3D design app for modelling solid objects that can be 3D-printed in plastic',
     good: 'designing and modelling a 3D object or prototype to 3D-print — e.g. a container, holder, tool, model, badge, replacement part or simple moving mechanism — iterating the shape and measurements in the editor',
     avoid: 'do NOT use Tinkercad to simulate, test or compare MATERIAL PROPERTIES such as strength, flexibility, weight, recyclability or the sustainability of plastic vs metal vs wood — it only designs shapes in plastic and cannot simulate materials. Do NOT frame it as electronics, circuits or block-coding.'
+  },
+  '3d printers': {
+    is: 'a machine that prints a physical plastic object from a 3D model students have designed',
+    good: 'printing a student-designed 3D model or prototype (usually designed in Tinkercad) and refining it after a test print',
+    avoid: 'it only prints the shape students design, in plastic — do NOT use it to compare or test material properties.'
+  },
+  'adobe express': {
+    is: 'a quick graphic-design and short-video app for posters, infographics, flyers, simple web pages and clips',
+    good: 'designing a poster, infographic, social-style graphic or short promo video',
+    avoid: 'for a talking or animated character use "Animating a Character with Adobe Express"; for audio or podcasts use "Podcasting using Canva".'
+  },
+  'animating a character with adobe express': {
+    is: 'the Adobe Express Animate from Audio feature, where students record their voice and an on-screen character automatically lip-syncs to it',
+    good: 'a character or avatar narrating, explaining or telling a story'
+  },
+  'apple clips': {
+    is: 'a fast iPad video maker with live captions, stickers and titles',
+    good: 'a short captioned reflection, explainer or news-style clip',
+    avoid: 'for fuller editing with transitions and multiple tracks use iMovie.'
+  },
+  beebots: {
+    is: 'a simple floor robot for early-years directional and sequence coding on a mat',
+    good: 'Prep to Year 2 students programming a sequence of moves to navigate a mat or map',
+    avoid: 'Beebots have no sensors and no screen — not for data collection or older-year abstract coding.'
+  },
+  'book creator': {
+    is: 'a tool for making multimodal digital books with text, images, audio and video',
+    good: 'an explainer book, story or portfolio where students add their own recorded narration'
+  },
+  'brushes redux': {
+    is: 'a digital painting app for expressive, layered artwork',
+    good: 'original digital paintings or illustrations',
+    avoid: 'for design layout that combines text and images use Canva, not a painting app.'
+  },
+  canva: {
+    is: 'a graphic-design tool for posters, infographics, presentations and simple video',
+    good: 'campaign posters, infographics, explainer carousels and exhibition panels, including the Remove Background feature'
+  },
+  'chatterpix kids': {
+    is: 'an app that makes a photo talk by drawing a mouth and recording a short voice clip (Prep to Year 2)',
+    good: 'a quick talking image for younger students to explain or introduce something',
+    avoid: 'for Year 3 and up use "Animating a Character with Adobe Express" instead.'
+  },
+  clickview: {
+    is: 'an educational video library for watching and analysing curated clips',
+    good: 'watching and responding to a relevant educational video, sometimes with built-in questions',
+    avoid: 'it is for watching video, not making it — to create video use iMovie, Apple Clips or Stop Motion Studio.'
+  },
+  epic: {
+    is: 'a childrens digital library of ebooks and audiobooks',
+    good: 'guided or research reading, and audiobooks on a topic',
+    avoid: 'it is a reading library, not a creation tool.'
+  },
+  'explain everything': {
+    is: 'an interactive whiteboard that records the screen and voice as an animated screencast',
+    good: 'a narrated screencast where students explain their thinking while drawing or annotating'
+  },
+  'field guide to victoria': {
+    is: 'a Museums Victoria app for identifying local Victorian animals and species',
+    good: 'identifying and researching local Victorian fauna in biodiversity, habitat or local-environment units',
+    avoid: 'its content is specific to Victoria — not for species elsewhere.'
+  },
+  freeform: {
+    is: 'an infinite collaborative whiteboard or canvas',
+    good: 'brainstorming, mind-maps, and collecting and connecting ideas or evidence on a shared board'
+  },
+  garageband: {
+    is: 'a music-creation and recording studio',
+    good: 'composing music, jingles, soundscapes or sound effects',
+    avoid: 'for podcasts or audio storytelling use "Podcasting using Canva", which works on iPads.'
+  },
+  geoboard: {
+    is: 'a virtual geoboard for exploring shapes with stretched bands on a peg grid',
+    good: 'investigating area, perimeter, angles, symmetry and 2D shapes',
+    avoid: 'a maths and geometry tool only.'
+  },
+  'google maps': {
+    is: 'a maps tool for locating real places, measuring routes and distances, and exploring Street View',
+    good: 'locating and virtually visiting real places, comparing distances or routes',
+    avoid: 'for richer data-layer mapping use National Geographic MapMaker.'
+  },
+  imovie: {
+    is: 'a video editor for making and editing short films',
+    good: 'a short documentary, news report or edited film with titles and transitions'
+  },
+  'insta360 camera': {
+    is: 'a 360-degree camera that captures immersive spherical photos and video',
+    good: 'capturing a 360-degree view of a space or process, or making a virtual tour',
+    avoid: 'for an ordinary photo or video a normal camera is better — use it when the whole surroundings matter.'
+  },
+  kahoot: {
+    is: 'a game-based quiz tool',
+    good: 'a student-made quiz to teach or revise content, or a quick formative check',
+    avoid: 'it is short question-and-answer — not a tool for deep creation.'
+  },
+  'lego spike prime': {
+    is: 'a build-and-code kit for motorised models with motors and sensors',
+    good: 'building, coding and testing a working model that addresses a real system, force or automation problem',
+    avoid: 'describe a real build, code and test — not a metaphor; it must physically do something.'
+  },
+  'makey makey': {
+    is: 'an invention kit that turns everyday conductive objects into keyboard or controller inputs',
+    good: 'interactive posters, instruments or controllers triggered by touching conductive materials'
+  },
+  'merge cubes': {
+    is: 'a foam cube that shows interactive 3D and AR holograms when viewed through a compatible app',
+    good: 'holding and exploring a 3D object in augmented reality, such as anatomy, planets or artefacts',
+    avoid: 'needs the AR app and a real 3D-object purpose — not a standalone novelty.'
+  },
+  'micro:bit': {
+    is: 'a pocket programmable board with sensors — accelerometer, light, temperature, compass, radio, buttons and an LED grid',
+    good: 'coding a sensor-based device, data logger or paired-device alert and testing it',
+    avoid: 'name the actual sensors or inputs used, not just "a device".'
+  },
+  'microsoft excel': {
+    is: 'a spreadsheet for collecting, charting and analysing data',
+    good: 'gathering data into tables, making graphs and spotting patterns'
+  },
+  'microsoft forms': {
+    is: 'a tool for building surveys and quizzes that auto-collect responses',
+    good: 'running a survey to gather real data, or a quick quiz, then reading the auto-charts'
+  },
+  'microsoft word': {
+    is: 'a word processor for extended writing',
+    good: 'reports, letters, explanations and other extended text',
+    avoid: 'for design-led products such as posters and infographics use Canva.'
+  },
+  'minecraft education': {
+    is: 'a sandbox world-building platform with Code Builder and the Agent',
+    good: 'building or coding a world to model, explore or represent a concept',
+    avoid: 'only use a verified Minecraft library lesson when it genuinely fits; do not invent lesson titles or URLs.'
+  },
+  'national geographic mapmaker': {
+    is: 'an interactive mapping tool with data layers such as climate, population and terrain',
+    good: 'exploring, layering and annotating real geographic data to draw conclusions',
+    avoid: 'encourage manipulating the layers, not just viewing a static map.'
+  },
+  padlet: {
+    is: 'a shared online wall for posting notes, images and links together',
+    good: 'a collaborative evidence or debate wall, brainstorming, or curating examples with peer responses'
+  },
+  piccollage: {
+    is: 'a quick photo-collage and grid maker with captions',
+    good: 'a visual collage of evidence or photos with short captions',
+    avoid: 'for richer design use Canva.'
+  },
+  'podcast equipment': {
+    is: 'physical microphones and recorders for capturing audio',
+    good: 'only when a hands-on hardware recording setup is specifically intended',
+    avoid: 'for almost all podcasts and audio stories use "Podcasting using Canva" instead — it works on iPads and is the preferred school platform.'
+  },
+  'podcasting using canva': {
+    is: 'the preferred school podcasting platform, which works on iPads',
+    good: 'recording and editing a podcast episode, audio story or interview'
+  },
+  'puppet pals': {
+    is: 'an app for making animated puppet shows with characters, backdrops and recorded voice',
+    good: 'a narrated puppet-show story or role-play for younger years',
+    avoid: 'plan the narrative first rather than animating randomly.'
+  },
+  scratchjr: {
+    is: 'an introductory block-coding app for Prep to Year 2 to make animated stories and games',
+    good: 'young students coding a simple interactive story or animation',
+    avoid: 'for older or advanced coding use Micro:bit or a robot.'
+  },
+  'seek by inaturalist': {
+    is: 'an app that identifies plants, animals and fungi from the camera',
+    good: 'identifying and recording local species in nature and biodiversity units',
+    avoid: 'treat identifications as a guide to check, not always 100 percent correct.'
+  },
+  seesaw: {
+    is: 'a student portfolio and journal that captures work with photos, video and voice',
+    good: 'capturing, reflecting on and sharing learning as a multimodal journal entry'
+  },
+  sketchbook: {
+    is: 'a digital drawing and painting app with professional sketching tools',
+    good: 'detailed digital drawings, illustrations or design sketches',
+    avoid: 'for poster or infographic layout use Canva.'
+  },
+  'sky map': {
+    is: 'an app that identifies stars, planets and constellations when you point the device at the sky',
+    good: 'exploring the night sky, constellations and planets in space and astronomy units'
+  },
+  'slow motion physical analysis': {
+    is: 'a technique of filming an action in slow motion to analyse movement, technique or forces',
+    good: 'recording and slowing down a movement, such as a sport skill or a physical process, to observe and analyse it',
+    avoid: 'have a clear analytical question — not just a slow-motion video for effect.'
+  },
+  'sphero bolt': {
+    is: 'a programmable robot ball with sensors and a programmable LED matrix, using block and text coding',
+    good: 'coding Sphero to navigate, map routes, draw paths or collect sensor data'
+  },
+  'sphero indi': {
+    is: 'a screenless early-years robot car driven by coloured tiles to teach cause-and-effect coding',
+    good: 'Prep to Year 2 sequencing and navigation using colour tiles, with no screen needed',
+    avoid: 'not for advanced coding or data — that is Sphero BOLT.'
+  },
+  'stop motion studio': {
+    is: 'a frame-by-frame stop-motion animation app',
+    good: 'a stop-motion animation that explains a process or tells a story'
+  },
+  'tablet magnifiers': {
+    is: 'a magnification aid for looking closely at small objects or text',
+    good: 'magnifying small specimens, details or text for close observation or accessibility',
+    avoid: 'an observation and accessibility aid, not a creation tool.'
+  },
+  'word clouds abcya': {
+    is: 'a tool that turns text into a word cloud where more frequent words appear larger',
+    good: 'visualising the key words or themes in a text or brainstorm, then discussing what the big words show',
+    avoid: 'a quick visualisation — pair it with analysis, not a final product on its own.'
   }
 };
 
 function toolAffordanceNote_(toolName){
-  const note = TOOL_AFFORDANCE_NOTES[toolInventoryKey(toolName)];
+  const note = TOOL_AFFORDANCE_NOTES[toolInventoryKey(toolName)] || TOOL_AFFORDANCE_NOTES[String(toolName || '').toLowerCase().trim()];
   if(!note) return '';
-  return `WHAT ${String(toolName).toUpperCase()} IS REALLY FOR: ${toolName} is ${note.is}. Good uses: ${note.good}. AVOID: ${note.avoid}`;
+  let s = `WHAT ${String(toolName).toUpperCase()} IS REALLY FOR: ${toolName} is ${note.is}.`;
+  if(note.good) s += ` Good uses: ${note.good}.`;
+  if(note.avoid) s += ` AVOID: ${note.avoid}`;
+  return s;
 }
 
 // True only for tools backed by a curated verified lesson library (Minecraft Education,
