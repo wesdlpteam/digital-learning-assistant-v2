@@ -130,6 +130,11 @@ Treat these with the SAME ~6-sentence depth as every other tool — matching a s
 - BAD example (too thin — under-written to the old 3-4 sentence cap): "Students use the Protecting Animals Micro:bit lesson (URL) to design and code a simple device that could help monitor or protect local wildlife. They present their prototype and explain how technology can support conservation efforts."
 - GOOD example (~6 sentences, ~700 chars — this is the target depth): "Students follow the Protecting Animals Micro:bit lesson (https://microbit.org/teach/lessons/?selected=protecting-animals) to prototype a low-power motion-sensing alert that helps protect a local species the class has researched, such as the eastern barred bandicoot or platypus. Working in pairs, they programme the accelerometer and radio to broadcast a signal when movement is detected, then iterate the MakeCode blocks after testing the trigger sensitivity outdoors. Each pair logs sensor readings, captures annotated MakeCode screenshots and a 60-second demonstration video that shows the device responding in context. They link the prototype to the Line of Inquiry about how humans can take action for vulnerable habitats, presenting one concrete protective behaviour their technology could enable."
 
+TOOLS WITHOUT A VERIFIED LESSON LIBRARY (this is MOST tools — e.g. Tinkercad, Sphero, Stop Motion Studio, most apps):
+- The "name the specific library lesson and include its URL" rules above apply ONLY to a tool whose verified lesson list is actually printed in THIS prompt (currently Minecraft Education and Micro:bit, plus any future curated library). Never apply them to any other tool.
+- For every other tool, NEVER name a specific published lesson, NEVER invent a lesson title, and NEVER include a lesson-style URL such as "tinkercad.com/lessons/...". Those lessons do not exist, and inventing them sends teachers to dead links.
+- Instead, describe an original classroom activity built around the tool's own genuine features. The ONLY links you may include for these tools are the official product links a rule below explicitly requires (Podcasting using Canva -> https://www.canva.com; Animate from Audio -> https://new.express.adobe.com/home/tools/animate-from-audio).
+
 PODCASTING RULE: Whenever a suggestion involves podcasting, audio recording, audio storytelling, or audio interviews, ALWAYS use the tool name "Podcasting using Canva" — not GarageBand, not "Podcast Equipment", not Adobe Express. Podcasting using Canva is the school's preferred podcasting platform (it works on iPads, whereas Adobe Express Podcasting does not). Always include the URL https://www.canva.com in the description.
 
 ANIMATE CHARACTER RULE: Whenever a suggestion involves a talking character, animated narration, a lip-synced explainer, an avatar telling a story, a character delivering information, or any animated character speaking, ALWAYS use the tool name "Animating a Character with Adobe Express" — not generic "Adobe Express", not ChatterPix Kids (which is Prep–Year 2 only), not Puppet Pals. This is Adobe Express's Animate from Audio feature: students record audio and a character automatically lip-syncs to it. Always include the URL https://new.express.adobe.com/home/tools/animate-from-audio in the description, and name the specific feature ("Animate from Audio") in the description text. For Kinder and Prep–Year 2, frame it as teacher-guided (the teacher operates the tool while children record their voices).
@@ -145,7 +150,43 @@ const REALISTIC_TOOL_USE_RULES = `REALISTIC CLASSROOM USE RULES (HARD RULE):
 - Robotics and drones should only be suggested when the unit genuinely involves movement, mapping, forces, systems, navigation, data collection, automation, measurement, environments or spatial thinking.
 - CoDrone EDU rule: only use it within the Studio-configured year range; it must involve actual drone actions such as flight paths, take-off/landing, waypoints, altitude, obstacle courses, mapping, aerial observation or sensor/data collection. Do NOT suggest CoDrone for body systems, emotions, wellbeing, fitness challenges, storytelling-only tasks, or purely abstract concepts.
 - Bad example: CoDrone EDU drones model body systems or wellbeing. A flying drone cannot meaningfully model a circulatory system.
+- Tinkercad rule: Tinkercad is for designing and modelling 3D objects to 3D-print in plastic. Only suggest it for designing a 3D object or prototype to print. Do NOT use Tinkercad to simulate, test or compare material properties (strength, flexibility, weight, recyclability, or the sustainability of plastic vs metal vs wood) — it only designs shapes in plastic and cannot simulate materials. Do NOT frame Tinkercad as electronics, circuits or block-coding.
 - If you cannot explain exactly what students will do with the hardware/software, choose a different tool.`;
+
+// ===== Per-tool "what this tool is really for" notes (2026-06-05) =====
+// Short, accurate affordance notes injected into suggestion prompts AND enforced by
+// checkRealisticToolUse, so the system stops proposing mismatched use-cases (e.g. using
+// Tinkercad to "swap materials" — it cannot simulate material properties). Add entries
+// here as misuses are found; keyed by toolInventoryKey(toolName).
+const TOOL_AFFORDANCE_NOTES = {
+  tinkercad: {
+    is: 'a 3D design app for modelling solid objects that can be 3D-printed in plastic',
+    good: 'designing and modelling a 3D object or prototype to 3D-print — e.g. a container, holder, tool, model, badge, replacement part or simple moving mechanism — iterating the shape and measurements in the editor',
+    avoid: 'do NOT use Tinkercad to simulate, test or compare MATERIAL PROPERTIES such as strength, flexibility, weight, recyclability or the sustainability of plastic vs metal vs wood — it only designs shapes in plastic and cannot simulate materials. Do NOT frame it as electronics, circuits or block-coding.'
+  }
+};
+
+function toolAffordanceNote_(toolName){
+  const note = TOOL_AFFORDANCE_NOTES[toolInventoryKey(toolName)];
+  if(!note) return '';
+  return `WHAT ${String(toolName).toUpperCase()} IS REALLY FOR: ${toolName} is ${note.is}. Good uses: ${note.good}. AVOID: ${note.avoid}`;
+}
+
+// True only for tools backed by a curated verified lesson library (Minecraft Education,
+// Micro:bit, plus any future curated library). Such tools are the ONLY ones allowed to cite
+// a real lesson + URL; every other ("library-less") tool must not invent lessons or links.
+function toolHasVerifiedLibrary_(toolName){
+  const key = toolInventoryKey(toolName);
+  if(!key) return false;
+  try {
+    for(const libKey of getLibraryKeys()){
+      const lessons = LIBRARIES[libKey] || [];
+      if(!lessons.length) continue;
+      if(toolInventoryKey(getLibraryMeta(libKey).name || libKey) === key) return true;
+    }
+  } catch(e){}
+  return false;
+}
 
 // ========== CENTRALISED TOOL CONSTRAINTS — used by every AI suggestion path ==========
 
@@ -545,6 +586,15 @@ function checkRealisticToolUse(toolName, desc, entry){
   const full = `${d} ${unit}`;
   const yr = getYearNumber(entry && entry.yl);
   if(!rawTool || !desc) return realismResult(false, 'Missing tool or description.');
+  // Library-less tools must not cite a fabricated lesson link. Verified-library tools
+  // (Minecraft, Micro:bit) and the official Canva/Adobe product links are exempt; any other
+  // URL (e.g. an invented tinkercad.com/lessons/... link) is a hallucination and is rejected.
+  if(!toolHasVerifiedLibrary_(rawTool)){
+    const urls = String(desc).match(/https?:\/\/[^\s)"'<>]+/gi) || [];
+    const allowedDomain = /(?:^|\/\/|\.)(?:canva\.com|adobe\.com|express\.adobe\.com|microbit\.org|education\.minecraft\.net)(?:[\/:?#]|$)/i;
+    const badUrl = urls.find(u => !allowedDomain.test(u));
+    if(badUrl) return realismResult(false, `${rawTool} has no verified lesson library, so it must not include a made-up lesson link like ${badUrl}. Describe an original activity using ${rawTool}'s real features, with no invented lesson name or URL.`);
+  }
   if(t.includes('codrone')){
     const codroneRange = getToolAgeRange('CoDrone EDU');
     if(yr < codroneRange.min || yr > codroneRange.max) return realismResult(false, `CoDrone EDU is configured for ${ageRangeLabel(codroneRange)}.`);
@@ -559,6 +609,11 @@ function checkRealisticToolUse(toolName, desc, entry){
   if(/minecraft/i.test(t)){
     const mcFit = checkMinecraftEducationFit(rawTool, desc, entry);
     if(!mcFit.ok) return realismResult(false, mcFit.reason);
+  }
+  if(/tinkercad/i.test(t)){
+    // Tinkercad designs 3D shapes to print in plastic — it cannot simulate material properties.
+    const materialMisuse = /(material propert|propert(?:y|ies)\s+of\s+(?:the\s+|different\s+)?materials?|swap(?:ping)?\s+(?:out\s+)?materials?|different\s+materials|compare\s+materials|which\s+material|sustainab\w*[^.]{0,30}material|recycl\w*[^.]{0,30}material|(?:plastic|metal|wood|glass)[^.]{0,40}\b(?:plastic|metal|wood|glass)\b|strength[^.]{0,30}flexib)/i.test(d);
+    if(materialMisuse) return realismResult(false, 'Tinkercad designs 3D shapes to print in plastic; it cannot simulate or compare material properties (strength, flexibility, weight, sustainability). Re-frame as designing/modelling a 3D object to 3D-print, or choose a different tool.');
   }
   if(/(sphero|bee-bot|beebot|lego spike|micro:bit|makey makey|3d printer|tinkercad)/i.test(t)){
     const concreteHardwareAction = /(code|program|build|prototype|test|debug|measure|collect|sensor|circuit|route|path|navigate|drive|move|design|model|print|construct|iterate)/i.test(d);

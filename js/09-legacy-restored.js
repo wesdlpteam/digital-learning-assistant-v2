@@ -3186,6 +3186,7 @@ async function buildNamedToolOpportunityChange_(entryIdx, slot, targetTool, inst
   const oldDesc = sugDesc(currentSug);
   const existingTools = getSugs(entry).map((s,i)=>i===slot.sugIdx?null:sugTool(s)).filter(Boolean).join(', ');
   const plannerCtx = entry.plannerContextRich || entry.plannerText || '';
+  const affordanceNote = (typeof toolAffordanceNote_ === 'function') ? toolAffordanceNote_(targetTool) : '';
   const prompt = `You are a Digital Learning Coach at Wesley College.
 
 Task: add a strong opportunity to use the named tool: ${targetTool}.
@@ -3200,7 +3201,7 @@ Tool: ${oldTool}
 Description: ${oldDesc}
 
 Other tools already in this unit, do not duplicate: ${existingTools || 'none'}
-
+${affordanceNote ? '\n' + affordanceNote + '\n' : ''}
 Tool rules:
 - The "t" field MUST start with exactly: ${targetTool}
 - You MAY pair the target tool with ONE secondary tool when it genuinely strengthens the activity. Use the format: "${targetTool} + SecondaryTool" (e.g. "${targetTool} + Freeform"). The secondary must be a Wesley-approved tool that is age-appropriate for ${entry.yl} (good pairings include Freeform, Padlet, Book Creator, Canva, Seesaw, iMovie, GarageBand, PicCollage). Do not pair with any tool already listed above.
