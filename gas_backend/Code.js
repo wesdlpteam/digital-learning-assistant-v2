@@ -601,7 +601,38 @@ var TECH_SUGGEST_DAILY_CAP = 500;
 // v3 = context now anchored on the unit's Central Idea + Lines of Inquiry
 // (not the unreliable whole-year plannerContextRich "soup"), plus an explicit
 // honesty rule that flags a poor fit instead of forcing a contrived activity.
-var TECH_SUGGEST_CACHE_PREFIX = 'tech_sugg_v3_';
+// v4 (2026-06-05) = realistic, age-appropriate activities (dropped the
+// "visionary / under-used feature" pressure that produced over-engineered
+// fantasies), and a "stretch" fit now gets an honest note instead of a forced
+// activity (same as "poor"). Bumping the prefix abandons the old answers so the
+// next click on each tool+unit regenerates once under the new prompt, then is
+// stored and reused.
+var TECH_SUGGEST_CACHE_PREFIX = 'tech_sugg_v4_';
+// Set once by pruneOldTechCaches_ after it clears the abandoned v1/v2/v3 entries.
+var TECH_CACHE_PRUNE_FLAG = 'tech_cache_pruned_v4';
+
+// One-time cleanup: when the cache prefix is bumped (e.g. v3 -> v4) the old
+// entries are never read again but still occupy ScriptProperties space. The
+// store is finite; if it fills, the cache write at the end of
+// suggestTechForPlanner_ silently fails and EVERY click regenerates (burning the
+// daily cap and showing teachers a fresh answer each time). Deleting the
+// abandoned old-prefix entries reclaims that space. Guarded by a flag so it only
+// scans/deletes once, not on every request.
+function pruneOldTechCaches_(props) {
+  try {
+    if (props.getProperty(TECH_CACHE_PRUNE_FLAG)) return;
+    var all = props.getProperties();
+    var stale = ['tech_sugg_v1_', 'tech_sugg_v2_', 'tech_sugg_v3_'];
+    Object.keys(all).forEach(function(key) {
+      for (var i = 0; i < stale.length; i++) {
+        if (key.indexOf(stale[i]) === 0) { props.deleteProperty(key); break; }
+      }
+    });
+    props.setProperty(TECH_CACHE_PRUNE_FLAG, new Date().toISOString());
+  } catch (err) {
+    Logger.log('pruneOldTechCaches_ failed (non-fatal): ' + err);
+  }
+}
 
 function suggestTechForPlanner_(args) {
   var ca = String(args.ca || '').trim();
@@ -636,6 +667,7 @@ function suggestTechForPlanner_(args) {
   ).replace(/=+$/, '');
 
   var props = PropertiesService.getScriptProperties();
+  pruneOldTechCaches_(props);
   if (!regen) {
     var cached = props.getProperty(cacheKey);
     if (cached) {
@@ -665,7 +697,7 @@ function suggestTechForPlanner_(args) {
     }
   }
 
-  var systemPrompt = 'You are a visionary digital learning coach at Wesley College (IB PYP, Melbourne). You help primary-school teachers see possibilities with a specific approved technology that they would not have thought of on their own. Your descriptions inspire. They blend pedagogical rigour with creative ambition. They name authentic audiences, cross-disciplinary connections, real-world impact, and student agency. Output STRICT JSON only — no markdown, no commentary.';
+  var systemPrompt = 'You are a practical, down-to-earth digital learning coach at Wesley College (IB PYP, Melbourne). You help primary-school teachers use a specific approved technology in a way that is realistic, age-appropriate, and genuinely doable in an ordinary classroom. You favour simple, solid ideas a busy teacher could run next week over clever-sounding ones that need specialist skills or weeks of setup. You are honest: if a tool does not really suit a unit, you say so plainly rather than forcing it. Output STRICT JSON only — no markdown, no commentary.';
   var userPrompt =
     'TOOL THE TEACHER WANTS TO USE: ' + tool + '\n' +
     'CAMPUS: ' + ca + '\n' +
@@ -673,25 +705,28 @@ function suggestTechForPlanner_(args) {
     'UNIT OF INQUIRY: ' + th + '\n\n' +
     'PLANNER CONTEXT:\n' + plannerContext + '\n\n' +
     REALISTIC_TOOL_USE_RULES + '\n\n' +
-    'FIT CHECK FIRST (HONESTY OVERRIDES AMBITION): Before writing anything, judge whether ' + tool + ' genuinely suits THIS unit\'s central idea and lines of inquiry. A tool is a POOR fit when its core function has little to do with the unit\'s topic — for example a robotics or construction kit for a discussion-, literacy-, ethics- or economics-driven unit. If it is a poor fit, set "fit" to "poor" and DO NOT invent a forced or contrived activity to make it look good: instead use the "description" to tell the teacher plainly, in 2-3 honest sentences, that ' + tool + ' is not a strong fit for this unit and name the kind of tool or approach that would suit it better. Never dress up a poor fit as a strong one. Only write the ambitious 6-sentence activity below when the fit is "good" or "stretch".\n\n' +
-    'YOUR MISSION (for a good or stretch fit): Write a description that makes the teacher stop and say "I never thought of using it like that." Push the learning into territory most ' + yl + ' classrooms have not explored. Reject the obvious. Reject the generic. Every sentence must be tailored to THIS unit.\n\n' +
-    'The "description" field MUST be exactly 6 vivid, classroom-ready sentences that together do all of the following:\n' +
-    '  1. Open with the bold creative premise — what students are actually making, investigating, or experiencing (name the unit\'s topic explicitly).\n' +
-    '  2. Connect the activity directly to one of the unit\'s lines of inquiry or the central idea (name it).\n' +
-    '  3. Add an unexpected angle — a cross-disciplinary link, a counter-intuitive role-reversal, an authentic external audience, a real community/expert connection, an ethical or perspective-taking dimension, or a use of the tool that most teachers don\'t know about. Write it as a natural sentence; do NOT announce it with a label such as "The twist:".\n' +
-    '  4. Describe what the FINAL student artefact looks like, sounds like, or does — concrete and shareable.\n' +
-    '  5. Name a specific advanced or under-used feature of the tool that powers the activity (not the basic feature everyone already uses).\n' +
-    '  6. End with the inspiring "so what" — the disposition, agency, or real-world contribution the student takes away beyond the unit.\n\n' +
+    'FIT CHECK FIRST (HONESTY OVERRIDES EVERYTHING): Before writing anything, judge how well ' + tool + ' suits THIS unit\'s central idea and lines of inquiry, and whether a realistic activity with it is doable by a typical ' + yl + ' class. Choose ONE of three verdicts:\n' +
+    '  - "good": the tool\'s everyday core function genuinely serves this unit, AND a simple, realistic activity with it is achievable at this year level.\n' +
+    '  - "stretch": the tool could be bent to fit, but it is not a natural match for this unit, OR making it fit would be too complex or ambitious for ' + yl + '. Treat this almost like a poor fit.\n' +
+    '  - "poor": the tool\'s core function has little to do with this unit\'s topic — for example a robotics or construction kit for a discussion-, literacy-, ethics- or economics-driven unit.\n' +
+    'ONLY a "good" verdict gets an activity. For BOTH "stretch" and "poor", DO NOT invent a forced or contrived activity: instead use "description" to tell the teacher plainly, in 2-3 honest sentences, that ' + tool + ' is not a strong fit for this unit and name the kind of tool or approach that would suit it better. Leave "valueAdd" empty and "steps" empty. Never dress up a stretch or poor fit as a real lesson — if in doubt, mark it "stretch" rather than forcing it.\n\n' +
+    'YOUR JOB (only when the fit is "good"): Write a realistic, age-appropriate activity that a busy ' + yl + ' teacher could actually run, using what ' + tool + ' does every day. Keep it simple and concrete. Do NOT chase novelty, do NOT show off rare or advanced features, and do NOT over-engineer it — favour a solid idea a teacher could start next week over an impressive-sounding one that needs specialist skills or weeks of setup.\n\n' +
+    'The "description" field must be 4-5 plain, classroom-ready sentences that together:\n' +
+    '  1. Say what students actually do with ' + tool + ' (name the unit\'s topic explicitly).\n' +
+    '  2. Connect it directly to one of the unit\'s lines of inquiry or the central idea (name it).\n' +
+    '  3. Describe what students end up making, recording or presenting — concrete and shareable.\n' +
+    '  4. Name the ordinary, everyday feature of ' + tool + ' that powers the activity (the one a teacher would reach for first, not an obscure one).\n' +
+    '  5. Make sure the whole thing is realistic for ' + yl + ' — no specialist engineering, no fantasy scale.\n\n' +
     'SINGLE-TOOL REALITY CHECK (HARD RULE): the whole activity must be genuinely achievable using ONLY ' + tool + '. Do not describe steps that need another app or device unless that capability is built into ' + tool + ' itself. If your idea would need a second app, scope it down to what ' + tool + ' actually does.\n\n' +
     'Return STRICT JSON with this exact shape:\n' +
     '{\n' +
-    '  "description": "For a good/stretch fit: exactly 6 sentences as specified above, flowing prose, no bullet points or numbering. For a POOR fit: 2-3 honest sentences explaining why this tool does not suit this unit and what kind of tool or approach would fit better — do NOT describe a contrived activity.",\n' +
-    '  "valueAdd": "For a good/stretch fit: 2-3 sentences on the deeper learning value this adds (creative agency, transferable skills, authentic audience, future-of-work capability) that a non-digital or generic-digital task could not deliver. For a poor fit: leave empty.",\n' +
-    '  "steps": ["For a good/stretch fit: 4-6 short imperative steps a teacher would follow, including one unexpected element. For a poor fit: empty array."],\n' +
+    '  "description": "For a GOOD fit: 4-5 plain, realistic sentences as specified above, flowing prose, no bullet points or numbering. For a STRETCH or POOR fit: 2-3 honest sentences explaining why this tool does not suit this unit and what kind of tool or approach would fit better — do NOT describe a contrived activity.",\n' +
+    '  "valueAdd": "For a GOOD fit only: 2-3 sentences on the practical learning value this adds that a non-digital or generic task could not deliver. For a stretch or poor fit: leave empty.",\n' +
+    '  "steps": ["For a GOOD fit only: 4-5 short, simple, realistic steps a teacher would follow. For a stretch or poor fit: empty array."],\n' +
     '  "fit": "good" | "stretch" | "poor",\n' +
     '  "fitNote": "If fit is stretch or poor, 1 sentence on why and what would work better. If good, leave empty."\n' +
     '}\n' +
-    'Be honest in "fit": forcing a weak tool onto a unit wastes the teacher\'s time. If this tool is a weak match for this unit\'s central idea and lines of inquiry, say so and mark it "poor".';
+    'Be honest in "fit": forcing a weak or too-complex tool onto a unit wastes the teacher\'s time. When the match is weak or the only way to make it work would be unrealistic for ' + yl + ', mark it "stretch" or "poor" and do not write an activity.';
 
   var aiResult;
   try {

@@ -974,15 +974,19 @@ function renderTechResult(campus,yl,theme,tool,resp){
   // this unit, don't dress it up as a lesson — show the plain explanation, point
   // the teacher back to the tool picker, and skip the enthusiastic scaffolding
   // (Value Add / How do I teach this / try / used) and the pinned chip.
-  if(fit==='poor'){
+  // 2026-06-05: a "stretch" fit is now treated like "poor" — an honest note, not
+  // a forced activity. Both render this plain "Honest fit check" card and skip the
+  // Value Add / How do I teach this / pinned chip. Stretch keeps the amber badge
+  // and amber note border; poor keeps the red note border.
+  if(fit==='poor'||fit==='stretch'){
     var caE=encodeURIComponent(campus),ylE=encodeURIComponent(yl),thE=encodeURIComponent(theme),ciE=encodeURIComponent(editorCi||''),loE=encodeURIComponent(editorLo||'');
     body.innerHTML=
       '<div class="sg" style="margin-bottom:14px">' +
         '<div class="sg-head"><div class="sg-icon" style="background:'+tc+'">'+em+'</div><div class="sg-meta"><div class="sg-type">Honest fit check</div><div class="sg-tool">'+escapeHtml(tool)+'</div></div></div>' +
         '<div class="sg-body">' +
-          '<div class="tech-fit poor" style="margin-bottom:10px">'+fitLabel+'</div>' +
+          '<div class="tech-fit '+fit+'" style="margin-bottom:10px">'+fitLabel+'</div>' +
           '<div class="sg-desc">'+linkifyDesc(desc)+'</div>' +
-          (fitNote?'<div class="tech-fitnote" style="border-left-color:#FF6B6B">'+escapeHtml(fitNote)+'</div>':'') +
+          (fitNote?'<div class="tech-fitnote"'+(fit==='poor'?' style="border-left-color:#FF6B6B"':'')+'>'+escapeHtml(fitNote)+'</div>':'') +
         '</div>' +
       '</div>' +
       '<div class="tech-actions"><button class="tech-btn primary" onclick="openTechPicker(\''+caE+'\',\''+ylE+'\',\''+thE+'\',\''+ciE+'\',\''+loE+'\')">← Choose another tool</button><button class="tech-btn" onclick="regenTechResultFromOverlay(true)">↻ Try again</button><button class="tech-btn" onclick="closeTech()">Done</button></div>' +
