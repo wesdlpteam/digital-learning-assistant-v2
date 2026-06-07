@@ -159,9 +159,9 @@ const REALISTIC_TOOL_USE_RULES = `REALISTIC CLASSROOM USE RULES (HARD RULE):
 // proposing mismatched use-cases — e.g. using Tinkercad to "swap materials", which it
 // cannot simulate). Keyed by the lowercased tool name (matched via toolInventoryKey, so
 // canonical names and variants both resolve). `good`/`avoid` are optional.
-// Covers all 48 approved tools. The "Wise Discussion Chatbots" note is a best-understanding
-// draft (Schoolbox AI discussion bot) pending Nathan's confirmation. A missing note simply
-// falls back to generic behaviour, so adding/correcting one later is safe.
+// Covers all 48 approved tools. (Wise Discussion Chatbots = Schoolbox "AI-guided Student
+// Discussions", confirmed by Nathan 2026-06-07.) A missing note simply falls back to generic
+// behaviour, so adding/correcting one later is safe.
 const TOOL_AFFORDANCE_NOTES = {
   tinkercad: {
     is: 'a 3D design app for modelling solid objects that can be 3D-printed in plastic',
@@ -379,9 +379,9 @@ const TOOL_AFFORDANCE_NOTES = {
     avoid: 'an observation and accessibility aid, not a creation tool.'
   },
   'wise discussion chatbots': {
-    is: 'an AI discussion chatbot built in Schoolbox (the school LMS) that a teacher sets up around a topic, persona or scenario for students to have a written conversation with',
-    good: 'students holding a back-and-forth written discussion with the bot to explore or debate ideas, ask questions, or practise — for example interviewing a historical figure or character, debating a viewpoint, or being prompted with Socratic questions that push their thinking on the unit topic',
-    avoid: 'it is a discussion and thinking partner, not a fact-checked research source or a tool for making a product — do not rely on it for factual accuracy.'
+    is: 'a Schoolbox "AI-guided Student Discussions" activity, added to a class page, where students have a structured written conversation with an AI agent that the teacher sets up and stays in control of (rules, timing, helpfulness level and support)',
+    good: 'introducing a topic, supporting inquiry, and guiding reflection and deeper critical thinking through one of four scenarios — Character Interview (role-play a historical figure, character or scientist to explore perspective), Socratic Tutor (open-ended questions that lead students to their own understanding), Self-Reflection (reflect on learning, strengths, challenges and goals), or Project Ideation (brainstorm and explore ideas for a project or design)',
+    avoid: 'it is a teacher-guided thinking and discussion activity, not a fact-checked research source or a tool for producing a finished artefact.'
   },
   'word clouds abcya': {
     is: 'a tool that turns text into a word cloud where more frequent words appear larger',
