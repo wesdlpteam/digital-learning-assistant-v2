@@ -391,6 +391,16 @@
         </div>
       </div>
 
+      <!-- Suggestion Quality Audit -->
+      <div class="card" style="margin-bottom:14px">
+        <span class="label">🔎 Audit Suggestions</span>
+        <p style="font-size:13px;color:var(--dim);margin-bottom:14px;line-height:1.6">Grades every stored suggestion for teacher-friendly, creative, achievable quality and rewrites the weak ones. Runs on the server — close the Studio anytime. The first run is a dry run (report only); run it again to auto-fix.</p>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <button class="btn-pri" id="btn-suggestion-audit" onclick="startSuggestionAudit()">Start audit</button>
+        </div>
+        <div id="suggestion-audit-panel" style="margin-top:10px"></div>
+      </div>
+
       <!-- Side-by-side campus comparison -->
       <div class="card">
         <span class="label">Side-by-side campus comparison</span>
@@ -662,15 +672,15 @@
 
 <!-- ?v=APP_VERSION cache-busts the code files. Bump this to match APP_VERSION
      in js/00-config-state-utils.js on every deploy so browsers fetch fresh code. -->
-<script src="js/00-config-state-utils.js?v=5.31"></script>
-<script src="js/01-inventory-helpers.js?v=5.31"></script>
-<script src="js/02-ui-load-navigation.js?v=5.31"></script>
-<script src="js/03-dashboard-browse-entry.js?v=5.31"></script>
-<script src="js/04-audit-analytics-live.js?v=5.31"></script>
-<script src="js/05-bulk-setup-libraries.js?v=5.31"></script>
-<script src="js/06-bulk-router-chat.js?v=5.31"></script>
-<script src="js/07-bulk-actions.js?v=5.31"></script>
-<script src="js/09-legacy-restored.js?v=5.31"></script>
-<script src="js/08-export-sync-hotfixes.js?v=5.31"></script>
+<script src="js/00-config-state-utils.js?v=5.32"></script>
+<script src="js/01-inventory-helpers.js?v=5.32"></script>
+<script src="js/02-ui-load-navigation.js?v=5.32"></script>
+<script src="js/03-dashboard-browse-entry.js?v=5.32"></script>
+<script src="js/04-audit-analytics-live.js?v=5.32"></script>
+<script src="js/05-bulk-setup-libraries.js?v=5.32"></script>
+<script src="js/06-bulk-router-chat.js?v=5.32"></script>
+<script src="js/07-bulk-actions.js?v=5.32"></script>
+<script src="js/09-legacy-restored.js?v=5.32"></script>
+<script src="js/08-export-sync-hotfixes.js?v=5.32"></script>
 </body>
 </html>

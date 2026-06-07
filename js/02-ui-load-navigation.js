@@ -461,6 +461,7 @@ function switchTab(tab,btn){
     renderBulkWelcome();
     renderSnapshotsList();
     renderPlaybooksList();
+    if(typeof pollSuggestionAudit === 'function') pollSuggestionAudit();
     ensureLibrariesLoaded().then(() => {
       renderToolInventory();
       renderBulkWelcome();
