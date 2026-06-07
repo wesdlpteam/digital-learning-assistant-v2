@@ -43,6 +43,9 @@ function updateBulkRegenCount(){
 }
 
 // Shared description quality + ordering instructions — referenced by all suggestion-generating prompts
+// KEEP IN SYNC with gas_backend INSPIRING_DESCRIPTION_RULES. The audit grader and
+// all Studio edit paths assume one shared style (twist ban, single-tool reality
+// check, banned-phrase list). Update both copies together.
 const SUGGESTION_STYLE = `DESCRIPTION QUALITY RULES (CRITICAL — read these before writing ANY suggestion):
 
 INNOVATION FIRST: The most innovative, unexpected, and out-of-the-box suggestion must always come first (slot 0). Teachers see the top suggestion first — lead with something that makes them think "I want to try that!" Save the more familiar tools (Seesaw, Canva, Book Creator) for later slots.
@@ -72,6 +75,7 @@ BANNED PHRASES — these make suggestions sound generic and lazy. NEVER write an
 - "document their learning journey"
 - "document their inquiry journey"
 - "Students use [tool] to [vague verb] about [unit theme]."
+- "The twist" / "The twist:" / "Here's the twist" / "the real twist" — never announce a twist by name; write the unexpected angle as a plain sentence.
 
 NAME THE ACTUAL TOPIC — never use "this unit" or "unit focus" as a placeholder:
 - BAD: "Students use Padlet as a collaborative evidence wall for this unit."
@@ -92,6 +96,8 @@ The planner context (central idea, lines of inquiry, activities) should guide th
 - GOOD: "Students use Padlet to build a collaborative debate wall about real-world government decisions, posting arguments, counterarguments and evidence. They respond to peers with evidence-based feedback, then summarise how the debate connects to how governance affects citizens' lives."
 
 TEACHER READABILITY: Write so a primary teacher can picture exactly what happens in the lesson. No jargon, no abstract framing. If a colleague reading the suggestion cannot immediately imagine what students are doing, rewrite it.
+
+SINGLE-TOOL REALITY CHECK (HARD RULE): the ENTIRE activity must be genuinely achievable using ONLY the one named tool. Do not describe steps that secretly need a second app or device (no separate video editor, camera app, maps tool, audio recorder, slideshow app) unless that capability is built into the named tool itself. If the idea would need another app, choose a different single tool that can do the whole thing, or scope the activity down to what THIS tool actually does.
 
 NAME THE TOOL'S FEATURES: Do not treat tools as black boxes. Name the specific feature, mode, or affordance that makes the activity work:
 - BAD: "They combine evidence, concise copy and deliberate design choices" (could be any tool)

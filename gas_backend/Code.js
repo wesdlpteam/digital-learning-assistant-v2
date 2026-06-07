@@ -483,6 +483,34 @@ function doPost(e) {
       return jsonResponse({ message: 'Removed ' + removed + ' server-side regen trigger(s).', removed: removed, user: verifiedEmail });
     }
 
+    // 2026-06-07: live + audit-shared grader. Client edit paths call this to
+    // grade a freshly generated suggestion before showing it.
+    if (action === 'gradesuggestion') {
+      const unit = {
+        ca: body.ca || '', yl: body.yl || '', th: body.th || '',
+        ci: body.ci || '', lo: body.lo || ''
+      };
+      const slotIdx = Number.isInteger(parseInt(body.sugIdx, 10)) ? parseInt(body.sugIdx, 10) : 0;
+      const result = auditGradeSuggestion_(unit, slotIdx, { t: body.t || '', d: body.d || '' });
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+    if (action === 'kickoffsuggestionaudit') {
+      const result = kickoffSuggestionAudit({ dryRun: (typeof body.dryRun === 'boolean') ? body.dryRun : undefined });
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+    if (action === 'suggestionauditstatus') {
+      const result = suggestionAuditStatus();
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+    if (action === 'suggestionauditabort') {
+      const result = suggestionAuditAbort();
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
     // 2026-06-04: repair units whose `s` was contaminated by wrong planner
     // text ("the soup"). Clears the bad plannerText + requeues, then a
     // self-removing trigger regenerates their suggestions from verified ci/lo.
@@ -3908,6 +3936,93 @@ function inspiringYearRule_(yl) {
   return diversityYearRule_(yl);
 }
 
+// 2026-06-07: Deterministic banned-phrase pre-check for the suggestion audit grader.
+// Mirror of tests/banned-phrase.impl.js — keep the two in sync.
+var AUDIT_BANNED_PHRASES = [
+  'for a twist',
+  'the twist:', 'the twist —', "here's the twist", 'here is the twist', 'the real twist', 'the big twist',
+  'connected to the central idea', 'linked to the line of inquiry',
+  'related to the unit theme', 'for this unit', 'in this unit', 'about this unit',
+  "this unit's focus", 'the unit focus', 'connects to the unit focus',
+  'share their learning', 'use the app to present', 'make a simple product',
+  'create a digital product', 'explore the topic', 'connected to the unit',
+  'present their findings', 'record their thinking',
+  'document their learning journey', 'document their inquiry journey'
+];
+
+function auditBannedPhraseHit_(text) {
+  var t = String(text || '').toLowerCase();
+  for (var i = 0; i < AUDIT_BANNED_PHRASES.length; i++) {
+    if (t.indexOf(AUDIT_BANNED_PHRASES[i]) !== -1) return AUDIT_BANNED_PHRASES[i];
+  }
+  return null;
+}
+
+// 2026-06-07: AI quality grader for a single stored suggestion. Returns
+// { pass: bool, reasons: [string], note: string }. Deterministic banned-phrase
+// pre-check runs first (guarantees the known offenders fail regardless of the
+// model). Uses the FAST model — this runs across the whole corpus.
+function auditGradeSuggestion_(unit, slotIdx, sug) {
+  const t = (sug && sug.t) ? String(sug.t) : '';
+  const d = (sug && sug.d) ? String(sug.d) : '';
+
+  // 1) Deterministic pre-check — always authoritative on a hit.
+  const banned = auditBannedPhraseHit_(d);
+  if (banned) {
+    return { pass: false, reasons: ['banned_phrase'], note: 'Contains banned phrase: "' + banned + '"' };
+  }
+  if (!d || d.length < 120) {
+    return { pass: false, reasons: ['too_thin'], note: 'Description is empty or far too short.' };
+  }
+
+  // 2) AI grade against the same rules used to GENERATE suggestions.
+  const rubric = INSPIRING_DESCRIPTION_RULES + '\n' + REALISTIC_TOOL_USE_RULES;
+  const system = 'You are a strict but fair reviewer of primary-school digital-technology activity suggestions for Wesley College (IB PYP). '
+    + 'Judge ONE suggestion against the quality rules. Be conservative: only FAIL on a CLEAR violation; if it is acceptable, PASS. '
+    + 'Fail reasons you may use (only when clearly true): '
+    + '"dull_generic" (boring, templated, could apply to any unit), '
+    + '"tool_as_metaphor" (the tool is used as a vague metaphor, not for its real affordance), '
+    + '"not_achievable" (a primary teacher could not realistically run this with this single tool), '
+    + '"jargon_unreadable" (abstract/edu-jargon; a teacher cannot picture the lesson), '
+    + '"banned_phrase" (lazy templated phrasing). '
+    + 'Return STRICT JSON only: {"pass":true|false,"reasons":["..."],"note":"one short sentence"}.';
+  const user = 'QUALITY RULES:\n' + rubric
+    + '\n\n---\nUNIT: ' + (unit.ca || '') + ' | ' + (unit.yl || '') + ' | "' + (unit.th || '') + '"'
+    + (unit.ci ? '\nCentral Idea: "' + unit.ci + '"' : '')
+    + (unit.lo ? '\nLines of Inquiry: "' + unit.lo + '"' : '')
+    + '\nSLOT: ' + (slotIdx + 1) + ' of 6' + (slotIdx === 5 ? ' (STEM Design Cycle slot)' : '')
+    + '\nTOOL: ' + t
+    + '\nDESCRIPTION: "' + d + '"'
+    + '\n\nGrade this one suggestion. JSON only.';
+
+  let parsed = null;
+  try {
+    const res = callAIProxy_({
+      contents: [{ role: 'user', parts: [{ text: user }] }],
+      systemPrompt: system,
+      model: OPENAI_FAST_MODEL,
+      maxTokens: 300,
+      temperature: 0
+    });
+    let txt = String(res && res.text || '').replace(/```json|```/g, '').trim();
+    const s = txt.indexOf('{'), e = txt.lastIndexOf('}');
+    if (s !== -1 && e !== -1) parsed = JSON.parse(txt.slice(s, e + 1));
+  } catch (err) {
+    Logger.log('auditGradeSuggestion_: grade call failed (' + err + ') — defaulting to PASS to avoid false churn.');
+    return { pass: true, reasons: [], note: 'grader error — passed by default' };
+  }
+  if (!parsed || typeof parsed.pass !== 'boolean') {
+    return { pass: true, reasons: [], note: 'unparseable grade — passed by default' };
+  }
+  return {
+    pass: parsed.pass,
+    reasons: Array.isArray(parsed.reasons) ? parsed.reasons : [],
+    note: String(parsed.note || '')
+  };
+}
+
+// KEEP IN SYNC with js/05 SUGGESTION_STYLE (client copy). Both define the shared
+// writing style; the audit grader uses THIS server copy. Update both together.
 const INSPIRING_DESCRIPTION_RULES = '\nDESCRIPTION STYLE — INSPIRING + INNOVATIVE (the whole point of this regen):\n' +
   'Every description in slots 1-5 must be EXACTLY 6 vivid, classroom-ready sentences. Each sentence has a job:\n' +
   '  Sentence 1: Bold creative premise — what students are actually making, investigating, or experiencing. Name the unit\'s topic explicitly (not "this unit").\n' +
@@ -4480,6 +4595,31 @@ var SERVER_REGEN_TICK_BATCH = 8;
 // 24h time-based guard, which couldn't distinguish yesterday's bad data
 // from this morning's good runs because both fit inside 24h.
 var INSPIRING_REGEN_VERSION = 'r3-2026-05-29';
+
+// 2026-06-07: Suggestion quality audit (separate runner from inspiring regen).
+var SUGGESTION_AUDIT_TICK_HANDLER = 'suggestionAuditTick';
+var SUGGESTION_AUDIT_TICK_MINUTES = 5;          // snappier cadence (spec decision)
+var SUGGESTION_AUDIT_TICK_BATCH = 6;            // units per tick (grade-only / dry run) — stay under the 6-min GAS limit
+var SUGGESTION_AUDIT_FIX_BATCH = 3;             // smaller batch when auto-fixing: each weak slot adds up to 3 AI calls
+var SUGGESTION_AUDIT_VERSION = 'a1-2026-06-07';
+var SUGGESTION_AUDIT_REPORT_FILE = 'suggestion_audit_report.json'; // small file in same Drive folder as data.json
+var SUGGESTION_AUDIT_DRYRUN_PROP = 'SUGGESTION_AUDIT_DRYRUN_DONE'; // set after first real dry run
+
+function suggestionAuditReportFile_() {
+  const parents = DriveApp.getFileById(DATA_JSON_FILE_ID).getParents();
+  const folder = parents.hasNext() ? parents.next() : DriveApp.getRootFolder();
+  const it = folder.getFilesByName(SUGGESTION_AUDIT_REPORT_FILE);
+  if (it.hasNext()) return it.next();
+  return folder.createFile(SUGGESTION_AUDIT_REPORT_FILE, '{}', 'application/json');
+}
+function suggestionAuditReadReport_() {
+  try { return JSON.parse(suggestionAuditReportFile_().getBlob().getDataAsString() || '{}'); }
+  catch (e) { return {}; }
+}
+function suggestionAuditWriteReport_(report) {
+  suggestionAuditReportFile_().setContent(JSON.stringify(report, null, 2));
+}
+
 // 50 distinct units extracted from audit_findings.json (2026-05-28).
 // Hardcoded because this is a one-off cleanup list; after the regen sweep
 // these units will have fresh content and the list is moot.
@@ -4538,6 +4678,14 @@ var SERVER_REGEN_AUDIT_TARGETS = [
 
 function kickoffServerSideRegen(opts) {
   opts = opts || {};
+  // 2026-06-07: reciprocal concurrency guard — refuse if the suggestion-audit
+  // trigger is running. Both this and the audit write the same 11 MB data.json;
+  // interleaving timers would drop one side's edits (last-writer-wins). Mirrors
+  // the guard in kickoffSuggestionAudit.
+  if (typeof SUGGESTION_AUDIT_TICK_HANDLER !== 'undefined' &&
+      ScriptApp.getProjectTriggers().some(function (t) { return t.getHandlerFunction() === SUGGESTION_AUDIT_TICK_HANDLER; })) {
+    return { error: 'busy', reason: 'The suggestion quality audit is running. Wait for it to finish or abort it first before starting a regen.' };
+  }
   const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
   const raw = JSON.parse(file.getBlob().getDataAsString());
   const isArr = Array.isArray(raw);
@@ -5385,32 +5533,9 @@ function stripTwistLabel_(value) {
   return s.replace(/ {2,}/g, ' ').trim();
 }
 
-function regenerateOneInspiringSlot_(body) {
+function regenerateOneInspiringSlotCore_(data, idx, sugIdx, opts) {
+  opts = opts || {};
   try {
-    const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
-    const raw = JSON.parse(file.getBlob().getDataAsString());
-    const isArr = Array.isArray(raw);
-    const data = isArr ? raw : Object.values(raw).filter(function (u) { return u && typeof u === 'object'; });
-
-    const ca = String(body.ca || '');
-    const yl = String(body.yl || '');
-    const th = String(body.th || '');
-    const sugIdx = parseInt(body.sugIdx, 10);
-    if (!Number.isInteger(sugIdx) || sugIdx < 0 || sugIdx > 5) {
-      return { error: 'bad-sugIdx', reason: 'sugIdx must be 0-5' };
-    }
-    let idx = -1;
-    const hintIdx = parseInt(body.idx, 10);
-    if (Number.isInteger(hintIdx) && hintIdx >= 0 && hintIdx < data.length &&
-        data[hintIdx] && data[hintIdx].ca === ca && data[hintIdx].yl === yl && data[hintIdx].th === th) {
-      idx = hintIdx;
-    } else {
-      for (let i = 0; i < data.length; i++) {
-        if (data[i] && data[i].ca === ca && data[i].yl === yl && data[i].th === th) { idx = i; break; }
-      }
-    }
-    if (idx === -1) return { error: 'unit-not-found' };
-
     const target = data[idx];
     if (!inspiringHasUnitDetails_(target)) return { error: 'missing-ci-or-lo' };
     const currentSugs = Array.isArray(target.s) ? target.s.slice() : [];
@@ -5446,7 +5571,8 @@ function regenerateOneInspiringSlot_(body) {
     // When the Studio picker supplies forcedTool, honour it exactly: validate
     // membership + age, block intra-unit duplicates, then ask the model ONLY to
     // write the activity for this tool. No tool-selection loop, no auto-swap.
-    const forcedTool = (typeof body.forcedTool === 'string') ? body.forcedTool.trim() : '';
+    const forcedToolRaw = (opts && opts.forcedTool) || '';
+    const forcedTool = (typeof forcedToolRaw === 'string') ? forcedToolRaw.trim() : '';
     if (forcedTool) {
       const fMembership = inspiringCheckToolMembership_([{ t: forcedTool, d: '' }], approvedSet, bannedSet, target.yl);
       if (!fMembership.ok) {
@@ -5628,6 +5754,203 @@ function regenerateOneInspiringSlot_(body) {
       yl: target.yl,
       th: target.th
     };
+  } catch (err) {
+    Logger.log('regenerateOneInspiringSlotCore_: exception ' + err);
+    return { error: 'exception', message: String(err) };
+  }
+}
+
+// 2026-06-07: surgically rewrite ONE weak slot in-memory. Returns
+// { ok, oldTool, newTool } or { ok:false, reason }. Caller persists data.
+function auditFixSlot_(data, idx, sugIdx) {
+  const unit = data[idx];
+  const before = (unit.s && unit.s[sugIdx]) ? unit.s[sugIdx] : { t: '', d: '' };
+  const gen = regenerateOneInspiringSlotCore_(data, idx, sugIdx, {});
+  if (!gen || !gen.ok || !gen.t || !gen.d) {
+    return { ok: false, reason: (gen && gen.reason) || 'regen-failed', oldTool: before.t || '' };
+  }
+  unit.s[sugIdx] = { t: gen.t, d: gen.d };
+  if (typeof clearHumanVerifiedFlags_ === 'function') {
+    clearHumanVerifiedFlags_(unit, 'Suggestion rewritten by quality audit');
+  }
+  return { ok: true, oldTool: before.t || '', newTool: gen.t };
+}
+
+function suggestionAuditTick() {
+  try {
+    const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+    const raw = JSON.parse(file.getBlob().getDataAsString());
+    const isArr = Array.isArray(raw);
+    const data = isArr ? raw : Object.values(raw).filter(u => u && typeof u === 'object');
+
+    const report = suggestionAuditReadReport_();
+    const dryRun = !!report.dryRun;
+    if (!report.reasons) report.reasons = {};
+    if (!report.changed) report.changed = [];
+    report.total = report.total || data.filter(function (u) { return u && Array.isArray(u.s) && u.s.length; }).length;
+
+    // Auto-fix does up to 3 extra AI calls per weak slot, so use a smaller batch
+    // for it; grade-only (dry run) can process more units per tick.
+    const batchLimit = dryRun ? SUGGESTION_AUDIT_TICK_BATCH : SUGGESTION_AUDIT_FIX_BATCH;
+    const persist_ = function () {
+      const toWrite = isArr ? data : raw;
+      file.setContent(JSON.stringify(toWrite, null, 2));
+      try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e) { Logger.log('audit pushToGitHub failed: ' + e); }
+    };
+    const countRemaining_ = function () {
+      return data.filter(function (uu) {
+        return uu && Array.isArray(uu.s) && uu.s.length && !(uu.suggestionAuditAt && uu.suggestionAuditVersion === SUGGESTION_AUDIT_VERSION);
+      }).length;
+    };
+
+    let processedUnits = 0, changedThisBatch = false;
+    for (let i = 0; i < data.length && processedUnits < batchLimit; i++) {
+      const u = data[i];
+      if (!u || !Array.isArray(u.s) || !u.s.length) continue;
+      if (u.suggestionAuditAt && u.suggestionAuditVersion === SUGGESTION_AUDIT_VERSION) continue; // already audited this version
+      processedUnits++;
+
+      for (let s = 0; s < u.s.length; s++) {
+        const verdict = auditGradeSuggestion_(u, s, u.s[s]);
+        report.graded = (report.graded || 0) + 1;
+        if (!verdict.pass) {
+          (verdict.reasons.length ? verdict.reasons : ['unspecified']).forEach(function (r) {
+            report.reasons[r] = (report.reasons[r] || 0) + 1;
+          });
+          const rec = { ca: u.ca, yl: u.yl, th: u.th, slot: s, reason: verdict.reasons.join(',') || 'unspecified', note: verdict.note, verified: u.humanVerified === true };
+          if (!dryRun) {
+            const fix = auditFixSlot_(data, i, s);
+            if (fix.ok) { report.rewritten = (report.rewritten || 0) + 1; rec.oldTool = fix.oldTool; rec.newTool = fix.newTool; }
+            else { rec.unfixed = true; rec.reason += '|fix:' + fix.reason; }
+          }
+          if (report.changed.length < 500) report.changed.push(rec);
+        }
+      }
+      u.suggestionAuditAt = new Date().toISOString();
+      u.suggestionAuditVersion = SUGGESTION_AUDIT_VERSION;
+      changedThisBatch = true;
+
+      // Persist after EACH unit during auto-fix so a mid-tick GAS timeout loses
+      // zero completed units (the DLA resumable-bulk-ops rule). A dry run only
+      // touches markers, so it persists once at batch end (cheaper).
+      if (!dryRun) {
+        persist_();
+        report.remaining = countRemaining_();
+        report.status = 'running';
+        report.updatedAt = new Date().toISOString();
+        suggestionAuditWriteReport_(report);
+      }
+    }
+
+    if (dryRun && changedThisBatch) {
+      persist_();
+    }
+
+    const remaining = data.filter(function (u) {
+      return u && Array.isArray(u.s) && u.s.length && !(u.suggestionAuditAt && u.suggestionAuditVersion === SUGGESTION_AUDIT_VERSION);
+    }).length;
+    report.remaining = remaining;
+    report.status = remaining === 0 ? 'done' : 'running';
+    report.updatedAt = new Date().toISOString();
+    if (remaining === 0) {
+      report.finishedAt = report.updatedAt;
+      if (dryRun) { PropertiesService.getScriptProperties().setProperty(SUGGESTION_AUDIT_DRYRUN_PROP, '1'); report.status = 'dry-run-done'; }
+      suggestionAuditWriteReport_(report);
+      const removed = removeSuggestionAuditTrigger_();
+      Logger.log('suggestionAuditTick: complete, removed ' + removed + ' trigger(s).');
+    } else {
+      suggestionAuditWriteReport_(report);
+    }
+  } catch (e) {
+    Logger.log('suggestionAuditTick error (will retry next tick): ' + (e && e.stack ? e.stack : e));
+    const r = suggestionAuditReadReport_(); r.status = 'paused'; r.lastError = String(e); suggestionAuditWriteReport_(r);
+  }
+}
+
+function removeSuggestionAuditTrigger_() {
+  const triggers = ScriptApp.getProjectTriggers();
+  let removed = 0;
+  for (let i = 0; i < triggers.length; i++) {
+    if (triggers[i].getHandlerFunction() === SUGGESTION_AUDIT_TICK_HANDLER) { ScriptApp.deleteTrigger(triggers[i]); removed++; }
+  }
+  return removed;
+}
+
+function kickoffSuggestionAudit(opts) {
+  opts = opts || {};
+  // Concurrency guard — don't run alongside the inspiring regen trigger (both write data.json).
+  const existing = ScriptApp.getProjectTriggers().filter(function (t) {
+    return t.getHandlerFunction() === SUGGESTION_AUDIT_TICK_HANDLER || t.getHandlerFunction() === SERVER_REGEN_TICK_HANDLER;
+  });
+  if (existing.length) return { error: 'busy', reason: 'An audit or regen job is already running. Wait for it to finish or abort it first.' };
+
+  const props = PropertiesService.getScriptProperties();
+  // First-ever run is forced to dry-run (spec decision), unless caller explicitly overrides.
+  const firstRunDone = props.getProperty(SUGGESTION_AUDIT_DRYRUN_PROP) === '1';
+  const dryRun = (typeof opts.dryRun === 'boolean') ? opts.dryRun : !firstRunDone;
+
+  // Reset markers so the audit re-grades the whole corpus under this version.
+  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  const raw = JSON.parse(file.getBlob().getDataAsString());
+  const isArr = Array.isArray(raw);
+  const data = isArr ? raw : Object.values(raw).filter(u => u && typeof u === 'object');
+  let total = 0;
+  for (let i = 0; i < data.length; i++) {
+    const u = data[i];
+    if (!u || !Array.isArray(u.s) || !u.s.length) continue;
+    total++;
+    delete u.suggestionAuditAt; delete u.suggestionAuditVersion;
+  }
+  file.setContent(JSON.stringify(isArr ? data : raw, null, 2));
+
+  suggestionAuditWriteReport_({
+    status: 'running', dryRun: dryRun, startedAt: new Date().toISOString(),
+    total: total, graded: 0, rewritten: 0, remaining: total, reasons: {}, changed: []
+  });
+
+  removeSuggestionAuditTrigger_();
+  ScriptApp.newTrigger(SUGGESTION_AUDIT_TICK_HANDLER).timeBased().everyMinutes(SUGGESTION_AUDIT_TICK_MINUTES).create();
+  suggestionAuditTick(); // start immediately
+
+  return {
+    message: 'Suggestion audit started' + (dryRun ? ' (DRY RUN — grades only, no changes).' : ' (auto-fix).')
+      + ' ' + total + ' units. Tick every ' + SUGGESTION_AUDIT_TICK_MINUTES + ' min. You can close the Studio.',
+    dryRun: dryRun, total: total
+  };
+}
+
+function suggestionAuditStatus() {
+  const r = suggestionAuditReadReport_();
+  r.triggerInstalled = ScriptApp.getProjectTriggers().some(function (t) { return t.getHandlerFunction() === SUGGESTION_AUDIT_TICK_HANDLER; });
+  return r;
+}
+
+function suggestionAuditAbort() {
+  const removed = removeSuggestionAuditTrigger_();
+  const r = suggestionAuditReadReport_(); r.status = 'aborted'; suggestionAuditWriteReport_(r);
+  return { message: 'Aborted. Removed ' + removed + ' trigger(s).', removed: removed };
+}
+
+function regenerateOneInspiringSlot_(body) {
+  try {
+    const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+    const raw = JSON.parse(file.getBlob().getDataAsString());
+    const data = Array.isArray(raw) ? raw : Object.values(raw).filter(u => u && typeof u === 'object');
+    const ca = String(body.ca || ''), yl = String(body.yl || ''), th = String(body.th || '');
+    const sugIdx = parseInt(body.sugIdx, 10);
+    if (!Number.isInteger(sugIdx) || sugIdx < 0 || sugIdx > 5) return { error: 'bad-sugIdx', reason: 'sugIdx must be 0-5' };
+    let idx = -1;
+    const hintIdx = parseInt(body.idx, 10);
+    if (Number.isInteger(hintIdx) && hintIdx >= 0 && hintIdx < data.length &&
+        data[hintIdx] && data[hintIdx].ca === ca && data[hintIdx].yl === yl && data[hintIdx].th === th) {
+      idx = hintIdx;
+    } else {
+      for (let i = 0; i < data.length; i++) {
+        if (data[i] && data[i].ca === ca && data[i].yl === yl && data[i].th === th) { idx = i; break; }
+      }
+    }
+    if (idx === -1) return { error: 'unit-not-found' };
+    return regenerateOneInspiringSlotCore_(data, idx, sugIdx, { forcedTool: body.forcedTool });
   } catch (err) {
     Logger.log('regenerateOneInspiringSlot_: exception ' + err);
     return { error: 'exception', message: String(err) };
@@ -5867,4 +6190,12 @@ function finishRepairContaminated(opts) {
     touched: touched,
     reboots: reboots
   };
+}
+
+function testAuditGrader_() {
+  const unit = { ca: 'Test', yl: 'Year 3', th: 'Sharing the Planet', ci: 'Living things depend on each other.', lo: 'Ecosystems; interdependence' };
+  const weak = { t: 'ScratchJr', d: 'Students use ScratchJr to make a story. For a twist, they retell it from another character. They share their learning with the class and present their findings.' };
+  const strong = { t: 'Micro:bit', d: 'Students programme a Micro:bit to log light and temperature in three microhabitats around the school grounds, such as under a log, in open lawn, and beside the pond. Working in pairs they use the accelerometer-free data-logging blocks to capture readings every minute across a lunchtime, then graph the differences. They compare which tiny creatures they predict would thrive in each spot and why, linking conditions to the interdependence of living things. Each pair captures annotated MakeCode screenshots and a 30-second clip of their device in place. They present one habitat-protection action the school could take based on their evidence. The work becomes a corridor display that invites other classes to add their own observations.' };
+  Logger.log('WEAK -> ' + JSON.stringify(auditGradeSuggestion_(unit, 0, weak)));
+  Logger.log('STRONG -> ' + JSON.stringify(auditGradeSuggestion_(unit, 1, strong)));
 }

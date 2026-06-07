@@ -1833,6 +1833,14 @@ ${fullContext}`;
       bulkChatAddMessage('assistant', resultMsg);
       bulkChatMemory.push({ role: 'assistant', content: `Proposed ${changes.length} changes${dupeNote}. Breakdown: ${Object.entries(byTool).map(([t,n])=>`${n}x ${t}`).join(', ')}` });
       window._snapshotReason = `Before: ${bulkChatContext.rawInstruction ? bulkChatContext.rawInstruction.slice(0, 60) : 'bulk edit'}`;
+      // 2026-06-07: live quality gate for bulk proposals — annotate weak ones.
+      bulkChatAddMessage('assistant', 'Checking proposed changes against the style bar…');
+      await Promise.all(changes.map(async (c) => {
+        const entry = DATA[c.entryIdx];
+        if (!entry) return;
+        const g = await gradeSuggestionLive(entry, c.sugIdx, c.t, c.d);
+        if (!g.pass) { c._styleWeak = true; c._styleNote = (g.reasons || []).join(', ') + (g.note ? ' — ' + g.note : ''); }
+      }));
       showChangesPopup(changes);
       bulkChatState = 'done';
     } else {
@@ -1867,3 +1875,60 @@ ${fullContext}`;
 }
 
 // Backward compatibility — detectBulkPlatform no longer needed but keep as no-op
+
+// 2026-06-07: Suggestion Quality Audit — server-side, laptop-off.
+// Mirrors the authenticated-POST mechanism inspireAllBatch uses (06-bulk-router-chat.js):
+// withGASToken(...) + fetch(SCRIPT_URL, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(...)})
+// then reads the JSON response directly (this endpoint is NOT mode:'no-cors' — gas_backend
+// returns real JSON via jsonResponse for these actions, same as regenerateAllInspiring).
+async function auditGasCall_(payload){
+  const body = withGASToken(payload);
+  const response = await fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(body)
+  });
+  return await response.json();
+}
+
+async function startSuggestionAudit() {
+  if (!confirm('Start the Suggestion Quality Audit?\n\nThe first run is a DRY RUN — it grades every suggestion and shows you a report without changing anything. Run it again afterwards to auto-fix.\n\nIt runs on the server, so you can close the Studio.')) return;
+  try {
+    const res = await auditGasCall_({ action: 'kickoffsuggestionaudit' });
+    if (res && res.error) { setStatus('Audit not started: ' + (res.reason || res.error), 'error'); return; }
+    setStatus(res && res.message ? res.message : 'Audit started on the server.', 'success');
+    pollSuggestionAudit();
+  } catch (e) { setStatus('Could not start audit: ' + e.message, 'error'); }
+}
+
+async function pollSuggestionAudit() {
+  const panel = document.getElementById('suggestion-audit-panel');
+  if (!panel) return;
+  try {
+    const r = await auditGasCall_({ action: 'suggestionauditstatus' });
+    const reasons = r.reasons ? Object.entries(r.reasons).map(([k, v]) => `${v} ${k.replace(/_/g, ' ')}`).join(' · ') : '';
+    const dry = r.dryRun ? ' <span style="color:var(--gold)">(dry run)</span>' : '';
+    panel.innerHTML = `
+      <div style="font-size:12px;line-height:1.6">
+        <strong>Audit${dry}:</strong> ${r.status || 'unknown'}<br>
+        Graded ${r.graded || 0} / ${r.total || 0} · ${r.rewritten || 0} rewritten · ${r.remaining ?? '?'} left<br>
+        ${reasons ? `<span style="color:var(--dim)">Weak by reason: ${reasons}</span>` : ''}
+        ${(r.status === 'dry-run-done') ? `<br><button class="btn-pri" onclick="confirmAuditAutoFix()">Looks right — run the auto-fix</button>` : ''}
+        ${(r.status === 'running') ? `<br><button class="btn-sm" onclick="abortSuggestionAudit()">Stop</button>` : ''}
+      </div>`;
+    if (r.status === 'running') setTimeout(pollSuggestionAudit, 20000);
+  } catch (e) { panel.innerHTML = `<span style="color:#f87171">Status check failed: ${e.message}</span>`; }
+}
+
+async function confirmAuditAutoFix() {
+  if (!confirm('Run the auto-fix now? This rewrites every suggestion the audit graded as weak.')) return;
+  const res = await auditGasCall_({ action: 'kickoffsuggestionaudit', dryRun: false });
+  setStatus(res && res.message ? res.message : 'Auto-fix started.', 'success');
+  pollSuggestionAudit();
+}
+
+async function abortSuggestionAudit() {
+  const res = await auditGasCall_({ action: 'suggestionauditabort' });
+  setStatus(res && res.message ? res.message : 'Aborted.', 'success');
+  pollSuggestionAudit();
+}

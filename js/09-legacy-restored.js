@@ -404,7 +404,7 @@ function showChangesPopup(changes){
       </div>
       <div style="padding:10px 12px;background:#081808;border:1px solid #183818;border-radius:10px;min-width:0">
         <div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:700">Suggested replacement</div>
-        <div style="font-size:14px;font-weight:900;color:var(--lime);margin-bottom:6px;line-height:1.25">${esc(newTool)}</div>
+        <div style="font-size:14px;font-weight:900;color:var(--lime);margin-bottom:6px;line-height:1.25">${esc(newTool)}${c._styleWeak ? ` <span title="${(typeof esc==='function'?esc(c._styleNote||''):(c._styleNote||''))}" style="color:var(--gold);font-size:10px">⚠ style: ${(typeof esc==='function'?esc(c._styleNote||''):(c._styleNote||''))}</span>` : ''}</div>
         <div style="font-size:12px;color:#d8d8d8;line-height:1.6;max-height:220px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;padding-right:6px">${linkify(newDesc||'No description')}</div>
         ${newUrlHtml}
       </div>
