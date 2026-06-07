@@ -2328,6 +2328,28 @@ Return ONLY a JSON array of exactly 3 suggestions:
 
     window['_fbsugs_'+uid] = filtered;
 
+    // 2026-06-07: live quality gate — grade each candidate; if none pass, redo once.
+    sendBtn.textContent = 'Checking style…';
+    let graded = await Promise.all(filtered.map(s => gradeSuggestionLive(entry, sugIdx, s.t, s.d)));
+    if (!graded.some(g => g.pass)) {
+      const reasons = [...new Set(graded.flatMap(g => g.reasons || []))].join(', ');
+      const redoPrompt = prompt + `\n\nThe previous options were graded WEAK (${reasons}). Rewrite all 3 to fix this — vivid, specific, achievable, no banned phrasing.`;
+      try {
+        const raw2 = await callAI([{role:'user',parts:[{text:redoPrompt}]}], null, OPENAI_FAST_MODEL);
+        const c2 = raw2.replace(/```json|```/g,'').trim();
+        const a = c2.indexOf('['), b = c2.lastIndexOf(']');
+        if (a !== -1 && b !== -1) {
+          const re = JSON.parse(c2.slice(a, b+1)).filter(s => s && s.t);
+          if (re.length) {
+            filtered.length = 0; re.forEach(s => filtered.push(s));
+            window['_fbsugs_'+uid] = filtered;
+            graded = await Promise.all(filtered.map(s => gradeSuggestionLive(entry, sugIdx, s.t, s.d)));
+          }
+        }
+      } catch (e) { /* keep originals; annotate below */ }
+    }
+    const styleNote = filtered.map((s,i) => (graded[i] && graded[i].pass) ? '' : ` <span title="${esc((graded[i]&&graded[i].note)||'')}" style="color:var(--gold);font-size:10px">⚠ style</span>`);
+
     let rejectedBanner = '';
     if(rejected.length){
       rejectedBanner = `<div style="padding:8px 12px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:8px;margin-bottom:8px;font-size:11px;color:var(--gold);line-height:1.5">
@@ -2339,7 +2361,7 @@ Return ONLY a JSON array of exactly 3 suggestions:
       <div style="padding:10px 14px;background:#0a1a0a;border:1px solid #1e3a1e;border-radius:8px;margin-bottom:8px">
         <div style="display:flex;align-items:flex-start;gap:8px">
           <div style="flex:1">
-            <div style="font-size:13px;font-weight:700;color:var(--lime);margin-bottom:2px">${esc(s.t)}</div>
+            <div style="font-size:13px;font-weight:700;color:var(--lime);margin-bottom:2px">${esc(s.t)}${styleNote[i]||''}</div>
             <div style="font-size:12px;color:#aaa;line-height:1.5">${esc(s.d)}</div>
           </div>
           <button onclick="confirmSugFeedback(${entryIdx},${sugIdx},'${uid}',${i})" style="flex-shrink:0;padding:7px 14px;background:var(--lime);color:#111;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer">Apply</button>
