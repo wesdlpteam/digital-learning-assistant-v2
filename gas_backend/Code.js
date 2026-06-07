@@ -4021,6 +4021,8 @@ function auditGradeSuggestion_(unit, slotIdx, sug) {
   };
 }
 
+// KEEP IN SYNC with js/05 SUGGESTION_STYLE (client copy). Both define the shared
+// writing style; the audit grader uses THIS server copy. Update both together.
 const INSPIRING_DESCRIPTION_RULES = '\nDESCRIPTION STYLE — INSPIRING + INNOVATIVE (the whole point of this regen):\n' +
   'Every description in slots 1-5 must be EXACTLY 6 vivid, classroom-ready sentences. Each sentence has a job:\n' +
   '  Sentence 1: Bold creative premise — what students are actually making, investigating, or experiencing. Name the unit\'s topic explicitly (not "this unit").\n' +
