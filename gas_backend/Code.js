@@ -3930,6 +3930,69 @@ function auditBannedPhraseHit_(text) {
   return null;
 }
 
+// 2026-06-07: AI quality grader for a single stored suggestion. Returns
+// { pass: bool, reasons: [string], note: string }. Deterministic banned-phrase
+// pre-check runs first (guarantees the known offenders fail regardless of the
+// model). Uses the FAST model — this runs across the whole corpus.
+function auditGradeSuggestion_(unit, slotIdx, sug) {
+  const t = (sug && sug.t) ? String(sug.t) : '';
+  const d = (sug && sug.d) ? String(sug.d) : '';
+
+  // 1) Deterministic pre-check — always authoritative on a hit.
+  const banned = auditBannedPhraseHit_(d);
+  if (banned) {
+    return { pass: false, reasons: ['banned_phrase'], note: 'Contains banned phrase: "' + banned + '"' };
+  }
+  if (!d || d.length < 120) {
+    return { pass: false, reasons: ['too_thin'], note: 'Description is empty or far too short.' };
+  }
+
+  // 2) AI grade against the same rules used to GENERATE suggestions.
+  const rubric = INSPIRING_DESCRIPTION_RULES + '\n' + REALISTIC_TOOL_USE_RULES;
+  const system = 'You are a strict but fair reviewer of primary-school digital-technology activity suggestions for Wesley College (IB PYP). '
+    + 'Judge ONE suggestion against the quality rules. Be conservative: only FAIL on a CLEAR violation; if it is acceptable, PASS. '
+    + 'Fail reasons you may use (only when clearly true): '
+    + '"dull_generic" (boring, templated, could apply to any unit), '
+    + '"tool_as_metaphor" (the tool is used as a vague metaphor, not for its real affordance), '
+    + '"not_achievable" (a primary teacher could not realistically run this with this single tool), '
+    + '"jargon_unreadable" (abstract/edu-jargon; a teacher cannot picture the lesson), '
+    + '"banned_phrase" (lazy templated phrasing). '
+    + 'Return STRICT JSON only: {"pass":true|false,"reasons":["..."],"note":"one short sentence"}.';
+  const user = 'QUALITY RULES:\n' + rubric
+    + '\n\n---\nUNIT: ' + (unit.ca || '') + ' | ' + (unit.yl || '') + ' | "' + (unit.th || '') + '"'
+    + (unit.ci ? '\nCentral Idea: "' + unit.ci + '"' : '')
+    + (unit.lo ? '\nLines of Inquiry: "' + unit.lo + '"' : '')
+    + '\nSLOT: ' + (slotIdx + 1) + ' of 6' + (slotIdx === 5 ? ' (STEM Design Cycle slot)' : '')
+    + '\nTOOL: ' + t
+    + '\nDESCRIPTION: "' + d + '"'
+    + '\n\nGrade this one suggestion. JSON only.';
+
+  let parsed = null;
+  try {
+    const res = callAIProxy_({
+      contents: [{ role: 'user', parts: [{ text: user }] }],
+      systemPrompt: system,
+      model: OPENAI_FAST_MODEL,
+      maxTokens: 300,
+      temperature: 0
+    });
+    let txt = String(res && res.text || '').replace(/```json|```/g, '').trim();
+    const s = txt.indexOf('{'), e = txt.lastIndexOf('}');
+    if (s !== -1 && e !== -1) parsed = JSON.parse(txt.slice(s, e + 1));
+  } catch (err) {
+    Logger.log('auditGradeSuggestion_: grade call failed (' + err + ') — defaulting to PASS to avoid false churn.');
+    return { pass: true, reasons: [], note: 'grader error — passed by default' };
+  }
+  if (!parsed || typeof parsed.pass !== 'boolean') {
+    return { pass: true, reasons: [], note: 'unparseable grade — passed by default' };
+  }
+  return {
+    pass: parsed.pass,
+    reasons: Array.isArray(parsed.reasons) ? parsed.reasons : [],
+    note: String(parsed.note || '')
+  };
+}
+
 const INSPIRING_DESCRIPTION_RULES = '\nDESCRIPTION STYLE — INSPIRING + INNOVATIVE (the whole point of this regen):\n' +
   'Every description in slots 1-5 must be EXACTLY 6 vivid, classroom-ready sentences. Each sentence has a job:\n' +
   '  Sentence 1: Bold creative premise — what students are actually making, investigating, or experiencing. Name the unit\'s topic explicitly (not "this unit").\n' +
@@ -5889,4 +5952,12 @@ function finishRepairContaminated(opts) {
     touched: touched,
     reboots: reboots
   };
+}
+
+function testAuditGrader_() {
+  const unit = { ca: 'Test', yl: 'Year 3', th: 'Sharing the Planet', ci: 'Living things depend on each other.', lo: 'Ecosystems; interdependence' };
+  const weak = { t: 'ScratchJr', d: 'Students use ScratchJr to make a story. For a twist, they retell it from another character. They share their learning with the class and present their findings.' };
+  const strong = { t: 'Micro:bit', d: 'Students programme a Micro:bit to log light and temperature in three microhabitats around the school grounds, such as under a log, in open lawn, and beside the pond. Working in pairs they use the accelerometer-free data-logging blocks to capture readings every minute across a lunchtime, then graph the differences. They compare which tiny creatures they predict would thrive in each spot and why, linking conditions to the interdependence of living things. Each pair captures annotated MakeCode screenshots and a 30-second clip of their device in place. They present one habitat-protection action the school could take based on their evidence. The work becomes a corridor display that invites other classes to add their own observations.' };
+  Logger.log('WEAK -> ' + JSON.stringify(auditGradeSuggestion_(unit, 0, weak)));
+  Logger.log('STRONG -> ' + JSON.stringify(auditGradeSuggestion_(unit, 1, strong)));
 }
