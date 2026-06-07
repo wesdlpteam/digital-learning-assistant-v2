@@ -1,8 +1,14 @@
-# Suggestion Quality Audit — Design Spec
+# Suggestion Quality Audit + Consistent-Style Editing — Design Spec
 
 **Date:** 2026-06-07
 **Author:** Nathan Benn (commissioned) / Claude (design)
 **Status:** Approved design — pending spec review, then implementation plan
+
+> **Scope note (added 2026-06-07):** This spec now covers TWO related workstreams that
+> share one AI grader: **(1)** a one-off-then-repeatable server-side audit that fixes the
+> stored corpus, and **(2)** making the new writing style apply consistently whenever a
+> curator edits in the Studio (Bulk AI Edit + per-suggestion Feedback), including a live
+> quality check. Root cause for WS2 is documented in "Workstream 2" below.
 
 ---
 
@@ -171,10 +177,86 @@ Studio status panel  ◄──poll Drive suggestion_audit_report.json──  rep
    `suggestionAuditAt` stamped, report accurate, trigger self-removes.
 4. Confirm laptop-off: kick off, close browser, verify progress advances on next open.
 
+---
+
+# Workstream 2 — Consistent new style across Studio edit paths
+
+## Root cause (verified 2026-06-07)
+
+The writing rules exist in **two drifted copies**:
+
+- **Server:** `INSPIRING_DESCRIPTION_RULES` (`gas_backend/Code.js:3911-3931`) — the *new*
+  style: strict 6-sentence per-sentence template, **explicit ban on announcing "the twist"**
+  ("The twist:" / "Here's the twist" / "the real twist"), a SINGLE-TOOL REALITY CHECK hard
+  rule, and the corpus runs every output through `stripTwistLabel_()`. Used by the server
+  actions: `regenerateallinspiring`, `regenerateoneinspiring`, `regenerateoneinspiringslot`,
+  sweep. So **Inspire All / Generate 6 / per-slot ↻ already produce the new style.**
+- **Studio client:** `SUGGESTION_STYLE` (`js/05-bulk-setup-libraries.js:46-145`) — the *older*
+  style. No "twist" ban, no `stripTwistLabel_`, different structure. Injected into the
+  client-side paths: **Bulk AI Edit chat** (`js/07-bulk-actions.js:68,415,549,1429,1579`) and
+  **per-suggestion Feedback chat** (`js/06-bulk-router-chat.js:2287`). Legacy fallbacks in
+  `js/09` carry yet more copies (`1183,1333,1394,3218`).
+
+**Consequence:** editing a lesson via Feedback, or running a Bulk AI Edit, can still *generate*
+"For a twist…" phrasing — it is not only legacy stored data. This is what Nathan is seeing.
+
+## Decision (spec review)
+**Same rules everywhere + a live quality check** on the two interactive client paths.
+
+## Design
+
+1. **Unify the rules (single source, drift-guarded).**
+   - Update the client `SUGGESTION_STYLE` so its description-style + banned-phrases content
+     matches the server's `INSPIRING_DESCRIPTION_RULES`: add the explicit "do not announce the
+     twist" ban, the SINGLE-TOOL REALITY CHECK hard rule, "present their findings" to the
+     banned list, and the per-sentence-job framing. Keep the client-only additions that the
+     server expresses elsewhere (Podcasting/Animate/Green-Screen/Minecraft rules) — these are
+     NOT a drift, they're client conveniences; leave them.
+   - Add a load-bearing comment at BOTH definitions: `// KEEP IN SYNC with the other copy
+     (gas_backend INSPIRING_DESCRIPTION_RULES <-> js/05 SUGGESTION_STYLE). Grader + all edit
+     paths assume one shared style.` This is the cheap drift guard (no runtime fetch).
+
+2. **Strip "twist" labels on the client output paths.** Port the server's `stripTwistLabel_`
+   logic into a client helper (`js/00-config-state-utils.js`, beside the other text cleaners)
+   and apply it to suggestion text produced by Bulk AI Edit and the Feedback chat before the
+   draft is shown / saved — exactly where the server applies it to its own output.
+
+3. **One shared grader, reused live.** The audit's grader (`auditGradeSuggestion_`, WS1) is
+   exposed as a server action `gradesuggestion` (doPost) returning
+   `{pass, reasons[], note}`. The two interactive client paths call it after generating a
+   draft and **before** showing it: if `pass === false`, automatically re-generate once
+   (same path, with the grader's `reasons` appended to the prompt as a fix hint); if it still
+   fails, show the draft anyway with a small "couldn't fully meet the style bar — review"
+   note rather than blocking the curator. This keeps the grader rubric identical to the audit
+   (no third definition of "good").
+   - **Transport:** reuse the exact request/response mechanism the existing `callAI()` client
+     helper already uses to read AI results (the Feedback/Bulk paths already read responses,
+     so a readable channel exists — the implementation reads `callAI`'s definition and mirrors
+     it for the grade call). Grading uses `OPENAI_FAST_MODEL` (gpt-4.1-mini).
+
+4. **Live-check UX:** one extra short "checking style…" beat after generate, before the draft
+   appears. The auto-redo is capped at one retry to bound latency/cost (per Nathan: accepts a
+   few seconds + extra cost for the strongest guarantee).
+
+## WS2 testing (manual)
+- Feed the 24 known "For a twist" descriptions through the client `stripTwistLabel_` port →
+  confirm labels removed, sentence still reads naturally.
+- In the Studio: run a Feedback edit that would historically yield "For a twist"; confirm the
+  output is in the new style and any twist label is stripped.
+- Confirm the grade gate: force a weak draft (e.g. instruct "write 2 vague sentences"),
+  confirm it auto-redoes once and surfaces the note if still weak.
+- Confirm the client and server rule text now agree on: twist ban, single-tool reality check,
+  banned-phrase list.
+
+---
+
 ## Out of scope (YAGNI)
-- No per-suggestion manual approve UI (Nathan chose auto-fix).
+- No per-suggestion manual approve UI for the audit (Nathan chose auto-fix).
 - No re-grading of `index.html`'s public "Have a tool in mind?" live picker (separate path).
-- No change to the generation rules themselves — this audits/repairs stored output only.
+- No runtime fetch of rules from server to client — the sync-comment guard is sufficient
+  (avoids a load-time dependency).
+- No live grade gate on the *server* regen buttons (Inspire All / Generate 6 / ↻) — those
+  already use the new rules; the periodic audit is their safety net.
 
 ## Resolved decisions (spec review, 2026-06-07)
 - **Trigger interval: 5 minutes** (`everyMinutes(5)`). Snappier; per-tick batch size still
