@@ -495,6 +495,21 @@ function doPost(e) {
       result.user = verifiedEmail;
       return jsonResponse(result);
     }
+    if (action === 'kickoffsuggestionaudit') {
+      const result = kickoffSuggestionAudit({ dryRun: (typeof body.dryRun === 'boolean') ? body.dryRun : undefined });
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+    if (action === 'suggestionauditstatus') {
+      const result = suggestionAuditStatus();
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+    if (action === 'suggestionauditabort') {
+      const result = suggestionAuditAbort();
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
 
     // 2026-06-04: repair units whose `s` was contaminated by wrong planner
     // text ("the soup"). Clears the bad plannerText + requeues, then a
@@ -5825,6 +5840,61 @@ function removeSuggestionAuditTrigger_() {
     if (triggers[i].getHandlerFunction() === SUGGESTION_AUDIT_TICK_HANDLER) { ScriptApp.deleteTrigger(triggers[i]); removed++; }
   }
   return removed;
+}
+
+function kickoffSuggestionAudit(opts) {
+  opts = opts || {};
+  // Concurrency guard — don't run alongside the inspiring regen trigger (both write data.json).
+  const existing = ScriptApp.getProjectTriggers().filter(function (t) {
+    return t.getHandlerFunction() === SUGGESTION_AUDIT_TICK_HANDLER || t.getHandlerFunction() === SERVER_REGEN_TICK_HANDLER;
+  });
+  if (existing.length) return { error: 'busy', reason: 'An audit or regen job is already running. Wait for it to finish or abort it first.' };
+
+  const props = PropertiesService.getScriptProperties();
+  // First-ever run is forced to dry-run (spec decision), unless caller explicitly overrides.
+  const firstRunDone = props.getProperty(SUGGESTION_AUDIT_DRYRUN_PROP) === '1';
+  const dryRun = (typeof opts.dryRun === 'boolean') ? opts.dryRun : !firstRunDone;
+
+  // Reset markers so the audit re-grades the whole corpus under this version.
+  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  const raw = JSON.parse(file.getBlob().getDataAsString());
+  const isArr = Array.isArray(raw);
+  const data = isArr ? raw : Object.values(raw).filter(u => u && typeof u === 'object');
+  let total = 0;
+  for (let i = 0; i < data.length; i++) {
+    const u = data[i];
+    if (!u || !Array.isArray(u.s) || !u.s.length) continue;
+    total++;
+    delete u.suggestionAuditAt; delete u.suggestionAuditVersion;
+  }
+  file.setContent(JSON.stringify(isArr ? data : raw, null, 2));
+
+  suggestionAuditWriteReport_({
+    status: 'running', dryRun: dryRun, startedAt: new Date().toISOString(),
+    total: total, graded: 0, rewritten: 0, remaining: total, reasons: {}, changed: []
+  });
+
+  removeSuggestionAuditTrigger_();
+  ScriptApp.newTrigger(SUGGESTION_AUDIT_TICK_HANDLER).timeBased().everyMinutes(SUGGESTION_AUDIT_TICK_MINUTES).create();
+  suggestionAuditTick(); // start immediately
+
+  return {
+    message: 'Suggestion audit started' + (dryRun ? ' (DRY RUN — grades only, no changes).' : ' (auto-fix).')
+      + ' ' + total + ' units. Tick every ' + SUGGESTION_AUDIT_TICK_MINUTES + ' min. You can close the Studio.',
+    dryRun: dryRun, total: total
+  };
+}
+
+function suggestionAuditStatus() {
+  const r = suggestionAuditReadReport_();
+  r.triggerInstalled = ScriptApp.getProjectTriggers().some(function (t) { return t.getHandlerFunction() === SUGGESTION_AUDIT_TICK_HANDLER; });
+  return r;
+}
+
+function suggestionAuditAbort() {
+  const removed = removeSuggestionAuditTrigger_();
+  const r = suggestionAuditReadReport_(); r.status = 'aborted'; suggestionAuditWriteReport_(r);
+  return { message: 'Aborted. Removed ' + removed + ' trigger(s).', removed: removed };
 }
 
 function regenerateOneInspiringSlot_(body) {
