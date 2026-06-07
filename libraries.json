@@ -47,6 +47,7 @@
         "Sphero Indi",
         "Stop Motion Studio",
         "Tablet Magnifiers",
+        "Teachable Machine",
         "Tinkercad",
         "Wise Discussion Chatbots",
         "Word Clouds ABCya"
@@ -258,7 +259,18 @@
         "slow motion physical analysis": {
           "min": -2,
           "max": 1
+        },
+        "teachable machine": {
+          "min": 1,
+          "max": 6
         }
+      }
+    },
+    "_toolAffordances": {
+      "teachable machine": {
+        "is": "Teachable Machine is a web-based tool that lets students create simple machine learning models by training the computer to recognise images, sounds, or poses.",
+        "good": "Students can make projects that identify objects, recognise their voice commands, or detect body movements to create interactive stories or games.",
+        "avoid": "Avoid using it for complex or highly accurate machine learning tasks as it is designed for basic, educational purposes only."
       }
     }
   },
