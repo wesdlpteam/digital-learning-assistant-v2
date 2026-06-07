@@ -5483,32 +5483,9 @@ function stripTwistLabel_(value) {
   return s.replace(/ {2,}/g, ' ').trim();
 }
 
-function regenerateOneInspiringSlot_(body) {
+function regenerateOneInspiringSlotCore_(data, idx, sugIdx, opts) {
+  opts = opts || {};
   try {
-    const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
-    const raw = JSON.parse(file.getBlob().getDataAsString());
-    const isArr = Array.isArray(raw);
-    const data = isArr ? raw : Object.values(raw).filter(function (u) { return u && typeof u === 'object'; });
-
-    const ca = String(body.ca || '');
-    const yl = String(body.yl || '');
-    const th = String(body.th || '');
-    const sugIdx = parseInt(body.sugIdx, 10);
-    if (!Number.isInteger(sugIdx) || sugIdx < 0 || sugIdx > 5) {
-      return { error: 'bad-sugIdx', reason: 'sugIdx must be 0-5' };
-    }
-    let idx = -1;
-    const hintIdx = parseInt(body.idx, 10);
-    if (Number.isInteger(hintIdx) && hintIdx >= 0 && hintIdx < data.length &&
-        data[hintIdx] && data[hintIdx].ca === ca && data[hintIdx].yl === yl && data[hintIdx].th === th) {
-      idx = hintIdx;
-    } else {
-      for (let i = 0; i < data.length; i++) {
-        if (data[i] && data[i].ca === ca && data[i].yl === yl && data[i].th === th) { idx = i; break; }
-      }
-    }
-    if (idx === -1) return { error: 'unit-not-found' };
-
     const target = data[idx];
     if (!inspiringHasUnitDetails_(target)) return { error: 'missing-ci-or-lo' };
     const currentSugs = Array.isArray(target.s) ? target.s.slice() : [];
@@ -5544,7 +5521,8 @@ function regenerateOneInspiringSlot_(body) {
     // When the Studio picker supplies forcedTool, honour it exactly: validate
     // membership + age, block intra-unit duplicates, then ask the model ONLY to
     // write the activity for this tool. No tool-selection loop, no auto-swap.
-    const forcedTool = (typeof body.forcedTool === 'string') ? body.forcedTool.trim() : '';
+    const forcedToolRaw = (opts && opts.forcedTool) || '';
+    const forcedTool = (typeof forcedToolRaw === 'string') ? forcedToolRaw.trim() : '';
     if (forcedTool) {
       const fMembership = inspiringCheckToolMembership_([{ t: forcedTool, d: '' }], approvedSet, bannedSet, target.yl);
       if (!fMembership.ok) {
@@ -5726,6 +5704,32 @@ function regenerateOneInspiringSlot_(body) {
       yl: target.yl,
       th: target.th
     };
+  } catch (err) {
+    Logger.log('regenerateOneInspiringSlotCore_: exception ' + err);
+    return { error: 'exception', message: String(err) };
+  }
+}
+
+function regenerateOneInspiringSlot_(body) {
+  try {
+    const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+    const raw = JSON.parse(file.getBlob().getDataAsString());
+    const data = Array.isArray(raw) ? raw : Object.values(raw).filter(u => u && typeof u === 'object');
+    const ca = String(body.ca || ''), yl = String(body.yl || ''), th = String(body.th || '');
+    const sugIdx = parseInt(body.sugIdx, 10);
+    if (!Number.isInteger(sugIdx) || sugIdx < 0 || sugIdx > 5) return { error: 'bad-sugIdx', reason: 'sugIdx must be 0-5' };
+    let idx = -1;
+    const hintIdx = parseInt(body.idx, 10);
+    if (Number.isInteger(hintIdx) && hintIdx >= 0 && hintIdx < data.length &&
+        data[hintIdx] && data[hintIdx].ca === ca && data[hintIdx].yl === yl && data[hintIdx].th === th) {
+      idx = hintIdx;
+    } else {
+      for (let i = 0; i < data.length; i++) {
+        if (data[i] && data[i].ca === ca && data[i].yl === yl && data[i].th === th) { idx = i; break; }
+      }
+    }
+    if (idx === -1) return { error: 'unit-not-found' };
+    return regenerateOneInspiringSlotCore_(data, idx, sugIdx, { forcedTool: body.forcedTool });
   } catch (err) {
     Logger.log('regenerateOneInspiringSlot_: exception ' + err);
     return { error: 'exception', message: String(err) };
