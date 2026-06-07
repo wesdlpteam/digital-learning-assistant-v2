@@ -3908,6 +3908,28 @@ function inspiringYearRule_(yl) {
   return diversityYearRule_(yl);
 }
 
+// 2026-06-07: Deterministic banned-phrase pre-check for the suggestion audit grader.
+// Mirror of tests/banned-phrase.impl.js — keep the two in sync.
+var AUDIT_BANNED_PHRASES = [
+  'for a twist',
+  'the twist:', 'the twist —', "here's the twist", 'here is the twist', 'the real twist', 'the big twist',
+  'connected to the central idea', 'linked to the line of inquiry',
+  'related to the unit theme', 'for this unit', 'in this unit', 'about this unit',
+  "this unit's focus", 'the unit focus', 'connects to the unit focus',
+  'share their learning', 'use the app to present', 'make a simple product',
+  'create a digital product', 'explore the topic', 'connected to the unit',
+  'present their findings', 'record their thinking',
+  'document their learning journey', 'document their inquiry journey'
+];
+
+function auditBannedPhraseHit_(text) {
+  var t = String(text || '').toLowerCase();
+  for (var i = 0; i < AUDIT_BANNED_PHRASES.length; i++) {
+    if (t.indexOf(AUDIT_BANNED_PHRASES[i]) !== -1) return AUDIT_BANNED_PHRASES[i];
+  }
+  return null;
+}
+
 const INSPIRING_DESCRIPTION_RULES = '\nDESCRIPTION STYLE — INSPIRING + INNOVATIVE (the whole point of this regen):\n' +
   'Every description in slots 1-5 must be EXACTLY 6 vivid, classroom-ready sentences. Each sentence has a job:\n' +
   '  Sentence 1: Bold creative premise — what students are actually making, investigating, or experiencing. Name the unit\'s topic explicitly (not "this unit").\n' +
