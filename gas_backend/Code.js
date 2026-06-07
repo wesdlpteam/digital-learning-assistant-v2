@@ -4578,6 +4578,30 @@ var SERVER_REGEN_TICK_BATCH = 8;
 // 24h time-based guard, which couldn't distinguish yesterday's bad data
 // from this morning's good runs because both fit inside 24h.
 var INSPIRING_REGEN_VERSION = 'r3-2026-05-29';
+
+// 2026-06-07: Suggestion quality audit (separate runner from inspiring regen).
+var SUGGESTION_AUDIT_TICK_HANDLER = 'suggestionAuditTick';
+var SUGGESTION_AUDIT_TICK_MINUTES = 5;          // snappier cadence (spec decision)
+var SUGGESTION_AUDIT_TICK_BATCH = 6;            // units per tick — stay under the 6-min GAS limit
+var SUGGESTION_AUDIT_VERSION = 'a1-2026-06-07';
+var SUGGESTION_AUDIT_REPORT_FILE = 'suggestion_audit_report.json'; // small file in same Drive folder as data.json
+var SUGGESTION_AUDIT_DRYRUN_PROP = 'SUGGESTION_AUDIT_DRYRUN_DONE'; // set after first real dry run
+
+function suggestionAuditReportFile_() {
+  const parents = DriveApp.getFileById(DATA_JSON_FILE_ID).getParents();
+  const folder = parents.hasNext() ? parents.next() : DriveApp.getRootFolder();
+  const it = folder.getFilesByName(SUGGESTION_AUDIT_REPORT_FILE);
+  if (it.hasNext()) return it.next();
+  return folder.createFile(SUGGESTION_AUDIT_REPORT_FILE, '{}', 'application/json');
+}
+function suggestionAuditReadReport_() {
+  try { return JSON.parse(suggestionAuditReportFile_().getBlob().getDataAsString() || '{}'); }
+  catch (e) { return {}; }
+}
+function suggestionAuditWriteReport_(report) {
+  suggestionAuditReportFile_().setContent(JSON.stringify(report, null, 2));
+}
+
 // 50 distinct units extracted from audit_findings.json (2026-05-28).
 // Hardcoded because this is a one-off cleanup list; after the regen sweep
 // these units will have fresh content and the list is moot.
