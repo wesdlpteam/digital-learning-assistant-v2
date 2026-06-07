@@ -5750,6 +5750,83 @@ function auditFixSlot_(data, idx, sugIdx) {
   return { ok: true, oldTool: before.t || '', newTool: gen.t };
 }
 
+function suggestionAuditTick() {
+  try {
+    const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+    const raw = JSON.parse(file.getBlob().getDataAsString());
+    const isArr = Array.isArray(raw);
+    const data = isArr ? raw : Object.values(raw).filter(u => u && typeof u === 'object');
+
+    const report = suggestionAuditReadReport_();
+    const dryRun = !!report.dryRun;
+    if (!report.reasons) report.reasons = {};
+    if (!report.changed) report.changed = [];
+    report.total = report.total || data.filter(function (u) { return u && Array.isArray(u.s) && u.s.length; }).length;
+
+    let processedUnits = 0, changedThisBatch = false;
+    for (let i = 0; i < data.length && processedUnits < SUGGESTION_AUDIT_TICK_BATCH; i++) {
+      const u = data[i];
+      if (!u || !Array.isArray(u.s) || !u.s.length) continue;
+      if (u.suggestionAuditAt && u.suggestionAuditVersion === SUGGESTION_AUDIT_VERSION) continue; // already audited this version
+      processedUnits++;
+
+      for (let s = 0; s < u.s.length; s++) {
+        const verdict = auditGradeSuggestion_(u, s, u.s[s]);
+        report.graded = (report.graded || 0) + 1;
+        if (!verdict.pass) {
+          (verdict.reasons.length ? verdict.reasons : ['unspecified']).forEach(function (r) {
+            report.reasons[r] = (report.reasons[r] || 0) + 1;
+          });
+          const rec = { ca: u.ca, yl: u.yl, th: u.th, slot: s, reason: verdict.reasons.join(',') || 'unspecified', note: verdict.note, verified: u.humanVerified === true };
+          if (!dryRun) {
+            const fix = auditFixSlot_(data, i, s);
+            if (fix.ok) { report.rewritten = (report.rewritten || 0) + 1; rec.oldTool = fix.oldTool; rec.newTool = fix.newTool; changedThisBatch = true; }
+            else { rec.unfixed = true; rec.reason += '|fix:' + fix.reason; }
+          }
+          if (report.changed.length < 500) report.changed.push(rec);
+        }
+      }
+      u.suggestionAuditAt = new Date().toISOString();
+      u.suggestionAuditVersion = SUGGESTION_AUDIT_VERSION;
+      changedThisBatch = true; // the marker itself is a change worth persisting for resume
+    }
+
+    if (changedThisBatch) {
+      const toWrite = isArr ? data : raw;
+      file.setContent(JSON.stringify(toWrite, null, 2));
+      try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e) { Logger.log('audit pushToGitHub failed: ' + e); }
+    }
+
+    const remaining = data.filter(function (u) {
+      return u && Array.isArray(u.s) && u.s.length && !(u.suggestionAuditAt && u.suggestionAuditVersion === SUGGESTION_AUDIT_VERSION);
+    }).length;
+    report.remaining = remaining;
+    report.status = remaining === 0 ? 'done' : 'running';
+    report.updatedAt = new Date().toISOString();
+    if (remaining === 0) {
+      report.finishedAt = report.updatedAt;
+      if (dryRun) { PropertiesService.getScriptProperties().setProperty(SUGGESTION_AUDIT_DRYRUN_PROP, '1'); report.status = 'dry-run-done'; }
+      suggestionAuditWriteReport_(report);
+      const removed = removeSuggestionAuditTrigger_();
+      Logger.log('suggestionAuditTick: complete, removed ' + removed + ' trigger(s).');
+    } else {
+      suggestionAuditWriteReport_(report);
+    }
+  } catch (e) {
+    Logger.log('suggestionAuditTick error (will retry next tick): ' + (e && e.stack ? e.stack : e));
+    const r = suggestionAuditReadReport_(); r.status = 'paused'; r.lastError = String(e); suggestionAuditWriteReport_(r);
+  }
+}
+
+function removeSuggestionAuditTrigger_() {
+  const triggers = ScriptApp.getProjectTriggers();
+  let removed = 0;
+  for (let i = 0; i < triggers.length; i++) {
+    if (triggers[i].getHandlerFunction() === SUGGESTION_AUDIT_TICK_HANDLER) { ScriptApp.deleteTrigger(triggers[i]); removed++; }
+  }
+  return removed;
+}
+
 function regenerateOneInspiringSlot_(body) {
   try {
     const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
