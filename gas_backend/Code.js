@@ -3975,25 +3975,27 @@ function auditGradeSuggestion_(unit, slotIdx, sug) {
     return { pass: false, reasons: ['too_thin'], note: 'Description is empty or far too short.' };
   }
 
-  // 2) AI grade against the same rules used to GENERATE suggestions.
-  const rubric = INSPIRING_DESCRIPTION_RULES + '\n' + REALISTIC_TOOL_USE_RULES;
-  const system = 'You are a strict but fair reviewer of primary-school digital-technology activity suggestions for Wesley College (IB PYP). '
-    + 'Judge ONE suggestion against the quality rules. Be conservative: only FAIL on a CLEAR violation; if it is acceptable, PASS. '
-    + 'Fail reasons you may use (only when clearly true): '
-    + '"dull_generic" (boring, templated, could apply to any unit), '
-    + '"tool_as_metaphor" (the tool is used as a vague metaphor, not for its real affordance), '
-    + '"not_achievable" (a primary teacher could not realistically run this with this single tool), '
-    + '"jargon_unreadable" (abstract/edu-jargon; a teacher cannot picture the lesson), '
-    + '"banned_phrase" (lazy templated phrasing). '
-    + 'Return STRICT JSON only: {"pass":true|false,"reasons":["..."],"note":"one short sentence"}.';
-  const user = 'QUALITY RULES:\n' + rubric
-    + '\n\n---\nUNIT: ' + (unit.ca || '') + ' | ' + (unit.yl || '') + ' | "' + (unit.th || '') + '"'
+  // 2) AI grade against a FOCUSED quality bar — only the things that matter to a
+  // teacher: teacher-friendly, creative, achievable, real tool use, no lazy
+  // phrasing. Deliberately NOT the full generation spec — do not fail for
+  // sentence count, length or formatting, and be generous on "achievable".
+  const system = 'You are a fair reviewer of primary-school (IB PYP) digital-technology activity suggestions for Wesley College. '
+    + 'Judge ONE suggestion on whether a teacher would find it good to use. PASS unless there is a CLEAR, obvious problem; when in doubt, PASS. '
+    + 'FAIL only for one of these real problems: '
+    + '"dull_generic" = boring or templated, could be pasted into any unit with no real connection; '
+    + '"tool_as_metaphor" = the named tool is used as a vague metaphor, not for what it actually does; '
+    + '"not_achievable" = a normal primary teacher plainly could NOT run this with the named tool (be generous — only fail if clearly impossible, NOT if a minor step might be easier with another app); '
+    + '"jargon_unreadable" = so abstract or jargon-heavy a teacher cannot picture the lesson; '
+    + '"banned_phrase" = lazy templated filler phrasing. '
+    + 'Do NOT fail for sentence count, length, word count, formatting, or punctuation — including being 5 or 7 sentences instead of 6. Those do not matter here. '
+    + 'reasons MUST be ONLY codes from that exact list (dull_generic, tool_as_metaphor, not_achievable, jargon_unreadable, banned_phrase). Put any specifics in note, never in reasons. '
+    + 'Return STRICT JSON only: {"pass":true|false,"reasons":["code"],"note":"one short sentence"}.';
+  const user = 'UNIT: ' + (unit.ca || '') + ' | ' + (unit.yl || '') + ' | "' + (unit.th || '') + '"'
     + (unit.ci ? '\nCentral Idea: "' + unit.ci + '"' : '')
     + (unit.lo ? '\nLines of Inquiry: "' + unit.lo + '"' : '')
-    + '\nSLOT: ' + (slotIdx + 1) + ' of 6' + (slotIdx === 5 ? ' (STEM Design Cycle slot)' : '')
     + '\nTOOL: ' + t
     + '\nDESCRIPTION: "' + d + '"'
-    + '\n\nGrade this one suggestion. JSON only.';
+    + '\n\nWould a teacher find this good to use? PASS unless there is a clear problem. JSON only.';
 
   let parsed = null;
   try {
@@ -4014,11 +4016,16 @@ function auditGradeSuggestion_(unit, slotIdx, sug) {
   if (!parsed || typeof parsed.pass !== 'boolean') {
     return { pass: true, reasons: [], note: 'unparseable grade — passed by default' };
   }
-  return {
-    pass: parsed.pass,
-    reasons: Array.isArray(parsed.reasons) ? parsed.reasons : [],
-    note: String(parsed.note || '')
-  };
+  // Normalise reasons to the fixed code set so the report tally stays clean
+  // (the model occasionally returns a freeform sentence instead of a code).
+  const ALLOWED = ['dull_generic', 'tool_as_metaphor', 'not_achievable', 'jargon_unreadable', 'banned_phrase'];
+  let reasons = (Array.isArray(parsed.reasons) ? parsed.reasons : []).map(function (r) {
+    r = String(r || '').toLowerCase().trim().replace(/\s+/g, '_');
+    return ALLOWED.indexOf(r) !== -1 ? r : 'other';
+  });
+  reasons = reasons.filter(function (r, i) { return reasons.indexOf(r) === i; }); // de-dupe
+  if (parsed.pass === false && !reasons.length) reasons = ['other'];
+  return { pass: parsed.pass, reasons: reasons, note: String(parsed.note || '') };
 }
 
 // KEEP IN SYNC with js/05 SUGGESTION_STYLE (client copy). Both define the shared
