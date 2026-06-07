@@ -1833,6 +1833,14 @@ ${fullContext}`;
       bulkChatAddMessage('assistant', resultMsg);
       bulkChatMemory.push({ role: 'assistant', content: `Proposed ${changes.length} changes${dupeNote}. Breakdown: ${Object.entries(byTool).map(([t,n])=>`${n}x ${t}`).join(', ')}` });
       window._snapshotReason = `Before: ${bulkChatContext.rawInstruction ? bulkChatContext.rawInstruction.slice(0, 60) : 'bulk edit'}`;
+      // 2026-06-07: live quality gate for bulk proposals — annotate weak ones.
+      bulkChatAddMessage('assistant', 'Checking proposed changes against the style bar…');
+      await Promise.all(changes.map(async (c) => {
+        const entry = DATA[c.entryIdx];
+        if (!entry) return;
+        const g = await gradeSuggestionLive(entry, c.sugIdx, c.t, c.d);
+        if (!g.pass) { c._styleWeak = true; c._styleNote = (g.reasons || []).join(', ') + (g.note ? ' — ' + g.note : ''); }
+      }));
       showChangesPopup(changes);
       bulkChatState = 'done';
     } else {
