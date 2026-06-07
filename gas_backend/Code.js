@@ -4599,7 +4599,8 @@ var INSPIRING_REGEN_VERSION = 'r3-2026-05-29';
 // 2026-06-07: Suggestion quality audit (separate runner from inspiring regen).
 var SUGGESTION_AUDIT_TICK_HANDLER = 'suggestionAuditTick';
 var SUGGESTION_AUDIT_TICK_MINUTES = 5;          // snappier cadence (spec decision)
-var SUGGESTION_AUDIT_TICK_BATCH = 6;            // units per tick — stay under the 6-min GAS limit
+var SUGGESTION_AUDIT_TICK_BATCH = 6;            // units per tick (grade-only / dry run) — stay under the 6-min GAS limit
+var SUGGESTION_AUDIT_FIX_BATCH = 3;             // smaller batch when auto-fixing: each weak slot adds up to 3 AI calls
 var SUGGESTION_AUDIT_VERSION = 'a1-2026-06-07';
 var SUGGESTION_AUDIT_REPORT_FILE = 'suggestion_audit_report.json'; // small file in same Drive folder as data.json
 var SUGGESTION_AUDIT_DRYRUN_PROP = 'SUGGESTION_AUDIT_DRYRUN_DONE'; // set after first real dry run
@@ -4677,6 +4678,14 @@ var SERVER_REGEN_AUDIT_TARGETS = [
 
 function kickoffServerSideRegen(opts) {
   opts = opts || {};
+  // 2026-06-07: reciprocal concurrency guard — refuse if the suggestion-audit
+  // trigger is running. Both this and the audit write the same 11 MB data.json;
+  // interleaving timers would drop one side's edits (last-writer-wins). Mirrors
+  // the guard in kickoffSuggestionAudit.
+  if (typeof SUGGESTION_AUDIT_TICK_HANDLER !== 'undefined' &&
+      ScriptApp.getProjectTriggers().some(function (t) { return t.getHandlerFunction() === SUGGESTION_AUDIT_TICK_HANDLER; })) {
+    return { error: 'busy', reason: 'The suggestion quality audit is running. Wait for it to finish or abort it first before starting a regen.' };
+  }
   const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
   const raw = JSON.parse(file.getBlob().getDataAsString());
   const isArr = Array.isArray(raw);
@@ -5780,8 +5789,22 @@ function suggestionAuditTick() {
     if (!report.changed) report.changed = [];
     report.total = report.total || data.filter(function (u) { return u && Array.isArray(u.s) && u.s.length; }).length;
 
+    // Auto-fix does up to 3 extra AI calls per weak slot, so use a smaller batch
+    // for it; grade-only (dry run) can process more units per tick.
+    const batchLimit = dryRun ? SUGGESTION_AUDIT_TICK_BATCH : SUGGESTION_AUDIT_FIX_BATCH;
+    const persist_ = function () {
+      const toWrite = isArr ? data : raw;
+      file.setContent(JSON.stringify(toWrite, null, 2));
+      try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e) { Logger.log('audit pushToGitHub failed: ' + e); }
+    };
+    const countRemaining_ = function () {
+      return data.filter(function (uu) {
+        return uu && Array.isArray(uu.s) && uu.s.length && !(uu.suggestionAuditAt && uu.suggestionAuditVersion === SUGGESTION_AUDIT_VERSION);
+      }).length;
+    };
+
     let processedUnits = 0, changedThisBatch = false;
-    for (let i = 0; i < data.length && processedUnits < SUGGESTION_AUDIT_TICK_BATCH; i++) {
+    for (let i = 0; i < data.length && processedUnits < batchLimit; i++) {
       const u = data[i];
       if (!u || !Array.isArray(u.s) || !u.s.length) continue;
       if (u.suggestionAuditAt && u.suggestionAuditVersion === SUGGESTION_AUDIT_VERSION) continue; // already audited this version
@@ -5797,7 +5820,7 @@ function suggestionAuditTick() {
           const rec = { ca: u.ca, yl: u.yl, th: u.th, slot: s, reason: verdict.reasons.join(',') || 'unspecified', note: verdict.note, verified: u.humanVerified === true };
           if (!dryRun) {
             const fix = auditFixSlot_(data, i, s);
-            if (fix.ok) { report.rewritten = (report.rewritten || 0) + 1; rec.oldTool = fix.oldTool; rec.newTool = fix.newTool; changedThisBatch = true; }
+            if (fix.ok) { report.rewritten = (report.rewritten || 0) + 1; rec.oldTool = fix.oldTool; rec.newTool = fix.newTool; }
             else { rec.unfixed = true; rec.reason += '|fix:' + fix.reason; }
           }
           if (report.changed.length < 500) report.changed.push(rec);
@@ -5805,13 +5828,22 @@ function suggestionAuditTick() {
       }
       u.suggestionAuditAt = new Date().toISOString();
       u.suggestionAuditVersion = SUGGESTION_AUDIT_VERSION;
-      changedThisBatch = true; // the marker itself is a change worth persisting for resume
+      changedThisBatch = true;
+
+      // Persist after EACH unit during auto-fix so a mid-tick GAS timeout loses
+      // zero completed units (the DLA resumable-bulk-ops rule). A dry run only
+      // touches markers, so it persists once at batch end (cheaper).
+      if (!dryRun) {
+        persist_();
+        report.remaining = countRemaining_();
+        report.status = 'running';
+        report.updatedAt = new Date().toISOString();
+        suggestionAuditWriteReport_(report);
+      }
     }
 
-    if (changedThisBatch) {
-      const toWrite = isArr ? data : raw;
-      file.setContent(JSON.stringify(toWrite, null, 2));
-      try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e) { Logger.log('audit pushToGitHub failed: ' + e); }
+    if (dryRun && changedThisBatch) {
+      persist_();
     }
 
     const remaining = data.filter(function (u) {
