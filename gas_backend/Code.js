@@ -5734,6 +5734,22 @@ function regenerateOneInspiringSlotCore_(data, idx, sugIdx, opts) {
   }
 }
 
+// 2026-06-07: surgically rewrite ONE weak slot in-memory. Returns
+// { ok, oldTool, newTool } or { ok:false, reason }. Caller persists data.
+function auditFixSlot_(data, idx, sugIdx) {
+  const unit = data[idx];
+  const before = (unit.s && unit.s[sugIdx]) ? unit.s[sugIdx] : { t: '', d: '' };
+  const gen = regenerateOneInspiringSlotCore_(data, idx, sugIdx, {});
+  if (!gen || !gen.ok || !gen.t || !gen.d) {
+    return { ok: false, reason: (gen && gen.reason) || 'regen-failed', oldTool: before.t || '' };
+  }
+  unit.s[sugIdx] = { t: gen.t, d: gen.d };
+  if (typeof clearHumanVerifiedFlags_ === 'function') {
+    clearHumanVerifiedFlags_(unit, 'Suggestion rewritten by quality audit');
+  }
+  return { ok: true, oldTool: before.t || '', newTool: gen.t };
+}
+
 function regenerateOneInspiringSlot_(body) {
   try {
     const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
