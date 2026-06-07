@@ -891,6 +891,12 @@ setInterval(async()=>{
     if(typeof renderDashboard === 'function') renderDashboard();
     invPersist();
     if(typeof setStatus === 'function') setStatus(`Added "${display}" to ${safeList === 'approved' ? 'whitelist' : 'banned list'}`);
+    // For whitelist adds, draft a "what it's for" note and show the approve/edit popup.
+    // NOTE: this patched invAddTool (in 08, loads last) is the version that actually runs —
+    // the copy in js/01 is shadowed, so the trigger MUST live here too.
+    if(safeList === 'approved' && typeof proposeToolAffordance_ === 'function'){
+      try { proposeToolAffordance_(display); } catch(e){ console.warn('[DLA] affordance draft failed to start', e); }
+    }
     return false;
   };
   window.invAddTool = invAddTool;
