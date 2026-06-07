@@ -159,9 +159,9 @@ const REALISTIC_TOOL_USE_RULES = `REALISTIC CLASSROOM USE RULES (HARD RULE):
 // proposing mismatched use-cases — e.g. using Tinkercad to "swap materials", which it
 // cannot simulate). Keyed by the lowercased tool name (matched via toolInventoryKey, so
 // canonical names and variants both resolve). `good`/`avoid` are optional.
-// NOTE: "Wise Discussion Chatbots" is intentionally absent pending confirmation of its
-// real classroom use — a missing note just falls back to generic behaviour, it does not
-// break anything.
+// Covers all 48 approved tools. The "Wise Discussion Chatbots" note is a best-understanding
+// draft (Schoolbox AI discussion bot) pending Nathan's confirmation. A missing note simply
+// falls back to generic behaviour, so adding/correcting one later is safe.
 const TOOL_AFFORDANCE_NOTES = {
   tinkercad: {
     is: 'a 3D design app for modelling solid objects that can be 3D-printed in plastic',
@@ -377,6 +377,11 @@ const TOOL_AFFORDANCE_NOTES = {
     is: 'a magnification aid for looking closely at small objects or text',
     good: 'magnifying small specimens, details or text for close observation or accessibility',
     avoid: 'an observation and accessibility aid, not a creation tool.'
+  },
+  'wise discussion chatbots': {
+    is: 'an AI discussion chatbot built in Schoolbox (the school LMS) that a teacher sets up around a topic, persona or scenario for students to have a written conversation with',
+    good: 'students holding a back-and-forth written discussion with the bot to explore or debate ideas, ask questions, or practise — for example interviewing a historical figure or character, debating a viewpoint, or being prompted with Socratic questions that push their thinking on the unit topic',
+    avoid: 'it is a discussion and thinking partner, not a fact-checked research source or a tool for making a product — do not rely on it for factual accuracy.'
   },
   'word clouds abcya': {
     is: 'a tool that turns text into a word cloud where more frequent words appear larger',
