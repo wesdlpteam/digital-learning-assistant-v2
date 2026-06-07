@@ -176,8 +176,12 @@ Studio status panel  ◄──poll Drive suggestion_audit_report.json──  rep
 - No re-grading of `index.html`'s public "Have a tool in mind?" live picker (separate path).
 - No change to the generation rules themselves — this audits/repairs stored output only.
 
-## Open questions for spec review
-- Trigger interval: 5 min (snappier) vs reuse the existing 10-min cadence (less quota
-  pressure)? Default proposed: 5 min.
-- Should the first real run default to `gradeOnly` (report-only dry run) so Nathan sees the
-  verdicts once before any auto-fix touches live data? Recommended: yes, as a safety net.
+## Resolved decisions (spec review, 2026-06-07)
+- **Trigger interval: 5 minutes** (`everyMinutes(5)`). Snappier; per-tick batch size still
+  governs the 6-min GAS limit. Accept slightly higher chance of an overnight quota pause on a
+  full run.
+- **First run is a dry run.** The first kickoff defaults to `gradeOnly: true` — grades every
+  suggestion and writes the report, but rewrites nothing. The Studio surfaces "this was a dry
+  run — review verdicts, then run again to auto-fix." Subsequent runs auto-fix. Implement as a
+  one-time flag persisted in the report/Script Properties so the dry-run gate only applies to
+  the very first audit, not every future run.
