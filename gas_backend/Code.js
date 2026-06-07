@@ -483,6 +483,19 @@ function doPost(e) {
       return jsonResponse({ message: 'Removed ' + removed + ' server-side regen trigger(s).', removed: removed, user: verifiedEmail });
     }
 
+    // 2026-06-07: live + audit-shared grader. Client edit paths call this to
+    // grade a freshly generated suggestion before showing it.
+    if (action === 'gradesuggestion') {
+      const unit = {
+        ca: body.ca || '', yl: body.yl || '', th: body.th || '',
+        ci: body.ci || '', lo: body.lo || ''
+      };
+      const slotIdx = Number.isInteger(parseInt(body.sugIdx, 10)) ? parseInt(body.sugIdx, 10) : 0;
+      const result = auditGradeSuggestion_(unit, slotIdx, { t: body.t || '', d: body.d || '' });
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
     // 2026-06-04: repair units whose `s` was contaminated by wrong planner
     // text ("the soup"). Clears the bad plannerText + requeues, then a
     // self-removing trigger regenerates their suggestions from verified ci/lo.
