@@ -443,6 +443,22 @@ async function callAI(contents, systemPrompt, model, _attempt=0){
   return out;
 }
 
+// 2026-06-07: live quality grader — POSTs one suggestion to the shared server
+// grader (action 'gradesuggestion') and returns {pass, reasons, note}. Any
+// failure returns pass:true so the curator is never blocked.
+async function gradeSuggestionLive(entry, sugIdx, t, d) {
+  try {
+    const body = withGASToken({
+      action: 'gradesuggestion',
+      ca: entry.ca || '', yl: entry.yl || '', th: entry.th || '',
+      ci: entry.ci || '', lo: entry.lo || '', sugIdx: sugIdx, t: t || '', d: d || ''
+    });
+    const r = await fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) });
+    const j = JSON.parse(await r.text());
+    return (typeof j.pass === 'boolean') ? j : { pass: true, reasons: [], note: '' };
+  } catch (e) { console.warn('gradeSuggestionLive failed, passing by default:', e.message); return { pass: true, reasons: [], note: '' }; }
+}
+
 function switchTab(tab,btn){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   if(btn) btn.classList.add('active');
