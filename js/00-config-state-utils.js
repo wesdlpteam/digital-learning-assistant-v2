@@ -3,7 +3,7 @@ let DATA = [];
 // stamp on the <script src="js/..."> tags in DLA_Studio.html. Bumping the
 // number changes every code file's web address, which forces browsers to
 // download the new code instead of reusing a stale cached copy.
-const APP_VERSION = '5.32';
+const APP_VERSION = '5.33';
 
 // Reliable "get the latest version" action used by the ↻ latest button.
 // Reloads the whole app from the network with a one-off unique address so the
@@ -84,11 +84,17 @@ function cleanMinecraftLessonUrl_(url){
   return String(url || '').trim()
     .replace(/watr-humans-and-elephants/gi, 'water-humans-and-elephants');
 }
+function stripTwistLabel_(value) {
+  let s = String(value || '');
+  s = s.replace(/(^|[.!?]\s+)(?:and |but )?(?:here(?:'|’)?s |here is )?the (?:real |big )?twist(?:\s*[:—]\s*|\s+is(?:\s+that)?\s+)/gi, function (m, lead) { return lead; });
+  s = s.replace(/(^|[.!?]\s+)([a-z])/g, function (m, lead, ch) { return lead + ch.toUpperCase(); });
+  return s.replace(/ {2,}/g, ' ').trim();
+}
 function cleanSuggestionText_(value){
-  return cleanTextCorruption_(value)
+  return stripTwistLabel_(cleanTextCorruption_(value)
     .replace(/\bWatr Humans and Elephants\b/gi, 'Water Humans and Elephants')
     .replace(/\bWatr Humans And Elephants\b/gi, 'Water Humans and Elephants')
-    .trim();
+    .trim());
 }
 function cleanSuggestionObject_(s){
   const out = Object.assign({}, s || {});
