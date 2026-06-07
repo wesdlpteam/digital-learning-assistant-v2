@@ -161,6 +161,10 @@ function invAddTool(listKey){
   renderToolInventory();
   saveLibraries();
   setStatus(`Added "${val}" to ${listKey === 'approved' ? 'whitelist' : 'banned list'}`);
+  // For whitelist adds, let the AI draft a "what it's for" note, then show an approve/edit popup.
+  if(listKey === 'approved' && typeof proposeToolAffordance_ === 'function'){
+    proposeToolAffordance_(val);
+  }
 }
 
 function invRemoveTool(listKey, tool){

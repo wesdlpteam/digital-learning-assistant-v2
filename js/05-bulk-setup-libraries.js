@@ -390,9 +390,19 @@ const TOOL_AFFORDANCE_NOTES = {
   }
 };
 
+// Returns the affordance note for a tool: a curator-approved note saved in
+// LIBRARIES_META._toolAffordances (persisted in libraries.json) WINS over the built-in
+// TOOL_AFFORDANCE_NOTES default, so edits/new-tool notes always take precedence.
+function getToolAffordance_(toolName){
+  const k1 = toolInventoryKey(toolName);
+  const k2 = String(toolName || '').toLowerCase().trim();
+  const saved = (typeof LIBRARIES_META === 'object' && LIBRARIES_META && LIBRARIES_META._toolAffordances) || {};
+  return saved[k1] || saved[k2] || TOOL_AFFORDANCE_NOTES[k1] || TOOL_AFFORDANCE_NOTES[k2] || null;
+}
+
 function toolAffordanceNote_(toolName){
-  const note = TOOL_AFFORDANCE_NOTES[toolInventoryKey(toolName)] || TOOL_AFFORDANCE_NOTES[String(toolName || '').toLowerCase().trim()];
-  if(!note) return '';
+  const note = getToolAffordance_(toolName);
+  if(!note || !note.is) return '';
   let s = `WHAT ${String(toolName).toUpperCase()} IS REALLY FOR: ${toolName} is ${note.is}.`;
   if(note.good) s += ` Good uses: ${note.good}.`;
   if(note.avoid) s += ` AVOID: ${note.avoid}`;
@@ -413,6 +423,129 @@ function toolHasVerifiedLibrary_(toolName){
     }
   } catch(e){}
   return false;
+}
+
+// ===== Auto-draft a "what this tool is for" note when a tool is added to the whitelist =====
+// Called (fire-and-forget) from invAddTool('approved'). Uses the Studio's built-in AI to draft
+// an affordance note, then shows an approve/edit popup. Never blocks the add; on any AI failure
+// the popup opens with empty boxes so the curator can type the note themselves.
+async function proposeToolAffordance_(toolName){
+  const name = String(toolName || '').trim();
+  if(!name) return;
+  // Skip if we already have a note (saved override or built-in default) — avoids re-prompting on re-add.
+  if(getToolAffordance_(name)) return;
+  const clean = (typeof cleanSuggestionText_ === 'function') ? cleanSuggestionText_ : (s => String(s || ''));
+  let draft = { is:'', good:'', avoid:'' };
+  try{
+    if(typeof setStatus === 'function') setStatus(`Researching ${name}…`);
+    const prompt = `You are a Digital Learning Coach at Wesley College, an Australian primary school.
+Describe the classroom technology tool named "${name}" for a tool-affordance guide.
+Return ONLY strict JSON with exactly these keys:
+{"is":"one plain sentence naming what the tool genuinely is and its main purpose","good":"the strongest real classroom uses - concrete activities or products students make with it","avoid":"a common misuse to avoid, or an empty string if none"}
+Rules:
+- Be accurate and concrete; do NOT invent features the tool does not have.
+- Write for a primary teacher: plain English, no jargon, Australian spelling.
+- Use straight apostrophes only. No line breaks inside the JSON values. Keep each value to about one sentence.
+- If you are genuinely unsure what "${name}" is, set "is" to an empty string rather than guessing.`;
+    const model = (typeof OPENAI_FAST_MODEL !== 'undefined' && OPENAI_FAST_MODEL) || (typeof OPENAI_MODEL !== 'undefined' && OPENAI_MODEL) || undefined;
+    const raw = await callAI([{role:'user', parts:[{text:prompt}]}], null, model);
+    const txt = String(raw || '').replace(/```json|```/g, '').trim();
+    const si = txt.indexOf('{'), ei = txt.lastIndexOf('}');
+    if(si !== -1 && ei !== -1){
+      const parsed = JSON.parse(txt.slice(si, ei + 1));
+      draft = { is: clean(parsed.is || ''), good: clean(parsed.good || ''), avoid: clean(parsed.avoid || '') };
+    }
+  }catch(err){
+    console.warn('Tool affordance draft failed:', err && err.message ? err.message : err);
+  }
+  if(typeof setStatus === 'function') setStatus('');
+  showToolAffordancePopup_(name, draft);
+}
+
+function showToolAffordancePopup_(toolName, draft){
+  draft = draft || { is:'', good:'', avoid:'' };
+  const prev = document.getElementById('tool-affordance-overlay');
+  if(prev) prev.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'tool-affordance-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:1100;display:flex;align-items:center;justify-content:center;padding:20px';
+
+  const card = document.createElement('div');
+  card.style.cssText = 'background:var(--card,#1b1b1f);color:var(--text,#eee);border:1px solid var(--border,#333);border-radius:16px;padding:24px;max-width:min(680px,96vw);width:100%;max-height:92vh;overflow:auto;display:flex;flex-direction:column;gap:14px';
+
+  const title = document.createElement('div');
+  title.style.cssText = 'font-size:18px;font-weight:700';
+  title.textContent = `What is "${toolName}" for?`;
+
+  const blurb = document.createElement('div');
+  blurb.style.cssText = 'font-size:13px;color:var(--dim,#aaa)';
+  blurb.textContent = (draft && draft.is)
+    ? 'The site AI drafted this. Edit anything, then Approve to save - or Skip to leave this tool without a note.'
+    : 'The AI could not draft this automatically. Type a note, then Approve - or Skip to leave it blank.';
+
+  function field(labelText, value, ph){
+    const wrap = document.createElement('div');
+    const lab = document.createElement('label');
+    lab.style.cssText = 'display:block;font-size:12px;font-weight:600;margin-bottom:4px';
+    lab.textContent = labelText;
+    const ta = document.createElement('textarea');
+    ta.style.cssText = 'width:100%;min-height:54px;box-sizing:border-box;background:var(--bg,#111);color:var(--text,#eee);border:1px solid var(--border,#333);border-radius:8px;padding:8px;font:inherit;resize:vertical';
+    ta.value = value || '';
+    ta.placeholder = ph || '';
+    wrap.appendChild(lab); wrap.appendChild(ta);
+    return { wrap, ta };
+  }
+
+  const fIs = field("What it's for", draft.is, 'e.g. a 3D design app for modelling objects to 3D-print');
+  const fGood = field('Good uses', draft.good, 'the strongest real classroom activities or products');
+  const fAvoid = field('Avoid (optional)', draft.avoid, 'a common misuse to avoid - leave blank if none');
+
+  const btnRow = document.createElement('div');
+  btnRow.style.cssText = 'display:flex;gap:10px;justify-content:flex-end;margin-top:4px';
+  const skip = document.createElement('button');
+  skip.textContent = 'Skip';
+  skip.style.cssText = 'padding:8px 16px;border-radius:8px;border:1px solid var(--border,#333);background:transparent;color:inherit;cursor:pointer';
+  const approve = document.createElement('button');
+  approve.textContent = 'Approve & save';
+  approve.style.cssText = 'padding:8px 16px;border-radius:8px;border:none;background:var(--lime,#3a7);color:#022;font-weight:700;cursor:pointer';
+
+  skip.addEventListener('click', () => overlay.remove());
+  approve.addEventListener('click', async () => {
+    const note = { is: fIs.ta.value.trim(), good: fGood.ta.value.trim(), avoid: fAvoid.ta.value.trim() };
+    if(!note.is){ if(typeof setStatus === 'function') setStatus("Add at least \"What it's for\", or click Skip.", 'error'); fIs.ta.focus(); return; }
+    approve.disabled = true; approve.textContent = 'Saving…';
+    try{ await saveToolAffordance_(toolName, note); }catch(e){}
+    overlay.remove();
+  });
+  btnRow.appendChild(skip); btnRow.appendChild(approve);
+
+  card.appendChild(title); card.appendChild(blurb);
+  card.appendChild(fIs.wrap); card.appendChild(fGood.wrap); card.appendChild(fAvoid.wrap);
+  card.appendChild(btnRow);
+  overlay.appendChild(card);
+  overlay.addEventListener('click', e => { if(e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+  setTimeout(() => { try{ fIs.ta.focus(); }catch(e){} }, 50);
+}
+
+async function saveToolAffordance_(toolName, note){
+  const key = toolInventoryKey(toolName);
+  if(!key || !note || !note.is) return;
+  if(typeof LIBRARIES_META !== 'object' || !LIBRARIES_META) LIBRARIES_META = {};
+  if(!LIBRARIES_META._toolAffordances || typeof LIBRARIES_META._toolAffordances !== 'object') LIBRARIES_META._toolAffordances = {};
+  const entry = { is: String(note.is).trim() };
+  if(note.good && String(note.good).trim()) entry.good = String(note.good).trim();
+  if(note.avoid && String(note.avoid).trim()) entry.avoid = String(note.avoid).trim();
+  LIBRARIES_META._toolAffordances[key] = entry;
+  if(typeof setStatus === 'function') setStatus(`Saving note for ${toolName}…`);
+  try{
+    await saveLibraries();
+    if(typeof setStatus === 'function') setStatus(`Saved what ${toolName} is for ✓`);
+  }catch(e){
+    if(typeof setStatus === 'function') setStatus(`Could not save note: ${e && e.message ? e.message : e}`, 'error');
+    throw e;
+  }
 }
 
 // ========== CENTRALISED TOOL CONSTRAINTS — used by every AI suggestion path ==========
