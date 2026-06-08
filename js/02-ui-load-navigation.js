@@ -1,10 +1,6 @@
 function esc(s){
   return cleanTextCorruption_(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-function fixDashCorruption(s){
-  // Kept for older call sites; the broader punctuation repair now lives in cleanTextCorruption_.
-  return cleanTextCorruption_(s);
-}
 function linkify(s){ return esc(cleanTextCorruption_(s)).replace(/(https?:\/\/[^\s)&<]+)/g, '<a href="$1" target="_blank" style="color:var(--mint);text-decoration:none;word-break:break-all">$1</a>'); }
 function linkifyLight(s){ return esc(cleanTextCorruption_(s)).replace(/(https?:\/\/[^\s)&<]+)/g, '<a href="$1" target="_blank" style="color:#2563eb;text-decoration:none;word-break:break-all">$1</a>'); }
 function caCol(ca){ return CAMPUS_COL[normCa(ca)]||CAMPUS_COL[ca]||'#818cf8'; }
@@ -64,8 +60,6 @@ async function reconnectDrive(){
   }
 }
 
-function showApiKeyScreen(){ showBackendScreen(); }
-
 function showBackendScreen(){
   const current = getGASToken();
   const msg = 'Optional backend shared secret. Leave blank unless you have set DLA_SHARED_SECRET in Apps Script Script Properties.';
@@ -79,8 +73,6 @@ function showBackendScreen(){
     setStatus('Backend shared secret cleared');
   }
 }
-
-function saveApiKey(){ showScreen('load'); }
 
 async function getDriveToken(){
   
@@ -250,11 +242,6 @@ function ingest(arr, skipCache){
   const qy=document.getElementById('q-year');
   if(qc){ while(qc.options.length>1) qc.remove(1); campuses2.forEach(c=>qc.add(new Option(c,c))); }
   if(qy){ while(qy.options.length>1) qy.remove(1); yrs2.forEach(y=>qy.add(new Option(y,y))); }
-  // Diversity scanner dropdowns
-  const dc=document.getElementById('div-campus');
-  const dy=document.getElementById('div-year');
-  if(dc){ while(dc.options.length>1) dc.remove(1); campuses2.forEach(c=>dc.add(new Option(c,c))); }
-  if(dy){ while(dy.options.length>1) dy.remove(1); yrs2.forEach(y=>dy.add(new Option(y,y))); }
   showApp();
   
   const emailEl=document.getElementById('sidebar-user-email');

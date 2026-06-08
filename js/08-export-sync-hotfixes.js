@@ -1,5 +1,3 @@
-function detectBulkPlatform(){}
-
 // 2026-05-28: Surgeon now reads a JSON response (was no-cors), shows the
 // count of requeued units, and prompts the user to immediately kick off
 // Inspire All to regenerate them through the full inspiring pipeline.
@@ -210,81 +208,6 @@ async function runBulkRegen(){
   }
 }
 
-// 2026-05-28: Legacy client-side runBulkRegen kept here as dead code while
-// the new server-side path stabilises. Renamed so the new function above
-// is what the bulk-regen button calls. This stub never runs.
-async function _legacyRunBulkRegen_unused(){
-  const ca=document.getElementById('bulk-regen-campus')?.value||'';
-  const yr=document.getElementById('bulk-regen-year')?.value||'';
-  const targets=DATA.map((e,idx)=>({e,idx})).filter(({e})=>{
-    if(ca&&e.ca!==ca) return false;
-    if(yr&&e.yl!==yr) return false;
-    return getSugs(e).filter(isRealSug).length>=6;
-  });
-  if(!targets.length){ setStatus('No entries match the selected filters','error'); return; }
-
-  const confirmed=confirm(`Regenerate ${targets.length} entr${targets.length!==1?'ies':'y'}${ca?' for '+ca:''}${yr?' '+yr:''}?\n\nThis will replace their current suggestions using GPT-4.1. The change history will let you undo if needed.`);
-  if(!confirmed) return;
-
-  const btn=document.getElementById('btn-bulk-regen');
-  const prog=document.getElementById('bulk-regen-progress');
-  const bar=document.getElementById('bulk-regen-bar');
-  const lbl=document.getElementById('bulk-regen-label');
-  const res=document.getElementById('bulk-regen-result');
-  if(!btn || !prog || !bar || !lbl || !res){ setStatus('Bulk regenerate panel is not available in this Studio view','error'); return; }
-  btn.disabled=true; prog.style.display='block'; res.innerHTML='';
-  let done=0, fixed=0, failed=0;
-
-  for(const {e,idx} of targets){
-    done++;
-    bar.style.width=`${Math.round((done/targets.length)*100)}%`;
-    lbl.textContent=`${done}/${targets.length}: ${e.yl} — ${e.th}`;
-    const prompt=`Generate exactly 6 digital technology suggestions for this IB PYP unit at Wesley College (Microsoft school).
-Campus: ${e.ca} | Year Level: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: "${e.ci}"`:''}${e.plannerText?`\nPlanner context: ${e.plannerText}`:''}
-Every suggestion uses ONE approved tool (no "+" pairings). All 6 suggestions MUST use DIFFERENT tools.
-Suggestion #6 MUST be a STEM Design Cycle activity (Empathise → Define → Ideate → Prototype → Test) that connects specifically to the unit theme \u2014 no duplicates.
-${SUGGESTION_STYLE}
-Return ONLY a JSON array: [{"t":"Tool Name","d":"~6 vivid practical sentences (500-800 chars) following the writing-style and depth rules above."},...]`;
-    try{
-      let sugs = null;
-      let dupedTool = null;
-      let lastDupOpener = '';
-      let lastFailReason = '';
-      for(let attempt=0; attempt<3; attempt++){
-        let retryNote = '';
-        if(attempt>0 && lastFailReason === 'dup'){
-          retryNote = `\n\nRETRY ${attempt}: Your previous response used "${dupedTool}" twice. Every one of the 6 suggestions MUST use a DIFFERENT tool. #6 must be a STEM Design Cycle activity.`;
-        } else if(attempt>0 && lastFailReason === 'opener-dup'){
-          retryNote = `\n\nRETRY ${attempt}: Your previous response used "${lastDupOpener}" as the slot-1 tool, but another unit in this campus + year level already opens with that tool. Slot 1 MUST be a DIFFERENT tool that specifically suits THIS unit's theme.`;
-        }
-        const raw=await callAI([{role:'user',parts:[{text:prompt+retryNote}]}],null,OPENAI_MODEL);
-        const clean=raw.replace(/```json|```/g,'').trim();
-        const si=clean.indexOf('['),ei=clean.lastIndexOf(']');
-        if(si===-1||ei===-1) throw new Error('No JSON');
-        const parsed=JSON.parse(clean.slice(si,ei+1));
-        const keys=parsed.map(s=>toolKey(sugTool(s))).filter(Boolean);
-        const dup=keys.find((k,i)=>keys.indexOf(k)!==i);
-        if(dup){ const dupSug=parsed.find(s=>toolKey(sugTool(s))===dup); dupedTool = dupSug ? sugTool(dupSug) : dup; lastFailReason='dup'; continue; }
-        const openerDup = openerDupesSiblingInYear_(e, parsed);
-        if(openerDup){ lastDupOpener = openerDup; lastFailReason='opener-dup'; continue; }
-        sugs = parsed;
-        break;
-      }
-      if(!sugs) throw new Error(
-        lastFailReason === 'opener-dup' ? `Opener stayed identical to a sibling unit ("${lastDupOpener}") after 3 attempts`
-        : 'Duplicates in batch after retry');
-      recordChange(idx, getSugs(DATA[idx]), sugs);
-      DATA[idx].s=sugs; DATA[idx].audited=true; fixed++;
-      saveToDrive();
-    }catch(err){ failed++; }
-    if(done<targets.length) await sleep(2000);
-  }
-  lbl.textContent=`Done — ${fixed} regenerated, ${failed} failed`;
-  btn.disabled=false;
-  setStatus(`Bulk regen complete — ${fixed} entries updated`);
-  renderDashboard();
-}
-
 // 2026-05-27: scanAndFixComponentDupes apparatus removed — under the
 // new single-tool rule, App Smash component duplicates cannot exist.
 // The Sweep App Smashes button on the Inspire All card handles any
@@ -480,73 +403,6 @@ function jumpToBrowseGroup(ca, yr){
   renderBrowse();
 }
 
-function exportHTML(){
-  const ca=document.getElementById('export-campus')?.value||'';
-  const yr=document.getElementById('export-year')?.value||'';
-  const entries=DATA.filter(e=>(!ca||e.ca===ca)&&(!yr||e.yl===yr));
-  if(!entries.length){ alert('No entries match the selected filters'); return; }
-
-  const title=`DLA Suggestions — ${ca||'All Campuses'} ${yr||'All Year Levels'}`;
-  const campusCols={'Elsternwick':'#818cf8','Glen Waverley':'#34d399','St Kilda':'#fb923c','St Kilda Road':'#fb923c'};
-
-  let html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
-  <title>${title}</title>
-  <style>body{font-family:system-ui,sans-serif;max-width:900px;margin:0 auto;padding:40px 20px;color:#1a1a1a;line-height:1.6}h1{font-size:28px;font-weight:900;margin-bottom:4px}.meta{font-size:14px;color:#666;margin-bottom:40px}.entry{margin-bottom:32px;page-break-inside:avoid}.entry-header{padding:14px 18px;border-radius:8px;margin-bottom:12px}.entry-title{font-size:18px;font-weight:800;margin-bottom:2px}.entry-meta{font-size:12px;opacity:.7}.sug{padding:10px 14px;background:#f8f8f8;border-radius:6px;margin-bottom:8px;border-left:3px solid #ddd}.sug-tool{font-size:14px;font-weight:700;margin-bottom:2px}.sug-desc{font-size:13px;color:#555}@media print{.entry{page-break-inside:avoid}}@media (max-width:768px){#sidebar{width:100% !important;height:auto !important;top:auto !important;bottom:0 !important;left:0 !important;right:0 !important;flex-direction:row !important;padding:0 !important;border-right:none !important;border-top:1px solid var(--border) !important;z-index:200 !important;overflow-x:auto;overflow-y:hidden;}body.app-mode #main{margin-left:0 !important;margin-bottom:64px;}body.app-mode #sidebar{display:flex !important;}#logo{display:none !important;}#sidebar-footer{display:none !important;}.nav-item{flex-direction:column !important;gap:2px !important;padding:8px 12px !important;font-size:10px !important;border-radius:0 !important;margin-bottom:0 !important;min-width:60px;text-align:center;white-space:nowrap;flex:1;justify-content:center;}.nav-item span{font-size:18px;}.nav-item.active{background:rgba(212,160,23,0.15) !important;border-bottom:2px solid var(--gold) !important;}#app-content{padding:16px !important;}.page-title{font-size:24px !important;}.page-sub{font-size:13px !important;}.stat-grid{grid-template-columns:repeat(2,1fr) !important;}.card{padding:16px !important;border-radius:12px !important;}.sug-tool{font-size:15px !important;}.sug-desc{font-size:13px !important;}#panel-browse>div:first-child{flex-direction:column !important;}#f-campus,#f-year,#f-tool,#f-search{width:100% !important;min-width:unset !important;}.row{padding:12px 14px !important;flex-wrap:wrap;}#chat-messages{height:260px !important;}#bulk-chat-messages{height:260px !important;}.chat-bubble{font-size:12px !important;max-width:92% !important;}#comparison-grid>div{grid-template-columns:1fr !important;}#coverage-heatmap,#live-heatmap{overflow-x:auto;}#live-overview-grid{grid-template-columns:repeat(2,1fr) !important;}div[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr !important;}#changes-popup-overlay>div{max-width:100% !important;max-height:90vh !important;border-radius:16px 16px 0 0 !important;position:fixed !important;bottom:0 !important;left:0 !important;right:0 !important;}#history-overlay{left:0 !important;right:0 !important;bottom:70px !important;width:auto !important;}#screen-setup{flex-direction:column !important;}.setup-sidebar{width:100% !important;flex-direction:row !important;align-items:center;padding:12px 20px !important;height:56px;}.dla-wordmark{font-size:20px !important;margin-bottom:0 !important;margin-right:auto;}.setup-nav-item{display:none !important;}.setup-center{flex:none !important;width:100% !important;padding:24px 20px !important;}.setup-right{display:none !important;}#undo-bar{bottom:74px !important;left:8px !important;right:8px !important;flex-wrap:wrap;}#bulk-regen-campus,#bulk-regen-year,#compare-year,#compare-theme,#export-campus,#export-year{width:100% !important;}.back-btn{margin-bottom:14px !important;}#conflict-bar{font-size:12px !important;padding:8px 14px !important;}#status-bar{font-size:11px !important;}.sug-chat-window{border-radius:0 0 10px 10px;}#changes-popup-overlay{align-items:flex-end !important;padding:0 !important;}}@media (max-width:480px){.stat-grid{grid-template-columns:repeat(2,1fr) !important;}.stat-num{font-size:28px !important;}.page-title{font-size:22px !important;}#app-content{padding:12px !important;}}</style></head><body>
-  <h1>${title}</h1>
-  <div class="meta">Generated ${new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'})} · ${entries.length} entries</div>`;
-
-  entries.forEach(e=>{
-    const sugs=getSugs(e);
-    const col=campusCols[e.ca]||'#666';
-    html+=`<div class="entry">
-      <div class="entry-header" style="background:${col}18;border-left:4px solid ${col}">
-        <div class="entry-title">${esc(e.th)}</div>
-        <div class="entry-meta">${esc(e.ca)} · ${esc(e.yl)}${e.ci?` · ${esc(e.ci)}`:''}</div>
-      </div>`;
-    if(sugs.length){
-      sugs.forEach((s,i)=>{
-        html+=`<div class="sug" style="border-left-color:${col}">
-          <div class="sug-tool">${i+1}. ${esc(sugTool(s))}</div>
-          <div class="sug-desc">${linkifyLight(sugDesc(s))}</div>
-        </div>`;
-      });
-    } else {
-      html+=`<div class="sug"><div class="sug-desc" style="color:#999;font-style:italic">No suggestions yet</div></div>`;
-    }
-    html+='</div>';
-  });
-  html+='</body></html>';
-
-  const blob=new Blob([html],{type:'text/html'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url; a.download=`DLA-${(ca||'All').replace(/\s/g,'-')}-${(yr||'All').replace(/\s/g,'-')}.html`;
-  a.click(); URL.revokeObjectURL(url);
-}
-
-function exportCSV(){
-  const ca=document.getElementById('export-campus')?.value||'';
-  const yr=document.getElementById('export-year')?.value||'';
-  const entries=DATA.filter(e=>(!ca||e.ca===ca)&&(!yr||e.yl===yr));
-  if(!entries.length){ alert('No entries match'); return; }
-
-  const rows=[['Campus','Year Level','Theme','Central Idea','Suggestion #','Tool','Description']];
-  entries.forEach(e=>{
-    const sugs=getSugs(e);
-    if(sugs.length){
-      sugs.forEach((s,i)=>rows.push([e.ca,e.yl,e.th,e.ci||'',i+1,sugTool(s),sugDesc(s)]));
-    } else {
-      rows.push([e.ca,e.yl,e.th,e.ci||'','','','']);
-    }
-  });
-
-  const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob=new Blob([csv],{type:'text/csv'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url; a.download=`DLA-${(ca||'All').replace(/\s/g,'-')}-${(yr||'All').replace(/\s/g,'-')}.csv`;
-  a.click(); URL.revokeObjectURL(url);
-}
 
 function clearSession(){
   if(!confirm('Clear session and return to the load screen?\n\nYour Drive data is safe — this just clears the local cache.')) return;

@@ -76,7 +76,6 @@ Plain classic `<script>` tags loaded **in this exact order** (see bottom of `DLA
 00-config-state-utils.js   ← globals: DATA, SCRIPT_URL, OPENAI_MODEL, CAMPUS_COL, text-corruption cleaners
 01-inventory-helpers.js
 02-ui-load-navigation.js   ← screens, tabs, status bar, Drive reconnect
-03-dashboard-browse-entry.js
 04-audit-analytics-live.js
 05-bulk-setup-libraries.js ← libraries.json load/save, optional GitHub pull
 06-bulk-router-chat.js
@@ -102,7 +101,7 @@ Single `doPost(e)` router dispatched by `body.action` (lowercased). Current acti
 
 Required Script Properties: `OPENAI_API_KEY`, `GITHUB_TOKEN`. Optional: `DLA_SHARED_SECRET`, plus tool-inventory keys written by `syncToolInventory_`.
 
-Hardcoded Drive/Sheet IDs at the top of the file: `DATA_JSON_FILE_ID`, `LIBRARIES_JSON_FILE_ID`, `PLANNERS_FOLDER_ID`, `TECH_RULES_SHEET_ID`. The OpenAI key is **only** in Script Properties — `getKey()` on the frontend is a deliberate no-op. All AI calls go through `callAIProxy_` so the key never reaches the browser.
+Hardcoded Drive/Sheet IDs at the top of the file: `DATA_JSON_FILE_ID`, `LIBRARIES_JSON_FILE_ID`, `PLANNERS_FOLDER_ID`, `TECH_RULES_SHEET_ID`. The OpenAI key is **only** in Script Properties — it never reaches the frontend. All AI calls go through `callAIProxy_` so the key stays server-side.
 
 `APPROVED_TOOLS` / `REALISTIC_TOOL_USE_RULES` constants are the hardcoded fallback prompt. The live prompt is built by `getApprovedToolsPrompt_()` from synced Script Properties — edit via the Studio's Tool Inventory UI, not by changing these constants.
 

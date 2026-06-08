@@ -51,46 +51,6 @@
 
 /* ----- Block: legacy lines 2317-4264 ----- */
 
-function computeStats(){
-  const toolCounts={}, campusTools={}, yearTools={}; let total=0;
-  
-  DATA.forEach(e=>{
-    if(e.audited === false) return;
-    getSugs(e).forEach((s, slotIdx)=>{
-      // Skip STEM Design Cycle slot (#6) so it doesn't pollute the audit chart
-      if(slotIdx === 5) return;
-      const raw=(s&&s.t&&s.t.trim()&&s.t.trim()!=='TBA')?s.t.trim():null;
-      if(!raw) return;
-      // Strategy: normalise the FULL name first. If it resolves to a known tool, use it directly.
-      // Only split into parts for genuine multi-tool combinations (& + or App Smash patterns).
-      let parts = [];
-      // Try normalising the whole name first — catches "Minecraft: Area and Volume" → "Minecraft Education"
-      const wholeNorm = normaliseToolName(raw);
-      if(wholeNorm !== raw){
-        // Normalisation matched — use the single normalised name
-        parts = [raw]; // will be normalised again below
-      } else {
-        // No match — try splitting on & and + only (NOT "and" — too aggressive)
-        parts = raw.split(/\s*[&+]\s*/).map(t=>t.trim()).filter(Boolean);
-      }
-      const nca=normCa(e.ca);
-      parts.forEach(rawT=>{
-        // Normalise variants: remove hyphens, fix capitalisation for known tools
-        const t = normaliseToolName(rawT);
-        toolCounts[t]=(toolCounts[t]||0)+1;
-        if(!campusTools[nca]) campusTools[nca]={};
-        campusTools[nca][t]=(campusTools[nca][t]||0)+1;
-        if(!yearTools[e.yl]) yearTools[e.yl]={};
-        yearTools[e.yl][t]=(yearTools[e.yl][t]||0)+1;
-        total++;
-      });
-    });
-  });
-  
-  const incompleteEntries = DATA.filter(e => e.audited === false || getSugs(e).length < 6 || getSugs(e).some(s=>!s||!s.t||!s.t.trim()||s.t.trim()==='TBA'));
-  const sorted=Object.entries(toolCounts).sort((a,b)=>b[1]-a[1]).map(([name,count])=>({name,count,pct:total?Math.round(count/total*100):0}));
-  return {sorted,campusTools,yearTools,total,incompleteCount:incompleteEntries.length};
-}
 
 function renderAudit(){
   renderAuditChart();
@@ -112,178 +72,6 @@ function setAnalyticsView(btn){
   AUDIT_VIEW=btn.dataset.av;
   AUDIT_YEAR_CAMPUS='';
   renderAuditChart();
-}
-function renderAuditChart(){
-  const stats = computeStats();
-  const container = document.getElementById('audit-chart');
-  const filterEl = document.getElementById('year-campus-filter');
-  if(!container) return;
-
-  
-  container.innerHTML = '';
-  if(filterEl) filterEl.innerHTML = '';
-
-  
-  const campusDebug = [...new Set(DATA.map(e=>e.ca))];
-  const debugEl = document.getElementById('audit-campus-debug');
-  if(debugEl) debugEl.innerHTML = 'Campuses in data: '+campusDebug.map(ca=>`<span style="margin-right:8px;color:${caCol(ca)}">${ca} (${DATA.filter(e=>e.ca===ca).length})</span>`).join('');
-
-  if(!stats.sorted.length){
-    container.innerHTML = '<div style="padding:40px;text-align:center;color:var(--dim);font-size:14px">No suggestion data found in this dataset.</div>';
-    return;
-  }
-
-  if(AUDIT_VIEW === 'tools'){
-    const card = document.createElement('div');
-    card.className = 'card';
-    const warningNote = stats.incompleteCount > 0
-      ? ' <span style="color:#FF8080;font-size:11px;font-weight:600">· '+stats.incompleteCount+' entries pending audit</span>'
-      : '';
-    card.innerHTML = '<span class="label">Tool frequency — ' + stats.total + ' total — click a bar to see entries</span>' + warningNote;
-
-    const top = stats.sorted.slice(0,50);
-    const mx = top[0].count || 1;
-
-    top.forEach(({name, count, pct}) => {
-      const isWarn = name.startsWith('\u26a0');
-      const barCol = isWarn ? '#FF8080' : 'var(--lime)';
-      const nameCol = isWarn ? '#FF8080' : 'var(--text)';
-      const uid = 'dd_' + name.replace(/\W/g,'').slice(0,18) + '_' + count;
-
-      const wrap = document.createElement('div');
-      wrap.style.cssText = 'margin-bottom:14px;cursor:pointer';
-
-      const labelRow = document.createElement('div');
-      labelRow.style.cssText = 'display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:5px';
-      labelRow.innerHTML = '<span style="color:'+nameCol+'">' + esc(name) + '</span><span style="color:var(--dim)">' + count + '\u00d7 (' + pct + '%)</span>';
-
-      const track = document.createElement('div');
-      track.style.cssText = 'height:6px;background:var(--card2);border-radius:3px;margin-bottom:0';
-      const fill = document.createElement('div');
-      fill.style.cssText = 'height:100%;border-radius:3px;background:'+barCol+';width:'+Math.round((count/mx)*100)+'%';
-      track.appendChild(fill);
-
-      
-      const dd = document.createElement('div');
-      dd.id = uid;
-      dd.style.cssText = 'display:none;margin-top:10px;padding:8px;background:var(--card2);border-radius:8px;border:1px solid var(--border)';
-      DATA.forEach((e,idx2) => {
-        const hasTool = getSugs(e).some(s => {
-          const t = (s && s.t && s.t.trim()) ? s.t.trim() : '';
-          if(isWarn) return !t;
-          // Compare using normalised names so "Minecraft: Ocean Heroes" matches "Minecraft Education"
-          const normT = normaliseToolName(t);
-          return normT === name || t === name || t.toLowerCase().includes(name.toLowerCase());
-        });
-        if(!hasTool) return;
-        const row = document.createElement('div');
-        row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:7px 10px;cursor:pointer;border-radius:6px;font-size:12px';
-        row.innerHTML = '<span style="color:var(--dim);width:100px;flex-shrink:0">'+esc(e.ca)+'</span>'
-          +'<span style="color:var(--gold);font-weight:600;width:62px;flex-shrink:0">'+esc(e.yl)+'</span>'
-          +'<span style="flex:1">'+esc(e.th)+'</span>'
-          +'<span style="color:var(--dim)">\u203a</span>';
-        row.onmouseover = () => row.style.background = 'var(--card)';
-        row.onmouseout = () => row.style.background = '';
-        row.onclick = (ev) => { ev.stopPropagation(); openEntry(idx2); };
-        dd.appendChild(row);
-      });
-      if(!dd.children.length) dd.innerHTML = '<div style="color:var(--dim);font-size:12px;padding:6px">No entries found</div>';
-
-      wrap.onclick = () => {
-        const open = dd.style.display !== 'none';
-        container.querySelectorAll('[id^="dd_"]').forEach(el => el.style.display = 'none');
-        dd.style.display = open ? 'none' : 'block';
-      };
-
-      wrap.appendChild(labelRow);
-      wrap.appendChild(track);
-      wrap.appendChild(dd);
-      card.appendChild(wrap);
-    });
-
-    container.appendChild(card);
-
-  } else if(AUDIT_VIEW === 'campus'){
-    const campuses = [...new Set(DATA.map(e => normCa(e.ca)))].sort();
-    const palette = ['#F5A623','#C5E84A','#60B8F0','#9B8BFF','#52B95C','#FF8080'];
-    campuses.forEach((ca, ci) => {
-      const tools = stats.campusTools[ca] || {};
-      const totalSugs = Object.values(tools).reduce((a,b)=>a+b,0);
-      const sorted = Object.entries(tools).sort((a,b) => b[1]-a[1]).slice(0,12);
-      const mx = sorted[0]?.[1] || 1;
-      const col = palette[ci % palette.length];
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.style.marginBottom = '14px';
-      let html = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">'
-        + '<div style="width:10px;height:10px;border-radius:3px;background:'+col+'"></div>'
-        + '<span style="font-weight:800;font-size:16px">'+esc(ca)+'</span>'
-        + '<span style="color:var(--dim);font-size:12px">'+totalSugs+' suggestions</span></div>';
-      if(totalSugs===0){ html+='<div style="color:var(--dim);font-size:13px;padding:8px 0">No audited suggestions yet</div>'; card.innerHTML=html; container.appendChild(card); return; }
-      sorted.forEach(([n,c]) => {
-        html += '<div style="margin-bottom:12px">'
-          + '<div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:4px"><span>'+esc(n)+'</span><span style="color:var(--dim)">'+c+'\u00d7</span></div>'
-          + '<div style="height:6px;background:var(--card2);border-radius:3px"><div style="height:100%;border-radius:3px;background:'+col+';width:'+Math.round((c/mx)*100)+'%"></div></div>'
-          + '</div>';
-      });
-      card.innerHTML = html;
-      container.appendChild(card);
-    });
-
-  } else {
-    
-    const campuses = [...new Set(DATA.map(e => normCa(e.ca)))].sort();
-    const palette = ['#F5A623','#C5E84A','#9B8BFF'];
-
-    
-    const allBtn = document.createElement('button');
-    allBtn.className = 'view-tab' + (AUDIT_YEAR_CAMPUS===''?' active':'');
-    allBtn.textContent = 'All';
-    allBtn.onclick = () => setYrCampus('', allBtn);
-    if(filterEl) filterEl.appendChild(allBtn);
-
-    campuses.forEach(ca => {
-      const b = document.createElement('button');
-      b.className = 'view-tab' + (AUDIT_YEAR_CAMPUS===ca?' active':'');
-      b.textContent = ca;
-      b.onclick = () => setYrCampus(ca, b);
-      if(filterEl) filterEl.appendChild(b);
-    });
-
-    const fd = AUDIT_YEAR_CAMPUS ? DATA.filter(e => normCa(e.ca)===AUDIT_YEAR_CAMPUS) : DATA;
-    const yt = {};
-    fd.forEach(e => {
-      if(e.audited === false) return;
-      getSugs(e).forEach(s => {
-        const t = (s && s.t && s.t.trim() && s.t.trim()!=='TBA') ? s.t.trim() : null;
-        if(!t) return;
-        if(!yt[e.yl]) yt[e.yl] = {};
-        yt[e.yl][t] = (yt[e.yl][t]||0)+1;
-      });
-    });
-
-    const col = AUDIT_YEAR_CAMPUS
-      ? palette[campuses.indexOf(AUDIT_YEAR_CAMPUS) % palette.length]
-      : '#C5E84A';
-
-    YR.filter(yr => yt[yr]).forEach(yr => {
-      const sorted = Object.entries(yt[yr]).sort((a,b)=>b[1]-a[1]).slice(0,10);
-      const mx = sorted[0]?.[1] || 1;
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.style.marginBottom = '14px';
-      let html = '<div style="font-weight:800;font-size:17px;color:var(--lime);margin-bottom:14px">'
-        + yr + (AUDIT_YEAR_CAMPUS ? ' — '+AUDIT_YEAR_CAMPUS : '') + '</div>';
-      sorted.forEach(([n,c]) => {
-        html += '<div style="margin-bottom:12px">'
-          + '<div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:4px"><span>'+esc(n)+'</span><span style="color:var(--dim)">'+c+'\u00d7</span></div>'
-          + '<div style="height:6px;background:var(--card2);border-radius:3px"><div style="height:100%;border-radius:3px;background:'+col+';width:'+Math.round((c/mx)*100)+'%"></div></div>'
-          + '</div>';
-      });
-      card.innerHTML = html;
-      container.appendChild(card);
-    });
-  }
 }
 
 function setYrCampus(ca,btn){
@@ -626,7 +414,6 @@ function showBeforeAfterPreview(){
   overlay.onclick = (e) => { if(e.target === overlay) overlay.remove(); };
 }
 
-function checkKeyInput(){ /* legacy no-op: AI key is managed by GAS Script Properties. */ }
 
 function initNetworkCanvas(){
   const canvas=document.getElementById('bg-canvas');
@@ -1373,67 +1160,6 @@ Create ONE replacement suggestion that is classroom-realistic, age-appropriate, 
   }
 }
 
-async function fixAllIncomplete(){
-  const {incomplete,banned:_b,duplicates:_d,offWhitelist:_o} = getIssues();
-  if(!incomplete.length) return;
-  const btn=document.getElementById('btn-fix-incomplete');
-  const prog=document.getElementById('fix-incomplete-progress');
-  const lbl=document.getElementById('fix-incomplete-label');
-  const bar=document.getElementById('fix-incomplete-bar-fill');
-  if(btn) btn.disabled=true;
-  if(prog) prog.style.display='block';
-  let done=0, fixed=0, failed=0;
-  for(const {e,idx} of incomplete){
-    done++;
-    if(lbl) lbl.textContent=`${done}/${incomplete.length}: ${e.yl} — ${e.th}`;
-    if(bar) bar.style.width=`${Math.round((done/incomplete.length)*100)}%`;
-    const prompt=`Generate exactly 6 digital technology suggestions for this IB PYP unit.
-Suggestion #6 MUST be a STEM Design Cycle activity (Empathise-Define-Ideate-Prototype-Test).
-Campus: ${e.ca} | Year Level: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: "${e.ci}"`:''}${e.lo?`\nLines of Inquiry: "${e.lo}"`:''}${e.plannerText?`\nPlanner: ${e.plannerText}`:''}
-Requirements: every suggestion uses ONE approved tool (no "+" pairings), all 6 use DIFFERENT tools.
-${SUGGESTION_STYLE}
-Return ONLY a JSON array, no markdown: [{"t":"Tool Name","d":"~6 vivid practical sentences (500-800 chars) following the writing-style and depth rules above."},...]`;
-    try{
-      let sugs = null;
-      let dupedTool = null;
-      let lastDupOpener = '';
-      let lastFailReason = '';
-      for(let attempt=0; attempt<3; attempt++){
-        let retryNote = '';
-        if(attempt>0 && lastFailReason === 'dup'){
-          retryNote = `\n\nRETRY ${attempt}: Your previous response used "${dupedTool}" twice. Every one of the 6 suggestions MUST use a DIFFERENT tool. #6 must be a STEM Design Cycle activity.`;
-        } else if(attempt>0 && lastFailReason === 'opener-dup'){
-          retryNote = `\n\nRETRY ${attempt}: Your previous response used "${lastDupOpener}" as the slot-1 tool, but another unit in this campus + year level already opens with that tool. Slot 1 MUST be a DIFFERENT tool that specifically suits THIS unit's theme.`;
-        }
-        const raw=await callAI([{role:'user',parts:[{text:prompt+retryNote}]}], null, OPENAI_MODEL);
-        const clean=raw.replace(/```json|```/g,'').trim();
-        const si=clean.indexOf('['), ei=clean.lastIndexOf(']');
-        if(si===-1||ei===-1) throw new Error('No JSON array');
-        const parsed=JSON.parse(clean.slice(si,ei+1));
-        if(!parsed.length) throw new Error('Empty array');
-        const keys=parsed.map(s=>toolKey(sugTool(s))).filter(Boolean);
-        const dup=keys.find((k,i)=>keys.indexOf(k)!==i);
-        if(dup){ const dupSug=parsed.find(s=>toolKey(sugTool(s))===dup); dupedTool = dupSug ? sugTool(dupSug) : dup; lastFailReason='dup'; continue; }
-        const openerDup = openerDupesSiblingInYear_(e, parsed);
-        if(openerDup){ lastDupOpener = openerDup; lastFailReason='opener-dup'; continue; }
-        sugs = parsed;
-        break;
-      }
-      if(!sugs) throw new Error(
-        lastFailReason === 'opener-dup' ? `Opener stayed identical to a sibling unit ("${lastDupOpener}") after 3 attempts`
-        : 'Duplicates in batch after retry');
-      DATA[idx].s=sugs; DATA[idx].audited=true; fixed++;
-      saveToDrive();
-    }catch(err){
-      failed++;
-    }
-    if(done<incomplete.length) await sleep(2000);
-  }
-  if(lbl) lbl.textContent=`Done — ${fixed} fixed, ${failed} failed`;
-  if(btn){ btn.disabled=false; }
-  setStatus(`${fixed} incomplete entries fixed`);
-  renderDashboard();
-}
 
 async function readSheetRange(range){
   const token = await getDriveToken();
@@ -2183,11 +1909,8 @@ function libExportAll(){
   URL.revokeObjectURL(url);
 }
 
-// Keep old name working for backward compat
-function libExportLessons(){ libExportAll(); }
 
 function libImportAllTrigger(){ document.getElementById('lib-import-all')?.click(); }
-function libImportTrigger(){ libImportAllTrigger(); } // backward compat
 
 function libImportAll(event){
   const file = event.target.files?.[0];
@@ -2251,8 +1974,6 @@ function libImportAll(event){
   event.target.value = '';
 }
 
-// Keep old name working
-function libImportLessons(event){ libImportAll(event); }
 
 // ========== LIBRARIES PANEL RENDERER ==========
 
