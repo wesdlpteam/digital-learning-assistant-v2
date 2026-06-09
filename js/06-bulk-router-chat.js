@@ -1063,35 +1063,6 @@ async function inspireAllRequeueBadDescriptions(){
   }
 }
 
-// 2026-05-27: Re-sweep Year 3-6 units to lift Minecraft + Micro:bit
-// pickup with the Y3+ STEM PRIORITY nudge active (added to the inspiring
-// prompt the same day). Clears inspiringRegenAt markers on every Y3-6
-// unit, then auto-launches Inspire All to regenerate them.
-async function inspireAllRequeueY3Plus(){
-  if(!confirm('Re-sweep every Year 3-6 unit (about 72 units) with the new Year 3+ Minecraft/Micro:bit nudge?\n\n• Clears inspiringRegenAt on Y3-Y6 units only — Kinder, Prep, Y1, Y2 stay untouched.\n• Then auto-launches Inspire All to regenerate them.\n• ~30s per unit × 72 = approximately 25-35 minutes total.\n• Resumable if the laptop sleeps — same per-unit marker discipline.\n• Estimated lift: Minecraft + Micro:bit picks rise from 4 each to roughly 15-25 each.\n\nProceed?')) return;
-  setStatus('Clearing Y3+ markers…', 'loading');
-  try {
-    const payload = withGASToken({ action: 'regenerateAllInspiringRequeueY3Plus' });
-    const response = await fetch(SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
-    });
-    const result = await response.json();
-    if(result.error){ setStatus('Requeue error: ' + result.error, 'error'); return; }
-    if(!result.cleared){ setStatus('No Y3-6 units have inspiringRegenAt set — nothing to clear.', 'success'); return; }
-    setStatus(`Cleared inspiringRegenAt on ${result.cleared} Year 3-6 unit(s) — launching Inspire All…`, 'success');
-    console.info('Y3+ requeue units:', result.units);
-    if(typeof loadFromDrive === 'function'){
-      await loadFromDrive();
-      if(typeof renderBrowse === 'function') renderBrowse();
-    }
-    inspireAllBatch();
-  } catch(err){
-    setStatus('Y3+ requeue failed: ' + err.message, 'error');
-  }
-}
-
 // 2026-05-25: Emergency kill switch. Sets the INSPIRING_ABORT Script
 // Property to '1'; every in-flight regenerateAllInspiring batch checks
 // this between units and bails. Frontend loop also reads the response
@@ -1200,35 +1171,6 @@ async function inspireAllAutoFixBadTools(){
     }
   } catch(err){
     setStatus('Auto-fix failed: ' + err.message, 'error');
-  }
-}
-
-// 2026-05-25: Restore inspiringRegenAt markers on units that were
-// already regenerated but lost their marker (overzealous bad-tool
-// requeue mass-cleared most of the corpus on 2026-05-25). Heuristic:
-// units with >=5 sentence + >=600 char slot-1 descriptions are
-// almost certainly already inspiring-style — restore the marker
-// without touching the content.
-async function inspireAllRecoverMarkers(){
-  if(!confirm('Restore inspiringRegenAt markers on units that already have inspiring-style descriptions (>=5 sentences, >=600 chars in slot 1)?\n\nFixes the case where "Re-regen bad tools" cleared markers but the regen could not actually fix the units. The descriptions themselves are untouched.\n\nProceed?'))return;
-  setStatus('Scanning for recoverable markers…', 'loading');
-  try {
-    const payload = withGASToken({ action: 'inspiringRecoverMarkers' });
-    const response = await fetch(SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
-    });
-    const result = await response.json();
-    if(result.error){ setStatus('Recover error: ' + result.error, 'error'); return; }
-    setStatus(`✓ Restored ${result.recovered} marker(s); ${result.skippedCount} units left for fresh regen.`, 'success');
-    if(Array.isArray(result.skipped) && result.skipped.length) console.info('Inspire All recover — skipped units (need fresh regen):', result.skipped);
-    if(typeof loadFromDrive === 'function'){
-      await loadFromDrive();
-      if(typeof renderBrowse === 'function') renderBrowse();
-    }
-  } catch(err){
-    setStatus('Recover failed: ' + err.message, 'error');
   }
 }
 
@@ -1497,8 +1439,6 @@ function renderBrowse(){
       <button onclick="inspireAllRequeueAutoSwapped()" style="padding:6px 12px;background:transparent;border:1px solid #A78BFA;color:#A78BFA;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" title="Clear inspiringRegenAt on every auto-swapped unit so Inspire All can produce fresh descriptions tailored to the substituted tools (fixes feature-mismatch language + any duplicates the auto-fix introduced).">🎯 Re-regen auto-swapped (AI)</button>
       <button onclick="inspireAllRequeueBadTools()" style="padding:6px 12px;background:transparent;border:1px solid #FBBF24;color:#FBBF24;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Scan for bad-tool units, clear their inspiringRegenAt, and offer to redo just those with the AI (more expensive but produces fresh descriptions).">🔍 Re-regen with AI</button>
       <button onclick="inspireAllRequeueBadDescriptions()" style="padding:6px 12px;background:transparent;border:1px solid #F97316;color:#F97316;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Scan slot DESCRIPTIONS for off-whitelist tool names (Clips iOS app, Microsoft Sway, Notability, iMotion, Keynote, Flipgrid, WeVideo, Google Slides, OneNote). Word-bounded so common phrases like 'video clips' don't false-positive. Clears their inspiringRegenAt and lets you click Inspire All to redo only those.">📝 Re-regen for bad description tools</button>
-      <button onclick="inspireAllRequeueY3Plus()" style="padding:6px 12px;background:transparent;border:1px solid #22C55E;color:#22C55E;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear inspiringRegenAt on every Year 3-6 unit, then auto-launch Inspire All. Used after the Y3+ Minecraft/Micro:bit nudge went live — the existing 4/134 pickup rate is from the pre-nudge prompt; this re-sweep lifts it. ~25-35 min total.">🪨 Re-sweep Year 3+ (Minecraft/Micro:bit nudge)</button>
-      <button onclick="inspireAllRecoverMarkers()" style="padding:6px 12px;background:transparent;border:1px solid #4ADE80;color:#4ADE80;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Restore inspiringRegenAt markers on units that already have inspiring-style descriptions (>=5 sentences, >=600 chars).">🔄 Recover markers</button>
       <button onclick="inspireAllAbort()" style="padding:6px 12px;background:transparent;border:1px solid #DC2626;color:#DC2626;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer" title="EMERGENCY STOP: stops any in-flight Inspire All batch at the next unit boundary and blocks future runs until cleared.">🛑 STOP</button>
       <button onclick="inspireAllClearAbort()" style="padding:6px 12px;background:transparent;border:1px solid #888;color:#888;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear the backend abort flag so Inspire All can run again.">Clear abort</button>
       <button onclick="inspireAllReset()" style="padding:6px 12px;background:transparent;border:1px solid rgba(255,128,128,.3);color:#FF8080;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Clear the inspiringRegenAt flag on EVERY unit so Inspire All can be re-run from scratch.">Reset inspire flags</button>
@@ -1896,166 +1836,6 @@ function openSlotToolPicker(entryIdx, sugIdx){
       regenSlotWithTool(entryIdx, sugIdx, tool);
     };
   });
-}
-
-// 2026-05-28: Legacy client-side regenSingleSug body kept here as a
-// no-op-wrapped function in case anything still calls it. The new body
-// above replaces this one; this stub never runs.
-async function _legacyRegenSingleSug_unused(entryIdx, sugIdx){
-  const uid = `s${entryIdx}_${sugIdx}`;
-  const btn = document.getElementById(uid+'-regen');
-  if(btn){ btn.textContent='Scanning…'; btn.disabled=true; }
-  startProgress();
-
-  const entry = DATA[entryIdx];
-  const currentSug = getSugs(entry)[sugIdx];
-  const currentTool = sugTool(currentSug);
-  const others = getSugs(entry).filter((_,i)=>i!==sugIdx).map(s=>sugTool(s)).join(', ');
-  const isStem = sugIdx === 5;
-
-  // Fetch rich planner context from GAS — cached per session
-  let regenPlannerCtx = entry.plannerContextRich || '';
-  if (!regenPlannerCtx) {
-    try { regenPlannerCtx = await fetchPlannerContext(entry); } catch(e) {}
-  }
-  const regenPlannerBlock = regenPlannerCtx
-    ? regenPlannerCtx.slice(0, 8000)
-    : (entry.plannerText ? entry.plannerText.slice(0, 1500) : '');
-  if(btn) btn.textContent = '…';
-
-  const freq = {};
-  DATA.forEach(e => {
-    getSugs(e).forEach(s => {
-      const t = normaliseToolName((s && s.t ? s.t.trim() : ''));
-      if(t) freq[t] = (freq[t] || 0) + 1;
-    });
-  });
-
-  // Age-appropriate tools for this unit's year level. Exclude the current tool and other tools already used in this unit.
-  const ageAppropriate = getAgeAppropriateTools(entry.yl).filter(t => toolKey(t) !== toolKey(currentTool));
-  const candidateTools = getRegenerateCandidateTools_(entry, currentSug, sugIdx, freq);
-  const candidateKeys = new Set(candidateTools.map(toolKey).filter(Boolean));
-  const podcastAllowed = regenAllowsPodcastTool_(entry, currentSug);
-  const constraintBlock = buildToolConstraints(entry.yl);
-
-  const overused = Object.entries(freq).filter(([t,c]) => c > 13).map(([t])=>t);
-  const neverUsed = candidateTools.filter(t => !freq[normaliseToolName(t)]).slice(0, 6);
-
-  const stemInstruction = isStem ? `
-THIS IS SUGGESTION #6 — IT MUST BE A STEM DESIGN CYCLE ACTIVITY using the cycle: Empathise → Define → Ideate → Prototype → Test. Use a hands-on maker/robotics tool that is age-appropriate.` : '';
-
-  const podcastGuard = podcastAllowed ? `
-Podcast/audio tools are allowed for this regeneration because the current unit or activity includes audio, speaking, interview, narration or sound.` : `
-PODCAST GUARD: Do NOT choose Podcasting using Canva or Podcast Equipment for this regeneration. The current unit/activity does not specifically call for podcasting, interviews, audio storytelling, narration or sound work.`;
-
-  const prompt = `You are a Digital Learning Coach at Wesley College generating a fresh technology suggestion for an IB PYP unit.
-
-Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"${entry.ci?`
-Central Idea: "${entry.ci}"`:''}${regenPlannerBlock?`
-Planner context: ${regenPlannerBlock}`:''}Current suggestion being regenerated: ${currentTool}: ${sugDesc(currentSug)}
-Tools already used in this unit (do not repeat): ${others||'none'}
-
-${constraintBlock}
-${stemInstruction}
-${podcastGuard}
-
-HARD RULES:
-- This is a regeneration, not a wording tweak.
-- Do NOT use the current tool again: ${currentTool || '(none)'}.
-- Do NOT duplicate any other tool already used in this unit.
-- Choose exactly ONE tool from this candidate list: ${candidateTools.length ? candidateTools.join(', ') : '(no available candidates)'}.
-- Do NOT choose a tool outside the candidate list.
-- Do NOT default to Podcasting using Canva. Only use it when podcast/audio work is explicitly central to the activity.
-
-OVERUSED TOOLS (avoid unless perfect fit — already appears 14+ times across library): ${overused.length ? overused.join(', ') : '(none)'}
-NEVER-USED candidate tools (fresh ideas): ${neverUsed.length ? neverUsed.join(', ') : '(none)'}
-
-Generate ONE fresh suggestion that is genuinely age-appropriate for ${entry.yl} and connects to this unit's theme.
-${SUGGESTION_STYLE}
-
-Return ONLY JSON: {"t":"Tool Name","d":"~6 vivid practical sentences (500-800 chars) connecting to this unit, following the writing-style and depth rules above."}`;
-
-  try{
-    if(!candidateTools.length) throw new Error('No available age-appropriate tools left for this unit after excluding repeats and banned tools');
-    let newSug = null;
-    let lastIssue = null;
-    for(let attempt=0; attempt<5; attempt++){
-      let retryNote = '';
-      if(lastIssue === 'same') retryNote = `
-
-RETRY: You used the same tool (${currentTool}). You MUST choose a DIFFERENT tool from this candidate list only: ${candidateTools.join(', ')}.`;
-      else if(lastIssue === 'dupe') retryNote = `
-
-RETRY: Previous response used a tool already in this unit. Pick a DIFFERENT tool from this candidate list only: ${candidateTools.join(', ')}.`;
-      else if(lastIssue === 'age') retryNote = `
-
-RETRY: Previous response proposed a tool NOT age-appropriate for ${entry.yl}. You MUST pick from: ${candidateTools.join(', ')}.`;
-      else if(lastIssue === 'unavailable') retryNote = `
-
-RETRY: Previous response proposed a tool Wesley does NOT have. Pick from this candidate list only: ${candidateTools.join(', ')}.`;
-      else if(lastIssue === 'candidate') retryNote = `
-
-RETRY: Previous response chose a tool outside the candidate list. Pick exactly ONE of these tools and no others: ${candidateTools.join(', ')}.`;
-      else if(lastIssue === 'podcast') retryNote = `
-
-RETRY: Do NOT choose Podcasting using Canva. This regeneration is not for a podcast, audio interview, narration or sound activity. Pick a different candidate tool: ${candidateTools.join(', ')}.`;
-
-      const raw = await callAI([{role:'user',parts:[{text:prompt+retryNote}]}], null, OPENAI_FAST_MODEL);
-      const clean = raw.replace(/```json|```/g,'').trim();
-      const si = clean.indexOf('{'), ei = clean.lastIndexOf('}');
-      if(si===-1||ei===-1) throw new Error('No JSON');
-      const parsed = JSON.parse(clean.slice(si, ei+1));
-      if(!parsed.t||!parsed.d) throw new Error('Invalid');
-
-      if(toolKey(parsed.t) === toolKey(currentTool)){
-        lastIssue = 'same';
-        continue;
-      }
-      if(wouldDupeInEntry(entry, parsed.t, sugIdx)){
-        lastIssue = 'dupe';
-        continue;
-      }
-      const toolLower = normaliseToolName(parsed.t).toLowerCase();
-      if(NOT_AVAILABLE_AT_WESLEY.some(na => na.toLowerCase() === toolLower)){
-        lastIssue = 'unavailable';
-        continue;
-      }
-      if(!isToolAgeAppropriate(parsed.t, entry.yl)){
-        lastIssue = 'age';
-        continue;
-      }
-      if(!candidateKeys.has(toolKey(parsed.t))){
-        lastIssue = 'candidate';
-        continue;
-      }
-      if(!podcastAllowed && /podcasting using canva|podcast equipment/i.test(normaliseToolName(parsed.t))){
-        lastIssue = 'podcast';
-        continue;
-      }
-      newSug = parsed;
-      break;
-    }
-    if(!newSug){
-      const problem = lastIssue === 'same' ? 'AI kept repeating the same tool' :
-                      lastIssue === 'age' ? 'AI kept proposing tools not age-appropriate' :
-                      lastIssue === 'dupe' ? 'AI kept proposing tools already in this unit' :
-                      lastIssue === 'unavailable' ? 'AI kept proposing tools Wesley does not have' :
-                      lastIssue === 'candidate' ? 'AI kept choosing tools outside the candidate list' :
-                      lastIssue === 'podcast' ? 'AI kept defaulting to Podcasting using Canva for a non-audio activity' :
-                      'AI failed after 5 attempts';
-      throw new Error(`${problem} — try 💬 feedback with a specific tool name`);
-    }
-
-    // Safety-first: do not apply or save immediately. Show before/after for approval.
-    window._snapshotReason = `Before regenerating ${currentTool || 'suggestion'} in ${entry.yl} ${entry.th}`;
-    showChangesPopup([{ entryIdx, sugIdx, t:newSug.t, d:newSug.d, reason:'Single suggestion regeneration from Browse Library' }]);
-    setStatus('Regenerated draft ready for review');
-  }catch(e){
-    setStatus('Regen failed: '+e.message, 'error');
-  }finally{
-    stopProgress();
-    if(btn){ btn.textContent='↻'; btn.disabled=false; }
-  }
 }
 
 function openFeedbackChat(uid, entryIdx, sugIdx){

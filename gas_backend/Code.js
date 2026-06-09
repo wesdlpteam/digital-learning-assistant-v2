@@ -1085,19 +1085,7 @@ function callAIProxy_(body) {
   throw new Error(lastError || 'OpenAI request failed');
 }
 
-function testOpenAIKey() {
-  const result = callAIProxy_({
-    action: 'callAI',
-    model: 'gpt-4.1-mini',
-    maxTokens: 40,
-    contents: [{ role: 'user', parts: [{ text: 'Reply with exactly: DLA API key working' }] }]
-  });
-  Logger.log(result.text);
-}
 
-function testAllowedEmails() {
-  Logger.log('Allowed DLA Studio users: ' + DLA_ALLOWED_EMAILS.join(', '));
-}
 
 
 // ==========================================
@@ -1166,9 +1154,6 @@ function readPlannerMarkdown_(folder, yl, th, caCode) {
 // v5.18 FIX: Now uses getApprovedToolsPrompt_() (same source as Surgeon)
 //            instead of the orphaned TOOL_INVENTORY property.
 //            Added duplicate-tool detection and NO DUPLICATES prompt rule.
-// v5.18b FIX: Added optional filterCa/filterYl so targeted functions
-//             (testGWYear4HTWW, goNuclearGWYear4) don't accidentally
-//             audit unrelated entries that happen to sit earlier in the array.
 function auditPlanners(filterCa, filterYl) {
   // 2026-05-18: Prevent concurrent audit runs (the auditAndSync trigger
   // can otherwise fire while a manual run is in flight, doubling OpenAI
@@ -1567,73 +1552,6 @@ function runSurgeon(bannedTool, replacementTool) {
   };
 }
 
-function callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt) {
-  attempt = attempt || 1;
-  let replacementInstruction = forcedReplacement
-    ? `You MUST use "${forcedReplacement}" as the replacement tool.`
-    : `Choose the best replacement from the approved list.\n${yearGuidance}`;
-
-  const otherToolsList = (otherToolsInPlanner && otherToolsInPlanner.length)
-    ? `\nTOOLS ALREADY USED IN THIS UNIT — DO NOT PICK ANY OF THESE: ${otherToolsInPlanner.join(', ')}`
-    : '';
-
-  const responseShape = `{"t": "Tool Name", "d": "Specific description for this unit.", "url": "https://..."}`;
-
-  let prompt = `You are a Digital Learning Coach at Wesley College.\n${getApprovedToolsPrompt_()}\n${REALISTIC_TOOL_USE_RULES}\nReplace "${oldTool}" for this unit:\nCampus: ${planner.ca} | Year: ${planner.yl} | Theme: "${planner.th}"\n${planner.plannerText ? `Unit summary: ${planner.plannerText}` : ''}${otherToolsList}\n${replacementInstruction}\nThe description must be highly innovative, exciting, and connect specifically to this unit's content. Use standard apostrophes (') only.\nReturn ONLY JSON: ${responseShape}`;
-
-  let payload = {
-    "model": OPENAI_MODEL,
-    "messages": [{ "role": "user", "content": prompt }],
-    "response_format": { "type": "json_object" },
-    "temperature": 0.2,
-    "max_tokens": 1024
-  };
-
-  let options = {
-    "method": "post",
-    "contentType": "application/json",
-    "headers": { "Authorization": "Bearer " + getOpenAIKey_() },
-    "payload": JSON.stringify(payload),
-    "muteHttpExceptions": true
-  };
-
-  try {
-    let response = UrlFetchApp.fetch(OPENAI_ENDPOINT, options);
-    let code = response.getResponseCode();
-
-    if (isRetriableHttpCode_(code) && attempt <= 3) {
-      if (code === 429) setCooldown_(2, 'OpenAI rate limit during Surgeon replacement');
-      Utilities.sleep(30000);
-      return callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt + 1);
-    }
-
-    if (code === 200) {
-      let jsonResponse = JSON.parse(response.getContentText());
-      let text = jsonResponse?.choices?.[0]?.message?.content;
-      if (!text) throw new Error("OpenAI Surgeon response was empty.");
-      text = text.replace(/[\u2018\u2019\u0060\u00B4]/g, "'").replace(/[\u201C\u201D]/g, '"');
-      const parsed = JSON.parse(text.replace(/```json|```/g, "").trim());
-
-      if (parsed && parsed.t && parsed.d) {
-        const realism = checkRealisticToolUse_(parsed.t, parsed.d, planner);
-        if (!realism.ok) {
-          if (attempt <= 3) { Utilities.sleep(3000); return callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt + 1); }
-          return null;
-        }
-      }
-      if (parsed && parsed.t && otherToolsInPlanner && otherToolsInPlanner.length) {
-        const parsedKey = toolKey_(parsed.t);
-        const hasDupe = parsedKey && otherToolsInPlanner.some(t => toolKey_(t) === parsedKey);
-        if (hasDupe && attempt <= 3) { Utilities.sleep(3000); return callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt + 1); }
-        if (hasDupe) return null;
-      }
-      return parsed;
-    }
-  } catch (e) {
-    if (attempt <= 3) { Utilities.sleep(5000); return callOpenAIWithRetry(planner, oldTool, yearGuidance, forcedReplacement, otherToolsInPlanner, attempt + 1); }
-  }
-  return null;
-}
 
 
 // ==========================================
@@ -1889,9 +1807,6 @@ function removeAutoSyncTrigger() {
 // 5. PLANNER CONTEXT — On-demand + Batch Enrichment
 // ==========================================
 
-function buildPlannerExtractionPrompt_(unitTheme) {
-  return 'You are extracting structured teaching context from an IB PYP unit planner PDF at Wesley College, Melbourne.\n\nFind the unit: "' + unitTheme + '" in the attached PDF.\n(PYP acronyms: WWA = Who We Are, WWAIPAT = Where We Are in Place and Time, HWEO = How We Express Ourselves, HTWW/HWWO = How the World Works, HWOO = How We Organize Ourselves, STP = Sharing the Planet.)\n\nIf this unit is NOT found or has no documented content yet, return exactly: NOT_FOUND\n\nIf found, extract the following in plain text (no JSON, no markdown headings):\n\nCENTRAL IDEA: [exactly as written]\n\nLINES OF INQUIRY: [each line, separated by semicolons]\n\nKEY CONCEPTS: [the key concepts]\n\nPROVOCATION / TUNING IN: [what provocation or tuning-in activity is planned - be specific about what students will do, see, or experience]\n\nLEARNING ENGAGEMENTS: [list the main learning activities, investigations, or tasks students will do - include named resources, excursions, guest speakers, experiments, projects. Be specific and practical.]\n\nASSESSMENT: [assessment tasks or evidence of learning - portfolios, presentations, performances, exhibitions]\n\nTEACHER NOTES: [any other relevant teaching context - action opportunities, transdisciplinary connections, integration notes that would help a digital learning coach suggest appropriate technology]\n\nBe thorough but concise. Extract what is actually written in the planner - do not invent content. If a section has no content in the PDF, write "Not specified."';
-}
 
 // v5.19: Reads markdown planner directly — no OpenAI API call needed.
 function getPlannerContext_(body) {
@@ -2083,16 +1998,6 @@ function syncToolInventory_(body) {
   return { message: 'Synced: ' + approved.length + ' approved, ' + banned.length + ' banned', syncTime: new Date().toISOString() };
 }
 
-function checkToolInventorySync() {
-  var props = PropertiesService.getScriptProperties();
-  var syncTime = props.getProperty('DLA_TOOL_SYNC_TIME');
-  if (!syncTime) { Logger.log('No sync yet. Using hardcoded APPROVED_TOOLS.'); return; }
-  var approved = JSON.parse(props.getProperty('DLA_TOOL_APPROVED') || '[]');
-  var banned = JSON.parse(props.getProperty('DLA_TOOL_BANNED') || '[]');
-  Logger.log('Last sync: ' + syncTime);
-  Logger.log('Approved (' + approved.length + '): ' + approved.join(', '));
-  Logger.log('Banned (' + banned.length + '): ' + banned.join(', '));
-}
 
 
 // ==========================================
@@ -2183,102 +2088,6 @@ function restoreWipedSuggestionsFromGitHub() {
   return { restored: restored, units: restoredList };
 }
 
-function testGWYear4HTWW() {
-  const file = DriveApp.getFileById(DATA_JSON_FILE_ID); 
-  let data = JSON.parse(file.getBlob().getDataAsString());
-  
-  for (let i = 0; i < data.length; i++) {
-    let planner = data[i];
-    let isGW = planner.ca === "Glen Waverley" || planner.ca === "GW";
-    let isYear4 = planner.yl === "Year 4";
-    let isHTWW = String(planner.th).toLowerCase().includes("how the world works");
-    
-    if (isGW && isYear4 && isHTWW) {
-      Logger.log("Found GW Year 4 HTWW. Resetting audit status to force generation...");
-      
-      data[i].audited = false; 
-      data[i].s = []; 
-      file.setContent(JSON.stringify(data, null, 2));
-      
-      // v5.18b FIX: Pass filter so only Glen Waverley Year 4 entries are audited.
-      // Previously called auditPlanners() unfiltered, which processed
-      // whatever unaudited entries came first in the array (often Prep).
-      auditPlanners('Glen Waverley', 'Year 4'); 
-      Logger.log("Audit complete. Check your DLA Studio for the new App Smash suggestions.");
-      return;
-    }
-  }
-  Logger.log("Could not find the GW Year 4 How the World Works planner in data.json.");
-}
-
-function goNuclearGWYear4() {
-  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
-  let data = JSON.parse(file.getBlob().getDataAsString());
-  let count = 0;
-
-  data.forEach(planner => {
-    if (planner.ca === "Glen Waverley" && planner.yl === "Year 4") {
-      planner.audited = false;
-      planner.s = []; 
-      count++;
-    }
-  });
-
-  if (count > 0) {
-    file.setContent(JSON.stringify(data, null, 2));
-    SpreadsheetApp.flush(); 
-  }
-  
-  Logger.log(`Reset successful! Found and reset ${count} planners.`);
-  return count;
-}
-
-// One-off: reboot just the GW Year 4 "How We Express Ourselves" Makerspace
-// suggestion so we can sanity-check the catchy/hands-on output before rolling
-// the reboot out to everyone. Clears that single entry's stemRebooted flag
-// (and its MAKERSPACE_MEMORY record) then calls rebootMakerspace scoped to
-// that one unit.
-function testRebootGWYear4HWEO() {
-  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
-  let data = JSON.parse(file.getBlob().getDataAsString());
-
-  let targetIdx = -1;
-  for (let i = 0; i < data.length; i++) {
-    const p = data[i];
-    const isGW = p.ca === 'Glen Waverley' || p.ca === 'GW';
-    const isYear4 = p.yl === 'Year 4';
-    const isHWEO = String(p.th).toLowerCase().includes('how we express ourselves');
-    if (isGW && isYear4 && isHWEO) { targetIdx = i; break; }
-  }
-
-  if (targetIdx === -1) {
-    Logger.log('Could not find GW Year 4 "How We Express Ourselves" in data.json.');
-    return { message: 'Target unit not found', rebooted: 0 };
-  }
-
-  const target = data[targetIdx];
-  Logger.log(`Found target: [${target.ca}] ${target.yl} — ${target.th}`);
-
-  data[targetIdx].stemRebooted = false;
-
-  const props = PropertiesService.getScriptProperties();
-  const memoryString = props.getProperty('MAKERSPACE_MEMORY');
-  if (memoryString) {
-    const memory = JSON.parse(memoryString);
-    const key = `${target.ca}_${target.yl}_${target.th}`;
-    if (memory[key]) {
-      delete memory[key];
-      props.setProperty('MAKERSPACE_MEMORY', JSON.stringify(memory));
-      Logger.log(`Cleared MAKERSPACE_MEMORY entry for ${key}.`);
-    }
-  }
-
-  file.setContent(JSON.stringify(data, null, 2));
-
-  const result = rebootMakerspace(target.ca, target.yl, 'How We Express Ourselves');
-  Logger.log(JSON.stringify(result));
-  return result;
-}
 
 // v5.19: Identical to enrichPlannerContext() now — kept as a separate
 // entry point so existing triggers still work.
@@ -2287,103 +2096,6 @@ function runEnrichmentFix() {
 }
 
 
-function addKinderUnits() {
-  var folder = DriveApp.getFolderById(PLANNERS_FOLDER_ID);
-  var file = DriveApp.getFileById(DATA_JSON_FILE_ID);
-  var data = JSON.parse(file.getBlob().getDataAsString());
-  var added = [];
-
-  var kinderLevels = [
-    { yl: '3 Year Old Kinder', tokens: ['3yo', '3yearoldkinder', 'threeyearoldkinder'] },
-    { yl: '4 Year Old Kinder', tokens: ['4yo', '4yearoldkinder', 'fouryearoldkinder'] }
-  ];
-  var campus = 'Glen Waverley';
-  var caCode = 'GW';
-
-  // PYP transdisciplinary themes to search for in the markdown
-  var themes = [
-    'Who We Are',
-    'Where We Are in Place and Time',
-    'How We Express Ourselves',
-    'How the World Works',
-    'How We Organise Ourselves',
-    'Sharing the Planet'
-  ];
-
-  // Build an in-memory index of every file in the Planners folder ONCE,
-  // so we don't hammer Drive with one getFilesByName call per guess.
-  var folderIndex = [];
-  var iter = folder.getFiles();
-  while (iter.hasNext()) {
-    var f = iter.next();
-    folderIndex.push({ file: f, name: f.getName(), nameLower: f.getName().toLowerCase() });
-  }
-
-  // Resolve a planner file by fuzzy-matching against the index. A file matches
-  // if its filename (lowercased, spaces stripped) contains ANY of the kinder
-  // tokens AND the campus code, regardless of year prefix or "Planner" vs
-  // "Planners" pluralisation. Survives renames between e.g. 2025 and 2026.
-  function findKinderPlanner(level) {
-    var caCodeLower = '(' + caCode.toLowerCase() + ')';
-    var matches = folderIndex.filter(function(entry) {
-      var stripped = entry.nameLower.replace(/\s+/g, '');
-      var hasCampus = entry.nameLower.indexOf(caCodeLower) !== -1;
-      var hasToken = level.tokens.some(function(t) {
-        return stripped.indexOf(t.replace(/\s+/g, '')) !== -1;
-      });
-      return hasCampus && hasToken;
-    });
-    if (matches.length === 0) return null;
-    matches.sort(function(a, b) { return b.file.getLastUpdated() - a.file.getLastUpdated(); });
-    return matches[0].file;
-  }
-
-  kinderLevels.forEach(function(level) {
-    var mdFile = findKinderPlanner(level);
-
-    if (!mdFile) {
-      Logger.log('No planner file found for ' + level.yl + '.');
-      Logger.log('Tokens tried: ' + level.tokens.join(', ') + ' (must also contain "(' + caCode + ')")');
-      Logger.log('Files in folder containing "kinder", "3yo", or "4yo":');
-      folderIndex.forEach(function(entry) {
-        var n = entry.nameLower;
-        if (n.indexOf('kinder') !== -1 || n.indexOf('3yo') !== -1 || n.indexOf('4yo') !== -1) {
-          Logger.log('  -> ' + entry.name);
-        }
-      });
-      return;
-    }
-
-    var content = mdFile.getBlob().getDataAsString().toLowerCase();
-    Logger.log('Found: ' + mdFile.getName() + ' (' + content.length + ' chars) for ' + level.yl);
-
-    themes.forEach(function(th) {
-      if (!content.includes(th.toLowerCase())) {
-        Logger.log('  X "' + th + '" not found in ' + level.yl + ' planner — skipping');
-        return;
-      }
-      var exists = data.some(function(e) {
-        return e.ca === campus && e.yl === level.yl && e.th.toLowerCase() === th.toLowerCase();
-      });
-      if (exists) {
-        Logger.log('  - "' + th + '" already exists for ' + level.yl + ' — skipping');
-        return;
-      }
-      data.push({ ca: campus, yl: level.yl, th: th, ci: '', lo: '', s: [], audited: false });
-      added.push(level.yl + ' — ' + th);
-      Logger.log('  + Added: ' + level.yl + ' — ' + th);
-    });
-  });
-
-  if (added.length) {
-    file.setContent(JSON.stringify(data, null, 2));
-    Logger.log('Saved ' + added.length + ' new entries to data.json');
-    pushToGitHub();
-    Logger.log('Pushed to GitHub');
-  } else {
-    Logger.log('No new entries to add. Check the file names in the log above.');
-  }
-}
 
 // ==========================================
 // COMBINED PLANNER EXTRACTION
@@ -3014,28 +2726,6 @@ function rebootAndSync() {
 // in regex character classes work (these are BMP code units).
 const PUA_GLYPH_RE_ = /[\uE000-\uF8FF]/g;
 
-function scanPlannerPUAGlyphs() {
-  const folder = DriveApp.getFolderById(PLANNERS_FOLDER_ID);
-  const iter = folder.getFiles();
-  const report = [];
-  let totalFiles = 0, totalDirty = 0, totalGlyphs = 0;
-  while (iter.hasNext()) {
-    const f = iter.next();
-    if (!/\.md$/i.test(f.getName())) continue;
-    totalFiles++;
-    const text = f.getBlob().getDataAsString();
-    const matches = text.match(PUA_GLYPH_RE_) || [];
-    if (!matches.length) continue;
-    totalDirty++;
-    totalGlyphs += matches.length;
-    report.push({ name: f.getName(), count: matches.length });
-  }
-  report.sort((a, b) => b.count - a.count);
-  Logger.log(`Scanned ${totalFiles} .md file(s); ${totalDirty} contain PUA glyphs (${totalGlyphs} total).`);
-  report.forEach(r => Logger.log(`  ${r.count.toString().padStart(4)}  ${r.name}`));
-  if (!totalDirty) Logger.log('No PUA glyphs detected — nothing to clean.');
-  return { scanned: totalFiles, dirty: totalDirty, totalGlyphs: totalGlyphs, files: report };
-}
 
 function cleanPlannerPUAGlyphs() {
   const folder = DriveApp.getFolderById(PLANNERS_FOLDER_ID);
@@ -6199,10 +5889,3 @@ function finishRepairContaminated(opts) {
   };
 }
 
-function testAuditGrader_() {
-  const unit = { ca: 'Test', yl: 'Year 3', th: 'Sharing the Planet', ci: 'Living things depend on each other.', lo: 'Ecosystems; interdependence' };
-  const weak = { t: 'ScratchJr', d: 'Students use ScratchJr to make a story. For a twist, they retell it from another character. They share their learning with the class and present their findings.' };
-  const strong = { t: 'Micro:bit', d: 'Students programme a Micro:bit to log light and temperature in three microhabitats around the school grounds, such as under a log, in open lawn, and beside the pond. Working in pairs they use the accelerometer-free data-logging blocks to capture readings every minute across a lunchtime, then graph the differences. They compare which tiny creatures they predict would thrive in each spot and why, linking conditions to the interdependence of living things. Each pair captures annotated MakeCode screenshots and a 30-second clip of their device in place. They present one habitat-protection action the school could take based on their evidence. The work becomes a corridor display that invites other classes to add their own observations.' };
-  Logger.log('WEAK -> ' + JSON.stringify(auditGradeSuggestion_(unit, 0, weak)));
-  Logger.log('STRONG -> ' + JSON.stringify(auditGradeSuggestion_(unit, 1, strong)));
-}
