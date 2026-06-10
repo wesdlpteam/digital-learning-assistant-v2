@@ -30,7 +30,6 @@
         "Micro:bit",
         "Microsoft Excel",
         "Microsoft Forms",
-        "Microsoft Word",
         "Minecraft Education",
         "National Geographic MapMaker",
         "Padlet",
@@ -50,8 +49,7 @@
         "Tablet Magnifiers",
         "Teachable Machine",
         "Tinkercad",
-        "Wise Discussion Chatbots",
-        "Word Clouds ABCya"
+        "Wise Discussion Chatbots"
       ],
       "banned": [
         "Apple Keynote",
@@ -69,10 +67,6 @@
         "WeVideo"
       ],
       "ageRanges": {
-        "word": {
-          "min": 4,
-          "max": 6
-        },
         "excel": {
           "min": 3,
           "max": 6
@@ -195,10 +189,6 @@
         },
         "brushes redux": {
           "min": -2,
-          "max": 6
-        },
-        "word clouds abcya": {
-          "min": 0,
           "max": 6
         },
         "sketchbook": {
