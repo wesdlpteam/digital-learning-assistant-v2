@@ -808,10 +808,14 @@ setInterval(async()=>{
     whitelistEl.innerHTML = approved.length ? approved.map(t => {
       const range = (typeof getToolAgeRange === 'function') ? getToolAgeRange(t) : {min:0,max:6};
       const toolAttr = invAttr(t);
-      return `<div style="display:grid;grid-template-columns:minmax(150px,1fr) 105px 105px auto;gap:6px;align-items:center;padding:7px 8px;background:rgba(197,232,74,0.08);border:1px solid rgba(197,232,74,0.3);border-radius:12px;font-size:12px;color:var(--lime)">
+      const rwNote = (typeof getToolAffordance_ === 'function') ? getToolAffordance_(t) : null;
+      const rwOn = !!(rwNote && rwNote.realWorld);
+      return `<div style="display:grid;grid-template-columns:minmax(150px,1fr) 105px 105px auto auto auto;gap:6px;align-items:center;padding:7px 8px;background:rgba(197,232,74,0.08);border:1px solid rgba(197,232,74,0.3);border-radius:12px;font-size:12px;color:var(--lime)">
         <div style="min-width:0"><div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(t)}</div><div style="font-size:10px;color:var(--dim);font-weight:600">${ageRangeLabel(range)}</div></div>
         <select class="inp" data-inv-age-tool="${toolAttr}" data-inv-age-edge="min" title="Minimum year level" style="margin-bottom:0;font-size:11px;padding:5px 7px;color:var(--lime);border-color:rgba(197,232,74,.3)">${yearSelectOptions(range.min)}</select>
         <select class="inp" data-inv-age-tool="${toolAttr}" data-inv-age-edge="max" title="Maximum year level" style="margin-bottom:0;font-size:11px;padding:5px 7px;color:var(--lime);border-color:rgba(197,232,74,.3)">${yearSelectOptions(range.max)}</select>
+        <label title="Weave a real-world AI connection into this tool's suggestions" style="display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--dim);cursor:pointer;white-space:nowrap;user-select:none"><input type="checkbox" data-inv-rw="${toolAttr}" ${rwOn ? 'checked' : ''} style="accent-color:var(--lime);cursor:pointer">AI real-world</label>
+        <button type="button" data-inv-edit-note="${toolAttr}" style="background:transparent;border:none;color:var(--lime);cursor:pointer;padding:0 4px;font-size:14px;line-height:1;opacity:.8" title="Edit how the AI should use this tool (what it's for, good uses, real-world examples)">✎</button>
         <button type="button" data-inv-remove="approved" data-inv-tool="${toolAttr}" style="background:transparent;border:none;color:var(--lime);cursor:pointer;padding:0 6px;font-size:18px;line-height:1;opacity:.8" title="Remove">×</button>
       </div>`;
     }).join('') : '<span style="font-size:11px;color:var(--dim);font-style:italic">No whitelist — all approved tools allowed.</span>';
@@ -828,6 +832,12 @@ setInterval(async()=>{
         invRemoveTool(removeBtn.getAttribute('data-inv-remove'), removeBtn.getAttribute('data-inv-tool'));
         return false;
       }
+      const editNoteBtn = e.target && e.target.closest ? e.target.closest('[data-inv-edit-note]') : null;
+      if(editNoteBtn){
+        e.preventDefault(); e.stopPropagation(); if(e.stopImmediatePropagation) e.stopImmediatePropagation();
+        if(typeof invEditToolAffordance === 'function') invEditToolAffordance(editNoteBtn.getAttribute('data-inv-edit-note'));
+        return false;
+      }
       const addBtn = e.target && e.target.closest ? e.target.closest('[data-inv-add],#inv-whitelist-add,#inv-banned-add') : null;
       if(addBtn){
         e.preventDefault(); e.stopPropagation(); if(e.stopImmediatePropagation) e.stopImmediatePropagation();
@@ -842,6 +852,12 @@ setInterval(async()=>{
       if(e.target && e.target.id === 'inv-banned-input'){ e.preventDefault(); e.stopPropagation(); invAddTool('banned'); }
     }, true);
     document.addEventListener('change', function(e){
+      const rwBox = e.target && e.target.matches && e.target.matches('[data-inv-rw]') ? e.target : null;
+      if(rwBox){
+        e.stopPropagation();
+        if(typeof invToggleAiRealWorld === 'function') invToggleAiRealWorld(rwBox.getAttribute('data-inv-rw'), rwBox.checked);
+        return;
+      }
       const sel = e.target && e.target.matches && e.target.matches('[data-inv-age-tool][data-inv-age-edge]') ? e.target : null;
       if(!sel) return;
       e.preventDefault(); e.stopPropagation();
