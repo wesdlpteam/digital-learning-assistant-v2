@@ -266,7 +266,7 @@
           "max": 6
         },
         "dollar street": {
-          "min": -2,
+          "min": 3,
           "max": 6
         }
       }
@@ -280,7 +280,14 @@
       "dollar street": {
         "is": "Dollar Street is an online tool that shows photos and information about everyday homes and lives of people from different income levels around the world to help students understand global diversity.",
         "good": "Students can compare living conditions, clothing, and food from various countries to create presentations or posters about cultural and economic differences.",
-        "avoid": "Avoid using it as a source for detailed statistics or current news since it focuses on visual stories rather than data analysis."
+        "avoid": "Avoid using it as a source for detailed statistics or current news since it focuses on visual stories rather than data analysis.",
+        "realWorld": "In 1-2 sentences woven into the description, connect this specific activity to a real-world system that uses the same kind of AI ? choose a parallel that genuinely matches the activity, never a generic list."
+      },
+      "tinkercad": {
+        "realWorld": "In 1-2 sentences woven into the description, connect this specific activity to a real-world system that uses the same kind of AI ? choose a parallel that genuinely matches the activity, never a generic list."
+      },
+      "sphero indi": {
+        "realWorld": "In 1-2 sentences woven into the description, connect this specific activity to a real-world system that uses the same kind of AI ? choose a parallel that genuinely matches the activity, never a generic list."
       }
     }
   },
