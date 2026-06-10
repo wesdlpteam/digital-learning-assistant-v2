@@ -1206,7 +1206,17 @@ async function fixAllOfType(type){
         prompt=`${buildGASRules(e.yl)}\n\nGenerate exactly 5 digital technology suggestions for this IB PYP unit.\nCampus: ${e.ca} | Year: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: "${e.ci}"`:''}${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nEvery suggestion uses ONE approved tool (no "+" pairings). All 5 must use DIFFERENT tools.\nReturn ONLY JSON array: [{"t":"Tool Name","d":"Specific description for this unit."},...]`;
 
       } else if(type==='banned'||type==='offwhitelist'){
-        prompt=`${buildGASRules(e.yl)}\n\nReplace these non-approved suggestions for this unit. Return 6 total suggestions (the 6th must be a STEM Design Cycle activity).\nUnit: ${e.ca} | ${e.yl} | "${e.th}"${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nCurrent suggestions (keep approved ones; replace the rest):\n${currentSugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}\nEvery suggestion uses ONE approved tool (no "+" pairings). All 6 must use DIFFERENT tools.\nReturn ONLY JSON array of exactly 6 (the 6th must be a STEM Design Cycle activity): [{"t":"Tool Name","d":"Specific description."},...]`;
+        // Name the offending tools explicitly. "Keep approved ones; replace the
+        // rest" left detection to the model, which kept off-list tools it
+        // assumed were fine (e.g. Microsoft Word at a "Microsoft school",
+        // Word Clouds ABCya) — so flagged units saved "fixed" but stayed flagged.
+        const badTools = currentSugs
+          .map((s,i)=>({i, tool:sugTool(s)}))
+          .filter(x => x.i !== 5 && x.tool && (dashboardBannedToolMatch_(x.tool) || !isWhitelisted(x.tool)));
+        const badToolDesc = badTools.length
+          ? badTools.map(x=>`#${x.i+1} ${x.tool}`).join('; ')
+          : 'any tool not on the approved list above';
+        prompt=`${buildGASRules(e.yl)}\n\nSome suggestions in this unit use tools that are NOT approved. Replace ONLY those; keep every other suggestion exactly as it is. Return 6 total suggestions (the 6th must be a STEM Design Cycle activity).\nUnit: ${e.ca} | ${e.yl} | "${e.th}"${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nCurrent suggestions:\n${currentSugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}\nTools to REPLACE (not approved): ${badToolDesc}\nEach replacement MUST be a tool copied verbatim from the APPROVED TOOLS list above.\nEvery suggestion uses ONE approved tool (no "+" pairings). All 6 must use DIFFERENT tools.\nReturn ONLY JSON array of exactly 6 (the 6th must be a STEM Design Cycle activity): [{"t":"Tool Name","d":"Specific description."},...]`;
 
       } else if(type==='duplicate'){
         prompt=`${buildGASRules(e.yl)}\n\nFix duplicate tools in this unit — each suggestion must use a DIFFERENT tool.\nUnit: ${e.ca} | ${e.yl} | "${e.th}"${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nCurrent suggestions:\n${currentSugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}\nEvery suggestion uses ONE approved tool (no "+" pairings). All 6 must use DIFFERENT tools.\nReturn ONLY JSON array of exactly 6 (the 6th must be a STEM Design Cycle activity) with NO repeated tools: [{"t":"Tool Name","d":"Specific description."},...]`;
@@ -1224,10 +1234,13 @@ async function fixAllOfType(type){
       let sugs = null;
       let lastDupOpener = '';
       let lastFailReason = '';
+      let lastOffTools = '';
       for(let attempt=0; attempt<3; attempt++){
         let retryNote = '';
         if(attempt>0 && lastFailReason === 'opener-dup'){
           retryNote = `\n\nRETRY ${attempt}: Your previous response used "${lastDupOpener}" as the slot-1 tool, but another unit in this campus + year level already opens with that tool. Slot 1 MUST be a DIFFERENT tool that specifically suits THIS unit's theme.`;
+        } else if(attempt>0 && lastFailReason === 'off-list'){
+          retryNote = `\n\nRETRY ${attempt}: Your previous response used tool(s) that are NOT on the approved list: ${lastOffTools}. Slots 1-5 MUST each use a tool copied verbatim from the APPROVED TOOLS list. Replace the offending tool(s) with approved ones.`;
         }
         const raw=await callAI([{role:'user',parts:[{text:prompt+retryNote}]}],null,OPENAI_MODEL);
         const clean=raw.replace(/```json|```/g,'').trim();
@@ -1240,6 +1253,19 @@ async function fixAllOfType(type){
         if(uniqueTools.size < toolNames.length){ if(attempt>=2) throw new Error('AI returned duplicates again after retry'); continue; }
         const openerDup = openerDupesSiblingInYear_(e, parsed);
         if(openerDup){ lastDupOpener = openerDup; lastFailReason = 'opener-dup'; if(attempt < 2) continue; }
+        // Validate the AI's answer against the live whitelist — without this,
+        // an off-list "fix" saves fine and the dashboard just re-flags it.
+        // Slot 6 (index 5) is the STEM Design Cycle activity name, exempt from
+        // the whitelist exactly like the dashboard scan in getIssues().
+        const offListBack = parsed
+          .map((s,i)=>({i, tool:(sugTool(s)||'').trim()}))
+          .filter(x => x.i !== 5 && x.tool && (dashboardBannedToolMatch_(x.tool) || !isWhitelisted(x.tool)));
+        if(offListBack.length){
+          lastOffTools = offListBack.map(x=>x.tool).join(', ');
+          lastFailReason = 'off-list';
+          if(attempt < 2) continue;
+          throw new Error(`AI replacement still used non-approved tool(s): ${lastOffTools}`);
+        }
         sugs = parsed;
         break;
       }
@@ -1275,7 +1301,12 @@ async function fixAllOfType(type){
   if(fixedSinceSave>0) await saveToDrive();
   if(lbl) lbl.textContent=`Done — ${fixed} fixed, ${failed} failed`;
   renderDashboard();
-  setStatus(`Fixed ${fixed} ${type} issue${fixed!==1?'s':''}`);
+  // Don't hide failures — "Fixed 5" with 10 silent failures looked like the
+  // button only processed 5 at a time and needed repeated clicks.
+  setStatus(failed>0
+    ? `Fixed ${fixed} of ${entries.length} units — ${failed} unit${failed!==1?'s':''} couldn't be fixed automatically. Click the Fix button again to retry ${failed!==1?'them':'it'}.`
+    : `Fixed ${fixed} ${type} issue${fixed!==1?'s':''}`,
+    failed>0 ? 'error' : undefined);
 }
 
 // ========== LIBRARIES — stored in libraries.json on Drive/GitHub ==========
