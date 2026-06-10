@@ -13,6 +13,7 @@
         "ChatterPix Kids",
         "Clickview",
         "Delightex",
+        "Dollar Street",
         "Epic",
         "Explain Everything",
         "Field Guide to Victoria",
@@ -20,8 +21,8 @@
         "GarageBand",
         "Geoboard",
         "Google Maps",
-        "iMovie",
-        "insta360 camera",
+        "IMovie",
+        "Insta360 camera",
         "Kahoot",
         "Lego Spike Prime",
         "Makey Makey",
@@ -263,6 +264,10 @@
         "teachable machine": {
           "min": 1,
           "max": 6
+        },
+        "dollar street": {
+          "min": -2,
+          "max": 6
         }
       }
     },
@@ -271,6 +276,11 @@
         "is": "Teachable Machine is a web-based tool that lets students create simple machine learning models by training the computer to recognise images, sounds, or poses.",
         "good": "Students can make projects that identify objects, recognise their voice commands, or detect body movements to create interactive stories or games.",
         "avoid": "Avoid using it for complex or highly accurate machine learning tasks as it is designed for basic, educational purposes only."
+      },
+      "dollar street": {
+        "is": "Dollar Street is an online tool that shows photos and information about everyday homes and lives of people from different income levels around the world to help students understand global diversity.",
+        "good": "Students can compare living conditions, clothing, and food from various countries to create presentations or posters about cultural and economic differences.",
+        "avoid": "Avoid using it as a source for detailed statistics or current news since it focuses on visual stories rather than data analysis."
       }
     }
   },
