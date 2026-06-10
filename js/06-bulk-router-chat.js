@@ -313,47 +313,11 @@ function closeEntry(){
   if(PREV_TAB==='browse') renderBrowse();
 }
 
-// v5.18 FIX: Removed all BANNED tools from this list. Previously contained
-// classvr, green screen, digital camera, google earth, lego spike essential,
-// teams, powerpoint, onenote, sway — all of which are banned.
-// This list is the FALLBACK whitelist when TOOL_INVENTORY.approved is empty,
-// so banned tools in here could slip through if the inventory hasn't loaded.
-const TOOL_WHITELIST = [
-  // Microsoft M365 (only approved ones: Word, Excel, Forms)
-  // Note: bare 'microsoft' removed — it was a substring-match backdoor for banned MS tools.
-  'microsoft word','microsoft excel','microsoft forms','word','excel','forms',
-  'wise','schoolbox','wise discussion chatbots','schoolbox discussion chatbots',
-
-  // Robotics / STEM (Lego Spike Essential is BANNED — only Prime)
-  'beebot','beebots','bee-bot','bee-bots','sphero indi','sphero bolt','sphero',
-  'lego spike prime','lego spike','lego','micro:bit','microbit','codrone','makey makey',
-
-  // Hardware (ClassVR, Green Screen, Digital Camera are BANNED)
-  '3d printer','merge cube','merge cubes',
-  'podcast equipment','rodecaster','ipad','laptop',
-
-  // Core creation
-  'seesaw','canva','book creator','padlet',
-
-  // Video / audio / animation
-  'garageband','scratchjr','scratch jr','scratch','stop motion studio','stop motion',
-  'chatterpix','imovie','puppet pals',
-  'adobe express','podcasting using canva','animating a character with adobe express',
-
-  // Subject specific (Google Earth is BANNED)
-  'google maps','national geographic mapmaker','national geographic map maker','nat geo mapmaker','mapmaker',
-  'field guide to victoria','field guide','sky map',
-  'geoboard',
-
-  // Other
-  'clickview','epic','piccollage','brushes redux','word clouds','abcya',
-  'sketchbook','explain everything','freeform','delightex',
-  'kahoot','tinkercad','minecraft','minecraft education',
-
-  // Extended hardware
-  'insta360','rugged robot','smart bricks','indi robot','edison',
-  'cubetto','pico vr','pico','merge explorer'
-];
+// v5.38: the old hard-coded TOOL_WHITELIST fallback is gone. It silently
+// re-approved tools after they were removed from the editable Tool Inventory
+// (e.g. Word Clouds ABCya), and its stale entries made the dashboard flash
+// false "off whitelist" counts at boot before libraries.json loaded.
+// The editable Tool Inventory in libraries.json is the single source of truth.
 
 
 // v5.18 FIX: Expanded static banned list so these tools are caught
@@ -417,28 +381,26 @@ function isWhitelisted(toolName){
   // Banned list always wins, including static legacy bans such as ClassVR.
   if(dashboardBannedToolMatch_(raw)) return false;
 
-  // National Geographic MapMaker variants are approved even if older dashboard code
-  // runs before the editable Tool Inventory finishes loading from libraries.json.
-  if(/^(national geographic mapmaker|national geographic map maker|nat geo mapmaker|mapmaker)$/.test(key)) return true;
-
+  // The editable Tool Inventory (libraries.json) is the single source of truth.
+  // No static fallback: removing a tool in the Tool Inventory UI must make the
+  // dashboard flag it, full stop.
   try{
     if(typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY){
       const approved = Array.isArray(TOOL_INVENTORY.approved) ? TOOL_INVENTORY.approved : [];
       if(approved.length){
-        const isApproved = approved.some(a => {
+        return approved.some(a => {
           const ak = dashboardToolKey_(a);
           return ak && (key === ak || key.includes(ak) || ak.includes(key));
         });
-        if(isApproved) return true;
       }
     }
   }catch(e){}
 
-  const t = key;
-  return TOOL_WHITELIST.some(w => {
-    const wk = dashboardToolKey_(w);
-    return wk && (t === wk || t.includes(wk) || wk.includes(t));
-  });
+  // Inventory not loaded yet (dashboard can render before libraries.json
+  // arrives). Treat everything non-banned as OK for now — renderDashboard
+  // re-runs once the inventory loads, so real issues still surface without
+  // flashing false "off whitelist" counts at boot.
+  return true;
 }
 
 // ===== Age-range scan helpers (wrong-year-level dashboard flag) =====
@@ -555,13 +517,15 @@ function filterIssueType(label){
 }
 
 function renderDashboard(){
-  // The "wrong year level" check needs the Tool Inventory age ranges, which load
-  // from libraries.json after sign-in. At boot the dashboard can render before
-  // that finishes — making every tool look unconstrained and the count read 0.
-  // If the age ranges aren't loaded yet, load them once and re-count when ready.
+  // The "off whitelist" and "wrong year level" checks need the Tool Inventory
+  // (approved list + age ranges), which loads from libraries.json after sign-in.
+  // At boot the dashboard can render before that finishes — those two counts
+  // read 0 until then. If the inventory isn't loaded yet, load it once and
+  // re-count when ready.
   if(typeof ensureLibrariesLoaded === 'function' && !window._dashAgeReloaded){
     const _ar = (typeof TOOL_INVENTORY!=='undefined' && TOOL_INVENTORY && TOOL_INVENTORY.ageRanges) ? TOOL_INVENTORY.ageRanges : null;
-    if(!_ar || Object.keys(_ar).length === 0){
+    const _ap = (typeof TOOL_INVENTORY!=='undefined' && TOOL_INVENTORY && Array.isArray(TOOL_INVENTORY.approved)) ? TOOL_INVENTORY.approved : [];
+    if(!_ar || Object.keys(_ar).length === 0 || _ap.length === 0){
       window._dashAgeReloaded = true;
       ensureLibrariesLoaded().then(()=>{ renderDashboard(); }).catch(()=>{});
     }

@@ -3326,9 +3326,6 @@ setInterval(async()=>{
       if(typeof DEFAULT_TOOL_AGE_RANGES === 'object' && DEFAULT_TOOL_AGE_RANGES){
         DEFAULT_TOOL_AGE_RANGES[NATGEO_TOOL] = {min:3,max:6};
       }
-      if(typeof TOOL_WHITELIST !== 'undefined' && Array.isArray(TOOL_WHITELIST)){
-        ['national geographic mapmaker','national geographic map maker','nat geo mapmaker','mapmaker','delightex'].forEach(v => { if(!TOOL_WHITELIST.includes(v)) TOOL_WHITELIST.push(v); });
-      }
       if(typeof TOOL_INVENTORY !== 'undefined'){
         normaliseToolInventory?.();
         TOOL_INVENTORY.approved = TOOL_INVENTORY.approved || [];
