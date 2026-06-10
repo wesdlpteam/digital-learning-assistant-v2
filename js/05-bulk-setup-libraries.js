@@ -168,7 +168,16 @@ const REALISTIC_TOOL_USE_RULES = `REALISTIC CLASSROOM USE RULES (HARD RULE):
 // Covers all 48 approved tools. (Wise Discussion Chatbots = Schoolbox "AI-guided Student
 // Discussions", confirmed by Nathan 2026-06-07.) A missing note simply falls back to generic
 // behaviour, so adding/correcting one later is safe.
+// Generic fallback instruction used when a curator flags a tool as "AI ↔ real world"
+// but provides no custom examples (popup tickbox / whitelist tickbox).
+const GENERIC_AI_REAL_WORLD_NOTE = 'In 1-2 sentences woven into the description, connect this specific activity to a real-world system that uses the same kind of AI — choose a parallel that genuinely matches the activity, never a generic list.';
+
 const TOOL_AFFORDANCE_NOTES = {
+  // realWorld only: is/good/avoid live in the curator-saved override in libraries.json
+  // (_meta._toolAffordances['teachable machine']); getToolAffordance_ merges per-field.
+  'teachable machine': {
+    realWorld: 'In 1-2 sentences woven into the description, connect THIS specific classification task to a real-world system that works the same way — choose the parallel that genuinely matches the activity, never a generic list. True examples to draw from: recognising uniforms/vehicles/helpers → image recognition in council CCTV and emergency-dispatch systems; sorting recycling/materials → camera-driven sorting arms in recycling facilities; identifying plants/animals/leaves → wildlife-monitoring cameras and apps like Seek/iNaturalist; recognising faces/poses/movements → face unlock, accessibility tools, physiotherapy and sports-coaching apps; sorting food/produce → fruit-grading machines on farms; recognising sounds/voice commands → smart speakers and hearing-assistance tech.'
+  },
   tinkercad: {
     is: 'a 3D design app for modelling solid objects that can be 3D-printed in plastic',
     good: 'designing and modelling a 3D object or prototype to 3D-print — e.g. a container, holder, tool, model, badge, replacement part or simple moving mechanism — iterating the shape and measurements in the editor',
@@ -403,16 +412,46 @@ function getToolAffordance_(toolName){
   const k1 = toolInventoryKey(toolName);
   const k2 = String(toolName || '').toLowerCase().trim();
   const saved = (typeof LIBRARIES_META === 'object' && LIBRARIES_META && LIBRARIES_META._toolAffordances) || {};
-  return saved[k1] || saved[k2] || TOOL_AFFORDANCE_NOTES[k1] || TOOL_AFFORDANCE_NOTES[k2] || null;
+  const savedNote = saved[k1] || saved[k2] || null;
+  const builtin = TOOL_AFFORDANCE_NOTES[k1] || TOOL_AFFORDANCE_NOTES[k2] || null;
+  if(!savedNote && !builtin) return null;
+  // Per-field merge: a curator-saved value wins over the built-in default for that field,
+  // including an explicit empty string (= curator turned that part off).
+  const merged = Object.assign({}, builtin || {});
+  if(savedNote){
+    for(const f of ['is','good','avoid','realWorld']){
+      if(Object.prototype.hasOwnProperty.call(savedNote, f)) merged[f] = savedNote[f];
+    }
+  }
+  return merged;
 }
 
 function toolAffordanceNote_(toolName){
   const note = getToolAffordance_(toolName);
-  if(!note || !note.is) return '';
-  let s = `WHAT ${String(toolName).toUpperCase()} IS REALLY FOR: ${toolName} is ${note.is}.`;
-  if(note.good) s += ` Good uses: ${note.good}.`;
-  if(note.avoid) s += ` AVOID: ${note.avoid}`;
+  if(!note) return '';
+  let s = '';
+  if(note.is){
+    s = `WHAT ${String(toolName).toUpperCase()} IS REALLY FOR: ${toolName} is ${note.is}.`;
+    if(note.good) s += ` Good uses: ${note.good}.`;
+    if(note.avoid) s += ` AVOID: ${note.avoid}`;
+  }
+  if(note.realWorld) s += `${s ? '\n' : ''}REAL-WORLD CONNECTION (REQUIRED): ${note.realWorld}`;
   return s;
+}
+
+// Conditional real-world-connection rules for prompts where the AI may pick ANY tool
+// (bulk opportunity scans, bulk chat, audit replacements). One line per tool whose
+// affordance note carries a realWorld field (today: Teachable Machine).
+function aiRealWorldRulesBlock_(){
+  const names = (TOOL_INVENTORY && Array.isArray(TOOL_INVENTORY.approved) && TOOL_INVENTORY.approved.length)
+    ? TOOL_INVENTORY.approved
+    : (typeof DEFAULT_APPROVED_TOOLS !== 'undefined' ? DEFAULT_APPROVED_TOOLS : []);
+  const lines = [];
+  names.forEach(t => {
+    const n = getToolAffordance_(t);
+    if(n && n.realWorld) lines.push(`- If a suggestion uses ${t}: ${n.realWorld}`);
+  });
+  return lines.length ? `AI REAL-WORLD CONNECTION RULES (apply whenever the named tool is used):\n${lines.join('\n')}` : '';
 }
 
 // True only for tools backed by a curated verified lesson library (Minecraft Education,
@@ -468,8 +507,8 @@ Rules:
   showToolAffordancePopup_(name, draft);
 }
 
-function showToolAffordancePopup_(toolName, draft){
-  draft = draft || { is:'', good:'', avoid:'' };
+function showToolAffordancePopup_(toolName, draft, mode){
+  draft = draft || { is:'', good:'', avoid:'', realWorld:'' };
   const prev = document.getElementById('tool-affordance-overlay');
   if(prev) prev.remove();
 
@@ -486,7 +525,9 @@ function showToolAffordancePopup_(toolName, draft){
 
   const blurb = document.createElement('div');
   blurb.style.cssText = 'font-size:13px;color:var(--dim,#aaa)';
-  blurb.textContent = (draft && draft.is)
+  blurb.textContent = mode === 'edit'
+    ? 'This is the current note guiding how the AI writes suggestions for this tool. Edit anything, then Approve to save - or Skip to close without changes.'
+    : (draft && draft.is)
     ? 'The site AI drafted this. Edit anything, then Approve to save - or Skip to leave this tool without a note.'
     : 'The AI could not draft this automatically. Type a note, then Approve - or Skip to leave it blank.';
 
@@ -507,6 +548,18 @@ function showToolAffordancePopup_(toolName, draft){
   const fGood = field('Good uses', draft.good, 'the strongest real classroom activities or products');
   const fAvoid = field('Avoid (optional)', draft.avoid, 'a common misuse to avoid - leave blank if none');
 
+  const rwRow = document.createElement('label');
+  rwRow.style.cssText = 'display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;cursor:pointer;user-select:none';
+  const rwCb = document.createElement('input');
+  rwCb.type = 'checkbox';
+  rwCb.style.cssText = 'accent-color:var(--lime,#3a7);width:15px;height:15px;cursor:pointer';
+  rwRow.appendChild(rwCb);
+  rwRow.appendChild(document.createTextNode('AI tool — weave a real-world AI connection into its suggestions'));
+  const fRW = field('Real-world examples (optional)', draft.realWorld || '', 'e.g. identifying plants → wildlife-monitoring cameras and apps like Seek. Leave blank for a sensible default.');
+  rwCb.checked = !!(draft.realWorld && String(draft.realWorld).trim());
+  fRW.wrap.style.display = rwCb.checked ? '' : 'none';
+  rwCb.addEventListener('change', () => { fRW.wrap.style.display = rwCb.checked ? '' : 'none'; });
+
   const btnRow = document.createElement('div');
   btnRow.style.cssText = 'display:flex;gap:10px;justify-content:flex-end;margin-top:4px';
   const skip = document.createElement('button');
@@ -519,6 +572,8 @@ function showToolAffordancePopup_(toolName, draft){
   skip.addEventListener('click', () => overlay.remove());
   approve.addEventListener('click', async () => {
     const note = { is: fIs.ta.value.trim(), good: fGood.ta.value.trim(), avoid: fAvoid.ta.value.trim() };
+    // Unticked saves an explicit '' so it also suppresses any built-in realWorld default.
+    note.realWorld = rwCb.checked ? (fRW.ta.value.trim() || GENERIC_AI_REAL_WORLD_NOTE) : '';
     if(!note.is){ if(typeof setStatus === 'function') setStatus("Add at least \"What it's for\", or click Skip.", 'error'); fIs.ta.focus(); return; }
     approve.disabled = true; approve.textContent = 'Saving…';
     try{ await saveToolAffordance_(toolName, note); }catch(e){}
@@ -528,6 +583,7 @@ function showToolAffordancePopup_(toolName, draft){
 
   card.appendChild(title); card.appendChild(blurb);
   card.appendChild(fIs.wrap); card.appendChild(fGood.wrap); card.appendChild(fAvoid.wrap);
+  card.appendChild(rwRow); card.appendChild(fRW.wrap);
   card.appendChild(btnRow);
   overlay.appendChild(card);
   overlay.addEventListener('click', e => { if(e.target === overlay) overlay.remove(); });
@@ -543,15 +599,58 @@ async function saveToolAffordance_(toolName, note){
   const entry = { is: String(note.is).trim() };
   if(note.good && String(note.good).trim()) entry.good = String(note.good).trim();
   if(note.avoid && String(note.avoid).trim()) entry.avoid = String(note.avoid).trim();
+  // realWorld is stored even when '' — an explicit empty suppresses a built-in default
+  // (per-field merge in getToolAffordance_).
+  if(note.realWorld != null) entry.realWorld = String(note.realWorld).trim();
   LIBRARIES_META._toolAffordances[key] = entry;
   if(typeof setStatus === 'function') setStatus(`Saving note for ${toolName}…`);
   try{
     await saveLibraries();
     if(typeof setStatus === 'function') setStatus(`Saved what ${toolName} is for ✓`);
+    if(typeof renderToolInventory === 'function') renderToolInventory();
   }catch(e){
     if(typeof setStatus === 'function') setStatus(`Could not save note: ${e && e.message ? e.message : e}`, 'error');
     throw e;
   }
+}
+
+// Whitelist-row tickbox: flag/unflag a tool for the AI real-world connection at any time.
+// Saves into the same _toolAffordances override block; an explicit empty string suppresses
+// a built-in default (per-field merge in getToolAffordance_).
+async function invToggleAiRealWorld(toolName, on){
+  const key = toolInventoryKey(toolName);
+  if(!key) return;
+  if(typeof LIBRARIES_META !== 'object' || !LIBRARIES_META) LIBRARIES_META = {};
+  if(!LIBRARIES_META._toolAffordances || typeof LIBRARIES_META._toolAffordances !== 'object') LIBRARIES_META._toolAffordances = {};
+  const saved = LIBRARIES_META._toolAffordances[key] || {};
+  if(on){
+    const builtin = TOOL_AFFORDANCE_NOTES[key] || TOOL_AFFORDANCE_NOTES[String(toolName).toLowerCase().trim()] || null;
+    saved.realWorld = (saved.realWorld && String(saved.realWorld).trim()) || (builtin && builtin.realWorld) || GENERIC_AI_REAL_WORLD_NOTE;
+  } else {
+    saved.realWorld = '';
+  }
+  LIBRARIES_META._toolAffordances[key] = saved;
+  if(typeof setStatus === 'function') setStatus(`Saving AI real-world setting for ${toolName}…`);
+  try{
+    await saveLibraries();
+    if(typeof setStatus === 'function') setStatus(on ? `${toolName} suggestions will now weave in a real-world AI connection ✓` : `Real-world AI connection turned off for ${toolName} ✓`);
+  }catch(e){
+    if(typeof setStatus === 'function') setStatus(`Could not save: ${e && e.message ? e.message : e}`, 'error');
+    if(typeof renderToolInventory === 'function') renderToolInventory();
+  }
+}
+
+// Whitelist-row ✎ button: open the "What is this tool for?" popup pre-filled with the
+// current note (saved override merged over built-in default) so it can be edited any time,
+// not only when the tool is first added.
+function invEditToolAffordance(toolName){
+  const note = (typeof getToolAffordance_ === 'function') ? getToolAffordance_(toolName) : null;
+  showToolAffordancePopup_(toolName, {
+    is: (note && note.is) || '',
+    good: (note && note.good) || '',
+    avoid: (note && note.avoid) || '',
+    realWorld: (note && note.realWorld) || ''
+  }, 'edit');
 }
 
 // ========== CENTRALISED TOOL CONSTRAINTS — used by every AI suggestion path ==========

@@ -2022,6 +2022,7 @@ ${stemInstruction}
 
 ${constraintBlock}
 ${platformContext}
+${(typeof aiRealWorldRulesBlock_ === 'function') ? aiRealWorldRulesBlock_() : ''}
 
 OVERUSED TOOLS across library (avoid unless teacher specifically names them): ${overused.length ? overused.join(', ') : '(none)'}
 UNDERUSED age-appropriate tools (prefer these when suitable): ${underused.length ? underused.join(', ') : '(none)'}

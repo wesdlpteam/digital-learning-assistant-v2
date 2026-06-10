@@ -123,6 +123,10 @@ const REALISTIC_TOOL_USE_RULES = `REALISTIC CLASSROOM USE RULES (HARD RULE):
 - iPad rule: "iPad" by itself is a platform, not a tool. ONLY pick "iPad" as the t-field when the activity uses an iPad built-in feature that has no dedicated approved tool — specifically the Camera (photos/video), Voice Memos, Notes sketch, or generic device behaviours. NEVER use "iPad" as a wrapper for a third-party app that isn't on the approved tools list (no Clips, no Notability, no iMotion, no specific iOS app names). If the activity needs a specific app, pick that app from the approved list as the t-field instead.
 - If the real classroom task is unclear, choose a different tool.`;
 
+// Mirrors the client-side Teachable Machine real-world note (js/05 TOOL_AFFORDANCE_NOTES
+// 'teachable machine'.realWorld and the whitelist "AI real-world" tickbox). Keep wordings in sync.
+const TEACHABLE_MACHINE_REAL_WORLD_RULE = 'TEACHABLE MACHINE REAL-WORLD CONNECTION (REQUIRED whenever a suggestion uses Teachable Machine): in 1-2 sentences woven into the description, connect THIS specific classification task to a real-world system that works the same way — choose the parallel that genuinely matches the activity, never a generic list. True examples to draw from: recognising uniforms/vehicles/helpers → image recognition in council CCTV and emergency-dispatch systems; sorting recycling/materials → camera-driven sorting arms in recycling facilities; identifying plants/animals/leaves → wildlife-monitoring cameras and apps like Seek/iNaturalist; recognising faces/poses/movements → face unlock, accessibility tools, physiotherapy and sports-coaching apps; sorting food/produce → fruit-grading machines on farms; recognising sounds/voice commands → smart speakers and hearing-assistance tech.';
+
 function toolKey_(t) {
   return (t || '').toString().toLowerCase().trim().replace(/\s+/g, ' ');
 }
@@ -733,6 +737,7 @@ function suggestTechForPlanner_(args) {
     'UNIT OF INQUIRY: ' + th + '\n\n' +
     'PLANNER CONTEXT:\n' + plannerContext + '\n\n' +
     REALISTIC_TOOL_USE_RULES + '\n\n' +
+    (toolKey_(tool) === 'teachable machine' ? TEACHABLE_MACHINE_REAL_WORLD_RULE + '\n\n' : '') +
     'FIT CHECK FIRST (HONESTY OVERRIDES EVERYTHING): Before writing anything, judge how well ' + tool + ' suits THIS unit\'s central idea and lines of inquiry, and whether a realistic activity with it is doable by a typical ' + yl + ' class. Choose ONE of three verdicts:\n' +
     '  - "good": the tool\'s everyday core function genuinely serves this unit, AND a simple, realistic activity with it is achievable at this year level.\n' +
     '  - "stretch": the tool could be bent to fit, but it is not a natural match for this unit, OR making it fit would be too complex or ambitious for ' + yl + '. Treat this almost like a poor fit.\n' +
@@ -2929,7 +2934,7 @@ function diversityBuildPrompt_(data, targetIdx, approvedToolsPrompt) {
     'DIVERSITY CONSTRAINTS FOR THIS UNIT (the reason you\'re being asked to regenerate):' + overusedLine + allUsedLine + '\n' +
     '- VARY YOUR OPENER — slot 1 should specifically suit THIS unit\'s theme; do not default to one canonical tool across units.\n' +
     '- If multiple tools fit equally well, pick the one that\'s LEAST used in the year level.\n\n' +
-    approvedToolsPrompt + '\n' + REALISTIC_TOOL_USE_RULES + '\n\n' +
+    approvedToolsPrompt + '\n' + REALISTIC_TOOL_USE_RULES + '\n' + TEACHABLE_MACHINE_REAL_WORLD_RULE + '\n\n' +
     'YEAR LEVEL GUIDANCE FOR ' + target.yl + ':\n' + diversityYearRule_(target.yl) + '\n' +
     inspiringLessonsLibraryText_() + '\n\n' +
     'Return ONLY a valid JSON object (no markdown, no backticks). Use straight apostrophes (\'). Schema:\n' +
@@ -3813,7 +3818,7 @@ function inspiringBuildPrompt_(data, targetIdx, approvedToolsPrompt) {
     'DIVERSITY CONSTRAINTS:' + overusedLine + allUsedLine + '\n' +
     '- VARY YOUR OPENER — slot 1 sets the unit\'s tone and must specifically suit THIS unit\'s theme; do not default to one canonical tool across units.\n' +
     '- If multiple tools fit equally well, pick the one LEAST used in the year level.' + stemNudgeLine + mapsToolRule + '\n\n' +
-    approvedToolsPrompt + '\n' + REALISTIC_TOOL_USE_RULES + '\n\n' +
+    approvedToolsPrompt + '\n' + REALISTIC_TOOL_USE_RULES + '\n' + TEACHABLE_MACHINE_REAL_WORLD_RULE + '\n\n' +
     'YEAR LEVEL GUIDANCE FOR ' + target.yl + ':\n' + inspiringYearRule_(target.yl) + '\n' +
     inspiringLessonsLibraryText_() + '\n' +
     INSPIRING_DESCRIPTION_RULES + '\n\n' +
@@ -5347,7 +5352,7 @@ function regenerateOneInspiringSlotCore_(data, idx, sugIdx, opts) {
       sentenceRule + '\n\n' +
       'TOOLS ALREADY USED IN THIS UNIT (slots you are NOT replacing): ' + (otherTools.length ? otherTools.join(', ') : '(none)') + '.\n' +
       'HARD RULE: Your replacement MUST use a tool that is NOT in the list above (no duplicates within the unit). No "+" pairings — pick exactly ONE approved tool.' + overusedLine + '\n\n' +
-      approvedToolsPrompt + '\n' + REALISTIC_TOOL_USE_RULES + '\n\n' +
+      approvedToolsPrompt + '\n' + REALISTIC_TOOL_USE_RULES + '\n' + TEACHABLE_MACHINE_REAL_WORLD_RULE + '\n\n' +
       'YEAR LEVEL GUIDANCE FOR ' + target.yl + ':\n' + inspiringYearRule_(target.yl) + '\n' +
       inspiringLessonsLibraryText_() + '\n' +
       INSPIRING_DESCRIPTION_RULES + '\n\n' +

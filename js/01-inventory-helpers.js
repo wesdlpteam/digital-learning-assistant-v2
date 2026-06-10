@@ -229,13 +229,17 @@ function renderToolInventory(){
   whitelistEl.innerHTML = approved.length
     ? approved.map(t => {
         const range = getToolAgeRange(t);
-        return `<div style="display:grid;grid-template-columns:minmax(150px,1fr) 105px 105px auto;gap:6px;align-items:center;padding:7px 8px;background:rgba(197,232,74,0.08);border:1px solid rgba(197,232,74,0.3);border-radius:12px;font-size:12px;color:var(--lime)">
+        const rwNote = (typeof getToolAffordance_ === 'function') ? getToolAffordance_(t) : null;
+        const rwOn = !!(rwNote && rwNote.realWorld);
+        return `<div style="display:grid;grid-template-columns:minmax(150px,1fr) 105px 105px auto auto auto;gap:6px;align-items:center;padding:7px 8px;background:rgba(197,232,74,0.08);border:1px solid rgba(197,232,74,0.3);border-radius:12px;font-size:12px;color:var(--lime)">
           <div style="min-width:0">
             <div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(t)}</div>
             <div style="font-size:10px;color:var(--dim);font-weight:600">${ageRangeLabel(range)}</div>
           </div>
           <select class="inp" title="Minimum year level" onchange="invUpdateToolAge(${jsArg(t)},'min',this.value)" style="margin-bottom:0;font-size:11px;padding:5px 7px;color:var(--lime);border-color:rgba(197,232,74,.3)">${yearSelectOptions(range.min)}</select>
           <select class="inp" title="Maximum year level" onchange="invUpdateToolAge(${jsArg(t)},'max',this.value)" style="margin-bottom:0;font-size:11px;padding:5px 7px;color:var(--lime);border-color:rgba(197,232,74,.3)">${yearSelectOptions(range.max)}</select>
+          <label title="Weave a real-world AI connection into this tool's suggestions" style="display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--dim);cursor:pointer;white-space:nowrap;user-select:none"><input type="checkbox" ${rwOn ? 'checked' : ''} onchange="invToggleAiRealWorld(${jsArg(t)}, this.checked)" style="accent-color:var(--lime);cursor:pointer">AI real-world</label>
+          <button type="button" onclick="event.stopPropagation(); invEditToolAffordance(${jsArg(t)}); return false;" style="background:transparent;border:none;color:var(--lime);cursor:pointer;padding:0 4px;font-size:14px;line-height:1;opacity:.8" title="Edit how the AI should use this tool (what it's for, good uses, real-world examples)">✎</button>
           <button type="button" onclick="event.stopPropagation(); invRemoveTool('approved',${jsArg(t)}); return false;" style="background:transparent;border:none;color:var(--lime);cursor:pointer;padding:0 6px;font-size:18px;line-height:1;opacity:.8" title="Remove">×</button>
         </div>`;
       }).join('')

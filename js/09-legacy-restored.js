@@ -969,6 +969,7 @@ Other tools already used in this unit — avoid duplicates unless you are only i
 ${constraints}
 ${SUGGESTION_STYLE}
 ${REALISTIC_TOOL_USE_RULES}
+${(typeof aiRealWorldRulesBlock_ === 'function') ? aiRealWorldRulesBlock_() : ''}
 
 Create ONE replacement suggestion that is classroom-realistic, age-appropriate, and directly connected to the unit. If the current tool is actually appropriate, you may keep the same tool but must substantially improve the description so the classroom activity is practical and specific. Return ONLY JSON: {"t":"Tool Name","d":"~6 vivid practical sentences (500-800 chars) following the writing-style and depth rules above.","url":"optional direct lesson URL"}`;
 

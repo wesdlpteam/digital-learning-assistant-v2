@@ -48,6 +48,7 @@ async function buildSameToolDescriptionRewriteChange_(entryIdx, sugIdx, reason, 
   const oldDesc = sugDesc(oldSug);
   const safeToolForJson = JSON.stringify(String(oldTool || '')).slice(1, -1);
   const plannerCtx = entry.plannerContextRich || entry.plannerText || '';
+  const affordanceNote = (typeof toolAffordanceNote_ === 'function') ? toolAffordanceNote_(oldTool) : '';
   const prompt = `You are improving the wording of ONE digital learning suggestion for an IB PYP unit at Wesley College.
 
 IMPORTANT: This is a DESCRIPTION-ONLY fix. Keep the SAME tool exactly: ${oldTool}
@@ -66,7 +67,7 @@ Current description: ${oldDesc}
 Rewrite the description into ~6 vivid, practical sentences (target 500-800 characters) that follow the DESCRIPTION QUALITY RULES below. The central idea, lines of inquiry, and planner context above tell you what the unit is ABOUT — use that topic by name in your description, but NEVER quote the central idea or lines of inquiry directly.
 
 ${SUGGESTION_STYLE}
-
+${affordanceNote ? '\n' + affordanceNote + '\n' : ''}
 Return ONLY JSON: {"t":"${safeToolForJson}","d":"Improved description using the same tool."}`;
 
   const raw = await callAI([{role:'user', parts:[{text:prompt}]}], null, OPENAI_FAST_MODEL || OPENAI_MODEL);
@@ -1267,11 +1268,13 @@ ${platformMatchingRule}
 QUANTITY CAP: Propose a maximum of ${maxCap} changes total. If you find more than ${maxCap} genuine matches, select only the ${maxCap} strongest connections.
 ` : '';
 
+  const namedToolAffordance = (namedOpportunityTool && typeof toolAffordanceNote_ === 'function') ? toolAffordanceNote_(namedOpportunityTool) : '';
   const namedToolSection = (!platform && namedOpportunityTool) ? `
 
 SPECIFIC TOOL OPPORTUNITY MODE:
 The coordinator explicitly named the tool "${namedOpportunityTool}". This is already specific enough — do NOT ask for a named lesson library and do NOT switch to other tools.
 - Every proposal MUST use exactly this tool name in the "t" field: "${namedOpportunityTool}".
+${namedToolAffordance ? '\n' + namedToolAffordance + '\n' : ''}
 - Scan every candidate entry below${targetYears.length ? ` (${targetYears.join(', ')} only)` : ''} and find genuine unit fits.
 - SKIP entries that already contain ${namedOpportunityTool}; the candidate list has already been pre-filtered for this.
 - Replace the weakest non-STEM suggestion slot only: sugIdx 0, 1, 2, 3 or 4. Never target sugIdx 5.
@@ -1344,6 +1347,8 @@ ${buildDynamicToolAgeGuide()}
 ${WISE_DISCUSSION_CHATBOTS_CONTEXT}
 
 ${REALISTIC_TOOL_USE_RULES}
+
+${(typeof aiRealWorldRulesBlock_ === 'function') ? aiRealWorldRulesBlock_() : ''}
 
 DUPLICATE PREVENTION (HARD RULE):
 - Do NOT propose a change that would use the same tool as another suggestion already in the same entry.
