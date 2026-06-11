@@ -5850,7 +5850,21 @@ function regenerateOneInspiringSlot_(body) {
       }
     }
     if (idx === -1) return { error: 'unit-not-found' };
-    return regenerateOneInspiringSlotCore_(data, idx, sugIdx, { forcedTool: body.forcedTool });
+    const result = regenerateOneInspiringSlotCore_(data, idx, sugIdx, { forcedTool: body.forcedTool });
+    // 2026-06-11: optional server-side persist for headless repair runs.
+    // The Studio's per-suggestion regenerate button saves client-side, so
+    // this only runs when the caller explicitly asks (body.persist).
+    if (result && result.ok && body.persist) {
+      data[idx].s[sugIdx] = { t: result.t, d: result.d };
+      if (typeof clearHumanVerifiedFlags_ === 'function') {
+        clearHumanVerifiedFlags_(data[idx], 'Suggestion regenerated (slot repair)');
+      }
+      const toWrite = Array.isArray(raw) ? data : raw;
+      file.setContent(JSON.stringify(toWrite, null, 2));
+      try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e) { Logger.log('pushToGitHub after slot persist failed: ' + e); }
+      result.persisted = true;
+    }
+    return result;
   } catch (err) {
     Logger.log('regenerateOneInspiringSlot_: exception ' + err);
     return { error: 'exception', message: String(err) };
