@@ -457,6 +457,15 @@ function doPost(e) {
       return jsonResponse(result);
     }
 
+    // 2026-06-10: Zero-AI repair for slots whose tool LABEL doesn't match the
+    // description (rename-only passes left t="Seesaw" on Micro:bit prose).
+    // body.dryRun:true returns the planned relabels without writing anything.
+    if (action === 'fixtoollabelmismatches') {
+      const result = fixToolLabelMismatches_({ ca: body.ca || null, yl: body.yl || null, dryRun: !!body.dryRun });
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
     // 2026-05-25: Clears inspiringRegenAt on units whose tool names were
     // auto-swapped, so Inspire All produces a fresh description for the
     // new tool (avoiding feature-mismatch language from the original).
@@ -4239,6 +4248,195 @@ function inspiringAutoFixBadTools(opts) {
   Logger.log('inspiringAutoFixBadTools: fixed ' + fixed + ' unit(s).');
   if (fixes.length) Logger.log('Fixes:\n' + fixes.map(f => '  ' + f.ca + ' / ' + f.yl + ' / ' + f.th + ' — ' + f.swaps.map(s => 'slot ' + s.slot + ' "' + s.from + '" -> "' + s.to + '"').join('; ')).join('\n'));
   return { fixed: fixed, fixes: fixes };
+}
+
+// ============================================================================
+// 2026-06-10: Tool label/description mismatch repair (zero-AI).
+// Rename-only passes (Auto-fix bad tools, the pipeline's auto-substitute) can
+// swap a slot's `t` to an approved stand-in while `d` still describes the
+// ORIGINAL tool (e.g. t="Seesaw" on a Micro:bit conductivity activity).
+// dlaToolMismatchScan_ walks every unit and, when a slot's labelled tool is
+// never mentioned in its own description but exactly ONE evidence-eligible
+// approved tool clearly is, relabels the slot to that tool — the description
+// was written for it. Guards: never relabels to a banned tool, never creates
+// an intra-unit duplicate (app-smash components included), respects age
+// ranges, skips slot 6 (STEM Design Cycle) and "+" app-smash labels.
+// Keep DLA_TOOL_MENTION_OVERRIDES_ in sync with the copy in
+// js/06-bulk-router-chat.js (the dashboard's "tool mismatch" card).
+
+var DLA_TOOL_MENTION_OVERRIDES_ = {
+  'micro:bit': 'micro[\\s:._-]?bits?',
+  'minecraft education': 'minecraft',
+  'merge cubes': 'merge\\s*cubes?',
+  'beebots': 'bee[\\s-]?bots?',
+  'scratchjr': 'scratch\\s*jr',
+  'stop motion studio': 'stop[\\s-]?motion',
+  'chatterpix kids': 'chatterpix',
+  'piccollage': 'pic\\s*collage',
+  'garageband': 'garage\\s*band',
+  'sphero bolt': 'sphero',
+  'sphero indi': 'sphero',
+  'lego spike prime': 'lego\\s*spike',
+  'podcast equipment': 'podcast',
+  'podcasting using canva': 'podcast\\w*[\\s\\S]{0,40}canva',
+  'national geographic mapmaker': 'map\\s*maker',
+  'field guide to victoria': 'field\\s*guide',
+  'wise discussion chatbots': 'discussion\\s+chatbots?',
+  'insta360 camera': 'insta\\s*360',
+  'animating a character with adobe express': 'adobe\\s*express',
+  'adobe express': 'adobe\\s*express',
+  '3d printers': '3d[\\s-]?print',
+  'microsoft excel': '\\bexcel\\b',
+  'microsoft forms': 'microsoft\\s+forms?',
+  'seek by inaturalist': 'inaturalist',
+  'teachable machine': 'teachable\\s*machine',
+  'slow motion physical analysis': 'slow[\\s-]?motion',
+  'tablet magnifiers': 'magnif',
+  'dollar street': 'dollar\\s*street',
+  'sky map': 'sky\\s*map',
+  'google maps': 'google\\s*maps',
+  'imovie': 'imovie'
+};
+
+// Tools whose names are too generic to serve as relabel EVIDENCE ("epic
+// adventure", "freeform discussion", a physical sketchbook...). They still
+// count for the own-label check, where over-matching only makes the scan
+// more conservative.
+var DLA_MENTION_EVIDENCE_EXCLUDE_ = {
+  'epic': 1, 'freeform': 1, 'sketchbook': 1, 'apple clips': 1,
+  'microsoft excel': 1, 'microsoft forms': 1, '3d printers': 1,
+  'tablet magnifiers': 1, 'podcast equipment': 1, 'geoboard': 1
+};
+
+function dlaToolMentionRegex_(toolName) {
+  const key = diversityToolKey_(toolName);
+  if (DLA_TOOL_MENTION_OVERRIDES_[key]) return new RegExp(DLA_TOOL_MENTION_OVERRIDES_[key], 'i');
+  // Generic: split into tokens (incl. camelCase joins), flexible separators.
+  const tokens = String(toolName || '')
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .split(/[^A-Za-z0-9]+/)
+    .filter(Boolean)
+    .map(function (t) { return t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); });
+  if (!tokens.length) return null;
+  return new RegExp('\\b' + tokens.join('[\\s:._-]*') + '\\b', 'i');
+}
+
+function dlaDescMentionsTool_(desc, toolName) {
+  const rx = dlaToolMentionRegex_(toolName);
+  return rx ? rx.test(String(desc || '')) : false;
+}
+
+function dlaYearLevelValue_(label) {
+  const raw = String(label == null ? '' : label).trim().toLowerCase();
+  if (!raw) return null;
+  if (/3\s*year\s*old/.test(raw)) return -2;
+  if (/4\s*year\s*old/.test(raw)) return -1;
+  if (/\bprep\b|\bfoundation\b/.test(raw)) return 0;
+  const digits = raw.match(/[0-6]/g) || [];
+  const uniq = digits.filter(function (v, idx) { return digits.indexOf(v) === idx; });
+  if (uniq.length === 1) return Number(uniq[0]);
+  return null;
+}
+
+// Pure core, shared by the action and local tests: scans (and with
+// opts.apply, mutates) the data array. inv = {approved:[], banned:[], ageRanges:{}}.
+function dlaToolMismatchScan_(data, inv, opts) {
+  opts = opts || {};
+  const apply = !!opts.apply;
+  const approved = Array.isArray(inv.approved) ? inv.approved : [];
+  const bannedSet = {};
+  (Array.isArray(inv.banned) ? inv.banned : []).forEach(function (b) { bannedSet[diversityToolKey_(b)] = 1; });
+  const ageRanges = inv.ageRanges && typeof inv.ageRanges === 'object' ? inv.ageRanges : {};
+  const items = [];
+  let fixed = 0;
+
+  for (let i = 0; i < data.length; i++) {
+    const u = data[i];
+    if (!u || !Array.isArray(u.s)) continue;
+    if (typeof inspiringInScope_ === 'function' && !inspiringInScope_(u, opts)) continue;
+    for (let j = 0; j < u.s.length && j < 6; j++) {
+      if (j === 5) continue; // STEM Design Cycle slot: activity title, not a tool
+      const s = u.s[j];
+      if (!s || typeof s !== 'object') continue;
+      const label = String(s.t || '').trim();
+      const desc = String(s.d || '');
+      if (!label || desc.length < 60) continue;
+      if (label.indexOf('+') !== -1) continue; // app-smash labels: skip
+      if (dlaDescMentionsTool_(desc, label)) continue; // label features in its own prose
+
+      const labelKey = diversityToolKey_(label);
+      const hits = [];
+      const seenKeys = {};
+      for (let a = 0; a < approved.length; a++) {
+        const cand = approved[a];
+        const candKey = diversityToolKey_(cand);
+        if (!candKey || candKey === labelKey) continue;
+        if (bannedSet[candKey] || DLA_MENTION_EVIDENCE_EXCLUDE_[candKey]) continue;
+        const rx = dlaToolMentionRegex_(cand);
+        if (!rx) continue;
+        const m = desc.match(new RegExp(rx.source, 'gi'));
+        if (!m || !m.length) continue;
+        const firstIdx = desc.search(rx);
+        // Confidence: named at least twice, or named in the opening lines.
+        if (m.length < 2 && firstIdx > 200) continue;
+        // Dedupe by pattern (e.g. 'Adobe Express' vs 'Animating a Character
+        // with Adobe Express' share one regex) so one tool can't look like two.
+        if (seenKeys[rx.source]) continue;
+        seenKeys[rx.source] = 1;
+        hits.push(cand);
+      }
+      if (!hits.length) continue;
+
+      const item = { ca: u.ca, yl: u.yl, th: u.th, slot: j, from: label, to: hits.length === 1 ? hits[0] : null };
+      if (hits.length > 1) {
+        item.status = 'ambiguous';
+        item.detail = 'description mentions: ' + hits.join(', ');
+        items.push(item);
+        continue;
+      }
+      const to = hits[0];
+      const toKey = diversityToolKey_(to);
+      let dup = false;
+      for (let k = 0; k < u.s.length; k++) {
+        if (k === j || !u.s[k]) continue;
+        const parts = String(u.s[k].t || '').split('+');
+        for (let p = 0; p < parts.length; p++) {
+          if (diversityToolKey_(parts[p]) === toKey) { dup = true; break; }
+        }
+        if (dup) break;
+      }
+      if (dup) { item.status = 'skipped-duplicate'; items.push(item); continue; }
+      const yv = dlaYearLevelValue_(u.yl);
+      const r = ageRanges[toKey];
+      if (yv !== null && r && typeof r.min === 'number' && typeof r.max === 'number' && (yv < r.min || yv > r.max)) {
+        item.status = 'skipped-age'; items.push(item); continue;
+      }
+      item.status = apply ? 'fixed' : 'planned';
+      items.push(item);
+      if (apply) { s.t = to; fixed++; }
+    }
+  }
+  return { items: items, fixed: fixed };
+}
+
+function fixToolLabelMismatches_(opts) {
+  opts = opts || {};
+  const dryRun = !!opts.dryRun;
+  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  const raw = JSON.parse(file.getBlob().getDataAsString());
+  const isArr = Array.isArray(raw);
+  const data = isArr ? raw : Object.values(raw).filter(u => u && typeof u === 'object');
+  let ageRanges = {};
+  try { ageRanges = JSON.parse(PropertiesService.getScriptProperties().getProperty('DLA_TOOL_AGE_RANGES') || '{}'); } catch (e) {}
+  const inv = { approved: getApprovedToolNames_(), banned: getBannedToolNames_(), ageRanges: ageRanges };
+  const res = dlaToolMismatchScan_(data, inv, { ca: opts.ca || null, yl: opts.yl || null, apply: !dryRun });
+  if (!dryRun && res.fixed) {
+    const toWrite = isArr ? data : raw;
+    file.setContent(JSON.stringify(toWrite, null, 2));
+    try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e) { Logger.log('pushToGitHub after label-mismatch fix failed: ' + e); }
+  }
+  Logger.log('fixToolLabelMismatches_: ' + (dryRun ? 'dry-run, ' : '') + res.items.length + ' item(s), ' + res.fixed + ' fixed.');
+  return { dryRun: dryRun, found: res.items.length, fixed: res.fixed, items: res.items };
 }
 
 // 2026-05-25: Targeted requeue for units whose tool names were auto-swapped

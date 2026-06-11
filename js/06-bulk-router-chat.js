@@ -373,6 +373,98 @@ function dashboardBannedToolMatch_(toolName){
   return null;
 }
 
+// ===== Tool label / description mismatch (dashboard card) =====
+// A rename-only fix pass can leave a slot labelled with one tool while the
+// description still describes another (t="Seesaw" on Micro:bit prose).
+// Detection: the labelled tool is never named in its own write-up, but at
+// least one other approved tool clearly is. The Fix button calls the
+// backend's zero-AI relabel action; anything it can't safely relabel stays
+// flagged for a per-suggestion regenerate.
+// Keep these two maps in sync with gas_backend/Code.js.
+const DLA_TOOL_MENTION_OVERRIDES = {
+  'micro:bit': 'micro[\\s:._-]?bits?',
+  'minecraft education': 'minecraft',
+  'merge cubes': 'merge\\s*cubes?',
+  'beebots': 'bee[\\s-]?bots?',
+  'scratchjr': 'scratch\\s*jr',
+  'stop motion studio': 'stop[\\s-]?motion',
+  'chatterpix kids': 'chatterpix',
+  'piccollage': 'pic\\s*collage',
+  'garageband': 'garage\\s*band',
+  'sphero bolt': 'sphero',
+  'sphero indi': 'sphero',
+  'lego spike prime': 'lego\\s*spike',
+  'podcast equipment': 'podcast',
+  'podcasting using canva': 'podcast\\w*[\\s\\S]{0,40}canva',
+  'national geographic mapmaker': 'map\\s*maker',
+  'field guide to victoria': 'field\\s*guide',
+  'wise discussion chatbots': 'discussion\\s+chatbots?',
+  'insta360 camera': 'insta\\s*360',
+  'animating a character with adobe express': 'adobe\\s*express',
+  'adobe express': 'adobe\\s*express',
+  '3d printers': '3d[\\s-]?print',
+  'microsoft excel': '\\bexcel\\b',
+  'microsoft forms': 'microsoft\\s+forms?',
+  'seek by inaturalist': 'inaturalist',
+  'teachable machine': 'teachable\\s*machine',
+  'slow motion physical analysis': 'slow[\\s-]?motion',
+  'tablet magnifiers': 'magnif',
+  'dollar street': 'dollar\\s*street',
+  'sky map': 'sky\\s*map',
+  'google maps': 'google\\s*maps',
+  'imovie': 'imovie'
+};
+// Names too generic to serve as mismatch EVIDENCE ("epic adventure",
+// "freeform discussion"). Still fine for the own-label check.
+const DLA_MENTION_EVIDENCE_EXCLUDE = {
+  'epic': 1, 'freeform': 1, 'sketchbook': 1, 'apple clips': 1,
+  'microsoft excel': 1, 'microsoft forms': 1, '3d printers': 1,
+  'tablet magnifiers': 1, 'podcast equipment': 1, 'geoboard': 1
+};
+const _dlaMentionRegexCache = {};
+function dlaToolKeyPlain_(t){ return String(t || '').toLowerCase().trim(); }
+function dlaToolMentionRegex_(toolName){
+  const key = dlaToolKeyPlain_(toolName);
+  if(!key) return null;
+  if(_dlaMentionRegexCache[key] !== undefined) return _dlaMentionRegexCache[key];
+  let rx = null;
+  if(DLA_TOOL_MENTION_OVERRIDES[key]){
+    rx = new RegExp(DLA_TOOL_MENTION_OVERRIDES[key], 'i');
+  } else {
+    const tokens = String(toolName || '')
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .split(/[^A-Za-z0-9]+/)
+      .filter(Boolean)
+      .map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    if(tokens.length) rx = new RegExp('\\b' + tokens.join('[\\s:._-]*') + '\\b', 'i');
+  }
+  _dlaMentionRegexCache[key] = rx;
+  return rx;
+}
+function dlaDescMentionsTool_(desc, toolName){
+  const rx = dlaToolMentionRegex_(toolName);
+  return rx ? rx.test(String(desc || '')) : false;
+}
+// Approved tools (other than the label) that the write-up clearly names.
+function dlaMismatchEvidence_(desc, labelKey){
+  const approved = (typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY && Array.isArray(TOOL_INVENTORY.approved)) ? TOOL_INVENTORY.approved : [];
+  if(!approved.length) return [];
+  const out = [];
+  const seen = {};
+  for(const cand of approved){
+    const candKey = dlaToolKeyPlain_(cand);
+    if(!candKey || candKey === labelKey) continue;
+    if(DLA_MENTION_EVIDENCE_EXCLUDE[candKey]) continue;
+    if(typeof dashboardBannedToolMatch_ === 'function' && dashboardBannedToolMatch_(cand)) continue;
+    const rx = dlaToolMentionRegex_(cand);
+    if(!rx || !rx.test(desc)) continue;
+    if(seen[rx.source]) continue;
+    seen[rx.source] = 1;
+    out.push(cand);
+  }
+  return out;
+}
+
 function isWhitelisted(toolName){
   if(!toolName) return true;
   const raw = String(toolName || '').trim();
@@ -441,7 +533,7 @@ function approvedToolsForYear_(yv){
 }
 
 function getIssues(){
-  const incomplete=[], banned=[], duplicates=[], offWhitelist=[], missingPlanner=[], ageMismatch=[];
+  const incomplete=[], banned=[], duplicates=[], offWhitelist=[], missingPlanner=[], ageMismatch=[], toolMismatch=[];
   DATA.forEach((e,idx)=>{
     const sugs=getSugs(e);
     const realSugs=sugs.filter(isRealSug);
@@ -494,17 +586,26 @@ function getIssues(){
           ageMismatch.push({e,idx,type:'agemismatch',detail:`"${t}" is for ${ageRangeLabel(_range)}, this unit is ${e.yl}`});
         }
       }
+      // Label/write-up mismatch: the labelled tool never appears in its own
+      // description, but another approved tool clearly does.
+      if(t && !t.includes('+')){
+        const _d = String(s.d || '');
+        if(_d.length >= 60 && !dlaDescMentionsTool_(_d, t)){
+          const _ev = dlaMismatchEvidence_(_d, dlaToolKeyPlain_(t));
+          if(_ev.length) toolMismatch.push({e,idx,type:'toolmismatch',detail:`labelled "${t}" but the write-up is about ${_ev.join(' / ')}`});
+        }
+      }
     });
 
     if(!e.plannerText || e.plannerText.trim().length < 20)
       missingPlanner.push({e,idx,type:'missingplanner',detail:'No planner summary'});
   });
-  return {incomplete,banned,duplicates,offWhitelist,missingPlanner,ageMismatch};
+  return {incomplete,banned,duplicates,offWhitelist,missingPlanner,ageMismatch,toolMismatch};
 }
 
 function filterIssueType(label){
   
-  const map={'banned':'banned','off whitelist':'offwhitelist','duplicates':'duplicate','no planner':'incomplete','no planner summary':'missingplanner','wrong year level':'agemismatch'};
+  const map={'banned':'banned','off whitelist':'offwhitelist','duplicates':'duplicate','no planner':'incomplete','no planner summary':'missingplanner','wrong year level':'agemismatch','tool mismatch':'toolmismatch'};
   const type=map[label];
   const el=document.getElementById('issues-list');
   if(!el) return;
@@ -530,8 +631,8 @@ function renderDashboard(){
       ensureLibrariesLoaded().then(()=>{ renderDashboard(); }).catch(()=>{});
     }
   }
-  const {incomplete,banned,duplicates,offWhitelist,missingPlanner,ageMismatch}=getIssues();
-  const total=incomplete.length+banned.length+duplicates.length+offWhitelist.length+missingPlanner.length+ageMismatch.length;
+  const {incomplete,banned,duplicates,offWhitelist,missingPlanner,ageMismatch,toolMismatch}=getIssues();
+  const total=incomplete.length+banned.length+duplicates.length+offWhitelist.length+missingPlanner.length+ageMismatch.length+toolMismatch.length;
   document.getElementById('db-sub').textContent=`${DATA.length} entries across ${[...new Set(DATA.map(e=>e.ca))].length} campuses — ${total} issue${total!==1?'s':''} found`;
   const statDefs=[
     {label:'total entries',val:DATA.length,bg:'#C5E84A',col:'#111'},
@@ -540,6 +641,7 @@ function renderDashboard(){
     {label:'duplicates',val:duplicates.length,bg:duplicates.length>0?'#9B8BFF':'#1a1a1a',col:duplicates.length>0?'#fff':'#888'},
     {label:'off whitelist',val:offWhitelist.length,bg:offWhitelist.length>0?'#60B8F0':'#1a1a1a',col:offWhitelist.length>0?'#111':'#888'},
     {label:'wrong year level',val:ageMismatch.length,bg:ageMismatch.length>0?'#E85D9B':'#1a1a1a',col:ageMismatch.length>0?'#111':'#888'},
+    {label:'tool mismatch',val:toolMismatch.length,bg:toolMismatch.length>0?'#5EEAD4':'#1a1a1a',col:toolMismatch.length>0?'#111':'#888'},
     {label:'no planner',val:missingPlanner.length,bg:missingPlanner.length>0?'#D4A017':'#1a1a1a',col:missingPlanner.length>0?'#111':'#888'},
   ];
   document.getElementById('stat-cards').innerHTML=statDefs.map(({label,val,bg,col})=>`<div class="stat-card" style="background:${bg};border-color:transparent;cursor:pointer" onclick="filterIssueType('${label}')"><div class="stat-num" style="color:${col}">${val}</div><div class="stat-lbl" style="color:${col}">${label}</div></div>`).join('');
@@ -548,6 +650,7 @@ function renderDashboard(){
     ...banned,
     ...offWhitelist,
     ...ageMismatch,
+    ...toolMismatch,
     ...duplicates,
     ...incomplete,
     ...missingPlanner,
@@ -562,6 +665,7 @@ function renderDashboard(){
     if(banned.length>0) fixBtns.push({count:banned.length, label:'Fix banned tools', color:'#FF8080', type:'banned', fn:"fixAllOfType('banned')"});
     if(offWhitelist.length>0) fixBtns.push({count:offWhitelist.length, label:'Fix off-list', color:'#60B8F0', type:'offwhitelist', fn:"fixAllOfType('offwhitelist')"});
     if(ageMismatch.length>0) fixBtns.push({count:ageMismatch.length, label:'Fix wrong year level', color:'#E85D9B', type:'agemismatch', fn:"fixAllOfType('agemismatch')"});
+    if(toolMismatch.length>0) fixBtns.push({count:toolMismatch.length, label:'Fix tool mismatch', color:'#5EEAD4', type:'toolmismatch', fn:"fixAllOfType('toolmismatch')"});
 
     if(fixBtns.length > 0){
       fixBar.innerHTML=`
@@ -584,9 +688,9 @@ function renderDashboard(){
   }
   document.getElementById('issues-list').innerHTML=all.length
     ? all.map(({e,idx,type,detail})=>{
-        const badgeBg={'banned':'#FF8080','incomplete':'#F5A623','duplicate':'#9B8BFF','offwhitelist':'#60B8F0','missingplanner':'#D4A017','agemismatch':'#E85D9B'}[type]||'#888';
-        const badgeCol={'banned':'#111','incomplete':'#111','duplicate':'#fff','offwhitelist':'#111','missingplanner':'#111','agemismatch':'#111'}[type]||'#fff';
-        const label={'banned':'banned','incomplete':'no planner','duplicate':'duplicate','offwhitelist':'off-list','missingplanner':'no planner','agemismatch':'year level'}[type]||type;
+        const badgeBg={'banned':'#FF8080','incomplete':'#F5A623','duplicate':'#9B8BFF','offwhitelist':'#60B8F0','missingplanner':'#D4A017','agemismatch':'#E85D9B','toolmismatch':'#5EEAD4'}[type]||'#888';
+        const badgeCol={'banned':'#111','incomplete':'#111','duplicate':'#fff','offwhitelist':'#111','missingplanner':'#111','agemismatch':'#111','toolmismatch':'#111'}[type]||'#fff';
+        const label={'banned':'banned','incomplete':'no planner','duplicate':'duplicate','offwhitelist':'off-list','missingplanner':'no planner','agemismatch':'year level','toolmismatch':'tool mismatch'}[type]||type;
         return `<div class="row" onclick="openEntry(${idx})">
           <span style="font-size:11px;padding:4px 11px;border-radius:20px;background:${badgeBg};color:${badgeCol};font-weight:800;letter-spacing:.3px;flex-shrink:0">${label}</span>
           <span style="font-size:13px;color:#9ab89a;width:110px;flex-shrink:0">${esc(e.ca)}</span>

@@ -1171,6 +1171,34 @@ ${SUGGESTION_STYLE}`;
 
 
 async function fixAllOfType(type){
+  // Tool label/write-up mismatches go through the backend's zero-AI relabel
+  // action (strict guards: no banned tools, no duplicates, age ranges
+  // respected). Slots it can't safely relabel stay flagged — fix those with
+  // the per-suggestion regenerate (↻) button in Browse.
+  if(type==='toolmismatch'){
+    try{
+      setStatus('Checking which tool mismatches can be auto-fixed…','loading');
+      const dryR=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(withGASToken({action:'fixtoollabelmismatches',dryRun:true}))});
+      const dry=await dryR.json();
+      if(dry.error){ setStatus('Mismatch check failed: '+dry.error,'error'); return; }
+      const planned=(dry.items||[]).filter(i=>i.status==='planned');
+      const rest=(dry.items||[]).filter(i=>i.status!=='planned');
+      if(!planned.length){
+        alert('None of the flagged suggestions can be safely auto-relabelled.'+(rest.length?`\n\n${rest.length} need a fresh write-up instead — open the unit in Browse and hit the regenerate (↻) button on the flagged suggestion.`:''));
+        setStatus('No auto-fixable tool mismatches.','success');
+        return;
+      }
+      const lines=planned.map(i=>`• ${i.ca} / ${i.yl} / ${i.th}: "${i.from}" → "${i.to}"`).join('\n');
+      if(!confirm(`Relabel ${planned.length} suggestion(s) to match what their write-up actually describes?\n\n${lines}${rest.length?`\n\n${rest.length} other flagged suggestion(s) can't be safely auto-fixed and need a per-suggestion regenerate instead.`:''}\n\nNo AI calls — the write-ups are kept, only the tool name changes.`)) return;
+      const applyR=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(withGASToken({action:'fixtoollabelmismatches',dryRun:false}))});
+      const res=await applyR.json();
+      if(res.error){ setStatus('Mismatch fix failed: '+res.error,'error'); return; }
+      setStatus(`✓ Relabelled ${res.fixed} suggestion(s) to match their write-ups.`,'success');
+      if(typeof loadFromDrive==='function') await loadFromDrive();
+      if(typeof renderDashboard==='function') renderDashboard();
+    }catch(err){ setStatus('Mismatch fix failed: '+err.message,'error'); }
+    return;
+  }
   const {incomplete,banned,duplicates,offWhitelist,ageMismatch}=getIssues();
   const typeMap={incomplete,banned,duplicate:duplicates,offwhitelist:offWhitelist,agemismatch:ageMismatch};
   const issues=typeMap[type]||[];
