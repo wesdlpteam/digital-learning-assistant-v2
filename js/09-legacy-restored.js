@@ -2090,8 +2090,10 @@ function buildKnownPlatforms(){
       context: 'You have strong knowledge of Code.org courses and lesson plans. Reference specific lessons, courses and activities from Code.org when proposing changes.' },
     { match: /scratch\.mit|scratchfoundation/i, name: 'Scratch',
       context: 'You know the Scratch educator resources and lesson library. Reference specific Scratch projects and activities when proposing changes.' },
-    { match: /tinkercad/i, name: 'Tinkercad',
-      context: 'You know the Tinkercad lesson library for 3D design and circuits. Reference specific Tinkercad lessons when proposing changes.' },
+    // Tinkercad must NOT be listed as a platform: it has no verified lesson library,
+    // platform mode forces GPT to cite lesson names + URLs, and checkRealisticToolUse
+    // rejects every invented URL — guaranteeing zero results. Named-tool opportunity
+    // mode (with its TOOL_AFFORDANCE_NOTES entry) handles Tinkercad instead.
     { match: /commonsense/i, name: 'Common Sense Education',
       context: 'You know the Common Sense Education digital citizenship curriculum. Reference specific lessons when proposing changes.' },
     { match: /canva\.com\/edu/i, name: 'Canva for Education',

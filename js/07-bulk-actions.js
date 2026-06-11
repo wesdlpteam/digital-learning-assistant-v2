@@ -1235,7 +1235,7 @@ async function startBulkAnalysis(){
 
   // Parse explicit count from coordinator's instruction (e.g. "find 15 opportunities", "at least 12", "give me 20")
   // This becomes a HARD TARGET for GPT — without it, GPT-4.1 tends to return conservative counts (5-7)
-  const countMatch = (enrichedInstruction || '').match(/\b(?:find|add|propose|suggest|need|want|get|give\s+me|identify|locate|spot|show\s+me)\s+(?:at\s+least\s+|about\s+|around\s+|approximately\s+|up\s+to\s+|some\s+|me\s+)?(\d{1,3})\b/i);
+  const countMatch = (enrichedInstruction || '').match(/\b(?:find|add|propose|suggest|need|want|get|give\s+me|identify|locate|spot|show\s+me|look(?:ed|ing)?\s+for|search(?:ed|ing)?\s+for)\s+(?:at\s+least\s+|about\s+|around\s+|approximately\s+|up\s+to\s+|some\s+|me\s+)?(\d{1,3})\b/i);
   const explicitCount = countMatch ? Math.min(parseInt(countMatch[1], 10), 60) : null;
   const maxCap = explicitCount ? Math.max(explicitCount + 5, 25) : 20;
 
@@ -1690,7 +1690,20 @@ ${fullContext}`;
         : namedOpportunityTool
         ? `I understood the requested tool as ${namedOpportunityTool}, but GPT did not return any usable non-duplicate proposals after filtering. Try "find at least 10 ${namedOpportunityTool} opportunities in ${targetYears.length ? targetYears.join(', ') : 'all year levels'} and replace the weakest non-STEM suggestion".`
         : 'No changes proposed for this instruction. Try rephrasing — for example, name a specific tool or lesson library.';
-      bulkChatAddMessage('assistant', `⚠️ ${msg}`);
+      // Itemise WHY everything was set aside — without this, a run where the AI proposed
+      // plenty but every proposal failed a safety check reads as "found nothing", which
+      // hides systematic problems (e.g. a prompt/filter contradiction for one tool).
+      const zeroBits = [];
+      if(filteredUnsafe) zeroBits.push(`${filteredUnsafe} not age-appropriate`);
+      if(filteredRealism) zeroBits.push(`${filteredRealism} unrealistic for the tool (often a made-up lesson link)`);
+      if(filteredBanned) zeroBits.push(`${filteredBanned} on the banned list`);
+      if(filteredNegative) zeroBits.push(`${filteredNegative} you asked to avoid`);
+      if(filteredForbidden) zeroBits.push(`${filteredForbidden} not an approved tool`);
+      if(filteredStem) zeroBits.push(`${filteredStem} targeting the protected STEM slot`);
+      const zeroNote = (rawAiCount > 0 && zeroBits.length)
+        ? `<br><span style="color:var(--dim);font-size:11px">The AI actually proposed ${rawAiCount} idea${rawAiCount!==1?'s':''}, but they were all set aside: ${zeroBits.join(', ')}.</span>`
+        : '';
+      bulkChatAddMessage('assistant', `⚠️ ${msg}${zeroNote}`);
       bulkChatMemory.push({ role: 'assistant', content: `No changes found. ${msg}` });
       bulkChatState = 'idle';
     }
