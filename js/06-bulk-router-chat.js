@@ -447,6 +447,7 @@ function dlaDescMentionsTool_(desc, toolName){
 }
 // Approved tools (other than the label) that the write-up clearly names.
 function dlaMismatchEvidence_(desc, labelKey){
+  if(window._TOOL_INVENTORY_READY !== true) return []; // whitelist not loaded yet
   const approved = (typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY && Array.isArray(TOOL_INVENTORY.approved)) ? TOOL_INVENTORY.approved : [];
   if(!approved.length) return [];
   const out = [];
@@ -476,8 +477,13 @@ function isWhitelisted(toolName){
   // The editable Tool Inventory (libraries.json) is the single source of truth.
   // No static fallback: removing a tool in the Tool Inventory UI must make the
   // dashboard flag it, full stop.
+  // v5.41: gate on the explicit readiness flag, not approved.length — the
+  // boot-time NatGeo seed (js/08) puts ONE tool into approved before
+  // libraries.json loads, which made every other tool briefly read as
+  // "off whitelist" (the 647-then-0 flicker on the dashboard).
   try{
-    if(typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY){
+    if(window._TOOL_INVENTORY_READY === true &&
+       typeof TOOL_INVENTORY !== 'undefined' && TOOL_INVENTORY){
       const approved = Array.isArray(TOOL_INVENTORY.approved) ? TOOL_INVENTORY.approved : [];
       if(approved.length){
         return approved.some(a => {
@@ -624,9 +630,7 @@ function renderDashboard(){
   // read 0 until then. If the inventory isn't loaded yet, load it once and
   // re-count when ready.
   if(typeof ensureLibrariesLoaded === 'function' && !window._dashAgeReloaded){
-    const _ar = (typeof TOOL_INVENTORY!=='undefined' && TOOL_INVENTORY && TOOL_INVENTORY.ageRanges) ? TOOL_INVENTORY.ageRanges : null;
-    const _ap = (typeof TOOL_INVENTORY!=='undefined' && TOOL_INVENTORY && Array.isArray(TOOL_INVENTORY.approved)) ? TOOL_INVENTORY.approved : [];
-    if(!_ar || Object.keys(_ar).length === 0 || _ap.length === 0){
+    if(window._TOOL_INVENTORY_READY !== true){
       window._dashAgeReloaded = true;
       ensureLibrariesLoaded().then(()=>{ renderDashboard(); }).catch(()=>{});
     }

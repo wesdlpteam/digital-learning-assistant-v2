@@ -117,6 +117,13 @@ function loadToolInventoryFromMeta(meta){
     ageRanges: normaliseAgeRanges(inv.ageRanges || inv.ranges || inv.age_ranges || {})
   };
   seedDefaultInventoryIfEmpty();
+  // The genuine whitelist is now in place. Boot-time hotfixes (the NatGeo
+  // seed in js/08) can make TOOL_INVENTORY.approved non-empty long before
+  // this runs, so "approved has entries" is NOT a reliable loaded-signal —
+  // this flag is. The dashboard's off-whitelist and tool-mismatch counts
+  // stay quiet until it's set, preventing the boot-time flash of hundreds
+  // of false "off whitelist" hits (the 647-then-0 flicker).
+  window._TOOL_INVENTORY_READY = true;
   return TOOL_INVENTORY;
 }
 
