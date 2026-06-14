@@ -2368,6 +2368,11 @@ async function regenAll(){
   // 2026-05-28: Rewired to server-side regenerateOneInspiring. Same whitelist
   // + age + sibling-dup + auto-substitute + library-lesson pipeline as
   // Inspire All. Replaces the old client-side 3-attempt SUGGESTION_STYLE loop.
+  // 2026-06-15: Hardened so a failure can NEVER render as a blank box. Every
+  // exit path resets the button and shows a plain-English reason; the previous
+  // version could leave an empty red <div> when an error carried no message,
+  // which looked exactly like "nothing happened". See regenAllFail_().
+  const fail = (msg)=>regenAllFail_(res, btn, msg);
   try{
     const payload = withGASToken({
       action: 'regenerateOneInspiring',
@@ -2376,18 +2381,50 @@ async function regenAll(){
       th: entry.th,
       idx: idx
     });
-    const response = await fetch(SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
-    });
-    const result = await response.json();
+    let response;
+    try{
+      response = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+    }catch(netErr){
+      return fail('Could not reach the server - check your internet connection and try Generate again. (' + ((netErr && netErr.message) || 'network error') + ')');
+    }
+    // Read as text first so a non-JSON reply (e.g. an expired sign-in serving a
+    // Google login page) becomes a clear message instead of a silent parse crash.
+    const rawText = await response.text();
+    let result;
+    try{
+      result = JSON.parse(rawText);
+    }catch(parseErr){
+      const looksLikeLogin = /<html|<!doctype|accounts\.google|sign in|login/i.test(rawText || '');
+      if(!response.ok || looksLikeLogin){
+        return fail('Your Studio sign-in looks like it has expired. Click "Reconnect Drive" at the top of the page, then try Generate again. (server replied with status ' + response.status + ')');
+      }
+      const snippet = (rawText || '').replace(/\s+/g,' ').trim().slice(0,160);
+      return fail('The server sent back something unexpected (status ' + response.status + '): ' + (snippet || 'an empty reply') + '. Please try again - if it keeps happening, note the time so it can be looked into.');
+    }
+    if(!result || typeof result !== 'object'){
+      return fail('The server did not return a usable answer. Please try Generate again.');
+    }
+    if(result.paused){
+      return fail(result.reason === 'lock-held'
+        ? 'Another generation is already running in the background. Wait about a minute, then try Generate again.'
+        : 'Generation was paused (' + (result.reason || 'unknown reason') + '). Please try again.');
+    }
     if(result.error){
-      throw new Error(result.reason || result.error);
+      const friendly = {
+        'unit-not-found': 'The server could not match this unit (it may have been moved or renamed since the page loaded). Go Back, reopen the unit from Browse, and try again.',
+        'missing-ci-or-lo': 'This unit is missing its Central Idea or Lines of Inquiry, which the generator needs to work. Add those in Edit Unit Details, then try Generate again.',
+        'regen-failed': 'The AI could not produce 6 valid suggestions after several attempts' + (result.reason ? ' (' + result.reason + ')' : '') + '. Please try Generate once more.',
+        'exception': 'The server hit an error' + (result.message ? ': ' + result.message : '') + '. Please try again - if it keeps happening, note the time.'
+      };
+      return fail(friendly[result.error] || ('Generation failed: ' + (result.reason || result.error)));
     }
     const sugs = result.sugs;
     if(!Array.isArray(sugs) || sugs.length !== 6){
-      throw new Error('Server returned ' + (Array.isArray(sugs) ? sugs.length : 'no') + ' suggestions; expected 6');
+      return fail('The server did not return a full set of 6 suggestions' + (Array.isArray(sugs) ? ' (it sent ' + sugs.length + ')' : '') + '. Please try Generate again.');
     }
     const autoSwappedNote = result.autoSwapped
       ? `<div style="font-size:11px;color:#fbbf24;margin-bottom:8px">\u26a0 One or more tools were auto-substituted \u2014 review carefully.</div>`
@@ -2404,10 +2441,19 @@ async function regenAll(){
       </div>`;
     stopProgress();
   }catch(e){
-    res.innerHTML=`<div style="font-size:12px;color:#f87171">${esc(e.message)}</div>`;
-    stopProgress();
-  btn.disabled=false; btn.textContent='Generate 6 new suggestions';
+    // Last-resort guard: whatever slipped through, never leave a blank box.
+    fail('Something went wrong while generating (' + ((e && e.message) || 'no detail was given') + '). Please try Generate again.');
   }
+}
+
+// 2026-06-15: Shared failure renderer for regenAll - always shows a visible,
+// non-empty message and always re-enables the button. Centralised so no future
+// edit can accidentally reintroduce a silent/blank failure.
+function regenAllFail_(res, btn, msg){
+  const text = (msg && String(msg).trim()) || 'Generation did not complete, and no reason was given. Please try Generate again.';
+  if(res) res.innerHTML = `<div style="font-size:12px;color:#f87171;line-height:1.4">${esc(text)}</div>`;
+  try{ stopProgress(); }catch(e){}
+  if(btn){ btn.disabled=false; btn.textContent='Generate 6 new suggestions'; }
 }
 
 function applyRegenAll(idx,pendingId){
