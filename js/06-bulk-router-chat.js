@@ -623,6 +623,13 @@ function filterIssueType(label){
   el.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
+function goToProposalReview(){
+  // Refresh the proposals list, then switch to the browse panel where the
+  // pending-proposal cards render (switchTab('browse',...) calls renderBrowse()).
+  try { if (typeof loadUoiProposals === 'function') loadUoiProposals(); } catch(e){}
+  switchTab('browse', document.querySelector('.nav-item[data-tab="browse"]'));
+}
+
 function renderDashboard(){
   // The "off whitelist" and "wrong year level" checks need the Tool Inventory
   // (approved list + age ranges), which loads from libraries.json after sign-in.
@@ -638,6 +645,21 @@ function renderDashboard(){
   const {incomplete,banned,duplicates,offWhitelist,missingPlanner,ageMismatch,toolMismatch}=getIssues();
   const total=incomplete.length+banned.length+duplicates.length+offWhitelist.length+missingPlanner.length+ageMismatch.length+toolMismatch.length;
   document.getElementById('db-sub').textContent=`${DATA.length} entries across ${[...new Set(DATA.map(e=>e.ca))].length} campuses — ${total} issue${total!==1?'s':''} found`;
+  // Pending teacher submissions notification (data from loadUoiProposals at startup).
+  (function(){
+    var banner = document.getElementById('uoi-pending-banner');
+    if(!banner) return;
+    var cache = window._uoiProposalsCache || [];
+    var pending = cache.filter(function(p){ return !p.status || p.status === 'pending'; });
+    if(!pending.length){ banner.innerHTML=''; return; }
+    banner.innerHTML =
+      '<div onclick="goToProposalReview()" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:12px 16px;margin-bottom:14px;'+
+      'background:#FBBF24;border-radius:10px;font-weight:800;color:#111">'+
+      '<span style="font-size:16px">📥</span>'+
+      '<span style="flex:1">'+pending.length+' teacher submission'+(pending.length!==1?'s':'')+' awaiting review</span>'+
+      '<span style="font-size:12px;background:#111;color:#FBBF24;padding:5px 12px;border-radius:8px">Review →</span>'+
+      '</div>';
+  })();
   const statDefs=[
     {label:'total entries',val:DATA.length,bg:'#C5E84A',col:'#111'},
     {label:'no planner',val:incomplete.length,bg:incomplete.length>0?'#F5A623':'#1a1a1a',col:incomplete.length>0?'#111':'#888'},
