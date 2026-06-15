@@ -1025,16 +1025,21 @@ function approveUoiProposal_(opts) {
   try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e2) { Logger.log('pushToGitHub after UOI approval failed: ' + e2); }
 
   // Auto-generate the 6 lesson ideas from the just-saved CI/LOIs so the unit
-  // isn't left empty (kinder year levels get kinder-safe tools via the
-  // inspiring year rule). Best-effort: if it fails, the CI/LOI edit still
-  // stands and a curator can run Inspire All later.
+  // isn't left empty. regenerateAllInspiring writes the LIVE unit.s and pushes
+  // (regenerateOneInspiring_ only stages a hidden preview, so don't use it
+  // here). Kinder year levels get kinder-safe tools via the inspiring year
+  // rule. Best-effort: if it fails, the CI/LOI edit still stands and a curator
+  // can run Inspire All later. Needs both ci + lo (like inspiringHasUnitDetails_).
   var ideasGenerated = false;
   try {
-    if (typeof regenerateOneInspiring_ === 'function' && unit.ci && unit.lo) {
-      var ideasResult = regenerateOneInspiring_({ ca: p.ca, yl: p.yl, th: p.th });
-      ideasGenerated = !!(ideasResult && !ideasResult.error && !ideasResult.paused);
+    if (typeof regenerateAllInspiring === 'function' && unit.ci && unit.lo) {
+      var unitIdx = data.indexOf(unit);
+      if (unitIdx !== -1) {
+        var ideasResult = regenerateAllInspiring({ indices: [unitIdx], redoAll: true, batch: 1 });
+        ideasGenerated = !!(ideasResult && ideasResult.fixed > 0);
+      }
     }
-  } catch (e3) { Logger.log('regenerateOneInspiring_ after UOI approval failed: ' + e3); }
+  } catch (e3) { Logger.log('regenerateAllInspiring after UOI approval failed: ' + e3); }
 
   p.status = 'approved';
   p.approvedAt = new Date().toISOString();

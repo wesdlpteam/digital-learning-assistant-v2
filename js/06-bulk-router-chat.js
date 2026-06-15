@@ -1304,13 +1304,14 @@ async function loadUoiProposals(){
     if(result.error){ console.warn('loadUoiProposals error:', result.error); return; }
     window._uoiProposalsCache = result.proposals || [];
     if(typeof renderBrowse === 'function') renderBrowse();
+    if(typeof renderDashboard === 'function') renderDashboard();
   } catch(err){
     console.warn('loadUoiProposals failed:', err.message);
   }
 }
 
 async function approveUoiProposal(id){
-  if(!confirm('Approve this teacher edit?\n\n• Their Central Idea / Lines of Inquiry will be applied to data.json\n• inspiringRegenAt cleared so the next Inspire All retunes tech ideas to the new wording\n• Committed + pushed to GitHub\n\nProceed?'))return;
+  if(!confirm('Approve this teacher edit?\n\n• Their Central Idea / Lines of Inquiry will be applied to data.json\n• 6 lesson ideas auto-generated and published (needs both Central Idea + Lines of Inquiry)\n• Committed + pushed to GitHub\n\nProceed?'))return;
   try {
     const payload = withGASToken({ action: 'approveUoiProposal', id: id });
     const response = await fetch(SCRIPT_URL, {
@@ -1320,7 +1321,7 @@ async function approveUoiProposal(id){
     });
     const result = await response.json();
     if(result.error){ setStatus('Approve error: ' + result.error, 'error'); return; }
-    setStatus(`✓ Approved — ${result.changes ? result.changes.length : 0} field(s) updated. Run Inspire All when ready to retune tech ideas.`, 'success');
+    setStatus(`✓ Approved — ${result.changes ? result.changes.length : 0} field(s) updated. ${result.ideasGenerated ? '6 lesson ideas generated and published.' : 'Ideas not generated (needs both Central Idea and Lines of Inquiry) — run Inspire All when ready.'}`, 'success');
     await loadUoiProposals();
     if(typeof loadFromDrive === 'function'){
       await loadFromDrive();
