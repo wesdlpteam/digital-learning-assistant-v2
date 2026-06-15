@@ -2751,11 +2751,15 @@ function readHash(){try{
 function nv(t,v){
 if(t==="ca")trackPage(CN[v]+" campus",CN[v],"");
 else if(t==="yl")trackPage(v,CN[S.ca]||"",v);
-else if(t==="ui"){var u=D.filter(function(r){return r.ca===(Object.keys(CM).find(function(k){return CM[k]===S.ca}))&&r.yl===S.yl})[v];if(u&&(!u.s||!u.s.length||u.s.every(function(s){return !s.t||s.t.indexOf("Planner Needed")!==-1||s.t==="(empty)"}))){openPlanner(CN[S.ca]||"",S.yl,u.th);return;}trackPage(u?u.th:"Unit",CN[S.ca]||"",S.yl);}if(t==="ca"){S.ca=v;S.v="campus"}else if(t==="yl"){S.yl=v;S.v="units"}else if(t==="ui"){S.ui=v;S.v="detail"}pushHash();R()}
+else if(t==="ui"){var u=D.filter(function(r){return r.ca===(Object.keys(CM).find(function(k){return CM[k]===S.ca}))&&r.yl===S.yl})[v];if(unitNeedsPlannerPopup_(u)){openPlanner(CN[S.ca]||"",S.yl,u.th);return;}trackPage(u?u.th:"Unit",CN[S.ca]||"",S.yl);}if(t==="ca"){S.ca=v;S.v="campus"}else if(t==="yl"){S.yl=v;S.v="units"}else if(t==="ui"){S.ui=v;S.v="detail"}pushHash();R()}
 function bk(){if(S.v==="detail"){S.ui=null;S.v="units"}else if(S.v==="units"){S.yl=null;S.v="campus"}else if(S.v==="campus"){S.ca=null;S.v="home";loadLeaderboard()}else{S.v="home";loadLeaderboard();}pushHash();R()}
 
 
 
+function unitNeedsPlannerPopup_(u){
+  if(!u||!u.s||!u.s.length)return false;
+  return u.s.every(function(s){return !s.t||s.t.indexOf("Planner Needed")!==-1||s.t==="(empty)";});
+}
 function openPlanner(campus,yl,theme){
 var tmsg=encodeURIComponent("Hi Nathan, I have the UOI planner for "+yl+" "+theme+" ("+campus+"). How should I send it to you?");
 document.getElementById("plannerCTA").href="https://teams.microsoft.com/l/chat/0/0?users=nathan.benn@wesleycollege.edu.au&message="+tmsg;
