@@ -562,6 +562,13 @@ function doPost(e) {
       return jsonResponse(result);
     }
 
+    // 2026-06-15: one-time admin action to create the empty kinder unit shells.
+    if (action === 'seedkinderunits') {
+      const result = seedKinderUnits_();
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
     return jsonResponse({ error: 'Unknown action: ' + actionRaw });
   } catch(err) {
     return jsonResponse({ error: err && err.message ? err.message : String(err) });

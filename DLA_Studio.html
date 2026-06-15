@@ -172,6 +172,16 @@
         <div id="issues-list"></div>
       </div>
       <div class="card" style="margin-top:8px">
+        <span class="label">Kinder year groups</span>
+        <p style="font-size:13px;color:var(--dim);margin:8px 0 14px;line-height:1.6">
+          One-time setup: create the empty 3YO &amp; 4YO kinder units (all six themes) for Elsternwick and St Kilda Road so kinder teachers can submit their Central Idea &amp; Lines of Inquiry. Safe to click more than once.
+        </p>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <button class="btn-pri" id="btn-seed-kinder" onclick="seedKinderYearGroups()">Create kinder year groups</button>
+          <span id="seed-kinder-status" style="font-size:13px;font-weight:600"></span>
+        </div>
+      </div>
+      <div class="card" style="margin-top:8px">
         <span class="label">Add to Queue</span>
         <p style="font-size:13px;color:var(--dim);margin-bottom:16px;line-height:1.6">
           Submit a new unit to the auditor. The Apps Script engine picks it up within 10 minutes, finds the matching planner PDF on Drive, and fills in 5 AI-generated suggestions automatically.
@@ -673,14 +683,14 @@
 
 <!-- ?v=APP_VERSION cache-busts the code files. Bump this to match APP_VERSION
      in js/00-config-state-utils.js on every deploy so browsers fetch fresh code. -->
-<script src="js/00-config-state-utils.js?v=5.44"></script>
-<script src="js/01-inventory-helpers.js?v=5.44"></script>
-<script src="js/02-ui-load-navigation.js?v=5.44"></script>
-<script src="js/04-audit-analytics-live.js?v=5.44"></script>
-<script src="js/05-bulk-setup-libraries.js?v=5.44"></script>
-<script src="js/06-bulk-router-chat.js?v=5.44"></script>
-<script src="js/07-bulk-actions.js?v=5.44"></script>
-<script src="js/09-legacy-restored.js?v=5.44"></script>
-<script src="js/08-export-sync-hotfixes.js?v=5.44"></script>
+<script src="js/00-config-state-utils.js?v=5.45"></script>
+<script src="js/01-inventory-helpers.js?v=5.45"></script>
+<script src="js/02-ui-load-navigation.js?v=5.45"></script>
+<script src="js/04-audit-analytics-live.js?v=5.45"></script>
+<script src="js/05-bulk-setup-libraries.js?v=5.45"></script>
+<script src="js/06-bulk-router-chat.js?v=5.45"></script>
+<script src="js/07-bulk-actions.js?v=5.45"></script>
+<script src="js/09-legacy-restored.js?v=5.45"></script>
+<script src="js/08-export-sync-hotfixes.js?v=5.45"></script>
 </body>
 </html>

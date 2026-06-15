@@ -630,6 +630,27 @@ function goToProposalReview(){
   switchTab('browse', document.querySelector('.nav-item[data-tab="browse"]'));
 }
 
+async function seedKinderYearGroups(){
+  const btn=document.getElementById('btn-seed-kinder');
+  const st=document.getElementById('seed-kinder-status');
+  if(!confirm('Create the empty 3YO & 4YO kinder units for Elsternwick and St Kilda Road?\n\nThis adds any that do not already exist and publishes them. Safe to run more than once.'))return;
+  if(btn){btn.disabled=true;}
+  if(st){st.textContent='Creating...';st.style.color='var(--gold)';}
+  try{
+    const payload=withGASToken({action:'seedKinderUnits'});
+    const r=await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+    const res=await r.json();
+    if(res.error){throw new Error(res.error);}
+    const added=(typeof res.added==='number')?res.added:0;
+    if(st){st.textContent=added>0?('\u2713 Created '+added+' kinder unit(s).'):'\u2713 Already present \u2014 nothing to add.';st.style.color='var(--lime)';}
+    if(typeof loadFromDrive==='function'){await loadFromDrive(); if(typeof renderDashboard==='function') renderDashboard();}
+  }catch(err){
+    if(st){st.textContent='Failed: '+(err&&err.message?err.message:err);st.style.color='#FF8080';}
+  }finally{
+    if(btn){btn.disabled=false;}
+  }
+}
+
 function renderDashboard(){
   // The "off whitelist" and "wrong year level" checks need the Tool Inventory
   // (approved list + age ranges), which loads from libraries.json after sign-in.
