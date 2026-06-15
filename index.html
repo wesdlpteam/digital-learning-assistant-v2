@@ -1629,7 +1629,7 @@ function tgWesleyCur(){
 
 // ========== END TECHNOLOGIES CURRICULUM ==========
 
-const CM={"Glen Waverley":"GW","Elsternwick":"EL","St Kilda":"SKR"},CN={"GW":"Glen Waverley","EL":"Elsternwick","SKR":"St Kilda Rd"};
+const CM={"Glen Waverley":"GW","Elsternwick":"EL","St Kilda":"SKR"},CN={"GW":"Glen Waverley","EL":"Elsternwick","SKR":"St Kilda Road"};
 const CC={"GW":"#F5A623","EL":"#CDEB45","SKR":"#7ED957"};
 const CTX={"GW":"#3D1E00","EL":"#1A2E05","SKR":"#0D3B00"};
 const TC={"Who We Are":"#FF6B6B","Where We Are in Place and Time":"#F5A623","How We Express Ourselves":"#A78BFA","How the World Works":"#CDEB45","How the World Works (Materials)":"#CDEB45","How the World Works (Solar System)":"#CDEB45","How We Organise Ourselves":"#38BDF8","Sharing the Planet":"#22C55E"};
@@ -2467,7 +2467,7 @@ function normaliseCampusName(campus){
   var k=c.toLowerCase().replace(/\./g,'').replace(/\s+/g,' ');
   if(k==='el'||k==='elsternwick'||k.indexOf('elsternwick')>-1)return 'Elsternwick';
   if(k==='gw'||k==='glen waverley'||k.indexOf('glen waverley')>-1)return 'Glen Waverley';
-  if(k==='skr'||k==='stk'||k==='st kilda'||k==='st kilda road'||k==='st kilda rd'||k.indexOf('st kilda')>-1)return 'St Kilda Rd';
+  if(k==='skr'||k==='stk'||k==='st kilda'||k==='st kilda road'||k==='st kilda rd'||k.indexOf('st kilda')>-1)return 'St Kilda Road';
   return c;
 }
 function normaliseYearName(year){
@@ -2620,7 +2620,7 @@ function renderLeaderboard(){
 var lb=normaliseLeaderboard(window._leaderboard||[]);
 if(!window._leaderboard)return '<div class="lb-loading">Loading leaderboard...</div>';
 var h='';
-var campuses=[{code:'EL',name:'Elsternwick',color:'#CDEB45'},{code:'GW',name:'Glen Waverley',color:'#F5A623'},{code:'SKR',name:'St Kilda Rd',color:'#7ED957'}];
+var campuses=[{code:'EL',name:'Elsternwick',color:'#CDEB45'},{code:'GW',name:'Glen Waverley',color:'#F5A623'},{code:'SKR',name:'St Kilda Road',color:'#7ED957'}];
 campuses.forEach(function(c){
 var teams=lb.filter(function(t){return normaliseCampusName(t.campus)===c.name;}).sort(function(a,b){return (Number(b.points)||0)-(Number(a.points)||0);});
 h+='<div class="lb-campus"><div class="lb-campus-title"><span style="color:'+c.color+'">'+c.name+'</span></div>';
