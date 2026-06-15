@@ -1027,6 +1027,51 @@ function dismissUoiProposal_(opts) {
 
 
 // ==========================================
+// 2026-06-15: SEED EMPTY KINDER UNITS
+// Adds 3YO + 4YO kinder shells (6 themes each) for Elsternwick and
+// St Kilda so teachers can open them and submit CI/LOIs. Idempotent -
+// skips any ca/yl/th that already exists. Run once from the editor.
+// ==========================================
+function kinderUnitsToSeed_() {
+  var campuses = ['Elsternwick', 'St Kilda'];
+  var years = ['3 Year Old Kinder', '4 Year Old Kinder'];
+  var themes = ['Who We Are', 'Where We Are in Place and Time', 'How We Express Ourselves', 'How the World Works', 'How We Organise Ourselves', 'Sharing the Planet'];
+  var out = [];
+  campuses.forEach(function (ca) {
+    years.forEach(function (yl) {
+      themes.forEach(function (th) {
+        out.push({ ca: ca, yl: yl, th: th, ci: '', lo: '', s: [] });
+      });
+    });
+  });
+  return out;
+}
+
+function seedKinderUnits_() {
+  var file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  var data = JSON.parse(file.getBlob().getDataAsString());
+  if (!Array.isArray(data)) { Logger.log('seedKinderUnits_: data.json is not an array - aborting'); return { error: 'data-not-array' }; }
+
+  var existing = {};
+  for (var i = 0; i < data.length; i++) {
+    var e = data[i];
+    if (e && e.ca && e.yl && e.th) existing[e.ca + '|' + e.yl + '|' + e.th] = true;
+  }
+
+  var added = 0;
+  kinderUnitsToSeed_().forEach(function (u) {
+    if (!existing[u.ca + '|' + u.yl + '|' + u.th]) { data.push(u); added++; }
+  });
+
+  if (added === 0) { Logger.log('seedKinderUnits_: nothing to add (all 24 already present)'); return { added: 0 }; }
+
+  file.setContent(JSON.stringify(data, null, 2));
+  try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e2) { Logger.log('seedKinderUnits_: pushToGitHub failed: ' + e2); }
+  Logger.log('seedKinderUnits_: added ' + added + ' kinder unit(s); total now ' + data.length);
+  return { added: added, total: data.length };
+}
+
+// ==========================================
 // AI PROXY FOR DLA STUDIO
 // ==========================================
 function callAIProxy_(body) {
