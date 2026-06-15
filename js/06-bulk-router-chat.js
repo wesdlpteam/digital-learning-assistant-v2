@@ -1653,9 +1653,14 @@ function renderEntry(idx){
   document.getElementById('entry-sugs').innerHTML=sugs.length
     ? sugs.map((s,i)=>buildSugRow(s,idx,i)).join('')
     : '<div class="card2" style="color:var(--dim);font-size:12px;font-style:italic">No suggestions yet.</div>';
-  document.getElementById('regen-all-result').innerHTML='';
-  document.getElementById('btn-regen-all').disabled=false;
-  document.getElementById('btn-regen-all').textContent=`Generate 6 new suggestions for ${e.yl}`;
+  // 2026-06-15: If a freshly-generated preview is pending for this unit, re-show
+  // it instead of blanking the box — otherwise a background refresh wipes the
+  // curator's 6 ideas before they can Apply them ("flashed then vanished" bug).
+  if(!(typeof renderRegenAllPreview_==='function' && renderRegenAllPreview_(idx))){
+    document.getElementById('regen-all-result').innerHTML='';
+    document.getElementById('btn-regen-all').disabled=false;
+    document.getElementById('btn-regen-all').textContent=`Generate 6 new suggestions for ${e.yl}`;
+  }
 }
 
 
@@ -2429,16 +2434,22 @@ async function regenAll(){
     const autoSwappedNote = result.autoSwapped
       ? `<div style="font-size:11px;color:#fbbf24;margin-bottom:8px">\u26a0 One or more tools were auto-substituted \u2014 review carefully.</div>`
       : '';
+    // 2026-06-15: Persist the preview (and its auto-swap flag) so it survives a
+    // re-render. A background Drive refresh / merge-save calls renderEntry(),
+    // which blanks #regen-all-result — that was the "6 ideas flashed then
+    // vanished" bug. renderEntry now re-shows this via renderRegenAllPreview_().
     const pendingId='regenall_'+idx;
     window[pendingId]=sugs;
+    window['regenallSwap_'+idx]=result.autoSwapped||null;
     res.innerHTML=`
       <div style="font-size:10px;color:var(--mint);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Preview — apply to save</div>
       ${autoSwappedNote}
       ${sugs.map(s=>`<div class="preview-ok"><div class="preview-tool">${esc(s.t)}</div><div class="preview-desc">${esc(s.d)}</div></div>`).join('')}
       <div style="display:flex;gap:8px;margin-top:12px">
         <button class="btn-pri" onclick="applyRegenAll(${idx},'${pendingId}')">Apply all</button>
-        <button class="btn-sm" onclick="document.getElementById('regen-all-result').innerHTML='';document.getElementById('btn-regen-all').disabled=false;document.getElementById('btn-regen-all').textContent='Generate 6 new suggestions'">Discard</button>
+        <button class="btn-sm" onclick="discardRegenAll(${idx})">Discard</button>
       </div>`;
+    renderRegenAllPreview_(idx);
     stopProgress();
   }catch(e){
     // Last-resort guard: whatever slipped through, never leave a blank box.
@@ -2456,6 +2467,46 @@ function regenAllFail_(res, btn, msg){
   if(btn){ btn.disabled=false; btn.textContent='Generate 6 new suggestions'; }
 }
 
+// 2026-06-15: Re-renders the pending "Generate 6 new suggestions" preview for a
+// unit from the stashed window state. Called right after generation AND again by
+// renderEntry(), so a background re-render can no longer make the preview vanish.
+// Returns true if a pending preview was shown, false if there was nothing pending.
+function renderRegenAllPreview_(idx){
+  const sugs=window['regenall_'+idx];
+  const res=document.getElementById('regen-all-result');
+  const btn=document.getElementById('btn-regen-all');
+  if(!res || !Array.isArray(sugs) || sugs.length!==6) return false;
+  const pendingId='regenall_'+idx;
+  const autoSwappedNote = window['regenallSwap_'+idx]
+    ? `<div style="font-size:11px;color:#fbbf24;margin-bottom:8px">⚠ One or more tools were auto-substituted — review carefully.</div>`
+    : '';
+  res.innerHTML=`
+      <div style="font-size:10px;color:var(--mint);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Preview — apply to save (stays until you Apply or Discard)</div>
+      ${autoSwappedNote}
+      ${sugs.map(s=>`<div class="preview-ok"><div class="preview-tool">${esc(s.t)}</div><div class="preview-desc">${esc(s.d)}</div></div>`).join('')}
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn-pri" onclick="applyRegenAll(${idx},'${pendingId}')">Apply all</button>
+        <button class="btn-sm" onclick="discardRegenAll(${idx})">Discard</button>
+      </div>`;
+  if(btn){ btn.disabled=true; btn.textContent='Preview ready below — Apply or Discard'; }
+  return true;
+}
+
+// 2026-06-15: Discards a pending preview and restores the button to its idle
+// state. Replaces the old inline onclick so the stashed window state is cleared.
+function discardRegenAll(idx){
+  delete window['regenall_'+idx];
+  delete window['regenallSwap_'+idx];
+  const res=document.getElementById('regen-all-result');
+  const btn=document.getElementById('btn-regen-all');
+  if(res) res.innerHTML='';
+  if(btn){
+    btn.disabled=false;
+    const yl=DATA[idx]&&DATA[idx].yl;
+    btn.textContent=yl?`Generate 6 new suggestions for ${yl}`:'Generate 6 new suggestions';
+  }
+}
+
 function applyRegenAll(idx,pendingId){
   const sugs=window[pendingId]; if(!sugs) return;
   const cleaned=sugs.map(cleanSuggestionObject_);
@@ -2463,6 +2514,7 @@ function applyRegenAll(idx,pendingId){
   DATA[idx].audited=true;
   markEntryNeedsHumanRecheck_(idx, 'Regenerated suggestions after human verification');
   delete window[pendingId];
+  delete window['regenallSwap_'+idx];
   setStatus('Saved');
   saveToDrive();
   renderEntry(idx);
