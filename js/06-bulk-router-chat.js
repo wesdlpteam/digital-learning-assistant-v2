@@ -539,11 +539,19 @@ function approvedToolsForYear_(yv){
 }
 
 function getIssues(){
-  const incomplete=[], banned=[], duplicates=[], offWhitelist=[], missingPlanner=[], ageMismatch=[], toolMismatch=[];
+  const incomplete=[], banned=[], duplicates=[], offWhitelist=[], missingPlanner=[], ageMismatch=[], toolMismatch=[], quoteCorrupt=[];
   DATA.forEach((e,idx)=>{
     const sugs=getSugs(e);
     const realSugs=sugs.filter(isRealSug);
     if(realSugs.length<6) incomplete.push({e,idx,type:'incomplete',detail:`${realSugs.length}/6 — no planner uploaded`});
+
+    // Scrambled-quote detection: Wise Discussion Chatbot cards whose quote marks were
+    // lossy-transcoded to "?" (e.g. ?Topic? / week??). Cleared by fixScrambledWiseCards().
+    sugs.forEach(s=>{
+      if(!s || !isRealSug(s)) return;
+      if(sugTool(s)!=='Wise Discussion Chatbots') return;
+      if(wiseCardIsScrambled_(sugDesc(s))) quoteCorrupt.push({e,idx,type:'quotecorrupt',detail:'Wise chatbot card has scrambled quote marks'});
+    });
 
     const bannedSeen = new Set();
     sugs.forEach((s, slotIdx)=>{
@@ -606,7 +614,7 @@ function getIssues(){
     if(!e.plannerText || e.plannerText.trim().length < 20)
       missingPlanner.push({e,idx,type:'missingplanner',detail:'No planner summary'});
   });
-  return {incomplete,banned,duplicates,offWhitelist,missingPlanner,ageMismatch,toolMismatch};
+  return {incomplete,banned,duplicates,offWhitelist,missingPlanner,ageMismatch,toolMismatch,quoteCorrupt};
 }
 
 function filterIssueType(label){
@@ -651,6 +659,35 @@ async function seedKinderYearGroups(){
   }
 }
 
+// One-click repair for Wise Discussion Chatbot cards whose quote marks were
+// scrambled to "?". Rebuilds each affected card's description from the (now fixed)
+// clean template — deterministic, no AI, instant. The "Fix scrambled quotes" button
+// that calls this is count-driven, so it disappears once no scrambled cards remain.
+// NOTE: getSugs() returns normalised COPIES, so we mutate the raw e.s items directly.
+async function fixScrambledWiseCards(){
+  if(typeof buildWiseOpportunityDescription_!=='function'){
+    if(typeof setStatus==='function') setStatus('Cannot rebuild — bulk module not loaded yet, try again in a moment','error');
+    return;
+  }
+  if(!confirm('Rebuild every Wise Discussion Chatbot card that has scrambled "?" quote marks?\n\nIt regenerates their text with clean quotes and saves. Safe to run more than once.')) return;
+  let fixed=0;
+  DATA.forEach(e=>{
+    const raw = Array.isArray(e&&e.s) ? e.s : (e&&e.s&&typeof e.s==='object' ? Object.values(e.s) : []);
+    raw.forEach(item=>{
+      if(!item || typeof item!=='object') return;
+      if(sugTool(item)!=='Wise Discussion Chatbots') return;
+      if(!wiseCardIsScrambled_(sugDesc(item))) return;
+      item.d = buildWiseOpportunityDescription_(e); // sugDesc reads .d first, so this wins
+      fixed++;
+    });
+  });
+  if(!fixed){ if(typeof setStatus==='function') setStatus('No scrambled Wise cards found ✓'); renderDashboard(); return; }
+  if(typeof setStatus==='function') setStatus('Rebuilding '+fixed+' Wise card'+(fixed!==1?'s':'')+'…','loading');
+  await saveToDrive();
+  renderDashboard();
+  if(typeof setStatus==='function') setStatus('✓ Rebuilt '+fixed+' scrambled Wise card'+(fixed!==1?'s':'')+' with clean quotes');
+}
+
 function renderDashboard(){
   // The "off whitelist" and "wrong year level" checks need the Tool Inventory
   // (approved list + age ranges), which loads from libraries.json after sign-in.
@@ -663,8 +700,8 @@ function renderDashboard(){
       ensureLibrariesLoaded().then(()=>{ renderDashboard(); }).catch(()=>{});
     }
   }
-  const {incomplete,banned,duplicates,offWhitelist,missingPlanner,ageMismatch,toolMismatch}=getIssues();
-  const total=incomplete.length+banned.length+duplicates.length+offWhitelist.length+missingPlanner.length+ageMismatch.length+toolMismatch.length;
+  const {incomplete,banned,duplicates,offWhitelist,missingPlanner,ageMismatch,toolMismatch,quoteCorrupt}=getIssues();
+  const total=incomplete.length+banned.length+duplicates.length+offWhitelist.length+missingPlanner.length+ageMismatch.length+toolMismatch.length+quoteCorrupt.length;
   document.getElementById('db-sub').textContent=`${DATA.length} entries across ${[...new Set(DATA.map(e=>e.ca))].length} campuses — ${total} issue${total!==1?'s':''} found`;
   // Pending teacher submissions notification (data from loadUoiProposals at startup).
   (function(){
@@ -698,6 +735,7 @@ function renderDashboard(){
     ...offWhitelist,
     ...ageMismatch,
     ...toolMismatch,
+    ...quoteCorrupt,
     ...duplicates,
     ...incomplete,
     ...missingPlanner,
@@ -713,6 +751,7 @@ function renderDashboard(){
     if(offWhitelist.length>0) fixBtns.push({count:offWhitelist.length, label:'Fix off-list', color:'#60B8F0', type:'offwhitelist', fn:"fixAllOfType('offwhitelist')"});
     if(ageMismatch.length>0) fixBtns.push({count:ageMismatch.length, label:'Fix wrong year level', color:'#E85D9B', type:'agemismatch', fn:"fixAllOfType('agemismatch')"});
     if(toolMismatch.length>0) fixBtns.push({count:toolMismatch.length, label:'Fix tool mismatch', color:'#5EEAD4', type:'toolmismatch', fn:"fixAllOfType('toolmismatch')"});
+    if(quoteCorrupt.length>0) fixBtns.push({count:quoteCorrupt.length, label:'Fix scrambled quotes', color:'#F0A35E', type:'quotecorrupt', fn:"fixScrambledWiseCards()"});
 
     if(fixBtns.length > 0){
       fixBar.innerHTML=`
@@ -735,9 +774,9 @@ function renderDashboard(){
   }
   document.getElementById('issues-list').innerHTML=all.length
     ? all.map(({e,idx,type,detail})=>{
-        const badgeBg={'banned':'#FF8080','incomplete':'#F5A623','duplicate':'#9B8BFF','offwhitelist':'#60B8F0','missingplanner':'#D4A017','agemismatch':'#E85D9B','toolmismatch':'#5EEAD4'}[type]||'#888';
-        const badgeCol={'banned':'#111','incomplete':'#111','duplicate':'#fff','offwhitelist':'#111','missingplanner':'#111','agemismatch':'#111','toolmismatch':'#111'}[type]||'#fff';
-        const label={'banned':'banned','incomplete':'no planner','duplicate':'duplicate','offwhitelist':'off-list','missingplanner':'no planner','agemismatch':'year level','toolmismatch':'tool mismatch'}[type]||type;
+        const badgeBg={'banned':'#FF8080','incomplete':'#F5A623','duplicate':'#9B8BFF','offwhitelist':'#60B8F0','missingplanner':'#D4A017','agemismatch':'#E85D9B','toolmismatch':'#5EEAD4','quotecorrupt':'#F0A35E'}[type]||'#888';
+        const badgeCol={'banned':'#111','incomplete':'#111','duplicate':'#fff','offwhitelist':'#111','missingplanner':'#111','agemismatch':'#111','toolmismatch':'#111','quotecorrupt':'#111'}[type]||'#fff';
+        const label={'banned':'banned','incomplete':'no planner','duplicate':'duplicate','offwhitelist':'off-list','missingplanner':'no planner','agemismatch':'year level','toolmismatch':'tool mismatch','quotecorrupt':'scrambled quotes'}[type]||type;
         return `<div class="row" onclick="openEntry(${idx})">
           <span style="font-size:11px;padding:4px 11px;border-radius:20px;background:${badgeBg};color:${badgeCol};font-weight:800;letter-spacing:.3px;flex-shrink:0">${label}</span>
           <span style="font-size:13px;color:#9ab89a;width:110px;flex-shrink:0">${esc(e.ca)}</span>

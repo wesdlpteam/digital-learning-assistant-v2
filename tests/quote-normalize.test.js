@@ -1,7 +1,7 @@
 // tests/quote-normalize.test.js
 // Run: node tests/quote-normalize.test.js   (exit 0 = pass)
 // Guards the fix for the "Wise Discussion Chatbot" cards showing "?" where quotes belong.
-const { normalizeSmartQuotes_, buildWiseDescriptionSample_ } = require('./quote-normalize.impl.js');
+const { normalizeSmartQuotes_, buildWiseDescriptionSample_, wiseCardIsScrambled_ } = require('./quote-normalize.impl.js');
 
 let failures = 0;
 function check(name, cond){ if(!cond){ console.error('FAIL:', name); failures++; } else { console.log('ok:', name); } }
@@ -25,6 +25,19 @@ check('built Wise description has no smart double-quotes', !SMART_DOUBLE.test(de
 check('built Wise description has no smart single-quotes', !SMART_SINGLE.test(desc));
 check('built Wise description has no literal "?" placeholders for quotes', desc.indexOf('?"') === -1 ? true : desc.indexOf('?"') > -1);
 check('built Wise description still reads correctly', desc.indexOf('The topic is "Sharing the Planet: living things adapt".') !== -1);
+
+// --- Scrambled-card detector (drives the self-hiding "Fix scrambled quotes" button) ---
+const CORRUPT_TOPIC = 'The teacher creates a Wise Discussion Chatbot using the Project Ideation scenario and sets the bot\'s role as Leo. The topic is ?Sharing the Planet: living things adapt?. Students chat with the bot; they ask ?What could we test this week?? and ?How will we know it helped??.';
+const CLEAN_TOPIC = buildWiseDescriptionSample_();
+
+check('detects mangled open-quote (space-?-letter)', wiseCardIsScrambled_(CORRUPT_TOPIC) === true);
+check('detects "??" double mark', wiseCardIsScrambled_('they ask ?What now??') === true);
+check('clean built description is NOT flagged', wiseCardIsScrambled_(CLEAN_TOPIC) === false);
+check('clean text with a real question mark is NOT flagged', wiseCardIsScrambled_('How will we know it helped? They reflect together.') === false);
+check('straight-quoted question is NOT flagged', wiseCardIsScrambled_('they ask "What could we test this week?" and "How will we know it helped?".') === false);
+check('empty/null is NOT flagged', wiseCardIsScrambled_('') === false && wiseCardIsScrambled_(null) === false);
+// Idempotency: rebuilding a scrambled card yields text the detector no longer flags
+check('rebuilt card clears the flag (self-terminating)', wiseCardIsScrambled_(normalizeSmartQuotes_(CLEAN_TOPIC)) === false);
 
 if(failures){ console.error(`\n${failures} test(s) failed`); process.exit(1); }
 console.log('\nAll quote-normalize tests passed'); process.exit(0);

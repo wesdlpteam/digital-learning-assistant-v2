@@ -25,6 +25,21 @@ function buildWiseDescriptionSample_(parts) {
   );
 }
 
+// Mirror of wiseCardIsScrambled_ (js/00-config-state-utils.js). Detects a Wise
+// Discussion Chatbot description whose quote characters were lossy-transcoded to "?".
+// Signature that appears ONLY in corrupted text, never in a clean build:
+//   "??"        — a real "?" followed by a mangled close-quote  (clean: ?")
+//   space-?-letter — a mangled open-quote before a word        (clean: space-"-letter)
+// A genuine question mark is always preceded by a letter (e.g. "helped? They"), so a
+// SPACE immediately before "?" only happens when an opening quote was destroyed.
+function wiseCardIsScrambled_(desc) {
+  return /\?\?|\s\?[A-Za-z]/.test(String(desc == null ? '' : desc));
+}
+
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { normalizeSmartQuotes_: normalizeSmartQuotes_, buildWiseDescriptionSample_: buildWiseDescriptionSample_ };
+  module.exports = {
+    normalizeSmartQuotes_: normalizeSmartQuotes_,
+    buildWiseDescriptionSample_: buildWiseDescriptionSample_,
+    wiseCardIsScrambled_: wiseCardIsScrambled_
+  };
 }
