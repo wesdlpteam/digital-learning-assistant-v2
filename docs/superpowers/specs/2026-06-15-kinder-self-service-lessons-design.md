@@ -20,8 +20,8 @@ This design delivers:
 3. A **Pending submissions** inbox in DLA Studio where a curator reviews, edits, and
    approves a draft — which publishes it straight into the live unit (no planner upload, no
    manual re-typing).
-4. On each submission: an **email** to nathan.benn@wesleycollege.edu.au and a **dashboard
-   notification badge** in DLA Studio showing the pending count.
+4. On each submission: an **email** to dlpteam@wesleycollege.edu.au (cc nathan.benn@wesleycollege.edu.au)
+   and a **dashboard notification badge** in DLA Studio showing the pending count.
 
 ## Decisions (from brainstorming)
 
@@ -101,8 +101,8 @@ no colour change is needed; verify no other code path hard-compares the literal 
   unauthenticated write path already used for reactions/feedback).
 - Writes a row to a new **`KinderSubmissions`** sheet tab: timestamp, campus, year level,
   theme, CI, LOIs, generated ideas (JSON), teacher name/email (if given), `status:"pending"`.
-- On write, send an **email** via `MailApp.sendEmail` to nathan.benn@wesleycollege.edu.au with
-  the submission details and a note to review in Studio. (Optionally cc dlpteam@ — default off.)
+- On write, send an **email** via `MailApp.sendEmail` to dlpteam@wesleycollege.edu.au, cc
+  nathan.benn@wesleycollege.edu.au, with the submission details and a note to review in Studio.
 
 ### D. Studio Pending submissions inbox + dashboard badge
 
