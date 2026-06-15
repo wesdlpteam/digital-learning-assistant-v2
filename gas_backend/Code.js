@@ -957,6 +957,28 @@ function submitUoiProposal_(args) {
   if (proposals.length > 500) proposals = proposals.slice(-500);
   saveUoiProposals_(proposals);
   incrementUoiDailyCounter_();
+
+  // Notify the DLA team a submission is waiting for review. Best-effort -
+  // an email/quota failure must never block the saved submission.
+  try {
+    var esc_ = function (v) { return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); };
+    var loHtml = esc_(lo).replace(/\n/g, '<br>');
+    MailApp.sendEmail({
+      to: 'dlpteam@wesleycollege.edu.au',
+      cc: 'nathan.benn@wesleycollege.edu.au',
+      subject: 'New DLA lesson-idea submission: ' + ca + ' / ' + yl + ' / ' + th,
+      htmlBody:
+        '<p>A teacher submitted a Central Idea / Lines of Inquiry for review.</p>' +
+        '<p><b>Campus:</b> ' + esc_(ca) + '<br>' +
+        '<b>Year level:</b> ' + esc_(yl) + '<br>' +
+        '<b>Theme:</b> ' + esc_(th) + '</p>' +
+        '<p><b>Central Idea:</b><br>' + (ci ? esc_(ci) : '<i>(none given)</i>') + '</p>' +
+        '<p><b>Lines of Inquiry:</b><br>' + (lo ? loHtml : '<i>(none given)</i>') + '</p>' +
+        (note ? '<p><b>Teacher note:</b><br>' + esc_(note) + '</p>' : '') +
+        '<p>Review and approve it in DLA Studio - approving will auto-generate the lesson ideas.</p>'
+    });
+  } catch (mailErr) { Logger.log('submitUoiProposal_ email failed (non-fatal): ' + mailErr); }
+
   return { id: id, submittedAt: proposals[proposals.length - 1].submittedAt };
 }
 
