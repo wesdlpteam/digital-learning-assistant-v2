@@ -3,7 +3,7 @@ let DATA = [];
 // stamp on the <script src="js/..."> tags in DLA_Studio.html. Bumping the
 // number changes every code file's web address, which forces browsers to
 // download the new code instead of reusing a stale cached copy.
-const APP_VERSION = '5.45';
+const APP_VERSION = '5.46';
 
 // Reliable "get the latest version" action used by the ↻ latest button.
 // Reloads the whole app from the network with a one-off unique address so the
@@ -58,11 +58,21 @@ function withGASToken(payload){
   if(token) out.token = token; // optional emergency/shared-secret fallback
   return out;
 }
+function normalizeSmartQuotes_(value){
+  // Curly/smart quotes are the one kind of punctuation that gets lossy-transcoded
+  // to "?" somewhere on the save pipeline (U+201C/U+201D -> "?"). Plain ASCII quotes
+  // can never be corrupted that way, so we convert smart quotes -> straight BEFORE
+  // text is built or stored — matching the curly->straight normalisation the server
+  // AI paths already do (gas_backend Code.js diversityCallOnce_/inspiringCallOnce_).
+  return String(value == null ? '' : value)
+    .replace(/[‘’‚‛`´]/g, "'")
+    .replace(/[“”„‟]/g, '"');
+}
 function cleanTextCorruption_(value){
   // Some AI/backend responses arrive with stray question marks where punctuation
   // should be. Keep real question marks at sentence ends, but repair obvious
   // mid-word apostrophes and isolated dash placeholders before display/save.
-  let s = String(value || '');
+  let s = normalizeSmartQuotes_(value);
   const urls = [];
   s = s.replace(/https?:\/\/\S+/g, function(url){
     const token = `__DLA_URL_${urls.length}__`;

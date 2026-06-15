@@ -877,7 +877,9 @@ function buildWiseOpportunityDescription_(entry, oldTool, instruction){
   };
   const product = productByScenario[scenario] || productByScenario['Socratic Tutor'];
   const purpose = purposeByScenario[scenario] || purposeByScenario['Socratic Tutor'];
-  return `The teacher creates a Wise Discussion Chatbot using the ${scenario} scenario and sets the bot's role as ${persona.name}. The topic is “${topic}”. Students chat with the bot to ${purpose}; for example, they ask ${persona.examples}. After the chat, students produce ${product} linked explicitly to ${theme}.`;
+  // Smart quotes in the persona/template get lossy-transcoded to "?" on save, so
+  // normalise to straight ASCII quotes here at the source (never emit curly quotes).
+  return normalizeSmartQuotes_(`The teacher creates a Wise Discussion Chatbot using the ${scenario} scenario and sets the bot's role as ${persona.name}. The topic is “${topic}”. Students chat with the bot to ${purpose}; for example, they ask ${persona.examples}. After the chat, students produce ${product} linked explicitly to ${theme}.`);
 }
 
 function buildWiseOpportunityChange_(candidate, instruction){
