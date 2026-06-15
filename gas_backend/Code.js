@@ -1002,12 +1002,24 @@ function approveUoiProposal_(opts) {
   file.setContent(JSON.stringify(data, null, 2));
   try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e2) { Logger.log('pushToGitHub after UOI approval failed: ' + e2); }
 
+  // Auto-generate the 6 lesson ideas from the just-saved CI/LOIs so the unit
+  // isn't left empty (kinder year levels get kinder-safe tools via the
+  // inspiring year rule). Best-effort: if it fails, the CI/LOI edit still
+  // stands and a curator can run Inspire All later.
+  var ideasGenerated = false;
+  try {
+    if (typeof regenerateOneInspiring_ === 'function' && unit.ci && unit.lo) {
+      var ideasResult = regenerateOneInspiring_({ ca: p.ca, yl: p.yl, th: p.th });
+      ideasGenerated = !!(ideasResult && !ideasResult.error && !ideasResult.paused);
+    }
+  } catch (e3) { Logger.log('regenerateOneInspiring_ after UOI approval failed: ' + e3); }
+
   p.status = 'approved';
   p.approvedAt = new Date().toISOString();
   proposals[idx] = p;
   saveUoiProposals_(proposals);
 
-  return { id: id, applied: true, changes: changes, requiresRegen: true };
+  return { id: id, applied: true, changes: changes, requiresRegen: !ideasGenerated, ideasGenerated: ideasGenerated };
 }
 
 function dismissUoiProposal_(opts) {
