@@ -688,6 +688,37 @@ async function fixScrambledWiseCards(){
   if(typeof setStatus==='function') setStatus('✓ Rebuilt '+fixed+' scrambled Wise card'+(fixed!==1?'s':'')+' with clean quotes');
 }
 
+function uoiProposalsCardHtml(list){
+  if(!Array.isArray(list) || !list.length) return '';
+  return `<div class="card2" style="margin-bottom:10px;border-color:rgba(212,160,23,.4);background:rgba(212,160,23,.06)">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+      <span style="font-size:18px">📝</span>
+      <span style="font-size:13px;color:var(--text);font-weight:800">${list.length} teacher edit proposal${list.length===1?'':'s'} pending review</span>
+      <span style="font-size:12px;color:var(--dim)">Submitted from the public DLA site. Approve to apply Central Idea / Lines of Inquiry into data.json.</span>
+      <button onclick="loadUoiProposals()" style="margin-left:auto;padding:5px 10px;background:transparent;border:1px solid #888;color:#aaa;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Reload the pending proposals list from the backend">↻ Refresh</button>
+    </div>
+    ${list.map(p => {
+      const submitted = p.submittedAt ? new Date(p.submittedAt).toLocaleString('en-AU') : '';
+      const ciBlock = p.ci ? `<div style="margin-top:8px"><div style="font-size:10px;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px">Proposed Central Idea</div><div style="font-size:13px;color:#EEE;line-height:1.5;background:#1a1a1a;padding:8px 10px;border-radius:6px;border-left:3px solid #FBBF24">${esc(p.ci)}</div></div>` : '';
+      const loBlock = p.lo ? `<div style="margin-top:8px"><div style="font-size:10px;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px">Proposed Lines of Inquiry</div><div style="font-size:13px;color:#EEE;line-height:1.5;background:#1a1a1a;padding:8px 10px;border-radius:6px;border-left:3px solid #A78BFA;white-space:pre-wrap">${esc(p.lo)}</div></div>` : '';
+      const noteBlock = p.note ? `<div style="margin-top:8px;font-size:12px;color:#aaa;line-height:1.5"><strong style="color:#FBBF24">Teacher note:</strong> ${esc(p.note)}</div>` : '';
+      return `<div style="padding:14px;border:1px solid rgba(212,160,23,.25);border-radius:10px;margin-bottom:10px;background:rgba(0,0,0,.18)">
+        <div style="display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:800;color:var(--text)">${esc(p.ca)} · ${esc(p.yl)} · ${esc(p.th)}</div>
+            <div style="font-size:11px;color:#888;margin-top:2px">Submitted ${submitted}</div>
+          </div>
+          <div style="display:flex;gap:6px;flex-shrink:0">
+            <button onclick="approveUoiProposal('${esc(p.id)}')" style="padding:6px 12px;background:#22C55E;color:#0a1f12;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer" title="Apply this proposal to data.json + push to GitHub">✓ Approve</button>
+            <button onclick="dismissUoiProposal('${esc(p.id)}')" style="padding:6px 12px;background:transparent;border:1px solid rgba(255,128,128,.4);color:#FF8080;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer" title="Dismiss without applying">✕ Dismiss</button>
+          </div>
+        </div>
+        ${ciBlock}${loBlock}${noteBlock}
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
 function renderDashboard(){
   // The "off whitelist" and "wrong year level" checks need the Tool Inventory
   // (approved list + age ranges), which loads from libraries.json after sign-in.
@@ -703,20 +734,13 @@ function renderDashboard(){
   const {incomplete,banned,duplicates,offWhitelist,missingPlanner,ageMismatch,toolMismatch,quoteCorrupt}=getIssues();
   const total=incomplete.length+banned.length+duplicates.length+offWhitelist.length+missingPlanner.length+ageMismatch.length+toolMismatch.length+quoteCorrupt.length;
   document.getElementById('db-sub').textContent=`${DATA.length} entries across ${[...new Set(DATA.map(e=>e.ca))].length} campuses — ${total} issue${total!==1?'s':''} found`;
-  // Pending teacher submissions notification (data from loadUoiProposals at startup).
+  // Pending teacher submissions — full review card on the dashboard (Approve/Dismiss here).
   (function(){
     var banner = document.getElementById('uoi-pending-banner');
     if(!banner) return;
     var cache = window._uoiProposalsCache || [];
     var pending = cache.filter(function(p){ return !p.status || p.status === 'pending'; });
-    if(!pending.length){ banner.innerHTML=''; return; }
-    banner.innerHTML =
-      '<div onclick="goToProposalReview()" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:12px 16px;margin-bottom:14px;'+
-      'background:#FBBF24;border-radius:10px;font-weight:800;color:#111">'+
-      '<span style="font-size:16px">📥</span>'+
-      '<span style="flex:1">'+pending.length+' teacher submission'+(pending.length!==1?'s':'')+' awaiting review</span>'+
-      '<span style="font-size:12px;background:#111;color:#FBBF24;padding:5px 12px;border-radius:8px">Review →</span>'+
-      '</div>';
+    banner.innerHTML = (typeof uoiProposalsCardHtml === 'function') ? uoiProposalsCardHtml(pending) : '';
   })();
   const statDefs=[
     {label:'total entries',val:DATA.length,bg:'#C5E84A',col:'#111'},
@@ -1646,33 +1670,7 @@ function renderBrowse(){
   const _proposalsScoped = _proposals.filter(p =>
     (!ca || p.ca === ca) && (!yr || p.yl === yr)
   );
-  const proposalReviewHtml = _proposalsScoped.length ? `<div id="uoi-proposals-card" class="card2" style="margin-bottom:10px;border-color:rgba(212,160,23,.4);background:rgba(212,160,23,.06)">
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
-      <span style="font-size:18px">📝</span>
-      <span style="font-size:13px;color:var(--text);font-weight:800">${_proposalsScoped.length} teacher edit proposal${_proposalsScoped.length===1?'':'s'} pending review</span>
-      <span style="font-size:12px;color:var(--dim)">Submitted from the public DLA site. Approve to apply Central Idea / Lines of Inquiry into data.json.</span>
-      <button onclick="loadUoiProposals()" style="margin-left:auto;padding:5px 10px;background:transparent;border:1px solid #888;color:#aaa;border-radius:8px;font-weight:600;font-size:11px;cursor:pointer" title="Reload the pending proposals list from the backend">↻ Refresh</button>
-    </div>
-    ${_proposalsScoped.map(p => {
-      const submitted = p.submittedAt ? new Date(p.submittedAt).toLocaleString('en-AU') : '';
-      const ciBlock = p.ci ? `<div style="margin-top:8px"><div style="font-size:10px;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px">Proposed Central Idea</div><div style="font-size:13px;color:#EEE;line-height:1.5;background:#1a1a1a;padding:8px 10px;border-radius:6px;border-left:3px solid #FBBF24">${esc(p.ci)}</div></div>` : '';
-      const loBlock = p.lo ? `<div style="margin-top:8px"><div style="font-size:10px;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px">Proposed Lines of Inquiry</div><div style="font-size:13px;color:#EEE;line-height:1.5;background:#1a1a1a;padding:8px 10px;border-radius:6px;border-left:3px solid #A78BFA;white-space:pre-wrap">${esc(p.lo)}</div></div>` : '';
-      const noteBlock = p.note ? `<div style="margin-top:8px;font-size:12px;color:#aaa;line-height:1.5"><strong style="color:#FBBF24">Teacher note:</strong> ${esc(p.note)}</div>` : '';
-      return `<div style="padding:14px;border:1px solid rgba(212,160,23,.25);border-radius:10px;margin-bottom:10px;background:rgba(0,0,0,.18)">
-        <div style="display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap">
-          <div style="flex:1;min-width:0">
-            <div style="font-size:13px;font-weight:800;color:var(--text)">${esc(p.ca)} · ${esc(p.yl)} · ${esc(p.th)}</div>
-            <div style="font-size:11px;color:#888;margin-top:2px">Submitted ${submitted}</div>
-          </div>
-          <div style="display:flex;gap:6px;flex-shrink:0">
-            <button onclick="approveUoiProposal('${esc(p.id)}')" style="padding:6px 12px;background:#22C55E;color:#0a1f12;border:none;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer" title="Apply this proposal to data.json + push to GitHub">✓ Approve</button>
-            <button onclick="dismissUoiProposal('${esc(p.id)}')" style="padding:6px 12px;background:transparent;border:1px solid rgba(255,128,128,.4);color:#FF8080;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer" title="Dismiss without applying">✕ Dismiss</button>
-          </div>
-        </div>
-        ${ciBlock}${loBlock}${noteBlock}
-      </div>`;
-    }).join('')}
-  </div>` : '';
+  const proposalReviewHtml = uoiProposalsCardHtml(_proposalsScoped);
 
   document.getElementById('browse-list').innerHTML=proposalReviewHtml + inspireSummaryHtml + sweepStandaloneHtml + makerspaceSummaryHtml + verificationSummaryHtml + filtered.map(({e,idx})=>{
     const verified = isHumanVerifiedEntry_(e);
