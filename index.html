@@ -2048,7 +2048,7 @@ for(const[n,k]of Object.entries(CM)){
 var cc=CC[k],ct=CTX[k],campusUnits=D.filter(r=>r.ca===n),uc=campusUnits.length;
 var yrsPresent=YO.filter(y=>campusUnits.some(u=>u.yl===y));
 var rangeLabel=yrsPresent.length?(yrsPresent[0]+' – '+yrsPresent[yrsPresent.length-1]):'Prep – Year 6';
-h+='<div class="cc" onclick="nv(\'ca\',\''+k+'\')" style="background:'+cc+'"><div class="cc-wm" style="color:'+ct+'">'+k+'</div><div class="cc-inner"><div class="cc-name" style="color:'+ct+'">'+n+'</div><div class="cc-sub" style="color:'+ct+'99">'+rangeLabel+' · '+uc+' units</div></div></div>';
+h+='<div class="cc" onclick="nv(\'ca\',\''+k+'\')" style="background:'+cc+'"><div class="cc-wm" style="color:'+ct+'">'+k+'</div><div class="cc-inner"><div class="cc-name" style="color:'+ct+'">'+(CN[k]||n)+'</div><div class="cc-sub" style="color:'+ct+'99">'+rangeLabel+' · '+uc+' units</div></div></div>';
 }
 h+='<div class="lb-section"><h2 class="sec-title" style="margin-bottom:16px">🏆 Tech Champions</h2>';
 h+=renderLeaderboard();
