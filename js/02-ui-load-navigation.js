@@ -248,6 +248,11 @@ function ingest(arr, skipCache){
   if(emailEl&&CURRENT_USER_EMAIL) emailEl.textContent=CURRENT_USER_EMAIL;
   switchTab('dashboard',document.querySelector('.nav-item[data-tab="dashboard"]'));
   renderDashboard();
+  // Fetch pending teacher submissions now that sign-in is complete. The blind
+  // 1.5s startup timer in js/06 can fire before auth and fail (then never
+  // retries), so guarantee a post-auth fetch here to populate the dashboard
+  // banner + browse review card.
+  if(typeof loadUoiProposals==='function') loadUoiProposals();
 }
 
 let LAST_KNOWN_MODIFIED = null;
@@ -457,6 +462,7 @@ function switchTab(tab,btn){
   // made on the Bulk tab are reflected immediately (no stale "off whitelist" flags).
   if(tab==='dashboard' && typeof renderDashboard==='function') renderDashboard();
   if(tab==='browse') renderBrowse();
+  if((tab==='dashboard'||tab==='browse') && typeof loadUoiProposals==='function') loadUoiProposals();
   if(tab==='audit') renderAudit();
   if(tab==='live') loadLiveAnalytics();
   if(tab==='tools'){

@@ -3,7 +3,7 @@ let DATA = [];
 // stamp on the <script src="js/..."> tags in DLA_Studio.html. Bumping the
 // number changes every code file's web address, which forces browsers to
 // download the new code instead of reusing a stale cached copy.
-const APP_VERSION = '5.46';
+const APP_VERSION = '5.47';
 
 // Reliable "get the latest version" action used by the ↻ latest button.
 // Reloads the whole app from the network with a one-off unique address so the
@@ -67,6 +67,15 @@ function normalizeSmartQuotes_(value){
   return String(value == null ? '' : value)
     .replace(/[‘’‚‛`´]/g, "'")
     .replace(/[“”„‟]/g, '"');
+}
+function wiseCardIsScrambled_(desc){
+  // Detects a Wise Discussion Chatbot description whose quote characters were
+  // lossy-transcoded to "?". Signature that appears ONLY in corrupted text:
+  //   "??"           — a real "?" followed by a mangled close-quote  (clean: ?")
+  //   space-?-letter — a mangled open-quote before a word            (clean: space-"-letter)
+  // A genuine "?" is always preceded by a letter, so a SPACE before "?" only
+  // happens when an opening quote was destroyed. Drives the self-hiding fix button.
+  return /\?\?|\s\?[A-Za-z]/.test(String(desc == null ? '' : desc));
 }
 function cleanTextCorruption_(value){
   // Some AI/backend responses arrive with stray question marks where punctuation
