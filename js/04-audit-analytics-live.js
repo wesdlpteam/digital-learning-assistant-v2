@@ -576,7 +576,7 @@ ${JSON.stringify(brief, null, 2)}
 Return plain prose. No headings, no bullets, no quotes.`;
 
   try {
-    const fastModel = (typeof OPENAI_FAST_MODEL !== 'undefined' && OPENAI_FAST_MODEL) ? OPENAI_FAST_MODEL : 'gpt-4.1-mini';
+    const fastModel = (typeof OPENAI_FAST_MODEL !== 'undefined' && OPENAI_FAST_MODEL) ? OPENAI_FAST_MODEL : 'gpt-5.5-mini';
     const raw = await callAI(
       [{ role: 'user', parts: [{ text: userText }] }],
       system,
