@@ -798,7 +798,6 @@ function suggestTechForPlanner_(args) {
   try {
     aiResult = callAIProxy_({
       model: OPENAI_FAST_MODEL,
-      temperature: 0.75,
       maxTokens: 1400,
       systemPrompt: systemPrompt,
       contents: [{ role: 'user', parts: [{ text: userPrompt }] }]
@@ -1142,8 +1141,8 @@ function callAIProxy_(body) {
   const payload = {
     model: model,
     messages: messages,
-    temperature: Number.isFinite(temperature) ? temperature : 0.2,
-    max_tokens: Number.isFinite(maxTokens) ? maxTokens : 4096
+    reasoning_effort: 'low',
+    max_completion_tokens: Number.isFinite(maxTokens) ? Math.max(maxTokens, 4000) : 4096
   };
 
   let lastError = '';
@@ -1457,8 +1456,8 @@ ${plannerMarkdown}
         "content": prompt
       }],
       "response_format": { "type": "json_object" },
-      "temperature": 0.2,
-      "max_tokens": 8192
+      "reasoning_effort": "low",
+      "max_completion_tokens": 16384
     };
 
     let success = false;
@@ -2329,8 +2328,8 @@ Return ONLY a JSON object in exactly this shape — no commentary, no markdown f
     model: OPENAI_MODEL,
     messages: [{ role: 'user', content: prompt }],
     response_format: { type: 'json_object' },
-    temperature: 0.1,
-    max_tokens: 600
+    reasoning_effort: 'low',
+    max_completion_tokens: 4000
   };
 
   const response = UrlFetchApp.fetch(OPENAI_ENDPOINT, {
@@ -2604,8 +2603,8 @@ Return ONLY JSON in this exact format:
       model: OPENAI_MODEL,
       messages: [{ role: 'user', content: prompt }],
       response_format: { type: 'json_object' },
-      temperature: 0.6,
-      max_tokens: 1024
+      reasoning_effort: 'low',
+      max_completion_tokens: 6000
     };
 
     try {
@@ -3087,8 +3086,8 @@ function diversityCallOnce_(prompt) {
     model: OPENAI_MODEL,
     messages: [{ role: 'user', content: prompt }],
     response_format: { type: 'json_object' },
-    temperature: 0.4,
-    max_tokens: 4096
+    reasoning_effort: 'low',
+    max_completion_tokens: 16000
   };
   const response = UrlFetchApp.fetch(OPENAI_ENDPOINT, {
     method: 'post',
@@ -3812,7 +3811,7 @@ function auditGradeSuggestion_(unit, slotIdx, sug) {
       systemPrompt: system,
       model: OPENAI_FAST_MODEL,
       maxTokens: 300,
-      temperature: 0
+      temperature: 1
     });
     let txt = String(res && res.text || '').replace(/```json|```/g, '').trim();
     const s = txt.indexOf('{'), e = txt.lastIndexOf('}');
@@ -3951,8 +3950,8 @@ function inspiringCallOnce_(prompt, temperature) {
     model: OPENAI_MODEL,
     messages: [{ role: 'user', content: prompt }],
     response_format: { type: 'json_object' },
-    temperature: temp,
-    max_tokens: 5000
+    reasoning_effort: 'low',
+    max_completion_tokens: 16000
   };
   const response = UrlFetchApp.fetch(OPENAI_ENDPOINT, {
     method: 'post',
