@@ -2055,7 +2055,7 @@ function openFeedbackChat(uid, entryIdx, sugIdx){
     </div>
     <div style="padding:12px 16px;border-top:1px solid var(--border);background:var(--card2)">
       <div id="${uid}-memhint" style="margin-bottom:8px;display:none"></div>
-      <div style="font-size:11px;color:var(--dim);margin-bottom:8px;line-height:1.5">Type any request — GPT-4.1 Mini understands tool swaps, refinements, direct edits, curriculum ties, and more.</div>
+      <div style="font-size:11px;color:var(--dim);margin-bottom:8px;line-height:1.5">Type any request — the AI understands tool swaps, refinements, direct edits, curriculum ties, and more.</div>
       <div style="display:flex;gap:8px">
         <button class="btn-sm" onclick="toggleFeedbackVoice('${uid}')" id="${uid}-voice" title="Speak your request (en-AU)" style="padding:8px 10px;flex-shrink:0">🎤</button>
         <input id="${uid}-input" class="inp" placeholder="${esc(placeholderText)}" style="flex:1;margin-bottom:0;font-size:13px" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();applySugFeedbackDirect('${uid}',${entryIdx},${sugIdx})}">

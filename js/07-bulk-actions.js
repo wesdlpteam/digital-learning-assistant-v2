@@ -1085,7 +1085,7 @@ async function startBulkAnalysis(){
     { text: 'Building tool frequency index', status: 'pending' },
     { text: 'Computing overused & underused tools', status: 'pending' },
     { text: 'Age-gating by year level', status: 'pending' },
-    { text: 'Generating proposals with GPT-4.1', status: 'pending' },
+    { text: 'Generating proposals with ' + OPENAI_MODEL, status: 'pending' },
     { text: 'Filtering duplicate proposals', status: 'pending' }
   ]);
 
@@ -1428,7 +1428,7 @@ ${fullContext}`;
     updateReasoningStep(1, 'done');
     updateReasoningStep(2, 'done'); // overused/underused
     updateReasoningStep(3, 'done'); // age-gating
-    updateReasoningStep(4, 'active', `Generating proposals with GPT-4.1 (~${Math.round(estimatedTokens/1000)}K tokens)`);
+    updateReasoningStep(4, 'active', `Generating proposals with ${OPENAI_MODEL} (~${Math.round(estimatedTokens/1000)}K tokens)`);
     
     if(bar) bar.style.width = '30%';
     if(lbl) lbl.textContent = `Analysing ${analysisData.length} candidate entries (~${Math.round(estimatedTokens/1000)}K tokens)…`;
@@ -1652,7 +1652,7 @@ ${fullContext}`;
       const reasonNote = reasonBits.length ? `<br><span style="color:var(--dim);font-size:11px">Set aside: ${reasonBits.join(', ')}.</span>` : '';
       const truncatedNote = recoveredPartial ? `<br><span style="color:var(--orange);font-size:11px">⚠ The AI's reply looked cut off, so some proposals may be missing — re-run if you need the full set.</span>` : '';
       const targetWarn = (explicitCount && rawAiCount < explicitCount - 1)
-        ? `<div style="margin-top:8px;padding:8px 12px;background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.35);border-radius:8px;font-size:12px;color:var(--orange)">⚠ You asked for <strong>${explicitCount}</strong> but GPT only returned <strong>${rawAiCount}</strong>. Try rephrasing as "scan EVERY entry and find at least ${explicitCount}" or click ↻ and retry — GPT-4.1 sometimes responds conservatively on the first pass.</div>`
+        ? `<div style="margin-top:8px;padding:8px 12px;background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.35);border-radius:8px;font-size:12px;color:var(--orange)">⚠ You asked for <strong>${explicitCount}</strong> but GPT only returned <strong>${rawAiCount}</strong>. Try rephrasing as "scan EVERY entry and find at least ${explicitCount}" or click ↻ and retry — the AI sometimes responds conservatively on the first pass.</div>`
         : '';
 
       const byTool = {};

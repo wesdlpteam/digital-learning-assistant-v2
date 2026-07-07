@@ -3,7 +3,7 @@ let DATA = [];
 // stamp on the <script src="js/..."> tags in DLA_Studio.html. Bumping the
 // number changes every code file's web address, which forces browsers to
 // download the new code instead of reusing a stale cached copy.
-const APP_VERSION = '5.53';
+const APP_VERSION = '5.54';
 
 // Reliable "get the latest version" action used by the ↻ latest button.
 // Reloads the whole app from the network with a one-off unique address so the
@@ -22,6 +22,10 @@ function stampVersionLabels(){
     if(a) a.textContent = '● DLA Studio v' + APP_VERSION;
     const b = document.getElementById('setup-version-label');
     if(b) b.textContent = 'v' + APP_VERSION;
+    // Status bar shows the REAL configured model, so the label can never go
+    // stale again after a model switch (was hardcoded 'GPT-4.1 via GAS').
+    const c = document.getElementById('ai-model-label');
+    if(c && typeof OPENAI_MODEL === 'string') c.textContent = OPENAI_MODEL + ' via GAS';
   }catch(e){}
 }
 if(typeof document !== 'undefined'){

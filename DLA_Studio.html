@@ -112,7 +112,7 @@
       <div class="status-cards">
         <div class="status-card">
           <span class="status-key">AI Engine</span>
-          <span class="status-val">GPT-4.1 via GAS</span>
+          <span class="status-val" id="ai-model-label">AI via GAS</span>
           <span><span class="status-dot"></span></span>
         </div>
         <div class="status-card">
@@ -261,13 +261,13 @@
     <!-- BULK TOOLS -->
     <div id="panel-tools" class="panel">
       <div class="page-title">Bulk Tools</div>
-      <div class="page-sub">Chat with GPT-4.1 to make changes across your entire library. Manage your tool inventory, run playbooks, and roll back with snapshots.</div>
+      <div class="page-sub">Chat with the built-in AI to make changes across your entire library. Manage your tool inventory, run playbooks, and roll back with snapshots.</div>
 
       <!-- Bulk AI Edit — Chatbot Interface (moved to TOP) -->
       <div class="card" style="margin-bottom:14px;padding:0;overflow:hidden">
         <div style="padding:20px 24px 12px">
           <span class="label">Bulk AI Edit</span>
-          <p style="font-size:13px;color:var(--dim);margin-bottom:0;line-height:1.6">Chat with GPT-4.1 to make bulk changes. Describe what you want — the AI will ask clarifying questions before proposing changes.</p>
+          <p style="font-size:13px;color:var(--dim);margin-bottom:0;line-height:1.6">Chat with the built-in AI to make bulk changes. Describe what you want — the AI will ask clarifying questions before proposing changes.</p>
         </div>
         <div id="bulk-chat-messages" style="height:380px;overflow-y:auto;padding:14px 20px;background:var(--bg);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
           <div id="bulk-chat-welcome" class="chat-msg model">
@@ -690,14 +690,14 @@
 
 <!-- ?v=APP_VERSION cache-busts the code files. Bump this to match APP_VERSION
      in js/00-config-state-utils.js on every deploy so browsers fetch fresh code. -->
-<script src="js/00-config-state-utils.js?v=5.53"></script>
-<script src="js/01-inventory-helpers.js?v=5.53"></script>
-<script src="js/02-ui-load-navigation.js?v=5.53"></script>
-<script src="js/04-audit-analytics-live.js?v=5.53"></script>
-<script src="js/05-bulk-setup-libraries.js?v=5.53"></script>
-<script src="js/06-bulk-router-chat.js?v=5.53"></script>
-<script src="js/07-bulk-actions.js?v=5.53"></script>
-<script src="js/09-legacy-restored.js?v=5.53"></script>
-<script src="js/08-export-sync-hotfixes.js?v=5.53"></script>
+<script src="js/00-config-state-utils.js?v=5.54"></script>
+<script src="js/01-inventory-helpers.js?v=5.54"></script>
+<script src="js/02-ui-load-navigation.js?v=5.54"></script>
+<script src="js/04-audit-analytics-live.js?v=5.54"></script>
+<script src="js/05-bulk-setup-libraries.js?v=5.54"></script>
+<script src="js/06-bulk-router-chat.js?v=5.54"></script>
+<script src="js/07-bulk-actions.js?v=5.54"></script>
+<script src="js/09-legacy-restored.js?v=5.54"></script>
+<script src="js/08-export-sync-hotfixes.js?v=5.54"></script>
 </body>
 </html>
