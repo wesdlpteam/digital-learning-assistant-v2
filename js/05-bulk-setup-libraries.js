@@ -76,6 +76,7 @@ BANNED PHRASES — these make suggestions sound generic and lazy. NEVER write an
 - "document their inquiry journey"
 - "Students use [tool] to [vague verb] about [unit theme]."
 - "The twist" / "The twist:" / "Here's the twist" / "the real twist" — never announce a twist by name; write the unexpected angle as a plain sentence.
+- "For a twist" / "To stretch" / "Take it further" / "For an extra challenge" - vary sentence openings naturally instead of stock lead-ins.
 
 NAME THE ACTUAL TOPIC — never use "this unit" or "unit focus" as a placeholder:
 - BAD: "Students use Padlet as a collaborative evidence wall for this unit."

@@ -599,6 +599,18 @@ function doGet(e) {
       return cb ? jsonpResponse(cb, result) : jsonResponse(result);
     }
 
+    // 2026-07-07: ops health — surfaces failures that used to be swallowed
+    // (audit batch save, GitHub mirror push). No auth: exposes only two
+    // timestamps/messages, no data.
+    if (action === 'health') {
+      var hp = PropertiesService.getScriptProperties();
+      return jsonResponse({
+        ok: true,
+        lastAuditSaveFail: hp.getProperty('DLA_LAST_AUDIT_SAVE_FAIL') || null,
+        lastGitHubPushFail: hp.getProperty('DLA_LAST_GITHUB_PUSH_FAIL') || null
+      });
+    }
+
     // 2026-05-25: Public teacher endpoint — submit a CI/LOI edit proposal
     // for admin review. No auth (teachers aren't signed in); daily cap
     // protects against scraping/spam. Admin reviews in DLA Studio.
@@ -1574,7 +1586,11 @@ ${plannerMarkdown}
     // 5 × 11 MB writes per batch with 1.
     if (dataDirty) {
       try { file.setContent(JSON.stringify(data, null, 2)); }
-      catch (writeErr) { Logger.log('auditPlanners end-of-batch save failed: ' + writeErr); }
+      catch (writeErr) {
+        Logger.log('auditPlanners end-of-batch save failed: ' + writeErr);
+        // Surface on ?action=health — a failed save here silently loses a whole batch of paid audit results.
+        try { PropertiesService.getScriptProperties().setProperty('DLA_LAST_AUDIT_SAVE_FAIL', new Date().toISOString() + ' ' + String(writeErr).slice(0, 300)); } catch (_) {}
+      }
     }
   } finally {
     lock.releaseLock();
@@ -1678,12 +1694,26 @@ const GITHUB_REPO   = 'digital-learning-assistant-v2';
 const GITHUB_PATH   = 'data.json';
 const GITHUB_BRANCH = 'main';
 
-function pushToGitHub() {
+// 2026-07-07 (audit BE-04 + stale-push): wrapper records the last push failure
+// in a script property (read by ?action=health) instead of every caller
+// swallowing it invisibly, and lets a caller that just wrote data.json pass the
+// exact content instead of re-reading Drive (read-after-write on the 12MB file
+// can return a stale blob, which pushed slightly old snapshots to GitHub).
+function pushToGitHub(contentOpt) {
+  try {
+    pushToGitHubCore_(contentOpt);
+    try { PropertiesService.getScriptProperties().deleteProperty('DLA_LAST_GITHUB_PUSH_FAIL'); } catch (_) {}
+  } catch (e) {
+    try { PropertiesService.getScriptProperties().setProperty('DLA_LAST_GITHUB_PUSH_FAIL', new Date().toISOString() + ' ' + String(e).slice(0, 300)); } catch (_) {}
+    throw e;
+  }
+}
+
+function pushToGitHubCore_(contentOpt) {
   // v5.21b: Retry on 409 (SHA conflict). The remote SHA can go stale if another
   // GAS run, manual commit, or webhook touched the file between our GET and PUT.
   // We refetch the SHA and retry up to 3 times before giving up.
-  const file = DriveApp.getFileById(DATA_JSON_FILE_ID);
-  const content = file.getBlob().getDataAsString();
+  const content = contentOpt || DriveApp.getFileById(DATA_JSON_FILE_ID).getBlob().getDataAsString();
   const base64Content = Utilities.base64Encode(content);
   const getUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}?ref=${GITHUB_BRANCH}`;
   const putUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}`;
@@ -3717,7 +3747,7 @@ function inspiringYearRule_(yl) {
 // 2026-06-07: Deterministic banned-phrase pre-check for the suggestion audit grader.
 // Mirror of tests/banned-phrase.impl.js — keep the two in sync.
 var AUDIT_BANNED_PHRASES = [
-  'for a twist',
+  'for a twist', 'to stretch their', 'take it further', 'for an extra challenge',
   'the twist:', 'the twist —', "here's the twist", 'here is the twist', 'the real twist', 'the big twist',
   'connected to the central idea', 'linked to the line of inquiry',
   'related to the unit theme', 'for this unit', 'in this unit', 'about this unit',
@@ -3827,6 +3857,7 @@ const INSPIRING_DESCRIPTION_RULES = '\nDESCRIPTION STYLE — INSPIRING + INNOVAT
   '  - "create a digital product" / "make a simple product"\n' +
   '  - "Students use [tool] to [vague verb] about [unit theme]"\n' +
   '  - "The twist" / "The twist:" / "Here\'s the twist" / "the real twist" — never announce a twist by name; write the idea as a plain sentence.\n' +
+  '  - "For a twist" / "To stretch" / "Take it further" / "For an extra challenge" — vary sentence openings naturally instead of stock lead-ins.\n' +
   'Name the actual topic. If the unit is about ecosystems, say "ecosystems". If it is about migration, say "migration".\n\n' +
   'WRITING MECHANICS: Use straight apostrophes (\'), em-dashes (—), Australian English. No curly quotes. No line breaks inside JSON string values.';
 
@@ -5507,6 +5538,23 @@ function stripTwistLabel_(value) {
   return s.replace(/ {2,}/g, ' ').trim();
 }
 
+// 2026-07-07 (audit BE-05): slot regen was the only regen site without the
+// sibling-opener check the other three sites get via diversityValidateSugs_.
+// Returns the sibling theme if toolName already opens another unit in the
+// same campus + year level, else null.
+function slotOpenerDupesSibling_(data, idx, toolName) {
+  var target = data[idx];
+  var key = diversityToolKey_(toolName);
+  if (!key) return null;
+  for (var k = 0; k < data.length; k++) {
+    if (k === idx) continue;
+    var u = data[k];
+    if (!u || u.ca !== target.ca || u.yl !== target.yl) continue;
+    if (diversityToolKey_(diversitySlotTool_(u, 0)) === key) return u.th || 'sibling unit';
+  }
+  return null;
+}
+
 function regenerateOneInspiringSlotCore_(data, idx, sugIdx, opts) {
   opts = opts || {};
   try {
@@ -5558,6 +5606,12 @@ function regenerateOneInspiringSlotCore_(data, idx, sugIdx, opts) {
       });
       if (fDup) {
         return { error: 'forced-tool-duplicate', reason: forcedTool + ' is already used in another slot of this unit — pick a different tool' };
+      }
+      if (sugIdx === 0) {
+        var fSib = slotOpenerDupesSibling_(data, idx, forcedTool);
+        if (fSib) {
+          return { error: 'forced-tool-opener-dup', reason: forcedTool + ' already opens the sibling unit "' + fSib + '" in this year level — pick a different tool for the first slot' };
+        }
       }
 
       const fPrompt = 'You are a visionary Digital Learning Coach at Wesley College (IB PYP, Melbourne). You are rewriting ONE digital technology suggestion for a single unit. Output STRICT JSON only.\n\n' +
@@ -5682,6 +5736,14 @@ function regenerateOneInspiringSlotCore_(data, idx, sugIdx, opts) {
         if (attempt < 3) { Utilities.sleep(3000); continue; }
         break;
       }
+      if (sugIdx === 0) {
+        var sibTh = slotOpenerDupesSibling_(data, idx, parsed.t);
+        if (sibTh) {
+          lastReason = 'opener "' + parsed.t + '" already opens sibling unit "' + sibTh + '" in this year level';
+          if (attempt < 3) { Utilities.sleep(3000); continue; }
+          break;
+        }
+      }
       outSug = { t: cleanTextCorruption_(parsed.t), d: cleanTextCorruption_(stripTwistLabel_(parsed.d)) };
       success = true;
       break;
@@ -5703,6 +5765,7 @@ function regenerateOneInspiringSlotCore_(data, idx, sugIdx, opts) {
         diversityToolComponents_(candidate.t).forEach(function (c) {
           if (otherKeys.has(diversityToolKey_(c))) collide = true;
         });
+        if (sugIdx === 0 && slotOpenerDupesSibling_(data, idx, candidate.t)) collide = true;
         if (!collide) {
           outSug = { t: cleanTextCorruption_(candidate.t), d: cleanTextCorruption_(stripTwistLabel_(candidate.d)) };
           autoSwapped = swapped || subRes.swaps || true;
@@ -6014,8 +6077,6 @@ function repairScrambledText(opts) {
   var maps = repairCompiled_();
   var file = DriveApp.getFileById(DATA_JSON_FILE_ID);
   var data = JSON.parse(file.getBlob().getDataAsString());
-  var _rawProbe = file.getBlob().getDataAsString();
-  var probeCounts = { didnt: _rawProbe.split("didn?t").length - 1, dierent: _rawProbe.split("di?erent").length - 1, apps: _rawProbe.split("app?s").length - 1, streets: _rawProbe.split("street?s").length - 1, voices: _rawProbe.split("voices?and").length - 1, bytes: _rawProbe.length };
   var perToken = {}, stats = { total: 0 };
   function applyPack(s, pack) {
     if (!pack) return s;
@@ -6055,12 +6116,13 @@ function repairScrambledText(opts) {
     if (data[u] && typeof data[u] === 'object' && walk(data[u], '')) unitsTouched++;
   }
   if (!dryRun && stats.total > 0) {
-    file.setContent(JSON.stringify(data, null, 2));
-    try { pushToGitHub(); } catch (e) { Logger.log('repairScrambledText push failed: ' + e); }
+    var repairedJson = JSON.stringify(data, null, 2);
+    file.setContent(repairedJson);
+    try { pushToGitHub(repairedJson); } catch (e) { Logger.log('repairScrambledText push failed: ' + e); }
   }
   var top = Object.keys(perToken).map(function (k) { return [k, perToken[k]]; })
     .sort(function (a, b) { return b[1] - a[1]; }).slice(0, 25);
-  return { ok: true, dryRun: dryRun, probeCounts: probeCounts, replacements: stats.total, unitsTouched: unitsTouched, topTokens: top,
+  return { ok: true, dryRun: dryRun, replacements: stats.total, unitsTouched: unitsTouched, topTokens: top,
            mapSizes: { all: REPAIR_TEXT_MAP.all.length, dash: REPAIR_TEXT_MAP.dash.length, space: REPAIR_TEXT_MAP.space.length } };
 }
 

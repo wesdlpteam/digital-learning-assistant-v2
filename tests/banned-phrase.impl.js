@@ -1,6 +1,6 @@
 // tests/banned-phrase.impl.js
 var AUDIT_BANNED_PHRASES = [
-  'for a twist',
+  'for a twist', 'to stretch their', 'take it further', 'for an extra challenge',
   'the twist:', 'the twist —', "here's the twist", 'here is the twist', 'the real twist', 'the big twist',
   'connected to the central idea', 'linked to the line of inquiry',
   'related to the unit theme', 'for this unit', 'in this unit', 'about this unit',
