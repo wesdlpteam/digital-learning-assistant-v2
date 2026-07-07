@@ -5540,6 +5540,7 @@ function stripTwistLabel_(value) {
   // twist to their designs") and titles ("Ada Twist, Scientist") don't match.
   s = s.replace(/(^|[.!?]\s+)(?:as|in|for)\s+(?:a|an|the)\s+(?:[\w-]+\s+)?twist(?:\s+of\s+[\w-]+)?\s*[,:]\s*/gi, function (m, lead) { return lead; });
   s = s.replace(/(^|[.!?]\s+)to\s+add\s+(?:a|an|the)\s+(?:[\w-]+\s+)?twist\s*[,:]\s*/gi, function (m, lead) { return lead; });
+  s = s.replace(/(^|[.!?]\s+)to\s+bring\s+in\s+(?:a|an)\s+[\w-]+\s+twist\s*[,:]\s*/gi, function (m, lead) { return lead; });
   s = s.replace(/(^|[.!?]\s+)a\s+twist\s+of\s+[\w-]+\s*[,:]\s*/gi, function (m, lead) { return lead; });
   s = s.replace(/(^|[.!?]\s+)to\s+stretch\s+their\s+(?:thinking|learning)\s*[,:]\s*/gi, function (m, lead) { return lead; });
   s = s.replace(/(^|[.!?]\s+)(?:to\s+)?take\s+it\s+further\s*[,:]\s*/gi, function (m, lead) { return lead; });
