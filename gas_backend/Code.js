@@ -13,7 +13,7 @@ const TECH_RULES_SHEET_ID = '1uoLwkd768PEGzyBG7U6xCqrtckZR1X-Rs5uMcYdOXSI';
 //   OPENAI_FAST_MODEL  — light paths: public suggestTech, anything where
 //                        latency/cost matters more than headroom
 const OPENAI_MODEL = 'gpt-5.5';
-const OPENAI_FAST_MODEL = 'gpt-5.5-mini';
+const OPENAI_FAST_MODEL = 'gpt-5-mini';
 const OPENAI_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
 
 function getRequiredScriptProperty_(key) {

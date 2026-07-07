@@ -3,7 +3,7 @@ let DATA = [];
 // stamp on the <script src="js/..."> tags in DLA_Studio.html. Bumping the
 // number changes every code file's web address, which forces browsers to
 // download the new code instead of reusing a stale cached copy.
-const APP_VERSION = '5.52';
+const APP_VERSION = '5.53';
 
 // Reliable "get the latest version" action used by the ↻ latest button.
 // Reloads the whole app from the network with a one-off unique address so the
@@ -44,7 +44,7 @@ const MAX_HISTORY = 20;
 const CLIENT_ID = '334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleusercontent.com';
 const ANALYTICS_SHEET_ID = '1R4P4FJlc8SyRFlVWoM0HpHmfCNMNVOpI8cuEILFxBNY';
 const OPENAI_MODEL = 'gpt-5.5';            // main model (Bulk AI Edit, Fix All, regenerate, scoring)
-const OPENAI_FAST_MODEL = 'gpt-5.5-mini';  // feedback & single-suggestion regen — faster & cheaper
+const OPENAI_FAST_MODEL = 'gpt-5-mini';  // feedback & single-suggestion regen — faster & cheaper
 const YR = ["3 Year Old Kinder","4 Year Old Kinder","Prep","Year 1","Year 2","Year 3","Year 4","Year 5","Year 6"];
 const CAMPUS_COL = { Elsternwick:'#818cf8', 'Glen Waverley':'#34d399', 'St Kilda':'#fb923c', 'St Kilda Road':'#fb923c' };
 
