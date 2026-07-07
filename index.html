@@ -687,6 +687,7 @@ function copyPromptToClipboard(text){
 function openCopilotHelper(idx,btn){
   var d=(window._copilotData||[])[idx];
   if(!d)return;
+  trackInteraction('copilot_open',(d.tool||''));
   var prompt=buildCopilotPrompt(d);
   if(btn){btn.disabled=true;btn.style.opacity='.75';}
   copyPromptToClipboard(prompt).then(function(copied){
@@ -801,6 +802,7 @@ function renderTechPickerPrompt(campus,yl,theme,ci,lo){
 
 function reopenTechChip(campusEnc,ylEnc,themeEnc,toolEnc,ciEnc,loEnc){
   var campus=decodeURIComponent(campusEnc),yl=decodeURIComponent(ylEnc),theme=decodeURIComponent(themeEnc),tool=decodeURIComponent(toolEnc);
+  trackInteraction('tech_chip_reopen',tool);
   var ci=ciEnc?decodeURIComponent(ciEnc):'',lo=loEnc?decodeURIComponent(loEnc):'';
   openTechResult(campus,yl,theme,tool,false,ci,lo);
 }
@@ -812,6 +814,7 @@ function dismissTechChip(campusEnc,ylEnc,themeEnc,toolEnc){
 
 function openTechPicker(campusEnc,ylEnc,themeEnc,ciEnc,loEnc){
   var campus=decodeURIComponent(campusEnc),yl=decodeURIComponent(ylEnc),theme=decodeURIComponent(themeEnc);
+  trackInteraction('tech_picker_open',theme);
   var ci=ciEnc?decodeURIComponent(ciEnc):'',lo=loEnc?decodeURIComponent(loEnc):'';
   var tools=window.APPROVED_TOOLS_LIST||[];
   var old=document.getElementById('techOverlay');if(old)old.remove();
@@ -856,6 +859,7 @@ function filterTechTiles(q){
 function pickTech(btn,campusEnc,ylEnc,themeEnc){
   var campus=decodeURIComponent(campusEnc),yl=decodeURIComponent(ylEnc),theme=decodeURIComponent(themeEnc);
   var tool=btn.getAttribute('data-tool');
+  trackInteraction('tech_picker_generate',tool);
   // Carry the picker's stored ci/lo into the result modal so the editor pre-fills.
   var overlay=document.getElementById('techOverlay');
   var ci=overlay&&overlay.dataset.ci?overlay.dataset.ci:'';
@@ -1047,6 +1051,7 @@ function buildUnitEditorPanel(campus,yl,theme,tool,ci,lo,startOpen){
 function regenWithCustomDetails(){
   var overlay=document.getElementById('techOverlay');
   if(!overlay)return;
+  trackInteraction('tech_picker_custom',overlay.dataset.tool||'');
   var ciEl=document.getElementById('techEdCi');
   var loEl=document.getElementById('techEdLo');
   var customCi=(ciEl&&ciEl.value||'').trim();
@@ -1071,6 +1076,7 @@ function resetCustomDetails(){
 function regenTechResultFromOverlay(regen){
   var overlay=document.getElementById('techOverlay');
   if(!overlay)return;
+  trackInteraction('tech_picker_regen',overlay.dataset.tool||'');
   var campus=overlay.dataset.campus,yl=overlay.dataset.yl,theme=overlay.dataset.theme,tool=overlay.dataset.tool;
   openTechResult(campus,yl,theme,tool,!!regen,overlay.dataset.ci||'',overlay.dataset.lo||'',overlay.dataset.customCi||'',overlay.dataset.customLo||'');
 }
@@ -1273,6 +1279,7 @@ function submitUoiEdit(campusEnc,ylEnc,themeEnc){
     .then(function(txt){
       var parsed;try{parsed=JSON.parse(txt);}catch(e){throw new Error('Server returned invalid response');}
       if(parsed&&parsed.error)throw new Error(parsed.error);
+      trackInteraction('uoi_submit',theme);
       saveLocalUoiProposal(campus,yl,theme,ci,lo,note);
       closeUoiEdit();
       R();
@@ -2752,7 +2759,7 @@ function nv(t,v){
 if(t==="ca")trackPage(CN[v]+" campus",CN[v],"");
 else if(t==="yl")trackPage(v,CN[S.ca]||"",v);
 else if(t==="ui"){var u=D.filter(function(r){return r.ca===(Object.keys(CM).find(function(k){return CM[k]===S.ca}))&&r.yl===S.yl})[v];if(unitNeedsPlannerPopup_(u)){openPlanner(CN[S.ca]||"",S.yl,u.th);return;}trackPage(u?u.th:"Unit",CN[S.ca]||"",S.yl);}if(t==="ca"){S.ca=v;S.v="campus"}else if(t==="yl"){S.yl=v;S.v="units"}else if(t==="ui"){S.ui=v;S.v="detail"}pushHash();R()}
-function bk(){if(S.v==="detail"){S.ui=null;S.v="units"}else if(S.v==="units"){S.yl=null;S.v="campus"}else if(S.v==="campus"){S.ca=null;S.v="home";loadLeaderboard()}else{S.v="home";loadLeaderboard();}pushHash();R()}
+function bk(){if(S.v==="detail"){S.ui=null;S.v="units";trackPage(S.yl||"Units",CN[S.ca]||"",S.yl||"")}else if(S.v==="units"){S.yl=null;S.v="campus";trackPage((CN[S.ca]||"")+" campus",CN[S.ca]||"","")}else if(S.v==="campus"){S.ca=null;S.v="home";trackPage("Home","","");loadLeaderboard()}else{S.v="home";trackPage("Home","","");loadLeaderboard();}pushHash();R()}
 
 
 
@@ -2770,6 +2777,7 @@ function closePlanner(){document.getElementById("plannerOverlay").classList.remo
 function tgSec(id){var el=document.getElementById('sc_'+id);var btn=document.getElementById('sb_'+id);if(el.classList.contains('open')){el.classList.remove('open');btn.classList.remove('open');}else{el.classList.add('open');btn.classList.add('open');}}
 function openStem(){
   var d=window._stemData;if(!d)return;
+  trackInteraction('stem_reveal',d.toolLabel||'');
   var old=document.getElementById('stemOverlay');if(old)old.remove();
   var _stemKey=_usedKey(window._usedData&&window._usedData[d.usi]);
   var _stemDone=_isUsedLocally(_stemKey);
@@ -2800,7 +2808,7 @@ function closeStem(){
 function tgATL(el,id){var d=document.getElementById("ad_"+id);var p=document.getElementById("ap_"+id);if(d.classList.contains("open")){d.classList.remove("open");p.classList.remove("open")}else{d.classList.add("open");p.classList.add("open")}}
 function tgCur(el,id){var d=document.getElementById("d_"+id);var p=document.getElementById("p_"+id);if(d.classList.contains("open")){d.classList.remove("open");p.classList.remove("open")}else{d.classList.add("open");p.classList.add("open")}}
 var _fbCurrent='';
-function openFB(idx){_fbCurrent=window._fbData[idx]||{};var ctx=[_fbCurrent.campus,_fbCurrent.year,_fbCurrent.theme,_fbCurrent.tool,_fbCurrent.phase].map(function(v){return escapeHtml(v||'');}).join(' · ');var host=document.getElementById('fbContent');if(!host)return;host.innerHTML='<div class="fb-title">💬 Suggestion Feedback</div><div class="fb-sub">Your feedback helps us improve these suggestions for everyone.</div><div class="fb-context">'+ctx+'</div><div class="fb-label">How did this go, or what would you change?</div><textarea class="fb-textarea" id="fbText" placeholder="e.g. We tried this and it worked great, but we\'d swap Canva for Book Creator next time..."></textarea><div class="fb-actions"><button class="fb-cancel" onclick="closeFB()">Cancel</button><button class="fb-submit" id="fbSubmit" onclick="submitFB()">Submit Feedback</button></div>';document.getElementById('fbOverlay').classList.add('open');}
+function openFB(idx){_fbCurrent=window._fbData[idx]||{};trackInteraction('feedback_open',_fbCurrent.tool||'');var ctx=[_fbCurrent.campus,_fbCurrent.year,_fbCurrent.theme,_fbCurrent.tool,_fbCurrent.phase].map(function(v){return escapeHtml(v||'');}).join(' · ');var host=document.getElementById('fbContent');if(!host)return;host.innerHTML='<div class="fb-title">💬 Suggestion Feedback</div><div class="fb-sub">Your feedback helps us improve these suggestions for everyone.</div><div class="fb-context">'+ctx+'</div><div class="fb-label">How did this go, or what would you change?</div><textarea class="fb-textarea" id="fbText" placeholder="e.g. We tried this and it worked great, but we\'d swap Canva for Book Creator next time..."></textarea><div class="fb-actions"><button class="fb-cancel" onclick="closeFB()">Cancel</button><button class="fb-submit" id="fbSubmit" onclick="submitFB()">Submit Feedback</button></div>';document.getElementById('fbOverlay').classList.add('open');}
 function closeFB(){document.getElementById('fbOverlay').classList.remove('open');}
 function submitFB(){var txt=document.getElementById('fbText').value.trim();if(!txt){document.getElementById('fbText').style.borderColor='#FF6B6B';return;}var btn=document.getElementById('fbSubmit');btn.disabled=true;btn.textContent='Sending...';var payload={type:'feedback',v:'2',campus:_fbCurrent.campus,year:_fbCurrent.year,theme:_fbCurrent.theme,tool:_fbCurrent.tool,phase:_fbCurrent.phase,feedback:txt};fetch(FBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)}).then(function(){showFBSuccess();}).catch(function(){showFBSuccess();});}
 function showFBSuccess(){document.getElementById('fbContent').innerHTML='<div class="fb-success"><div class="fb-success-icon">✅</div><div class="fb-success-msg">Thanks for your feedback!</div><div class="fb-success-sub">This helps us make better suggestions for everyone.</div><button class="fb-cancel" onclick="closeFB()" style="margin-top:20px">Close</button></div>';}
@@ -2825,6 +2833,10 @@ navigator.sendBeacon(FBHOOK,new Blob([body],{type:'text/plain'}));
 fetch(FBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:body}).catch(function(){});
 }
 }
+
+// One-shot in-page feature click. Fire-and-forget like every other FBHOOK post;
+// page/campus/year piggyback on the trackPage state so the dashboard can slice by unit.
+function trackInteraction(kind,detail){try{var p={type:'interaction',v:'2',session:_userSession,kind:kind,page:_pageName,campus:_pageCampus,year:_pageYear,detail:String(detail||'').slice(0,200)};fetch(FBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(p)}).catch(function(){});}catch(e){}}
 
 function _scheduleFlush(){
 if(_analyticsFlushTimer)clearTimeout(_analyticsFlushTimer);
