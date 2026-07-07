@@ -750,7 +750,7 @@ function renderDashboard(){
     {label:'off whitelist',val:offWhitelist.length,bg:offWhitelist.length>0?'#60B8F0':'#1a1a1a',col:offWhitelist.length>0?'#111':'#888'},
     {label:'wrong year level',val:ageMismatch.length,bg:ageMismatch.length>0?'#E85D9B':'#1a1a1a',col:ageMismatch.length>0?'#111':'#888'},
     {label:'tool mismatch',val:toolMismatch.length,bg:toolMismatch.length>0?'#5EEAD4':'#1a1a1a',col:toolMismatch.length>0?'#111':'#888'},
-    {label:'no planner',val:missingPlanner.length,bg:missingPlanner.length>0?'#D4A017':'#1a1a1a',col:missingPlanner.length>0?'#111':'#888'},
+    {label:'no planner summary',val:missingPlanner.length,bg:missingPlanner.length>0?'#D4A017':'#1a1a1a',col:missingPlanner.length>0?'#111':'#888'},
   ];
   document.getElementById('stat-cards').innerHTML=statDefs.map(({label,val,bg,col})=>`<div class="stat-card" style="background:${bg};border-color:transparent;cursor:pointer" onclick="filterIssueType('${label}')"><div class="stat-num" style="color:${col}">${val}</div><div class="stat-lbl" style="color:${col}">${label}</div></div>`).join('');
 

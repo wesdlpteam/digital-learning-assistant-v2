@@ -3,7 +3,7 @@ let DATA = [];
 // stamp on the <script src="js/..."> tags in DLA_Studio.html. Bumping the
 // number changes every code file's web address, which forces browsers to
 // download the new code instead of reusing a stale cached copy.
-const APP_VERSION = '5.50';
+const APP_VERSION = '5.51';
 
 // Reliable "get the latest version" action used by the ↻ latest button.
 // Reloads the whole app from the network with a one-off unique address so the
@@ -301,6 +301,21 @@ function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
 function recordChange(idx, oldSugs, newSugs){
   CHANGE_HISTORY.unshift({ idx, oldSugs, newSugs, ts: Date.now() });
   if(CHANGE_HISTORY.length > MAX_HISTORY) CHANGE_HISTORY.pop();
+}
+
+// Ctrl/Cmd+U (keydown handler in js/08). Restores the most recent per-unit
+// suggestion change recorded by recordChange. Skips entries without idx/oldSugs
+// (e.g. the diversify batch marker js/06 pushes) — those aren't restorable.
+async function undoLastChange(){
+  const pos = CHANGE_HISTORY.findIndex(en => en && typeof en.idx === 'number' && Array.isArray(en.oldSugs));
+  if(pos === -1){ if(typeof setStatus === 'function') setStatus('Nothing to undo — no suggestion change recorded this session'); return; }
+  const h = CHANGE_HISTORY[pos];
+  if(!DATA[h.idx]){ if(typeof setStatus === 'function') setStatus('Undo failed: unit no longer exists', 'error'); return; }
+  CHANGE_HISTORY.splice(pos, 1);
+  DATA[h.idx].s = JSON.parse(JSON.stringify(h.oldSugs));
+  if(typeof CURRENT_ENTRY_IDX !== 'undefined' && CURRENT_ENTRY_IDX === h.idx && typeof renderEntry === 'function') renderEntry(h.idx);
+  if(typeof saveToDrive === 'function') await saveToDrive();
+  if(typeof setStatus === 'function') setStatus('↶ Undid last suggestion change to "' + (DATA[h.idx].th || 'unit') + '"');
 }
 
 // ========== SNAPSHOT / UNDO SYSTEM ==========

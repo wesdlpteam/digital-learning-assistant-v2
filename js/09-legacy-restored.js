@@ -478,13 +478,14 @@ async function addToGASQueue(){
   statusEl.textContent=''; statusEl.style.color='var(--lime)';
 
   try{
-    await fetch(SCRIPT_URL, {
+    const r = await fetch(SCRIPT_URL, {
       method:'POST',
-      mode:'no-cors',
       headers:{'Content-Type':'text/plain'},
       body:JSON.stringify(withGASToken({action:'addToQueue', ca, yl, th, ci:''}))
     });
-    
+    const result = await r.json().catch(()=>({}));
+    if(result && result.error) throw new Error(result.error);
+
     statusEl.textContent=`✓ "${th}" queued — the auditor will process it within 10 minutes`;
     statusEl.style.color='var(--lime)';
     document.getElementById('q-theme').value='';
@@ -1229,10 +1230,21 @@ async function loadLiveAnalytics(){
       intentRows = [];
     }
 
+    // Interactions sheet (in-page feature clicks) — tolerated as missing, same
+    // reason as Intent: it only auto-creates on the first tracked click.
+    let interactionRows = [];
+    try {
+      interactionRows = await readSheetRange('Interactions!A1:G5000');
+    } catch (interactionErr) {
+      console.info('Interactions sheet not yet present:', interactionErr && interactionErr.message || interactionErr);
+      interactionRows = [];
+    }
+
     // Cache datasets first so any renderer that switches tabs/scopes can re-pull.
-    window._growthRowsCache = { analytics: analyticsRows, used: usedRows, intent: intentRows };
+    window._growthRowsCache = { analytics: analyticsRows, used: usedRows, intent: intentRows, interactions: interactionRows };
     window._usedRowsCache   = usedRows;
     window._intentRowsCache = intentRows;
+    window._interactionRowsCache = interactionRows;
     window._feedbackCache   = feedbackRows;
     window._dashRowsCache   = dashRows;
 

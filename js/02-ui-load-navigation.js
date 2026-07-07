@@ -377,7 +377,6 @@ function downloadJSON(){
   const a=document.createElement('a');
   a.href=u; a.download='data.json'; a.click();
   URL.revokeObjectURL(u);
-  if(DRIVE_FILE_ID) saveToDrive();
 }
 
 // OpenAI chat-completions adapter.

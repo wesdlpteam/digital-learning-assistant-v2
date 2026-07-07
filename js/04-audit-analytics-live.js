@@ -1197,6 +1197,49 @@ function renderLiveAdoptionExtras(){
 function renderLiveEngagementExtras(){
   const cache = window._growthRowsCache || {};
   renderEngagementFunnel(cache.analytics || [], cache.used || window._usedRowsCache || [], cache.intent || window._intentRowsCache || []);
+  renderInteractionsCard(cache.interactions || window._interactionRowsCache || []);
+}
+
+/* ---------- In-page teacher actions (Engagement) ---------- */
+// Renders the Interactions sheet (fed by index.html trackInteraction since
+// 2026-07-07). Headline = AI generations, because each one is a paid model call
+// the dashboard previously couldn't see at all.
+function renderInteractionsCard(interactionRows){
+  const el = document.getElementById('live-interactions');
+  if(!el) return;
+  const rows = (interactionRows || []).slice(1); // drop header row
+  if(!rows.length){
+    el.innerHTML = '<div style="color:#888;font-size:13px;padding:8px 0">No in-page actions recorded yet — collection started 7 Jul 2026.</div>';
+    return;
+  }
+  const counts = {};
+  rows.forEach(r => { const k = String(r[2]||'').toLowerCase(); if(k) counts[k]=(counts[k]||0)+1; });
+  const ai = (counts['tech_picker_generate']||0)+(counts['tech_picker_regen']||0)+(counts['tech_picker_custom']||0);
+  const LABELS = [
+    ['tech_picker_open','🔧 Tool picker opened'],
+    ['tech_picker_generate','✨ AI idea generated from picker'],
+    ['tech_picker_regen','↻ AI idea regenerated'],
+    ['tech_picker_custom','✏️ AI idea with custom unit details'],
+    ['tech_chip_reopen','📌 Saved picker result reopened'],
+    ['copilot_open','🤖 "How do I teach this?" opened'],
+    ['stem_reveal','🔬 STEM activity revealed'],
+    ['feedback_open','💬 Feedback box opened'],
+    ['uoi_submit','📝 Unit details proposed']
+  ];
+  const max = Math.max(1, ...LABELS.map(([k]) => counts[k]||0));
+  const items = LABELS.map(([k,label]) => {
+    const n = counts[k]||0;
+    const w = Math.round(n/max*100);
+    return '<div style="display:flex;align-items:center;gap:10px;margin:5px 0">'
+      + '<div style="flex:0 0 250px;font-size:12.5px;color:#ccc">'+label+'</div>'
+      + '<div style="flex:1;height:8px;background:var(--card2,#1a1a1a);border-radius:4px;overflow:hidden"><div style="height:100%;width:'+w+'%;background:var(--lime,#B5D334)"></div></div>'
+      + '<div style="flex:0 0 46px;text-align:right;font-size:12.5px;font-weight:700;color:#fff">'+n+'</div></div>';
+  }).join('');
+  el.innerHTML = '<div style="display:flex;gap:18px;align-items:baseline;margin-bottom:8px">'
+    + '<div><span style="font-size:26px;font-weight:800;color:var(--lime,#B5D334)">'+ai+'</span>'
+    + '<span style="font-size:12px;color:#999;margin-left:8px">AI generations (each is a paid model call)</span></div>'
+    + '<div style="flex:1"></div><div style="font-size:12px;color:#999">'+rows.length+' actions total</div></div>'
+    + items;
 }
 
 // The campus heatmap from 09 is replaced by the reach matrix, so render a no-op.
