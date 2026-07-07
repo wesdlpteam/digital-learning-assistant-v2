@@ -6126,9 +6126,13 @@ function repairScrambledText(opts) {
            mapSizes: { all: REPAIR_TEXT_MAP.all.length, dash: REPAIR_TEXT_MAP.dash.length, space: REPAIR_TEXT_MAP.space.length } };
 }
 
+// 2026-07-07: original two HWOO targets verified repaired; new sweep found
+// disaster-theme bleed in three more pre-2026-06-04 regens (CI is authoritative:
+// HWEO=design for purpose, GW HWW=living things/materials/light, WWAIPT=cities).
 var REPAIR_CONTAM_TARGETS = [
-  { ca: 'Glen Waverley', yl: 'Year 5', th: 'How We Organise Ourselves' },
-  { ca: 'St Kilda', yl: 'Year 3', th: 'How We Organise Ourselves' }
+  { ca: 'Glen Waverley', yl: 'Year 5', th: 'How We Express Ourselves' },
+  { ca: 'Glen Waverley', yl: 'Year 5', th: 'How the World Works' },
+  { ca: 'St Kilda', yl: 'Year 3', th: 'Where We Are in Place and Time' }
 ];
 
 function _repairContamKey_(u) { return u.ca + '||' + u.yl + '||' + u.th; }
