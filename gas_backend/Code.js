@@ -4903,7 +4903,8 @@ function sweepTwistLabels() {
   const data = isArr ? raw : Object.values(raw).filter(u => u && typeof u === 'object');
   // Mirror of stripTwistLabel_'s opener so we only touch descriptions that
   // actually carry a "twist" label (avoids rewriting every description's spacing).
-  const labelRe = /(^|[.!?]\s+)(?:and |but )?(?:here(?:'|’)?s |here is )?the (?:real |big )?twist(?:\s*[:—]\s*|\s+is(?:\s+that)?\s+)/i;
+  // Detection gate only — precise stripping happens in stripTwistLabel_.
+  const labelRe = /(the (?:real |big )?twist|(?:as|in|for|to add) [^.!?]{0,30}?twist\s*[,:]|a twist of|to stretch their (?:thinking|learning)|take it further\s*[,:]|for an extra challenge)/i;
   let unitsChanged = 0, sugsChanged = 0;
   const units = [];
   for (let i = 0; i < data.length; i++) {
@@ -5533,6 +5534,16 @@ function cleanTextCorruption_(value) {
 function stripTwistLabel_(value) {
   let s = String(value || '');
   s = s.replace(/(^|[.!?]\s+)(?:and |but )?(?:here(?:'|’)?s |here is )?the (?:real |big )?twist(?:\s*[:—]\s*|\s+is(?:\s+that)?\s+)/gi, function (m, lead) { return lead; });
+  // 2026-07-07: stock lead-in clauses from pre-ban regens ("To add a digital
+  // twist, " / "As a playful twist, " / "To stretch their thinking, " ...).
+  // Strip the clause, keep the sentence. Mid-sentence nouns ("adding a sensory
+  // twist to their designs") and titles ("Ada Twist, Scientist") don't match.
+  s = s.replace(/(^|[.!?]\s+)(?:as|in|for)\s+(?:a|an|the)\s+(?:[\w-]+\s+)?twist(?:\s+of\s+[\w-]+)?\s*[,:]\s*/gi, function (m, lead) { return lead; });
+  s = s.replace(/(^|[.!?]\s+)to\s+add\s+(?:a|an|the)\s+(?:[\w-]+\s+)?twist\s*[,:]\s*/gi, function (m, lead) { return lead; });
+  s = s.replace(/(^|[.!?]\s+)a\s+twist\s+of\s+[\w-]+\s*[,:]\s*/gi, function (m, lead) { return lead; });
+  s = s.replace(/(^|[.!?]\s+)to\s+stretch\s+their\s+(?:thinking|learning)\s*[,:]\s*/gi, function (m, lead) { return lead; });
+  s = s.replace(/(^|[.!?]\s+)(?:to\s+)?take\s+it\s+further\s*[,:]\s*/gi, function (m, lead) { return lead; });
+  s = s.replace(/(^|[.!?]\s+)for\s+an\s+extra\s+challenge\s*[,:]\s*/gi, function (m, lead) { return lead; });
   s = s.replace(/(^|[.!?]\s+)([a-z])/g, function (m, lead, ch) { return lead + ch.toUpperCase(); });
   return s.replace(/ {2,}/g, ' ').trim();
 }
