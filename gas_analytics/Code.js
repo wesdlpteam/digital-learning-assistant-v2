@@ -10,7 +10,7 @@
  *   unused           → removes most recent matching Used row (toggle off), recomputes Leaderboard
  *   intent           → Intent sheet (teacher plans to try a suggestion), recomputes Leaderboard
  *   unintent         → removes most recent matching Intent row (toggle off), recomputes Leaderboard
- *   reaction         → Reactions sheet (server-side debounce: 5s same-context window)
+ *   interaction      → Interactions sheet (whitelisted in-page feature clicks)
  *   analytics_batch  → Analytics sheet (one row per event in batch)
  *   feedback         → Feedback sheet (REFUSES empty feedback text)
  *
@@ -27,7 +27,7 @@ const SHEETS = {
   USED:        'Used',
   INTENT:      'Intent',
   FEEDBACK:    'Feedback',
-  REACTIONS:   'Reactions',
+  INTERACTIONS: 'Interactions',
   ANALYTICS:   'Analytics',
   LEADERBOARD: 'Leaderboard',
   ERRORS:      'Errors'
@@ -38,13 +38,13 @@ const HEADERS = {
   Used:        ['Timestamp','Team','Campus','Year Level','Theme','Tool','Phase'],
   Intent:      ['Timestamp','Team','Campus','Year Level','Theme','Tool','Phase'],
   Feedback:    ['Timestamp','Campus','Year Level','Theme','Tool','Phase','Feedback'],
-  Reactions:   ['Timestamp','Campus','Year Level','Theme','Tool','Phase','Reaction'],
+  Interactions: ['Timestamp','Session','Kind','Page','Campus','Year Level','Detail'],
   Analytics:   ['Timestamp','Session','Page','Campus','Year Level','Time Spent (seconds)'],
   Leaderboard: ['Campus','Year','Points','Streaks','LastTheme','LastTool','StreakCount'],
   Errors:      ['Timestamp','Reason','Type','Body','Raw']
 };
 
-const REACTION_DEBOUNCE_MS = 5000;
+const INTERACTION_KINDS = ['tech_picker_open','tech_picker_generate','tech_picker_regen','tech_picker_custom','copilot_open','stem_reveal','feedback_open','uoi_submit','tech_chip_reopen'];
 // Used is worth more than Intent because it represents follow-through, not just planning.
 const POINTS_PER_USED      = 2;
 const POINTS_PER_INTENT    = 1;
@@ -115,8 +115,8 @@ function doPost(e) {
       handleIntent_(ss, body);
     } else if (type === 'unintent') {
       handleUnintent_(ss, body);
-    } else if (type === 'reaction') {
-      handleReaction_(ss, body);
+    } else if (type === 'interaction') {
+      handleInteraction_(ss, body);
     } else if (type === 'analytics_batch') {
       handleAnalyticsBatch_(ss, body);
     } else if (type === 'feedback') {
@@ -326,47 +326,17 @@ function handleUnintent_(ss, body) {
   }));
 }
 
-function handleReaction_(ss, body) {
-  const sheet = ensureSheet_(ss, SHEETS.REACTIONS);
-  const ts = new Date();
-  const campus   = clean_(body.campus);
-  const year     = clean_(body.year);
-  const theme    = clean_(body.theme);
-  const tool     = clean_(body.tool);
-  const phase    = clean_(body.phase);
-  const reaction = clean_(body.reaction).toLowerCase();
-  if (!campus || !year || !theme || !reaction) {
-    logError_(ss, 'reaction_missing_required', 'reaction', body, '');
+// interaction = teacher clicked an in-page feature (tech picker, Copilot helper,
+// STEM reveal, feedback modal, UOI proposal). Kind values are whitelisted so a
+// scripted caller can't grow unbounded sheet columns. 2026-07-07.
+function handleInteraction_(ss, body) {
+  const sheet = ensureSheet_(ss, SHEETS.INTERACTIONS);
+  const kind = clean_(body.kind).toLowerCase();
+  if (INTERACTION_KINDS.indexOf(kind) === -1) {
+    logError_(ss, 'interaction_unknown_kind', 'interaction', body, '');
     return;
   }
-  if (reaction !== 'up' && reaction !== 'down') {
-    logError_(ss, 'reaction_invalid_value', 'reaction', body, '');
-    return;
-  }
-  // Server-side debounce — ignore identical reaction within 5s on the same context.
-  const lastRow = sheet.getLastRow();
-  if (lastRow > 1) {
-    const lookback = Math.min(20, lastRow - 1);
-    const recent = sheet.getRange(lastRow - lookback + 1, 1, lookback, 7).getValues();
-    const nowMs = ts.getTime();
-    for (let i = recent.length - 1; i >= 0; i--) {
-      const r = recent[i];
-      if (!r[0]) continue;
-      const dt = nowMs - new Date(r[0]).getTime();
-      if (dt > REACTION_DEBOUNCE_MS) break;
-      if (
-        clean_(r[1]) === campus &&
-        clean_(r[2]) === year &&
-        clean_(r[3]) === theme &&
-        clean_(r[4]) === tool &&
-        clean_(r[5]) === phase &&
-        clean_(r[6]).toLowerCase() === reaction
-      ) {
-        return; // duplicate inside debounce window
-      }
-    }
-  }
-  sheet.appendRow([ts, campus, year, theme, tool, phase, reaction]);
+  sheet.appendRow([new Date(), clean_(body.session), kind, clean_(body.page), clean_(body.campus), clean_(body.year), clean_(body.detail)]);
 }
 
 function handleAnalyticsBatch_(ss, body) {
