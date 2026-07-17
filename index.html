@@ -264,15 +264,19 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
    width: calc(50% - 50vw) is 0 on narrow viewports (where .wp already fills the screen) and grows
    negative as the viewport widens, pulling the ribbon edges out to the screen edges. */
 .champ-ribbon{
-  background:linear-gradient(90deg,rgba(245,166,35,.10) 0%,rgba(205,235,69,.06) 100%);
-  border:1px solid rgba(245,166,35,.25);
-  border-left:none;border-right:none;border-radius:0;
+  /* Deliberate full-width banner band: sits flush under the sticky site header and reads as an
+     intentional recognition strip, not a floating tint. Solid-ish gold gradient + hairline top/bottom
+     rules give it edges; the negative margins below break it out of the 700px .wp column to the screen. */
+  background:linear-gradient(90deg,rgba(245,166,35,.20) 0%,rgba(205,235,69,.13) 100%);
+  border:none;border-top:1px solid rgba(245,166,35,.32);border-bottom:1px solid rgba(245,166,35,.32);
+  border-radius:0;
   margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);
   width:100vw;max-width:100vw;
   /* Inner padding keeps content roughly aligned with .wp on wide viewports, with extra outer
      padding on narrow viewports so pills don't kiss the screen edge. */
-  padding:10px clamp(14px, calc(50vw - 350px + 14px), 80px);
-  margin-top:14px;margin-bottom:14px;
+  padding:13px clamp(14px, calc(50vw - 350px + 14px), 80px);
+  /* Flush to the header above; generous gap below so the hero heading breathes. */
+  margin-top:0;margin-bottom:32px;
   overflow-x:auto;overflow-y:hidden;white-space:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:thin;
 }
 .champ-ribbon::-webkit-scrollbar{height:4px}
