@@ -1175,8 +1175,17 @@ function callAIProxy_(body) {
     if (/tokens per min|TPM|too large|maximum context|context length/i.test(errMsg)) {
       throw new Error(errMsg);
     }
-    if (isRetriableHttpCode_(code) && attempt < 4) {
-      Utilities.sleep([15000, 30000, 60000][attempt - 1]);
+    // 2026-07-20: OpenAI intermittently rejects a slice of otherwise-valid
+    // calls with "You have insufficient permissions ... Missing scopes:
+    // model.request" (~10-20% observed live on suggestTech; same key+model
+    // succeeds on retry). Match on the MESSAGE, not the HTTP code (the blip
+    // arrives as 401 as well as 403), and retry FAST so it never surfaces
+    // "AI request failed" to a teacher. A genuinely bad key returns this on
+    // every attempt and still throws after the retries are exhausted.
+    var transientAuth = /insufficient permission|missing scope|model\.request/i.test(errMsg);
+    if ((isRetriableHttpCode_(code) || transientAuth) && attempt < 4) {
+      var backoff = transientAuth ? [1000, 2000, 4000][attempt - 1] : [15000, 30000, 60000][attempt - 1];
+      Utilities.sleep(backoff);
       continue;
     }
     throw new Error(errMsg);
