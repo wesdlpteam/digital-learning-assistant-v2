@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Wesley Digital Learning Assistant</title>
+<script>window.APP_VERSION='2026-07-20-1';</script>  <!-- bump on every deploy so open tabs auto-refresh -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23111111'/%3E%3Cpolygon points='19,3 10,17 15,17 13,29 22,15 17,15' fill='%23CDEB45'/%3E%3Ccircle cx='6' cy='6' r='2' fill='%23CDEB45' opacity='0.5'/%3E%3Ccircle cx='26' cy='26' r='2' fill='%23CDEB45' opacity='0.5'/%3E%3Ccircle cx='26' cy='6' r='1.5' fill='%237ED957' opacity='0.6'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -2944,4 +2945,32 @@ DOCS["doc_rubbish_audit"]={"n":"DT Hub — Rubbish Recording and Reduction Lesso
 /* ===== end DLA teacher hotfix ===== */
 
 
+/* ===== auto-update: refresh stale tabs when a newer version ships ===== */
+(function(){
+  var CUR=window.APP_VERSION; if(!CUR) return;
+  var IDX='/digital-learning-assistant-v2/';   // index.html is served here
+  var busy=false, lastReload=+(sessionStorage.getItem('vc_lr')||0);
+  function maybeReload(v){
+    if(!v||v===CUR) return;
+    var now=Date.now();
+    if(now-lastReload<300000) return;          // reload at most once / 5 min (loop guard)
+    lastReload=now; try{sessionStorage.setItem('vc_lr',String(now));}catch(e){}
+    location.reload();
+  }
+  function check(reloadIfChanged){
+    if(busy) return; busy=true;
+    fetch(IDX+'?vc='+Date.now(),{cache:'no-store',headers:{'Range':'bytes=0-1500'}})
+      .then(function(r){return r.text();})
+      .then(function(t){
+        busy=false;
+        var m=t.match(/APP_VERSION\s*=\s*'([^']+)'/);
+        if(m&&reloadIfChanged) maybeReload(m[1]);
+      })
+      .catch(function(){busy=false;});
+  }
+  document.addEventListener('visibilitychange',function(){
+    if(document.visibilityState==='visible') check(true);   // returned to tab: safe moment to refresh
+  });
+  setInterval(function(){ check(document.hidden); },120000); // background tab: refresh quietly
+})();
 </script>
