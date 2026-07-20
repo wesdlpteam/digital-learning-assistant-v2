@@ -2138,31 +2138,6 @@ var _cpResources=[];if(_lessonUrl){_cpResources.push({label:_lessonLabel,url:_le
 var _cpi=window._copilotData.length;window._copilotData.push({campus:CN[ca],year:yl,theme:u.th,centralIdea:u.ci,linesOfInquiry:lois.join('; '),tool:s.t,description:s.d,phase:'Idea #'+(si+1),resources:_cpResources});
 h+='<div class="sg-copilot"><button class="sg-copilot-btn" onclick="openCopilotHelper('+_cpi+',this)"><span class="sg-copilot-ico">🤖</span><span class="sg-copilot-main">How do I teach this?</span></button></div>';
 
-h+='<div class="sg-extras">';
-var sid2='s'+window._sid++;
-h+='<div class="atl-section"><div class="sg-collapse" id="sb_'+sid2+'" onclick="tgSec(\''+sid2+'\')"><div class="sg-label" style="color:#F5A623">🎯 IB Approaches to Learning</div><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 8 10 12 14 8"/></svg></div><div class="sg-collapsible" id="sc_'+sid2+'"><div class="atl-pills">';
-var atls=gATL(s.t,s.d);
-var atlcols={"Thinking":"#A78BFA","Research":"#38BDF8","Communication":"#CDEB45","Social":"#FF6B6B","Self-Management":"#F5A623"};
-var atlgrp={};atls.forEach(function(a){if(!atlgrp[a.cat])atlgrp[a.cat]=[];atlgrp[a.cat].push(a);});
-if(!window._aid)window._aid=0;
-Object.keys(atlgrp).forEach(function(cat){var aid='atl'+window._aid++;h+='<div class="atl-pill" onclick="tgATL(this,\''+aid+'\')" id="ap_'+aid+'"><span class="atl-dot" style="background:'+atlcols[cat]+'"></span>'+cat+'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 8 10 12 14 8"/></svg></div>';});
-if(!Object.keys(atlgrp).length)h+='<div class="atl-pill">Integrated across ATL categories</div>';
-h+='</div>';
-window._aid-=Object.keys(atlgrp).length;
-Object.keys(atlgrp).forEach(function(cat){var aid='atl'+window._aid++;h+='<div class="atl-detail" id="ad_'+aid+'"><b>'+cat+' Skills</b><ul style="margin:6px 0 0 16px;padding:0;list-style:disc">';atlgrp[cat].forEach(function(a){h+='<li>'+a.skill+' — '+a.desc+'</li>';});h+='</ul></div>';});
-h+='</div></div></div>';
-if(!window._wid)window._wid=0;
-var wdss=gWDS(s.t,s.d,yl);
-var wdscols={'Principled Practice':'#9333EA','Engineering Knowledge':'#F5A623','Creative Communicator':'#38BDF8','Systems Thinking':'#22C55E'};
-var wdsgrp={};wdss.forEach(function(w){if(!wdsgrp[w.cat])wdsgrp[w.cat]=[];wdsgrp[w.cat].push(w);});
-var wid2='w'+window._sid++;
-h+='<div class="wds-section"><div class="sg-collapse" id="sb_'+wid2+'" onclick="tgSec(\''+wid2+'\')"><div class="sg-label" style="color:#9333EA"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="18" height="18" style="vertical-align:middle;margin-right:4px;position:relative;top:-1px"><defs><linearGradient id="wg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#4A90D9"/><stop offset="100%" stop-color="#C45AE0"/></linearGradient></defs><circle cx="50" cy="50" r="50" fill="url(#wg)"/><g fill="white"><path d="M62 20 C72 25 78 36 78 48 C78 58 73 67 65 72 L65 80 L42 80 L42 72 C34 67 29 58 29 48 C29 33 39 20 52 20 Z"/><rect x="43" y="83" width="22" height="5" rx="2"/></g><rect x="43" y="43" width="14" height="14" rx="2" fill="#7B5FC7" stroke="#4A90D9" stroke-width="1.5"/><rect x="47" y="47" width="6" height="6" fill="#4A90D9"/><line x1="50" y1="43" x2="50" y2="36" stroke="#7B5FC7" stroke-width="2"/><circle cx="50" cy="34" r="3" fill="#7B5FC7"/><line x1="50" y1="57" x2="50" y2="64" stroke="#7B5FC7" stroke-width="2"/><circle cx="50" cy="66" r="3" fill="#7B5FC7"/><line x1="43" y1="50" x2="36" y2="50" stroke="#7B5FC7" stroke-width="2"/><circle cx="34" cy="50" r="3" fill="#7B5FC7"/><line x1="57" y1="50" x2="64" y2="50" stroke="#7B5FC7" stroke-width="2"/><circle cx="66" cy="50" r="3" fill="#7B5FC7"/><line x1="43" y1="43" x2="37" y2="37" stroke="#7B5FC7" stroke-width="2"/><circle cx="35" cy="35" r="3" fill="#7B5FC7"/><line x1="57" y1="43" x2="63" y2="37" stroke="#7B5FC7" stroke-width="2"/><circle cx="65" cy="35" r="3" fill="#7B5FC7"/></svg>Wesley Digital Skills</div><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 8 10 12 14 8"/></svg></div><div class="sg-collapsible" id="sc_'+wid2+'"><div class="wds-pills">';
-Object.keys(wdsgrp).forEach(function(cat){var wid='wds'+window._wid++;h+='<div class="wds-pill" onclick="tgWDS(this,\''+wid+'\')" id="wp_'+wid+'"><span class="wds-dot" style="background:'+wdscols[cat]+'"></span>'+cat+'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 8 10 12 14 8"/></svg></div>';});
-if(!Object.keys(wdsgrp).length)h+='<div class="wds-pill">Integrated across all domains</div>';
-h+='</div>';
-window._wid-=Object.keys(wdsgrp).length;
-Object.keys(wdsgrp).forEach(function(cat){var wid='wds'+window._wid++;h+='<div class="wds-detail" id="wd_'+wid+'"><b>'+cat+'</b><ul style="margin:6px 0 0 16px;padding:0;list-style:disc">';wdsgrp[cat].forEach(function(w){h+='<li><b>'+w.sub+'</b> — '+w.desc+'</li>';});h+='</ul></div>';});
-h+='</div></div>';
 if(!window._fbData)window._fbData=[];var _fbi=window._fbData.length;window._fbData.push({campus:CN[ca],year:yl,theme:u.th,tool:s.t,phase:phaseLabel+' #'+(si+1)});
 if(!window._usedData)window._usedData=[];var _usi=window._usedData.length;window._usedData.push({campus:CN[ca],year:yl,theme:u.th,tool:s.t,phase:phaseLabel});
 if(!window._intentData)window._intentData=[];var _ini=window._intentData.length;window._intentData.push({campus:CN[ca],year:yl,theme:u.th,tool:s.t,phase:phaseLabel});
@@ -2171,7 +2146,7 @@ var _usiDone=_isUsedLocally(_usiKey);
 var _iniKey=_intentKey(window._intentData[_ini]);
 var _iniDone=_isIntentLocally(_iniKey);
 h+='<div class="sg-fb"><button class="sg-intent'+(_iniDone?' done':'')+'" data-ikey="'+encodeURIComponent(_iniKey)+'" onclick="markIntent('+_ini+',this)">'+(_iniDone?'🟡 Planned — click to undo':'🚀 I\'m going to try this')+'</button><button class="sg-used'+(_usiDone?' done':'')+'" data-ukey="'+encodeURIComponent(_usiKey)+'" onclick="markUsed('+_usi+',this)">'+(_usiDone?'✅ Used — click to undo':'✓ I Used This')+'</button><div class="sg-react"><button onclick="openFB('+_fbi+')" class="sg-fb-btn">💬 Feedback</button></div></div>';
-h+='</div></div>';});
+h+='</div>';});
 
 // "I have a tool in mind" — teacher-driven live AI suggestion
 h+=renderTechPickerPrompt(CN[ca],yl,u.th,u.ci||'',u.lo||'');
