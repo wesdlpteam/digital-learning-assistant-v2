@@ -2146,7 +2146,7 @@ var _usiDone=_isUsedLocally(_usiKey);
 var _iniKey=_intentKey(window._intentData[_ini]);
 var _iniDone=_isIntentLocally(_iniKey);
 h+='<div class="sg-fb"><button class="sg-intent'+(_iniDone?' done':'')+'" data-ikey="'+encodeURIComponent(_iniKey)+'" onclick="markIntent('+_ini+',this)">'+(_iniDone?'🟡 Planned — click to undo':'🚀 I\'m going to try this')+'</button><button class="sg-used'+(_usiDone?' done':'')+'" data-ukey="'+encodeURIComponent(_usiKey)+'" onclick="markUsed('+_usi+',this)">'+(_usiDone?'✅ Used — click to undo':'✓ I Used This')+'</button><div class="sg-react"><button onclick="openFB('+_fbi+')" class="sg-fb-btn">💬 Feedback</button></div></div>';
-h+='</div>';});
+h+='</div></div>';});
 
 // "I have a tool in mind" — teacher-driven live AI suggestion
 h+=renderTechPickerPrompt(CN[ca],yl,u.th,u.ci||'',u.lo||'');
