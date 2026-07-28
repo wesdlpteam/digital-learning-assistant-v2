@@ -15,3 +15,6 @@ Thumbs.db
 # Local data.json / libraries.json backups (timestamped, auto-generated)
 data.json.bak-*
 libraries.json.bak-*
+
+# generated sandbox demo output (lives in its own repo)
+/build/

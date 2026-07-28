@@ -1,0 +1,9 @@
+{
+  "name": "dla-tools",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/",
+    "build:sandbox": "node tools/build-sandbox.mjs"
+  }
+}
