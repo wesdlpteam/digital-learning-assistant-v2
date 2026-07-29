@@ -227,13 +227,63 @@
     });
   }
 
+  // ---- 6b. Trim empty leading buckets off the growth chart ---------------
+  // renderGrowthChart_eChart hardcodes 12 buckets for the Month view
+  // (js/04-audit-analytics-live.js:753) regardless of how much data exists. The
+  // demo's history starts in May, so Month drew nine blank months first, which
+  // reads as "nobody used this for most of a year". Drop the leading buckets
+  // where every series is zero, so the axis begins where the data does.
+  function trimEmptyGrowthBuckets() {
+    if (!window.echarts || !echarts.getInstanceByDom) return;
+    var host = document.getElementById('live-growth-chart');
+    if (!host) return;
+    var inst;
+    try { inst = echarts.getInstanceByDom(host); } catch (e) { return; }
+    if (!inst) return;
+
+    var opt;
+    try { opt = inst.getOption(); } catch (e) { return; }
+    if (!opt || !opt.xAxis || !opt.xAxis[0] || !Array.isArray(opt.xAxis[0].data)) return;
+    var series = (opt.series || []).filter(function (s) { return Array.isArray(s.data); });
+    if (!series.length) return;
+
+    var categories = opt.xAxis[0].data;
+    var value = function (v) {
+      if (v && typeof v === 'object') v = v.value;
+      return Number(v) || 0;
+    };
+    var firstWithData = -1;
+    for (var i = 0; i < categories.length; i++) {
+      var any = series.some(function (s) { return value(s.data[i]) > 0; });
+      if (any) { firstWithData = i; break; }
+    }
+    // nothing to trim, no data at all, or it would leave too little to plot
+    if (firstWithData <= 0) return;
+    if (categories.length - firstWithData < 2) return;
+
+    opt.xAxis[0].data = categories.slice(firstWithData);
+    opt.series.forEach(function (s) {
+      if (Array.isArray(s.data)) s.data = s.data.slice(firstWithData);
+    });
+    try { inst.setOption(opt, true); } catch (e) { /* leave the chart as drawn */ }
+  }
+
+  var _realRenderLiveGrowth = window.renderLiveGrowth;
+  if (typeof _realRenderLiveGrowth === 'function') {
+    window.renderLiveGrowth = function () {
+      var result = _realRenderLiveGrowth.apply(this, arguments);
+      setTimeout(trimEmptyGrowthBuckets, 40);
+      return result;
+    };
+  }
+
   // Both levels of navigation hide their panels with display:none, so a chart
   // can be laid out at 0px twice over: once for the tab, once for the
   // Analytics sub-tab (.analytics-subpanel, driven by setAnalyticsSubtab).
   function afterNav() {
     setTimeout(function () { sweep(); resizeCharts(); }, 60);
-    setTimeout(resizeCharts, 260);
-    setTimeout(resizeCharts, 700);
+    setTimeout(function () { resizeCharts(); trimEmptyGrowthBuckets(); }, 260);
+    setTimeout(function () { resizeCharts(); trimEmptyGrowthBuckets(); }, 700);
   }
   ['switchTab', 'setAnalyticsSubtab'].forEach(function (name) {
     var real = window[name];
