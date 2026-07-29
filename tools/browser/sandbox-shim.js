@@ -35,7 +35,14 @@
   // ---- the unit currently on screen --------------------------------------
   function currentUnitSuggestions() {
     try {
-      if (!window.S || S.ca == null || S.yl == null || S.ui == null) return [];
+      // S, CN, CM and D are declared const/let in index.html, so they live in
+      // the global LEXICAL scope and are NOT properties of window. Reach them
+      // by bare name (visible across classic script tags), never as window.S.
+      // The functions we override are function declarations, so those ARE on
+      // window and can be reassigned.
+      if (typeof S === 'undefined' || S.ca == null || S.yl == null || S.ui == null) return [];
+      // gu() expects the campus CODE (S.ca is already 'EL'/'GW'/'SKR'), the
+      // same way index.html calls it. Do not translate through CN here.
       var units = gu(S.ca, S.yl);
       var unit = units && units[S.ui];
       return (unit && unit.s) || [];
