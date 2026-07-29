@@ -2,7 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { slimUnits } from './lib/slim-data.mjs';
+import { slimUnits, dropExcludedYearLevels } from './lib/slim-data.mjs';
 import { transformHtml } from './lib/transform-html.mjs';
 import { assertNoDroppedFieldUsage, assertNoGoogleScriptRefs, assertSizeUnder } from './lib/verify.mjs';
 import { fetchLeaderboardSnapshot, loadPreviousSnapshot } from './lib/leaderboard.mjs';
@@ -52,7 +52,8 @@ async function main() {
   // 2. data.json
   const sourceData = read('data.json');
   const units = JSON.parse(sourceData);
-  const slim = JSON.stringify(slimUnits(units));
+  const kept = dropExcludedYearLevels(units);
+  const slim = JSON.stringify(slimUnits(kept));
   assertSizeUnder(Buffer.byteLength(slim, 'utf8'), DATA_CAP, 'data.json');
   const dataBytes = write('data.json', slim);
 
@@ -77,7 +78,7 @@ async function main() {
   const total = htmlBytes + dataBytes + libBytes + lbBytes;
   const before = Buffer.byteLength(sourceData, 'utf8');
   console.log(`  index.html            ${htmlBytes.toLocaleString()} bytes`);
-  console.log(`  data.json             ${dataBytes.toLocaleString()} bytes (from ${before.toLocaleString()}, ${units.length} units)`);
+  console.log(`  data.json             ${dataBytes.toLocaleString()} bytes (from ${before.toLocaleString()}; ${kept.length} units kept of ${units.length}, Kinder dropped)`);
   console.log(`  libraries.json        ${libBytes.toLocaleString()} bytes`);
   console.log(`  demo-leaderboard.json ${lbBytes.toLocaleString()} bytes`);
   console.log(`  TOTAL first load      ${total.toLocaleString()} bytes`);

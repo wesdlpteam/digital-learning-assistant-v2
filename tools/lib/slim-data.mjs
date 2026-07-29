@@ -18,6 +18,16 @@ export const DROPPED_FIELDS = [
   'suggestionAuditVersion'
 ];
 
+// Kinder units carry no tech ideas at all in the live corpus (23 of them as at
+// 2026-07-29: Elsternwick 11, St Kilda 12), so they render as empty pages. They
+// are dropped from the demo builds only. The live site is untouched.
+export const EXCLUDED_YEAR_LEVELS = ['3 Year Old Kinder', '4 Year Old Kinder'];
+
+export function dropExcludedYearLevels(units) {
+  if (!Array.isArray(units)) throw new Error('dropExcludedYearLevels expects an array of units');
+  return units.filter(u => !EXCLUDED_YEAR_LEVELS.includes(u && u.yl));
+}
+
 export function slimUnits(units) {
   if (!Array.isArray(units)) throw new Error('slimUnits expects an array of units');
   return units.map(unit => {

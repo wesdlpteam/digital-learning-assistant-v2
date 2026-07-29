@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { slimUnits, KEEP_FIELDS, DROPPED_FIELDS } from '../tools/lib/slim-data.mjs';
+import {
+  slimUnits, KEEP_FIELDS, DROPPED_FIELDS,
+  dropExcludedYearLevels, EXCLUDED_YEAR_LEVELS
+} from '../tools/lib/slim-data.mjs';
 
 const FULL_UNIT = {
   ca: 'Elsternwick',
@@ -63,4 +66,27 @@ test('DROPPED_FIELDS and KEEP_FIELDS do not overlap', () => {
 
 test('throws on a non-array input', () => {
   assert.throws(() => slimUnits(null), /expects an array/);
+});
+
+test('drops both Kinder year levels and keeps everything else in order', () => {
+  const units = [
+    { ca: 'Elsternwick', yl: '3 Year Old Kinder', th: 'A' },
+    { ca: 'Elsternwick', yl: 'Prep', th: 'B' },
+    { ca: 'St Kilda', yl: '4 Year Old Kinder', th: 'C' },
+    { ca: 'St Kilda', yl: 'Year 6', th: 'D' }
+  ];
+  assert.deepEqual(dropExcludedYearLevels(units).map(u => u.th), ['B', 'D']);
+});
+
+test('leaves a corpus with no Kinder untouched', () => {
+  const units = [{ ca: 'X', yl: 'Prep', th: 'A' }, { ca: 'X', yl: 'Year 1', th: 'B' }];
+  assert.equal(dropExcludedYearLevels(units).length, 2);
+});
+
+test('EXCLUDED_YEAR_LEVELS names both Kinder levels exactly as the data spells them', () => {
+  assert.deepEqual(EXCLUDED_YEAR_LEVELS, ['3 Year Old Kinder', '4 Year Old Kinder']);
+});
+
+test('dropExcludedYearLevels throws on a non-array input', () => {
+  assert.throws(() => dropExcludedYearLevels(null), /expects an array/);
 });
