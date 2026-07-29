@@ -58,6 +58,16 @@
     id: { initialize: function () {}, prompt: function () {}, renderButton: function () {} }
   };
 
+  // ---- 2b. Silence the dead Drive paths ----------------------------------
+  // js/08's init starts a conflict-polling timer that asks Drive for the file's
+  // modifiedTime every few seconds. The guard blocks every one of those, so
+  // nothing leaves the device, but it fills the console and serves no purpose
+  // in a demo. Neuter the callers rather than relying on the guard alone.
+  window.getDriveFileModified = function () { return Promise.resolve(null); };
+  window.startConflictPolling = function () { /* sandbox: no Drive to poll */ };
+  window.reloadFromDrive = function () { return Promise.resolve(); };
+  window.loadUoiProposals = function () { return Promise.resolve([]); };
+
   // ---- 3. Analytics: read from the local sample file, never Sheets --------
   window.getAnalyticsSheetTz = function () { return Promise.resolve('Australia/Melbourne'); };
   window.readSheetRange = function (range) {
