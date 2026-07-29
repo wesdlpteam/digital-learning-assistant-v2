@@ -114,14 +114,17 @@
   // Controls that generate, save, sync or push. Everything stays visible so the
   // audience can see the capability; nothing is clickable.
   var WRITE_CONTROL_IDS = [
-    'btn-drive', 'btn-seed-kinder', 'btn-add-queue', 'btn-bulk-reset', 'btn-bulk-voice',
+    'btn-drive', 'btn-add-queue', 'btn-bulk-reset', 'btn-bulk-voice',
     'btn-bulk-chat-send', 'btn-full-realism-audit', 'btn-surgeon', 'btn-refresh-live',
     'btn-ai-summary', 'btn-regen-all', 'btn-entry-realism-scan', 'btn-score-quality'
   ];
   var WRITE_ONCLICK = /loadFromDrive|seedKinderYearGroups|addToGASQueue|runSurgeon|runTwistSweep|startSuggestionAudit|regenAll|generateAISummary|loadLiveAnalytics|createManualSnapshot|savePlaybookFromChat|pullLibrariesFromGitHub|refreshLibrariesFromDrive|showAddLibraryDialog|libImportAllTrigger|clearSession|forceLatestVersion|showBackendScreen|runFullRealismAudit|scanCurrentEntryRealism|scoreEntryQuality|bulkChatSend|bulkChatReset|toggleBulkVoice|inspireAll|rebootMakerspace|runBulk|Surgeon/i;
 
   // Sections Nathan asked to remove, keyed by a button inside the card.
-  var REMOVE_CARD_BY_BTN_ID = ['btn-twist-sweep', 'btn-suggestion-audit'];
+  // btn-seed-kinder is the dashboard's "Kinder year groups" one-time setup card;
+  // Kinder is gone from the demo corpus entirely, so the card has nothing to
+  // refer to.
+  var REMOVE_CARD_BY_BTN_ID = ['btn-twist-sweep', 'btn-suggestion-audit', 'btn-seed-kinder'];
   // Controls created at runtime, so matched by their visible label.
   var REMOVE_BY_TEXT = [/inspire all/i, /sweep app smash/i, /makerspace/i];
 
