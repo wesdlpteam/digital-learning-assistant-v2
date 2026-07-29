@@ -84,7 +84,7 @@ export function teamList() {
 //
 // Every team also gets a Used event inside the last 7 days, so the "active teams
 // this week" count is the full 21 rather than whichever happened to land.
-function buildEngagementRows(tools) {
+function buildEngagementRows(tools, historyDays) {
   const header = ['Timestamp', 'Team', 'Campus', 'Year', 'Theme', 'Tool', 'Phase'];
   const intent = [header];
   const used = [header];
@@ -100,9 +100,11 @@ function buildEngagementRows(tools) {
   // teams. Uses are then derived from most of those intents a few days later,
   // so both lines rise together and every day has activity.
   const plan = [];
+  const first = historyDays - 1;
   let cursor = 0;
-  for (let daysAgo = 29; daysAgo >= 3; daysAgo--) {
-    const perDay = 2 + Math.floor((29 - daysAgo) / 9);   // 2 → 4 as we approach today
+  for (let daysAgo = first; daysAgo >= 3; daysAgo--) {
+    // 1 a day at the start of the range, 4 a day by this week.
+    const perDay = 1 + Math.floor(((first - daysAgo) / first) * 3);
     for (let k = 0; k < perDay; k++) {
       const t = teams[cursor % teams.length];
       plan.push({
@@ -128,8 +130,11 @@ function buildEngagementRows(tools) {
   // pair them; anything less and the dashboard reports 0% follow-through.
   plan.forEach(p => {
     if (p.idx % 10 >= 7) return;
+    // Vary the follow-through delay by both the entry and the day it came from.
+    // A narrower delay left repeating gaps in the daily series.
+    const delay = 1 + ((p.idx * 5 + p.daysAgo * 3) % 7);
     used.push([
-      stamp(Math.max(0, p.daysAgo - (2 + (p.idx % 4))), 10 + (p.idx % 7), (p.idx * 7) % 60),
+      stamp(Math.max(0, p.daysAgo - delay), 10 + (p.idx % 7), (p.idx * 7) % 60),
       p.team.team, p.team.campus, p.team.year, p.theme, p.tool, PHASE
     ]);
   });
@@ -147,19 +152,22 @@ function buildEngagementRows(tools) {
 }
 
 // One row per page view, weighted so the trend rises towards today.
-function buildAnalyticsRows() {
+// The span is configurable so the Month bucket on the growth chart has more
+// than one point — Nathan wants it reaching back to May.
+function buildAnalyticsRows(historyDays) {
   const header = ['Timestamp', 'Session', 'Page', 'Campus', 'Year', 'Seconds'];
   const rows = [header];
+  const first = historyDays - 1;
   let i = 0;
-  for (let daysAgo = 29; daysAgo >= 0; daysAgo--) {
-    const viewsToday = 18 + Math.round((29 - daysAgo) * 1.4);
+  for (let daysAgo = first; daysAgo >= 0; daysAgo--) {
+    // 8 a day at the start of the range, ~59 a day by today.
+    const viewsToday = 8 + Math.round(((first - daysAgo) / first) * 51);
     for (let v = 0; v < viewsToday; v++) {
-      const campus = pick(CAMPUSES, i);
       rows.push([
         stamp(daysAgo, 8 + (i % 10), (i * 13) % 60),
         `s${(i % 140) + 1}`,
         pick(PAGES, i),
-        campus,
+        pick(CAMPUSES, i),
         pick(YEAR_LEVELS, i),
         45 + ((i * 17) % 90)
       ]);
@@ -169,13 +177,14 @@ function buildAnalyticsRows() {
   return rows;
 }
 
-function buildInteractionRows(tools) {
+function buildInteractionRows(tools, historyDays) {
   const header = ['Timestamp', 'Session', 'Kind', 'Page', 'Campus', 'Year', 'Detail'];
   const kinds = ['tech_picker_open', 'tech_picker_generate', 'lesson_link_click', 'copy_idea', 'tech_chip_reopen'];
   const rows = [header];
-  for (let i = 0; i < 180; i++) {
+  const span = historyDays - 2;
+  for (let i = 0; i < Math.round(historyDays * 6); i++) {
     rows.push([
-      stamp(1 + (i % 27), 9 + (i % 8), (i * 19) % 60),
+      stamp(1 + (i % span), 9 + (i % 8), (i * 19) % 60),
       `s${(i % 140) + 1}`,
       pick(kinds, i),
       pick(PAGES, i),
@@ -187,7 +196,7 @@ function buildInteractionRows(tools) {
   return rows;
 }
 
-function buildFeedbackRows(tools) {
+function buildFeedbackRows(tools, historyDays) {
   const header = ['Timestamp', 'Campus', 'Year', 'Theme', 'Tool', 'Rating', 'Comment'];
   const comments = [
     'Worked really well with my class, the kids were engaged the whole session.',
@@ -197,9 +206,10 @@ function buildFeedbackRows(tools) {
     'My team ran this across all three classes and it went down a treat.'
   ];
   const rows = [header];
-  for (let i = 0; i < 24; i++) {
+  const span = historyDays - 2;
+  for (let i = 0; i < Math.round(historyDays * 0.8); i++) {
     rows.push([
-      stamp(1 + (i % 25), 10 + (i % 6), (i * 23) % 60),
+      stamp(1 + (i % span), 10 + (i % 6), (i * 23) % 60),
       pick(CAMPUSES, i),
       pick(YEAR_LEVELS, i),
       pick(THEMES, i),
@@ -211,7 +221,32 @@ function buildFeedbackRows(tools) {
   return rows;
 }
 
-function buildDashboardRows() {
+// Derived from the generated view rows rather than hardcoded, so the campus
+// and page rollups can never contradict the totals the KPI strip computes off
+// the same data — which they would the moment the date range changed.
+function rollUpViews(analyticsRows) {
+  const byCampus = new Map();
+  const byPage = new Map();
+  analyticsRows.slice(1).forEach(r => {
+    const page = r[2], campus = r[3], secs = Number(r[5]) || 0;
+    const c = byCampus.get(campus) || { views: 0, secs: 0 };
+    c.views += 1; c.secs += secs; byCampus.set(campus, c);
+    const p = byPage.get(page) || { views: 0, secs: 0 };
+    p.views += 1; p.secs += secs; byPage.set(page, p);
+  });
+  return {
+    campuses: CAMPUSES.map(name => {
+      const c = byCampus.get(name) || { views: 0, secs: 0 };
+      return [name, String(c.views), String(c.views ? Math.round(c.secs / c.views) : 0), '', '', ''];
+    }),
+    pages: [...byPage.entries()]
+      .sort((a, b) => b[1].views - a[1].views)
+      .slice(0, 10)
+      .map(([name, p]) => [name, String(p.views), String(p.secs), '', '', ''])
+  };
+}
+
+function buildDashboardRows(rollup) {
   const blank = ['', '', '', '', '', ''];
   return [
     ['DLA ANALYTICS DASHBOARD', '', '', '', '', ''],
@@ -226,34 +261,40 @@ function buildDashboardRows() {
     blank,
     ['VIEWS BY CAMPUS', '', '', '', '', ''],
     ['Campus', 'Views', 'Avg seconds', '', '', ''],
-    ['Elsternwick', '412', '81', '', '', ''],
-    ['Glen Waverley', '438', '76', '', '', ''],
-    ['St Kilda', '397', '79', '', '', ''],
+    ...rollup.campuses,
     blank,
     ['TOP 10 MOST VIEWED PAGES', '', '', '', '', ''],
     // The renderer does section.slice(2), so there are two rows before the data.
     // This spacer must NOT be entirely empty — findSection() treats a fully blank
     // row as the end of the section and would return nothing.
-    ['Last 30 days', '', '', '', '', ''],
+    ['Whole date range', '', '', '', '', ''],
     ['Page', 'Views', 'Total seconds', '', '', ''],
-    ...PAGES.map((p, i) => [p, String(148 - i * 9), String((148 - i * 9) * (72 + i * 2)), '', '', '']),
+    ...rollup.pages,
     blank
   ];
 }
 
-export function buildSampleAnalytics(approvedTools) {
+// How far back the sample history reaches. The build script passes the number
+// of days between 1 May 2026 and the build date, so the growth chart's Month
+// bucket shows May onwards rather than a single point. Re-running the build
+// before each event keeps the range anchored to that May start.
+export const DEFAULT_HISTORY_DAYS = 90;
+
+export function buildSampleAnalytics(approvedTools, options = {}) {
   const tools = (approvedTools && approvedTools.length)
     ? approvedTools
     : ['Book Creator', 'Scratch', 'Adobe Express', 'Canva', 'Epic', 'Apple Clips'];
+  const historyDays = Math.max(30, Math.round(options.historyDays || DEFAULT_HISTORY_DAYS));
 
-  const engagement = buildEngagementRows(tools);
+  const engagement = buildEngagementRows(tools, historyDays);
+  const analytics = buildAnalyticsRows(historyDays);
 
   return {
-    'Dashboard!A1:F60': buildDashboardRows(),
-    'Analytics!A1:F5000': buildAnalyticsRows(),
-    'Feedback!A1:G100': buildFeedbackRows(tools),
+    'Dashboard!A1:F60': buildDashboardRows(rollUpViews(analytics)),
+    'Analytics!A1:F5000': analytics,
+    'Feedback!A1:G100': buildFeedbackRows(tools, historyDays),
     'Used!A1:G2000': engagement.used,
     'Intent!A1:G2000': engagement.intent,
-    'Interactions!A1:G5000': buildInteractionRows(tools)
+    'Interactions!A1:G5000': buildInteractionRows(tools, historyDays)
   };
 }

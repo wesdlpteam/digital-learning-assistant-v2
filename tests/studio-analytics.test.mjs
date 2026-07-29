@@ -91,14 +91,53 @@ test('every timestamp is a day-offset sentinel, never a baked date', () => {
   }
 });
 
-test('all activity falls inside the rolling 30-day window the dashboard filters on', () => {
+test('all activity falls inside the requested history span', () => {
   for (const [range, rows] of Object.entries(DATA)) {
     if (range.startsWith('Dashboard')) continue;
     for (const row of rows.slice(1)) {
       const days = Number(String(row[0]).match(TIMESTAMP_SENTINEL)[1]);
-      assert.ok(days <= 29, `${range} event ${days} days ago is outside the window`);
+      assert.ok(days < 90, `${range} event ${days} days ago is outside the 90-day span`);
     }
   }
+});
+
+test('history reaches back across the whole requested span, not just recent weeks', () => {
+  const wide = buildSampleAnalytics(TOOLS, { historyDays: 90 });
+  const oldest = Math.max(...wide['Analytics!A1:F5000'].slice(1)
+    .map(r => Number(String(r[0]).match(TIMESTAMP_SENTINEL)[1])));
+  assert.equal(oldest, 89, 'oldest view should sit at the far end of the span');
+  // every third of the range carries activity, so the Month bucket has points
+  for (const [lo, hi] of [[0, 29], [30, 59], [60, 89]]) {
+    const inBand = wide['Analytics!A1:F5000'].slice(1).filter(r => {
+      const d = Number(String(r[0]).match(TIMESTAMP_SENTINEL)[1]);
+      return d >= lo && d <= hi;
+    });
+    assert.ok(inBand.length > 100, `only ${inBand.length} views between ${lo} and ${hi} days ago`);
+  }
+});
+
+test('a longer span still leaves the recent end busiest', () => {
+  const wide = buildSampleAnalytics(TOOLS, { historyDays: 90 });
+  const rows = wide['Analytics!A1:F5000'].slice(1);
+  const count = (lo, hi) => rows.filter(r => {
+    const d = Number(String(r[0]).match(TIMESTAMP_SENTINEL)[1]);
+    return d >= lo && d <= hi;
+  }).length;
+  assert.ok(count(0, 29) > count(60, 89), 'recent month should out-draw the oldest month');
+});
+
+test('the span never drops below a month, however small a value is passed', () => {
+  const tiny = buildSampleAnalytics(TOOLS, { historyDays: 5 });
+  const oldest = Math.max(...tiny['Analytics!A1:F5000'].slice(1)
+    .map(r => Number(String(r[0]).match(TIMESTAMP_SENTINEL)[1])));
+  assert.equal(oldest, 29);
+});
+
+test('campus and page rollups are derived from the view rows, not hardcoded', () => {
+  const rows = DATA['Analytics!A1:F5000'].slice(1);
+  const section = findSection(DATA['Dashboard!A1:F60'], 'VIEWS BY CAMPUS').slice(1);
+  const rollupTotal = section.reduce((a, r) => a + Number(r[1]), 0);
+  assert.equal(rollupTotal, rows.length, 'campus views must add up to the actual view count');
 });
 
 test('every team has a Used event inside the last 7 days, so all 21 count as active', () => {

@@ -103,7 +103,20 @@ async function main() {
   }
   const studioUnits = prepareStudioUnits(units);
   studioBytes += write('studio-data.json', JSON.stringify(studioUnits));
-  studioBytes += write('studio-analytics.json', JSON.stringify(buildSampleAnalytics(approvedToolNames())));
+  // Nathan wants the growth chart's Month bucket to start in May, so the sample
+  // history reaches back to 1 May of the build year. Re-running the build keeps
+  // it anchored there; the page then resolves everything relative to whatever
+  // day it is opened.
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const mayFirst = new Date(now.getFullYear(), 4, 1);
+  // floor, not round: rounding up pushes the oldest event into April.
+  const historyDays = Math.max(90, Math.floor((today - mayFirst) / 86400000) + 1);
+  const analytics = buildSampleAnalytics(approvedToolNames(), { historyDays });
+  studioBytes += write('studio-analytics.json', JSON.stringify(analytics));
+  const oldest = new Date(today.getTime() - (historyDays - 1) * 86400000);
+  const localDate = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  console.log(`  sample history        ${historyDays} days (oldest event ${localDate(oldest)})`);
 
   // 6. housekeeping
   write('.nojekyll', '');
