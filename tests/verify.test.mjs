@@ -32,6 +32,31 @@ test('throws when a Google Apps Script reference survives', () => {
   );
 });
 
+test('also rejects the sign-in and Sheets hosts the Studio would use', () => {
+  assert.throws(
+    () => assertNoGoogleScriptRefs('<script src="https://accounts.google.com/gsi/client"></script>'),
+    /accounts\.google\.com/
+  );
+  assert.throws(
+    () => assertNoGoogleScriptRefs('fetch("https://sheets.googleapis.com/v4/spreadsheets/x")'),
+    /sheets\.googleapis\.com/
+  );
+});
+
+test('names the file it checked, so a build failure points at the right output', () => {
+  assert.throws(
+    () => assertNoGoogleScriptRefs('accounts.google.com', 'js/02-ui-load-navigation.js'),
+    /js\/02-ui-load-navigation\.js/
+  );
+});
+
+test('reports every offending host at once rather than one per run', () => {
+  assert.throws(
+    () => assertNoGoogleScriptRefs('script.google.com and accounts.google.com'),
+    /script\.google\.com x1, accounts\.google\.com x1/
+  );
+});
+
 test('size guard passes under the cap and throws over it', () => {
   assert.doesNotThrow(() => assertSizeUnder(1000, 2000, 'data.json'));
   assert.throws(() => assertSizeUnder(3000, 2000, 'data.json'), /data\.json/);
