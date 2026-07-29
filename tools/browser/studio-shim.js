@@ -111,14 +111,35 @@
   }
 
   // ---- 5. Removals, disabling and honesty labels -------------------------
-  // Controls that generate, save, sync or push. Everything stays visible so the
-  // audience can see the capability; nothing is clickable.
-  var WRITE_CONTROL_IDS = [
-    'btn-drive', 'btn-add-queue', 'btn-bulk-reset', 'btn-bulk-voice',
-    'btn-bulk-chat-send', 'btn-full-realism-audit', 'btn-surgeon', 'btn-refresh-live',
-    'btn-ai-summary', 'btn-regen-all', 'btn-entry-realism-scan', 'btn-score-quality'
+  // Everything stays visible so the audience can see the capability; nothing
+  // that changes anything is clickable.
+  //
+  // This is an ALLOW list, not a block list. A block list meant every control
+  // anyone forgot to name stayed live — including removeAllHumanVerified, which
+  // would wipe the 127/127 verified count mid-presentation, and libDeleteLesson.
+  // Nothing can reach Google (the guard sees to that) but local damage was one
+  // click away. So: name the handlers that only change what is on screen, and
+  // disable every other control.
+  var SAFE_HANDLERS = [
+    // top-level and sub navigation
+    'switchTab', 'setAnalyticsSubtab', 'showScreen', 'closeEntry', 'closeTech', 'closeModal',
+    // analytics view switches
+    'setAuditView', 'setAnalyticsView', 'setAuditStemScope', 'setAuditCampus',
+    'setGrowthBucket', 'setGrowthCampus', 'setRankingScope',
+    // read-only helpers
+    'showKeyboardHelp', 'openEntry', 'filterTechTiles', 'libClearForm',
+    'bulkQuickActionToggleAdvanced', 'bulkQuickActionFill', 'bulkQARefreshLibrarySelect_'
   ];
-  var WRITE_ONCLICK = /loadFromDrive|seedKinderYearGroups|addToGASQueue|runSurgeon|runTwistSweep|startSuggestionAudit|regenAll|generateAISummary|loadLiveAnalytics|createManualSnapshot|savePlaybookFromChat|pullLibrariesFromGitHub|refreshLibrariesFromDrive|showAddLibraryDialog|libImportAllTrigger|clearSession|forceLatestVersion|showBackendScreen|runFullRealismAudit|scanCurrentEntryRealism|scoreEntryQuality|bulkChatSend|bulkChatReset|toggleBulkVoice|inspireAll|rebootMakerspace|runBulk|Surgeon/i;
+  // Inline handlers that only show/hide something, e.g. the "⚙ Advanced" toggle.
+  var SAFE_INLINE = /style\.display|classList\.(toggle|add|remove)\(/;
+
+  function isSafeHandler(onclick) {
+    if (!onclick) return true;                       // no handler at all
+    var fn = (onclick.match(/^\s*([A-Za-z_$][\w$]*)\s*\(/) || [])[1];
+    if (fn && SAFE_HANDLERS.indexOf(fn) !== -1) return true;
+    if (!fn && SAFE_INLINE.test(onclick)) return true;
+    return false;
+  }
 
   // Sections Nathan asked to remove, keyed by a button inside the card.
   // btn-seed-kinder is the dashboard's "Kinder year groups" one-time setup card;
@@ -191,12 +212,13 @@
       if (/^\s*\d\s*year\s*old\s*kinder\s*$/i.test(t)) el.remove();
     });
 
-    // c. disable every remaining write control
-    WRITE_CONTROL_IDS.forEach(function (id) { disable(document.getElementById(id)); });
-    var all = document.querySelectorAll('button, input[type=submit]');
+    // c. disable every control whose handler is not on the safe list
+    var all = document.querySelectorAll('button, a.btn, .btn, .btn-pri, .btn-sec, input[type=submit]');
     Array.prototype.forEach.call(all, function (el) {
-      var oc = el.getAttribute('onclick') || '';
-      if (oc && WRITE_ONCLICK.test(oc)) disable(el);
+      var oc = el.getAttribute('onclick');
+      if (!oc) return;                               // collapsible headers etc.
+      if (isSafeHandler(oc)) return;
+      disable(el);
     });
 
     // d. sample-data label at the top of each numbers panel. Only the outermost
