@@ -81,10 +81,14 @@
       'font:700 12px/1.4 system-ui,-apple-system,Segoe UI,sans-serif;letter-spacing:.02em}' +
       '.sandbox-off{opacity:.45;cursor:not-allowed!important;position:relative}' +
       '.sandbox-off-note{font-size:11px;color:#888;margin-left:8px;font-weight:600}' +
-      // Tool Inventory whitelist should use the full content width
-      '#panel-inventory .lib-list,#panel-inventory .tool-list,#panel-inventory table,' +
-      '#panel-inventory .card{width:100%;max-width:none!important}' +
-      '#panel-inventory .card{box-sizing:border-box}';
+      // Tool Inventory whitelist fills the content width. It lives in
+      // #panel-tools as #inv-whitelist-pills, inside a two-column grid that
+      // pins it to a ~531px column. Collapse that grid to one column so the
+      // pills run the full width and the neighbouring block stacks underneath.
+      '#panel-tools div:has(> div > #inv-whitelist-pills){grid-template-columns:1fr!important}' +
+      '#panel-tools div:has(> #inv-whitelist-pills){grid-column:1/-1!important;width:100%}' +
+      '#inv-whitelist-pills{display:flex;flex-wrap:wrap;gap:8px;width:100%;max-width:none!important}' +
+      '#inv-whitelist-pills > *{flex:0 0 auto}';
     document.head.appendChild(css);
   }
 
@@ -148,6 +152,32 @@
       }
     });
 
+    // b2. some of these are not controls at all — the Makerspace reboot shows up
+    //     on Browse as a plain status line ("126/127 projects rebooted"). Remove
+    //     the whole card it sits in.
+    var blocks = document.querySelectorAll('.card, .card2');
+    Array.prototype.forEach.call(blocks, function (el) {
+      var text = (el.textContent || '');
+      if (!text) return;
+      if (REMOVE_BY_TEXT.some(function (re) { return re.test(text); })) {
+        var card = el.closest ? (el.closest('.card') || el) : el;
+        card.remove();
+      }
+    });
+
+    // b3. Kinder is gone from the demo corpus, but the year-level pickers are
+    //     built from a hardcoded list, not from DATA. Strip it there too so no
+    //     screen offers a year group that no longer exists.
+    var opts = document.querySelectorAll('option');
+    Array.prototype.forEach.call(opts, function (o) {
+      if (/kinder/i.test(o.textContent || '') || /kinder/i.test(o.value || '')) o.remove();
+    });
+    var labels = document.querySelectorAll('label, .pill, .chip, .age-range, [data-year]');
+    Array.prototype.forEach.call(labels, function (el) {
+      var t = (el.textContent || '').trim();
+      if (/^\s*\d\s*year\s*old\s*kinder\s*$/i.test(t)) el.remove();
+    });
+
     // c. disable every remaining write control
     WRITE_CONTROL_IDS.forEach(function (id) { disable(document.getElementById(id)); });
     var all = document.querySelectorAll('button, input[type=submit]');
@@ -156,29 +186,79 @@
       if (oc && WRITE_ONCLICK.test(oc)) disable(el);
     });
 
-    // d. sample-data labels on anything showing numbers
-    ['panel-live', 'panel-analytics', 'panel-dashboard', 'live-content', 'screen-dashboard']
-      .forEach(function (id) {
-        var host = document.getElementById(id);
-        if (!host || host.querySelector(':scope > .sandbox-sample-note')) return;
-        var note = document.createElement('div');
-        note.className = 'sandbox-sample-note';
-        note.textContent = SAMPLE_TEXT;
-        host.insertBefore(note, host.firstChild);
-      });
+    // d. sample-data label at the top of each numbers panel. Only the outermost
+    //    host per panel — live-content sits inside panel-live, and labelling
+    //    both stacks two identical banners.
+    ['panel-live', 'panel-dashboard'].forEach(function (id) {
+      var host = document.getElementById(id);
+      if (!host || host.querySelector('.sandbox-sample-note')) return;
+      var note = document.createElement('div');
+      note.className = 'sandbox-sample-note';
+      note.textContent = SAMPLE_TEXT;
+      host.insertBefore(note, host.firstChild);
+    });
   }
 
-  // ---- 6. Boot -----------------------------------------------------------
+  // ---- 6. Charts on hidden tabs -----------------------------------------
+  // loadLiveAnalytics() runs while the Analytics panel is still hidden, so
+  // ECharts measures its containers at 0px and draws nothing. Re-measure after
+  // any tab switch, once the panel actually has a size.
+  function resizeCharts() {
+    if (!window.echarts || !echarts.getInstanceByDom) return;
+    var candidates = document.querySelectorAll('[id^="live-"], .chart, [class*="chart"]');
+    Array.prototype.forEach.call(candidates, function (el) {
+      try {
+        var inst = echarts.getInstanceByDom(el);
+        if (inst) inst.resize();
+      } catch (e) { /* not a chart host */ }
+    });
+  }
+
+  // Both levels of navigation hide their panels with display:none, so a chart
+  // can be laid out at 0px twice over: once for the tab, once for the
+  // Analytics sub-tab (.analytics-subpanel, driven by setAnalyticsSubtab).
+  function afterNav() {
+    setTimeout(function () { sweep(); resizeCharts(); }, 60);
+    setTimeout(resizeCharts, 260);
+    setTimeout(resizeCharts, 700);
+  }
+  ['switchTab', 'setAnalyticsSubtab'].forEach(function (name) {
+    var real = window[name];
+    if (typeof real !== 'function') return;
+    window[name] = function () {
+      var result = real.apply(this, arguments);
+      afterNav();
+      return result;
+    };
+  });
+  window.addEventListener('resize', function () { setTimeout(resizeCharts, 120); });
+
+  // ---- 7. Boot -----------------------------------------------------------
   function boot() {
     addStyles();
     addBadge();
 
     Promise.all([
       fetch('studio-data.json', { cache: 'no-store' }).then(function (r) { return r.json(); }),
-      fetch('studio-analytics.json', { cache: 'no-store' }).then(function (r) { return r.json(); })
+      fetch('studio-analytics.json', { cache: 'no-store' }).then(function (r) { return r.json(); }),
+      fetch('libraries.json', { cache: 'no-store' }).then(function (r) { return r.json(); })
     ]).then(function (both) {
       var units = both[0];
       var raw = both[1];
+      var libs = both[2];
+
+      // The Tool Inventory normally arrives with libraries.json from Drive.
+      // Without this the whitelist shows a single seeded entry instead of the
+      // real approved list.
+      try {
+        if (typeof loadToolInventoryFromMeta === 'function' && libs && libs._meta) {
+          loadToolInventoryFromMeta(libs._meta);
+          if (typeof LIBRARIES !== 'undefined') LIBRARIES = libs;
+          if (typeof renderToolInventory === 'function') renderToolInventory();
+        }
+      } catch (e) {
+        if (window.console) console.warn('[sandbox] tool inventory seed failed:', e && e.message);
+      }
       ANALYTICS = {};
       Object.keys(raw).forEach(function (range) { ANALYTICS[range] = resolveRows(raw[range]); });
 

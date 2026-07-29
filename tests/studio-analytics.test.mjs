@@ -101,6 +101,42 @@ test('all activity falls inside the rolling 30-day window the dashboard filters 
   }
 });
 
+test('every team has a Used event inside the last 7 days, so all 21 count as active', () => {
+  const rows = DATA['Used!A1:G2000'].slice(1);
+  const teams = new Set(rows.map(r => r[1]));
+  assert.equal(teams.size, 21, '3 campuses x 7 year levels');
+  for (const team of teams) {
+    const recent = rows.filter(r =>
+      r[1] === team && Number(String(r[0]).match(TIMESTAMP_SENTINEL)[1]) <= 6);
+    assert.ok(recent.length > 0, `${team} has no use in the last 7 days`);
+  }
+});
+
+test('most intents are followed through, so intent-to-use does not read 0%', () => {
+  const sig = r => [r[2], r[3], r[4], r[5], r[6]].map(v => String(v || '').trim()).join('|');
+  const usedSigs = new Set(DATA['Used!A1:G2000'].slice(1).map(sig));
+  const intents = DATA['Intent!A1:G2000'].slice(1);
+  const followed = intents.filter(r => usedSigs.has(sig(r))).length;
+  const rate = followed / intents.length;
+  assert.ok(rate >= 0.6, `intent-to-use conversion was ${Math.round(rate * 100)}%, expected 60%+`);
+});
+
+test('a followed-through use always lands after the intent it answers', () => {
+  const days = r => Number(String(r[0]).match(TIMESTAMP_SENTINEL)[1]);
+  const sig = r => [r[2], r[3], r[4], r[5], r[6]].map(v => String(v || '').trim()).join('|');
+  const usedBySig = new Map();
+  DATA['Used!A1:G2000'].slice(1).forEach(r => {
+    const k = sig(r);
+    if (!usedBySig.has(k) || days(r) < days(usedBySig.get(k))) usedBySig.set(k, r);
+  });
+  for (const intentRow of DATA['Intent!A1:G2000'].slice(1)) {
+    const use = usedBySig.get(sig(intentRow));
+    if (!use) continue;
+    // fewer days ago == later in time
+    assert.ok(days(use) < days(intentRow), 'use must postdate its intent');
+  }
+});
+
 test('page views trend upward towards today', () => {
   const rows = DATA['Analytics!A1:F5000'].slice(1);
   const count = d => rows.filter(r => Number(String(r[0]).match(TIMESTAMP_SENTINEL)[1]) === d).length;

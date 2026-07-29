@@ -64,53 +64,64 @@ function stamp(daysAgo, hour, minute) {
 // dataset can be asserted in tests.
 function pick(list, i) { return list[i % list.length]; }
 
-function buildUsedRows(tools) {
-  const header = ['Timestamp', 'Team', 'Campus', 'Year', 'Theme', 'Tool', 'Phase'];
-  const rows = [header];
-  let i = 0;
-  // Every campus × every year level active, several times each across 28 days.
-  for (let round = 0; round < 7; round++) {
-    for (const campus of CAMPUSES) {
-      for (const year of YEAR_LEVELS) {
-        const daysAgo = 1 + ((round * 4 + i) % 27);
-        rows.push([
-          stamp(daysAgo, 9 + (i % 8), (i * 7) % 60),
-          `${campus} ${year} Team`,
-          campus,
-          year,
-          pick(THEMES, i),
-          pick(tools, i * 3),
-          'Unit planning'
-        ]);
-        i++;
-      }
-    }
+const PHASE = 'Unit planning';
+
+export function teamList() {
+  const teams = [];
+  for (const campus of CAMPUSES) {
+    for (const year of YEAR_LEVELS) teams.push({ campus, year, team: `${campus} ${year} Team` });
   }
-  return rows;
+  return teams;
 }
 
-function buildIntentRows(tools) {
+// Intent and Used are generated together on purpose.
+//
+// js/04-audit-analytics-live.js pairs the two sheets on a signature of
+// [campus, year, theme, tool, phase] to work out how many "I'm going to try
+// this" clicks were followed through. Generating them independently leaves that
+// figure at 0%, which reads as a failure on screen. So most Used rows are
+// derived from an Intent row: same signature, later timestamp.
+//
+// Every team also gets a Used event inside the last 7 days, so the "active teams
+// this week" count is the full 21 rather than whichever happened to land.
+function buildEngagementRows(tools) {
   const header = ['Timestamp', 'Team', 'Campus', 'Year', 'Theme', 'Tool', 'Phase'];
-  const rows = [header];
-  let i = 0;
-  for (let round = 0; round < 4; round++) {
-    for (const campus of CAMPUSES) {
-      for (const year of YEAR_LEVELS) {
-        const daysAgo = 1 + ((round * 5 + i) % 26);
-        rows.push([
-          stamp(daysAgo, 8 + (i % 9), (i * 11) % 60),
-          `${campus} ${year} Team`,
-          campus,
-          year,
-          pick(THEMES, i + 2),
-          pick(tools, i * 5 + 1),
-          'Planning to try'
-        ]);
-        i++;
-      }
-    }
-  }
-  return rows;
+  const intent = [header];
+  const used = [header];
+  const teams = teamList();
+
+  teams.forEach((t, i) => {
+    // Three intents per team, spread across the month.
+    const intents = [22, 13, 6].map((daysAgo, k) => ({
+      daysAgo,
+      theme: pick(THEMES, i + k),
+      tool: pick(tools, i * 3 + k)
+    }));
+
+    intents.forEach((it, k) => {
+      intent.push([
+        stamp(it.daysAgo, 8 + ((i + k) % 9), ((i + k) * 11) % 60),
+        t.team, t.campus, t.year, it.theme, it.tool, PHASE
+      ]);
+    });
+
+    // Two of the three are followed through a few days later — a 67% conversion.
+    [0, 2].forEach((k, n) => {
+      const it = intents[k];
+      used.push([
+        stamp(Math.max(1, it.daysAgo - 4), 10 + ((i + n) % 7), ((i + n) * 7) % 60),
+        t.team, t.campus, t.year, it.theme, it.tool, PHASE
+      ]);
+    });
+
+    // Plus a fresh use inside the last week, so every team counts as active.
+    used.push([
+      stamp(1 + (i % 6), 9 + (i % 8), (i * 13) % 60),
+      t.team, t.campus, t.year, pick(THEMES, i + 4), pick(tools, i * 5 + 2), PHASE
+    ]);
+  });
+
+  return { intent, used };
 }
 
 // One row per page view, weighted so the trend rises towards today.
@@ -213,12 +224,14 @@ export function buildSampleAnalytics(approvedTools) {
     ? approvedTools
     : ['Book Creator', 'Scratch', 'Adobe Express', 'Canva', 'Epic', 'Apple Clips'];
 
+  const engagement = buildEngagementRows(tools);
+
   return {
     'Dashboard!A1:F60': buildDashboardRows(),
     'Analytics!A1:F5000': buildAnalyticsRows(),
     'Feedback!A1:G100': buildFeedbackRows(tools),
-    'Used!A1:G2000': buildUsedRows(tools),
-    'Intent!A1:G2000': buildIntentRows(tools),
+    'Used!A1:G2000': engagement.used,
+    'Intent!A1:G2000': engagement.intent,
     'Interactions!A1:G5000': buildInteractionRows(tools)
   };
 }
