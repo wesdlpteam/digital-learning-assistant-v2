@@ -26,6 +26,89 @@ export const ANCHORS = {
 
 const HEAD_SCRIPT_RE = /<script>window\.APP_VERSION='[^']*';<\/script>/;
 
+// ---- DLA_Studio.html -------------------------------------------------------
+// The Studio signs in with Google and reads Drive; the demo does neither.
+export const STUDIO_ANCHORS = {
+  GSI: {
+    label: 'Google sign-in library',
+    find: '<script src="https://accounts.google.com/gsi/client" async defer></script>',
+    replace: '<!-- sandbox: Google sign-in removed -->'
+  },
+  STUDIO_CSS: {
+    label: 'studio stylesheet link',
+    find: '<link rel="stylesheet" href="css/studio.css">',
+    replace: '<link rel="stylesheet" href="css/studio.css">\n<script>/* ===== DLA sandbox guard ===== */\n__GUARD__\n</script>'
+  }
+};
+
+// js/00-config-state-utils.js — the three endpoints the Studio would otherwise reach.
+export const STUDIO_JS00_ANCHORS = {
+  SCRIPT_URL: {
+    label: 'gas_backend endpoint',
+    find: "const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzIoUL_vbTaH4P7PXuX8HeU9Xh6HuiEWJ05k7q50aJjCg7oeF-ELrlLuPx8uxPFHmE-eA/exec';",
+    replace: "const SCRIPT_URL = 'sandbox://blocked'; /* sandbox: backend endpoint removed */"
+  },
+  CLIENT_ID: {
+    label: 'Google OAuth client id',
+    find: "const CLIENT_ID = '334712966315-9diac0qcv57168kn378i5js2ikgqqvpt.apps.googleusercontent.com';",
+    replace: "const CLIENT_ID = 'sandbox-blocked'; /* sandbox: OAuth client removed */"
+  },
+  ANALYTICS_SHEET_ID: {
+    label: 'analytics spreadsheet id',
+    find: "const ANALYTICS_SHEET_ID = '1R4P4FJlc8SyRFlVWoM0HpHmfCNMNVOpI8cuEILFxBNY';",
+    replace: "const ANALYTICS_SHEET_ID = 'sandbox-blocked'; /* sandbox: sheet id removed */"
+  }
+};
+
+function applyAnchorSet(text, anchorSet, sourceName) {
+  let out = normaliseEol(text);
+  for (const [key, anchor] of Object.entries(anchorSet)) {
+    const hits = countOccurrences(out, anchor.find);
+    if (hits === 0) {
+      throw new Error(
+        `anchor "${key}" not found in ${sourceName} (${anchor.label}). ` +
+        'The source has changed since this build script was written. ' +
+        'Update the anchor set in tools/lib/transform-html.mjs.'
+      );
+    }
+    if (hits > 1) {
+      throw new Error(`anchor "${key}" appears ${hits} times in ${sourceName} (${anchor.label}); expected exactly 1.`);
+    }
+    out = out.replace(anchor.find, anchor.replace);
+  }
+  return out;
+}
+
+export function transformStudioHtml(html, { guardJs, shimJs } = {}) {
+  if (!guardJs || !shimJs) throw new Error('transformStudioHtml requires guardJs and shimJs');
+  const out = applyAnchorSet(html, STUDIO_ANCHORS, 'DLA_Studio.html')
+    .replace('__GUARD__', () => guardJs);
+  return `${out}\n<script>/* ===== DLA sandbox studio shim ===== */\n${shimJs}\n</script>\n`;
+}
+
+export function transformStudioJs00(source) {
+  return applyAnchorSet(source, STUDIO_JS00_ANCHORS, 'js/00-config-state-utils.js');
+}
+
+// Hosts that appear inline in the Studio scripts as request URLs — Drive reads
+// and writes, and the Sheets reads behind the analytics screens. The shim sets a
+// sentinel DRIVE_TOKEN so the UI behaves as signed in, which means the usual
+// `if(!DRIVE_TOKEN) return` gates no longer stop these paths. The runtime guard
+// would still block them, but leaving a live URL in a demo build is the kind of
+// thing that is one edit away from mattering, so strip them at build time too.
+const HOST_NEUTRALISATIONS = [
+  ['https://www.googleapis.com', 'sandbox://blocked'],
+  ['https://sheets.googleapis.com', 'sandbox://blocked'],
+  ['https://accounts.google.com', 'sandbox://blocked'],
+  ['https://script.google.com', 'sandbox://blocked']
+];
+
+export function neutraliseHosts(source) {
+  let out = normaliseEol(source);
+  for (const [from, to] of HOST_NEUTRALISATIONS) out = out.split(from).join(to);
+  return out;
+}
+
 function countOccurrences(haystack, needle) {
   let count = 0;
   let from = 0;

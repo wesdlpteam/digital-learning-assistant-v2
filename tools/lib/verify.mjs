@@ -14,12 +14,25 @@ export function assertNoDroppedFieldUsage(html) {
   }
 }
 
-export function assertNoGoogleScriptRefs(html) {
-  const hits = html.match(/script\.google\.com/g);
-  if (hits) {
+// Hosts the demo must never carry a reference to. script.google.com is the paid
+// path (gas_backend → OpenAI); the other two are how the Studio would sign in
+// and read the real analytics spreadsheet.
+export const FORBIDDEN_HOSTS = [
+  'script.google.com',
+  'accounts.google.com',
+  'sheets.googleapis.com',
+  'www.googleapis.com'
+];
+
+export function assertNoGoogleScriptRefs(text, label = 'the sandbox output') {
+  const found = FORBIDDEN_HOSTS
+    .map(host => ({ host, hits: (text.match(new RegExp(host.replace(/\./g, '\\.'), 'g')) || []).length }))
+    .filter(r => r.hits > 0);
+  if (found.length) {
+    const detail = found.map(r => `${r.host} x${r.hits}`).join(', ');
     throw new Error(
-      `${hits.length} reference(s) to script.google.com survived into the sandbox output. ` +
-      'The sandbox must never be able to reach the live backends.'
+      `Forbidden host reference(s) survived into ${label}: ${detail}. ` +
+      'The sandbox must never be able to reach the live backends or sign in.'
     );
   }
 }
