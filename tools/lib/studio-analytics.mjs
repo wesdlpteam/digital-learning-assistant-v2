@@ -90,33 +90,55 @@ function buildEngagementRows(tools) {
   const used = [header];
   const teams = teamList();
 
-  teams.forEach((t, i) => {
-    // Three intents per team, spread across the month.
-    const intents = [22, 13, 6].map((daysAgo, k) => ({
-      daysAgo,
-      theme: pick(THEMES, i + k),
-      tool: pick(tools, i * 3 + k)
-    }));
+  // Events are DEALT across days rather than assigned per team on fixed offsets.
+  // Giving every team the same day-offsets put 21 events on one day and left
+  // three weeks at zero, so the growth chart showed two impossible spikes
+  // separated by dead air while the views line climbed smoothly.
+  //
+  // Instead: walk day 29 → 3, decide a plausible number of intents for that day
+  // (rising gently towards today), and deal them round-robin across the 21
+  // teams. Uses are then derived from most of those intents a few days later,
+  // so both lines rise together and every day has activity.
+  const plan = [];
+  let cursor = 0;
+  for (let daysAgo = 29; daysAgo >= 3; daysAgo--) {
+    const perDay = 2 + Math.floor((29 - daysAgo) / 9);   // 2 → 4 as we approach today
+    for (let k = 0; k < perDay; k++) {
+      const t = teams[cursor % teams.length];
+      plan.push({
+        daysAgo,
+        team: t,
+        theme: pick(THEMES, cursor),
+        tool: pick(tools, cursor * 3),
+        idx: cursor
+      });
+      cursor++;
+    }
+  }
 
-    intents.forEach((it, k) => {
-      intent.push([
-        stamp(it.daysAgo, 8 + ((i + k) % 9), ((i + k) * 11) % 60),
-        t.team, t.campus, t.year, it.theme, it.tool, PHASE
-      ]);
-    });
+  plan.forEach(p => {
+    intent.push([
+      stamp(p.daysAgo, 8 + (p.idx % 9), (p.idx * 11) % 60),
+      p.team.team, p.team.campus, p.team.year, p.theme, p.tool, PHASE
+    ]);
+  });
 
-    // Two of the three are followed through a few days later — a 67% conversion.
-    [0, 2].forEach((k, n) => {
-      const it = intents[k];
-      used.push([
-        stamp(Math.max(1, it.daysAgo - 4), 10 + ((i + n) % 7), ((i + n) * 7) % 60),
-        t.team, t.campus, t.year, it.theme, it.tool, PHASE
-      ]);
-    });
-
-    // Plus a fresh use inside the last week, so every team counts as active.
+  // Roughly seven in ten intents are followed through, two to five days later.
+  // Same signature as the intent (campus|year|theme|tool|phase) so js/04 can
+  // pair them; anything less and the dashboard reports 0% follow-through.
+  plan.forEach(p => {
+    if (p.idx % 10 >= 7) return;
     used.push([
-      stamp(1 + (i % 6), 9 + (i % 8), (i * 13) % 60),
+      stamp(Math.max(0, p.daysAgo - (2 + (p.idx % 4))), 10 + (p.idx % 7), (p.idx * 7) % 60),
+      p.team.team, p.team.campus, p.team.year, p.theme, p.tool, PHASE
+    ]);
+  });
+
+  // Guarantee every team shows activity inside the last 7 days, so the
+  // "active teams this week" figure is the full 21.
+  teams.forEach((t, i) => {
+    used.push([
+      stamp(i % 7, 9 + (i % 8), (i * 13) % 60),
       t.team, t.campus, t.year, pick(THEMES, i + 4), pick(tools, i * 5 + 2), PHASE
     ]);
   });

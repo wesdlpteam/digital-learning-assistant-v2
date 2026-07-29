@@ -11,7 +11,9 @@ const STUDIO_SAMPLE = [
   '<script src="https://accounts.google.com/gsi/client" async defer></script>',
   '<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>',
   '<link rel="stylesheet" href="css/studio.css">',
-  '</head><body><div id="app-content"></div>',
+  '</head>',
+  '<body>',
+  '<div id="app-content"></div>',
   '<script src="js/00-config-state-utils.js?v=5.55"></script>',
   '</body></html>'
 ].join('\n');
@@ -26,7 +28,12 @@ const JS00_SAMPLE = [
 const SAMPLE = [
   `<html lang="en"><head><meta charset="UTF-8">`,
   `<script>window.APP_VERSION='2026-07-20-1';</script>`,
+  `@media(max-width:430px){.admin-btn{font-size:0}.admin-btn::after{content:'Admin';font-size:11px}}`,
   `</head><body><div id="app"></div>`,
+  `<script>`,
+  `const ADMIN_URL="https://wesdlpteam.github.io/digital-learning-assistant-v2/DLA_Studio.html";`,
+  `h+='<a class="admin-btn" href="'+ADMIN_URL+'" target="_blank" rel="noopener" title="Open DLA Studio admin"><span class="admin-ico">🔒</span><span>Admin</span></a>';`,
+  `</script>`,
   `<script>`,
   `const AI_HOOK = "https://script.google.com/macros/s/AKfycbzIoUL_vbTaH4P7PXuX8HeU9Xh6HuiEWJ05k7q50aJjCg7oeF-ELrlLuPx8uxPFHmE-eA/exec";`,
   `const FBHOOK="https://script.google.com/macros/s/AKfycbwFSbbn_1IaTst0ujfzBiQpE5pGpo07UL8yxemoHOudXzPHxKmKJvkgW2jvivf9yr9Alg/exec";`,
@@ -82,6 +89,25 @@ test('removes the boot-time leaderboard call', () => {
 test('disables the auto-update poller', () => {
   const out = transformHtml(SAMPLE, { guardJs: '/*g*/', shimJs: '/*s*/' });
   assert.ok(out.includes('sandbox: auto-update poller disabled'));
+});
+
+test('admin button points at the demo Studio, never the live one', () => {
+  const out = transformHtml(SAMPLE, { guardJs: '/*g*/', shimJs: '/*s*/' });
+  assert.ok(out.includes('const ADMIN_URL="studio.html"'));
+  assert.equal(out.includes('digital-learning-assistant-v2/DLA_Studio.html'), false);
+});
+
+test('admin button is inviting rather than locked', () => {
+  const out = transformHtml(SAMPLE, { guardJs: '/*g*/', shimJs: '/*s*/' });
+  assert.ok(out.includes('See behind the scenes'));
+  assert.equal(out.includes('🔒'), false);
+  assert.equal(/<span>Admin<\/span>/.test(out), false);
+});
+
+test('admin button label is also replaced on phone widths', () => {
+  const out = transformHtml(SAMPLE, { guardJs: '/*g*/', shimJs: '/*s*/' });
+  assert.ok(out.includes("content:'Behind the scenes'"));
+  assert.equal(out.includes("content:'Admin'"), false);
 });
 
 test('leaves unrelated markup untouched', () => {
@@ -174,6 +200,26 @@ test('neutraliseHosts leaves the surrounding code intact', () => {
 
 test('neutraliseHosts is a no-op on code with no such URLs', () => {
   assert.equal(neutraliseHosts('let DATA = [];'), 'let DATA = [];');
+});
+
+test('studio: hides the Connect-Google-Drive startup screen from first paint', () => {
+  const out = transformStudioHtml(STUDIO_SAMPLE, { guardJs: '/*g*/', shimJs: '/*s*/' });
+  assert.ok(out.includes('#screen-load{display:none!important}'));
+  // the rule must be in the head, before the body renders, or it flashes
+  assert.ok(out.indexOf('#screen-load{display:none') < out.indexOf('<body>'));
+});
+
+test('studio: shows a neutral demo loading note instead', () => {
+  const out = transformStudioHtml(STUDIO_SAMPLE, { guardJs: '/*g*/', shimJs: '/*s*/' });
+  assert.ok(out.includes('id="sandbox-loading"'));
+  assert.ok(out.includes('Loading the DLA Studio demo'));
+  assert.equal(/Connect Google Drive/i.test(out), false);
+});
+
+test('studio: preloads the demo data so it downloads alongside the scripts', () => {
+  const out = transformStudioHtml(STUDIO_SAMPLE, { guardJs: '/*g*/', shimJs: '/*s*/' });
+  assert.ok(out.includes('rel="preload" as="fetch" href="studio-data.json"'));
+  assert.ok(out.includes('rel="preload" as="fetch" href="studio-analytics.json"'));
 });
 
 test('studio: handles a CRLF working copy', () => {

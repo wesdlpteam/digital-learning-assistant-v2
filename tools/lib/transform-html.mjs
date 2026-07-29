@@ -21,6 +21,25 @@ export const ANCHORS = {
     label: 'auto-update version poller',
     find: '  var CUR=window.APP_VERSION; if(!CUR) return;',
     replace: '  return; /* sandbox: auto-update poller disabled */'
+  },
+  // Left alone, the Admin button on the demo sends the audience to the REAL
+  // Studio, which is both a sign-in wall and the live tool. Point it at the
+  // demo Studio instead.
+  ADMIN_URL: {
+    label: 'admin link target',
+    find: 'const ADMIN_URL="https://wesdlpteam.github.io/digital-learning-assistant-v2/DLA_Studio.html";',
+    replace: 'const ADMIN_URL="studio.html"; /* sandbox: point at the demo Studio, not the live one */'
+  },
+  // A padlock and the word "Admin" say keep out. In a demo we want the opposite.
+  ADMIN_BUTTON: {
+    label: 'admin button label and icon',
+    find: 'title="Open DLA Studio admin"><span class="admin-ico">🔒</span><span>Admin</span>',
+    replace: 'title="Open the demo of the behind-the-scenes admin Studio"><span class="admin-ico">👀</span><span>See behind the scenes</span>'
+  },
+  ADMIN_BUTTON_MOBILE: {
+    label: 'admin button label under 430px',
+    find: ".admin-btn::after{content:'Admin';font-size:11px}",
+    replace: ".admin-btn::after{content:'Behind the scenes';font-size:11px}"
   }
 };
 
@@ -37,7 +56,33 @@ export const STUDIO_ANCHORS = {
   STUDIO_CSS: {
     label: 'studio stylesheet link',
     find: '<link rel="stylesheet" href="css/studio.css">',
-    replace: '<link rel="stylesheet" href="css/studio.css">\n<script>/* ===== DLA sandbox guard ===== */\n__GUARD__\n</script>'
+    replace: [
+      '<link rel="stylesheet" href="css/studio.css">',
+      // Start the demo data downloading in parallel with the nine js/ files
+      // instead of after them. Shaves most of the wait before the UI appears.
+      '<link rel="preload" as="fetch" href="studio-data.json" crossorigin>',
+      '<link rel="preload" as="fetch" href="studio-analytics.json" crossorigin>',
+      // #screen-load is the Studio's own "Connect Google Drive to load your
+      // data.json" prompt. In the demo nothing ever connects to Drive, so it is
+      // both wrong and alarming to show it. Hide it from the very first paint
+      // (a style tag in the head, not a shim call, so there is no flash) and
+      // show a neutral loading note instead.
+      '<style>',
+      '#screen-load{display:none!important}',
+      '#sandbox-loading{position:fixed;inset:0;z-index:99998;display:flex;align-items:center;',
+      'justify-content:center;background:#0d0d0d;color:#c9c9c9;',
+      'font:600 15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;text-align:center;padding:24px}',
+      '#sandbox-loading .sl-sub{display:block;margin-top:8px;font-weight:400;font-size:13px;color:#7a7a7a}',
+      '</style>',
+      '<script>/* ===== DLA sandbox guard ===== */',
+      '__GUARD__',
+      '</script>'
+    ].join('\n')
+  },
+  BODY_OPEN: {
+    label: 'body open tag',
+    find: '<body>',
+    replace: '<body>\n<div id="sandbox-loading">Loading the DLA Studio demo…<span class="sl-sub">Sample data, nothing is connected</span></div>'
   }
 };
 

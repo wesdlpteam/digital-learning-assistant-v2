@@ -121,20 +121,64 @@ test('most intents are followed through, so intent-to-use does not read 0%', () 
   assert.ok(rate >= 0.6, `intent-to-use conversion was ${Math.round(rate * 100)}%, expected 60%+`);
 });
 
-test('a followed-through use always lands after the intent it answers', () => {
+test('no signature is used before anyone ever expressed intent in it', () => {
+  // Signatures legitimately repeat now that events are dealt across days, so a
+  // pairwise "this use answers that intent" ordering is not meaningful. The
+  // invariant that still matters: for any campus/year/theme/tool combination
+  // that appears in both sheets, intent activity did not begin AFTER use
+  // activity began. Larger daysAgo == earlier in time.
   const days = r => Number(String(r[0]).match(TIMESTAMP_SENTINEL)[1]);
   const sig = r => [r[2], r[3], r[4], r[5], r[6]].map(v => String(v || '').trim()).join('|');
-  const usedBySig = new Map();
-  DATA['Used!A1:G2000'].slice(1).forEach(r => {
-    const k = sig(r);
-    if (!usedBySig.has(k) || days(r) < days(usedBySig.get(k))) usedBySig.set(k, r);
-  });
-  for (const intentRow of DATA['Intent!A1:G2000'].slice(1)) {
-    const use = usedBySig.get(sig(intentRow));
-    if (!use) continue;
-    // fewer days ago == later in time
-    assert.ok(days(use) < days(intentRow), 'use must postdate its intent');
+  const earliest = rows => {
+    const m = new Map();
+    rows.forEach(r => {
+      const k = sig(r);
+      if (!m.has(k) || days(r) > m.get(k)) m.set(k, days(r));
+    });
+    return m;
+  };
+  const firstIntent = earliest(DATA['Intent!A1:G2000'].slice(1));
+  const firstUse = earliest(DATA['Used!A1:G2000'].slice(1));
+  for (const [k, useDay] of firstUse) {
+    if (!firstIntent.has(k)) continue;   // used without a prior intent — realistic
+    assert.ok(
+      firstIntent.get(k) >= useDay,
+      `signature ${k} was used ${useDay} days ago but first intended only ${firstIntent.get(k)} days ago`
+    );
   }
+});
+
+// The growth chart plots page views against tools-marked-used per day. If the
+// uses land on a handful of day-offsets the line reads as impossible spikes
+// separated by dead air, which is exactly what a sharp audience notices.
+function usesPerDay() {
+  const counts = new Array(30).fill(0);
+  DATA['Used!A1:G2000'].slice(1).forEach(r => {
+    const d = Number(String(r[0]).match(TIMESTAMP_SENTINEL)[1]);
+    if (d < 30) counts[d] += 1;
+  });
+  return counts;
+}
+
+test('uses are spread across the month, not clustered on a few days', () => {
+  const counts = usesPerDay();
+  const zeroDays = counts.filter(c => c === 0).length;
+  assert.ok(zeroDays <= 4, `${zeroDays} days have no uses at all; expected at most 4`);
+});
+
+test('no single day carries an implausible spike of uses', () => {
+  const counts = usesPerDay();
+  const active = counts.filter(c => c > 0).sort((a, b) => a - b);
+  const median = active[Math.floor(active.length / 2)];
+  const max = Math.max(...counts);
+  assert.ok(max <= median * 4, `busiest day had ${max} uses against a median of ${median}`);
+});
+
+test('uses trend upward over the month, matching the views line', () => {
+  const counts = usesPerDay();
+  const recent = counts.slice(0, 10).reduce((a, b) => a + b, 0);   // last 10 days
+  const older = counts.slice(20, 30).reduce((a, b) => a + b, 0);   // first 10 days
+  assert.ok(recent > older, `recent uses ${recent} should exceed older uses ${older}`);
 });
 
 test('page views trend upward towards today', () => {

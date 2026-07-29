@@ -266,6 +266,12 @@
       showApp();
       sweep();
 
+      // The demo's own loading note replaces the Studio's "Connect Google Drive
+      // to load your data.json" screen, which is hidden from first paint. Clear
+      // it now that the real UI is up.
+      var loading = document.getElementById('sandbox-loading');
+      if (loading) loading.remove();
+
       if (typeof loadLiveAnalytics === 'function') {
         loadLiveAnalytics().catch(function (e) {
           if (window.console) console.warn('[sandbox] analytics render issue:', e && e.message);
