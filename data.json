@@ -1673,28 +1673,28 @@
     "lo": "Interactions between objects, materials and living things\nGathering and analysing evidence\nHow scientific knowledge develops",
     "s": [
       {
-        "t": "Teachable Machine",
-        "d": "Students photograph and sort everyday objects by material, then train an image model to recognise groups such as metal, plastic, fabric and paper. They test it with unfamiliar objects and record where the computer's judgement differs from their own observations. Each group chooses new training images to improve one weak category, showing how scientific knowledge changes when better evidence is added. This works like camera-driven sorting arms in recycling facilities, where recognised materials are directed into different streams. Students swap models with another group to find objects that confuse the system. They finish with a tested classification model and a short list of evidence-based improvements."
+        "t": "Micro:bit",
+        "d": "Students program a Micro:bit to display changing light readings as they move it through sunlight, shade and covered spaces. They test how one change in the surroundings affects another part of the system. Groups swap devices and try to work out the testing conditions from the readings alone. They then improve their code so the evidence is easier for another group to interpret. Each group finishes with a working sensor-based investigation and a clear explanation of the pattern it revealed. The built-in light sensing and 5x5 LED grid let students collect and display evidence on one small device."
       },
       {
         "t": "Microsoft Excel",
-        "d": "Students measure how changing one part of a simple system, such as ramp height or surface type, affects how far an object travels. They enter repeated measurements into an Excel table so that patterns and unusual results are easy to spot. Groups exchange tables and try to work out the changed condition from the evidence alone. They then decide whether more trials are needed before making a claim. Students finish with a data table, a graph and a written conclusion supported by measurements. Excel charts turn repeated results into a clear visual pattern."
+        "d": "Students measure how changing one part of an investigation affects another, such as ramp height and travel distance or water temperature and dissolving time. They enter repeated results into Excel to compare evidence rather than relying on a single test. Groups exchange data tables and check whether another team's conclusion is supported by the numbers. They decide which graph makes the interaction easiest to understand and explain any unusual results. Each group finishes with a labelled data table, a graph and a short evidence-based conclusion. Excel's formulas and chart tools make patterns across repeated trials visible."
       },
       {
-        "t": "Micro:bit",
-        "d": "Students program a micro:bit to measure light or temperature in several classroom locations and compare how the surroundings affect the readings. Repeated measurements help them see why one observation is not enough to explain an interaction. Each group hides the location names and challenges another group to match the data patterns to places such as a sunny window, shaded shelf or doorway. Students adjust their testing method when readings vary unexpectedly. They finish with a working sensor program and a set of readings that support a claim. The built-in light and temperature sensors make immediate testing and retesting possible."
+        "t": "Teachable Machine",
+        "d": "Students photograph and sort classroom objects into visible material groups, then train Teachable Machine to recognise examples such as paper, plastic and metal. They test unfamiliar objects to find out what evidence the model uses and where its classifications fail. Another group challenges the model with crushed, partly hidden or unusually coloured samples and records which training examples need improvement. This works like camera-driven sorting systems in recycling facilities, where machines classify items before sorting arms move them. Students finish with a tested image-recognition model and a record of the changes that made it more reliable. Teachable Machine allows them to add new image examples and retrain the model quickly."
       },
       {
         "t": "Stop Motion Studio",
-        "d": "Students build a frame-by-frame explanation of an interaction such as melting ice, magnetic attraction, seed growth or an object moving down a ramp. They move models in small steps so viewers can see how one change affects another part of the system. Groups swap unfinished animations and predict the next change before the creators reveal it. Students revise any sequence that does not match their observations or scientific evidence. They finish with a short stop-motion explanation that shows cause and effect clearly. Onion-skin guidance helps students position each frame for smooth, accurate movement."
+        "d": "Students arrange everyday objects and record a frame-by-frame investigation showing an interaction such as attraction, repulsion, melting, dissolving or a simple food-chain change. They make only one variable change at a time so viewers can see cause and effect clearly. Pairs swap unfinished animations and identify where more frames or a comparison trial would strengthen the evidence. Students revise the sequence to distinguish what they observed from what they think happened. Each pair finishes with a short stop-motion explanation of an interaction within a system. Stop Motion Studio's frame-by-frame capture makes slow or hard-to-see changes easier to show."
       },
       {
-        "t": "Freeform",
-        "d": "Students collect observations, measurements and questions from one class investigation on a shared Freeform canvas. They connect evidence to possible explanations and separate what they observed from what they only think might be happening. Another group follows the connections and adds a question wherever the evidence does not yet support the claim. Students then choose which missing evidence would be most useful and plan one more fair test. They finish with a connected evidence map showing how their explanation changed. Freeform's open canvas lets groups move, group and link ideas as new evidence arrives."
+        "t": "Book Creator",
+        "d": "Students build a digital science notebook that follows one question from an early prediction to repeated tests and a revised explanation. They add text, photographs, recorded narration and short videos to show how their evidence changed their thinking. A partner reads the notebook without hearing the author explain it and marks any claim that needs clearer evidence. Students then revise the page order or add a missing comparison so the investigation can be followed by another Year 4 class. Each student finishes with a multimodal book showing how scientific knowledge develops through testing and revision. Book Creator combines text, images, audio and video on the same pages."
       },
       {
         "t": "Lego Spike Prime",
-        "d": "Students empathise with someone who needs to move a fragile object safely, then define what a successful transport system must do. Using Lego beams, wheels, gears, a motor and a sensor, they sketch ideas and build a physical prototype that starts, moves and stops without dropping its load. They test it with different loads or surfaces, measure what happens, and rebuild the weakest part after each trial. At the end, each team demonstrates its improved machine and explains which evidence led to the final change."
+        "d": "Students empathise with a person who needs to move an object safely without touching it, then define what the working system must sense and do. They ideate with sketches and loose cardboard, recycled materials and LEGO pieces before building a physical prototype with LEGO SPIKE Prime. Teams code a motor and a distance, colour or force sensor so an input causes a useful mechanical response. They test with different objects, record failures, and rebuild the mechanism or debug the code after each trial. At the end, students demonstrate the improved machine and explain how evidence from testing changed both its physical design and program."
       }
     ],
     "audited": true,
@@ -1721,7 +1721,7 @@
     "suggestionAuditAt": "2026-06-08T04:33:53.238Z",
     "suggestionAuditVersion": "a1-2026-06-07",
     "uoiEditApprovedAt": "2026-08-07T00:57:09.663Z",
-    "inspiringRegenAt": "2026-08-07T01:59:14.277Z"
+    "inspiringRegenAt": "2026-08-07T04:23:51.853Z"
   },
   {
     "ca": "Elsternwick",
@@ -2009,28 +2009,28 @@
     "lo": "The nature and impact of natural hazards (Causation); How design processes are used to generate and test solutions (Function); The ethical and practical considerations in human responses to natural challenges (Responsibility)",
     "s": [
       {
-        "t": "Merge Cubes",
-        "d": "Students bring natural hazards to life by designing interactive 3D models of bushfires, floods, or earthquakes using Merge Cubes. This hands-on experience lets them explore the nature and impact of natural hazards from every angle, making the concept of causation truly tangible. Imagine students stepping into the shoes of disaster scientists, presenting their hazard models to a panel of local emergency services experts invited virtually or in person. The final artefact is an augmented reality model that can be held, rotated, and annotated, ready to be shared at a school expo or with families via a QR code. Using Merge EDU's layered annotation feature, students embed voice explanations and real-time data overlays directly onto their 3D models. They leave with a sense of creative power, knowing they can explain?and even help solve?real-world challenges in ways that grab attention."
-      },
-      {
-        "t": "Tinkercad",
-        "d": "Students will design and 3D model a deployable emergency shelter that could be used after bushfires, floods, or earthquakes in Australia. This hands-on challenge brings to life the line of inquiry about how design processes are used to generate and test solutions to natural hazards. Students will pitch their shelter concepts to a panel of local emergency services volunteers, gathering real feedback on practical and ethical considerations. Their final artefact is a detailed, annotated 3D shelter prototype?complete with labelled features and a virtual walk-through?that can be shared with the school community and local stakeholders. Tinkercad's collaborative editing mode enables teams to co-design, iterate, and leave digital feedback directly on each other's models in real time. By becoming inventive problem-solvers who address real-world needs, students see themselves as designers with the power to shape safer, more resilient communities."
-      },
-      {
         "t": "National Geographic MapMaker",
-        "d": "Students become real-world risk mappers by plotting the locations and impacts of recent natural hazards in Australia and around the globe using National Geographic MapMaker. This directly explores the nature and impact of natural hazards, making abstract disasters concrete and local. Students take on the role of local council advisors, mapping not just the hazards but also the communities, wildlife, and infrastructure affected?then proposing priority zones for action. Their final artefact is a layered, annotated digital map, complete with custom symbols, data overlays, and embedded student recommendations, which can be printed for the school foyer or shared online with a community partner. They harness MapMaker's drawing and annotation tools to create custom icons and colour-coded hazard zones, moving well beyond the basic pin-drop. Students finish with the know-how to advocate for smarter, fairer responses to natural disasters in their own backyard."
+        "d": "Students layer terrain, climate and population data to locate Australian communities exposed to bushfires, floods or earthquakes. They compare the natural causes of each hazard with the number of people and places that could be affected. Each group chooses one community and annotates where a protective design, evacuation route or warning system could help. Groups swap maps and question whether the proposed response protects everyone, including people with limited transport or mobility. Students finish with an annotated hazard map showing evidence, risk areas and a recommended response. MapMaker's data layers let them test whether their first assumptions match real geographic patterns."
       },
       {
         "t": "Micro:bit",
-        "d": "Students become disaster tech innovators by programming Micro:bits to create simple early-warning devices for natural hazards, such as flood alarms or earthquake shakers. This activity brings to life the ethical and practical considerations in human responses to natural challenges, as students weigh whose safety should come first and how to make their devices accessible for all. To push their thinking, students interview a local SES volunteer or disaster expert (in person or via video) and use their insights to refine their prototypes. The final artefact is a working device with code and a short video pitch, ready to be shown to families or at a school STEM night. Students use the Micro:bit's sensor inputs (like tilt or water detection) and radio communication features to simulate real-world alert systems. They leave as confident problem-solvers, ready to use technology for good in their community."
+        "d": "Students program a micro:bit to recognise shaking and send a radio warning to another micro:bit across the classroom. This small model shows how a design process can turn information about earthquake movement into an alert. Pairs set their own movement threshold, test it on a gently shaken table and adjust the code to reduce false alarms. Another pair tests the device without being told its settings and gives practical feedback. Students finish with a working warning system that displays a clear LED message on both devices. The accelerometer, LED grid and radio link make repeated testing and debugging possible."
       },
       {
-        "t": "Wise Discussion Chatbots",
-        "d": "The teacher creates a Wise Discussion Chatbot using the Character Interview scenario and sets the bot's role as Dr Maya Chen, a wildlife ecologist advising the class about local habitats. The topic is \"How the World Works: Design processes enable people to respond creatively to challenges in the natural world.\". Students chat with the bot to explore a named perspective through guided questioning rather than general research; for example, they ask \"Which adaptation would help this species survive a hotter summer?\" and \"What human action is putting this habitat under pressure?\". After the chat, students produce a question bank plus a short perspective-and-evidence summary that compares the chatbot responses with unit sources linked explicitly to How the World Works."
+        "t": "Freeform",
+        "d": "Students build a shared cause-and-effect map for a bushfire, flood or earthquake using notes, arrows, images and labelled groups. This helps them work out how one natural event can affect homes, wildlife, transport, power and emergency services. Each group adds the views of residents, Traditional Owners, emergency workers, local businesses and environmental groups before choosing a response. Classmates then trace one chain of effects and flag any people or environments the proposed response may overlook. Students finish with a connected planning board that shows the hazard, its impacts, competing needs and revised design criteria. Freeform's infinite canvas makes it easy to move ideas and redraw links as thinking changes."
       },
       {
-        "t": "Disaster-Proof Dream Homes: Shake, Rattle & Rebuild!",
-        "d": "Students design and construct model houses using recycled cardboard, balsa wood, fabric, and a variety of everyday materials, aiming to withstand simulated natural hazards like earthquakes, floods, or bushfires. They use a micro:bit with sensors (e.g., accelerometer, moisture sensor, or temperature sensor) embedded in their structures to test and record how their designs perform under stress?such as shaking platforms, water spray, or heat lamps. Guided by the design thinking cycle, students iterate on their prototypes, analyze real hazard data, and reflect on how their innovations could help communities stay safe. This hands-on challenge connects STEM concepts to real-world resilience, ethical design, and sustainability."
+        "t": "IMovie",
+        "d": "Students record and edit a two-minute pitch for a tested solution to a bushfire, flood or earthquake challenge. They explain the problem, show their prototype being tested and identify one change made after failure or feedback. Teams include a short response from someone acting as a stakeholder who may benefit from or be disadvantaged by the design. Another class watches the films and votes on which solutions best balance safety, cost, access and environmental impact. Students finish with a concise documentary that makes their design decisions and evidence visible. iMovie's titles, transitions and voice recording help students turn separate test clips into one clear explanation."
+      },
+      {
+        "t": "Sphero BOLT",
+        "d": "Students code Sphero BOLT to carry a small emergency supply token along a floor route through a model hazard zone. This tests how movement, distance and route planning can support people when roads are blocked after a natural hazard. Another group changes one part of the course, forcing the programmers to measure again and debug their route rather than memorise it. Teams must choose whether speed, accuracy or safe clearance matters most and explain that choice. Students finish with a working program that completes the revised route and displays a warning symbol on BOLT's LED grid. BOLT's programmable movement, motor encoders and light grid allow precise trials and visible feedback."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Students read short stakeholder scenarios, define a need and sketch ideas for a fold-out emergency bridge that can move supplies across a model flood gap. They build first with cardboard, paper tubes, string, recycled materials and LEGO pieces, then add a SPIKE Prime motor and either a distance or force sensor where it serves a clear purpose. Teams test span, load, deployment time and access for different users, then change one part at a time after each failure. At the end, students demonstrate the bridge operating, show their test record and explain how feedback shaped the final design. The finished prototype must solve the practical problem without using more material or power than the team can justify."
       }
     ],
     "audited": true,
@@ -2054,7 +2054,7 @@
         "urlEvidence": true
       }
     ],
-    "inspiringRegenAt": "2026-05-29T04:54:58.328Z",
+    "inspiringRegenAt": "2026-08-07T04:24:40.017Z",
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T04:44:39.237Z",
     "suggestionAuditVersion": "a1-2026-06-07"
