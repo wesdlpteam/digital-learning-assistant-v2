@@ -1476,28 +1476,28 @@
     "lo": "Lines of inquiry to be confirmed once planner is uploaded",
     "s": [
       {
-        "t": "Seek by iNaturalist",
-        "d": "Students use Seek by iNaturalist to investigate living things around the school grounds or a nearby park, capturing photos and identifying species such as native plants, insects, and birds. In small groups, they collect data on at least five different organisms, using the app's identification badges and observation features to record details. Each group researches how their chosen species supports human health and community wellbeing, focusing on roles like pollination, air purification, or cultural significance. Students then design a digital poster or slideshow using their photos, species facts, and personal reflections on how nature influences mental and social health. This activity deepens their understanding of biodiversity's role in wellbeing and encourages thoughtful connections between people and the environment. The final presentations are shared in a class gallery walk to inspire discussion about personal and community health through nature."
+        "t": "Animating a Character with Adobe Express",
+        "d": "Students record a future version of themselves giving advice about handling a setback, change or friendship problem. This opens a safe conversation about resilience because students can speak through a character rather than perform on camera. Students swap characters with a partner and record a second message showing how advice may change for different people. They end with two short character videos that model helpful self-talk and responsible choices. The character automatically lip-syncs to each student's recorded voice. A class viewing can begin a list of strategies students already use when life feels difficult."
       },
       {
-        "t": "Delightex",
-        "d": "Students become resilience coaches by designing interactive scenarios in Delightex, where classmates face digital 'choose your own adventure' challenges about friendship, setbacks, and staying safe. This hands-on activity brings to life the central idea of how we respond to setbacks and manage change, letting students test strategies in a safe, playful way. By swapping scenarios and giving each other feedback, they see firsthand how different choices can shape outcomes and relationships. Their finished artefact is an interactive story or simulation that classmates?and even younger grades?can play through, sparking real discussion about what works and what doesn't. Delightex's branching scenario builder lets students weave in multiple paths and consequences, pushing them to think beyond right and wrong answers. Students leave with the confidence to tackle tricky situations, knowing they've practised and reflected on what it means to bounce back."
-      },
-      {
-        "t": "Epic",
-        "d": "Students dive into Epic's digital library to curate a 'Resilience Reads' collection, hand-picking picture books, comics, and articles that show characters overcoming obstacles and building healthy friendships. This ties directly to the inquiry into personal responsibility and positive relationships, as students analyse how fictional and real people handle setbacks. They take on the role of book reviewers, creating video or audio recommendations for their classmates and even for the school newsletter. The final artefact is a multimedia reading guide?complete with student reviews and suggested discussion questions?shared with families to encourage resilience conversations at home. Epic's built-in annotation and quiz features let students highlight powerful moments and pose thought-provoking questions to their peers. By the end, students see themselves as reading mentors and critical thinkers, ready to inspire others to grow through challenges."
+        "t": "Freeform",
+        "d": "Students build a shared map of actions that help or harm friendships online and face-to-face. This makes the links between choices, feelings, safety and trust easy to see. Small groups connect similar actions, then respectfully challenge one connection made by another group. They end with a colour-coded class canvas showing friendship problems, possible responses and likely outcomes. Freeform's infinite canvas lets students move, group and connect ideas as their thinking changes. The teacher can return to the board after stories or discussions and ask students to revise earlier ideas."
       },
       {
         "t": "GarageBand",
-        "d": "Invite students to compose 'soundtracks of resilience' in GarageBand, crafting original music that expresses the emotions felt when facing challenges or celebrating supportive friendships. This creative process taps into the unit's exploration of mental and social health, helping students reflect on how music can shift moods and build community. Students collaborate with another class to swap tracks and guess the stories or feelings behind each composition, sparking empathy and deeper listening. The final product is a class album?complete with liner notes explaining each track's inspiration?shared at assembly or uploaded for families to enjoy. GarageBand's Live Loops and multi-track layering allow students to experiment with complex textures and moods, far beyond basic recording. Students finish with a new way to express themselves and a toolkit for using music to boost their own and others' wellbeing."
+        "d": "Students compose two short soundscapes showing how a setback can feel before and after someone uses a coping strategy. This helps them notice that feelings can change without labelling any emotion as wrong. Partners listen without seeing the title and explain what change they hear, prompting the composer to refine the music. Each student ends with a paired recording that moves from tension towards calm, courage or hope. GarageBand lets students arrange loops and record original sounds in separate tracks. A listening gallery gives the class many word-free ways to represent resilience."
       },
       {
-        "t": "Animating a Character with Adobe Express",
-        "d": "Students use Adobe Express's Animate from Audio feature (https://new.express.adobe.com/home/tools/animate-from-audio) to create animated characters that role-play challenging friendship scenarios and safe online interactions. They write scripts exploring empathy, boundaries, and respectful communication, then record their voices to bring these characters to life with natural lip-syncing. Each student produces a short animated dialogue that models positive responses to common social challenges, such as resolving conflicts or asking for help. This activity deepens their understanding of personal and social health by practising perspective-taking and communication skills. Students share their animations in small groups to spark discussion about healthy relationships and digital citizenship. The finished animations become a resource for peers to reflect on managing emotions and interactions both online and face-to-face."
+        "t": "Padlet",
+        "d": "Students post short responses to friendship and online-safety scenarios, naming a safe action and why it could help. This makes personal responsibility visible through everyday choices such as pausing, asking permission, including others or seeking adult help. Students reply to two classmates by offering another respectful option rather than judging the first response. The class ends with a practical wall of strategies that can be revisited when real problems arise. Padlet supports brief posts and peer replies in one shared space. The teacher can add new scenarios during the inquiry to see whether students' responses become more thoughtful."
       },
       {
-        "t": "Resilience Road: Build Your Own Journey Board Game",
-        "d": "Students design and construct a 3D board game that represents a journey through life's challenges and triumphs, using cardboard, recycled materials, clay, and craft supplies for pathways, obstacles, and character tokens. They integrate simple interactive elements with Makey Makey or micro:bit to trigger sound effects or messages when players land on key spaces, blending physical making with digital creativity. Each game space features scenarios about overcoming setbacks and building friendships, encouraging students to reflect on their own strategies for resilience and safety. By inventing and playing their unique games, students collaboratively explore growth mindset and positive relationships in a memorable, hands-on way."
+        "t": "Book Creator",
+        "d": "Students create a choose-your-own-response story about a character facing a setback, change or friendship difficulty. This shows how one decision can affect safety, trust, feelings and what happens next. Students exchange books and record advice for the character at one important decision point. Each student ends with a multimodal book containing two possible responses, their consequences and a final reflection. Book Creator combines text, images and recorded narration on the same pages. Families or another Year 3 class can read the stories and discuss which choices protect both self and others."
+      },
+      {
+        "t": "Micro:bit",
+        "d": "Students empathise with classmates who sometimes need help pausing during a challenge, then define one moment when a quiet prompt could help. Using cardboard, felt, elastic and a battery-powered Micro:bit, they sketch and build a wearable or desk-based device that displays a chosen coping icon when button A or B is pressed. They test paper versions first, then program the 5x5 LED grid and improve the placement, comfort and clarity after partner feedback. Each student demonstrates a working prototype for a real situation such as taking a breath, asking for help or trying again. The final test checks whether another student can understand and use the device without spoken instructions."
       }
     ],
     "audited": true,
@@ -1545,7 +1545,8 @@
     ],
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T04:29:15.156Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T05:11:57.191Z"
   },
   {
     "ca": "Elsternwick",
@@ -1555,28 +1556,28 @@
     "lo": "How technology expands creative possibilities; The evolution of communication tools; The impact of technology on expression",
     "s": [
       {
-        "t": "Explain Everything",
-        "d": "Students become digital storytellers by remixing the history of communication?each group picks a key invention, from the printing press to social media, and animates its impact using Explain Everything's interactive whiteboard. This launches a hands-on exploration of how technology constantly expands creative possibilities for sharing ideas. To shake things up, students reimagine how people might have expressed themselves if their chosen technology existed centuries earlier, sparking wild, cross-era mashups. The finished artefact is a narrated, animated timeline where students' voices and drawings bring the evolution of expression to life, ready to be showcased to families at a Communication Through the Ages gallery. By mastering Explain Everything's advanced animation paths and interactive hot spots, students can make their timelines dynamic and clickable. Suddenly, they don't just learn about history?they get to rewrite it, and see themselves as inventors shaping how communities connect."
+        "t": "GarageBand",
+        "d": "Students record and arrange one short message as Morse-style rhythms, a radio jingle and a modern electronic soundscape. They hear how changing technology can reshape the same idea and influence how an audience responds. Each group gives another group only the audio and asks what message or mood they understood. Students then revise the least clear version after hearing that feedback. They finish with three contrasting recordings that show the evolution of audio communication. GarageBand's instruments, loops and audio tracks let students compose and record in one place."
       },
       {
-        "t": "GarageBand",
-        "d": "Unleash creativity by having students compose original theme music and sound effects that capture the mood of different forms of digital expression?imagine the 'ping' of an email vs. The warmth of a handwritten letter. This dives deep into the impact of technology on expression, using sound as a universal language. Students swap roles with media producers: their compositions will become the soundtrack for real communication tool exhibitions created by Year 2s, who will curate artefacts with the soundscapes playing in the background. The final product is a playlist of student-made tracks, each labelled with the communication tool and emotion it's meant to evoke?shared with the school community via QR codes at the gallery. GarageBand's Live Loops let students layer beats, voices, and even environmental sounds for rich, textured audio. Along the way, they discover how sound transforms a message's meaning, and they gain the confidence to express ideas in ways that words alone can't."
+        "t": "Explain Everything",
+        "d": "Students draw and record a narrated timeline showing how one communication tool changed from an older form to a digital form. This makes the evolution of communication visible while students explain what each change made possible. Partners swap timelines and identify one benefit, one loss and one new responsibility created by the change. Students add these responses as a final annotated section. They finish with a short screencast that combines drawings, labels and spoken explanation. Explain Everything records the screen and voice while students draw and annotate."
+      },
+      {
+        "t": "Animating a Character with Adobe Express",
+        "d": "Students record a short speech for an animated character explaining a cybersafe choice to younger learners. They explore how an on-screen speaker can make an important message clearer, friendlier or more persuasive. Each student tests two versions with different wording, then asks a younger peer which one is easiest to understand. Students revise the script so it avoids fear, blame and private information. They finish with a brief animated message ready to use in the student-led technology workshops. Adobe Express Animate from Audio automatically lip-syncs the character to the student's recorded voice."
       },
       {
         "t": "Delightex",
-        "d": "Students step into the shoes of future designers by building immersive 3D scenes in Delightex that imagine the next leap in communication?think hologram postcards or empathy-boosting message pods. This directly explores how technology can expand creative possibilities, challenging students to invent what comes after today's smartphones and social media. By presenting their visions to an expert panel of local tech mentors (in-person or via video), students get real feedback and see their ideas as part of a bigger conversation. The class creates a virtual exhibition of these speculative worlds, opening it up online for families, peers, and even guest visitors to 'walk through' and vote on the most inspiring concept. Delightex's scene-linking and interactive object features let students build explorable interconnected environments, not just static dioramas. Students experience the thrill of turning blue-sky ideas into virtual reality, ready to imagine themselves as tomorrow's innovators."
+        "d": "Students build an interactive 3D gallery showing how a single idea might be expressed through symbols, text, sound-related objects and virtual movement. This shows how digital spaces expand creative choices beyond a flat page. Groups exchange galleries and code one object to respond differently after visitors make a choice. Students test whether visitors can move through the scene and understand the intended message without spoken instructions. They finish with a coded virtual exhibition for classmates to explore. Delightex's CoBlocks let students program objects to move and respond inside the 3D scene."
       },
       {
-        "t": "Padlet",
-        "d": "Students become communication detectives, curating a living, interactive timeline of communication tools using Padlet's timeline view?tracking everything from ancient smoke signals to the latest emojis. This brings the line of inquiry on the evolution of communication tools to life in a format students can keep updating as new inventions emerge. Students add a 'future forecast' section: they must predict and justify what might come next, inviting their families to contribute ideas from home. The result is a collaborative, multimedia timeline filled with student-drawn images, voice clips, and even short video interviews with grandparents about technologies from their childhoods. Padlet's audio and video commenting features allow for rich, layered discussion and feedback that bridges generations and perspectives. Students walk away seeing themselves as historians and visionaries, able to spot patterns and wonder what's possible next."
+        "t": "Microsoft Forms",
+        "d": "Students build a survey asking how classmates create, communicate and decide what is safe to post online. The responses show how technology affects expression across their own school community. Students invite a younger class and an adult class to answer the same carefully worded questions. They compare the automatic charts and work out where age groups agree or differ. They finish with a survey and a set of evidence-based recommendations for their technology workshops. Microsoft Forms automatically collects responses and turns them into charts."
       },
       {
-        "t": "Wise Discussion Chatbots",
-        "d": "The teacher creates a Wise Discussion Chatbot using the Project Ideation scenario and sets the bot's role as Kai, a project coach who helps students narrow broad inquiry ideas into one practical proposal. The topic is \"How We Express Ourselves: Technology transforms how we create and share ideas.\". Students chat with the bot to test and refine possible inquiry actions or design ideas before committing to one plan; for example, they ask \"Which idea best connects to our central idea?\" and \"What resources, success criteria and next steps do you need?\". After the chat, students produce a one-page project proposal naming the chosen idea, success criteria, resources, first prototype/action step and how it connects to the unit linked explicitly to How We Express Ourselves."
-      },
-      {
-        "t": "Wearable Message Makers: Light-Up Expression Bands",
-        "d": "Students will design and craft their own wearable 'expression bands'?wristbands or headbands made from felt, recycled fabric, and cardboard?that light up to share a personal message or mood. Using simple circuits with LEDs and coin cell batteries, they'll integrate their chosen symbols, words, or emojis into the band, learning about both creative self-expression and basic electronics. Students will sketch, prototype, and refine their designs using the Design Cycle, then share how their wearable tech communicates ideas in new, interactive ways. This project brings together technology, hands-on making, and the evolving ways we express ourselves to others."
+        "t": "Lego Spike Prime",
+        "d": "Students empathise with younger learners by watching where instructions become confusing, then define a need for a hands-on machine that communicates one clear step without spoken words. They ideate with sketches and prototype using LEGO, cardboard signs, paper engineering and recycled materials, adding a motor and either a distance, colour or force sensor. They test whether a younger student can trigger the model and understand its moving message without help. Teams rebuild weak mechanisms, adjust the code and simplify any unclear visual parts. At the workshop, each group demonstrates a reliable interactive model and explains how testing changed both its mechanism and message."
       }
     ],
     "audited": true,
@@ -1603,7 +1604,8 @@
     ],
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T04:29:53.870Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T05:12:28.082Z"
   },
   {
     "ca": "Elsternwick",
@@ -1613,28 +1615,28 @@
     "lo": "Human systems; The interconnections that exist within and across systems; The influence of systems on communities",
     "s": [
       {
-        "t": "Minecraft Education",
-        "d": "Step into the bustling world of Minecraft's Sustainable Food Production lesson (https://education.minecraft.net/en-us/lessons/sustainable-food-production), where students trace the journey of food from farm to table and back again through waste and recycling. This immersive simulation lets students see first-hand how human systems?like farming, packaging, and waste management?are all interconnected and shape communities. As they move through virtual farms, recycling centres, and grocery stores, students take on the role of sustainability detectives, asking tough questions about what makes a system fair or sustainable for everyone. Their final portfolio is a digital map and photo-journal, created in-game, that follows a single item through every step of the system, highlighting the invisible connections that keep everything running. The in-game camera and book-and-quill features let students capture, annotate, and export their discoveries for a class exhibition or family showcase. By the end, students see themselves as part of the system?and start spotting opportunities to make real change in their own world."
+        "t": "Teachable Machine",
+        "d": "Students photograph clean examples of paper, plastic and landfill items, then train an image model to sort them. This shows how a recycling system depends on clear inputs, rules and decisions. Groups swap unfamiliar items and find out where their models make mistakes or disagree. They improve the training examples, retest the model and decide which items still require a human choice. Students end with a working waste-sorting model and a record of its most revealing errors. It works like the camera-driven sorting systems used to direct materials inside recycling facilities."
       },
       {
-        "t": "Wise Discussion Chatbots",
-        "d": "The teacher creates a Wise Discussion Chatbot using the Project Ideation scenario and sets the bot's role as Leo, a student sustainability coach helping teams turn inquiry questions into realistic action projects. The topic is \"How We Organise Ourselves: Systems connect us.\". Students chat with the bot to test and refine possible inquiry actions or design ideas before committing to one plan; for example, they ask \"What small change could our class actually test this week?\" and \"How will we know if our action helped?\". After the chat, students produce a one-page project proposal naming the chosen idea, success criteria, resources, first prototype/action step and how it connects to the unit linked explicitly to How We Organise Ourselves."
+        "t": "Freeform",
+        "d": "Students map one school system, such as lunch orders, borrowing books or moving waste from classrooms to bins. They add each person, place, action and resource, then draw arrows to show how the parts connect. Groups swap boards and remove one important part to predict what would slow down, stop or affect another system. They then invite a staff member involved in the system to correct missing links and explain real constraints. Students end with a detailed system map showing normal operation, a breakdown and a possible improvement. Freeform's infinite canvas lets students move ideas and redraw connections as their understanding changes."
+      },
+      {
+        "t": "Microsoft Excel",
+        "d": "Students collect daily counts of rubbish, recycling and compost produced by their class across one school week. They enter the numbers into a table and create graphs to spot patterns in the waste system. Each group chooses one practical change, such as moving a bin or improving a label, and gathers a second set of data after the change. Groups compare which change had the clearest effect rather than simply choosing the most popular idea. Students end with before-and-after graphs and an evidence-based recommendation for the school. Excel makes it easy to update charts when new measurements are added."
+      },
+      {
+        "t": "Sphero BOLT",
+        "d": "Students program Sphero BOLT to carry a small item through a model collection route linking a classroom, sorting point and reuse station. This makes the movement and timing inside a human system visible and testable. Another group changes one route condition, such as closing a path or moving a collection point, and the programmers must debug their solution. Students compare whether one long route or several short routes moves items more reliably. They end with a working program, a tested route and a short live demonstration of how the system responds to change. BOLT's programmable movement and 8x8 light grid can show both the route and the item's destination category."
+      },
+      {
+        "t": "Insta360 camera",
+        "d": "Students record a 360-degree view of one school system in action, such as the library return area, compost station or busy bag-storage space. The full view helps them notice how people, signs, objects and pathways affect one another. They position the camera twice?once during a quiet period and once when the system is busy?while protecting people's privacy. Another class explores the recordings and identifies a bottleneck or missing instruction that Year 4 did not notice. Students end with two immersive views and a specific proposal for improving the space. The spherical recording keeps the whole surrounding system visible rather than showing only where a camera operator pointed."
       },
       {
         "t": "Lego Spike Prime",
-        "d": "With Lego Spike Prime, students engineer and code their own working models of everyday systems?like a rubbish sorting machine or a traffic light network. This hands-on build gets students deep into the nuts and bolts of 'interconnections that exist within and across systems', making abstract ideas tangible. Students swap roles as engineers, testers, and system 'hackers', trying to break or improve each other's designs to see how resilient and adaptable real systems need to be. Their final artefact is a filmed demonstration and pitch, where they show off their model in action and explain what happens when one part is tweaked or removed. Advanced coding blocks?like sensor feedback and conditional loops?let students create systems that respond to real-world changes, not just follow a set sequence. By the end, they see themselves as inventors who can spot problems and design better solutions for their community."
-      },
-      {
-        "t": "Dollar Street",
-        "d": "Students use Dollar Street to investigate how different human systems?such as transport, communication, and sanitation?are represented in homes around the world. They browse the platform's photo galleries, focusing on images that show infrastructure like water sources, toilets, and kitchens. Students select three families from different continents and income levels, then create an illustrated infographic comparing how each family accesses basic systems. This links to the inquiry into how systems connect communities. Dollar Street's AI categorises household features in a way similar to how urban planners use image data to assess infrastructure needs globally. Students share their infographics and discuss how access to systems influences quality of life."
-      },
-      {
-        "t": "Microsoft Forms",
-        "d": "Students become community researchers by designing and running a survey in Microsoft Forms to uncover how different people experience and rely on systems at school or home. This inquiry dives into the influence of systems on communities, letting students collect real data and spot patterns they might not expect. Students compare responses between different groups?like students, teachers, and parents?to see whose voices are heard most and whose might be missing. Their final artefact is an interactive data dashboard, where they visualise the results and pose questions for action or improvement. Microsoft Forms' branching logic feature lets students create adaptive surveys that respond to answers, making the research more personalised and meaningful. By the end, students see themselves as changemakers who can use data to spark conversations and shape better systems."
-      },
-      {
-        "t": "Eco-Systems in Motion: Sphero Smart City Challenge",
-        "d": "Students design and build a vibrant miniature cityscape using recycled cardboard, bottle caps, fabric scraps, and natural materials, mapping out roads, parks, and key 'system' zones like recycling centres and compost stations. Working in teams, they code Sphero robots to represent 'waste trucks', programming routes to collect and deliver materials through their interconnected city systems. Along the way, they must troubleshoot breakdowns or blockages, redesigning physical features or code to keep their city running smoothly. This hands-on project highlights how human-made and natural systems interact, and empowers students to creatively explore sustainability and organisation in their own community."
+        "d": "Students empathise by observing a real recycling or composting problem at school, then define one action a small machine could improve. They sketch ideas and build a physical prototype from LEGO pieces, cardboard guides and clean recycled materials before adding SPIKE Prime motors and a colour, distance or force sensor. Teams code a working sorter, bin alert or moving collection system, then test it with repeated items and record where it jams, misses or gives the wrong response. They rebuild one part and adjust the code after feedback from another team. Students finish by demonstrating the improved machine and explaining how each physical and coded part helps the whole system work."
       }
     ],
     "audited": true,
@@ -1660,7 +1662,8 @@
     ],
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T04:33:31.406Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T05:13:28.930Z"
   },
   {
     "ca": "Elsternwick",
