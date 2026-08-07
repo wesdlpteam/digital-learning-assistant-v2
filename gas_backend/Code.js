@@ -150,7 +150,7 @@ function getSyncedToolNotesPrompt_() {
     var bits = [];
     if (n.is) bits.push('IS ' + n.is);
     if (n.good) bits.push('USE FOR: ' + n.good);
-    if (n.avoid) bits.push('DO NOT: ' + n.avoid);
+    if (n.avoid) bits.push('AVOID: ' + n.avoid);
     if (!bits.length) return;
     lines.push('- ' + k + ' \u2014 ' + bits.join('. ') + '.');
   });

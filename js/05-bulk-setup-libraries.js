@@ -233,8 +233,8 @@ const TOOL_AFFORDANCE_NOTES = {
   },
   delightex: {
     is: 'a 3D and VR scene-building platform (formerly CoSpaces Edu) where students build virtual worlds and code them with blocks (CoBlocks)',
-    good: 'building an interactive 3D or VR scene, virtual tour or simple game, and coding how objects move and respond',
-    avoid: 'it builds virtual on-screen 3D/VR scenes — not physical making or 3D printing (use Tinkercad or the 3D Printers for that).'
+    good: 'building an interactive 3D or VR scene, virtual tour or simple game, and coding how objects move and respond, including building in Merge Cube mode so the finished scene can be viewed on a Merge Cube',
+    avoid: 'it builds virtual on-screen 3D/VR scenes, not physical making or 3D printing (use Tinkercad or the 3D Printers for that).'
   },
   epic: {
     is: 'a childrens digital library of ebooks and audiobooks',
@@ -284,23 +284,23 @@ const TOOL_AFFORDANCE_NOTES = {
     avoid: 'it is short question-and-answer — not a tool for deep creation.'
   },
   'lego spike prime': {
-    is: 'a build-and-code kit for motorised models with motors and sensors',
-    good: 'building, coding and testing a working model that addresses a real system, force or automation problem',
-    avoid: 'describe a real build, code and test — not a metaphor; it must physically do something.'
+    is: 'a build-and-code robotics kit with motors and sensors, programmed in the LEGO SPIKE app',
+    good: 'students designing and building their own working model, then coding its motors and sensors to solve a real problem, and testing and improving it',
+    avoid: 'Wesley has the base and expansion sets. The only sensors are colour, distance and force, plus tilt and movement in the hub. There is NO camera, NO microphone, NO thermometer, NO humidity, moisture or gas sensor and NO GPS. Never name a sensor the kit does not have, and never use the kit as a metaphor: the model must physically build, run and do something.'
   },
   'makey makey': {
     is: 'an invention kit that turns everyday conductive objects into keyboard or controller inputs',
     good: 'interactive posters, instruments or controllers triggered by touching conductive materials'
   },
   'merge cubes': {
-    is: 'a foam cube that shows interactive 3D and AR holograms when viewed through a compatible app',
-    good: 'holding and exploring a 3D object in augmented reality, such as anatomy, planets or artefacts',
-    avoid: 'needs the AR app and a real 3D-object purpose — not a standalone novelty.'
+    is: 'a foam cube that acts as a marker, so a 3D scene students have built in Delightex appears to sit in their hands when they point an iPad camera at it',
+    good: 'students building their own 3D object, habitat, cell, artefact or scene in Delightex, then holding the cube to view, turn and present what they made',
+    avoid: 'Wesley does not have the paid Merge EDU library, so there are no ready-made anatomy, planet, fossil or Dig! objects to explore. Anything on the cube must be something students built themselves in Delightex. The cube has no screen, no electronics and no sensors: it does nothing on its own and needs an iPad camera pointed at it.'
   },
   'micro:bit': {
-    is: 'a pocket programmable board with sensors — accelerometer, light, temperature, compass, radio, buttons and an LED grid',
-    good: 'coding a sensor-based device, data logger or paired-device alert and testing it',
-    avoid: 'name the actual sensors or inputs used, not just "a device".'
+    is: 'a pocket-sized programmable board with a 5x5 red LED grid, two buttons, and built-in sensing for movement and tilt, compass direction, light level and rough temperature, plus a radio link to other micro:bits',
+    good: 'coding a sensor-based device, data logger, game or paired-device alert, wiring it to a buzzer, light or foil switch with crocodile clips, running it on a battery pack away from the computer, and testing it',
+    avoid: 'Wesley has the original V1 boards. They have NO microphone, NO speaker and NO touch-sensitive logo, so no lesson may depend on the board hearing or playing sound by itself. Sound needs a buzzer or headphones wired up with crocodile clips. There is also NO camera, NO GPS and NO humidity, moisture or air-quality sensor. The temperature reading comes from the chip and is only roughly room temperature, so never present it as a precise thermometer.'
   },
   'microsoft excel': {
     is: 'a spreadsheet for collecting, charting and analysing data',
@@ -377,13 +377,14 @@ const TOOL_AFFORDANCE_NOTES = {
     avoid: 'have a clear analytical question — not just a slow-motion video for effect.'
   },
   'sphero bolt': {
-    is: 'a programmable robot ball with sensors and a programmable LED matrix, using block and text coding',
-    good: 'coding Sphero to navigate, map routes, draw paths or collect sensor data'
+    is: 'a programmable robot ball with an 8x8 light grid, coded with blocks or text in the Sphero Edu app on an iPad',
+    good: 'coding BOLT to drive a route, navigate a course or maze, draw a shape or path, react to light levels, and show messages or simple animations on its light grid',
+    avoid: 'Wesley has the original BOLT. It can sense light level, tilt, speed and direction, and it can send infrared messages to another BOLT. It has NO camera, NO microphone, NO thermometer, NO colour sensor, NO distance sensor and NO GPS, and it cannot detect magnets or test which materials are magnetic. Do not mention its compass at all. Never name a sensor or feature that is not in this list.'
   },
   'sphero indi': {
-    is: 'a screenless early-years robot car driven by coloured tiles to teach cause-and-effect coding',
-    good: 'Prep to Year 2 sequencing and navigation using colour tiles, with no screen needed',
-    avoid: 'not for advanced coding or data — that is Sphero BOLT.'
+    is: 'a screenless early-years robot car that drives along a path of coloured tiles placed on the floor',
+    good: 'Prep to Year 2 students sequencing a route and exploring cause and effect by laying out coloured tiles, with no iPad or app needed',
+    avoid: 'Wesley uses Indi with the colour tiles only, no app and no screen. Do not give it block or text coding, sensors, data collection or graphing, and do not use it above Year 2. For older students coding a robot, use Sphero BOLT.'
   },
   'stop motion studio': {
     is: 'a frame-by-frame stop-motion animation app',
