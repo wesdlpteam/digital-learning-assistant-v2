@@ -4750,28 +4750,28 @@
     "lo": "How media targets audiences; Techniques used to engage and persuade; Critical evaluation of media messages",
     "s": [
       {
-        "t": "Podcast Equipment",
-        "d": "Let students become real media critics by producing a podcast episode that dissects how advertising influences our choices as consumers. This hands-on investigation dives into the line of inquiry about the techniques media uses to engage and persuade audiences, with students analysing catchy jingles, slogans, and emotional hooks. Invite a local journalist or radio host (virtually or in person) to share insights, so students see how the pros shape messages and responses. Each group publishes a polished podcast episode?complete with intro music, interviews, and their own critical takes?ready for the school community and families to stream. Using podcast equipment's multi-track mixing and audio editing features, students layer sound effects and music to make their message pop. They walk away with the confidence to question and decode every ad they see, not just take it at face value."
+        "t": "Wise Discussion Chatbots",
+        "d": "Students question a teacher-set Socratic Tutor about how a tempting advertisement targets a Year 6 audience. This helps them notice how colour, popularity, urgency and selective facts invite a response. The chatbot keeps asking for evidence when a student makes a claim too quickly. Students then swap advertisements and test whether a partner reaches the same conclusion. Each student ends with a written conversation showing how their thinking changed. The teacher controls the chatbot's rules, timing and level of support in Schoolbox."
       },
       {
-        "t": "Adobe Express",
-        "d": "Students take on the role of ethical ad designers, creating a campaign for a sustainable product that challenges typical consumerism. This activity spotlights how media targets audiences by asking students to flip the script?can you persuade classmates to care about fairness and the planet rather than just 'buy, buy, buy'? Students must research the environmental and social impact of their chosen product and pitch their campaign to a panel of real parents or community members. The final artefact is a vibrant, animated web page or poster, complete with compelling visuals and a call to action, ready for display at a school expo or online showcase. Adobe Express's Animate from Audio and Magic Design features let students bring their campaign to life with moving graphics and auto-generated layouts that grab attention. Students finish with creative muscle and a toolkit for using media to inspire positive change, not just more consumption."
-      },
-      {
-        "t": "Kahoot",
-        "d": "Flip the classroom by having students design and host a Kahoot quiz that tests their peers' ability to spot persuasive media tricks and hidden biases in real-world ads. This directly supports the line of inquiry around critically evaluating media messages, as students must craft questions that reveal how easily audiences can be swayed. For extra spark, invite teachers or another year level to play the quiz, turning students into quizmasters and media literacy champions for the wider school. The finished Kahoot is a live, competitive quiz event?complete with leaderboard, discussion breaks, and instant feedback?that can be replayed at assemblies or family nights. Students harness Kahoot's advanced question types, like image-based questions and multi-select, to make their quiz both tricky and engaging. They leave with sharper eyes for media manipulation and the thrill of leading learning for others."
-      },
-      {
-        "t": "Freeform",
-        "d": "Unleash students' creativity by having them map the journey of a product from creation to consumer using Freeform's infinite canvas. This activity digs into the environmental and ethical impacts of products, encouraging students to visualise every step?resources, labour, transport, packaging, and advertising spin. To broaden perspectives, students must include voices from different points in the supply chain, imagining what a factory worker, marketer, or eco-activist might say. Their final artefact is a sprawling, interactive mind map filled with sketches, sticky notes, voice memos, and web links, ready for a gallery walk or digital sharing with families. Freeform's collaborative real-time editing lets groups build and annotate together, layering in multimedia evidence and commentary. Students finish with a systems-thinking mindset and a knack for seeing the hidden stories behind everyday purchases."
+        "t": "Clickview",
+        "d": "Students watch and pause selected advertising clips to record the exact moment each one tries to influence its audience. This makes persuasive techniques easier to spot than discussing advertising in general. Groups compare whether the same clip influences them differently and explain why. Students then answer built-in questions that separate facts, feelings, assumptions and missing information. Each group ends with an evidence-based evaluation of one media message. Clickview's curated clips and built-in questions keep the viewing focused and manageable."
       },
       {
         "t": "Microsoft Forms",
-        "d": "Turn students into real-world researchers by designing and running a survey with Microsoft Forms to uncover what influences their peers' buying decisions. This activity directly explores how media targets audiences and the power of peer and social influences. Students compare their findings with national data or invite a local business owner to discuss how they use similar research. The final artefact is a set of interactive charts and data stories, built with Forms' branching logic and automatic analytics, ready to share at a student-led media literacy forum. Students use advanced features like response validation and custom themes to make their survey both professional and engaging. They come away with hands-on experience in data-driven decision-making and the confidence to question the forces shaping their own choices."
+        "d": "Students build a survey that asks peers what influences their choices between similar products. This shows whether price, packaging, friends, social media, sustainability claims or brand names have the strongest pull. Each group predicts the result before sending its survey to another Year 6 class. Students compare their prediction with the automatically collected responses and look for surprising differences between groups. They end with a survey and a set of charts that reveal real audience patterns. Microsoft Forms automatically gathers responses and displays clear summary charts."
       },
       {
-        "t": "Brand New Me: The Ethical Sneaker Hackathon",
-        "d": "Students team up to design and prototype their own 'ethical sneakers' using recycled materials (cardboard, fabric scraps, plastic bottles) and basic electronics (LEDs, simple circuits) to integrate interactive features like light-up logos or pressure sensors. Using tablets and the Makey Makey kit, they program a digital 'ad campaign' that activates when their sneaker is stepped on or touched, linking the physical prototype to a creative digital message about fair trade, sustainability, or consumer choices. Throughout, students apply the Design Cycle to research real sneaker brands, brainstorm features that reflect responsible consumerism, and iteratively build and test their hybrid creations. The project culminates in a 'Sneaker Expo' where teams showcase both their wearable prototypes and their persuasive tech-powered campaigns, reflecting on how products and advertising express values and influence choices."
+        "t": "GarageBand",
+        "d": "Students compose two short jingles for the same product?one designed to create excitement and one designed to build trust. This lets them test how sound can engage an audience before any factual claim is made. Another class listens without seeing the product and records which version makes it seem more appealing. Students revise the less effective jingle after hearing the audience's reasons. Each group ends with two contrasting recordings and a refined final jingle. GarageBand provides instruments, loops and recording tools in one music-making space."
+      },
+      {
+        "t": "Teachable Machine",
+        "d": "Students photograph and sort clean packaging into recyclable and non-recyclable groups, then train an image model to recognise the two categories. This opens a sharp discussion about whether green colours and nature images persuade people even when the packaging itself is difficult to recycle. Groups test each other's models with misleading packages and record where the computer makes mistakes. Camera-driven sorting arms in recycling facilities work in a similar way, using images to direct materials into different streams. Students end with a working classifier and a test record showing which visual clues helped or confused it. Teachable Machine trains a simple image-recognition model from student-provided examples."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Students empathise with shoppers who want quick, honest product information, then define what a fair supermarket display should reveal before a purchase. Using recycled cardboard, paper packaging and LEGO SPIKE Prime pieces, they ideate and build a shelf display where pressing a product activates a motor that reveals a hidden environmental or ethical consequence card. Teams prototype the mechanism, code the force sensor and motor, and test whether classmates understand the message without an explanation. They refine the wording, movement and timing after watching where users hesitate or choose only from the attractive front labels. Each team demonstrates a working physical display that changes a consumer's decision by making missing information visible."
       }
     ],
     "audited": true,
@@ -4799,7 +4799,8 @@
     ],
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T06:03:42.535Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T06:46:46.813Z"
   },
   {
     "ca": "Glen Waverley",
@@ -4809,31 +4810,31 @@
     "lo": "Lines of inquiry to be confirmed once planner is uploaded",
     "s": [
       {
-        "t": "Padlet",
-        "d": "Students become investigative journalists, curating a digital wall of real-world advertising campaigns that have shaped consumer choices and even swayed public opinion. This activity brings to life the central idea of how human-made systems?like advertising and media?interconnect with communities and influence sustainable futures. To deepen the challenge, students must include and contrast campaigns from different cultures or decades, sparking debate about fairness and manipulation. Their final Padlet is a vibrant, multimedia timeline, featuring embedded video ads, scanned print posters, and voice-over critiques. Using Padlet's map view, they plot where each campaign originated, revealing global patterns in consumer influence. Students finish with a sharp eye for hidden bias and a toolkit for questioning what they see in the world around them."
-      },
-      {
-        "t": "Podcasting using Canva",
-        "d": "Students step into the role of ethical consumer advocates, producing a podcast episode that exposes the environmental and social impact of everyday products. This directly explores how organisations and systems shape the world's sustainable future?a key unit focus. Inviting a local business owner or sustainability expert for a recorded interview gives students a real audience and expert voice. The final artefact is a polished podcast, complete with intro music, sound effects, and student-led discussions ready for the school community to stream. They use Canva's podcasting tools (https://www.canva.com) to edit, layer interviews, and add professional touches. Students walk away with confidence in speaking up, knowing their voices can drive change."
-      },
-      {
-        "t": "Canva",
-        "d": "Students become creative directors, designing eye-catching ethical advertising campaigns for products that support fair trade or environmental sustainability. This task challenges them to flip the script on traditional advertising?aligning with the inquiry into how influences shape consumer choices. Students must create two contrasting adverts: one using persuasive techniques for a 'fast fashion' product, and one for a sustainable alternative, then invite peers to vote on which is more convincing and why. Their final artefact is a set of professional-quality posters, shared digitally with families and displayed in a virtual gallery. Canva's Magic Write feature helps students craft punchy, original slogans and copy that stand out. They leave empowered to use media for good, not just persuasion."
-      },
-      {
-        "t": "National Geographic MapMaker",
-        "d": "Students become global supply chain detectives, mapping the journey of a common product?like a chocolate bar or sneaker?from raw materials to the shop shelf. This activity brings the structure and function of organisations to life, showing how interconnected our choices are with distant communities and environments. Students are challenged to annotate their maps with ethical dilemmas at each stage: Where are workers treated fairly? Where is the biggest environmental impact? Their final product is an interactive, annotated map tracing supply routes, ethical hotspots, and decision points, published for the school community to explore. Using MapMaker's custom annotation and layer tools, students add photos, links, and pop-up facts for a rich, interactive experience. They finish with a global perspective on how every purchase connects them to people and places far beyond their own."
+        "t": "Freeform",
+        "d": "Students collect advertising examples and build a shared map showing how price, packaging, influencers, friends and values shape consumer choices. This shows how organisations connect people, messages and purchasing systems. Groups draw arrows between examples and label who benefits, who pays and what happens after the product is discarded. Another class adds comments showing which messages would influence them and why. Students then reorganise the board to separate strong evidence from assumptions. They finish with a visual map of the forces behind everyday purchases."
       },
       {
         "t": "Microsoft Excel",
-        "d": "Students become data analysts, using Microsoft Excel to investigate how advertising and peer influence affect spending habits among their peers. They design and distribute a survey about recent purchases, brand preferences, and the impact of social media ads, then collect and organise the responses in Excel. Students use built-in charting tools to visualise trends?such as which advertising techniques are most persuasive or which products are most influenced by peer recommendations. Their final artefact is a data dashboard featuring graphs, pivot tables, and a short written analysis that highlights key findings and ethical considerations. This process sharpens their critical thinking and statistical literacy, revealing how data can uncover hidden patterns in consumer behaviour. Students present their dashboards to the class, sparking discussion about how informed choices can lead to more sustainable consumption."
+        "d": "Students enter class ratings for several product advertisements and graph which messages most affect willingness to buy. This makes peer pressure, price, sustainability claims and emotional appeals visible in real data. Groups compare results by changing one advertising feature at a time and recording any shift in ratings. They use the patterns to advise a fictional company which strategy is persuasive and which could mislead buyers. Students finish with a spreadsheet containing organised data, charts and evidence-based recommendations. Excel's tables and charts make patterns easier to spot and question."
       },
       {
-        "t": "Future Market Makers: The Ethical Pop-Up Shop Challenge",
-        "d": "Students design and build miniature pop-up shop stalls from recycled cardboard, fabric scraps, and craft supplies, representing businesses that prioritise ethical and sustainable consumer choices. Using micro:bit or Makey Makey kits, they integrate interactive digital elements?like simple LED displays or touch sensors?to showcase advertising strategies, product info, and eco-impact stats. Teams prototype their stall layout, signage, and product packaging, then pitch their business model to classmates, reflecting on how organisation, ethical decisions, and advertising shape consumer behaviour. The hands-on project empowers students to creatively visualise and test real-world sustainable commerce in a collaborative, memorable Makerspace experience."
+        "t": "Wise Discussion Chatbots",
+        "d": "Students hold a structured written discussion about whether a company should sell a cheap product when its production harms workers or the environment. This helps them examine how business decisions affect consumers, communities and a sustainable future. The teacher sets up a Socratic Tutor that asks students to explain evidence, consider another viewpoint and revise weak claims. Students swap one key argument with a partner, then return to the discussion and test whether their position still holds. They finish with a written conversation showing how their thinking changed. The teacher-controlled prompts keep the discussion focused without treating the chatbot as a research source."
+      },
+      {
+        "t": "Delightex",
+        "d": "Students build a virtual shop where each product choice leads to a different social, financial or environmental consequence. This makes the links between advertising, purchasing, organisations and waste easier to see. Groups exchange shops and test whether the clues provided are enough to support a fair choice. They then revise prices, signs and consequences so the choice is difficult rather than obviously right or wrong. Students finish with an interactive 3D scene that invites visitors to make and explain a consumer decision. CoBlocks let students code how objects respond when a visitor selects them."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "Students design a short advertisement for a familiar product, then remake it as an honest version that includes its environmental and ethical costs. This shows how organisations can frame information to influence what people notice and buy. Groups show both versions to another class and ask which words, images and omissions changed their response. They revise the honest advertisement so it stays persuasive without hiding important information. Students finish with a matched pair of social-style graphics or short promotional videos. Adobe Express provides quick layouts for combining clear text, images and simple video."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Students empathise with shoppers confused by sustainability labels, then define the need for a clear packaging-return station. Using LEGO parts, cardboard and cleaned recycled packages with coloured category labels, they build and code a working model that uses the colour sensor and motors to direct items into different return bins. Teams sketch several ideas, prototype one, and test it with users who deliberately insert items quickly, backwards or into the wrong opening. They improve the structure, instructions and code after recording where the system fails. Each team demonstrates a working physical model and explains how its design could help a school community make more responsible consumer choices."
       }
     ],
-    "audited": false,
+    "audited": true,
     "plannerText": "The Year 6 'How We Organise Ourselves' unit explores how influences shape consumer choices and impact the world's sustainable future. Students investigate advertising strategies, peer and social influences, and the ethical and environmental consequences of consumer decisions. The unit emphasizes critical thinking, research, and communication skills through collaborative inquiry, data analysis, and creative multimodal presentations. Students are encouraged to reflect on alternative, fair, and sustainable models of consumerism, culminating in group projects and action-oriented tasks that connect learning to real-world contexts.",
     "stemRebooted": true,
     "humanVerified": false,
@@ -4855,7 +4856,8 @@
     ],
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T06:04:06.996Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T06:47:56.949Z"
   },
   {
     "ca": "Glen Waverley",
@@ -4865,31 +4867,31 @@
     "lo": "The scientific method; How experiments lead to new understandings; The relationship between planets and the Sun; Energy transfer and transformation in circuits",
     "s": [
       {
+        "t": "Micro:bit",
+        "d": "Students wire foil switches to a Micro:bit and program its LED grid to show when a test circuit is open or closed. They change one variable at a time, such as the number of connected components, and record whether their prediction holds. Each group swaps its device with another group, which must work out the tested variable from the program's response. Students then debug any test that gives inconsistent results and repeat it. They end with a working circuit-testing device and a short set of evidence-based conclusions. The pins, crocodile clips and programmable LED grid make the circuit's input and output easy to see."
+      },
+      {
         "t": "Minecraft Education",
-        "d": "Students become scientists inside Minecraft by designing and running experiments in the 'The Scientific Method' lesson world (https://education.minecraft.net/en-us/lessons/the-scientific-method). As they test hypotheses and collect data, students experience first-hand how experimentation can confirm, challenge, or spark new scientific theories. They work in teams to solve open-ended challenges, debating different approaches and learning that sometimes the most unexpected results lead to the biggest breakthroughs. Their final artefact is a digital science journal?screenshots, experiment logs, and reflections?shared with the year level as a virtual science fair. They use Minecraft's in-game camera and Book & Quill to capture and annotate their discoveries, making their process visible and interactive. Students leave with a scientist's mindset: curious, collaborative, and ready to question the world around them."
-      },
-      {
-        "t": "Sky Map",
-        "d": "Students use Sky Map to track and identify planets and constellations, turning their iPads into a window to the solar system. This brings the line of inquiry about the relationship between planets and the Sun to life, as students see planetary motion in real time. They take on the role of 'astronomy guides,' creating narrated video tours for Year 3 students who are just starting to explore space. Each student produces a short, screen-recorded stargazing guide, complete with their own voiceover and highlighted celestial objects. The app's augmented reality overlay helps students compare what they see in the sky to what is mapped in the app, deepening their understanding of planetary positions and orbits. By teaching others, students gain confidence in explaining complex ideas and realise that science is something they can share, not just study."
-      },
-      {
-        "t": "Lego Spike Prime",
-        "d": "Students engineer and code Lego Spike Prime robots to model energy transfer and transformation in simple circuits. This hands-on investigation connects directly with the unit's exploration of how energy moves and changes form within systems. Working in teams, students design a 'chain reaction' machine that powers a sequence of events?like lighting an LED, spinning a motor, or triggering a buzzer?mirroring real-world energy flows. Their finished machines are showcased in a live demo day for parents and the school community, with each team explaining the science behind their design. Students dive into the Spike Prime's data logging feature to track voltage and current, using real-time graphs to support their explanations. They walk away with the ability to turn abstract energy concepts into something they can see, measure, and improve."
-      },
-      {
-        "t": "Teachable Machine",
-        "d": "Students train an image-classification model in Teachable Machine to investigate how packaging influences sustainable consumer choices. They photograph or collect examples of products with features such as recycling symbols, excessive wrapping, green colour palettes and vague environmental claims, then sort them into carefully defined classes. Using Teachable Machine's image project, webcam capture and live confidence scores, teams test whether the model can distinguish strong sustainability evidence from visual greenwashing. Misclassifications prompt students to revise their categories, balance the training samples and question the assumptions embedded in their dataset. Each team produces a tested classifier and a written set of evidence-based packaging criteria for responsible shoppers. A class demonstration compares how reliably the models judge unfamiliar products and exposes why both people and machines need trustworthy evidence."
+        "d": "Students build a Minecraft experiment that tests how changing one condition affects a clear result, while keeping all other conditions the same. This makes the scientific method visible and shows why repeated trials can confirm or contest an idea. Groups exchange worlds and run each other's experiments without being told the expected outcome. They then revise any setup that does not produce fair or repeatable evidence. Students end with a working experiment, recorded trial results and a conclusion displayed inside the world. Minecraft's blocks make variables easy to isolate, rebuild and test."
       },
       {
         "t": "Microsoft Excel",
-        "d": "Students design and conduct surveys to investigate consumer behaviour, collecting data on choices that affect sustainability and the environment. They input their survey results into Microsoft Excel and use pivot tables to organise and summarise the data effectively. By applying conditional formatting, students highlight trends and patterns in consumer decisions, such as preferences for eco-friendly products or energy use habits. They compare their class data with national statistics to explore how individual choices relate to broader societal behaviours. Students then create a dynamic infographic dashboard featuring colourful charts, key insights, and evidence-based recommendations. This dashboard becomes a visual tool to communicate how consumer behaviour influences sustainability, empowering students to see themselves as informed changemakers."
+        "d": "Students enter results from repeated circuit or energy-transfer experiments into an Excel table. They calculate averages and create graphs to check whether the evidence supports their first prediction. Groups receive the same data with one unusual result included and decide whether it is an error, an exception or a reason to repeat the test. They compare graph choices and select the one that communicates the pattern most honestly. Students end with a labelled graph and a written claim supported by specific data. Excel's formulas and charts allow results to be checked and viewed in several ways."
       },
       {
-        "t": "Smart Swap Stop: The Sustainable Vending Machine Challenge",
-        "d": "Students team up to design and build a working prototype of an eco-friendly vending machine using recycled cardboard, plastic bottles, motors, LEDs, and micro:bit controllers. Each group invents a machine that 'dispenses' sustainable choices?like reusable or upcycled items?triggered by coded micro:bit sensors or buttons. Students must prototype mechanical components (doors, levers, conveyor belts) and program digital feedback (lights, messages) to simulate real-world consumer decisions and environmental impacts. This project brings together engineering, coding, and creative problem-solving, letting students explore how technology can influence responsible consumerism and promote a sustainable future."
+        "t": "Teachable Machine",
+        "d": "Students photograph examples of recyclable and non-recyclable packaging in Teachable Machine and train an image model to sort them. They test whether changing the number, angle and background of the training images improves the model's reliability. Another group challenges the model with difficult items, such as crushed boxes or partly hidden containers, before suggesting better training data. This mirrors camera-driven sorting systems that guide robotic arms in recycling facilities. Students end with a tested classification model and a record of examples it still sorts incorrectly. Teachable Machine shows confidence levels, helping students decide whether the evidence is strong enough to trust."
+      },
+      {
+        "t": "Explain Everything",
+        "d": "Students draw a Sun, planets and orbital paths in Explain Everything, then record themselves explaining how distance and movement shape the planetary system. They use arrows, scale notes and moving objects to distinguish a useful scientific model from the real system it represents. Partners pause the recording at one questionable claim and add a challenge that must be answered with clearer reasoning. Students revise the explanation when the challenge exposes missing evidence or an inaccurate assumption. They end with a narrated screencast that shows both the model and how their explanation changed. Explain Everything records the screen and voice while students move and annotate their diagrams."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Students empathise with school staff who sort mixed classroom waste, then define one packaging item their machine should move into the correct container. They ideate with sketches before building a physical prototype from LEGO parts, motors, cardboard chutes and clean recycled packaging. They code the model to use a colour or distance sensor, then test it repeatedly with different item positions and adjust the mechanism. Teams record failed trials on paper and change one feature at a time so each improvement is based on evidence. At the end, each machine demonstrates a complete sensing, movement and sorting cycle while students explain the energy transfers and experimental evidence behind its final design."
       }
     ],
-    "audited": false,
+    "audited": true,
     "plannerText": "The Year 6 'How the World Works' unit explores the interdependence of human and natural worlds, focusing on consumer choices, their consequences, and alternative models for a sustainable future. Students investigate advertising strategies, peer influences, and environmental impacts through research, surveys, and analysis. The unit emphasizes critical thinking, collaboration, and communication, with learning experiences ranging from scientific inquiry and data analysis to creative multimodal presentations and hands-on STEM projects. Assessment tasks require students to synthesize their findings and propose actionable solutions for responsible consumerism.",
     "stemRebooted": true,
     "humanVerified": false,
@@ -4923,7 +4925,8 @@
     ],
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T06:04:33.872Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T06:49:16.979Z"
   },
   {
     "ca": "Glen Waverley",
