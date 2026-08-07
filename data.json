@@ -6685,28 +6685,28 @@
     "lo": "Different types of bridges and their design features; How materials and engineering principles contribute to structural strength and stability; Testing and refining designs through experimentation",
     "s": [
       {
+        "t": "Stop Motion Studio",
+        "d": "Students photograph a model bridge frame by frame as it bends, twists and finally collapses under an increasing load. This makes hidden forces visible and opens questions about why particular shapes and materials keep bridges stable. Groups swap animations, pause before the collapse and predict which part will fail first. They then remake the final frames to show one design change that could prevent the failure. Each group ends with a short before-and-after animation explaining structural failure and improvement. Stop Motion Studio's frame-by-frame playback makes tiny changes in the bridge easy to notice."
+      },
+      {
         "t": "Minecraft Education",
-        "d": "Students become bridge engineers, designing and building their own imaginative bridges in a custom Minecraft world that challenges their understanding of strength, stability, and purpose. This hands-on digital construction directly explores how engineers use materials and design features to make structures that last. By working in teams and swapping roles as architects, builders, and testers, students experience the real-life collaboration of engineering firms. Their final product is a virtual bridge tour, complete with signs explaining their design choices and a walkthrough video to share at assembly. Using Minecraft's Redstone mechanics, students can add working drawbridges or moving parts to demonstrate engineering innovation. They leave with the confidence to see themselves as real-world problem-solvers who can shape the built environment."
+        "d": "Students build a bridge across a fixed Minecraft span using a strict block limit and requirements for pedestrians, boats and safe access. The constraints show that a bridge must be stable, economical and fit for a particular purpose. Another group inspects the bridge, follows every route and leaves specific feedback about access, supports and wasted materials. Students revise their structure while keeping within the original block budget. They end with a working virtual bridge and a clear record of the changes they chose to make. Minecraft's shared building world allows students to inspect a structure from above, below and inside."
+      },
+      {
+        "t": "Microsoft Excel",
+        "d": "Students measure how much load several classroom bridge prototypes hold and enter each result into an Excel table. Comparing the results helps them work out how span length, material and structural shape affect strength. Groups exchange data so the class can test whether a pattern holds across many bridges rather than just one. Students use the evidence to choose one feature they would keep and one they would change in their next design. They end with labelled graphs that reveal which designs carried the greatest load. Excel's chart tools turn repeated test results into patterns students can see quickly."
+      },
+      {
+        "t": "Micro:bit",
+        "d": "Students program a Micro:bit to show a warning symbol when a model bridge tilts beyond a chosen point during testing. This links structural stability to a measurement rather than relying only on what the bridge looks like. Each group chooses its own warning threshold, tests it on several slopes and adjusts the code when the alert comes too early or too late. Students then place the programmed board on different bridge prototypes and compare how each structure moves as load is added. They end with a working tilt-warning device and a table of observations from repeated tests. The Micro:bit's built-in accelerometer detects movement and tilt while the LED grid displays the warning."
+      },
+      {
+        "t": "Explain Everything",
+        "d": "Students record a narrated bridge analysis while drawing arrows over a diagram to show compression, tension, load and support. This helps them explain why arches, triangles, cables and beams behave differently instead of simply naming bridge types. Partners exchange recordings and identify one force explanation that is clear and one point that needs stronger evidence. Students revise the explanation by redrawing forces and adding the result of a classroom load test. They end with a short screencast that connects a bridge's visible features to its strength and purpose. Explain Everything records students' voices and on-screen drawing together, so their thinking unfolds step by step."
       },
       {
         "t": "Lego Spike Prime",
-        "d": "Students will build and program physical model bridges using Lego Spike Prime, then test their strength and stability under load. This activity brings the line of inquiry about how engineering principles and materials affect structural strength to life. Students take on the role of design consultants, presenting their bridge solutions to a 'city council' made up of classmates and teachers. The final artefact is a functioning Lego bridge with coded sensors that trigger alerts or lights when the bridge is overloaded, showcased in a live demonstration. Spike Prime's data logging feature lets students collect and graph real-time load and stress data as weights are added. They gain a first-hand understanding of how engineers use testing and iteration to create safe, reliable structures."
-      },
-      {
-        "t": "Canva",
-        "d": "Students become bridge detectives, creating interactive infographics in Canva to compare famous bridges around the world and the unique features that make each strong and stable. This investigation dives deep into the line of inquiry about different bridge types and their design features. Students must include a 'design fail'?a real bridge that collapsed?and analyse what went wrong, linking history and engineering. Their finished infographic is published to the school website and displayed at the library for families to explore. Canva's Magic Write tool helps students generate catchy headlines and clear explanations, making their work pop. They walk away with the skills to communicate complex ideas visually and a critical eye for design decisions."
-      },
-      {
-        "t": "Stop Motion Studio",
-        "d": "Students create stop-motion animations that bring the story of a bridge's construction, testing, and refinement to life, using Stop Motion Studio. This creative project connects directly to experimenting with and improving designs through hands-on trials. Students take on the role of science communicators, scripting their animations as if they're explaining the process to a younger class or a TV audience. The final artefact is a short, narrated animation that can be screened at a whole-school STEM showcase or shared online. Stop Motion Studio's onion-skinning and voiceover features let students add smooth movement and engaging commentary, pushing their storytelling skills. They finish with a sense of pride in making engineering concepts accessible and fun for others."
-      },
-      {
-        "t": "National Geographic MapMaker",
-        "d": "Students use National Geographic MapMaker to plot the locations of iconic bridges worldwide, annotating each with its engineering features and the materials used. This mapping activity ties into the inquiry about how materials and environment influence bridge design and purpose. Students act as travel planners, recommending which bridges to visit for a 'World's Strongest Bridges' tour and justifying their choices based on geography and engineering. Their interactive map, complete with custom labels and photos, is shared with families and included in the year-level newsletter. MapMaker's annotation and layering tools allow students to compare bridge types and materials across continents in a way that's visually powerful. They leave with a global perspective on engineering and the ability to connect local learning to the wider world."
-      },
-      {
-        "t": "Bridge Builders' Earthquake Test Lab",
-        "d": "Students work in teams to design and construct model bridges using materials like popsticks, string, rubber bands, and recycled cardboard, focusing on stability and innovative structures. Once built, they mount their bridges onto a simple, student-made 'shake table' (crafted from cardboard, marbles, and rubber bands) and use an iPad to record slow-motion videos of their bridge during simulated earthquakes. Teams analyse footage to identify design strengths and weaknesses, then iterate their creations for improved resilience. This immersive project connects engineering, material science, and real-world problem-solving, making the forces that shape our world tangible and memorable."
+        "d": "Students empathise with pedestrians, cyclists and boat users who need a safe crossing, then define requirements for a bridge with a moving section. They sketch several ideas using LEGO beams, pins, wheels, string, cardboard and recycled tubes before choosing one to prototype. Teams physically build the bridge first, then add a SPIKE Prime motor and code it to raise or turn the moving section. They test repeated openings, add a force-sensor safety control, load the deck and rebuild weak joints until the mechanism works reliably. Each team demonstrates a stable bridge that carries a set load, opens for a model boat and stops safely when the force sensor is pressed."
       }
     ],
     "audited": true,
@@ -6731,7 +6731,8 @@
       }
     ],
     "suggestionAuditAt": "2026-06-08T06:55:47.442Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T07:48:36.855Z"
   },
   {
     "ca": "St Kilda",
@@ -6741,28 +6742,28 @@
     "lo": "The diversity of language and culture across First Nations communities in Australia; The significance of connection to Country as custodial responsibility; Listening to and learning from Indigenous perspectives",
     "s": [
       {
+        "t": "National Geographic MapMaker",
+        "d": "Students map First Nations language regions, major waterways and terrain across Australia using information from teacher-checked Indigenous sources. This shows that First Nations cultures and languages are diverse and closely connected with particular Countries. Groups compare different map layers and choose one place where water, landforms or climate may shape custodial responsibilities. They swap maps and check whether boundaries are described as living cultural regions rather than fixed borders. Each group finishes with an annotated map that includes language names, environmental features and careful source notes. MapMaker's geographic layers let students test how cultural and environmental patterns sit alongside one another."
+      },
+      {
         "t": "Field Guide to Victoria",
-        "d": "Students become digital ecologists, using the Field Guide to Victoria app to discover and profile local species that are significant to First Nations communities. Exploring the diversity of language and culture, they investigate how different animals and plants are woven into stories, art, and daily life across Indigenous nations. To deepen the experience, students act as junior rangers, creating short video field reports for a virtual exhibition shared with families and local Elders. Each group curates a multimedia species profile, blending photos, field notes, and voice recordings that highlight cultural connections to Country. By leveraging the app's interactive species identification and audio features, students can embed authentic calls or sounds into their reports. They walk away with a sense of place and a new appreciation for how deep knowledge of Country is passed down through generations."
+        "d": "Students identify local Victorian animals that live around the St Kilda campus and research what each species needs to survive. This grounds care for Country in the habitats and wildlife students encounter nearby. Each group chooses one animal and writes a practical care recommendation after considering habitat, water, food and human impact. Groups compare recommendations and decide which action the school community could realistically take. The class finishes with a set of species profiles and evidence-based care recommendations. The app's Victorian species information keeps the investigation local and specific."
       },
       {
         "t": "Book Creator",
-        "d": "Students author interactive digital storybooks that weave together Indigenous perspectives on water, land, and sustainability. This project invites them to listen to and retell stories from First Nations voices, exploring custodial responsibility for Country. Each student takes on the role of a cultural storyteller, crafting a narrative that could teach a younger class about respect for the environment. The final artefact is a vibrant, multimedia eBook, rich with embedded audio, video interviews, and original illustrations, ready to be showcased in the school library or shared with families. Book Creator's comic templates and audio hotspots let students layer in dialogue, soundscapes, and even language snippets from different First Nations communities. By publishing for a real audience, students gain creative confidence and a deeper respect for the wisdom held in Indigenous stories."
+        "d": "Students build a narrated book that explains what respectful listening to First Nations perspectives looks and sounds like. This helps them separate learning from Indigenous voices from speaking on behalf of First Nations people. Students select short ideas from teacher-approved First Nations sources, paraphrase carefully and record why each idea matters for caring for Country. A partner listens to every page and checks that the language is respectful, specific and properly attributed. Each student finishes with a multimodal book containing text, images and their own spoken reflection. Book Creator keeps the written, visual and recorded parts together on each page."
       },
       {
         "t": "Microsoft Excel",
-        "d": "Students become data detectives, gathering and analysing class-wide data on water use, waste, or biodiversity in their own school environment. This hands-on investigation connects directly to the line of inquiry about how human actions impact ecosystems and how we can act as custodians. They take on the challenge of presenting their findings to the school council, advocating for a new sustainability initiative based on their evidence. Their final product is a set of dynamic, colour-coded graphs and charts that reveal patterns and spark real conversations about change. Using Excel's conditional formatting and chart creation tools, students turn raw numbers into persuasive visual stories. They finish the project with a sense of empowerment?knowing their voice, backed by data, can help protect Country."
+        "d": "Students collect class data about water use, waste or habitat features around the school and enter the results into a table. This gives them evidence for discussing how everyday actions affect Country and local ecosystems. Teams choose the clearest category to investigate, then compare patterns across locations or days instead of guessing where change is needed. They exchange charts and ask one question that the other team must answer from the data. Each team finishes with a labelled graph and one realistic recommendation for caring for the school environment. Excel's tables and charts make patterns and differences easy to see."
       },
       {
-        "t": "Seesaw",
-        "d": "Students create reflective audio journals in Seesaw, capturing their evolving thoughts as they learn from Indigenous guest speakers, virtual excursions, and class discussions. This activity embodies the line of inquiry about listening to and learning from Indigenous perspectives. Students step into the shoes of environmental journalists, recording questions, insights, and 'aha' moments to share with a partner class in another part of Australia. The finished artefact is a timeline of voice recordings, photos, and drawings, easily shared with families and even local community members. Seesaw's voice annotation and timeline features allow students to layer personal reflection with images and text, making their learning journey visible and meaningful. They leave with stronger listening skills and a deeper understanding of how stories shape our connection to Country."
+        "t": "Micro:bit",
+        "d": "Students program a Micro:bit to count two categories of litter during a school-ground survey, using one button for recyclable items and the other for non-recyclable items. This connects custodial responsibility with careful observation and action in a place students use every day. Pairs exchange devices, test the counting instructions and debug any program that records the wrong category. They then use the finished counters to compare which area needs the most attention and choose one practical response. Each pair finishes with a working handheld litter counter whose LED grid displays the recorded totals. The two buttons, variables and 5x5 LED grid make the counting visible while students are outdoors."
       },
       {
-        "t": "National Geographic MapMaker",
-        "d": "Students become cultural geographers, using National Geographic MapMaker to create annotated digital maps showing the diversity of First Nations languages and cultural regions across Australia. This hands-on mapping task brings to life the line of inquiry about the incredible diversity of language and culture within Indigenous communities. To broaden their perspective, students compare their maps with those from other classes and discuss why boundaries and names might differ depending on whose story is told. The final artefact is an interactive, layered map with custom markers, pop-up facts, and embedded links to stories or language samples, ready for display at a school assembly. MapMaker's drawing, annotation, and layering tools let students build maps that are as rich and complex as the cultures they represent. They finish with a new respect for the importance of place, perspective, and the living legacy of Country."
-      },
-      {
-        "t": "Water Wise Wonderland: Interactive Creek Quest",
-        "d": "Students design and build a flowing creek ecosystem using cardboard, recycled materials, natural elements (pebbles, sticks, leaves), and craft supplies, creating habitats for native animals and plants. They embed Ozobot robots decorated as 'water droplets', programming them to travel along painted or marker-drawn water pathways, simulating the journey of water through different habitats and human interventions (like dams, pollution, wetlands). Along the route, students engineer interactive features?liftable floodgates, filtering stations, and bridges?using simple mechanisms and recycled parts. This hands-on project blends environmental science, First Nations water knowledge, and creative engineering, helping students understand sustainable water management and the importance of caring for waterways."
+        "t": "Lego Spike Prime",
+        "d": "Students empathise by studying how litter or foot traffic can disturb a small habitat, then define one movement problem that could be reduced without touching plants or animals. They ideate with sketches and build a physical prototype from cardboard, recycled materials and LEGO parts before adding a SPIKE Prime motor, distance sensor or force sensor. Teams test whether their model can move a barrier, lift a collection tray or signal when someone comes too close, then adjust the structure and code after each trial. A second team tests the design against agreed measures such as reliability, safe movement and minimal habitat disturbance. Each team demonstrates a working model and explains how feedback changed both the physical build and the program."
       }
     ],
     "audited": true,
@@ -6774,7 +6775,8 @@
     "inspiringRegenRecovered": true,
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T06:58:34.461Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T07:49:32.557Z"
   },
   {
     "ca": "St Kilda",
