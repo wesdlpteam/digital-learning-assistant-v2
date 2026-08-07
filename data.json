@@ -4431,27 +4431,27 @@
     "s": [
       {
         "t": "Tinkercad",
-        "d": "Students become purpose detectives by designing a tiny 'community need object' in Tinkercad, such as a lunchbox clip for one-handed opening, a desk organiser for neurodiverse learners, or a sign holder for a busy library shelf. Their modelling makes People design for purpose visible because every curve, hole, label and measurement must justify who it helps and why it exists. A real Wesley staff member can become the client, with students translating an interview comment into a 3D design constraint rather than designing from imagination alone. The final artefact is a labelled 3D model with a short design brief embedded in the object name and parts, ready to display as a Glen Waverley 'purpose gallery' for families or another year level. Tinkercad's Workplane, Align and Ruler tools let students build with precision, test scale, duplicate improved versions and compare how small design choices change usability. Students leave seeing themselves not as people who decorate objects, but as designers who can notice friction in everyday life and remove it for someone else."
+        "d": "Students design a small 3D classroom aid for a person who finds an everyday task difficult, such as holding cards, organising pencils or turning book pages. They work from a short user brief so every choice has a clear purpose. Students swap models and check whether the size, shape and openings would suit the intended user. They revise one feature after receiving specific feedback. Each student ends with a measured 3D model ready for a plastic test print. Tinkercad lets students reshape and resize solid objects as their ideas improve."
       },
       {
-        "t": "Micro:bit",
-        "d": "Students design an interactive 'audience pulse' device with Micro:bit that lets visitors press buttons to vote on which prototype feature is clearest, most helpful or most engaging. The task sharpens the line of inquiry into effective ways to engage an audience because students gather live feedback rather than guessing what people like. They take on the role of exhibition designers, discovering that a quiet data point from a younger student can be more useful than a loud compliment from a friend. The final artefact is a working handheld feedback tool that displays icons, tallies responses and gives the design team evidence to improve a poster, product or performance before the public showcase. Micro:bit's variables, button inputs and LED matrix display power the counting system, while students debug the code when votes do not behave as expected. Students learn that purposeful design listens, measures and changes, giving them a practical way to include audience voice in future creative decisions."
+        "t": "Freeform",
+        "d": "Students collect and connect notes about small problems experienced by people around the school. They sort the needs by user, place and purpose before choosing one worth solving. Another class adds questions and marks the ideas that would make the greatest difference. Students then map several possible solutions and show why one best matches the need. Each group ends with a clear design brief and a visual trail from problem to chosen idea. Freeform's shared infinite canvas keeps notes, sketches and feedback together."
       },
       {
-        "t": "Wise Discussion Chatbots",
-        "d": "Students enter a design studio with Wise Discussion Chatbots by interviewing simulated stakeholders such as a Prep buddy, a grandparent, a librarian, a new student or a groundskeeper about what makes a design useful. Their conversations reveal how design thinking meets community needs because a strong brief begins with empathy, not with the first idea that appears. Students can deliberately test bias by asking the same design question to several stakeholder personas and noticing whose needs are easiest to ignore. The final artefact is a refined design brief containing user quotes, must-have criteria, possible barriers and one surprising insight to be read by a peer design team before prototyping begins. Wise Discussion Chatbots' persona-based conversation and follow-up questioning features allow students to probe needs, clarify contradictions and practise respectful interviewing before meeting real people. Students gain the confidence to ask better questions, realising that listening is a creative act with the power to change what gets built."
+        "t": "Animating a Character with Adobe Express",
+        "d": "Students record a designed character delivering a 30-second message that asks the school community to support a useful change. They choose the character, words and tone to suit a specific audience such as younger students, families or teachers. Partners listen without seeing the planning notes and explain what action they think the message requests. Students rewrite and record the message until the purpose is immediately clear. Each student ends with a short animated appeal that can be played to its intended audience. Adobe Express automatically lip-syncs the on-screen character to the student's recorded voice."
       },
       {
-        "t": "Teachable Machine",
-        "d": "Students train Teachable Machine to become a 'design sorter' that classifies classroom packaging, posters or product sketches by intended purpose, such as inform, protect, persuade or assist. This investigation makes How design thinking creates in various ways concrete because students see that purpose can be read through visual choices like colour, shape, symbols and layout. The activity mirrors camera-driven sorting systems in recycling facilities, where machines learn from examples to identify materials and send them to the right processing stream. The final artefact is a live image model that students demonstrate to another class, showing which examples it classifies confidently, which ones confuse it, and what that reveals about unclear design. Teachable Machine's image training classes, confidence scores and retraining workflow drive the lesson as students add better examples, remove misleading data and test the model under different lighting or angles. Students discover that both human designers and AI systems need carefully chosen evidence, making them more critical creators and more thoughtful users of smart technologies."
+        "t": "Minecraft Education",
+        "d": "Students explore and build in Revamp Melbourne to create a solution for the city's future needs: https://education.minecraft.net/en-us/lessons/revamp-melbourne. They make design choices that respond to what people need now and may need later. Teams exchange builds and test whether visitors can work out each solution's purpose without an explanation. Students revise confusing spaces, signs or structures after the visit. Each team ends with a working Minecraft model of a purposeful Melbourne improvement. Minecraft's shared building world allows students to walk through and experience one another's designs at human scale."
       },
       {
-        "t": "Insta360 camera",
-        "d": "Students create a 360-degree 'empathy walk' of Glen Waverley campus spaces where design either helps people move, gather, read, wait or belong. The immersive investigation brings People design for purpose into focus because viewers can stand inside a space and notice how height, sound, traffic flow and signage affect different users. Students can film from unusual perspectives, such as wheelchair height, a Prep student's eye level or the viewpoint of someone carrying sports gear, making design needs impossible to dismiss. The final artefact is a navigable 360 tour with spoken hotspot-style explanations recorded in the Insta360 workflow, offered to staff or student leaders as a design recommendation experience rather than a flat report. Insta360's reframing, horizon levelling and tiny-planet or first-person view options let students choose the most persuasive perspective for each design problem. Students come to understand that audience engagement is not only a media skill but an act of helping others feel what a user feels before asking them to support change."
+        "t": "Kahoot",
+        "d": "Students build a short Kahoot that teaches an audience how to use a newly designed school service, space or object. They write questions that reveal whether their instructions and visual choices are clear. A different group plays the quiz without receiving any extra explanation. Students study the incorrect responses and rewrite the questions or information that caused confusion. Each group ends with a tested interactive quiz that teaches its intended audience. Kahoot displays player responses immediately, giving designers quick evidence about what worked."
       },
       {
-        "t": "Touch-to-Talk Community Story Sculptures",
-        "d": "Students use the Design Cycle to create an interactive cardboard and recycled-material sculpture that expresses a message, story, or need from the Glen Waverley community, such as welcoming new students, caring for shared spaces, or celebrating cultural identity. They build with cardboard, foil tape, fabric scraps, popsticks, clay, bottle caps, and hot glue, then connect hidden conductive touch points to a Makey Makey so the sculpture plays student-recorded voices, sound effects, or music when an audience touches different parts. Each prototype is tested with classmates to see whether the design clearly communicates its purpose and invites people to interact. The final gallery becomes a hands-on expression exhibition where students show how design choices can engage an audience and give ideas a memorable voice."
+        "t": "Lego Spike Prime",
+        "d": "Students empathise with a school user and define one repetitive task that a moving LEGO model could make easier, such as sorting coloured tokens or opening a model barrier. They ideate with paper sketches, then prototype with LEGO elements, motors and only the colour, distance or force sensor needed for the task. Another group tests the model using agreed success criteria while the designers observe failures, rebuild parts and debug the code. Students finish by demonstrating the improved working model and explaining how testing changed its movement, structure or controls."
       }
     ],
     "audited": true,
@@ -4463,31 +4463,22 @@
     "inspiringRegenRecovered": true,
     "inspiringRegenAutoSwapped": [
       {
-        "slot": 2,
-        "fromTool": "Micro:bit: Data Handling",
-        "toTool": "Seesaw",
+        "slot": 4,
+        "fromTool": "Minecraft: Revamp Melbourne",
+        "toTool": "Minecraft Education",
         "perComponent": [
           {
-            "from": "Micro:bit: Data Handling",
-            "to": "Seesaw"
+            "from": "Minecraft: Revamp Melbourne",
+            "to": "Minecraft Education"
           }
-        ]
-      },
-      {
-        "slot": 6,
-        "fromTool": "Makerspace/STEM Design Cycle",
-        "toTool": "Book Creator",
-        "perComponent": [
-          {
-            "from": "Makerspace/STEM Design Cycle",
-            "to": "Book Creator"
-          }
-        ]
+        ],
+        "urlEvidence": true
       }
     ],
     "suggestionAuditAt": "2026-06-08T05:53:32.169Z",
     "suggestionAuditVersion": "a1-2026-06-07",
-    "inspiringRegenAtVersion": "r3-2026-05-29"
+    "inspiringRegenAtVersion": "r3-2026-05-29",
+    "inspiringRegenAt": "2026-08-07T06:38:02.008Z"
   },
   {
     "ca": "Glen Waverley",
@@ -4498,27 +4489,27 @@
     "s": [
       {
         "t": "Dollar Street",
-        "d": "Students use Dollar Street to investigate how families earn, manage, and spend income in different economic systems around the world. They explore the platform's photo galleries, focusing on images of workspaces, markets, and household goods. Students select three families from varying income levels and create a visual report or digital poster comparing how each family's economic choices reflect their resources and responsibilities. This activity supports inquiry into wealth, income management, and economic diversity. Dollar Street's AI-driven categorisation of household assets is similar to how economists use image analysis to study global economic patterns. Students present their reports and reflect on the meaning of wealth and the responsibilities that come with managing resources."
+        "d": "Students compare photos of beds, kitchens, toys and transport across different income levels on Dollar Street. They look for signs of wealth that money alone cannot explain, such as safety, time, health, skills and family support. Each pair chooses one everyday object and swaps its photo trail with another pair to check whether their conclusions are fair. Students discuss why two homes with similar incomes may still offer very different choices and opportunities. They finish with a paper evidence board showing the photos they examined, what they noticed and one question they still have. Dollar Street's homes are arranged by purchasing-power-adjusted consumption, making visual comparison across countries possible."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Students build a survey that asks classmates how they would manage a fixed weekly income across needs, wants, saving, giving and unexpected costs. This makes the responsibilities of managing income visible through real choices rather than a single correct budget. Another Year 5 class completes the survey, then the creators compare the responses with their own predictions. Students revise one question if its wording pushed people towards a particular answer. They finish with an auto-generated chart and a short written conclusion about the choices people valued most. Microsoft Forms collects responses and creates charts automatically."
       },
       {
         "t": "Explain Everything",
-        "d": "Students will design interactive explainer videos mapping out how income is generated and managed in different professions, using Explain Everything's dynamic whiteboard tools. This hands-on project brings the line of inquiry 'Income is earned and managed in many ways' to life through visual storytelling and voice narration. Students take on the role of financial educators, crafting resources for younger peers or families to demystify where money comes from and how it can be used. The finished product is a multimedia presentation combining hand-drawn diagrams, animated sequences, and live annotations, which can be shared with the school community or uploaded to the class website. Explain Everything's infinite canvas and real-time collaboration features empower students to build layered, interactive content that evolves as their understanding deepens. This process fosters creative communication and a sense of responsibility as students become advocates for financial literacy."
+        "d": "Students draw and record a narrated money-flow diagram showing how income moves through a household, business or community organisation. They explain where money is earned, spent, saved, taxed or donated and what happens when one part changes. Partners exchange diagrams and ask the creator to add one unexpected event, such as a broken appliance, fewer customers or a rise in costs. Students then update their explanation to show how the whole economic system responds. They finish with a narrated screencast that makes each decision and consequence easy to follow. Explain Everything records students' voices while they draw, move and annotate items on the whiteboard."
       },
       {
-        "t": "Canva",
-        "d": "Students will create visually compelling infographics that redefine wealth beyond money, highlighting social, cultural, and environmental forms of value. This activity directly addresses the line of inquiry 'Wealth is more than money' by encouraging students to research and represent diverse perspectives on what it means to be 'rich'. Students act as social campaigners, designing posters for a school-wide exhibition that challenge common assumptions and spark conversations about true prosperity. The final artefacts are vibrant, data-driven infographics using Canva's advanced Magic Write and charting tools, ready to be displayed around campus or shared digitally with families. By leveraging Canva's Magic Write for headline generation and its drag-and-drop data visualisation, students move beyond basic poster-making to craft persuasive, evidence-based arguments. Through this, they develop the mindset of changemakers who see value in all its forms and inspire others to broaden their definitions of success."
-      },
-      {
-        "t": "Podcast Equipment",
-        "d": "Students will produce a podcast series interviewing local business owners, workers, and community members about their experiences earning and managing income. By exploring 'Responsibilities when managing income', students uncover real-life stories that connect economic concepts to the lived experiences of people in their neighbourhood. Acting as investigative journalists, students learn to craft thoughtful questions, record high-quality audio, and edit compelling episodes that give voice to diverse perspectives. The end result is a polished podcast series, complete with intro music, sound effects, and episode summaries, published on the school's digital platforms for the wider community. Using the podcast equipment's multi-track recording and mixing capabilities, students experiment with advanced editing techniques to create professional-sounding productions. This empowers them to amplify community voices and develop empathy, curiosity, and confidence as storytellers and listeners."
+        "t": "National Geographic MapMaker",
+        "d": "Students layer population and terrain data, then annotate places where people might earn income through farming, manufacturing, tourism, trade or services. This shows that income is earned in different ways because places have different resources, environments and connections. Small groups exchange maps and challenge one claim that does not yet have enough geographic evidence. Students adjust their annotations and add a possible responsibility, such as protecting land or paying workers fairly. They finish with an annotated map showing how geography can shape economic choices and opportunities. MapMaker's data layers let students compare patterns rather than simply view a static map."
       },
       {
         "t": "Adobe Express",
-        "d": "Students will craft animated video campaigns advocating for responsible income management, blending storytelling with digital design in Adobe Express. This project brings the line of inquiry 'Responsibilities when managing income' into focus by challenging students to dramatise scenarios about budgeting, saving, and ethical spending. Students step into the shoes of creative directors, scripting and animating stories that could genuinely influence their peers' financial habits. Their final artefacts are short, impactful animated videos using Adobe Express's Animate from Audio feature, ready to be screened at assembly or shared in a digital newsletter. By harnessing Animate from Audio, students turn their voiceovers into expressive character animations, elevating their message and captivating their audience. This process cultivates digital agency and a sense of social responsibility as students use their creativity to inspire positive change."
+        "d": "Students design a short campaign video arguing that a community should measure wealth with more than money. They choose three indicators, such as health, education, clean spaces, free time, belonging or access to services, and explain why each matters. The videos are shown to another class, whose students choose the indicators they would use when judging whether a community is doing well. Creators revise one scene after hearing which message was least clear. They finish with a polished video that proposes a broader way to describe community wealth. Adobe Express provides simple layouts, text, images and short-video editing in one app."
       },
       {
-        "t": "Mini Marketplace Mayhem: Build, Trade & Thrive!",
-        "d": "Students work in teams to design and construct their own miniature market stalls using cardboard, fabric scraps, recycled packaging, and craft materials. Each group invents a unique product or service (e.g., tiny crafts, handmade tokens, or simple games) and sets up their stall in a classroom 'market'. Using Sphero Indi robots coded as delivery carts, students simulate trading, earning income, and managing resources?navigating their robots between stalls to buy, sell, and barter. This hands-on project lets students experience the complexities of economic systems, understand wealth beyond money, and reflect on the responsibilities of managing income in a vibrant, creative marketplace they build themselves."
+        "t": "Lego Spike Prime",
+        "d": "Students empathise with a school canteen worker and customers, then define a problem involving fair, quick and accurate distribution of limited items. Using LEGO pieces, cardboard signs and reusable tokens, they ideate and build a physical dispenser that uses a motor and either the force, colour or distance sensor to release or sort one item at a time. Teams test it with different customers, record jams or unfair outcomes on paper, and rebuild the mechanism or debug the code. The final demonstration shows the working dispenser, explains how it manages scarce resources and identifies who is responsible when the system makes a mistake. This follows the Empathise-Define-Ideate-Prototype-Test cycle while keeping the mechanism physical and testable."
       }
     ],
     "audited": true,
@@ -4530,7 +4521,8 @@
     "inspiringRegenRecovered": true,
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T05:53:58.166Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T06:38:37.840Z"
   },
   {
     "ca": "Glen Waverley",
@@ -4540,28 +4532,28 @@
     "lo": "How structural features and adaptations help living things survive; How weathering and erosion cause change to Earth's surface; How light is used in science and technology",
     "s": [
       {
-        "t": "Teachable Machine",
-        "d": "Students build a classroom AI called Adaptation Detective that learns to classify living things and materials from close-up images: waxy leaves, hooked beaks, camouflage patterns, smooth pebbles, cracked rock and transparent plastics. The investigation makes the interactions between living things, materials and light visible because students must decide which features are useful evidence and which are misleading noise. They become ethical machine-learning trainers, discovering how a biased image set can make the AI 'think' a survival feature matters when it is really just the background, shadow or camera angle. The final artefact is a working image-classification model with a student-written 'trust card' for Year 4 scientists explaining when the model should and should not be used. Teachable Machine's train-test-preview workflow and confidence percentages power the lesson, letting students retrain the same model after deliberately adding confusing examples. Students leave seeing AI not as magic, but as a decision-making system humans must question, improve and use responsibly when interpreting the living and physical world."
-      },
-      {
         "t": "Micro:bit",
-        "d": "Students turn Micro:bits into field light-meters to investigate how transparent, translucent, reflective and opaque materials change the behaviour of light. This directly opens the inquiry into how light is used in science and technology, because learners collect readings before recommending the best material for a mini greenhouse, animal shelter window or safety reflector. Acting as junior environmental engineers, teams compare places around Glen Waverley campus where too much or too little light could affect plant growth, heat, visibility or animal comfort. The final artefact is a calibrated light-decision card displayed beside each tested location, showing the reading range, material choice and scientific reason for the recommendation. The Micro:bit's built-in light sensor, variables and conditional LED icons power the activity, so students can code warnings such as 'too bright', 'growth zone' or 'low visibility' without needing extra equipment. Students discover that measurement gives them a voice in real design choices, not just an answer in a science notebook."
+        "d": "Students program a micro:bit to measure light levels in sunny, shaded and covered places around the classroom or school grounds. They test how leaves, feathers, paper, plastic and other materials change the reading when placed between the board and a light source. This shows how living things and technologies can use or respond to different amounts of light. Groups swap their mystery materials and use only the readings to work out which ones block, scatter or let through the most light. Each group ends with a coded light meter, a table of readings and a decision about the best material for shade. The micro:bit's built-in light sensing and 5x5 LED grid make the testing visible straight away."
       },
       {
-        "t": "Sphero BOLT",
-        "d": "Students program Sphero BOLT as a roaming 'raindrop' that travels across different classroom landforms to test how slope, surface material and obstacles affect erosion. The activity deepens the inquiry into how weathering and erosion cause change to Earth's surface by turning runoff into a controllable, repeatable system students can debug. They take on the role of catchment planners deciding where a walking track, garden bed or creek crossing should go if the land must survive heavy rain. The final artefact is a live erosion-risk demonstration for families, where each robot path visibly shows a low-risk and high-risk design decision on a labelled terrain model. Sphero BOLT's Draw canvas, roll speed controls and live sensor data make the invisible variables of direction, acceleration and impact part of the scientific argument. Students come away understanding that landscapes are not fixed backgrounds, but changing systems that thoughtful humans can protect."
+        "t": "Minecraft Education",
+        "d": "Students build three versions of the same coastline to show its shape before erosion, after gentle weathering and after a major storm. They change blocks in measured layers so viewers can see how moving water and loosened material reshape Earth's surface. Another group inspects the sequence and suggests where plants, rocks or barriers might reduce further erosion. Students then revise the final coastline and add signs explaining which evidence guided their decisions. Each group ends with a walk-through model that shows change over time and a tested protection idea. Minecraft's block-based world makes removed, moved and deposited material easy to compare."
+      },
+      {
+        "t": "Teachable Machine",
+        "d": "Students photograph and sort examples of leaves into visible feature groups such as broad, narrow, waxy, hairy or spiny, then train an image model to recognise the groups. This helps them test whether structural features can be identified reliably and how those features may support survival. Groups exchange unfamiliar leaf images and check when the model makes a strong match, a weak match or a mistake. Wildlife-monitoring cameras and identification apps use a similar process, learning patterns from many labelled images before classifying a new one. Students end with a working classifier and a record of the extra examples they added to improve it. Teachable Machine displays confidence scores that make uncertain classifications easy to discuss."
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "Students move sand, pebbles and paper landforms one small step at a time to record weathering, erosion, transport and deposition. The animation makes slow changes to Earth's surface visible within a short viewing time. Groups swap films without titles and check whether viewers can identify each process from the movement of material alone. Students reshoot unclear sections so the cause and effect can be seen rather than merely stated. Each group ends with a short stop-motion sequence showing where material starts, how it moves and where it settles. Stop Motion Studio's frame-by-frame capture lets students control each stage precisely."
+      },
+      {
+        "t": "Microsoft Excel",
+        "d": "Students collect repeated measurements of how far light travels through clear, translucent and opaque materials, then enter the results in Microsoft Excel. They use tables and graphs to compare how material type and thickness affect the amount of light that passes through. Each group receives another group's graph without its material labels and uses the pattern to predict which sample was tested. The original group reveals the samples and checks which conclusions were supported by the data. Students end with a labelled graph and a short evidence-based recommendation for a window, shade cover or scientific instrument. Excel's chart tools turn repeated measurements into patterns that are easier to compare."
       },
       {
         "t": "Lego Spike Prime",
-        "d": "Students build mechanical animal adaptations with Lego Spike Prime, such as grabbing beaks, digging claws, seed-cracking jaws or wing-flap mechanisms, then test which design survives a specific habitat challenge. This targets how structural features and adaptations help living things survive by asking students to prove a structure's function through repeated trials rather than attractive appearance. Each team becomes a biomimicry design studio pitching what humans could learn from their creature when solving a real problem such as rubbish collection, seed dispersal, rescue gripping or low-energy movement. The final artefact is a working adaptation test rig that performs a challenge on demand while students explain the survival advantage it models to another Year 5 class. Lego Spike Prime's motor blocks, force sensor and data display allow students to measure grip strength, timing or success rate instead of relying on opinion. Students begin to see living things as brilliant engineers, and themselves as designers who can borrow respectfully from nature."
-      },
-      {
-        "t": "Book Creator",
-        "d": "Students publish an interactive 'Decision Atlas of Light, Life and Land' where each page begins with a real-world dilemma: which material should cover a habitat, which adaptation matters most, or where erosion might change a place next. The book braids the central idea together by showing how interactions between living things, materials and light help people make better decisions about the world. They write as museum curators preparing a family science night exhibit, balancing scientific accuracy with the challenge of making a younger visitor stop, wonder and ask a better question. The final artefact is a multimedia ebook with labelled diagrams, student narration, comparison panels and a final 'decision checkpoint' families can answer at home. Book Creator's comic templates, audio hotspots and read-to-me publishing features let students layer voice, image and explanation without leaving the tool. Students gain the confidence to become science communicators who do more than report facts ? they help an audience decide wisely."
-      },
-      {
-        "t": "Camouflage Coastlines: Build, Erode & Light-Test Survival Creatures",
-        "d": "Students use the Design Cycle to invent a fictional shoreline creature, then prototype its body adaptations with clay, cardboard, fabric scraps, foil, cellophane, popsticks, pipe cleaners, recycled packaging and hot glue. They build a mini coastal habitat in a tray with sand, gravel, rocks and water channels, then simulate weathering and erosion using spray bottles, droppers and gentle water flow to see how the habitat changes. Using LED torches and a simple Arduino or light-sensor meter, teams test how well their creature's colours, textures and reflective features help it hide, signal or survive under different light conditions. After collecting evidence, students redesign both creature and habitat to explain how living things, materials, erosion and light interact to help us make decisions about the world."
+        "d": "Students empathise with people monitoring a fragile sand coastline, then define the need for a device that can detect when part of the model has eroded. They ideate with sketches and prototype a physical shoreline from sand, cardboard, recycled plastic and LEGO, using a SPIKE Prime distance, colour or force sensor only where it can measure a real change. Teams test their model with poured water, observe failures, and rebuild the barrier or sensor position after each trial. They code the model to move or display an alert when the chosen change is detected. At the end, students demonstrate the improved physical prototype and explain how test evidence changed both its structure and its code."
       }
     ],
     "audited": true,
@@ -4590,7 +4582,8 @@
     ],
     "suggestionAuditAt": "2026-06-08T05:54:23.778Z",
     "suggestionAuditVersion": "a1-2026-06-07",
-    "inspiringRegenAtVersion": "r3-2026-05-29"
+    "inspiringRegenAtVersion": "r3-2026-05-29",
+    "inspiringRegenAt": "2026-08-07T06:40:06.050Z"
   },
   {
     "ca": "Glen Waverley",
