@@ -2205,31 +2205,31 @@
     "lo": "How values and beliefs impact choices; How people's choices and actions impact others; Responsible decision-making",
     "s": [
       {
-        "t": "Insta360 camera",
-        "d": "Students create an immersive 360-degree 'decision room' that places viewers inside moments when beliefs and values influence a community. They stage and film scenarios such as including an isolated classmate, responding to unfairness or balancing a personal preference with collective wellbeing. Because the Insta360 camera captures every direction, each group carefully positions contrasting reactions around the scene so viewers must turn and notice multiple perspectives. Students replay the footage, identify visible consequences and refilm after improving how clearly each choice communicates responsibility. The finished guided virtual experience includes spoken prompts inviting viewers to consider whose values shaped the decision and who was affected. Classmates explore each scene and discuss how changing one action could alter the outcome for everyone."
-      },
-      {
-        "t": "Field Guide to Victoria",
-        "d": "Students use the Field Guide to Victoria app to investigate local community values and beliefs by exploring stories, images and interviews about diverse people and places in their region. They collect digital field notes and photos that capture examples of how individuals' choices reflect their values and impact others, such as environmental care or cultural traditions. Using the app's annotation tools, students create a multimedia digital journal that documents their observations and reflections on responsible decision-making in their own neighbourhood. This hands-on exploration deepens their understanding of how beliefs shape actions in real life, linking to natural and social systems around them. They then present their journals in small groups, discussing patterns and differences they discovered, fostering empathy and critical thinking about community impact."
-      },
-      {
-        "t": "Wise Discussion Chatbots",
-        "d": "The teacher creates a Wise Discussion Chatbot using the Character Interview scenario and sets the bot's role as Ava, a community celebration organiser explaining why particular traditions matter to different families. The topic is \"Who We Are: People's choices are influenced by their beliefs and values and can impact others.\". Students chat with the bot to explore a named perspective through guided questioning rather than general research; for example, they ask \"How does this celebration show what your community values?\" and \"What might outsiders misunderstand about this tradition?\". After the chat, students produce a question bank plus a short perspective-and-evidence summary that compares the chatbot responses with unit sources linked explicitly to Who We Are."
-      },
-      {
         "t": "Podcasting using Canva",
-        "d": "Students transform the classroom into a podcast studio and use Podcasting using Canva (https://www.canva.com) to interview family members or community leaders about beliefs and values that have shaped important choices. Acting as investigative journalists, they plan open questions and listen for stories involving courage, kindness, fairness or difficult responsibility. Canva's audio recording, timeline editing and music library allow each group to assemble a polished episode with an introduction, edited interview highlights and a reflective conclusion. Students trim clips, balance voice and music levels, and sequence contrasting perspectives to show how one decision can affect other people. Each episode concludes with the students explaining what surprised them and how their own viewpoint changed. The class hosts a listening gallery and offers feedback on empathetic questioning, evidence and responsible storytelling."
+        "d": "Students record paired interviews about a difficult choice and the belief or value that shaped it. Hearing two answers to the same question shows how different values can lead to different choices. Each pair then invites a family or community member to add a short response to one agreed question. Students choose one moment where an action affected another person and explain what a more responsible choice might have been. They finish with a three-minute podcast episode containing the interview, reflection and closing question for listeners. Canva lets students record and edit the whole episode on an iPad."
+      },
+      {
+        "t": "Canva",
+        "d": "Students design a branching infographic that follows one everyday choice through several possible consequences. This makes the link between personal values, actions and their effects on other people easy to see. Partners swap drafts and choose the path they think is most responsible, then explain which value guided them. Students revise any path where the consequence is unclear or unrealistic. They finish with a decision map that can be displayed beside a real class agreement. Canva's infographic layouts help students organise choices, arrows and outcomes clearly."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Students build an anonymous survey using realistic dilemmas about friendship, fairness, honesty and belonging. The responses show how beliefs and values can lead people to make different choices in the same situation. Another Year 5 class completes the survey so students can compare their expectations with a wider set of views. Students study the automatic charts and discuss why the most popular answer is not always the most responsible one. They finish with a set of survey results and three evidence-based recommendations for class decision-making. Microsoft Forms collects responses and creates charts automatically."
       },
       {
         "t": "Padlet",
-        "d": "Turn Padlet into a living tapestry of beliefs by having students anonymously post sticky notes about choices they've made and the values behind them, then invite classmates to respond with empathy or curiosity. This activity links directly to 'how values and beliefs impact choices', making invisible motivations visible and sparking honest, respectful dialogue. To shake things up, students can invite another Year 5 class or even parents to add their own stories, weaving a web of perspectives across generations. The final artefact is a vibrant, interactive wall of stories, questions, and replies, rich with connections and surprises. Padlet's 'timeline view' lets students map out how one choice can lead to unexpected consequences over time, visually tracing the journey from belief to impact. Students leave with a toolkit for respectful discussion and a sense that their classroom is a safe space for real conversations."
+        "d": "Students post a short decision scenario with two possible actions and the people who could be affected. This helps them look beyond the person making the choice and consider the wider impact. Classmates respond from different viewpoints, such as a friend, family member or person left out, without pretending there is one perfect answer. The original writer then changes one action after reading the responses and explains the reason for the change. Students finish with a wall of revised scenarios showing how listening can improve a decision. Padlet keeps each scenario and its peer responses together in one visible thread."
       },
       {
-        "t": "Identity Automata: The Choice & Consequence Chain Reaction",
-        "d": "Students design and build elaborate chain reaction machines (inspired by Rube Goldberg devices) that visually represent how personal choices, shaped by beliefs and values, ripple out to affect others. Using cardboard, recycled materials, marbles, popsicle sticks, and LEGO gears, students craft each segment to symbolize a decision point or value (e.g., honesty triggers a positive domino effect, while selfishness creates an obstacle). They integrate BBC micro:bit sensors or Makey Makey to trigger sounds or lights at key moments?bridging the physical with the digital. The process encourages deep reflection on cause and effect in decision-making, while celebrating the diversity of each student's identity and the collective impact on their community."
+        "t": "Kahoot",
+        "d": "Students write quiz questions based on choices involving fairness, loyalty, honesty and responsibility. Creating the answer options makes them decide what responsible action looks like and why tempting alternatives may harm others. Small groups test one another's questions and flag any item where more than one answer could be justified. The writers revise those questions or add clearer context before running the final class quiz. Students finish with a playable quiz and a record of the questions that caused the strongest disagreement. Kahoot gives immediate response results that can open a short class discussion after each dilemma."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Students empathise by asking classmates when group discussions feel unfair, then define one barrier such as interruptions or unequal speaking time. They sketch ideas on paper and build a physical turn-taking aid from LEGO, cardboard and recycled materials, using a motor and either the force or distance sensor to release or move a discussion token. Groups test the prototype during a real conversation, count whether turns become more balanced, and rebuild any part that jams or creates a new problem. They then demonstrate the working model and explain how feedback changed both the mechanism and the rules it supports. The final test shows whether their design helps people make group decisions more fairly rather than simply making the mechanism move."
       }
     ],
-    "audited": false,
+    "audited": true,
     "plannerText": "The 'Who We Are' unit for Year 5 explores how people's choices are influenced by their beliefs and values, and how these choices impact others. Students inquire into the role of perspective, causation, and responsibility in decision-making, connecting personal identity with collective wellbeing. The unit emphasizes social and self-management skills, responsible action, and reflection, with opportunities for students to engage in collaborative learning, creative expression, and authentic connections to local and global communities.",
     "stemRebooted": true,
     "humanVerified": false,
@@ -2238,7 +2238,8 @@
     "inspiringRegenRecovered": true,
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T04:48:56.191Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T05:32:45.054Z"
   },
   {
     "ca": "Elsternwick",
@@ -2249,27 +2250,27 @@
     "s": [
       {
         "t": "Explain Everything",
-        "d": "Year 6 students build an interactive 'evidence room' that reveals how thinking beyond ourselves can grow into community action. Their evolving canvas directly explores how we evidence our process, preserving rejected ideas, perspective shifts, feedback and decisive moments rather than displaying only polished success. Acting as forensic curators, students invite classmates to inspect the evidence and decide which moments genuinely demonstrate empathy, courage or changed understanding. The final artefact is a narrated, zoomable case file that families can explore to trace one action from first assumption to measurable consequence. Explain Everything's infinite canvas, object locking and timeline recording allow students to layer artefacts spatially and replay exactly how their thinking changed. Students discover that honest evidence is not decoration?it gives their actions credibility and helps others believe change is possible."
-      },
-      {
-        "t": "GarageBand",
-        "d": "Students produce a series of 'voicemails from the future' in which imagined community members describe what changed because someone chose to think beyond themselves today. The scripts illuminate how taking action helps us grow our understandings by contrasting an early assumption with the future consequence of acting on it. Each student writes from a perspective unlike their own?such as a younger child, local resident or future Wesley student?to practise ethical imagination rather than speaking for others carelessly. The final artefact is a tightly edited audio anthology for families, with each one-minute message ending in a specific invitation to act. GarageBand's Live Loops grid, track automation and built-in voice effects let students construct recurring sonic motifs that shift as understanding deepens. They leave recognising that voice can make an unseen future feel close enough for a community to choose it."
-      },
-      {
-        "t": "Microsoft Excel",
-        "d": "Students run a seven-day 'action pulse' experiment, testing whether one carefully designed provocation changes a real behaviour within the Year 6 community. Their before-and-after evidence investigates both how taking action grows understanding and how we can prove that meaningful change occurred. As citizen researchers, teams must also identify whose experience is missing from their data and revise any claim that exaggerates their impact. The final artefact is a one-page interactive impact dashboard showing participation, change over time, unexpected results and the team's next ethical step for a year-level audience. Excel's structured tables, conditional formatting, sparklines and slicers allow viewers to interrogate patterns rather than accept a persuasive headline. Students learn that agency becomes more powerful when optimism is matched by evidence, humility and a willingness to adapt."
-      },
-      {
-        "t": "Stop Motion Studio",
-        "d": "Students create miniature stop-motion provocations in which an overlooked object?a discarded lunch wrapper, an empty chair or a closed gate?challenges viewers to think beyond themselves. The object's changing perspective explores how we provoke others to make meaningful change without relying on instructions or guilt. Students become social-impact filmmakers, using symbolism and visual metaphor to make an everyday school issue suddenly difficult to ignore. The final artefact is a 30-second campaign film with handmade sets, recorded narration and a single achievable call to action for screening to the school community. Stop Motion Studio's onion-skin controls, frame-by-frame audio waveform and adjustable frame rates help students synchronise tiny physical changes with precise emotional beats. They experience how an imaginative perspective can interrupt indifference and turn a familiar object into a catalyst for action."
+        "d": "Students record a screencast that shows how one idea for helping others changes from first thought to final action. This makes their choices, setbacks and new understanding visible instead of showing only polished work. Students swap screencasts and pause at key moments to suggest a different decision the creator could have made. Each student then adds a final section explaining which feedback changed their next step and why. They end with a narrated record of drawings, evidence, revisions and decisions. Explain Everything records their voice and screen while they draw and annotate."
       },
       {
         "t": "Freeform",
-        "d": "Students construct a living 'constellation of consequence' showing how one proposed action might affect people, places and futures beyond their immediate view. The expanding network makes thinking beyond ourselves visible while revealing how action can deepen understanding through consequences we did not initially predict. Teams deliberately add dissenting stakeholder voices and trace tensions between good intentions, unintended harm and long-term benefit. The final artefact is a navigable decision board that classmates and families can follow from the original issue through competing perspectives to a revised action pledge. Freeform's Scenes, diagramming connectors and locked background objects allow students to guide viewers through multiple pathways without flattening the issue into a linear poster. Students begin to see responsible agency as the ability to notice relationships, welcome challenge and redesign an action before asking others to join it."
+        "d": "Students build a shared board that connects school or community concerns with evidence, people affected and actions that Year 6 students could take. This helps them think beyond their first reaction and work out which actions could make a meaningful difference. Another class adds questions and places a marker beside the ideas most likely to influence them. Students reorganise the board after reading this response, keeping rejected ideas visible so the process can still be examined. They end with a connected map of evidence, audience questions, possible actions and final choices. Freeform's infinite canvas lets groups move, group and connect ideas as their thinking changes."
       },
       {
-        "t": "Sphero BOLT",
-        "d": "Teams empathise with younger students or people with differing mobility needs, then define how a moving messenger could carry a call to action through an accessible public installation. Using cardboard, recycled packaging, paper-engineered ramps, string guides and tactile markers, they ideate and build physical pathways before coding Sphero BOLT to navigate them. Each prototype is tested by another team for clarity, accessibility and reliability, with students measuring missed turns, collisions and whether the message reaches every intended stopping point. They iterate the route, physical mechanisms and code until the robot can pause at stakeholder stations, signal with its LED matrix and complete the journey consistently. At the final makerspace showcase, each team demonstrates an inclusive 'action courier' and explains how empathy, testing and failure transformed both the design and their understanding of meaningful change."
+        "t": "Microsoft Excel",
+        "d": "Students collect weekly numbers that show whether a chosen class action is changing behaviour, such as reusable-container use, library donations or participation in a kindness challenge. This gives them evidence to decide whether taking action is actually growing understanding or only creating attention. Groups exchange spreadsheets and try to explain one another's results before hearing the original group's interpretation. Students use the questions raised to adjust their action and collect a second round of data. They end with a table and graphs showing what changed, what stayed the same and what they will try next. Excel turns their recorded numbers into charts that make patterns easier to spot."
+      },
+      {
+        "t": "GarageBand",
+        "d": "Students compose a 30-second jingle that asks a specific audience to make one realistic change. This requires them to think beyond what they personally enjoy and consider what might move someone else to act. They test two versions with classmates, changing the pace, instruments or repeated words according to which message is remembered accurately. The class selects several jingles to play for the intended school audience. Students end with a short piece of original campaign music that carries one clear request. GarageBand lets them arrange musical loops and record their own sound."
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "Students build a frame-by-frame animation showing an action, an unexpected obstacle and the change in thinking that follows. This makes growth visible as a process rather than treating action as a perfect final moment. Pairs exchange unfinished animations and choose where the story needs stronger evidence or a more convincing response. Students photograph revised scenes and add frames that show how feedback altered the outcome. They end with a short animation that can provoke discussion about what meaningful change really requires. Stop Motion Studio joins individual photographs into a moving sequence that can be refined one frame at a time."
+      },
+      {
+        "t": "Micro:bit",
+        "d": "Students empathise by speaking with younger students about one school change they need help remembering, then define one clear action to encourage. They sketch ideas and build a physical reminder station from cardboard, recycled materials, copper tape and foil switches, with a Micro:bit programmed to show a symbol or count each response on its LED grid. Teams prototype different signs, switch positions and code, then test whether users understand what to press without an explanation. They record confusion through observation, revise the physical design and debug the program before testing again. Each team demonstrates a working station and explains how feedback changed both the build and the action it encourages."
       }
     ],
     "audited": true,
@@ -2281,7 +2282,8 @@
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T04:49:18.043Z",
     "suggestionAuditVersion": "a1-2026-06-07",
-    "uoiEditApprovedAt": "2026-06-15T04:59:46.012Z"
+    "uoiEditApprovedAt": "2026-06-15T04:59:46.012Z",
+    "inspiringRegenAt": "2026-08-07T05:33:17.863Z"
   },
   {
     "ca": "Elsternwick",
@@ -2291,31 +2293,31 @@
     "lo": "Student-led transdisciplinary themes; Approaches to learning; Research and presentation skills",
     "s": [
       {
-        "t": "Wise Discussion Chatbots",
-        "d": "The teacher creates a Wise Discussion Chatbot using the Project Ideation scenario and sets the bot's role as Kai, a project coach who helps students narrow broad inquiry ideas into one practical proposal. The topic is \"How We Organise Ourselves: Student-led exhibition (PYPEX) ? Students develop and present their own units of inquiry.\". Students chat with the bot to test and refine possible inquiry actions or design ideas before committing to one plan; for example, they ask \"Which idea best connects to our central idea?\" and \"What resources, success criteria and next steps do you need?\". After the chat, students produce a one-page project proposal naming the chosen idea, success criteria, resources, first prototype/action step and how it connects to the unit linked explicitly to How We Organise Ourselves."
-      },
-      {
-        "t": "Teachable Machine",
-        "d": "During their PYP Exhibition, students use Teachable Machine to build a custom classifier that recognises key artefacts, images or sounds from their chosen inquiry topics?such as endangered species, renewable energy devices or cultural symbols. They collect and label media relevant to their research, train the model, and demonstrate its use as an interactive element in their exhibition booth. This activity supports research and presentation skills, and mirrors how museum apps and educational kiosks use AI to help visitors identify and learn about objects. Students include a reflection on the classifier's accuracy and how AI can support public education."
-      },
-      {
         "t": "Microsoft Forms",
-        "d": "Students design and run a school-wide survey to investigate what values matter most to different age groups?democracy, fairness, freedom, or something else entirely? This hooks into the transdisciplinary theme of values and systems, but puts students in charge of authentic data collection and analysis. Instead of just reporting back, students must compare the results to what they've learned about Australian government and ask: is our political system a true reflection of our community's priorities? The final artefact is a dynamic data dashboard, with charts and insights displayed for the whole school to see during Exhibition. Using Microsoft Forms' branching surveys and live analytics (not just the basic quiz), students can dig into patterns by year level or gender, surfacing stories hidden in the numbers. They'll leave knowing how to use data to tell a persuasive civic story?and maybe spark a real debate about what should change."
-      },
-      {
-        "t": "Lego Spike Prime",
-        "d": "Students team up as law-makers and engineers to design, build, and code a simple automated voting machine using Lego Spike Prime. This directly supports the inquiry into the processes of government, giving students a hands-on experience with voting systems and the challenges of fairness and accuracy. To keep things real, the teams must debate and justify their design choices?should their machine allow for secret ballots, what happens if someone tries to vote twice, and how do they handle a tie? The finished project is a working prototype that runs a mock classroom election, with parents and peers invited to try it out during PYPEX. Advanced use of Spike Prime's custom sensors and colour detection allows the machine to verify ballots and tally votes instantly. Students finish with a deep respect for the invisible systems behind democracy?and the technical know-how to build them, not just talk about them."
+        "d": "Students build a public-budget ballot that asks visitors to allocate mock funding across the student-led PYPEX inquiries. This shows how voting rules and stated values can shape what a community supports. Each group chooses whether voters select one priority, rank several priorities or divide a fixed number of votes. Another Year 6 class completes the ballots, then students compare how each ballot design changed the result. Students finish with a working exhibition ballot and automatically collected response charts. Microsoft Forms gathers every response in one place and produces instant charts."
       },
       {
         "t": "Delightex",
-        "d": "Students design an interactive 3D Museum of Government Systems in Delightex, building separate galleries for democracy, monarchy and dictatorship. They populate each scene with buildings, symbols, labelled objects and information panels that reveal how leaders are selected, laws are created and citizens participate. Using Delightex's scene editor, object animations and CoBlocks coding, students create clickable exhibits that trigger explanations or show how a decision moves through each political system. Every gallery includes a fictional civic dilemma, such as funding a park, restricting protests or responding to a natural disaster. Visitors follow the virtual tour and compare how values such as fairness, freedom, authority and equality influence each response. Students finish with a curator's statement that justifies which system best protects citizens' rights and why."
+        "d": "Students build an interactive 3D model showing how an idea moves through Australia's Parliament to become a law. This makes government structures and decision points easier to explore than a flat diagram. Groups swap scenes and test whether they can follow the process without spoken instructions. Students revise any stage where testers become lost or misunderstand who makes the decision. They finish with a coded virtual tour for visitors to explore during PYPEX. Delightex lets students code objects to move or respond within a 3D scene."
       },
       {
-        "t": "Govern-Bot City: Build & Code Your Own Nation",
-        "d": "Students design and construct a miniature nation using recycled cardboard, popsticks, and craft materials to create government buildings, courtrooms, and community spaces. They then program Sphero robots to act as 'citizens', navigating the city according to rules and laws collaboratively designed by the class?experimenting with different systems (e.g., democracy, monarchy, dictatorship). Through iterative prototyping and coding, students physically experience how values, structures, and laws shape the daily life and fairness within their nation. This hands-on simulation makes the abstract concepts of governance and civic organisation tangible, memorable, and fun."
+        "t": "Microsoft Excel",
+        "d": "Students enter mock election results and work out the winner under first-past-the-post and preferential voting. This shows that the same votes can produce different outcomes when the system changes. Groups exchange identical vote data but apply different counting rules, then compare which result seems fairest and why. Students can also change a small number of preferences to find the point at which the winner changes. They finish with tables and graphs that support an evidence-based exhibition explanation. Excel makes it practical to calculate totals, organise preferences and graph the results."
+      },
+      {
+        "t": "Podcasting using Canva",
+        "d": "Students record a short episode that tests one question from their PYPEX inquiry through a structured civic debate. This strengthens research, persuasive speaking and the careful use of evidence. Each episode includes two different viewpoints and a final section where students identify the strongest claim rather than simply choosing a winner. A partner class listens and sends back the one question that still needs an answer. Students finish with an edited podcast episode that can play at the exhibition. Podcasting using Canva allows students to record and edit the complete episode on an iPad."
+      },
+      {
+        "t": "Explain Everything",
+        "d": "Students record a narrated explanation of how a proposed school rule could move from an idea to consultation, revision, voting and review. This connects law-making structures with a process students can examine in their own community. Another group pauses the explanation whenever a decision seems unfair or unclear, and the authors revise their model. Students must show where evidence, competing values and community feedback can change the proposal. They finish with a concise animated screencast for their PYPEX display. Explain Everything records students' voices while they draw, move and annotate ideas on the screen."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Students empathise by watching classmates use a paper ballot box and noting where ballots are misread, delayed or counted twice. They define one counting problem, then sketch ideas using cardboard, coloured paper ballots, LEGO pieces and simple chutes before selecting a design. Teams build a physical prototype and code the SPIKE Prime colour sensor and motors to sort coloured ballots while the program keeps a count. They test it with mixed ballot batches, record failures, and adjust the chute, sensor position or code until the results are reliable. At PYPEX, students demonstrate the working voting system and explain how its design rules can influence trust in an election."
       }
     ],
-    "audited": false,
+    "audited": true,
     "plannerText": "The Year 6 'How We Organise Ourselves' unit explores how values and structures determine how systems of government operate. Students investigate the function of Australia's political system, the processes involved in creating laws, and compare different political systems and the values that underpin them. The unit emphasizes inquiry, research, critical thinking, and communication through activities such as mock elections, debates, role-plays, and student-led research projects. Transdisciplinary connections are made with mathematics (voting systems), literacy (debating, persuasive writing), and digital skills. The unit fosters agency, collaboration, and real-world application of civic concepts.",
     "stemRebooted": true,
     "humanVerified": false,
@@ -2324,7 +2326,8 @@
     "inspiringRegenRecovered": true,
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T04:53:35.981Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T05:33:54.555Z"
   },
   {
     "ca": "Elsternwick",
