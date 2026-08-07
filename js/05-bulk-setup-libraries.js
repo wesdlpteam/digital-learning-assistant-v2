@@ -294,7 +294,7 @@ const TOOL_AFFORDANCE_NOTES = {
   },
   'merge cubes': {
     is: 'a foam cube that acts as a marker, so a 3D scene students have built in Delightex appears to sit in their hands when they point an iPad camera at it',
-    good: 'students building their own 3D object, habitat, cell, artefact or scene in Delightex, then holding the cube to view, turn and present what they made',
+    good: 'students building their own 3D scene in Delightex Merge Cube mode, then holding the cube to view, turn and present it. The six faces are the point: give each face a different member of a set students compare or sequence, such as a different natural hazard, habitat, body system, historical scene or stage of a process, so that turning the cube in their hands is what does the teaching',
     avoid: 'Wesley does not have the paid Merge EDU library, so there are no ready-made anatomy, planet, fossil or Dig! objects to explore. Anything on the cube must be something students built themselves in Delightex. The cube has no screen, no electronics and no sensors: it does nothing on its own and needs an iPad camera pointed at it.'
   },
   'micro:bit': {
