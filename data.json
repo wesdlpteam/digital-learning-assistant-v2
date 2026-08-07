@@ -281,31 +281,31 @@
     "lo": "Developing relationships; How those around us impact our behaviours and interactions; Keeping ourselves healthy and safe",
     "s": [
       {
-        "t": "Beebots",
-        "d": "Children become 'friendship robots', programming Bee-Bots to travel along a giant floor map representing different places in their school where relationships are built?like the playground, classroom, and library. This playful journey lets students explore how developing relationships in various spaces affects their feelings and sense of belonging. Students work in pairs to give each other directions, learning that clear communication and teamwork are key to keeping everyone safe and happy. The final artefact is a photo story: each Bee-Bot stop is captured and captioned by students, then shared as a visual map with families to show how friendships grow at school. Bee-Bots' sequence-and-repeat function helps students design longer, collaborative journeys that mirror real-life interactions. Kids leave with the confidence to navigate new social spaces and the understanding that strong relationships are built step by step."
-      },
-      {
-        "t": "Makey Makey",
-        "d": "Students invent 'Feelings Boards' using Makey Makey, connecting playdough, foil, and everyday objects to trigger different sounds for emotions like happy, sad, or calm. This hands-on project brings the line of inquiry about recognising and expressing feelings to life in a tangible way. Each group becomes wellbeing designers, tasked with imagining which sounds or music might help a friend feel better or safer in the classroom. The finished artefact is an interactive emotions station, where classmates and even visiting Year 1s can press different objects to hear the sounds students have chosen to represent each feeling. Makey Makey's ability to turn almost anything conductive into a computer key lets students experiment wildly?using fruit, fabric, or even a puddle of water as part of their circuit. They walk away knowing they can use creativity and empathy to support themselves and others."
-      },
-      {
         "t": "ChatterPix Kids",
-        "d": "Students use ChatterPix Kids to bring their 'Feelings Friends' to life by drawing or photographing a character that represents an emotion?like a smiling sun for happiness or a gentle cloud for calm. Each child records a short message in their character's voice, sharing a tip for making friends or describing a time they felt included at school. The app animates the character's mouth to match the recording, creating a playful, talking avatar. These mini-movies are compiled into a class video gallery that can be shared with families or used as conversation starters during circle time. ChatterPix Kids' simple interface empowers even the youngest students to express themselves and listen to others' perspectives. Children finish with a sense of pride, knowing their voices and ideas help build a caring classroom community."
+        "d": "Students draw a self-portrait, photograph it in ChatterPix Kids and record it saying what helps them feel safe, calm and welcome at school. This shows that relationships can change how someone feels. Children swap portraits with a partner and add one kind action they could offer that person. Each child ends with a short talking portrait for a class belonging display. Drawing a mouth on the photograph lets the portrait speak in the child's own voice. The teacher can replay selected portraits when the class reviews its agreements."
       },
       {
         "t": "ScratchJr",
-        "d": "Prep students animate their own friendship stories in ScratchJr, coding characters to show how kind actions and words can change the day for someone else. This directly connects to the unit's focus on how relationships impact our wellbeing. Students swap storyboards and code each other's ideas, learning to see friendship from another person's shoes. The final artefact is a gallery of animated mini-movies, ready to be screened for parents or shared with a buddy class. ScratchJr's speech bubble and background switching features let students add dialogue and change settings, making each story richer and more personal. Children finish with the pride of being storytellers who can use technology to spread kindness."
+        "d": "Students code two characters to show a playground interaction where one action changes how another character feels. This helps children notice how behaviour can support or harm wellbeing. Partners swap projects and suggest a different kind response for the second scene. Each pair ends with a short animated story that shows a problem and a helpful choice. Simple blocks let children sequence movement, speech and scene changes. The class can watch the stories and name the choices that build positive relationships."
+      },
+      {
+        "t": "Animating a Character with Adobe Express",
+        "d": "Students record a familiar character giving one clear tip for making friends or asking an adult for help. This gives children a safe way to talk about relationships, feelings and personal safety. Each child chooses whether the character speaks to a new Prep student, a worried friend or someone left out of play. The result is a short talking-character message for another Prep class. The Animate from Audio feature automatically matches the character's mouth to the child's voice. Teachers can replay the messages before transitions, buddy time or playground sessions."
       },
       {
         "t": "Book Creator",
-        "d": "Students will co-design a digital class friendship book, each contributing a page sharing their unique identity and what makes them feel happy and safe at school. This activity explores the line of inquiry 'how those around us impact our behaviours and interactions' by prompting children to notice what they value in friendships and caring relationships. Families are invited to add a short audio message to their child's page, creating a bridge between home and school voices. The final artefact is a vibrant multimedia eBook, complete with student drawings, voice recordings, and family messages, which can be shared on the big screen during a class celebration and emailed home to every family. Using Book Creator's 'read aloud' and easy audio embedding features, even emergent readers can confidently access and share their pages with peers. Every child leaves with a deep sense of belonging, pride in their identity, and the courage to celebrate the positive relationships that help them flourish at school."
+        "d": "Students build a class book by adding a drawing and recorded sentence about someone who helps them feel healthy, safe or included. This makes the link between caring relationships and wellbeing visible. Families can contribute a short child-recorded page about a caring routine used at home. The class ends with a narrated book showing many different ways people care for one another. Book Creator keeps pictures, text and voice recordings together on each page. Children can revisit the book when they need ideas for helping a classmate."
       },
       {
-        "t": "Feelings Forest: My Emotion Explorer Map",
-        "d": "Students design and craft their own 'Emotion Explorer' map using large sheets of paper, felt, cardboard scraps, and natural materials like leaves and twigs. Each student creates a unique forest path representing their feelings and important people in their lives, decorating their map with hand-drawn symbols, pop-up trees, and crafted emotion creatures. Using Bee-Bots, students program simple journeys along their map's path, stopping at key spots to share a story or feeling with classmates. This hands-on adventure helps students express their identity, understand emotions, and celebrate how different relationships shape who they are."
+        "t": "Seesaw",
+        "d": "Students photograph a partner-made block scene of a friendship moment and record what each person might be feeling. This helps children connect visible actions with feelings that may not be easy to see. The partner listens, then records one helpful action that could improve the scene. Each child ends with a photo-and-voice reflection showing how behaviour can affect wellbeing. Seesaw keeps the photograph and both spoken reflections together in a portfolio entry. The teacher can use the entries to notice which children can name feelings, safe choices and sources of help."
+      },
+      {
+        "t": "Beebots",
+        "d": "Students empathise with classmates by discussing busy classroom moments, then define a need such as finding a friend, a quiet place or a trusted adult. Using cardboard, paper, blocks and recycled materials, teams design a floor map with safe destinations and ideate a clear route between them. They prototype by programming Beebot with its directional buttons, test whether it reaches the chosen support place and change either the route or commands after each attempt. At the end, each team demonstrates a working journey and explains when that destination could help someone's wellbeing. The physical map remains available for play-based practice with safe choices and help-seeking."
       }
     ],
-    "audited": false,
+    "audited": true,
     "plannerText": "The Prep 'Who We Are' unit explores identity, relationships, and wellbeing as students transition into school life. Through stories, discussions, and creative activities, students learn about friendship, emotions, and belonging. The unit emphasizes developing social skills, understanding feelings, and building positive classroom agreements. Learning is play-based and teacher-guided, with opportunities for drawing, storytelling, and reflecting on personal experiences. The focus is on helping students recognize their own identity, connect with others, and understand how relationships impact their wellbeing.",
     "stemRebooted": true,
     "humanVerified": false,
@@ -339,7 +339,8 @@
     ],
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T03:59:10.928Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T04:43:28.448Z"
   },
   {
     "ca": "Elsternwick",
@@ -350,27 +351,27 @@
     "s": [
       {
         "t": "GarageBand",
-        "d": "Students become emotion composers, using GarageBand to create musical soundscapes that express a single feeling?joy, sadness, surprise, or calm. This taps straight into the idea that emotions can be expressed in different ways, making feelings audible instead of just visible or spoken. Inviting the Year 6 music leaders in to guess which emotion each piece represents flips the usual classroom dynamic and gives real-world feedback from older student musicians. Their finished tracks turn into a playlist of feelings, which can be played for families at the next assembly or shared as a wellbeing resource across the school. GarageBand's Live Loops let even young students experiment with layers and mood-shifting changes, far beyond just tapping a beat. Kids leave knowing their feelings have a sound?giving them a fresh tool to show the world how they feel, even when words are tricky."
+        "d": "Students record and arrange short sounds to express calm, worry, joy and anger without using words. This shows that emotions can be communicated and interpreted through music. Partners swap soundscapes, name the emotion they hear and explain which sounds shaped their response. Students then revise one sound so their message is clearer to the listener. Each pair ends with four short emotion soundscapes for a class listening gallery. GarageBand lets students layer recorded sounds and musical loops."
       },
       {
-        "t": "Apple Clips",
-        "d": "Students work in pairs or small groups to film short video skits using Apple Clips that depict specific emotions such as excitement, frustration, or nervousness. They use Apple Clips' stickers, filters, and animated text features to visually highlight each emotion and the ways people might respond to them. Each student narrates their character's feelings and models healthy emotional responses, creating expressive and relatable scenes. These videos capture both the emotional experience and appropriate reactions, helping students deepen their understanding of recognising and interpreting emotions. The final clips are compiled into a class 'Emotion Gallery' where students watch and discuss how emotions can be expressed differently. This creative process supports empathy and emotional literacy through engaging storytelling and multimedia expression."
+        "t": "Stop Motion Studio",
+        "d": "Students build a face from paper shapes and photograph it changing from one emotion to another. This helps them notice how eyes, eyebrows and mouths can communicate feelings. Partners watch each animation without being told the emotion, then suggest what may have happened between the first and last face. Students add or remove frames to make the emotional change easier to interpret. Each pair finishes with a short stop-motion story showing an emotion developing over time. Stop Motion Studio combines their photographs into a frame-by-frame animation."
+      },
+      {
+        "t": "Seesaw",
+        "d": "Students record a short video showing an emotion through facial expression, posture and movement while keeping their voice silent. This helps them recognise that people can express feelings without words. A partner watches the video, records an interpretation and suggests a kind response to the feeling they noticed. The original student then adds a voice reflection explaining what the partner understood accurately or differently. Each student finishes with a portfolio entry containing an expression, an interpretation and a response. Seesaw keeps video, voice and reflection together in one journal post."
       },
       {
         "t": "Freeform",
-        "d": "Students turn the iPad into a giant collaborative feelings map using Freeform, sketching, doodling, and placing emoji to show how different emotions might look, feel, and even where in the body they are sensed. This creative brainstorm helps all students recognise their own and others' emotions in a playful, visual way. Bringing in a real artist via video call to share how professionals use mood boards to start their work gives a glimpse into how emotions drive creative careers. Their final artefact is a living wall-sized digital canvas?full of drawings, words, and images?that can be printed out and displayed around the school. Freeform's collaborative board feature means the whole class can build together in real time, layering their voices visually. Students leave with a sense of how their inner world can be mapped and celebrated, and that everyone's feelings are a vital part of creative expression."
+        "d": "Students sort drawings and words for emotions onto a shared Freeform board. This helps them see that the same situation can lead to different feelings and that one expression can have several meanings. Small groups connect each emotion to possible body clues, facial clues and helpful responses. Groups then visit another section of the board and add a different interpretation rather than copying the first answer. The class ends with a connected emotion map that can support later picture-book and drama discussions. Freeform's open canvas lets students move, group and link ideas together."
       },
       {
-        "t": "Book Creator",
-        "d": "Students design an interactive feelings detective book, where each page invites the reader to guess the emotion shown through a combination of student-drawn faces, voice-recorded clues, and gentle sound effects. This taps directly into recognising our own and others' emotions by challenging classmates and families to interpret nuanced expressions and vocal cues. To deepen empathy, students swap books and try to decode the emotions from someone else's perspective, then annotate responses inside the app. The finished artefact is a colourful, multimedia eBook that can be shared with Prep buddies or sent home as a digital conversation starter about emotional literacy. Using Book Creator's comic templates and embedded audio hotspots, students combine visual storytelling and oral language in one seamless format. Every student becomes a confident feelings communicator?empowering them to notice, express, and interpret emotions with creative flair well beyond the classroom."
+        "t": "Sketchbook",
+        "d": "Students draw the same simple face twice, using colour, line and texture to express two different emotions. This shows how visual choices can communicate feelings even when the facial features stay similar. Partners view the drawings without labels and describe what each colour or mark makes them think the character feels. Students choose one piece of feedback and adjust a layer to make their intended emotion clearer. Each student finishes with a paired digital artwork and a short spoken explanation given to the class. Sketchbook's drawing tools and layers make it easy to test changes without losing the first idea."
       },
       {
-        "t": "Teachable Machine",
-        "d": "Students use Teachable Machine to train a model that recognises different facial expressions representing emotions such as happiness, sadness, anger and surprise. They capture images of themselves or classmates making these expressions, teaching the model to classify each one. The final product is a digital emotion detector that can identify and label emotions in real time. This activity links directly to understanding how we express and interpret emotions through facial cues. Students compare their model's accuracy to real-world systems like accessibility tools and face-unlock features in devices, which also use image recognition to interpret expressions. They reflect on how technology can help people better understand emotions, especially for those with communication challenges."
-      },
-      {
-        "t": "Feelings Bot Parade: Emotions on Wheels!",
-        "d": "Students design and craft expressive robot costumes using cardboard boxes, fabric scraps, paper plates, and art materials to represent different emotions (like joy, sadness, or excitement). They decorate Sphero Indi cars with their creations, then use simple color code tiles to program their 'Feelings Bots' on a parade route that tells a story of changing emotions. Along the way, students stop at 'emotion stations' to act out and discuss feelings, blending hands-on building, digital coding, and dramatic expression. This project helps students embody and communicate emotions through movement, art, and technology, making emotional literacy a joyful, memorable experience."
+        "t": "Slow Motion Physical Analysis",
+        "d": "Students empathise by watching classmates try to identify emotions shown by handmade cardboard masks, then define which moving feature is hardest to notice. They ideate and prototype a mask with paper eyebrows, sliding mouths, split pins, tabs, elastic and recycled cardboard so one face can change expression. Pairs film each mechanism in slow motion, test whether viewers can identify the emotion, and look closely at where a tab jams or a feature moves too little. They strengthen, reposition or enlarge parts, then film the revised mask for another test. At the end, each student demonstrates a working mask that changes between two clearly readable emotions and explains the improvement made after testing."
       }
     ],
     "audited": true,
@@ -406,7 +407,8 @@
     ],
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T03:59:45.944Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T04:44:01.458Z"
   },
   {
     "ca": "Elsternwick",
@@ -416,28 +418,28 @@
     "lo": "Local services; Why we need local services in our community; How services meet personal and community needs",
     "s": [
       {
-        "t": "ChatterPix Kids",
-        "d": "Kick off by turning community helper photos into talking characters using ChatterPix Kids ? students snap a picture of a local postie, nurse or lollipop person, then make them 'speak' about their daily work. This instantly dives into 'why we need local services in our community' by letting the helpers explain it in their own words (well, students' voices!). For an added spark, students can interview a real helper or family member to gather true facts and fun stories before recording. Each child creates a 30-second talking portrait, then the class puts these together for a digital 'Meet Our Helpers' wall to share with families. The app's background and sticker effects help each helper shine with a burst of personality ? think nurse with a superhero cape or postie with a puppy sidekick. Kids walk away with a sense of pride in their community and the confidence to tell stories in creative ways."
+        "t": "Teachable Machine",
+        "d": "Students train Teachable Machine to recognise picture cards showing ambulances, fire engines and library services. They test whether the computer can match each image to a service that meets a community need. Students choose difficult pictures, swap them with another group and work out why the model makes mistakes. They improve the model by adding more varied examples and testing it again. The class ends with a working image classifier and a record of its correct and incorrect guesses. Similar image recognition helps council monitoring and emergency-dispatch systems identify vehicles and respond to community needs."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Students answer a picture survey about which local service they would contact for needs such as feeling sick, finding a lost pet or borrowing a book. They see that services are established because different people need different kinds of help. Each pair adds one new question based on a need they notice at school or in Elsternwick. Students compare the automatic charts and discuss why some services were chosen more often than others. They end with a class survey and charts showing patterns in community needs. Microsoft Forms collects every response in one place and turns the results into automatic charts."
+      },
+      {
+        "t": "Puppet Pals",
+        "d": "Students record a puppet conversation between a community helper and a person asking for help. They show what the service provides, why it is needed and what happens when someone contacts it. Students swap planned situations so another pair must decide which helper belongs in the scene. They record clear questions and answers, then replay the show to check that the service process makes sense. Each pair finishes with a short animated puppet show for a younger class. Puppet Pals combines characters, backdrops, movement and recorded voices in one app."
+      },
+      {
+        "t": "IMovie",
+        "d": "Students record a short interview with a visiting community helper about the people, places and steps involved in their service. This makes the organisation behind a familiar service visible, rather than showing only the helper's job. Students choose the most useful answers for families new to Elsternwick and remove repeated or unclear sections. They arrange the clips so the film moves from a community need to the service's response. The class finishes with a set of short interview films featuring real local voices. iMovie lets students trim clips and add simple titles and transitions."
+      },
+      {
+        "t": "Microsoft Excel",
+        "d": "Students collect a class tally of local services they have used, such as libraries, doctors, public transport and emergency services. They enter the totals into a simple teacher-prepared Excel table and create a column chart. The chart helps them see which services meet frequent needs and which are used only in special situations. Pairs choose one surprising result and explain it to the class using the numbers. Students finish with a labelled chart showing how often different services support their class. Excel keeps the tally, totals and chart together so changing a number updates the display."
       },
       {
         "t": "Beebots",
-        "d": "Students program BeeBots to deliver 'packages' to map locations representing different local services ? post office, fire station, hospital, or library ? on a giant floor map of Elsternwick. By doing this, they explore how services are established to help people and what happens if one is missing. Students take on the role of town planners, puzzling out the most efficient routes to ensure everyone in the community gets what they need. Each team films a short video tour showing their BeeBot making the journey and narrating which service it's visiting and why. Using BeeBot's sequence-and-repeat function, students experiment with longer routes and discover how real systems need careful planning. The experience builds not just coding skills, but also a deeper appreciation for the invisible systems that keep a community running."
-      },
-      {
-        "t": "Tablet Magnifiers",
-        "d": "Students use Tablet Magnifiers to explore and document the fine details of objects and materials used by local services, such as uniforms, badges, tools, or vehicles. They take close-up photos of textures, symbols, or features that make each item unique to its service?like the reflective strip on a firefighter's jacket or the grooves on a key. Students then create a matching activity, pairing magnified images with the correct community service and explaining how each feature helps meet people's needs. This hands-on investigation builds appreciation for the design and purpose of everyday items. The final product is a digital matching game or poster that highlights the hidden details of community helpers' tools."
-      },
-      {
-        "t": "Makey Makey",
-        "d": "Challenge students to invent a 'help button' for a chosen community service using Makey Makey and everyday objects ? maybe a banana phone for the police, or a foil ambulance siren. This activity goes deep into 'how services meet personal and community needs' by asking 'How do people call for help, and what could make it easier?' Each group can demo their invention to a visiting grown-up, acting out a real-life scenario where someone needs to quickly reach the right helper. Their working prototype, filmed and explained in a short video, is shared at assembly or on the school website. Makey Makey's ability to turn almost anything conductive into a working input means even the wildest student ideas get a real-world test. Kids leave feeling like inventors who can solve real problems ? not just for themselves, but for everyone in their community."
-      },
-      {
-        "t": "Apple Clips",
-        "d": "Students use Apple Clips to create video tours of local services, such as the post office, fire station, or library. They record short clips explaining what each service does, who works there, and how it helps the community. Using live titles, stickers, and voiceover, students highlight the importance of these services and how they meet people's needs. The finished videos are combined into a digital 'Community Services Guide' that the class can watch together. This activity helps students understand the roles and systems that support their daily lives, while building confidence in speaking and presenting."
-      },
-      {
-        "t": "Community Helper Rescue Maze",
-        "d": "Students will design and build a 3D maze representing a miniature town using cardboard boxes, tubes, recycled containers, and craft materials to create roads, buildings, and local services (like fire stations, hospitals, and post offices). Using Sphero Indi cars, children program simple routes to 'respond' to community emergencies, navigating their crafted maze to reach different services. This hands-on project lets students explore how community helpers are organised and work together to meet needs, blending creative construction with basic coding and teamwork. It brings the theme to life as students imagine, build, and test their own organised community systems."
+        "d": "Students empathise with a toy person who needs to reach a doctor, library or fire station, then define what would make the journey clear and safe. They ideate and build a large floor map from cardboard, recycled boxes, paper roads, signs and removable service buildings. Each group prototypes a route by programming a Bee-Bot's directional buttons, then tests whether another group can follow and explain the service sequence. After collisions, missing signs or unclear routes are noticed, students move the physical parts, shorten the program and test again. The final demonstration shows a Bee-Bot travelling from a community need to the correct service on a working model of an organised neighbourhood."
       }
     ],
     "audited": true,
@@ -473,7 +475,8 @@
     ],
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T04:03:41.402Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T04:44:41.129Z"
   },
   {
     "ca": "Elsternwick",
