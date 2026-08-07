@@ -1673,28 +1673,28 @@
     "lo": "Interactions between objects, materials and living things\nGathering and analysing evidence\nHow scientific knowledge develops",
     "s": [
       {
-        "t": "Sphero BOLT",
-        "d": "Students program Sphero BOLT to travel for the same time across carpet, tiles and a cardboard ramp, then measure how far it moves. They keep the code unchanged so they can work out how surfaces and slopes affect motion within the system. This makes the relationship between a fair test, repeated trials and trustworthy evidence easy to see. Pairs swap one surface with another group and check whether the new results support the original claim. Each group ends with a debugged program, a results table and a short demonstration of its strongest evidence. BOLT's motor encoders allow students to compare movement across repeated runs."
-      },
-      {
-        "t": "Micro:bit",
-        "d": "Students program a micro:bit to measure light levels, then test how paper, fabric, plastic and other materials block light. They change one material at a time and collect repeated readings to see how an object can affect another part of a system. Groups choose one surprising result and ask another group to repeat the test without seeing the first readings. They compare the two sets of evidence and revise any claim that cannot be repeated. Each group ends with a working light meter, an evidence table and a clear claim about the tested materials. The micro:bit's LED grid can sense light and display a number or symbol in response."
-      },
-      {
         "t": "Teachable Machine",
-        "d": "Students photograph clean examples of paper, plastic and metal in Teachable Machine, then train an image model to sort them. Testing crumpled, partly hidden and unfamiliar items shows how the quality and range of evidence can change a system's decisions. Groups exchange test objects and decide which new training examples would make each model more reliable. Camera-driven sorting arms in recycling facilities work in a similar way, using learned visual patterns to direct materials into different streams. Each group ends with a trained classifier and a record of the examples that caused mistakes. Teachable Machine's live preview lets students test the model immediately and retrain it after checking the evidence."
+        "d": "Students photograph classroom objects and train Teachable Machine to sort them as metal, plastic, paper or fabric. They test what happens when an object is folded, partly hidden or shown under different light, gathering evidence about when the system succeeds or fails. Groups swap unusual objects and try to work out which training images made each classifier reliable. This works like the camera-driven sorting systems used in recycling facilities, where machines must recognise fast-moving materials despite changes in shape and position. Students finish with a trained classifier and a record of surprising test results. Teachable Machine lets them add image examples, train classes and test new images through the camera."
       },
       {
         "t": "Microsoft Excel",
-        "d": "Students enter repeated measurements from a class investigation of dissolving, melting, motion or plant growth into Microsoft Excel. They calculate averages and create charts to work out whether the evidence supports their scientific claims. Each group receives another group's unnamed data and tries to identify what changed and what stayed the same. The original group then reveals the investigation and checks whether its table and chart communicated the system clearly. Students finish with an organised data table, a chart and a revised evidence statement. Excel's formulas and chart tools make patterns and unusual results easier to compare."
+        "d": "Students measure how far toy cars travel when ramp height, surface material or car mass changes, then enter repeated results in Microsoft Excel. They compare averages and charts to see how evidence can explain interactions between objects and materials. Each group receives another group's unnamed data and works out which variable was changed before checking the answer. Students finish with a clear data table, a chart and a short evidence-based conclusion. Excel can calculate averages from repeated measurements. Its charts make patterns and unusual results easier to spot."
       },
       {
-        "t": "Tinkercad",
-        "d": "Students build and simulate a simple circuit in Tinkercad, then change one component at a time to test how the whole circuit responds. They investigate how batteries, switches, resistors and LEDs interact rather than treating each part separately. Groups remove one connection from their circuit and challenge classmates to diagnose and repair the fault. Students use the simulation results to explain why some circuit changes work and others do not. Each group ends with a functioning virtual circuit and a tested record of its changes. Tinkercad Circuits allows students to wire components, run the simulation and revise the design safely."
+        "t": "Stop Motion Studio",
+        "d": "Students build a tabletop model showing a chain of interactions, such as sunlight helping a plant grow and the plant providing food for an animal, then photograph each small change in Stop Motion Studio. Moving one part at a time helps them show how a change can travel through a living system. Groups exchange unfinished films and predict the next interaction before the creators reveal their ending. Students finish with a short stop-motion film that shows cause and effect across the whole system. Stop Motion Studio captures frames directly and plays them as an animation. Its frame-by-frame view helps students adjust movements that are too large or unclear."
       },
       {
-        "t": "Makey Makey",
-        "d": "Students empathise with younger learners who need a hands-on way to understand cause and effect, then define one scientific interaction their display must make clear. They ideate with sketches and prototype a cardboard display using foil, playdough, copper tape and recycled materials as conductive switches connected to Makey Makey. During testing, classmates press, hold and combine the switches while the designers check which materials complete the circuit reliably. Teams revise contact points, spacing and instructions after each test instead of decorating an idea that does not yet work. The final physical display demonstrates how material choice and circuit connections control the response of a working system."
+        "t": "Micro:bit",
+        "d": "Students program a Micro:bit to display readings from its light sensor or temperature sensor while they test different classroom locations. They repeat measurements at set times to find out how changing conditions affect the readings. Groups choose one surprising result, change only one condition and test whether the result happens again. Students finish with a working sensor tool and a set of repeated observations they can use to support a claim. The Micro:bit's LED grid can show numbers and simple symbols. Its built-in light and temperature sensors allow students to collect evidence without attaching extra equipment."
+      },
+      {
+        "t": "Explain Everything",
+        "d": "Students draw and record two explanations of the same interaction, such as why a paper helicopter falls differently after its wing length changes. The first explanation shows their initial idea, while the second uses results from repeated tests to revise it. Another class watches both versions and identifies the exact piece of evidence that changed the explanation. Students finish with a narrated whiteboard recording that makes the development of scientific knowledge visible. Explain Everything lets students draw, move objects and record their voice and on-screen actions. Its editable canvas allows them to correct one part without rebuilding the whole explanation."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Students empathise with a school gardener who needs to know when a covered seedling tray receives light, then define what a useful warning system must do. They ideate with sketches and build physical prototypes from LEGO pieces, cardboard shades and recycled materials before adding a LEGO Spike Prime light sensor and programmable output. Teams test each design under bright, dim and blocked light, record failures on paper and rebuild the sensor position or code. They repeat the Prototype and Test stages until the response is reliable rather than triggered by small accidental changes. Each team demonstrates its finished model, explains the interaction between light, sensor, program and output, and shows one improvement made from test evidence."
       }
     ],
     "audited": true,
@@ -1721,7 +1721,7 @@
     "suggestionAuditAt": "2026-06-08T04:33:53.238Z",
     "suggestionAuditVersion": "a1-2026-06-07",
     "uoiEditApprovedAt": "2026-08-07T00:57:09.663Z",
-    "inspiringRegenAt": "2026-08-07T01:43:35.611Z"
+    "inspiringRegenAt": "2026-08-07T01:51:08.049Z"
   },
   {
     "ca": "Elsternwick",
@@ -5769,15 +5769,15 @@
         "d": "Students give a carefully chosen historical artefact a voice, animating it to recount where it came from, what it witnessed and what it hopes people remember in the future. The speaking artefact illuminates how stories and artefacts can be shared into the future while making clear which details come from evidence and which are imaginative possibilities. Children adopt the perspective of an object that may have been treasured, discarded, repaired or passed between generations, building empathy for people whose lives differ from their own. The finished short animation looks like a museum object addressing visitors directly and can be screened for families beside the real or photographed artefact. Adobe Express Animate from Audio synchronises mouth and body movement with each child's recorded narration, while background and character controls establish the object's historical setting. Students recognise that their voices can renew an old story without claiming ownership of experiences that are not theirs."
       },
       {
-        "t": "Microsoft Excel",
-        "d": "Students build a junior museum catalogue in Microsoft Excel, sorting a teacher-prepared collection of artefacts by likely age, material, purpose and whether each item should be kept for the future. The catalogue reveals how people learn about the past by comparing patterns across objects rather than treating every artefact as an isolated curiosity. As collection managers with limited display space, students must justify why an everyday lunchbox, ticket or toy might deserve preservation alongside an obviously special object. The final colour-coded catalogue becomes a browsable family exhibition guide showing each object's past use, present meaning and proposed future care. Excel's custom sort, filters and icon-based conditional formatting let children instantly reorganise the collection and notice how different criteria produce different historical stories. Students learn that archives are shaped by human choices?and that they can advocate for whose everyday experiences deserve to be remembered."
+        "t": "Book Creator",
+        "d": "Students curate a junior St Kilda museum catalogue in Book Creator, giving each selected photograph or artefact its own page with a title, date clue and reason it should be preserved. They photograph items directly into the book and add brief voice recordings so emerging writers can explain a ticket, lunchbox, toy or family keepsake. Book Creator's drawing tool lets children circle scratches, materials and design details that offer evidence about the past. Pages are arranged from past to present, followed by a future page predicting how people might understand each object many years from now. Students distinguish observed evidence from remembered family stories by using consistent labels and page colours. The completed multimedia catalogue becomes a navigable class museum that families can read and listen to together."
       },
       {
         "t": "Beebots",
         "d": "Students empathise with future museum visitors, then define the challenge of designing a physical 'time-travelling archive trail' that makes the relationship between past, present and future easy to follow. Teams ideate and prototype a floor map from cardboard, recycled packaging, paper-engineered doors and hand-drawn artefact stations, with Bee-Bot carrying a symbolic story capsule between them. They test programmed routes, measure squares, debug incorrect turns and revise both the command sequence and physical layout when visitors become confused. During the final museum walk, each team demonstrates an accurate journey and explains how its preserved story moves through time. The project positions young designers as custodians who can build thoughtful systems for carrying memory to people they may never meet."
       }
     ],
-    "audited": true,
+    "audited": false,
     "plannerText": "Stories and artefacts help us to understand connections between the past, present and future. Lines of inquiry: How we learn about the past\nWhy people preserve stories and artefacts\nHow stories and artefacts can be shared into the future",
     "stemRebooted": false,
     "humanVerified": false,
