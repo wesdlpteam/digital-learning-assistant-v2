@@ -121,6 +121,11 @@ const REALISTIC_TOOL_USE_RULES = `REALISTIC CLASSROOM USE RULES (HARD RULE):
 - Bad example: CoDrone EDU drones model body systems or wellbeing. A flying drone cannot meaningfully model a circulatory system.
 - Google Maps rule: students do NOT have a login, so they can only VIEW Google Maps — exploring the world map, using Street View walkthroughs, comparing places, finding distances/scale, identifying landmarks. They CANNOT create custom maps, drop pins, save layers, edit "My Maps", or share editable maps. Any activity that requires student-built/annotated maps MUST use National Geographic MapMaker instead. Street View counts as a Google Maps viewing mode — use it freely.
 - iPad rule: "iPad" by itself is a platform, not a tool. ONLY pick "iPad" as the t-field when the activity uses an iPad built-in feature that has no dedicated approved tool — specifically the Camera (photos/video), Voice Memos, Notes sketch, or generic device behaviours. NEVER use "iPad" as a wrapper for a third-party app that isn't on the approved tools list (no Clips, no Notability, no iMotion, no specific iOS app names). If the activity needs a specific app, pick that app from the approved list as the t-field instead.
+- TOOL TRUTH (HARD RULE): only name a feature, sensor, button or mode you are CERTAIN the tool really has. Never invent capability to make an idea sound better. If you are unsure whether a tool can do something, describe the student action generically instead of naming the feature, or pick a different tool. A teacher who plans a lesson around a feature that does not exist loses the lesson.
+- Sphero BOLT truth: it REALLY has an ambient light sensor (tells light from dark), a compass for heading, an accelerometer and gyroscope for movement and orientation, an 8x8 programmable LED matrix, motor encoders, and infrared messaging between BOLT robots. It CANNOT detect magnets as an input, sound, temperature, colour of surfaces, or the distance to a wall. Its compass senses the Earth's magnetic field for direction only -- holding a magnet near it corrupts the heading, it is not a magnet detector.
+- Bee-Bot truth: it is a sequence-of-steps floor robot with directional buttons only. It has NO sensors -- it cannot see, detect obstacles, follow lines, or react to anything. Everything is programmed in advance.
+- Micro:bit truth: it REALLY has buttons, an LED grid, an accelerometer, a compass, a temperature sensor, a light sensor (via the LEDs), radio between micro:bits, and pins for crocodile clips. V2 adds a microphone, speaker and touch logo. It has no camera and no GPS.
+- Merge Cube truth: it displays 3D objects through a device camera. Students view and rotate supplied models; they cannot build new 3D content on the cube itself.
 - If the real classroom task is unclear, choose a different tool.`;
 
 // Mirrors the client-side Teachable Machine real-world note (js/05 TOOL_AFFORDANCE_NOTES
@@ -344,7 +349,10 @@ function doPost(e) {
         batch: body.batch || null,
         ca: body.ca || null,
         yl: body.yl || null,
-        redoAll: !!body.redoAll
+        redoAll: !!body.redoAll,
+        // Lets a curator regenerate one named unit as a spot-check before
+        // committing to a whole-corpus run.
+        indices: Array.isArray(body.indices) ? body.indices : null
       };
       const result = regenerateAllInspiring(opts);
       result.user = verifiedEmail;
@@ -4081,7 +4089,9 @@ function inspiringRecoverMarkers(opts) {
     if (!Array.isArray(u.s) || !u.s.length) { skipped.push({ ca: u.ca, yl: u.yl, th: u.th, why: 'no suggestions' }); continue; }
     const slot1 = (u.s[0] && u.s[0].d) ? String(u.s[0].d) : '';
     const sentences = inspiringSentenceCount_(slot1);
-    if (sentences >= 5 && slot1.length >= 600) {
+    // Matches the 4-5 sentence plain style; the length floor drops with it
+    // because plain sentences are shorter than the old dense ones.
+    if (sentences >= 4 && slot1.length >= 400) {
       u.inspiringRegenAt = now;
       u.inspiringRegenRecovered = true;
       recovered++;
@@ -4208,15 +4218,20 @@ function auditGradeSuggestion_(unit, slotIdx, sug) {
 // KEEP IN SYNC with js/05 SUGGESTION_STYLE (client copy). Both define the shared
 // writing style; the audit grader uses THIS server copy. Update both together.
 const INSPIRING_DESCRIPTION_RULES = '\nDESCRIPTION STYLE — INSPIRING + INNOVATIVE (the whole point of this regen):\n' +
-  'Every description in slots 1-5 must be EXACTLY 6 vivid, classroom-ready sentences. Each sentence has a job:\n' +
-  '  Sentence 1: Bold creative premise — what students are actually making, investigating, or experiencing. Name the unit\'s topic explicitly (not "this unit").\n' +
-  '  Sentence 2: Connect the activity to one of the unit\'s lines of inquiry or the central idea by NAME (paraphrase if quoting feels stilted; never use banned filler like "connected to the central idea").\n' +
-  '  Sentence 3: Add an unexpected angle that lifts the activity beyond the obvious — a cross-disciplinary link, a role reversal (students teach a younger class, become journalists/curators/town planners/scientists, or publish for a real external audience), an ethical/perspective-taking dimension, or a real community/expert connection. Write it as a natural sentence; do NOT announce it with a label such as "The twist:" or "Here\'s the twist".\n' +
-  '  Sentence 4: Describe the FINAL student artefact concretely — what it looks like, sounds like, or does. It must be shareable beyond the classroom (with a year-level audience, the school community, families, or a real-world stakeholder).\n' +
-  '  Sentence 5: Name a SPECIFIC advanced or under-used feature of the tool that powers the activity (not the basic feature everyone already uses). Use named features: "Canva\'s Magic Write", "Book Creator\'s comic templates", "Padlet\'s map view", "iMovie\'s split-screen", "Adobe Express Animate from Audio", "Bee-Bot\'s sequence-and-repeat function", etc.\n' +
-  '  Sentence 6: End with the inspiring "so what" — the disposition, agency, or real-world contribution the student takes away beyond the unit (action, voice, identity, civic awareness, creative confidence).\n' +
+  'Every description in slots 1-5 must be 4 to 5 short, plain sentences a busy classroom teacher can act on straight away. Each sentence has a job:\n' +
+  '  Sentence 1: What students actually DO, first, in ordinary words. Start with "Students..." and name a concrete action (program, photograph, record, build, sort, measure, interview). Name the unit topic plainly.\n' +
+  '  Sentence 2: Why it fits this unit, said simply. Connect to the central idea or a line of inquiry in everyday language, as a normal sentence a teacher would say out loud.\n' +
+  '  Sentence 3: The lift -- the part that makes this better than the obvious version (another class as the audience, students swapping work, a real person to share it with, a genuine choice students make). Write it plainly; do NOT give the activity a clever invented name.\n' +
+  '  Sentence 4: What students end up with. A concrete thing you could point at: a recording, a map, a model, a display, a short film.\n' +
+  '  Sentence 5 (optional): The one feature of the tool that makes it work, named simply -- but ONLY a feature the tool genuinely has (see the tool-truth rules). If you are not certain the feature exists, leave this sentence out.\n' +
   'STEM slot 6 (Makerspace/Physical-First): 4-5 sentences naming concrete materials (cardboard, circuits, recycled materials, Lego, paper engineering, copper tape, cup-and-string mechanisms etc.), what is prototyped, how iteration happens, and what the student demonstrates at the end. Still propose something most teachers haven\'t tried.\n\n' +
-  'PUSH PAST THE OBVIOUS. Teachers must read these and think "I never thought of using it like that." Reject generic descriptions. Every sentence tailored to THIS unit.\n\n' +
+  'WRITE FOR A REAL TEACHER (HARD RULE). The reader is a classroom teacher with no free time who may never have touched this tool. If a sentence would make them stop and reread it, rewrite it.\n' +
+  '  - NO INVENTED ACTIVITY NAMES. Never brand the lesson. Banned shapes: "a black-box systems lab", "a forensic engineering crew", "tiny nature listeners", "a decision theatre", "an evidence room", "disaster-data detectives", "a junior museum catalogue". Just say what students do.\n' +
+  '  - NO "students become X" role-play framing. Say what they do, not who they pretend to be.\n' +
+  '  - NO abstract nouns doing the work: ethical imagination, dispositions, agency, sonic motifs, transdisciplinary connections, systems thinking, provocations, mindsets. Use plain verbs instead.\n' +
+  '  - PLAIN WORDS: use "work out" not "infer", "show" not "illuminate", "find out" not "uncover", "thing they make" not "artefact", "idea" not "premise".\n' +
+  '  - Keep the good idea. Being plain does NOT mean being boring -- still suggest something a teacher would not have thought of. Say it in everyday words.\n' +
+  '  - A Year 3 teacher should be able to read it once and know what Monday morning looks like.\n\n' +
   'SINGLE-TOOL REALITY CHECK (HARD RULE): the ENTIRE activity must be genuinely achievable using ONLY the one named tool. Do not describe steps that secretly need a second app or device — no separate video editor, camera app, maps tool, audio recorder, slideshow app, etc. — unless that capability is built into the named tool itself. If your idea would need another app, either choose a different single tool that can do the whole thing, or scope the activity down to what THIS tool actually does. The named tool is what students use end-to-end, not a label on a multi-app project.\n\n' +
   'BANNED PHRASES — do not write any of these (they make suggestions feel lazy and templated):\n' +
   '  - "connected to the central idea \'...\'"\n' +
@@ -4227,6 +4242,9 @@ const INSPIRING_DESCRIPTION_RULES = '\nDESCRIPTION STYLE — INSPIRING + INNOVAT
   '  - "Students use [tool] to [vague verb] about [unit theme]"\n' +
   '  - "The twist" / "The twist:" / "Here\'s the twist" / "the real twist" — never announce a twist by name; write the idea as a plain sentence.\n' +
   '  - "For a twist" / "To stretch" / "Take it further" / "For an extra challenge" — vary sentence openings naturally instead of stock lead-ins.\n' +
+  '  - "becomes a ... crew" / "becomes a ... lab" / "students become ..." -- no role-play branding.\n' +
+  '  - "leave seeing themselves as ..." / "come away recognising ..." -- no closing moral. Stop after the useful information.\n' +
+  '  - "under-used" / "invisible inputs" / "measurable outputs" / "ethical imagination" / "lived experience".\n' +
   'Name the actual topic. If the unit is about ecosystems, say "ecosystems". If it is about migration, say "migration".\n\n' +
   'WRITING MECHANICS: Use straight apostrophes (\'), em-dashes (—), Australian English. No curly quotes. No line breaks inside JSON string values.';
 
@@ -4418,12 +4436,12 @@ function inspiringValidateSugs_(sugs, target, data, targetIdx, approvedSet, bann
     if (!membership.ok) return membership;
   }
   // Soft sentence-count check for slots 1-5 only. STEM slot is allowed to be
-  // shorter. We accept 5-8 sentences for the inspiring slots (target is 6 —
-  // the AI sometimes lands on 5 or 7 with natural prose; rejecting those
-  // would balloon retries without quality improvement).
+  // shorter. 2026-08-07: the description style moved from 6 dense sentences to
+  // 4-5 plain ones a teacher can act on, so the floor moved with it. Below 4 is
+  // genuinely too thin to run a lesson from.
   for (let i = 0; i < 5; i++) {
     const n = inspiringSentenceCount_(sugs[i].d);
-    if (n < 5) return { ok: false, reason: 'slot ' + (i + 1) + ' description is only ' + n + ' sentence(s); need ~6' };
+    if (n < 4) return { ok: false, reason: 'slot ' + (i + 1) + ' description is only ' + n + ' sentence(s); need 4-5' };
   }
   return { ok: true };
 }
