@@ -1864,27 +1864,27 @@
     "s": [
       {
         "t": "Wise Discussion Chatbots",
-        "d": "The teacher creates a Wise Discussion Chatbot using the Character Interview scenario and sets the bot's role as Ava, a community celebration organiser explaining why particular traditions matter to different families. The topic is \"Who We Are: Leaders shape communities.\". Students chat with the bot to explore a named perspective through guided questioning rather than general research; for example, they ask \"How does this celebration show what your community values?\" and \"What might outsiders misunderstand about this tradition?\". After the chat, students produce a question bank plus a short perspective-and-evidence summary that compares the chatbot responses with unit sources linked explicitly to Who We Are."
+        "d": "Students hold a written conversation with a teacher-set Socratic Tutor about a school leadership dilemma. They must decide what an effective leader should do, explain who is affected and respond to questions that challenge their choice. Each student receives the same dilemma but may reach a different decision. Students then compare their conversation with a partner and identify where listening, fairness or courage changed the outcome. They finish with a saved discussion showing how their thinking developed. The teacher controls the chatbot's rules, timing and level of support."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Students build a survey asking classmates which leadership qualities help a community most. This gathers real evidence about why people trust some leaders and not others. Small groups choose their own qualities to test, such as fairness, courage, listening and responsibility. They invite another Year 4 class to respond and look for surprising differences between the groups. Students finish with a survey and auto-generated charts that can guide leadership applications at school. Microsoft Forms collects every response in one place and displays the results automatically."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students build a digital handbook showing how a student leader should respond to real school situations. Each page links a responsibility, a leadership quality and a practical action. Students ask a current school leader to choose one situation that needs the clearest advice, then revise that page for a younger audience. They add recorded explanations so younger students can hear why each choice matters. Students finish with a multimodal leadership handbook that can be read during class meetings. Book Creator combines text, images, audio and video within one book."
       },
       {
         "t": "Kahoot",
-        "d": "Students design and host a live Kahoot quiz show called 'Who Leads?,' using questions they've researched about famous and unsung leaders from around the world. This taps into the line of inquiry about the qualities and impact of influential leaders while making the learning social and surprising. Flipping roles, students become quizmasters and even challenge teachers or parents to see who knows the most about leadership. The final product is a competitive, high-energy quiz event broadcast to the year level or during a school assembly. Kahoot's question randomisation and team mode features let students craft tricky questions and spark team-based debate, not just rapid-fire recall. Learners walk away with pride in their expertise and see how fun it is to lead and challenge others in a positive, inclusive way."
-      },
-      {
-        "t": "Canva",
-        "d": "Students become leadership campaigners by creating a digital poster series in Canva, each spotlighting a different leadership strength?like empathy, courage, or listening?that's often overlooked. This directly explores the unit's focus on the sometimes invisible qualities that make leaders influential in their communities. Building on visual arts, students remix famous leadership quotes and their own reflections, then campaign around the school by displaying their work in key spaces or sharing digitally with families. The final artefacts are eye-catching, professionally styled posters using Canva's Magic Write and Remove Background features for truly original messaging. Magic Write lets students spark their own campaign slogans or calls to action, making each poster unique and powerful. Students gain the creative confidence to advocate for the kind of leadership they believe in, knowing their ideas can shift thinking in their community."
-      },
-      {
-        "t": "Podcast Equipment",
-        "d": "Students produce a podcast mini-series titled 'Leadership Stories from Year 4,' where they script and record episodes exploring school and community leadership from unexpected perspectives. This brings the purpose of leadership alive by having students act as reporters, interviewing classmates, staff, or even student leaders from other schools. Students also record 'what if' segments?imagining what would happen if leaders made different choices or faced harder challenges. The finished work is a polished audio series, edited with intro music and sound effects, and published for families, other classes, and even the local community to tune in. Using the podcast equipment's audio mixing and multitrack editing features, students experiment with layering voices, soundscapes, and authentic storytelling. By publishing their own voices, students step into the public space as young thought leaders, realising their stories and questions matter."
+        "d": "Students write scenario questions that ask players to choose the strongest response to a leadership challenge. This makes them apply leadership qualities rather than simply list them. Each group tests its questions on classmates and rewrites any item that causes confusion or has more than one reasonable answer. A buddy class then plays the finished quiz and discusses why the best answer would help the community. Students finish with a playable quiz that teaches responsible decision-making. Kahoot gives immediate responses after each short question."
       },
       {
         "t": "Padlet",
-        "d": "Students use Padlet to create a collaborative debate wall where they post arguments, counterarguments and evidence about the roles and responsibilities of effective leaders in communities. They design posts that include text, images and links to biographies or speeches of influential leaders, encouraging peers to respond with thoughtful questions or alternative viewpoints using threaded comments. This interactive platform allows students to investigate leadership qualities and dilemmas by engaging in respectful online discussions, simulating real-world community decision-making. They curate a rich digital dialogue that highlights different leadership styles and challenges, then summarise key insights in a final reflection post. The Padlet wall becomes a dynamic resource showcasing diverse perspectives on leadership and how leaders shape communities."
+        "d": "Students post evidence showing how different leaders have shaped communities through decisions and actions. They connect each example to a quality such as persistence, empathy, fairness or clear communication. Classmates respond by adding a counterexample, a question or another leader who used the same quality differently. Students choose one post to revise after reading the responses rather than treating the first answer as final. The class finishes with a shared evidence wall that shows leadership can look different across communities. Padlet keeps notes, images, links and peer responses together on one wall."
       },
       {
-        "t": "LeaderBots: Guiding Our Cardboard Communities",
-        "d": "Students work in teams to design and build imaginative miniature communities from recycled cardboard, craft materials, and LEGO figures, each representing different leadership roles (mayor, coach, captain, etc.). They then program simple Ozobot robots to follow custom-drawn paths through their community, stopping at key 'leadership stations' where students place interactive signs or mini-challenges that showcase leadership qualities in action. The project blends hands-on construction with basic robotics, encouraging students to reflect on how leaders guide and shape the places we live. This creative journey lets every child bring their vision of leadership to life?both in what they build and how they direct their LeaderBot through it!"
+        "t": "Lego Spike Prime",
+        "d": "Students empathise by watching a real class meeting and noticing problems such as interrupted speakers, unclear turns or decisions that exclude quieter voices. They define one problem, sketch several ideas and use LEGO pieces, a motor and the force, colour or distance sensor to build a working meeting aid, such as a turn indicator or voting mechanism. Teams prototype the physical mechanism first, then code it to move, light up or respond when a participant takes an action. They test it during a short meeting, collect spoken feedback and rebuild any part that is confusing or unreliable. Each team demonstrates the improved device and explains how its design helps a leader listen, organise or make fair decisions."
       }
     ],
     "audited": true,
@@ -1896,7 +1896,8 @@
     "inspiringRegenRecovered": true,
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T04:38:54.201Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T05:22:33.056Z"
   },
   {
     "ca": "Elsternwick",
@@ -1906,28 +1907,28 @@
     "lo": "The devices used to target audiences; Critical evaluation of messages; How we know we have been influenced",
     "s": [
       {
-        "t": "Dollar Street",
-        "d": "Students use Dollar Street to analyse how advertising and persuasive messages are tailored to different audiences by examining household items, media devices, and branded products in homes from various countries and income levels. They select images that show advertisements, packaging, or media consumption, then create a gallery walk with annotated captions explaining how marketing targets specific needs or aspirations. This activity connects to the inquiry into how messages are crafted to influence audiences. Dollar Street's AI-powered categorisation of product types mirrors how marketing analysts use image recognition to study consumer behaviour. Students present their annotated galleries and discuss how advertising strategies vary across cultures and economic backgrounds."
-      },
-      {
-        "t": "Book Creator",
-        "d": "Students become 'message detectives' by creating interactive case files in Book Creator, analysing a selection of real advertisements, pop songs, and viral images to unmask the tricks used to target young audiences. This ties in powerfully with examining the devices used to target audiences and the critical evaluation of messages. Students publish their detective files as a digital exhibition for parents and younger students, teaching them how to spot manipulation in everyday media. Each student's case file contains annotated images, audio 'clue' explanations, and clickable hotspots revealing where and how persuasive language or visuals do their work. Book Creator's built-in comic templates and audio hotspots transform ordinary analysis into an engaging, multimedia experience. Students finish as confident analysts, ready to decode?and even outsmart?the messaging swirling around them."
-      },
-      {
-        "t": "Teachable Machine",
-        "d": "Students use Teachable Machine to train a model that can recognise and classify persuasive techniques in media messages?such as emotional appeals, statistics, celebrity endorsements or loaded language?by uploading or recording short video or audio samples. They curate examples from advertisements, social media clips or news segments, then label and train the model to identify each technique. The resulting classifier is tested by classmates, who submit new samples to see if the model can accurately detect the persuasive device. This activity directly supports critical evaluation of messages and helps students understand how they are influenced by targeted communication. The process mirrors how social media platforms and advertising agencies use AI to automatically flag or categorise persuasive content for moderation or targeted marketing. Students reflect on the strengths and limitations of their model in a short written analysis."
-      },
-      {
         "t": "Wise Discussion Chatbots",
-        "d": "The teacher creates a Wise Discussion Chatbot using the Character Interview scenario and sets the bot's role as Ava, a community celebration organiser explaining why particular traditions matter to different families. The topic is \"How We Express Ourselves: People can create or manipulate messages to target specific audiences.\". Students chat with the bot to explore a named perspective through guided questioning rather than general research; for example, they ask \"How does this celebration show what your community values?\" and \"What might outsiders misunderstand about this tradition?\". After the chat, students produce a question bank plus a short perspective-and-evidence summary that compares the chatbot responses with unit sources linked explicitly to How We Express Ourselves."
+        "d": "Students question a teacher-set Socratic Tutor about how the same message could persuade a child, a parent and a school principal. They examine how word choice, evidence and emotion change when the target audience changes. Students then swap one persuasive claim and ask the chatbot to challenge its missing evidence and possible bias. Each student decides which chatbot prompts helped them think critically rather than simply accepting an answer. They finish with a written conversation showing how their judgement changed. The teacher controls the chatbot's rules, timing and level of support."
+      },
+      {
+        "t": "Adobe Express",
+        "d": "Students design two advertisements for the same imaginary product, with one aimed at Year 2 students and the other at adults. This makes audience targeting visible through changes in images, colour, layout, claims and calls to action. Another class views the advertisements without being told the intended audiences and guesses who each one targets. Students revise any design whose intended audience was unclear or whose claims were misleading. They finish with a matched pair of advertisements and a short designer statement. Adobe Express supports posters, social-style graphics and short promotional videos."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Students build a survey that shows two differently worded messages about the same school proposal and asks which one is more convincing. They collect anonymous responses to find out whether emotion, evidence, popularity or urgency has the strongest influence. Students send different versions to separate groups, then compare the auto-generated charts for signs that wording changed people's choices. They also identify questions that may have pushed respondents towards a particular answer and rewrite them more fairly. They finish with a survey, response charts and an evidence-based conclusion. Microsoft Forms automatically collects responses and displays summary charts."
+      },
+      {
+        "t": "GarageBand",
+        "d": "Students record two short jingles promoting the same imaginary product to different audiences. They change tempo, instruments, repetition and vocal delivery to test how sound can shape attention and feeling. Classmates listen without seeing the product and identify the audience and emotion each recording appears designed to target. Students revise one jingle after hearing which musical choices influenced listeners most strongly. They finish with two contrasting recordings and a spoken explanation of their choices. GarageBand lets students compose, layer and record music in one place."
       },
       {
         "t": "Explain Everything",
-        "d": "Students use Explain Everything to create interactive digital whiteboard presentations where they design and record persuasive messages aimed at specific audiences. They combine drawing tools, text annotations, voice recordings, and imported images to build layered explanations that reveal how different devices like emotional appeals or repetition influence viewers. For example, students might annotate a commercial, political ad, or social media post to highlight bias and persuasive techniques. They then record their own voiceover reflections explaining how the message targets its audience and whether it changed their thinking. This process helps students critically evaluate messages by making their reasoning visible and audible. Finally, presentations are shared for peer feedback, encouraging discussion about how messages shape opinions and influence behaviour."
+        "d": "Students draw a persuasive message on the whiteboard and record themselves changing it while explaining every choice. They circle loaded words, exaggeration, missing evidence and visual tricks to show how a message can be manipulated. A partner pauses the screencast at key moments and suggests where the audience might be misled or influenced. Students then record a revised version that remains persuasive without hiding important information. They finish with a narrated before-and-after screencast. Explain Everything records the screen and voice while students draw and annotate."
       },
       {
-        "t": "Persuasion Pinball: Build & Code Your Message Machine",
-        "d": "Students design and construct interactive pinball machines from cardboard, recycled materials, and craft supplies, embedding key persuasive messages or advertisements throughout the playfield. Using micro:bit boards and simple sensors, they program sound or light effects that trigger when the ball hits specific targets, reinforcing their intended message to the player. Each group selects a target audience and crafts both the physical and digital elements to maximise impact, blending creativity, engineering, and persuasive communication. This hands-on project lets students critically explore how design, technology, and messaging work together to influence audiences."
+        "t": "Lego Spike Prime",
+        "d": "Students empathise with younger pupils and define how a moving message display could attract attention without startling, pressuring or misleading them. Using LEGO pieces, motors, a distance sensor, cardboard signs and recycled materials, they ideate and build a display that moves only when someone approaches. They code the model, test it with classmates, and change its movement, timing or wording after observing what people notice and how they respond. At the end, each group demonstrates a working prototype and explains where ethical audience targeting ends and manipulation begins. LEGO SPIKE Prime provides the motors, distance sensor and coding needed to make the physical display respond."
       }
     ],
     "audited": true,
@@ -1939,7 +1940,8 @@
     "inspiringRegenRecovered": true,
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T04:39:18.553Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T05:23:45.362Z"
   },
   {
     "ca": "Elsternwick",
@@ -1949,28 +1951,28 @@
     "lo": "The power of giving back; How our environment is impacted by the products we create; Sustainable business practices",
     "s": [
       {
-        "t": "Minecraft Education",
-        "d": "Invite Year 5 students to step into the shoes of eco-entrepreneurs as they explore sustainable buildings in Minecraft: Its Good To Be Green (https://education.minecraft.net/en-us/lessons/its-good-to-be-green). This digital adventure brings alive the central idea that entrepreneurs must design and market products and services that truly care for our planet. Students become sustainability consultants, critiquing and redesigning virtual spaces to minimise waste and maximise positive environmental impact. Their final showcase is a guided video tour of their improved Minecraft building, pitched to a real-world audience of parents and local business owners. Using Minecraft's Book & Quill feature, students annotate their builds with sustainability tips and business ideas directly inside the world. They finish with the confidence to see themselves as real change-makers, ready to build a greener future both online and off."
-      },
-      {
-        "t": "Tinkercad",
-        "d": "Students become inventors by designing a prototype of a sustainable product?think reusable packaging, water filters, or solar-powered gadgets?using Tinkercad's 3D modelling tools. This hands-on project connects directly to the unit's focus on how entrepreneurs develop products that reduce environmental harm. To spark real-world thinking, students pitch their designs to a panel of local community members or parents, gathering feedback and fresh perspectives. The final artefact is a digital 3D model, complete with an annotated walkthrough video explaining its sustainable features. Tinkercad's 'Send to 3D Print' feature lets students see their creations leap from screen to reality, ready for display at the market stall event. They walk away with practical design skills and the thrill of seeing their own ideas take shape in the real world."
+        "t": "Teachable Machine",
+        "d": "Students photograph examples of recyclable, compostable and landfill packaging, then train an image model to sort each item. This shows how entrepreneurs can plan packaging that creates less waste after a product is sold. Teams swap test objects and record which packaging their model sorts incorrectly. They then choose whether better training images or clearer packaging design would improve the result. Students end with a working classifier and a short demonstration for market-stall visitors. Camera-driven sorting arms in recycling facilities work in a similar way, using trained image systems to direct waste into different streams."
       },
       {
         "t": "Microsoft Excel",
-        "d": "Transform students into financial analysts as they use Microsoft Excel to track costs, sales, and environmental impacts of their sustainable business ideas. This activity ties straight into the line of inquiry about responsible business practices, challenging students to balance profit with positive impact. By comparing their own data with real-world companies' sustainability reports, students wrestle with the tough choices entrepreneurs face. Their final product is a colourful, interactive dashboard with graphs showing profits, carbon savings, and even 'giving back' donations. Excel's conditional formatting and pivot tables help students visualise patterns and spot opportunities for improvement. They gain the power to make data-driven decisions?an essential skill for any future entrepreneur or changemaker."
+        "d": "Students enter expected material costs, selling prices and quantities for their sustainable product. This helps them see that responsible choices must work alongside a realistic business plan. Teams test different decisions, such as paying more for recycled materials or donating part of each sale. They compare scenarios and choose one that balances profit, environmental impact and giving back. Students end with a cost table and graphs showing income, expenses, profit and donations. Spreadsheet formulas let them change one number and immediately see how it affects the whole plan."
       },
       {
-        "t": "Podcasting using Canva",
-        "d": "Students become sustainability storytellers by producing a podcast episode using Canva's podcasting features, interviewing local entrepreneurs or community members about giving back. This creative task links to the unit's exploration of the power of giving back and how businesses can inspire positive change. Students take on the role of real journalists, crafting questions and editing their recordings for a school-wide audience. The finished artefact is a polished podcast episode, complete with original cover art and show notes, ready to be shared on the school website or at the market event. Canva's 'Magic Write' tool helps students script compelling introductions and memorable episode titles. They leave with the confidence to use their voices to spark conversations and action in their community."
+        "t": "Tinkercad",
+        "d": "Students measure their product and model a reusable holder, stand or packaging insert that could be 3D-printed in plastic. This asks them to reduce unnecessary size while still protecting or displaying what they sell. Partners exchange models and check whether the measurements, openings and wall thicknesses suit the intended product. Each student revises the shape after the measurement check rather than accepting the first design. Students end with a print-ready 3D prototype that can support their market stall. Tinkercad's solid-shape tools let students adjust exact dimensions before printing."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students build a digital product story with text, images and recorded narration explaining where their materials come from, how the product is made and where the money will go. This makes environmental responsibility and giving back visible to potential customers. Another Year 5 team reads the book as a customer and leaves questions the creators must answer in the next version. Students revise unclear claims and add evidence for any sustainability promises they make. They end with a narrated digital book that can be opened beside their market stall. Book Creator keeps writing, images, audio and video together on each page."
+      },
+      {
+        "t": "Micro:bit",
+        "d": "Students program a micro:bit to count market-stall sales when one button is pressed and display the running total on its LED grid. This gives each business a clear way to track progress towards a profit or donation goal. Teams choose a target and code a different LED image to appear when it is reached. They swap devices, test the counting instructions and debug any totals that increase incorrectly. Students end with a battery-powered sales counter they can operate at the market stall. The two buttons, variables and 5x5 LED grid make the counter work without another app during the event."
       },
       {
         "t": "Lego Spike Prime",
-        "d": "Challenge students to build and code a working model of an eco-friendly factory or recycling machine using Lego Spike Prime. This STEM-rich activity dives straight into how our environment is impacted by the products we create, making sustainability a hands-on engineering challenge. Students work in teams as real-world problem-solvers, consulting with a local waste management expert or parent volunteer for feedback on their designs. Their final artefact is a moving, sensor-powered model that sorts or processes materials, demonstrated live at the market stall event. Spike Prime's data logging and advanced sensor integration let students test and refine their machines for real efficiency gains. They finish with the technical know-how and teamwork skills to tackle big challenges in the world around them."
-      },
-      {
-        "t": "Eco-Entrepreneur Pop-Up Market Pods",
-        "d": "Students design and build miniature market stall 'pods' from recycled cardboard, fabric scraps, and upcycled plastics, creating both the physical stall structure and display elements for their sustainable product. They integrate a simple micro:bit or Makey Makey circuit to add an interactive feature ? such as a light-up sign, movement sensor, or sound effect that activates when a customer 'visits' their stall. This project brings entrepreneurship to life as students prototype, iterate, and test both their stall's design and customer experience, closely mirroring real-world market innovation and sustainable business practices. It ties directly to the unit by blending hands-on making, digital technology, and systems thinking about ethical production and marketing."
+        "d": "Students empathise by watching sellers pack, display and hand over products, then define one repeated task that could be easier or create less waste. They ideate with sketches and prototype a working LEGO mechanism using beams, gears, motors and a distance, colour or force sensor, such as a dispenser that releases one paper bag at a time. Teams test the mechanism with the real product, count jams or wasted movements, and rebuild the parts that fail. They then code and refine its motor and sensor response until another group can operate it without help. At the market stall, students demonstrate the physical prototype and explain how each change made the selling system more efficient or sustainable."
       }
     ],
     "audited": true,
@@ -1996,7 +1998,8 @@
     ],
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T04:43:37.297Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T05:24:55.351Z"
   },
   {
     "ca": "Elsternwick",
