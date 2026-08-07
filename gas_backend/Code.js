@@ -5016,8 +5016,8 @@ function regenerateAllInspiringRequeueAutoSwapped(opts) {
 // the trigger removes itself. Idempotent — safe to call kickoff again.
 // ============================================================================
 var SERVER_REGEN_TICK_HANDLER = 'serverSideRegenTick';
-var SERVER_REGEN_TICK_MINUTES = 10;
-var SERVER_REGEN_TICK_BATCH = 8;
+var SERVER_REGEN_TICK_MINUTES = 5;
+var SERVER_REGEN_TICK_BATCH = 3;
 // Stamped on every successful regen + auto-swap. Bump when changing the
 // substitute / URL-backstop / save logic so kickoff knows "this unit was
 // regenerated under the current code; don't redo it". Replaces the prior
