@@ -2337,28 +2337,28 @@
     "lo": "Different forms of energy and how they are used; The impact of different energy sources on the planet; Sustainable energy practices",
     "s": [
       {
-        "t": "Minecraft Education",
-        "d": "Students will step into the world of Minecraft: Alternative Energy (https://education.minecraft.net/en-us/lessons/alternative-energy) to explore, build, and compare hydropower, wind power, and waste-to-energy plants. They will see first-hand how different forms of energy are converted and used, and how these choices impact communities and the planet. Acting as city planners, students must weigh the needs of a growing population against environmental concerns, debating tough decisions about energy sources. Their final creation is a virtual sustainable city, complete with annotated energy facilities and a video tour explaining their design decisions for a real-world audience. Using Minecraft's in-game camera and Book & Quill, students will capture and narrate their process, combining visuals and explanations in a digital portfolio. By the end, they will see themselves as innovators who can design for both progress and sustainability."
+        "t": "Micro:bit",
+        "d": "Students program micro:bits to gather data about energy use around the classroom, following https://microbit.org/teach/lessons/?selected=energy-awareness. They use the data to work out when electrical energy is being used well and when it may be wasted. Groups choose different classroom locations and compare results before recommending one realistic change to another Year 6 class. They finish with a working data logger and an evidence-based energy-saving recommendation. Students can adjust and rerun their programs when the first set of readings raises new questions. The micro:bit's built-in light sensing and programmable LED grid make the investigation visible in students' hands."
       },
       {
-        "t": "Dollar Street",
-        "d": "Students use Dollar Street to compare how families from different countries and income levels use energy in their daily lives. They explore photos of kitchens, lighting, and appliances, noting the types of energy sources?such as firewood, solar panels, or electricity?used in each home. Students create a comparative infographic that highlights the environmental impact and sustainability of each energy choice. This directly connects to the inquiry into energy use and sustainable practices. Dollar Street's AI-driven tagging of energy-related features mirrors how environmental agencies use image recognition to monitor global energy consumption. Students share their infographics and discuss how access to energy shapes human progress and environmental outcomes."
+        "t": "Minecraft Education",
+        "d": "Students explore hydropower, wind power and waste-to-energy systems in the Alternative Energy lesson at https://education.minecraft.net/en-us/lessons/alternative-energy. They follow how mechanical and electrical energy are transformed before power reaches a community. Pairs compare the three systems, then choose the best mix for a community with needs set by another pair. They finish with an annotated Minecraft record of their chosen energy system and the reasons behind it. Students must account for environmental effects as well as the amount of useful energy produced. The Minecraft world lets them move through each power system and examine parts that are difficult to visit in real life."
       },
       {
         "t": "Teachable Machine",
-        "d": "Students use Teachable Machine to train a model that classifies images or sounds of different energy sources?such as solar panels, wind turbines, fossil fuel plants and hydroelectric dams. They gather and label media, then train the model to distinguish between renewable and non-renewable sources. This activity supports inquiry into forms of energy, their uses and impacts on the planet. The process is similar to how environmental monitoring systems use AI to identify and track energy infrastructure from satellite images or field recordings. Students present their classifier and a reflection on how AI can support sustainable energy practices."
+        "d": "Students photograph and sort clean classroom waste, then train an image model to recognise items such as paper, containers and non-recyclable packaging. This shows how identifying materials correctly can reduce the energy and resources lost when recycling is contaminated. Teams swap test objects and check where each other's models make mistakes. They finish with a trained classification model, test results and a short list of changes that improved its accuracy. Camera-driven sorting arms in recycling facilities work in a similar way by recognising materials and directing them into different streams. Teachable Machine lets students add examples, retrain the model and immediately test whether it has improved."
       },
       {
-        "t": "Wise Discussion Chatbots",
-        "d": "The teacher creates a Wise Discussion Chatbot using the Character Interview scenario and sets the bot's role as Dr Maya Chen, a wildlife ecologist advising the class about local habitats. The topic is \"How the World Works: Energy may be converted, transformed, and used to support human progress.\". Students chat with the bot to explore a named perspective through guided questioning rather than general research; for example, they ask \"Which adaptation would help this species survive a hotter summer?\" and \"What human action is putting this habitat under pressure?\". After the chat, students produce a question bank plus a short perspective-and-evidence summary that compares the chatbot responses with unit sources linked explicitly to How the World Works."
+        "t": "Tinkercad",
+        "d": "Students design a precisely measured plastic housing or stand for a Solar Buddy light in Tinkercad. They consider how the shape could protect the light, keep controls accessible and position it for practical use. Each design is handed to another group, who checks its measurements and suggests one change for a nominated user or setting. Students finish with a refined 3D model that can be rotated and inspected from every side. They label the design choices that support safe, durable use without claiming the software can test materials or solar performance. Tinkercad's solid-modelling and measurement tools let students adjust dimensions before any later physical printing is considered."
+      },
+      {
+        "t": "Delightex",
+        "d": "Students build an interactive 3D scene that shows an energy chain, such as sunlight becoming electrical energy and then light in a home. This makes each conversion visible and helps students distinguish the energy source from the useful output and unwanted heat. Groups exchange scenes and try to identify a missing or inaccurate conversion before the designers revise it. They finish with a coded virtual model that viewers can move through and activate. Students can add a second pathway to compare a renewable source with a non-renewable source supplying the same need. Delightex's CoBlocks let objects move or respond so the energy sequence unfolds one stage at a time."
       },
       {
         "t": "Lego Spike Prime",
-        "d": "Students will engineer and code working models of hydroelectric dams or wind turbines using Lego Spike Prime, exploring how mechanical energy is converted into electricity. This hands-on robotics challenge deepens their understanding of how energy may be transformed and used to support human progress. Working in teams as 'renewable engineers', students will test and refine their builds, racing to see whose design generates the most power or lifts the heaviest load. Their final artefact is a live demonstration and a time-lapse video of their build, which can be shared with families or featured in a science expo. By programming sensors and motors with Spike Prime's advanced block coding, students can measure output and tweak their machines for maximum efficiency. They leave with real-world engineering skills and the thrill of seeing their ideas come to life."
-      },
-      {
-        "t": "Eco-Energy Amusement Park Challenge",
-        "d": "Students design and build a working model of an amusement park ride (such as a Ferris wheel, carousel, or roller coaster) powered by their choice of renewable energy, like solar, wind, or hand-crank. Using recycled cardboard, wooden skewers, plastic bottles, gears, and motors, teams prototype their ride, integrating a micro:bit or Makey Makey to monitor energy input or trigger ride movement. Learners apply the design cycle to test, refine, and showcase how energy is converted and transformed to create motion and fun, drawing real-world links to sustainable engineering. This collaborative project challenges students to creatively solve problems while making energy concepts tangible and memorable."
+        "d": "Students empathise with someone who needs reliable lighting but has limited energy, then define how an automatic system could reduce waste. They ideate with sketches and prototype a working model from LEGO parts, cardboard reflectors and recycled-material room structures, using a motor and either the distance, colour or force sensor. Teams code the model to switch, move or redirect a light-related part only when a chosen condition is met, then test it against agreed success criteria. After watching another group use it, they change the build or code and test again. Each team demonstrates the final physical system and explains where energy enters, how it is transformed and how the design reduces unnecessary use."
       }
     ],
     "audited": true,
@@ -2371,6 +2371,18 @@
     "inspiringRegenAutoSwapped": [
       {
         "slot": 1,
+        "fromTool": "Micro:bit: Energy Awareness",
+        "toTool": "Micro:bit",
+        "perComponent": [
+          {
+            "from": "Micro:bit: Energy Awareness",
+            "to": "Micro:bit"
+          }
+        ],
+        "urlEvidence": true
+      },
+      {
+        "slot": 2,
         "fromTool": "Minecraft: Alternative Energy",
         "toTool": "Minecraft Education",
         "perComponent": [
@@ -2380,22 +2392,12 @@
           }
         ],
         "urlEvidence": true
-      },
-      {
-        "slot": 6,
-        "fromTool": "Makerspace/STEM Design Cycle",
-        "toTool": "Seesaw",
-        "perComponent": [
-          {
-            "from": "Makerspace/STEM Design Cycle",
-            "to": "Seesaw"
-          }
-        ]
       }
     ],
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T04:54:06.038Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T05:38:15.611Z"
   },
   {
     "ca": "Elsternwick",
@@ -2405,31 +2407,31 @@
     "lo": "How community values shape the management of the natural environment; The need for sustainable practices; Taking action for environmental stewardship",
     "s": [
       {
-        "t": "Micro:bit",
-        "d": "Students become energy detectives, using Micro:bit's data logging to track and investigate real energy usage around Wesley College and at home. This hands-on inquiry dives into how community values shape our choices about energy and the environment. Imagine students presenting their findings to campus decision-makers, suggesting ways the school could save energy and reduce its environmental footprint. Their final artefact is a set of interactive data visualisations and a short action proposal, ready to be shared with the Facilities team and families. The real magic comes from Micro:bit's built-in data logger, which lets students gather, process, and analyse live energy data?no guesswork, just real numbers. Students leave empowered with the skills and voice to champion practical, sustainable change in their own community."
-      },
-      {
-        "t": "Podcasting using Canva",
-        "d": "Students become environmental storytellers, producing a podcast series that explores local and Indigenous perspectives on caring for the land. This creative project connects directly to the line of inquiry about how different community values influence environmental management. Students can invite guest experts, interview classmates who attended Camp Mallana, or even record soundscapes from local parks to bring their episodes to life. The final product is a polished, multi-episode podcast published for the school community and families, sparking real conversations about stewardship. By using Canva's podcasting tools (https://www.canva.com), students can mix interviews, music, and sound effects for professional-quality episodes. They finish with the confidence to use their voices and technology to inspire change far beyond the classroom."
-      },
-      {
         "t": "National Geographic MapMaker",
-        "d": "Students become global explorers, creating interactive maps that compare sustainable practices in different communities around the world. This activity shines a spotlight on the need for sustainable practices by inviting students to investigate and annotate real-world case studies?from Indigenous fire management in Australia to urban farming in Singapore. Students are challenged to consider what makes a practice 'sustainable' and how geography, culture, and resources shape community choices. Their finished artefact is a digital map layered with their own annotations, images, and case study summaries, ready to be shared at assembly or with partner schools. National Geographic MapMaker's custom annotation and layering tools let students build rich, multi-dimensional maps that tell compelling stories. Students walk away with a global mindset and the mapping skills to visualise solutions to environmental challenges."
+        "d": "Students layer population, climate and terrain data to compare how two communities manage nearby natural environments. This shows why the same environmental challenge can lead to different choices in different places. Each group chooses where it would protect land, allow development or restore habitat, then adds annotations explaining the trade-offs. Groups swap maps and challenge one decision using evidence from a different layer. Students finish with an annotated map that shows how community needs and environmental care can compete. MapMaker's geographic data layers let students test whether their first ideas still make sense when new evidence appears."
+      },
+      {
+        "t": "Insta360 camera",
+        "d": "Students record 360-degree views of places around the campus where people affect soil, water, plants or wildlife. Seeing the whole setting helps them notice how paths, bins, gardens and buildings shape the environment. Each group asks another class to explore one recording and identify a stewardship problem the filmmakers missed. Students then record a second view that points out a practical improvement and explains who would need to support it. They finish with a pair of immersive recordings showing a place before and after a proposed community action. The camera captures the complete surroundings, so viewers can look beyond the feature the group first noticed."
       },
       {
         "t": "Book Creator",
-        "d": "Students become environmental advocates, designing digital action books that inspire others to take up the challenge of stewardship. This project connects to 'taking action for environmental stewardship' by having students research a local issue and propose creative, practical solutions. Students can collaborate in pairs, take on roles as journalists or campaigners, and even include interviews with community members. The final book?complete with interactive elements, audio, and video?can be published online and shared with families, local council, or feeder schools. Book Creator's comic templates and embedded multimedia features allow students to craft engaging, persuasive stories that jump off the (digital) page. By the end, students have the tools and confidence to turn their ideas into real-world advocacy."
+        "d": "Students interview a teacher, Camp Mallana staff member or invited community expert about a practice that protects the natural environment. Their questions explore how culture, experience and community values influence decisions about land, water and living things. Students place short recorded answers beside their own respectful commentary and checked background information. A partner group listens and adds one question that the book still needs to answer. Students finish with a narrated digital book containing interviews, images, text and practical stewardship ideas. Book Creator keeps recorded voice, video, images and writing together on each page."
       },
       {
-        "t": "Merge Cubes",
-        "d": "Students become virtual ecologists, building 3D models of local ecosystems or sustainable innovations that can be explored in augmented reality using Merge Cubes. This immersive experience ties directly to the central idea of how communities interact with their environment in diverse ways. Students are invited to swap cubes and step into each other's shoes, seeing the world from the perspective of a river, a tree, or even a waste treatment plant. Their final product is a set of interactive AR models, complete with narrated explanations, that can be shared at a student expo or with younger year levels. Merge Cubes' object annotation and layered AR features let students add voiceovers and clickable hotspots for a truly interactive experience. Students leave not just with technical know-how, but with empathy for the living systems they're striving to protect."
+        "t": "Micro:bit",
+        "d": "Students program a Micro:bit to count different types of litter found during a marked schoolyard or Camp Mallana survey. They use the two buttons for separate categories and show running totals on the LED grid. This turns a general call to reduce waste into evidence that can guide a specific community response. Groups exchange devices, test the counting instructions and debug any program that records incorrect totals. Students finish with a portable litter-counting device and a tested plan for where it should be used. The buttons, LED grid and battery pack allow the device to collect counts away from a computer."
       },
       {
-        "t": "Eco-Guardian Wearables: Design for Change",
-        "d": "Students will design and build wearable tech accessories?such as wristbands, badges, or hats?using recycled materials, conductive thread, and simple circuits (LEDs, coin cell batteries, sewable microcontrollers). Each wearable will visually represent a chosen environmental issue or Indigenous stewardship practice, lighting up or changing color to communicate key messages. Students prototype their designs, solder or sew in electronic elements, and use digital drawing apps to create stencils or logos. This project challenges students to combine hands-on making with digital design, advocating for conservation and responsible action in a creative, memorable way."
+        "t": "Canva",
+        "d": "Students design an environmental campaign for one realistic change at Elsternwick, such as reducing lunch waste, protecting habitat or saving water. They select evidence, name the people whose support is needed and state one action the audience can take. Each campaign is tested with another class, whose response decides which wording or image the designers revise. The strongest campaigns can be shown to campus leaders or included in a real school sustainability drive. Students finish with a campaign poster, infographic or short promotional video. Canva's layouts support clear combinations of evidence, images and short calls to action."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Students empathise with cleaners, gardeners and local wildlife by examining where mixed waste creates problems, then define one item-sorting need. They sketch ideas and build a physical sorter from LEGO pieces, cardboard chutes and clean recycled packaging. Teams code a colour or distance sensor to trigger a motor that diverts model waste, then test it with repeated trials. They record failures by hand, adjust the chute, mechanism or code, and test again with another team's objects. Each team demonstrates a working prototype and explains how its design could support a community decision about waste."
       }
     ],
-    "audited": false,
+    "audited": true,
     "plannerText": "The Year 6 'Sharing the Planet' unit focuses on how communities interact with the environment in diverse ways, emphasizing stewardship, conservation, and the influence of community values. Students explore Indigenous practices, local and global case studies, and environmental challenges through inquiry-based learning, reflective tasks, and action projects. The unit integrates experiences from Camp Mallana, encourages advocacy and responsible action, and connects to curriculum areas such as science, social studies, and digital skills. Learning activities are designed to foster critical thinking, collaboration, and real-world application, culminating in student-led projects that promote environmental awareness and sustainable futures.",
     "stemRebooted": true,
     "humanVerified": false,
@@ -2461,7 +2463,8 @@
     ],
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T04:54:37.399Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T05:39:46.565Z"
   },
   {
     "ca": "Elsternwick",
@@ -2471,28 +2474,28 @@
     "lo": "What is a significant event; Why these events occurred; Impact of significant events",
     "s": [
       {
-        "t": "Minecraft Education",
-        "d": "Step into the shoes of a goldfields explorer with Minecraft: Gold Rush (https://education.minecraft.net/en-us/lessons/australian-gold-rush2), where students relive the journey of hopeful miners arriving in Victoria. By experiencing firsthand why the Gold Rush was such a significant event, students unpack the forces that shaped Melbourne and its communities. As they write diary entries and snap in-game photos, students grapple with whose voices are remembered and whose are left out of history. Their final artefact is a digital diary?complete with images and immersive storytelling?ready to be shared with families and displayed at a school history showcase. The lesson's teleportation feature lets students jump between historical locations, deepening their understanding of cause and effect across different settings. By the end, students see themselves as time travellers?confident in their ability to connect personal stories to the bigger picture of how events shape a place."
+        "t": "Wise Discussion Chatbots",
+        "d": "Students interview a teacher-set chatbot portraying a person affected by a significant migration event in Melbourne's history. They ask why the person moved, what changed in the new place and whose experiences might be missing. This opens the central idea through one person's choices before students examine the wider event. Pairs compare the answers they received and write follow-up questions that challenge different points of view. Students finish with a saved written interview and three claims they will check against reliable historical sources. The teacher controls the character, discussion rules and level of support, so the chatbot guides thinking rather than acting as a research source."
       },
       {
         "t": "National Geographic MapMaker",
-        "d": "Students become migration cartographers by using National Geographic MapMaker to plot the journeys of families and communities across continents and generations. Exploring what makes an event 'significant', they visually map out migration routes, settlement patterns, and the ripple effects on local culture. By inviting parents or community members to contribute their own migration stories, students gain a richer, multi-perspective view of Melbourne's evolving identity. The final product is an interactive digital map annotated with personal stories, photos, and key historical events?perfect for sharing at an open evening or on the class blog. MapMaker's layering and annotation tools let students overlay historical events, population changes, and cultural landmarks for true depth. Students walk away as mapmakers with a sense of belonging and a toolkit for seeing how movement shapes the world around them."
+        "d": "Students map migration routes to Victoria and annotate the places where selected significant events began, unfolded and had lasting effects. They switch between population, terrain and climate layers to work out how geography may have influenced why people moved. Each group removes one layer before another group examines the map and identifies what evidence is now missing. Students finish with an annotated map that links routes, causes and changes to communities. They add short notes that clearly separate map evidence from questions needing further research. MapMaker's geographic data layers let students test different explanations rather than simply view a static map."
       },
       {
-        "t": "Podcast Equipment",
-        "d": "Transform your students into history podcasters as they script and record interviews with 'witnesses' of Melbourne's significant events?real or imagined?using Podcast Equipment. Delving into the question of why events occurred, students step into the roles of journalists, activists, or community elders to explore motivations and consequences. By collaborating with a local historian or inviting family members to share their stories on-air, students see how history is a living conversation. Their finished artefact is a polished podcast episode, complete with intro music and sound effects, ready to broadcast to the school community and beyond. Using the podcast mixer's live EQ and multi-track recording, students can layer voices, music, and archival audio for a professional touch. They finish the project with the confidence to ask big questions and the skills to amplify voices from the past and present."
+        "t": "Dollar Street",
+        "d": "Students sort and compare Dollar Street photographs of homes, kitchens, bedrooms and valued objects from countries linked to migration stories they are researching. The visual evidence helps them consider what people may preserve, adapt or leave behind when events reshape a place. Students choose two households at similar income levels in different countries so culture is not confused with wealth. They exchange comparisons with another pair and check whether their first assumptions are supported by the photographs. Students finish with a captioned set of image observations and careful questions for further inquiry. Dollar Street arranges households by estimated monthly consumption, making fairer visual comparisons possible."
       },
       {
-        "t": "Wise Discussion Chatbots",
-        "d": "The teacher creates a Wise Discussion Chatbot using the Character Interview scenario and sets the bot's role as Ava, a community celebration organiser explaining why particular traditions matter to different families. The topic is \"Where We Are in Place and Time: Significant events shape a place\". Students chat with the bot to explore a named perspective through guided questioning rather than general research; for example, they ask \"How does this celebration show what your community values?\" and \"What might outsiders misunderstand about this tradition?\". After the chat, students produce a question bank plus a short perspective-and-evidence summary that compares the chatbot responses with unit sources linked explicitly to Where We Are in Place and Time."
+        "t": "Book Creator",
+        "d": "Students build a multimodal case study showing how one significant event changed a Victorian place before, during and after it occurred. They combine written explanations, primary-source images and recorded narration to show causes, different experiences and lasting impacts. A classmate listens without seeing the title and identifies which evidence makes the event seem significant. Students then revise any page where the link between evidence and change is unclear. They finish with a narrated digital book that can form part of the student-led exhibition. Book Creator keeps text, images, audio and video together in one publishable book."
       },
       {
-        "t": "Animating a Character with Adobe Express",
-        "d": "Students bring Melbourne's history to life by animating a character who witnessed a significant event, using Animating a Character with Adobe Express. As they retell why a particular event happened, students give voice to someone often overlooked?a child on the goldfields, a recent migrant, or a market stallholder. By sharing their animations with a Year 3 buddy class, students practise empathy and see how stories can bridge generations. The final artefact is a short animated video where their chosen character narrates the event's causes and consequences, ready for sharing on the school's digital channels. The Animate from Audio feature lets students turn their own recorded voices into expressive, lip-synced animations in minutes. They finish with creative confidence and a knack for making history feel personal and real."
+        "t": "Kahoot",
+        "d": "Students write a Kahoot quiz that asks classmates to judge whether events are significant rather than merely recall dates. Each question presents a short event summary and answer choices based on criteria such as scale, duration, change and different community perspectives. Groups swap quizzes and flag any question where more than one answer could be defended. The authors revise those questions or use them to start a class discussion about why historical significance can be contested. Students finish with a playable quiz that checks both historical knowledge and reasoning. Kahoot's immediate answer display gives the teacher a quick view of which significance criteria need more teaching."
       },
       {
-        "t": "Migration Maze: Journey Through Time",
-        "d": "Students design and construct a large, interactive 3D board game that traces the journeys of different migrant groups through history. Using recycled cardboard, craft sticks, fabric scraps, and paint, teams build detailed landscapes and landmarks representing significant places and moments along migration routes. They then integrate programmable Ozobots or Sphero Indi robots as 'travellers,' coding them to navigate the maze according to historical challenges, choices, and events. This hands-on project immerses students in the experience of migration, helping them understand how significant events shape communities and places over time."
+        "t": "Lego Spike Prime",
+        "d": "Students empathise with migrants arriving at an unfamiliar transport hub, then define one physical navigation or luggage-moving problem that could make arrival safer and clearer. Using LEGO beams, wheels, motors, the distance, colour or force sensor, and cardboard signs, teams ideate and build a working model such as an automated barrier, guided trolley or alert point. They test it with classmates following a simple arrival scenario, record where the mechanism fails, and rebuild or debug it at least once. Each team demonstrates the improved prototype and explains how a significant wave of migration could change the services and design of a place. The final model must physically move or respond to an input, not simply represent the historical event."
       }
     ],
     "audited": true,
@@ -2531,7 +2534,8 @@
       }
     ],
     "suggestionAuditAt": "2026-06-08T04:58:44.189Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T05:40:45.788Z"
   },
   {
     "ca": "Elsternwick",
