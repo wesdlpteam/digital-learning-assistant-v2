@@ -133,6 +133,33 @@ const REALISTIC_TOOL_USE_RULES = `REALISTIC CLASSROOM USE RULES (HARD RULE):
 // 'teachable machine'.realWorld and the whitelist "AI real-world" tickbox). Keep wordings in sync.
 const TEACHABLE_MACHINE_REAL_WORLD_RULE = 'TEACHABLE MACHINE REAL-WORLD CONNECTION (REQUIRED whenever a suggestion uses Teachable Machine): in 1-2 sentences woven into the description, connect THIS specific classification task to a real-world system that works the same way — choose the parallel that genuinely matches the activity, never a generic list. True examples to draw from: recognising uniforms/vehicles/helpers → image recognition in council CCTV and emergency-dispatch systems; sorting recycling/materials → camera-driven sorting arms in recycling facilities; identifying plants/animals/leaves → wildlife-monitoring cameras and apps like Seek/iNaturalist; recognising faces/poses/movements → face unlock, accessibility tools, physiotherapy and sports-coaching apps; sorting food/produce → fruit-grading machines on farms; recognising sounds/voice commands → smart speakers and hearing-assistance tech.';
 
+// Renders the Studio-synced per-tool notes as prompt text. This is the SINGLE
+// source of truth for what each tool is and is not for -- edit a tool's note in
+// the Studio Tool Inventory and it reaches the generator on the next sync. Do
+// NOT re-add hardcoded per-tool rules here; that is what drifted before.
+function getSyncedToolNotesPrompt_() {
+  var raw = PropertiesService.getScriptProperties().getProperty('DLA_TOOL_NOTES');
+  if (!raw) return '';
+  var notes;
+  try { notes = JSON.parse(raw); } catch (e) { return ''; }
+  var keys = Object.keys(notes || {});
+  if (!keys.length) return '';
+  var lines = [];
+  keys.sort().forEach(function (k) {
+    var n = notes[k] || {};
+    var bits = [];
+    if (n.is) bits.push('IS ' + n.is);
+    if (n.good) bits.push('USE FOR: ' + n.good);
+    if (n.avoid) bits.push('DO NOT: ' + n.avoid);
+    if (!bits.length) return;
+    lines.push('- ' + k + ' \u2014 ' + bits.join('. ') + '.');
+  });
+  if (!lines.length) return '';
+  return '\n\nWHAT EACH TOOL ACTUALLY IS (HARD RULE, synced from the Studio Tool Inventory).' +
+    ' These describe what the tool genuinely does at Wesley. Never contradict one, and never' +
+    ' name a feature a tool does not have:\n' + lines.join('\n');
+}
+
 function toolKey_(t) {
   return (t || '').toString().toLowerCase().trim().replace(/\s+/g, ' ');
 }
@@ -226,7 +253,8 @@ function getApprovedToolsPrompt_() {
     return 'APPROVED TOOLS ONLY (Wesley College — synced from Studio Tool Inventory):\n' +
       toolList +
       '\n\nPROHIBITED: ' + bannedList + ', any tool NOT on the approved list above.' +
-      '\nHARDWARE RULES: Instead of Digital Cameras, suggest using the iPad Camera app. Instead of Green Screen Kits, suggest using Canva\'s \'Remove Background\' feature.';
+      '\nHARDWARE RULES: Instead of Digital Cameras, suggest using the iPad Camera app. Instead of Green Screen Kits, suggest using Canva\'s \'Remove Background\' feature.' +
+      getSyncedToolNotesPrompt_();
   }
 
   return APPROVED_TOOLS;
@@ -2484,6 +2512,14 @@ function syncToolInventory_(body) {
   props.setProperty('DLA_TOOL_APPROVED', JSON.stringify(approved));
   props.setProperty('DLA_TOOL_BANNED', JSON.stringify(banned));
   props.setProperty('DLA_TOOL_AGE_RANGES', JSON.stringify(ageRanges));
+  // 2026-08-07: per-tool notes now arrive with the list. Before this the Studio
+  // held them alone, so a Studio-side ban never reached the prompts that write
+  // the lesson ideas. Only overwrite when the client actually sent some, so an
+  // older Studio tab cannot blank them.
+  var notes = body.notes;
+  if (notes && typeof notes === 'object' && Object.keys(notes).length) {
+    props.setProperty('DLA_TOOL_NOTES', JSON.stringify(notes));
+  }
   props.setProperty('DLA_TOOL_SYNC_TIME', new Date().toISOString());
 
   // v5.18: Clean up the orphaned TOOL_INVENTORY property if it exists

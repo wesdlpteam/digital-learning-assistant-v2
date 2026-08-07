@@ -1599,6 +1599,30 @@ function getLibraryLessons(key){ return LIBRARIES[key] || []; }
 // Pushes the Studio's approved/banned lists to GAS Script Properties
 // so the auditor, surgeon, and all GAS-side AI calls use the same lists.
 // Called automatically every time saveLibraries() succeeds.
+// Merged per-tool affordance notes for the approved list, keyed by lowercase
+// tool name. Sent to the backend by syncToolInventoryToGAS_ so the server builds
+// its prompts from the SAME notes the Studio shows, instead of its own hardcoded
+// copy that silently drifted (Tinkercad circuits, 2026-08-07).
+function buildToolNotesForSync_(){
+  const out = {};
+  const tools = (typeof TOOL_INVENTORY !== 'undefined' && Array.isArray(TOOL_INVENTORY.approved)) ? TOOL_INVENTORY.approved : [];
+  for(const t of tools){
+    const name = String(t && t.n ? t.n : t || '').trim();
+    if(!name) continue;
+    let a = null;
+    try { a = (typeof getToolAffordance_ === 'function') ? getToolAffordance_(name) : null; } catch(e){ a = null; }
+    if(!a && typeof TOOL_AFFORDANCE_NOTES === 'object' && TOOL_AFFORDANCE_NOTES) a = TOOL_AFFORDANCE_NOTES[name.toLowerCase().trim()];
+    if(!a) continue;
+    const entry = {};
+    if(a.is) entry.is = a.is;
+    if(a.good) entry.good = a.good;
+    if(a.avoid) entry.avoid = a.avoid;
+    if(a.realWorld) entry.realWorld = a.realWorld;
+    if(Object.keys(entry).length) out[name.toLowerCase().trim()] = entry;
+  }
+  return out;
+}
+
 async function syncToolInventoryToGAS_() {
   if (!SCRIPT_URL) return;
   normaliseToolInventory();
@@ -1606,7 +1630,12 @@ async function syncToolInventoryToGAS_() {
     action: 'syncToolInventory',
     approved: TOOL_INVENTORY.approved || [],
     banned: TOOL_INVENTORY.banned || [],
-    ageRanges: TOOL_INVENTORY.ageRanges || {}
+    ageRanges: TOOL_INVENTORY.ageRanges || {},
+    // 2026-08-07: the per-tool notes now travel with the list. They used to live
+    // ONLY here, so a rule like "Tinkercad is not for circuits" never reached the
+    // server -- which is the side that actually writes the lesson ideas. One copy,
+    // edited in Tool Inventory, used by both.
+    notes: buildToolNotesForSync_()
   });
   try {
     const r = await fetch(SCRIPT_URL, {
