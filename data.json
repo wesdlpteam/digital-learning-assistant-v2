@@ -1674,27 +1674,27 @@
     "s": [
       {
         "t": "Teachable Machine",
-        "d": "Students photograph classroom objects and train Teachable Machine to sort them as metal, plastic, paper or fabric. They test what happens when an object is folded, partly hidden or shown under different light, gathering evidence about when the system succeeds or fails. Groups swap unusual objects and try to work out which training images made each classifier reliable. This works like the camera-driven sorting systems used in recycling facilities, where machines must recognise fast-moving materials despite changes in shape and position. Students finish with a trained classifier and a record of surprising test results. Teachable Machine lets them add image examples, train classes and test new images through the camera."
+        "d": "Students photograph and sort everyday objects by material, then train an image model to recognise groups such as metal, plastic, fabric and paper. They test it with unfamiliar objects and record where the computer's judgement differs from their own observations. Each group chooses new training images to improve one weak category, showing how scientific knowledge changes when better evidence is added. This works like camera-driven sorting arms in recycling facilities, where recognised materials are directed into different streams. Students swap models with another group to find objects that confuse the system. They finish with a tested classification model and a short list of evidence-based improvements."
       },
       {
         "t": "Microsoft Excel",
-        "d": "Students measure how far toy cars travel when ramp height, surface material or car mass changes, then enter repeated results in Microsoft Excel. They compare averages and charts to see how evidence can explain interactions between objects and materials. Each group receives another group's unnamed data and works out which variable was changed before checking the answer. Students finish with a clear data table, a chart and a short evidence-based conclusion. Excel can calculate averages from repeated measurements. Its charts make patterns and unusual results easier to spot."
-      },
-      {
-        "t": "Stop Motion Studio",
-        "d": "Students build a tabletop model showing a chain of interactions, such as sunlight helping a plant grow and the plant providing food for an animal, then photograph each small change in Stop Motion Studio. Moving one part at a time helps them show how a change can travel through a living system. Groups exchange unfinished films and predict the next interaction before the creators reveal their ending. Students finish with a short stop-motion film that shows cause and effect across the whole system. Stop Motion Studio captures frames directly and plays them as an animation. Its frame-by-frame view helps students adjust movements that are too large or unclear."
+        "d": "Students measure how changing one part of a simple system, such as ramp height or surface type, affects how far an object travels. They enter repeated measurements into an Excel table so that patterns and unusual results are easy to spot. Groups exchange tables and try to work out the changed condition from the evidence alone. They then decide whether more trials are needed before making a claim. Students finish with a data table, a graph and a written conclusion supported by measurements. Excel charts turn repeated results into a clear visual pattern."
       },
       {
         "t": "Micro:bit",
-        "d": "Students program a Micro:bit to display readings from its light sensor or temperature sensor while they test different classroom locations. They repeat measurements at set times to find out how changing conditions affect the readings. Groups choose one surprising result, change only one condition and test whether the result happens again. Students finish with a working sensor tool and a set of repeated observations they can use to support a claim. The Micro:bit's LED grid can show numbers and simple symbols. Its built-in light and temperature sensors allow students to collect evidence without attaching extra equipment."
+        "d": "Students program a micro:bit to measure light or temperature in several classroom locations and compare how the surroundings affect the readings. Repeated measurements help them see why one observation is not enough to explain an interaction. Each group hides the location names and challenges another group to match the data patterns to places such as a sunny window, shaded shelf or doorway. Students adjust their testing method when readings vary unexpectedly. They finish with a working sensor program and a set of readings that support a claim. The built-in light and temperature sensors make immediate testing and retesting possible."
       },
       {
-        "t": "Explain Everything",
-        "d": "Students draw and record two explanations of the same interaction, such as why a paper helicopter falls differently after its wing length changes. The first explanation shows their initial idea, while the second uses results from repeated tests to revise it. Another class watches both versions and identifies the exact piece of evidence that changed the explanation. Students finish with a narrated whiteboard recording that makes the development of scientific knowledge visible. Explain Everything lets students draw, move objects and record their voice and on-screen actions. Its editable canvas allows them to correct one part without rebuilding the whole explanation."
+        "t": "Stop Motion Studio",
+        "d": "Students build a frame-by-frame explanation of an interaction such as melting ice, magnetic attraction, seed growth or an object moving down a ramp. They move models in small steps so viewers can see how one change affects another part of the system. Groups swap unfinished animations and predict the next change before the creators reveal it. Students revise any sequence that does not match their observations or scientific evidence. They finish with a short stop-motion explanation that shows cause and effect clearly. Onion-skin guidance helps students position each frame for smooth, accurate movement."
+      },
+      {
+        "t": "Freeform",
+        "d": "Students collect observations, measurements and questions from one class investigation on a shared Freeform canvas. They connect evidence to possible explanations and separate what they observed from what they only think might be happening. Another group follows the connections and adds a question wherever the evidence does not yet support the claim. Students then choose which missing evidence would be most useful and plan one more fair test. They finish with a connected evidence map showing how their explanation changed. Freeform's open canvas lets groups move, group and link ideas as new evidence arrives."
       },
       {
         "t": "Lego Spike Prime",
-        "d": "Students empathise with a school gardener who needs to know when a covered seedling tray receives light, then define what a useful warning system must do. They ideate with sketches and build physical prototypes from LEGO pieces, cardboard shades and recycled materials before adding a LEGO Spike Prime light sensor and programmable output. Teams test each design under bright, dim and blocked light, record failures on paper and rebuild the sensor position or code. They repeat the Prototype and Test stages until the response is reliable rather than triggered by small accidental changes. Each team demonstrates its finished model, explains the interaction between light, sensor, program and output, and shows one improvement made from test evidence."
+        "d": "Students empathise with someone who needs to move a fragile object safely, then define what a successful transport system must do. Using Lego beams, wheels, gears, a motor and a sensor, they sketch ideas and build a physical prototype that starts, moves and stops without dropping its load. They test it with different loads or surfaces, measure what happens, and rebuild the weakest part after each trial. At the end, each team demonstrates its improved machine and explains which evidence led to the final change."
       }
     ],
     "audited": true,
@@ -1721,7 +1721,7 @@
     "suggestionAuditAt": "2026-06-08T04:33:53.238Z",
     "suggestionAuditVersion": "a1-2026-06-07",
     "uoiEditApprovedAt": "2026-08-07T00:57:09.663Z",
-    "inspiringRegenAt": "2026-08-07T01:51:08.049Z"
+    "inspiringRegenAt": "2026-08-07T01:59:14.277Z"
   },
   {
     "ca": "Elsternwick",
