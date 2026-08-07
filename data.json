@@ -664,31 +664,31 @@
     "lo": "Safe environments; How our actions affect ourselves and others; Keeping our body and mind healthy",
     "s": [
       {
-        "t": "Book Creator",
-        "d": "Students become health detectives by creating interactive digital books that guide readers through a 'choose your own adventure' journey about making safe and healthy choices. Each page presents a scenario?like deciding what to eat for breakfast, how to cross the road, or what to do when feeling worried?and students design two possible paths, using photos, drawings, and voice recordings to illustrate the outcomes. Book Creator's multimedia features let students embed sound effects for good choices and gentle reminders for risky ones, making each decision point engaging and memorable. As they build their books, students discuss with partners how different actions affect wellbeing, deepening their understanding of cause and effect. The finished books are shared in a class library, allowing peers and families to explore and discuss the impact of everyday decisions. This project empowers students to see themselves as authors of their own safety and wellbeing stories."
-      },
-      {
-        "t": "ScratchJr",
-        "d": "Students become storytellers by coding animated stories where characters make healthy or risky choices and see the consequences play out. This links directly to 'how our actions affect ourselves and others', giving students a playful way to experiment with cause and effect. Each student will swap their own story with a partner and remix it to show a different outcome, encouraging empathy and new perspectives. The final product is a short, interactive animation that can be shared with Prep buddies or uploaded to Seesaw for families to watch together. ScratchJr's 'trigger on tap' and 'endless loop' blocks let students create branching storylines and repeating healthy habits, like brushing teeth or stretching. By the end, students feel empowered to make positive choices and understand that their actions ripple out to those around them."
-      },
-      {
         "t": "Apple Clips",
-        "d": "Students use Apple Clips to create safety and wellbeing video tips for their peers. They act out scenarios?such as crossing the road safely, making healthy food choices, or managing big feelings?and use the app's stickers, live titles, and filters to emphasise key actions. Students narrate their videos to explain why these actions matter for keeping themselves and others safe. The finished clips are compiled into a class 'Wellbeing Video Wall', which can be revisited during health and safety discussions. This activity empowers students to take ownership of their wellbeing and share practical strategies with others."
+        "d": "Students record two versions of the same doorway, playground or handwashing moment?one with an unsafe choice and one with a safer choice. Comparing the clips makes it clear that small actions can change everyone's safety and wellbeing. Each group chooses a real school routine that younger students or families would find useful. They finish with a short safety film that pauses before the choice and invites viewers to predict what should happen next. Live captions, stickers and titles help Year 1 students make the message easy to follow."
       },
       {
         "t": "Animating a Character with Adobe Express",
-        "d": "Students become animated health experts by using the Animate from Audio feature in Adobe Express (https://new.express.adobe.com/home/tools/animate-from-audio) to create talking characters that explain how different body systems keep us safe and healthy. Working in small groups, students record their voices as they describe the role of the heart, lungs, or skin, then select a character?such as a friendly doctor or a superhero organ?to deliver their message. The app automatically lip-syncs the character to their narration, making the information engaging and memorable. Each group shares their animated explainer with the class, sparking questions and connections about how our bodies work. The finished artefact is a short, lively video that can be shared with families or embedded on the class blog. This activity helps students build confidence in communicating scientific ideas and deepens their understanding of how our bodies protect and support us every day."
+        "d": "Students record a heart, brain, stomach or pair of lungs explaining one daily action that helps it stay healthy. Giving the body part a voice helps children connect eating, movement, sleep and calming choices with how their bodies and minds feel. Students swap recordings and check whether the advice is clear, kind and possible for a Year 1 child to follow. They finish with a short talking-character health message for a class body display. The Animate from Audio feature automatically moves the character's mouth with each student's recorded voice."
       },
       {
         "t": "Brushes Redux",
-        "d": "Students become wellbeing artists, using Brushes Redux to create digital posters that celebrate healthy habits and positive actions in their daily lives. This connects to 'keeping our body and mind healthy', encouraging students to notice and promote the small choices that make a big difference. Students will swap posters and add a new layer?showing what happens when someone forgets or ignores the healthy habit, building empathy and reflection. The final artefact is a vibrant digital gallery displayed on the class screen or printed for the school corridor, sparking conversations with peers and visitors. Brushes Redux's layering and transparency tools allow students to create before-and-after scenes or highlight hidden details, adding depth to their messages. Students leave with creative confidence and the drive to inspire others to look after themselves."
+        "d": "Students paint a layered self-portrait showing how their body and mind might feel before and after a healthy action such as sleep, movement, water or quiet breathing. The two versions show that choices can affect both physical feelings and emotions. Each student chooses colours, marks and shapes that make sense to them, then asks a partner what changes they notice. They finish with a paired digital painting that can prompt a class conversation about different ways people care for themselves. Layers let students change the background, body outline and feeling marks without starting again."
       },
       {
-        "t": "Healthy Habits Adventure Track",
-        "d": "Students design and build a vibrant obstacle course that represents a 'day in the life' of a healthy person, using cardboard, popsticks, fabric scraps, recycled containers, and markers. Along the track, they create interactive stations (like brushing teeth, eating fruits, exercising, and resting) with moving parts or flaps. Using Sphero Indi cars, students program simple routes to guide their cars through each healthy habit station, reinforcing cause-and-effect and the importance of daily routines. This hands-on project helps students physically map out and share their understanding of how healthy choices keep our bodies and minds strong."
+        "t": "Clickview",
+        "d": "Students watch a teacher-selected video about body care, emotions or staying safe and answer its built-in questions as they go. Stopping at key moments helps them notice how one person's action can help or harm themselves and others. Pairs compare one answer, replay the matching scene and decide whether the video gives enough evidence. They finish with a completed set of responses and one healthy or safe action they can test during the school week. Clickview's curated clips and built-in questions keep the viewing focused and manageable."
+      },
+      {
+        "t": "Puppet Pals",
+        "d": "Students build and record a short puppet scene in which a character faces a choice about playground safety, personal space, rest or asking for help. Showing both the choice and its effect makes cause and consequence visible to young learners. Groups exchange unfinished scenes, predict the safest next action and let the original creators choose the ending. They finish with a narrated puppet show that models clear words and helpful actions. Puppet Pals combines characters, backdrops, movement and recorded voices in one app."
+      },
+      {
+        "t": "Beebots",
+        "d": "Students empathise with someone moving through a busy classroom, define one safety problem, and sketch ideas for a clearer route. Using a Bee-Bot, a large paper floor mat, cardboard furniture, recycled-material barriers and picture cards, they prototype a path to places such as the sink, bag area or calm corner. They program the route in advance, test whether it avoids hazards, then move or redesign the physical features when the Bee-Bot cannot travel safely. After repeated testing, each group demonstrates its improved environment and explains how the design and programmed sequence protect people's wellbeing. The Bee-Bot follows only the directional commands students enter, so successful navigation depends on careful planning and debugging."
       }
     ],
-    "audited": false,
+    "audited": true,
     "plannerText": "The Year 1 'Who We Are' unit focuses on how our actions influence our safety and wellbeing, exploring the human body, healthy habits, and safe environments. Students investigate body systems, healthy routines, and choices that support physical and emotional health through hands-on activities, read-alouds, inquiry stations, and creative projects. The unit emphasizes student agency, reflection, and communication, with opportunities for students to document learning, build models, and share their understanding with peers and families. Transdisciplinary links include science, English, PE, and wellbeing, fostering a holistic understanding of how we care for ourselves and others.",
     "stemRebooted": true,
     "humanVerified": false,
@@ -712,7 +712,8 @@
     ],
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T04:09:01.804Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T04:50:41.765Z"
   },
   {
     "ca": "Elsternwick",
@@ -722,28 +723,28 @@
     "lo": "Forms of expression; Expressing thoughts and ideas; Understanding and appreciating art",
     "s": [
       {
-        "t": "ChatterPix Kids",
-        "d": "Students bring famous artworks to life by giving them voices and personalities using ChatterPix Kids. This playful approach lets them embody different forms of artistic expression, deepening their understanding of how ideas and emotions are communicated through art. They can even adopt the role of 'artwork ambassadors' and perform their creations for a younger class, sparking cross-year conversations about creativity. The final product is a gallery of talking masterpieces?each artwork introducing itself, sharing its story, and inviting viewers to think about how it inspires imagination. By layering in background sounds or music with ChatterPix Kids' sound effects feature, students explore how voice and tone can transform meaning. Kids leave feeling fearless about experimenting with art and technology, realising their own ideas deserve to be heard."
-      },
-      {
-        "t": "Book Creator",
-        "d": "Students curate their own digital exhibition of creative writing, visual art, and music using Book Creator. This presses right into the line of inquiry about expressing thoughts and ideas in imaginative ways. As classroom curators, they write artist statements and even include 'behind-the-scenes' pages revealing their process, inviting families and the school community to tour the finished eBook. Each child publishes a personal art anthology, complete with audio poetry readings, scanned artwork, and embedded music. Book Creator's comic templates and audio recording features let them blend text, speech, and images into a rich multimedia showcase. They finish the unit feeling like real authors, excited by the power and possibility of self-publishing."
-      },
-      {
-        "t": "Brushes Redux",
-        "d": "Students experiment with digital painting on Brushes Redux and reimagine a classic work of art in a brand-new style. This connects directly to forms of artistic expression, as they discover how colour, texture, and brushstroke choices can dramatically change a piece's mood or message. They become 'art remixers', debating whether changing the original artwork adds or takes away meaning, and share their thinking in a class critique. The end result is a digital art gallery with side-by-side comparisons: students' reinterpretations displayed alongside the originals, open for the school to view and discuss. Brushes Redux's advanced layering tool lets them build complex compositions, try out bold changes without fear, and even add hidden details. The experience empowers them to see themselves as artists who can play, remix, and push boundaries."
-      },
-      {
         "t": "GarageBand",
-        "d": "Students compose and record their own original soundtracks in GarageBand, using music to express a feeling or tell a story inspired by a piece of visual art. This explores the link between music and expressing thoughts and ideas, inviting students to consider how sound and rhythm can change our response to what we see. They might even swap soundtracks with another class, challenging their peers to guess which artwork each piece of music matches, sparking lively debate about interpretation. The culminating artefact is a playlist of student-generated tracks, each paired with a visual artwork and a short artist statement explaining the creative choices. By experimenting with GarageBand's live loops and sound library, students discover how layering and mixing transform simple melodies into rich soundscapes. They finish the experience tuned in to how music shapes our feelings and more confident to create their own."
+        "d": "Students compose a short soundscape that expresses the colours, shapes and feelings they notice in a chosen artwork. This shows how one art form can spark imagination in another. Students swap artworks without explaining their choices, then compare how differently their partners translate the same image into sound. They choose and arrange sounds to create a clear beginning, change and ending. The class finishes with a listening gallery where the artwork is revealed after each composition plays. GarageBand makes this possible by letting students record and arrange music and sound effects."
       },
       {
-        "t": "Delightex",
-        "d": "Students design interactive, choose-your-own-adventure stories in Delightex, where readers make decisions that affect the outcome of an artistic journey. This pushes deep into the idea of understanding and appreciating art by inviting others to step into the shoes of the artist or character. They take on the role of 'imagination guides', building stories that encourage empathy and let classmates experience art from different perspectives. Each finished project is an interactive storybook, complete with student-created art, branching paths, and audio narration, ready to be played by the wider school community. Delightex's path-branching feature lets students weave multiple endings and hidden surprises, making every reading a new adventure. By the end, they see themselves as storytellers and inventors, ready to take creative risks and put their ideas into the world."
+        "t": "Sketchbook",
+        "d": "Students draw an everyday object in Sketchbook, then transform it into something imagined through colour, pattern and added details. This helps them see that artistic expression can begin with close observation and grow through creative choices. Partners exchange unfinished drawings and suggest one surprising possibility without taking control of the artist's idea. Each student decides whether to accept, adapt or reject the suggestion. They finish with a detailed digital illustration and a short written artist statement. Sketchbook's drawing tools support careful sketching, colouring and visual experimentation."
       },
       {
-        "t": "Feelings Forts & Talking Tunnels",
-        "d": "Students work in teams to design and build colourful mini 'forts' or 'tunnels' using big cardboard boxes, fabric scraps, recycled materials, and child-safe art supplies. Inside their creations, they place a simple iPad with the Voice Memos app, recording and playing back their own poems, songs, or stories about feelings and imagination. Each fort is decorated to express an emotion or idea (like 'joy', 'curiosity', or 'peace'), blending artistic choices with physical construction. This project lets children express themselves through both building and audio storytelling, sharing their creative spaces and messages with classmates."
+        "t": "Stop Motion Studio",
+        "d": "Students animate cut-paper shapes to show the feeling and imagery in a short poem they have written. This lets them explore how words, movement and visual art can express the same thought in different ways. Another class watches the animations without seeing the poems and describes the feelings or ideas it notices. Students use that response to adjust the timing, movement or final frame. They finish with a short stop-motion poem that can be screened for the school community. Stop Motion Studio captures the paper pieces frame by frame so small changes appear to move."
+      },
+      {
+        "t": "Podcasting using Canva",
+        "d": "Students record a short interview with a classmate about an artwork, song or poem that inspires them. This builds appreciation by asking children to listen closely to another person's ideas and feelings. Interviewers must include one follow-up question based on something their partner actually says. Students then edit the conversation so the speaker's voice and meaning remain clear. They finish with a brief podcast episode featuring an introduction, interview and closing reflection. Podcasting using Canva supports recording and editing the complete audio story on an iPad."
+      },
+      {
+        "t": "Freeform",
+        "d": "Students draw or write responses to several artworks on a shared Freeform canvas. This makes different forms of expression and personal interpretations visible in one place. Each student connects their response to a classmate's idea that surprises them, then adds a note explaining the connection. The class looks for artworks that produced similar feelings as well as completely different reactions. They finish with a connected visual wall of drawings, words, questions and appreciation notes. Freeform's infinite collaborative canvas lets ideas sit beside one another and grow over several lessons."
+      },
+      {
+        "t": "Sphero Indi",
+        "d": "Students empathise with younger visitors who need a clear, playful way to move through a classroom art display, then define what would make the journey easy and enjoyable. They ideate routes with coloured tiles and prototype signs, arches and viewing stops from cardboard, paper, tape and recycled materials. Teams test whether Sphero Indi can travel the full route and pause attention at each artwork, then move tiles or rebuild structures when the journey is unclear. They invite another group to test the route without instructions and use the group's actions as feedback. Each team demonstrates an improved physical gallery path in which movement, colour and student-made art work together."
       }
     ],
     "audited": true,
@@ -770,7 +771,8 @@
     ],
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T04:09:26.445Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T04:51:13.160Z"
   },
   {
     "ca": "Elsternwick",
@@ -780,31 +782,31 @@
     "lo": "Needs and wants; The changing needs of communities; The design process",
     "s": [
       {
-        "t": "Delightex",
-        "d": "Students step into the shoes of local shoppers to design an interactive virtual marketplace, choosing stalls and products that reflect the real needs and wants of the Elsternwick community. This hands-on task brings to life the idea that marketplaces mirror what people value and require, as explored through real-world examples. Students work in teams and invite a parent or school staff member to 'shop' in their virtual market, then reflect on what surprised their guests and themselves about what was in high demand. The final artefact is a 3D interactive market map, complete with clickable pop-ups that explain which goods are needs and which are wants, ready to showcase at a family open afternoon. Delightex's Hotspot tool lets students embed audio stories and persuasive sales pitches for each stall, making every corner of their marketplace come alive with student voices. By tackling real-world choices and seeing how different groups prioritise, students build empathy and understand how communities shape ? and are shaped by ? their markets."
-      },
-      {
-        "t": "Animating a Character with Adobe Express",
-        "d": "Students use Animate from Audio (https://new.express.adobe.com/home/tools/animate-from-audio) to bring marketplace characters to life, recording their voices as shopkeepers, customers, or community helpers explaining why certain goods are needs or wants. The teacher guides students through choosing a character and recording a short persuasive pitch or story about a product or service that helps the Elsternwick community. For example, a student might voice a baker explaining why bread is essential, or a toy seller making a case for their latest game. The tool automatically lip-syncs the character to the student's voice, creating a lively animated video. These clips are compiled into a digital 'Marketplace Gallery' that can be shared with families or displayed on the class screen. This activity deepens understanding of community priorities and gives every student a voice in the conversation about what matters most."
-      },
-      {
         "t": "Microsoft Forms",
-        "d": "Students design a digital survey using Microsoft Forms to collect data on what classmates, teachers, and family members consider needs versus wants in their daily lives. They brainstorm and craft clear, age-appropriate questions, such as 'What is something you cannot live without?' or 'What is something you like to have but do not need?' After distributing the survey, students analyse the responses using Forms' automatic charts and graphs, identifying trends and surprises. Each group creates a summary poster with key findings and a reflection on how different perspectives shape what communities prioritise in marketplaces. This data-driven approach helps students connect maths skills with real-world decision-making and sparks rich discussion about empathy and responsibility."
+        "d": "Students build a short survey that asks another Year 2 class to choose between community needs and wants in marketplace situations. The responses show that marketplaces change according to what people value, use and can afford. Students include one question about what a local support organisation should stock first when space is limited. They compare the live results, discuss surprising choices and revise any unclear questions. They end with a real set of community preference data and a ranked list of priorities. Microsoft Forms automatically collects the answers and displays simple charts."
       },
       {
-        "t": "ChatterPix Kids",
-        "d": "Students snap photos of everyday objects found in local shops or at home, then use ChatterPix Kids to animate these items as if they could talk. Each object 'speaks' about whether it is a need or a want, and why it matters to people in the community. For example, a loaf of bread might explain its importance for families, while a soccer ball might share how it brings joy but is not essential. Students record their voices and add fun stickers or backgrounds to personalise each talking object. The final collection of animated clips is assembled into a class video wall, sparking conversations about how we make choices in marketplaces. This playful activity builds persuasive language skills and helps students see everyday goods from new perspectives."
+        "t": "Microsoft Excel",
+        "d": "Students enter class votes about essential and optional marketplace items into a simple spreadsheet. They use the totals to work out which items a small community stall should stock and how many of each it might need. Pairs receive the same limited stock budget but make different choices, then compare who they have served and who may miss out. They adjust quantities when the teacher announces a change such as hot weather, a new baby group or fewer available funds. They end with a stock table and a graph showing how community needs can change. Excel turns the entered totals into clear column or picture-style charts."
       },
       {
-        "t": "Puppet Pals",
-        "d": "With Puppet Pals, students storyboard, voice, and animate short skits where they role-play marketplace designers solving a tricky problem for their community. This brings the design process to life, letting students think like inventors as they brainstorm, prototype, and pitch imaginative stalls or services that help meet changing needs. Teams swap scripts so another group can 'remix' their story from a different perspective ? for example, from the viewpoint of a new family moving to Elsternwick or an elderly resident. The final artefact is a set of playful video skits that can be shared with the Prep classes or uploaded to Seesaw for families to enjoy and comment on. Puppet Pals' custom character maker lets students upload photos of real market spaces and add themselves as digital puppets, giving their stories a unique local flavour. By collaborating and adapting each other's ideas, students learn that great community solutions often come from seeing problems through many different eyes."
+        "t": "Clickview",
+        "d": "Students watch selected clips showing supermarkets, street markets and community food services, pausing to sort what each place provides into needs and wants. This helps them see that marketplaces are organised around the people who use them. The teacher adds questions that ask students to notice who is served, what is easy to access and what may be missing. Students revisit one clip after hearing about Sacred Heart Mission and change an answer when new evidence changes their thinking. They end with completed responses comparing several kinds of marketplaces. ClickView's built-in questions keep the viewing focused and make student thinking visible to the teacher."
       },
       {
-        "t": "Market Marvel Mini-Stalls",
-        "d": "Students design and build their own mini marketplace stalls using recycled boxes, fabric scraps, and craft materials, representing different community needs and wants (e.g., food, clothing, toys). Each group creates physical 'goods' for their stall, then codes a Bee-Bot or Sphero Indi to visit other stalls following a marketplace map they draw and decorate. Along the way, students practice exchanging 'needs' and 'wants' tokens and reflect on how their choices impact the community. This project blends creative building, basic robotics, and real-world marketplace concepts, making the design cycle hands-on and meaningful."
+        "t": "Insta360 camera",
+        "d": "Students record a 360-degree view of a classroom marketplace while classmates buy, sell, queue and restock essential and optional items. The whole-space recording helps them notice how layout and organisation affect whether community needs are met. Students watch from different directions and choose one change that would make the market easier for a young child, an older person or someone carrying several bags. They rearrange the stalls, record the market again and compare the two versions. They end with before-and-after 360-degree recordings of a redesigned marketplace. The spherical view captures the stalls, signs, queues and movement at the same time."
+      },
+      {
+        "t": "Geoboard",
+        "d": "Students build possible floor plans for a small community market by stretching bands around the virtual peg grid. They explore how stall shape, pathway width and available space influence what the market can offer. Partners swap plans and test whether every essential stall can be reached without crossing another stall. Students revise their shapes when a new community need requires a food table, quiet waiting area or donation point. They end with a clear geometric market plan that balances limited space with community priorities. The virtual bands make it quick to move boundaries and compare area and perimeter."
+      },
+      {
+        "t": "Sphero Indi",
+        "d": "Students empathise with people collecting essential items, then define the need for a safe route through a busy community market. Using cardboard stalls, recycled packaging, paper signs and Indi's coloured tiles, they sketch several ideas before building a physical marketplace and laying a delivery path. They test whether Indi can travel from the storeroom to the correct stalls, then move tiles, widen paths or change the layout whenever the route fails. Classmates test each prototype with a changed request, such as delivering food before toiletries or avoiding a crowded area. Students finish by demonstrating a reliable route and explaining how each redesign better meets a community need."
       }
     ],
-    "audited": false,
+    "audited": true,
     "plannerText": "The Year 2 'How We Organise Ourselves' unit explores how marketplaces reflect the needs and wants of communities, with a strong focus on distinguishing needs from wants and using the design thinking process to create solutions for real community challenges. Students investigate local and global perspectives, connect with organisations like Sacred Heart Mission, and engage in hands-on activities such as role-play, sorting games, and prototyping. The unit emphasises communication, reflection, and responsibility, integrating maths (data, measurement), English (persuasive writing, information reports), and social studies. Learners are encouraged to document their thinking, collaborate, and share their innovations with the school community, building empathy and practical problem-solving skills.",
     "stemRebooted": true,
     "humanVerified": false,
@@ -841,7 +843,8 @@
     ],
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T04:13:34.136Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T04:51:57.464Z"
   },
   {
     "ca": "Elsternwick",
