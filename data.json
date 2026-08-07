@@ -1240,28 +1240,28 @@
     "lo": "The work of scientists; The process of learning; How science brings about new understandings and changes",
     "s": [
       {
+        "t": "Micro:bit",
+        "d": "Students program a micro:bit to measure light levels and show an LED warning when a classroom space is using more light than it needs. This shows how scientists turn measurements into action that can reduce wasted energy. Groups test different thresholds, compare sunny and cloudy conditions, and swap devices to check whether another group's code works reliably. They adjust one variable at a time and debug warnings that appear too early or too late. Each group finishes with a working light-monitoring device and a tested recommendation for the classroom. The built-in light sensing, LED grid and battery pack allow the device to collect information and run away from the computer."
+      },
+      {
+        "t": "Microsoft Excel",
+        "d": "Students measure the time taken for ice cubes to melt under different fair-test conditions and enter their results in Microsoft Excel. This helps them see how controlled variables and repeated measurements lead to stronger scientific explanations. Groups exchange data so they can decide whether one unusual result should change the class conclusion. They make charts that reveal patterns across locations, coverings or container types. Each group finishes with a labelled graph and a short evidence-based conclusion about heat transfer and changes of state. Excel's tables and charts make patterns and unexpected results easy to compare."
+      },
+      {
         "t": "Minecraft Education",
-        "d": "Students will step inside a virtual sustainable building using Minecraft Education's 'It's Good To Be Green' lesson (https://education.minecraft.net/en-us/lessons/its-good-to-be-green), exploring how scientific principles shape eco-friendly design. This directly brings alive the line of inquiry about how science sparks new understandings and changes in the world around us. Students become environmental consultants, critiquing the building's features and suggesting improvements for real spaces at Wesley College. Their final artefact is a narrated Minecraft tour video, guiding families through the virtual building and pitching their own sustainable upgrade ideas. They'll use Minecraft's in-game camera and book-and-quill to collect evidence and annotate their discoveries, then screen-record their walkthroughs for a polished presentation. Students walk away empowered to see themselves as changemakers, ready to spot?and fix?sustainability challenges in their own community."
+        "d": "Students build two small homes in Minecraft Education, changing one design feature at a time to show how shade, windows and building materials can affect heating and energy use. This makes scientific principles visible as choices that can improve how people live. Another group inspects each pair of homes and identifies the variable that changed before suggesting a more sustainable redesign. Students then rebuild one section to respond to that feedback while keeping the comparison fair. Each team finishes with a matched pair of models and signs explaining the scientific reason for each design choice. Minecraft's shared block-building world lets students construct, inspect and revise the models at full scale."
+      },
+      {
+        "t": "Teachable Machine",
+        "d": "Students photograph clean examples of paper, plastic and general waste in Teachable Machine and train an image model to sort them. This shows how repeated examples help a computer learn patterns and how science can support responsible consumption. Groups test one another's models with crumpled, partly hidden and differently coloured items, then add better training examples when the model makes mistakes. Camera-driven sorting arms in recycling facilities work in a similar way by recognising materials before directing them into different streams. Each group finishes with a tested classification model and a record of which objects confused it. Teachable Machine's image classes and live camera testing make each improvement visible straight away."
       },
       {
         "t": "Explain Everything",
-        "d": "Students become science detectives, using Explain Everything to record and annotate their own fair-test experiments on energy transformation or states of matter. This activity brings the process of learning and the scientific method to life, showing how scientists test and refine their ideas. Each group takes on the challenge of explaining a common misconception (like 'cold is a thing' or 'bigger objects fall faster') to a younger class, using diagrams, voiceovers, and step-by-step explanations. The final product is a dynamic, interactive video lesson that can be shared with Year 2 students or uploaded to the school website as a 'myth-busting' mini-series. Students harness Explain Everything's infinite canvas and layering tools to zoom in, annotate, and even animate tricky science concepts?far beyond a basic slideshow. By teaching others, they build real confidence in their scientific reasoning and communication skills."
+        "d": "Students record a narrated screencast that explains one fair test, drawing the setup and moving labels to show the independent, dependent and controlled variables. This makes the process of learning in science as important as the final result. Partners pause the explanation at the prediction stage and decide whether the test is fair before hearing what happened. Students revise any unclear section and add an annotation showing how the evidence changed or strengthened their thinking. Each student finishes with a short recorded explanation that can play beside the experiment at the science fair. Explain Everything records the student's voice, drawing and on-screen movements together."
       },
       {
-        "t": "Book Creator",
-        "d": "Students will create a digital science biography using Book Creator, spotlighting a scientist whose work has changed the world. This taps into the line of inquiry about the work of scientists and the impact of their discoveries. Students will write from the scientist's point of view, crafting journal entries that reveal not only what they discovered but also the obstacles and failures along the way. The finished artefact is an interactive ebook, complete with voice recordings, photos, and clickable timelines, ready to be showcased at the Year 3 science fair and shared with families online. They'll use Book Creator's comic templates and audio hotspots to bring the scientists' stories vividly to life. By stepping into the shoes of real scientists, students see that discovery is messy, exciting, and always within reach."
-      },
-      {
-        "t": "Micro:bit",
-        "d": "Students become energy detectives, building and programming Micro:bit devices to monitor and display real-time classroom energy use. By investigating energy transformation as part of the scientific method, they learn how data can spark meaningful change. Students take on the role of sustainability advisors, using their findings to persuade the school community to adopt smarter energy habits. Each group creates a digital energy dashboard on their Micro:bit, with scrolling messages and animated icons that visualise both the problem and their proposed solution?ready for display at assembly or on the classroom door. The project leverages the Micro:bit's data-logging and radio communication features, allowing live comparisons between different rooms or teams. Through this hands-on mission, students discover how young scientists can use technology, data, and persuasive communication to take action for a more sustainable world."
-      },
-      {
-        "t": "Adobe Express",
-        "d": "Students will produce a short animated explainer using Adobe Express, unpacking how a key scientific principle (like insulation or energy transfer) solves a real-world problem. This activity highlights the central idea that humans use science to take meaningful action. Students take on the role of science communicators, scripting and animating their message for a real audience?like local council members or sustainability leaders. Their final artefact is a punchy, voice-animated video (using 'Animate from Audio') that can be shared on the school website or emailed to community partners. They'll dive into Adobe Express's 'Animate from Audio' feature to bring their narration to life with custom characters and motion. Students leave knowing their voices?and their science?can spark real change beyond the classroom."
-      },
-      {
-        "t": "Energy Chain Reaction Carnival",
-        "d": "Students design and build a spectacular Rube Goldberg-style chain reaction machine that demonstrates different types of energy transformation (e.g., potential to kinetic, motion to sound). Using recycled cardboard, marbles, dominoes, balloons, string, plastic bottles, and more, teams prototype each step and connect them for a dramatic final effect. They record their machine in action using an iPad, then use the Clips app to add voiceovers explaining each energy change and how scientific principles make their carnival contraption work. This hands-on challenge immerses students in the design cycle and links scientific understanding to creative problem-solving and real-world innovation."
+        "t": "Sphero BOLT",
+        "d": "Students empathise with people who need to move a small solar-panel cleaning robot safely along a narrow rooftop, then define the need for a reliable route that avoids fragile areas. Using cardboard, masking tape, recycled packaging and paper markers, they ideate and build a physical rooftop course before writing a Sphero BOLT program. They prototype one route, test its speed and direction, and change either the code or the cardboard design after every collision. Teams exchange courses so the robot must work in a setting its programmers did not build. Each team demonstrates a refined moving system and explains which test caused its most useful change."
       }
     ],
     "audited": true,
@@ -1340,7 +1340,8 @@
           ]
         }
       ]
-    }
+    },
+    "inspiringRegenAt": "2026-08-07T05:07:49.568Z"
   },
   {
     "ca": "Elsternwick",
@@ -1350,28 +1351,28 @@
     "lo": "Adaptations and structural features of living things; Roles of living things in an ecosystem; Actions that benefit or harm ecosystems",
     "s": [
       {
-        "t": "Seek by iNaturalist",
-        "d": "Students use Seek by iNaturalist to observe and identify living things in their local environment, such as insects, plants or birds in the schoolyard or nearby park. Working in pairs, they photograph and log their findings, using the app's identification features to learn about adaptations and roles in the ecosystem. Each pair selects one organism to research further, focusing on its unique adaptations and how it contributes to ecosystem balance. Students then create a short profile card for their chosen species, including a photo, key adaptations, and a description of its role. This hands-on investigation deepens understanding of how living things survive and thrive in changing environments. The class assembles a collaborative wall of local species, highlighting the importance of biodiversity and sustainability."
+        "t": "Field Guide to Victoria",
+        "d": "Students photograph and identify Victorian animals they can find around the Elsternwick campus. They check each identification against the app's species information and list the structural or behavioural features that may help the animal survive. This makes adaptation visible in places students usually walk past without noticing. Pairs compare animals found in sunny, shaded, built and planted areas, then suggest why each animal was there. They finish with a set of local species records and evidence-based survival explanations. The app's Victorian fauna guide keeps the investigation local and age-appropriate."
       },
       {
         "t": "National Geographic MapMaker",
-        "d": "Students take on the role of ecosystem detectives, using National Geographic MapMaker to build interactive maps that track how living things interact and depend on each other across different biomes. This activity dives into the line of inquiry about 'roles of living things in an ecosystem' by mapping out food webs, migration routes, or habitat boundaries. To make it real, students choose a local or global ecosystem and imagine they are advising a team of conservationists on where to focus their efforts. Their finished map is a digital, annotated masterpiece with layers, icons, and pop-up facts, ready to be shared in a virtual gallery walk for the school community. MapMaker's custom drawing and annotation tools let students add their own shapes, lines, and notes?so every map tells a unique story. Students walk away seeing the world as a network of connections, empowered to think spatially about how every action can ripple through an ecosystem."
+        "d": "Students explore climate and terrain layers to compare the changing environments where selected animals live. They annotate regions with the adaptations that help each animal find food, shelter or safety there. Groups then swap maps and add one possible environmental change, such as reduced rainfall, warmer conditions or habitat loss. The original group decides whether its animal could survive that change and adds a supported prediction. Students finish with an annotated map showing how place, adaptation and survival are connected. MapMaker's layered geographic data lets them look for patterns rather than view a static map."
       },
       {
-        "t": "Dollar Street",
-        "d": "Students use Dollar Street to investigate how families around the world adapt their homes and daily lives to different environments. They browse photos and stories, focusing on adaptations in clothing, shelter, and food storage across various climates and ecosystems. Students select two families living in contrasting environments?such as a tropical region and a desert?and create a side-by-side poster or digital display showing how each family's adaptations help them survive and thrive. This activity links to the unit's focus on adaptation and sustainability. Dollar Street's AI-powered tagging of household features is similar to how environmental scientists use image classification to study adaptation strategies in diverse communities. Students share their displays and discuss how adaptation supports sustainability in changing environments."
+        "t": "Book Creator",
+        "d": "Students record a short digital field guide entry explaining how one living thing fits into an ecosystem. They combine text, labelled images and narration to show its adaptations, food relationships and role in keeping the ecosystem healthy. Each student also adds a page showing one human action that would help and one that would cause harm. Another class listens to the entries and records a question that the authors can answer through revision. Students finish with a narrated class book linked to Life on Land or Life Below Water. Book Creator keeps writing, images, audio and video together in one book."
       },
       {
-        "t": "Wise Discussion Chatbots",
-        "d": "The teacher creates a Wise Discussion Chatbot using the Project Ideation scenario and sets the bot's role as Leo, a student sustainability coach helping teams turn inquiry questions into realistic action projects. The topic is \"Sharing the Planet: Adaptation and sustainability ensure the survival of living things in changing environments.\". Students chat with the bot to test and refine possible inquiry actions or design ideas before committing to one plan; for example, they ask \"What small change could our class actually test this week?\" and \"How will we know if our action helped?\". After the chat, students produce a one-page project proposal naming the chosen idea, success criteria, resources, first prototype/action step and how it connects to the unit linked explicitly to Sharing the Planet."
+        "t": "Adobe Express",
+        "d": "Students design an infographic that follows one animal through an environmental change. They show the animal's useful features, its ecosystem role, the new threat and an action people could take to improve its chance of survival. Students choose whether their message is aimed at families, park visitors or other children, then adjust the words and images for that audience. Partners test each infographic by explaining its message after viewing it for only ten seconds. Students finish with a clear conservation display for a classroom or corridor exhibition. Adobe Express provides simple layouts for combining short text, images and diagrams."
       },
       {
-        "t": "Padlet",
-        "d": "Students use Padlet to create a collaborative debate wall where they post arguments and perspectives from different living things within an ecosystem, such as pollinators like bees, predators like owls, or plants competing for sunlight. They design posts that include text, images, and links to research, representing each organism's adaptations and survival needs. Using Padlet's threaded comments, students respond to peers with evidence-based counterarguments or support, simulating real ecosystem interactions and conflicts. This interactive platform helps students explore the roles and relationships of living things while practising communication and critical thinking. The final Padlet wall becomes a dynamic, visual ecosystem dialogue that can be shared with parents and other classes. Through this, students deepen their understanding of how adaptations and actions affect ecosystem balance and sustainability."
+        "t": "Delightex",
+        "d": "Students build a 3D ecosystem containing producers, consumers, shelter, water and a human action that changes the environment. They code selected objects to move or respond so viewers can see relationships such as feeding, hiding or habitat loss. Groups exchange scenes and predict which living things will benefit, struggle or disappear after the change. The builders then revise their scene so the cause and effect can be understood without a long explanation. Students finish with an interactive ecosystem that compares a harmful choice with a more sustainable one. Delightex's CoBlocks make movement and responses part of the model rather than decoration."
       },
       {
-        "t": "Adaptation Adventure: Create-a-Creature Habitat Quest",
-        "d": "Students will design and build a unique animal using clay, recycled materials, and craft supplies, inventing imaginative adaptations to help it survive in a chosen ecosystem. Next, they'll construct a matching 3D habitat diorama using cardboard, fabric scraps, and natural elements, ensuring it includes features that support their animal's needs. Using Sphero Indi robots, students will code a simple 'migration' route for their creature?laying out coloured tiles and obstacles within their habitat diorama to simulate real-world challenges like finding food or shelter. This cross-disciplinary project brings adaptation and sustainability to life, connecting creativity, coding, and hands-on making to the big ideas of Sharing the Planet."
+        "t": "Micro:bit",
+        "d": "Students empathise with a small local animal that needs shelter from bright, exposed conditions, then define what a safe refuge must provide. They sketch several ideas and build a physical prototype from cardboard, recycled containers, paper engineering, fabric and natural loose parts. They add a battery-powered micro:bit programmed to read light level and show an LED warning when the shelter becomes too exposed. Teams test their refuge under different light and shade conditions, then adjust the structure or debug the light threshold. Each team demonstrates a revised shelter and explains how its design supports survival while using materials responsibly."
       }
     ],
     "audited": true,
@@ -1407,7 +1408,8 @@
     ],
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T04:24:16.134Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T05:09:15.401Z"
   },
   {
     "ca": "Elsternwick",
@@ -1417,28 +1419,28 @@
     "lo": "The factors that motivate exploration (Causation); How people reflect on discoveries from the past to inform change (Change); How exploration brings about change and new understandings for people, places and society (Change)",
     "s": [
       {
-        "t": "Minecraft Education",
-        "d": "Let your students step into the shoes of famous explorers and changemakers in 'Meet and Greet!' from the Minecraft Education library. This immersive activity brings the central idea to life by letting students build a 3D timeline and interact with figures whose discoveries have shaped society. Students take on the role of museum curators, choosing which Australian or global explorers to feature and debating whose journeys most changed the world. Their final artefact is a virtual museum filled with custom-built exhibits and interactive signs that can be toured by families or other classes. Students will use Minecraft's NPC (non-player character) and sign features to create dialogue and information for each explorer, making the experience truly interactive. They'll walk away with a sense of how exploration sparks new ideas?and the confidence to see themselves as future discoverers."
+        "t": "National Geographic MapMaker",
+        "d": "Students map the First Fleet route and add notes showing key decisions, risks and motivations along the journey. They switch between terrain, climate and population layers to work out how place may influence exploration. Groups compare the British route with evidence of the ancient travel, trade and navigation networks of Aboriginal and Torres Strait Islander peoples. Each group chooses one point where a different decision might have changed what happened next. Students finish with an annotated map that separates evidence, questions and possible consequences. MapMaker's geographic layers let them test ideas against real features of the Earth."
       },
       {
-        "t": "Dollar Street",
-        "d": "Students use Dollar Street to explore how exploration and discovery have shaped societies by examining the homes and possessions of families from different countries and time periods. They select families from regions historically impacted by exploration and compare items such as maps, tools, and means of transport. Students create a timeline or annotated collage that illustrates how discoveries?like new foods, technologies, or materials?have influenced daily life. This connects to the inquiry into how exploration brings about change. Dollar Street's AI-driven organisation of household artefacts is similar to how museums use digital cataloguing to track the evolution of everyday objects. Students present their collages and explain how exploration has changed societies over time."
-      },
-      {
-        "t": "Teachable Machine",
-        "d": "Students use Teachable Machine to create a model that recognises different types of exploration artefacts?such as maps, compasses, or navigation tools?by uploading images or taking photos. They train the model to classify each artefact, then challenge classmates to test the model with new items or images. This activity connects to the study of exploration and how discoveries are made and recorded. The process mirrors how museum cataloguing systems and digital archives use AI to identify and sort historical objects. Students present their classifier's results and discuss how technology can help us preserve and learn from the past."
+        "t": "Freeform",
+        "d": "Students collect images, short notes and source details about an Australian journey or discovery on a shared canvas. They connect each motivation to an action and then to a change for people, places or society. Groups swap boards and add a question wherever the evidence does not fully support a claim. Students then rearrange the material to show that the same event can look different from British and First Nations perspectives. They finish with a visual evidence web ready to guide historical writing or discussion. Freeform's infinite canvas makes relationships and gaps easy to see."
       },
       {
         "t": "Stop Motion Studio",
-        "d": "Students become filmmakers as they use Stop Motion Studio to animate a pivotal moment of exploration?like the arrival of the First Fleet or a dramatic encounter between explorers and Indigenous Australians. This activity brings the line of inquiry about how exploration brings about change and new understandings to life through visual storytelling. Students are challenged to show both excitement and conflict, or to imagine how the event might have unfolded differently with more dialogue and empathy. Their finished stop-motion films can be screened at a school film festival or shared with a partner class overseas. They'll experiment with Stop Motion Studio's onion-skinning and voiceover features, adding layers of movement and authentic narration. Students leave with creative skills and a new appreciation for how stories of discovery can be told in many ways."
+        "d": "Students build paper scenes and record a stop-motion explanation of how one discovery changed everyday life. They show the sequence from a problem or motivation, through exploration, to a discovery and its later effects. Another group watches the unfinished animation and identifies any missing cause or unexplained change. Students revise the sequence by adding frames, labels or a contrasting perspective rather than simply making the film longer. They finish with a short historical animation that makes cause and change visible. Stop Motion Studio's frame-by-frame recording lets students slow down a complex chain of events."
       },
       {
-        "t": "National Geographic MapMaker",
-        "d": "Students become cartographers tasked with mapping the journeys of famous explorers who shaped Australian history and global understanding. By tracing real routes and annotating key turning points, they dive into the line of inquiry on how exploration brings about change and new understandings for people, places and society. Each group must step into the perspective of an explorer or Indigenous community, debating in-character about the impacts and motivations behind these journeys. Their finished artefact is an interactive digital map layered with annotated routes, historical context, and reflective voice notes, ready to be shared with families and displayed in a year-level showcase. MapMaker's layer and annotation features let students overlay Indigenous place names and pre-colonial geography, revealing how discovery is shaped by perspective. Through this process, learners gain an active sense of agency in interpreting history and appreciate the power of maps to tell many stories, not just one."
+        "t": "Wise Discussion Chatbots",
+        "d": "Students interview a teacher-set historical character about why they supported, joined or were affected by an exploration. They ask follow-up questions about motives, choices and consequences while remembering that the chatbot is not a fact-checked source. Halfway through, students exchange their strongest question with a partner and use it to push the conversation beyond dates and events. They check important claims against class sources and note where the character's viewpoint may be limited. Students finish with a saved written conversation and a short list of claims to verify. The Character Interview scenario keeps the discussion structured while the teacher controls its rules and support."
       },
       {
-        "t": "Time Capsule Rover Quest",
-        "d": "Students will design and build their own 'exploration rovers' using recycled materials, wheels, and craft supplies, then program Sphero Indi robots to navigate a giant collaborative map representing different historical exploration routes (like the First Fleet or Indigenous trade paths). Along the journey, students will create and hide miniature 'time capsule artifacts' inside their rovers?handmade items or messages representing discoveries or moments in history. As they test and refine their rovers' journeys using the Design Cycle, students reflect on how exploration changes societies and what messages or objects might matter to future generations. This project fuses hands-on building, digital navigation, and historical imagination, making learning about past explorations a memorable adventure."
+        "t": "Clickview",
+        "d": "Students watch selected clips about the First Fleet, Aboriginal histories and later Australian exploration, pausing to record what each clip says changed. They sort their responses into motivations, discoveries, benefits, harms and unanswered questions. Pairs compare two clips and look for differences in language, missing voices and evidence. Each pair chooses one claim that needs a different perspective before it can be accepted. Students finish with completed responses that show how accounts of the past can shape decisions today. ClickView's curated video library and built-in questions support close viewing without requiring students to make another media piece."
+      },
+      {
+        "t": "Micro:bit",
+        "d": "Students empathise with travellers who need to keep a direction during a journey, then define one navigation problem their device should solve. Using cardboard, string, recycled packaging and a battery-powered Micro:bit, they sketch and build a wearable or handheld case before adding any code. They ideate several displays, then program the compass direction and 5x5 LED grid to give a simple directional signal. Pairs test the prototype on a marked classroom route, record where the signal or case causes confusion, and improve the code or physical design. Students finish by demonstrating the revised navigation aid and explaining how tools can change what people are able to explore."
       }
     ],
     "audited": true,
@@ -1463,7 +1465,8 @@
       }
     ],
     "suggestionAuditAt": "2026-06-08T04:28:38.150Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T05:10:45.082Z"
   },
   {
     "ca": "Elsternwick",
