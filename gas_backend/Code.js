@@ -574,6 +574,14 @@ function doPost(e) {
       return jsonResponse(result);
     }
 
+    // Build-time only: writes the sandbox demo's extra per-unit tech ideas.
+    // Generates nothing that is saved back to data.json.
+    if (action === 'extratechideas') {
+      const result = extraTechIdeas_(body);
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
     return jsonResponse({ error: 'Unknown action: ' + actionRaw });
   } catch(err) {
     return jsonResponse({ error: err && err.message ? err.message : String(err) });
@@ -842,6 +850,202 @@ function suggestTechForPlanner_(args) {
 
   payload.cached = false;
   return payload;
+}
+
+// ==========================================
+// EXTRA TECH IDEAS — batch generator for the sandbox demo
+// ==========================================
+// The sandbox demo (dla-sandbox) makes no AI calls at runtime, so its "Have a
+// tech tool in mind?" picker can only show ideas baked in at build time. Every
+// unit ships with exactly the six ideas its own page already lists, so tapping
+// any other tool used to dead-end. This action writes a small set of EXTRA
+// ideas per unit, each using a different approved tool the unit does not
+// already use, and the build bakes them into the demo.
+//
+// Authenticated (doPost only), read-only — it never touches data.json — and
+// deliberately outside the public suggestTech daily cap, so generating the demo
+// can never lock teachers out of the live picker.
+var EXTRA_IDEAS_MAX = 8;
+
+function squashToolName_(value) {
+  return String(value == null ? '' : value).toLowerCase().replace(/[^a-z0-9]+/g, '');
+}
+
+// A unit's stored suggestions carry ACTIVITY titles ("Animating a Character
+// with Adobe Express"), not bare tool names, so compare squashed forms in both
+// directions. Over-matching is the safe failure: it drops one candidate tool,
+// where under-matching would offer a tool the unit already uses.
+function toolsOverlap_(a, b) {
+  var x = squashToolName_(a);
+  var y = squashToolName_(b);
+  if (x.length < 4 || y.length < 4) return false;
+  return x === y || x.indexOf(y) !== -1 || y.indexOf(x) !== -1;
+}
+
+function matchPoolTool_(name, pool) {
+  var needle = squashToolName_(name);
+  if (needle.length < 3) return '';
+  for (var i = 0; i < pool.length; i++) {
+    if (squashToolName_(pool[i]) === needle) return pool[i];
+  }
+  for (var j = 0; j < pool.length; j++) {
+    var candidate = squashToolName_(pool[j]);
+    if (candidate.indexOf(needle) !== -1 || needle.indexOf(candidate) !== -1) return pool[j];
+  }
+  return '';
+}
+
+// Approved tools that suit this year level and that the unit isn't using yet.
+function extraIdeaCandidates_(yl, exclude) {
+  var approved = getApprovedToolNames_();
+  if (!approved.length) return [];
+  var ageRanges = {};
+  try {
+    ageRanges = JSON.parse(PropertiesService.getScriptProperties().getProperty('DLA_TOOL_AGE_RANGES') || '{}') || {};
+  } catch (err) {
+    ageRanges = {};
+  }
+  var year = getYearNumber_(yl);
+  var used = Array.isArray(exclude) ? exclude : [];
+  return approved.filter(function(tool) {
+    var range = ageRanges[String(tool).toLowerCase().trim()];
+    if (range && (year < range.min || year > range.max)) return false;
+    for (var i = 0; i < used.length; i++) {
+      if (toolsOverlap_(tool, used[i])) return false;
+    }
+    return true;
+  });
+}
+
+function generateExtraIdeaBatch_(ca, yl, th, plannerContext, pool, want, alreadyPicked) {
+  var systemPrompt = 'You are a practical, down-to-earth digital learning coach at Wesley College (IB PYP, Melbourne). You help primary-school teachers use approved technology in ways that are realistic, age-appropriate, and genuinely doable in an ordinary classroom. You favour simple, solid ideas a busy teacher could run next week over clever-sounding ones that need specialist skills or weeks of setup. Write in warm, plain, everyday language — like a friendly colleague chatting in the staffroom, not a textbook or a policy document. Avoid education jargon, buzzwords and acronyms; if a normal parent would not understand a word, do not use it. Output STRICT JSON only — no markdown, no commentary.';
+
+  var poolList = pool.map(function(tool) { return '- ' + tool; }).join('\n');
+  var avoid = (alreadyPicked && alreadyPicked.length)
+    ? 'ALREADY COVERED — do not use these tools again: ' + alreadyPicked.join(', ') + '\n'
+    : '';
+
+  var userPrompt =
+    'CAMPUS: ' + ca + '\n' +
+    'YEAR LEVEL: ' + yl + '\n' +
+    'UNIT OF INQUIRY: ' + th + '\n\n' +
+    'PLANNER CONTEXT:\n' + plannerContext + '\n\n' +
+    REALISTIC_TOOL_USE_RULES + '\n\n' +
+    'TOOLS YOU MAY CHOOSE FROM (approved tools this unit does not already use):\n' + poolList + '\n' + avoid + '\n' +
+    'YOUR JOB: choose the ' + want + ' tools from that list that genuinely suit THIS unit, and write one realistic classroom activity for each.\n\n' +
+    'HARD RULES:\n' +
+    '  - Return exactly ' + want + ' ideas, each using a DIFFERENT tool, and copy every tool name verbatim from the list above.\n' +
+    '  - Only pick tools that genuinely fit this unit AND are realistic for a typical ' + yl + ' class. If a tool would have to be bent to fit, pick a different one instead — you have plenty to choose from.\n' +
+    '  - Each activity must be achievable using ONLY its own tool. Do not describe steps needing a second app or device unless that capability is built into the tool itself.\n' +
+    '  - Vary the ideas: different things students make, record or present. Do not repeat one activity shape with the tool name swapped.\n\n' +
+    'Each "description" must be 4-5 plain, classroom-ready sentences that together:\n' +
+    '  1. Say what students actually do with the tool (name this unit\'s topic explicitly).\n' +
+    '  2. Connect it directly to one of the unit\'s lines of inquiry or the central idea (name it).\n' +
+    '  3. Describe what students end up making, recording or presenting — concrete and shareable.\n' +
+    '  4. Name the ordinary, everyday feature of the tool that powers the activity (the one a teacher would reach for first).\n' +
+    '  5. Stay realistic for ' + yl + ' — no specialist engineering, no fantasy scale.\n' +
+    'Flowing prose only: no bullet points or numbering inside a description, and never open a description with "For a twist".\n\n' +
+    'Return STRICT JSON with this exact shape:\n' +
+    '{ "ideas": [ { "tool": "exact tool name copied from the list", "description": "4-5 sentences" } ] }';
+
+  var aiResult;
+  try {
+    aiResult = callAIProxy_({
+      model: OPENAI_MODEL,
+      maxTokens: 8000,
+      systemPrompt: systemPrompt,
+      contents: [{ role: 'user', parts: [{ text: userPrompt }] }]
+    });
+  } catch (err) {
+    return { error: 'AI request failed: ' + (err && err.message ? err.message : String(err)), ideas: [] };
+  }
+
+  var rawText = String(aiResult.text || '').trim();
+  var jsonStart = rawText.indexOf('{');
+  var jsonEnd = rawText.lastIndexOf('}');
+  if (jsonStart === -1 || jsonEnd === -1) return { error: 'AI did not return JSON', ideas: [] };
+  var parsedAi;
+  try {
+    parsedAi = JSON.parse(rawText.slice(jsonStart, jsonEnd + 1));
+  } catch (err) {
+    return { error: 'AI returned malformed JSON', ideas: [] };
+  }
+
+  var planner = { th: th, yl: yl, plannerText: plannerContext };
+  var raw = Array.isArray(parsedAi.ideas) ? parsedAi.ideas : [];
+  var out = [];
+  var rejected = [];
+  for (var i = 0; i < raw.length; i++) {
+    var entry = raw[i] || {};
+    var toolName = matchPoolTool_(entry.tool, pool);
+    if (!toolName) { rejected.push(String(entry.tool || '(no tool)') + ': off-list'); continue; }
+    var desc = stripTwistLabel_(cleanTextCorruption_(String(entry.description || '').trim()));
+    if (desc.split(/\s+/).length < 40) { rejected.push(toolName + ': description too thin'); continue; }
+    var check = checkRealisticToolUse_(toolName, desc, planner);
+    if (!check.ok) { rejected.push(toolName + ': ' + check.reason); continue; }
+    out.push({ t: toolName, d: desc });
+  }
+  return { ideas: out, rejected: rejected };
+}
+
+function extraTechIdeas_(args) {
+  var ca = String(args.ca || '').trim();
+  var yl = String(args.yl || '').trim();
+  var th = String(args.th || '').trim();
+  var want = Math.max(1, Math.min(EXTRA_IDEAS_MAX, parseInt(args.count, 10) || 5));
+  if (!ca || !yl || !th) return { error: 'extraTechIdeas requires ca, yl and th' };
+  // index.html surfaces the campus as "St Kilda Rd"; data.json and campusMap
+  // use the short form. Canonicalise so the planner lookup below just works.
+  if (/^st\s*kilda(\s*(rd|road))?$/i.test(ca)) ca = 'St Kilda';
+
+  var candidates = extraIdeaCandidates_(yl, args.exclude);
+  if (candidates.length < want) {
+    return { error: 'Only ' + candidates.length + ' unused approved tools suit ' + yl };
+  }
+
+  var plannerContext = loadPlannerContextForUnit_(ca, yl, th);
+  if (!plannerContext) {
+    // Sandbox builds pass the unit's stored Central Idea / Lines of Inquiry so a
+    // missing planner file degrades to thinner context rather than no ideas.
+    var ci = String(args.ci || '').trim();
+    var lo = String(args.lo || '').trim();
+    if (!ci && !lo) return { error: 'No planner context found for ' + ca + ' / ' + yl + ' / ' + th };
+    plannerContext = ('UNIT: ' + th + '\n' +
+      (ci ? 'CENTRAL IDEA: ' + ci + '\n' : '') +
+      (lo ? 'LINES OF INQUIRY: ' + lo + '\n' : '')).trim();
+  }
+
+  var ideas = [];
+  var seen = {};
+  var rejected = [];
+  var lastError = '';
+  // Two rounds: the validators below drop off-list or unrealistic picks, so a
+  // short first batch gets one top-up attempt rather than shipping a gap.
+  for (var round = 0; round < 2 && ideas.length < want; round++) {
+    var pool = candidates.filter(function(tool) { return !seen[squashToolName_(tool)]; });
+    if (!pool.length) break;
+    var picked = ideas.map(function(idea) { return idea.t; });
+    var batch = generateExtraIdeaBatch_(ca, yl, th, plannerContext, pool, want - ideas.length, picked);
+    if (batch.rejected && batch.rejected.length) rejected = rejected.concat(batch.rejected);
+    if (batch.error) { lastError = batch.error; continue; }
+    for (var i = 0; i < batch.ideas.length && ideas.length < want; i++) {
+      var key = squashToolName_(batch.ideas[i].t);
+      if (!key || seen[key]) continue;
+      seen[key] = true;
+      ideas.push(batch.ideas[i]);
+    }
+  }
+
+  if (!ideas.length) return { error: lastError || 'AI returned no usable extra ideas', rejected: rejected };
+  return {
+    ca: ca,
+    yl: yl,
+    th: th,
+    ideas: ideas,
+    short: ideas.length < want,
+    rejected: rejected,
+    generatedAt: new Date().toISOString()
+  };
 }
 
 function getApprovedToolNames_() {

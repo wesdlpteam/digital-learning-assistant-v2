@@ -53,6 +53,13 @@ Regenerate from the main repo (digital-learning-assistant-v2):
     node tools/build-sandbox.mjs --out ../dla-sandbox
 
 No AI calls, no analytics, frozen leaderboard snapshot. Not live data.
+
+Every idea the tool picker can show is written ahead of time:
+\`data.json\` holds each unit's own ideas, and \`sandbox-extra-ideas.json\`
+holds the extra ones the picker falls back to when a tool has no ready-made
+idea for that unit. Regenerate those with:
+
+    node tools/gen-sandbox-extra-ideas.mjs
 `;
 
 async function main() {
@@ -77,6 +84,27 @@ async function main() {
 
   // 3. libraries.json - copied as-is, it holds the approved tool list
   const libBytes = write('libraries.json', read('libraries.json'));
+
+  // 3b. extra tech ideas — the picker's fallback when a tapped tool has no
+  // ready-made idea for the unit. Fetched lazily by the shim, so it is NOT part
+  // of the first-load budget. Regenerate with tools/gen-sandbox-extra-ideas.mjs.
+  const extraPath = path.join(ROOT, 'sandbox-extra-ideas.json');
+  let extraBytes = 0;
+  let extraUnits = 0;
+  if (fs.existsSync(extraPath)) {
+    const extra = JSON.parse(fs.readFileSync(extraPath, 'utf8'));
+    const covered = new Set(Object.keys(extra).filter(k => k !== '_meta'));
+    extraUnits = covered.size;
+    const uncovered = kept.filter(u => (u.s || []).length && !covered.has([u.ca, u.yl, u.th].join('|')));
+    if (uncovered.length) {
+      console.warn(`  WARNING: ${uncovered.length} demo unit(s) have no extra ideas — the picker will dead-end on them.`);
+      console.warn('           Run: node tools/gen-sandbox-extra-ideas.mjs');
+    }
+    extraBytes = write('sandbox-extra-ideas.json', JSON.stringify(extra));
+  } else {
+    console.warn('  WARNING: sandbox-extra-ideas.json missing — the tool picker will dead-end.');
+    console.warn('           Run: node tools/gen-sandbox-extra-ideas.mjs');
+  }
 
   // 4. leaderboard snapshot
   const snapshotPath = path.join(OUT, 'demo-leaderboard.json');
@@ -129,6 +157,7 @@ async function main() {
   console.log(`  libraries.json        ${libBytes.toLocaleString()} bytes`);
   console.log(`  demo-leaderboard.json ${lbBytes.toLocaleString()} bytes`);
   console.log(`  TOTAL first load      ${total.toLocaleString()} bytes  (public site)`);
+  console.log(`  extra tech ideas      ${extraBytes.toLocaleString()} bytes (${extraUnits} units, loaded on demand)`);
   if (total > DATA_CAP) throw new Error(`total payload ${total} exceeds ${DATA_CAP}`);
   console.log(`  studio bundle         ${studioBytes.toLocaleString()} bytes (${studioUnits.length} units, all verified)`);
   console.log('Sandbox build OK');
