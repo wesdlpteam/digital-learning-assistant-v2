@@ -177,17 +177,17 @@ const TOOL_AFFORDANCE_NOTES = {
   // realWorld only: is/good/avoid live in the curator-saved override in libraries.json
   // (_meta._toolAffordances['teachable machine']); getToolAffordance_ merges per-field.
   'teachable machine': {
-    realWorld: 'In 1-2 sentences woven into the description, connect THIS specific classification task to a real-world system that works the same way — choose the parallel that genuinely matches the activity, never a generic list. True examples to draw from: recognising uniforms/vehicles/helpers → image recognition in council CCTV and emergency-dispatch systems; sorting recycling/materials → camera-driven sorting arms in recycling facilities; identifying plants/animals/leaves → wildlife-monitoring cameras and apps like Seek/iNaturalist; recognising faces/poses/movements → face unlock, accessibility tools, physiotherapy and sports-coaching apps; sorting food/produce → fruit-grading machines on farms; recognising sounds/voice commands → smart speakers and hearing-assistance tech.'
+    realWorld: 'In 1-2 sentences woven into the description, connect THIS specific classification task to a real-world system that works the same way. Choose the parallel that genuinely matches the activity, never a generic list. True examples to draw from: recognising uniforms/vehicles/helpers -> image recognition in council CCTV and emergency-dispatch systems; sorting recycling/materials -> camera-driven sorting arms in recycling facilities; identifying plants/animals/leaves -> wildlife-monitoring cameras and apps like Seek/iNaturalist; recognising faces/poses/movements -> face unlock, accessibility tools, physiotherapy and sports-coaching apps; sorting food/produce -> fruit-grading machines on farms; recognising sounds/voice commands -> smart speakers and hearing-assistance tech.'
   },
   tinkercad: {
     is: 'a 3D design app for modelling solid objects that can be 3D-printed in plastic',
-    good: 'designing and modelling a 3D object or prototype to 3D-print — e.g. a container, holder, tool, model, badge, replacement part or simple moving mechanism — iterating the shape and measurements in the editor',
-    avoid: 'do NOT use Tinkercad to simulate, test or compare MATERIAL PROPERTIES such as strength, flexibility, weight, recyclability or the sustainability of plastic vs metal vs wood — it only designs shapes in plastic and cannot simulate materials. Do NOT frame it as electronics, circuits or block-coding.'
+    good: 'designing and modelling a 3D object or prototype to 3D-print, e.g. a container, holder, tool, model, badge, replacement part or simple moving mechanism, iterating the shape and measurements in the editor',
+    avoid: 'do NOT use Tinkercad to simulate, test or compare MATERIAL PROPERTIES such as strength, flexibility, weight, recyclability or the sustainability of plastic vs metal vs wood. It only designs shapes in plastic and cannot simulate materials. Do NOT frame it as electronics, circuits or block-coding.'
   },
   '3d printers': {
     is: 'a machine that prints a physical plastic object from a 3D model students have designed',
     good: 'printing a student-designed 3D model or prototype (usually designed in Tinkercad) and refining it after a test print',
-    avoid: 'it only prints the shape students design, in plastic — do NOT use it to compare or test material properties.'
+    avoid: 'it only prints the shape students design, in plastic. Do NOT use it to compare or test material properties.'
   },
   'adobe express': {
     is: 'a quick graphic-design and short-video app for posters, infographics, flyers, simple web pages and clips',
@@ -206,7 +206,7 @@ const TOOL_AFFORDANCE_NOTES = {
   beebots: {
     is: 'a simple floor robot for early-years directional and sequence coding on a mat',
     good: 'Prep to Year 2 students programming a sequence of moves to navigate a mat or map',
-    avoid: 'Beebots have no sensors and no screen — not for data collection or older-year abstract coding.'
+    avoid: 'Beebots have no sensors and no screen, so not for data collection or older-year abstract coding.'
   },
   'book creator': {
     is: 'a tool for making multimodal digital books with text, images, audio and video',
@@ -229,7 +229,7 @@ const TOOL_AFFORDANCE_NOTES = {
   clickview: {
     is: 'an educational video library for watching and analysing curated clips',
     good: 'watching and responding to a relevant educational video, sometimes with built-in questions',
-    avoid: 'it is for watching video, not making it — to create video use iMovie, Apple Clips or Stop Motion Studio.'
+    avoid: 'it is for watching video, not making it. To create video use iMovie, Apple Clips or Stop Motion Studio.'
   },
   delightex: {
     is: 'a 3D and VR scene-building platform (formerly CoSpaces Edu) where students build virtual worlds and code them with blocks (CoBlocks)',
@@ -248,7 +248,7 @@ const TOOL_AFFORDANCE_NOTES = {
   'field guide to victoria': {
     is: 'a Museums Victoria app for identifying local Victorian animals and species',
     good: 'identifying and researching local Victorian fauna in biodiversity, habitat or local-environment units',
-    avoid: 'its content is specific to Victoria — not for species elsewhere.'
+    avoid: 'its content is specific to Victoria, not for species elsewhere.'
   },
   freeform: {
     is: 'an infinite collaborative whiteboard or canvas',
@@ -276,12 +276,12 @@ const TOOL_AFFORDANCE_NOTES = {
   'insta360 camera': {
     is: 'a 360-degree camera that captures immersive spherical photos and video',
     good: 'capturing a 360-degree view of a space or process, or making a virtual tour',
-    avoid: 'for an ordinary photo or video a normal camera is better — use it when the whole surroundings matter.'
+    avoid: 'for an ordinary photo or video a normal camera is better. Use it when the whole surroundings matter.'
   },
   kahoot: {
     is: 'a game-based quiz tool',
     good: 'a student-made quiz to teach or revise content, or a quick formative check',
-    avoid: 'it is short question-and-answer — not a tool for deep creation.'
+    avoid: 'it is short question-and-answer, not a tool for deep creation.'
   },
   'lego spike prime': {
     is: 'a build-and-code robotics kit with motors and sensors, programmed in the LEGO SPIKE app',
@@ -337,7 +337,7 @@ const TOOL_AFFORDANCE_NOTES = {
   'podcast equipment': {
     is: 'physical microphones and recorders for capturing audio',
     good: 'only when a hands-on hardware recording setup is specifically intended',
-    avoid: 'for almost all podcasts and audio stories use "Podcasting using Canva" instead — it works on iPads and is the preferred school platform.'
+    avoid: 'for almost all podcasts and audio stories use "Podcasting using Canva" instead. It works on iPads and is the preferred school platform.'
   },
   'podcasting using canva': {
     is: 'the preferred school podcasting platform, which works on iPads',
@@ -374,7 +374,7 @@ const TOOL_AFFORDANCE_NOTES = {
   'slow motion physical analysis': {
     is: 'a technique of filming an action in slow motion to analyse movement, technique or forces',
     good: 'recording and slowing down a movement, such as a sport skill or a physical process, to observe and analyse it',
-    avoid: 'have a clear analytical question — not just a slow-motion video for effect.'
+    avoid: 'have a clear analytical question, not just a slow-motion video for effect.'
   },
   'sphero bolt': {
     is: 'a programmable robot ball with an 8x8 light grid, coded with blocks or text in the Sphero Edu app on an iPad',
@@ -397,13 +397,13 @@ const TOOL_AFFORDANCE_NOTES = {
   },
   'wise discussion chatbots': {
     is: 'a Schoolbox "AI-guided Student Discussions" activity, added to a class page, where students have a structured written conversation with an AI agent that the teacher sets up and stays in control of (rules, timing, helpfulness level and support)',
-    good: 'introducing a topic, supporting inquiry, and guiding reflection and deeper critical thinking through one of four scenarios — Character Interview (role-play a historical figure, character or scientist to explore perspective), Socratic Tutor (open-ended questions that lead students to their own understanding), Self-Reflection (reflect on learning, strengths, challenges and goals), or Project Ideation (brainstorm and explore ideas for a project or design)',
+    good: 'introducing a topic, supporting inquiry, and guiding reflection and deeper critical thinking through one of four scenarios: Character Interview (role-play a historical figure, character or scientist to explore perspective), Socratic Tutor (open-ended questions that lead students to their own understanding), Self-Reflection (reflect on learning, strengths, challenges and goals), or Project Ideation (brainstorm and explore ideas for a project or design)',
     avoid: 'it is a teacher-guided thinking and discussion activity, not a fact-checked research source or a tool for producing a finished artefact.'
   },
   'word clouds abcya': {
     is: 'a tool that turns text into a word cloud where more frequent words appear larger',
     good: 'visualising the key words or themes in a text or brainstorm, then discussing what the big words show',
-    avoid: 'a quick visualisation — pair it with analysis, not a final product on its own.'
+    avoid: 'a quick visualisation. Pair it with analysis, not a final product on its own.'
   }
 };
 
