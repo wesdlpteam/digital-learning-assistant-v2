@@ -3737,28 +3737,28 @@
     "lo": "The ways people use technology to express creativity; How texts and images work together; How technology influences our creativity",
     "s": [
       {
-        "t": "Canva",
-        "d": "Students become visual poets, designing striking posters that blend words and images to express how creativity shapes their view of the world. This taps straight into the line of inquiry about how texts and images work together to communicate ideas. Each student chooses a personal experience or perspective and transforms it into a visual message that could inspire others?imagine a mini-exhibition in the school foyer. The final artefact is a high-impact digital poster, ready to be printed or displayed on classroom screens and shared with families. Canva's Magic Write feature lets students experiment with AI-generated poetic phrases, remixing them with their own voice and style. By the end, students see themselves as creative communicators who can make their ideas stand out in a crowded world."
+        "t": "Brushes Redux",
+        "d": "Students paint the same familiar Melbourne scene twice, using colour, pattern and scale to show two different ways of understanding it. This makes it clear that technology can expand the choices artists make when expressing a point of view. They swap untitled paintings and ask a partner what each image seems to say. Students then revise one layer after hearing an interpretation they did not expect. They end with two detailed digital paintings that show how creative choices can change meaning. The layered painting tools let students alter parts of an image without starting again."
       },
       {
-        "t": "Stop Motion Studio",
-        "d": "In this creative adventure, students produce stop-motion animations that bring their own imaginative stories to life, using everyday objects and crafted figures. This hands-on project explores how technology influences our creativity, encouraging students to turn static scenes into dynamic tales. Students take on the role of film directors, collaborating in small teams and even inviting a Year 1 class as their premiere audience for feedback. The finished piece is a short stop-motion film, complete with sound effects and music, ready for a red-carpet screening at a family movie night. Stop Motion Studio's onion skinning feature lets students perfect their frame-by-frame movements, adding polish and professional flair. Students walk away with storytelling confidence and a director's eye for detail."
+        "t": "Podcasting using Canva",
+        "d": "Students record a short audio story describing the world through the eyes of an overlooked object, such as a lost button, playground gate or paintbrush. This shows how voice, words and sound can turn an ordinary object into an expression of a person's understanding. Another class listens without seeing the object and sketches what it imagines from the description. Students use that response to edit unclear language or add a more effective sound. They finish with a polished audio story ready for families to hear. Canva supports recording and editing the whole podcast on an iPad."
       },
       {
-        "t": "Padlet",
-        "d": "Students curate a living digital gallery, collecting and commenting on examples of creative expression from around the world?street art, digital comics, memes, and more. This activity dives into the diversity of voice and perspectives, showing how technology connects us to creative ideas from every culture. Each student becomes a curator, adding their own discoveries and sparking conversations by asking questions or challenging classmates to see things differently. The gallery is a collaborative Padlet wall, rich with images, links, and student reflections, open for families and other classes to explore. Padlet's timeline view lets students organise examples chronologically, tracing how creative technology has evolved over time. By the end, students feel like global citizens, ready to spot and celebrate creativity wherever they go."
-      },
-      {
-        "t": "Explain Everything",
-        "d": "Students step into the shoes of digital illustrators, using Explain Everything to create narrated explainer videos that show how images and words can work together to clarify a tricky concept?like 'What is creativity?' or 'How do artists use technology?'. This project is rooted in the line of inquiry about how texts and images combine to communicate meaning. Students can choose to explain an idea to a younger buddy class, making their work truly purposeful and audience-focused. The final artefact is a short, animated video with voiceover, ready to be shared on the school website or at assembly. Explain Everything's infinite canvas and layering tools let students animate drawings, move objects, and highlight key ideas as they narrate. Students finish with the skills to teach and inspire others using digital media."
+        "t": "Animating a Character with Adobe Express",
+        "d": "Students draw or select a character and record it explaining why two people might understand the same image differently. This brings together voice and image while showing that meaning depends on perspective. Students exchange animations and respond in character with a different interpretation of the image. They then rerecord one line so the character's words and appearance communicate more clearly together. The result is a short talking-character exchange that can open a class discussion about visual meaning. Animate from Audio automatically lip-syncs the character to each student's recording."
       },
       {
         "t": "GarageBand",
-        "d": "Students become sound designers, composing original theme music or soundscapes that capture the mood of their creative projects?whether it's a graphic novel, animation, or digital story. This taps into the central idea that creativity is about expressing your understanding of the world, but through the language of music. Students can swap roles with visual artists, challenging themselves to 'paint with sound' and then swap their tracks with classmates to inspire new visual artworks. The outcome is a shareable audio file?an original piece of music or soundscape?that can be embedded into digital books or played during a class showcase. GarageBand's Live Loops feature lets students experiment with layering, remixing, and building complex tracks without needing to read music. By the end, students discover that their creative voice isn't limited to words or images?it can be heard, too."
+        "d": "Students compose two contrasting soundscapes for the same imagined place, such as a city at dawn or a garden after dark. This helps them notice how technology can shape mood and influence what an audience pictures. Classmates listen with their eyes closed and describe the place they imagined from each version. Students adjust the order, volume and choice of sounds after comparing those responses with their intention. They finish with two recordings that express different understandings of one setting. GarageBand's music-creation and recording tools allow sounds to be arranged and edited in one place."
       },
       {
-        "t": "Mood Machine: Build Your Expressive Robot Buddy",
-        "d": "Students design and build their own expressive 'robot buddy' using recycled materials, cardboard, fabric scraps, and craft supplies for features like eyes, mouths, and arms. Using simple robotics kits (e.g., micro:bit with servo motors or Sphero Indi), they program their robot to display different 'emotions' or messages?such as changing colors, moving in unique ways, or playing sounds?based on how they want to express themselves. Each robot's appearance and programmed behaviors reflect its creator's personality or feelings, connecting to the theme of expressing our unique perspectives. The project encourages students to combine physical making with digital coding, exploring how technology and art can work together to communicate ideas and emotions."
+        "t": "Wise Discussion Chatbots",
+        "d": "Students hold a teacher-guided Project Ideation conversation about how text and images could express an idea such as belonging, wonder or change. This lets them examine how an AI suggestion can influence creativity without treating it as the author. Halfway through, students reject one suggestion, change another and add an idea drawn only from their own experience. They compare their conversation with a partner's and point out where human choices made each plan different. Each student ends with a written conversation and a clear plan for an original text-and-image piece. The teacher controls the chatbot's rules, timing and level of support in Schoolbox."
+      },
+      {
+        "t": "Micro:bit",
+        "d": "Students empathise with a younger audience, define one feeling or idea they want to communicate, and sketch several interactive sculpture ideas. They build a physical-first prototype from cardboard, recycled materials, coloured paper and foil switches, then place a Micro:bit where its 5x5 LED display is easy to see. Students program different LED images to appear when the foil switches connected by crocodile clips are pressed. Younger students test whether the images match the intended message, and the designers reshape, recode and debug their prototypes in response. The final sculpture demonstrates how physical materials and programmed light can work together to express an idea without words."
       }
     ],
     "audited": true,
@@ -3783,7 +3783,8 @@
       }
     ],
     "suggestionAuditAt": "2026-06-08T05:33:35.943Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T06:16:48.503Z"
   },
   {
     "ca": "Glen Waverley",
@@ -3793,28 +3794,28 @@
     "lo": "What are digital systems; Ideas and information can be organised and shared in safe online environments; Being a responsible digital citizen",
     "s": [
       {
-        "t": "Kahoot",
-        "d": "Kick off the 'How We Organise Ourselves' theme by letting students design and run their own Kahoot quiz to test how digital systems impact daily life. This activity dives straight into the central idea by challenging students to investigate and define what makes a system 'digital' versus 'analogue'. Students become quizmasters, flipping the usual roles as they teach their peers (and even teachers) with questions that spark debate about responsible digital citizenship. The final artefact is a lively, student-created quiz show, complete with leaderboard drama, that can be played by the whole year level or shared at assembly. By using Kahoot's question randomiser and live analytics, students can spot trends in what their classmates know (or don't!). They walk away not just as digital citizens, but as confident organisers and sharers of ideas in a safe, engaging online space."
-      },
-      {
-        "t": "Book Creator",
-        "d": "Students become digital archivists by curating a collaborative e-book that showcases different types of digital systems found in their homes, school, and community. This directly explores how ideas and information can be organised and shared in safe online environments. Each student interviews a family member or staff member about a digital system they use, bringing in real voices and perspectives. The finished e-book is a multimedia showcase, filled with audio clips, photos, and even hand-drawn diagrams, published to the school intranet for families to explore. Book Creator's real-time collaboration feature lets students co-author pages and add interactive elements like clickable sound buttons. By the end, students see themselves as creators of digital knowledge, not just consumers."
-      },
-      {
-        "t": "Delightex",
-        "d": "Invite students to imagine the invisible world of digital data by building interactive concept maps in Delightex that track how their personal information moves through digital systems. This ties powerfully to the line of inquiry about being a responsible digital citizen, as students visualise data flow and privacy choices. Students swap maps with a partner and spot potential risks or clever solutions, stepping into the shoes of cybersecurity experts. The final artefact is a dynamic, branching map that can be embedded in the class blog or presented to younger students as a digital safety explainer. Delightex's 'live collaboration' mode allows real-time feedback, making it easy for students to iterate and refine their ideas together. They finish with a sharper sense of how their digital choices ripple out in the real world."
-      },
-      {
-        "t": "Epic",
-        "d": "Turn students into investigative reporters by curating a digital magazine in Epic, collecting articles, comics, and videos about how digital systems help meet needs around the globe. This links to the central idea by showing the diversity of digital systems and how they solve real-world problems. Students each select a story from a different country or culture, broadening their view of technology beyond Australia and sparking conversations about fairness and access. The final product is a class magazine shelf on Epic, complete with student-written reviews and recommendations, which can be shared with the school library or featured in a newsletter. Epic's built-in quiz and annotation tools let students add interactive questions and highlight key points for their readers. They walk away as global thinkers, ready to spot the impact of digital systems everywhere."
+        "t": "Micro:bit",
+        "d": "Students program two Micro:bits to send and receive simple messages about safe online choices. One student presses button A or B, the message travels by radio, and the receiving LED grid shows the agreed symbol. This makes the parts of a digital system clear?input, code, connection and output all have a job. Pairs swap devices with classmates and work out the symbols without being told the code. They debug any message that is unclear, delayed or sent to the wrong receiver. The finished pair of devices is a working communication system students can demonstrate and explain."
       },
       {
         "t": "Teachable Machine",
-        "d": "Students use Teachable Machine to build a digital citizenship classifier that recognises safe and unsafe online behaviours?such as sharing personal information, using kind language, or encountering suspicious links?by uploading staged images or screenshots. They train the model to classify each scenario, then test it with new examples to see if it can identify responsible digital actions. This activity supports the exploration of digital systems and online safety. The process is similar to how content moderation tools and parental control apps use AI to detect risky online behaviour. Students discuss the strengths and limitations of their model and reflect on how technology can help keep digital environments safe."
+        "d": "Students train an image model to sort teacher-prepared cards into 'safe to share' and 'keep private' groups. They choose examples such as a favourite colour, a full name, a password, a pet photo or a home address. Classmates test the model with unfamiliar cards and record where its choices are wrong or uncertain. This works like image-recognition systems that flag visual content for human review on online services. Students then improve the training examples so the model makes more reliable choices. The finished model gives the class a powerful reason to discuss why people, not computers, remain responsible for sharing decisions."
       },
       {
-        "t": "Digital City Command Central",
-        "d": "Students work in teams to design and build a bustling model city using recycled boxes, cardboard, craft sticks, and assorted makerspace materials. Each group creates 'digital system stations' (like a library, bank, or school) that connect via roads and coloured string 'data cables.' Using simple programmable Sphero Indi cars or Bee-Bots, students code safe delivery routes for messages or 'data packets' between stations, physically moving tokens to represent information flow. Along the way, they embed safety checkpoints and decorate with signs highlighting digital citizenship rules, making abstract concepts like information organisation and online safety visible, tangible, and fun."
+        "t": "Microsoft Forms",
+        "d": "Students build a survey about how classmates consume, create and communicate with technology during a typical week. They write clear questions that avoid collecting names, passwords, locations or other private details. Another Year 3 class completes the survey, giving students a real audience and a larger set of anonymous responses. Students read the automatic charts and look for patterns in screen time, creative use and safe choices. They revise any question that produced confusing or unhelpful information. The finished survey and charts provide real evidence for a class discussion about balanced and responsible technology use."
+      },
+      {
+        "t": "Delightex",
+        "d": "Students build a 3D model showing how a message moves through a digital system from sender to receiver. They add objects for the input, processing steps, storage, connection and output, then code simple movements or responses. This helps students see that a digital system is organised from several connected parts rather than one mysterious device. Partners test each other's scenes and identify a missing step, unsafe action or broken connection. Students revise the scene so the message only reaches its destination after a responsible choice is made. The finished interactive model can be explored as a clear visual explanation of how information is organised and shared."
+      },
+      {
+        "t": "Book Creator",
+        "d": "Students make a digital citizenship handbook containing the class Essential Agreement, safe-sharing examples and responses to common online problems. They combine short text, original illustrations and recorded explanations so younger students can understand each rule. A Year 2 class listens to selected pages and identifies advice that is clear or still confusing. Year 3 students use that feedback to replace vague warnings with practical actions such as stopping, saving evidence and telling a trusted adult. Each student adds a final page showing one change they will make to their own digital habits. The finished narrated book is a useful guide that can remain in the class library."
+      },
+      {
+        "t": "Sphero BOLT",
+        "d": "Students empathise with younger children who need a clear way to move a pretend message safely across a classroom network, then define what could make the route confusing or unsafe. They ideate with paper sketches and prototype a physical network from cardboard channels, recycled boxes, tape, signs and removable barriers. They code Sphero BOLT to carry a paper 'data packet' along the route and use its LED grid to show whether the packet is public or private. Classmates test the system by changing one barrier or destination, and teams adjust both the physical design and the code after each failure. The final demonstration shows the robot delivering the correct packet while students explain how their system protects information and meets a user's need."
       }
     ],
     "audited": true,
@@ -3850,7 +3851,8 @@
     ],
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T05:34:02.311Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T06:17:25.900Z"
   },
   {
     "ca": "Glen Waverley",
@@ -3860,28 +3862,28 @@
     "lo": "Observable properties of solids and liquids; How heating and cooling change state; Scientific thinking helps solve everyday problems",
     "s": [
       {
-        "t": "Merge Cubes",
-        "d": "Students will use Merge Cubes to bring the world of solids and liquids to life, holding digital models of melting ice, bubbling chocolate, and swirling butter right in their hands. This immersive experience makes the observable properties of materials unforgettable, as students can rotate, zoom, and even 'touch' the changes of state. Students become museum curators, designing an interactive 'Materials in Motion' exhibit for visiting Year 1s, explaining how heating and cooling transform everyday substances. Their final artefact is a narrated, interactive Merge Cube display that younger students can explore during a special showcase. By using Merge Explorer's 'Object Viewer' and custom AR overlays, students can layer their own voice explanations and digital annotations onto the 3D models. They leave with the confidence to explain scientific change in a way that wows any audience?little or big."
-      },
-      {
         "t": "Microsoft Excel",
-        "d": "Students will become real scientists by collecting temperature and time data as they melt, freeze, and cool different materials?then visualise their discoveries in colourful Excel graphs. This hands-on investigation directly deepens their understanding of how heating and cooling can change the state of solids and liquids. To make it meaningful, students will write a short 'science advice column' for families, using their data to answer questions like 'Why does ice melt faster on metal than plastic?' Their final artefact is a one-page science report with embedded Excel charts and practical tips, ready to be shared with the school newsletter or parent community. Excel's conditional formatting feature will let students highlight surprising results?like the fastest-melting chocolate or the slowest-freezing butter?at a glance. They finish with the power to turn raw numbers into real-world answers that help others."
+        "d": "Students measure ice, chocolate and butter at regular intervals as they warm or cool, then enter the observations and times into Microsoft Excel. This helps them see that careful observations can reveal patterns in how materials change state. Groups compare which material changes first and decide whether the evidence supports their original prediction. They swap tables with another group and check whether the same pattern can be found without an explanation. Each group finishes with a labelled table and graph showing change over time. Excel turns the class measurements into charts that make patterns easier to spot."
       },
       {
-        "t": "Adobe Express",
-        "d": "Students will create animated explainer videos in Adobe Express, showing how a material like chocolate changes from solid to liquid and back again. This creative storytelling approach helps them unpack the cause-and-effect relationships behind heating and cooling. To add a spark, students will take on the role of 'science mythbusters', tackling common misconceptions (like 'chocolate never goes back to normal after melting') and setting the record straight for their peers. The final artefact is a polished, voice-narrated animation that can be screened at assembly or uploaded to the class blog for families to enjoy. Adobe Express's 'Animate from Audio' feature will let students bring their explanations to life with character movement and expressive visuals, making science concepts memorable. They walk away as confident communicators, able to explain tricky ideas with clarity and flair."
+        "t": "Teachable Machine",
+        "d": "Students train Teachable Machine with images of familiar solids and liquids, then test it with ice, water, butter and melted butter. This shows that observable properties help us classify materials, but materials that change state can confuse simple categories. Students choose the clearest training images and swap models with another group to find out which examples are misclassified. Camera-driven sorting systems in recycling facilities work in a similar way by learning visual differences between materials. Each group finishes with a trained image model and a record of the examples it classified well or poorly. The live image classifier gives immediate feedback when students show each sample to the camera."
       },
       {
-        "t": "Delightex",
-        "d": "Students will design interactive branching scenarios in Delightex, where classmates must make choices about how to solve everyday problems involving materials?like stopping a chocolate bar from melting on a hot day. This activity taps into the unit's focus on scientific thinking for solving real-life challenges. Students will include alternative outcomes that show what happens when the 'wrong' solution is chosen, encouraging empathy and critical analysis. The finished product is a digital choose-your-own-adventure that can be shared with other classes or even used as a revision game before assessment. Delightex's advanced 'decision path' mapping lets students visualise and refine the logic of their scenarios, making each storyline unique and meaningful. They leave knowing how to turn science knowledge into practical, creative solutions for everyday life."
+        "t": "Micro:bit",
+        "d": "Students program a Micro:bit to show an LED warning when its rough temperature reading rises above a chosen limit for protecting chocolate. This connects heating and cooling with an everyday problem?keeping a material solid long enough to carry or store it. Groups test several thresholds in different classroom locations and adjust their code when the warning appears too early or too late. Another group receives the device without instructions and checks whether its display clearly communicates the warning. Students finish with a coded temperature-alert device and a short test record. The Micro:bit's LED grid, buttons and rough temperature sensing let the device collect an input and respond straight away."
+      },
+      {
+        "t": "IMovie",
+        "d": "Students record and edit a short film showing ice, chocolate or butter before, during and after heating or cooling. This makes cause and effect visible while students explain which changes are reversible. Each group leaves a pause before the result so a younger class can predict what will happen next. Students add spoken explanations that separate what they observed from what they think caused it. They finish with a short science film containing evidence, a prediction pause and a clear conclusion. iMovie combines recorded clips, titles, narration and transitions in one project."
       },
       {
         "t": "Padlet",
-        "d": "Students become scientific detectives, curating a collaborative digital gallery of 'material mysteries'?real-world photos and videos of solids and liquids changing state in their homes or community. This Padlet investigation sharpens their understanding of observable properties and the effects of heating and cooling, as they hunt for everyday examples that make the science visible. Each student takes on the role of an expert explainer, adding voice notes or text posts that unpack the science behind what they captured, and responding to classmates' posts with questions or alternative explanations. The final Padlet wall becomes a vibrant, interactive exhibit that can be shared with families or even younger year levels, sparking curiosity beyond the classroom. Padlet's video commenting and map view features allow students to geo-tag where changes were observed and add rich multimedia explanations, transforming a simple wall into a living science atlas. By making their thinking public and engaging in peer dialogue, students grow as confident scientific communicators who see themselves as knowledge-builders in their community."
+        "d": "Students post labelled observations of solids and liquids to a shared Padlet wall, including shape, flow, texture and response to heating or cooling. This builds a class evidence bank that shows how scientific descriptions differ from everyday guesses. Groups find two posts that seem to disagree and add a question asking what test could settle the difference. The class then sorts the strongest posts into evidence for solids, liquids and changes of state. Students finish with a collaborative display of observations, questions and proposed tests. Padlet's shared wall keeps every group's notes, images and responses visible together."
       },
       {
-        "t": "Melting Mansion Mystery Lab",
-        "d": "Students will design and build imaginative 'mansions' or rooms using cardboard, foil, clay, and recycled materials, then select and place objects made from chocolate, ice, and butter inside. Using iPads and thermal cameras or temperature sensors, they will digitally document and analyse how heating and cooling (by moving their mansions to sunny, shady, or icy spots) change the states of these materials. The challenge: invent creative insulation or cooling features to protect their treasures from melting or solidifying, iterating their designs with the Design Cycle. This hands-on investigation brings the science of materials and change of state to life, blending physical crafting with digital observation and problem-solving."
+        "t": "Sphero BOLT",
+        "d": "Students empathise with someone carrying a chocolate snack on a warm day, then define the need to keep it solid while Sphero BOLT travels along a fixed classroom route. Teams ideate and build lightweight carriers from cardboard, foil, fabric, paper, tape and recycled packaging, attaching each carrier securely without covering the robot's movement. They prototype, code BOLT to drive the same route, and test how well each carrier protects an equal piece of chocolate. After comparing melting, stability and travel time, teams change one material or design feature and test again. Each team demonstrates its improved carrier and explains how evidence from heating, movement and material properties guided the final design."
       }
     ],
     "audited": true,
@@ -3917,7 +3919,8 @@
     ],
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T05:34:37.446Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T06:18:03.293Z"
   },
   {
     "ca": "Glen Waverley",
