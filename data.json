@@ -6516,28 +6516,28 @@
     "lo": "How our body systems connect and function; How our choices affect physical, emotional and mental wellbeing; Strategies to measure and maintain the health of the human body",
     "s": [
       {
-        "t": "Kahoot",
-        "d": "Kick off the 'Who We Are' unit by letting students design and host their own Kahoot quiz about healthy choices and body systems, flipping the script so they become the experts. This activity brings the central idea?how our choices shape health and wellbeing?alive as students research, select, and debate which questions will really challenge their classmates. Invite the school nurse or a PE teacher to join as a guest player, sparking cross-campus conversation and showing students their new knowledge matters. The final artefact is a high-energy, student-led quiz event that can be shared with other classes or even families at home. Using Kahoot's question logic branching, students can create adaptive quizzes that respond differently depending on the answer, making every round unique. Students walk away with real confidence as health communicators and a sense of ownership over their learning."
-      },
-      {
-        "t": "Adobe Express",
-        "d": "Students become wellbeing campaigners by creating a series of eye-catching digital posters in Adobe Express, each spotlighting a different body system and a daily habit that keeps it healthy. This directly explores the line of inquiry into how our choices impact physical, emotional, and mental wellbeing. Challenge students to design their posters for a real audience?Year 1 students?meaning they must simplify complex ideas and use creative visuals. The finished posters are printed for display in the junior school corridor and published in a digital gallery for families. By using Adobe Express's Animate from Audio feature, students can bring their posters to life with their own recorded voices, making the information memorable and fun. They'll gain persuasive communication skills and learn how to turn science into action for younger peers."
-      },
-      {
-        "t": "Padlet",
-        "d": "Turn your classroom into a living wellbeing lab by having students track and reflect on their daily health choices using Padlet's timeline view. This activity supports the line of inquiry into strategies for maintaining and measuring health, as students record meals, exercise, screen time, and sleep over two weeks. For a fresh angle, students swap anonymous timelines and write encouraging feedback to each other, building empathy and practical goal-setting skills. The final artefact is a class-wide interactive timeline, full of real-life stories and tips, that can be shared at a parent open night. Padlet's timeline feature lets students see progress and patterns over time, making abstract habits visible and actionable. They'll leave with a toolkit for self-reflection and the confidence to set and reach their own health goals."
+        "t": "Micro:bit",
+        "d": "Students program a Micro:bit to count movements during short bursts of walking, dancing and stretching. They compare what the counter records and discuss why movement supports the heart, lungs, muscles and mood. Each student chooses a realistic movement goal, then adjusts the program so the LED grid signals progress towards it. Partners wear and test each other's devices, checking whether different kinds of movement are counted fairly. Students finish with a working wearable activity counter and a short explanation of its limits. The built-in movement sensor, buttons and LED grid allow the device to measure, reset and display a count."
       },
       {
         "t": "Explain Everything",
-        "d": "Invite students to become animated science explainers by making interactive videos in Explain Everything, modelling how different body systems work together during a favourite activity like running or dancing. This brings the line of inquiry about the connection and function of body systems to life, helping students see the body as a team rather than separate parts. Students work in pairs, taking on the role of sports commentators narrating the 'play-by-play' of what happens inside the body. Their final artefact is a narrated, interactive video that can be shared with the school community or even used as a resource in PE lessons. Explain Everything's live annotation and zoom features allow students to highlight, draw, and spotlight key moments in real time, making their explanations vivid and memorable. They'll walk away with creative confidence and a deeper understanding of how their bodies support everything they love to do."
+        "d": "Students draw a body outline and record themselves explaining how the heart, lungs, brain, muscles and digestive system help one another. This makes the connections between body systems visible rather than treating each system as a separate fact. Partners swap recordings and add one question about what might happen when sleep, food, movement or hydration changes. Students revise their explanation so it answers the question with a clear cause-and-effect chain. They finish with a narrated body-systems screencast that can be played at a family information evening. Explain Everything records each drawing and annotation in time with the student's voice."
       },
       {
-        "t": "Epic",
-        "d": "Challenge students to curate a digital wellbeing bookshelf on Epic, selecting and reviewing fiction and non-fiction texts that explore health, emotions, and resilience. This activity supports the line of inquiry into emotional and mental wellbeing by encouraging students to see reading as a strategy for self-care and growth. Students act as librarians for a week, recommending books to classmates and justifying their choices in short video or written reviews. The final artefact is a class bookshelf with peer-reviewed recommendations, accessible to families and other classes. Epic's collection feature lets students build and share themed book lists, and the built-in quiz and review tools allow for interactive engagement. Students finish as empowered readers and wellbeing advocates, ready to support themselves and others through stories."
+        "t": "Teachable Machine",
+        "d": "Students record examples of three poses?active movement, quiet breathing and screen posture?and train Teachable Machine to recognise them. They test how reliably it sorts new poses and work out why balanced wellbeing cannot be judged from one body position alone. Groups exchange models and deliberately test different angles, bodies and backgrounds to find weak spots in the training examples. Similar pose recognition is used by physiotherapy and sports-coaching apps to give feedback on movement, so students can discuss why varied examples matter. Students finish with a tested pose model and a list of changes that improved its accuracy. Teachable Machine lets them add more pose examples, retrain the model and immediately test the result."
       },
       {
-        "t": "Body Systems Superheroes: Wearable Tech Workshop",
-        "d": "Students design and build their own wearable 'super suit' accessories that represent and support a healthy lifestyle?think heart-rate monitor wristbands, lung-power capes, or balanced diet badges. Using recycled cardboard, felt, LED stickers, Velcro, and craft supplies, each student chooses a body system to highlight and integrates simple tech like Makey Makey or micro:bit for interactive features (e.g., a button that lights up when 'exercising'). Throughout the Design Cycle, students research their chosen system, prototype their wearable, and reflect on how their creation supports wellbeing. This project empowers students to express 'Who We Are' through imaginative, hands-on making that links body systems, wellbeing, and personal agency."
+        "t": "Padlet",
+        "d": "Students post one evidence-based wellbeing strategy for sleep, movement, food, feelings or balanced screen use on Padlet. They explain which part of physical, emotional or mental wellbeing the choice may affect and avoid claiming that one choice works for everyone. Classmates respond with a respectful question or a practical variation that would make the strategy easier for another child to try. Each student then selects one peer suggestion to test safely for several days and adds a brief reflection. The class finishes with a shared wall of realistic strategies, questions and student reflections. Padlet keeps the posts and peer responses together so patterns and gaps are easy to see."
+      },
+      {
+        "t": "Kahoot",
+        "d": "Students write Kahoot questions that challenge common claims about hydration, sleep, exercise, emotions and screen breaks. They include believable incorrect answers, which requires them to understand why a choice may help or hinder wellbeing. Groups exchange quizzes and flag any question that treats health advice as a guarantee rather than a general strategy. Writers revise unclear questions before running the quiz with another Year 3 class. Students finish with a class-built wellbeing quiz that also reveals ideas needing further teaching. Kahoot gives immediate answer results so the teacher can pause and discuss surprising responses."
+      },
+      {
+        "t": "Sphero BOLT",
+        "d": "Students empathise by interviewing classmates about moments when choosing a healthy break from screens feels difficult, then define one small reminder their design should provide. They ideate with paper sketches and build a physical route from cardboard, recycled packaging, tape and labelled choice cards, with branches for options such as water, stretching, outdoor play or quiet breathing. They prototype by coding Sphero BOLT to travel the route and show a simple symbol on its light grid at the chosen stop. Classmates test whether the route and reminder are clear, while designers measure where the robot misses turns and rebuild or debug those sections. Each team demonstrates an improved working model and explains how user feedback changed its physical course and code."
       }
     ],
     "audited": true,
@@ -6573,7 +6573,8 @@
     ],
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T06:49:49.506Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T07:44:52.568Z"
   },
   {
     "ca": "St Kilda",
@@ -6627,31 +6628,31 @@
     "lo": "The function and purpose of not-for-profit organisations; How not-for-profit organisations respond to community needs; Our responsibility to take action and make a difference",
     "s": [
       {
+        "t": "Microsoft Forms",
+        "d": "Students build a short survey asking families which local community needs matter most and what action they could support. They collect responses without asking for names or private details. This helps students see that not-for-profit organisations listen before deciding how to respond. Another Year 4 class can complete the survey and suggest one need the students may have missed. The class ends with real response charts that can guide its fundraising or advocacy choice. Microsoft Forms automatically collects answers and displays simple charts."
+      },
+      {
         "t": "Wise Discussion Chatbots",
-        "d": "Students consult a teacher-created Wise Discussion chatbot using the Project Ideation scenario, meeting 'Amira Patel, a community partnerships coordinator' who challenges them to plan a realistic not-for-profit event. Teams ask questions such as 'Which roles would help our fundraiser run fairly?' and 'How could we respond if volunteers or supplies were unavailable?' They compare Amira's advice with their research into local organisations, then assign leadership, communication, finance and logistics responsibilities. Each team produces an event proposal outlining the community need, audience, resources, timeline and measures of success. They revisit the chatbot to test assumptions and refine weak parts of the plan. A class pitch session concludes with peer feedback on how responsibly and effectively each organisation could operate."
+        "d": "Students hold a teacher-guided written discussion about how a not-for-profit should use a limited donation. They weigh choices such as immediate help, long-term support, staff costs and community education. This shows why leaders need clear purposes and responsible decision-making. Students swap their strongest reasons with a partner, then return to the chatbot to test whether their choice still holds up. Each student finishes with a written decision and reasons they can bring to a class planning meeting. The teacher can set up the Socratic Tutor scenario to ask questions without giving students the answer."
       },
       {
-        "t": "Explain Everything",
-        "d": "Students become investigative journalists, using Explain Everything to create an interactive documentary exploring how not-for-profit organisations operate and make a difference in Melbourne. This deep dive brings the line of inquiry about the function and purpose of not-for-profits to life, as students research real organisations and the needs they address. By interviewing a local charity worker via video call or email, students get an insider's perspective on the challenges and rewards of community action. Their final product is a dynamic, clickable presentation with embedded interviews, voiceovers, and annotated diagrams, ready to be showcased at assembly or shared with families. The magic happens with Explain Everything's live collaboration and interactive hotspots, letting students co-create and link to actual websites or donation pages. Students finish with the confidence to see themselves as active participants in their community, not just observers."
+        "t": "Podcasting using Canva",
+        "d": "Students record a short interview with a local not-for-profit worker, volunteer or school community organiser. They ask how the organisation identifies needs, divides roles and knows whether its work is helping. Hearing a real person's answers makes organisational structures and responsibilities easier to understand. Small groups choose one answer that should influence the class's own community action. They produce an edited podcast episode with an introduction, selected interview sections and a closing question for listeners. Podcasting using Canva lets students record and edit the episode on an iPad."
       },
       {
-        "t": "Canva",
-        "d": "Students become advocacy designers, crafting bold infographics in Canva that spotlight the impact and inner workings of not-for-profit organisations in our community. By visually mapping how these organisations respond to community needs, students dig deeply into the line of inquiry exploring the function and purpose of not-for-profits. Each group chooses a real local charity, then interviews a staff member or volunteer via video call to capture authentic perspectives for their designs. The finished infographics are printed as giant posters for the school foyer and digitally shared with the featured organisations, giving student voices genuine reach. Canva's Magic Write tool empowers students to generate compelling copy and data visualisations that elevate their message beyond a basic poster. Every child walks away realising their creative communication can inspire real-world action and ripple outward far beyond the classroom."
+        "t": "Freeform",
+        "d": "Students map every job, decision and handover needed to run a class fundraising or advocacy event. They connect roles such as communications, finance, logistics and community contact with arrows showing who needs information from whom. This makes an organisation's structure visible before the event begins. Groups exchange boards and look for missing responsibilities, repeated jobs or points where a plan could stall. Each group finishes with a clear organisational map that can stay open during the real event. Freeform's shared infinite canvas allows students to move, group and connect ideas as the plan changes."
       },
       {
-        "t": "Adobe Express",
-        "d": "Students step into the shoes of not-for-profit campaigners, using Adobe Express to design a powerful digital poster or social media story advocating for a cause they care about. This activity brings the line of inquiry about taking action and making a difference into the digital age, as students learn how visual storytelling can inspire real change. Students pair up with Year 2 buddies, teaching them about advocacy and co-creating mini-campaigns for younger audiences. The final artefact is a shareable digital campaign?animated, colourful, and ready to be displayed on the school website or sent to a partnering charity. Students unlock the Animate from Audio feature, letting their own voices narrate their message and bring their posters to life. They leave knowing how to amplify their ideas and rally others for a cause."
+        "t": "Animating a Character with Adobe Express",
+        "d": "Students record a short explanation of one essential role inside a not-for-profit organisation. They explain what that person does, who they work with and what could happen if the role were missing. This helps students understand that community action depends on coordinated people rather than one leader doing everything. Each group chooses a different role, then the clips are shown together as an induction for the class's own action team. Students finish with a set of talking-character clips that clearly explain how the organisation works. Adobe Express Animate from Audio automatically lip-syncs an on-screen character to each student's recorded voice."
       },
       {
-        "t": "Padlet",
-        "d": "Students become digital connectors, building a collaborative Padlet wall that maps out all the not-for-profit organisations impacting their community and the issues they tackle. This activity shines a light on the line of inquiry about the structure and function of organisations, as students discover the web of support that exists around them. To add depth, students invite local not-for-profit representatives to leave voice notes or comments on the Padlet, creating a living, interactive resource. The final artefact is a multimedia map filled with photos, links, interviews, and student reflections, which can be shared with new families or featured at open days. Padlet's shelf view lets students organise organisations by type (e.g. Environment, health, social justice), making patterns and gaps easy to spot. By the end, students see themselves as part of a wider network, ready to spot where their own action is needed."
-      },
-      {
-        "t": "Pop-Up Pantry Planners: Build & Code a Community Food Network",
-        "d": "Students design and construct a 3D model of a community food support network using cardboard, recycled boxes, string, and art supplies to represent local food banks, community gardens, delivery routes, and collection stations. Teams use Ozobots or Sphero Indi robots, programmed via color codes or block coding, to simulate the movement of food supplies between their crafted locations, solving challenges like efficient delivery and equitable access. This project immerses students in the organisational roles, teamwork, and logistics that not-for-profits use to respond to real community needs. Through the Design Cycle, students prototype, test, and refine both their physical models and robot solutions, reflecting on leadership, resource allocation, and collaborative action."
+        "t": "Micro:bit",
+        "d": "Students empathise with volunteers managing a busy donation point, then define the problem of counting incoming items without stopping other work. They sketch ideas and prototype a collection box from cardboard, recycled materials, foil switches, crocodile clips and a battery-powered micro:bit. They program the buttons or foil switch to increase a count and show the total on the 5x5 LED grid. Teams test the box with repeated pretend donations, find counting errors and adjust the code or physical switch. At the end, each team demonstrates a working device and explains how its improved design could help a not-for-profit organise resources."
       }
     ],
-    "audited": false,
+    "audited": true,
     "plannerText": "The 'How We Organise Ourselves' Year 4 unit explores the structure and function of organisations, with a strong focus on not-for-profits, community action, and the roles required for effective teamwork. Students investigate how organisations respond to community needs, the importance of leadership and responsibility, and the processes involved in planning and running events. The unit integrates research, collaborative action, and reflection, with students engaging in real-world projects such as fundraising, advocacy, and bridge-building challenges. Emphasis is placed on student agency, voice, and choice, as well as developing digital literacy, communication, and problem-solving skills.",
     "humanVerified": false,
     "stemRebooted": true,
@@ -6673,7 +6674,8 @@
       }
     ],
     "suggestionAuditAt": "2026-06-08T06:54:29.362Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T07:45:28.912Z"
   },
   {
     "ca": "St Kilda",
