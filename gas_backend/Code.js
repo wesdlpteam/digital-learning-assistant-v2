@@ -561,6 +561,14 @@ function doPost(e) {
       return jsonResponse(result);
     }
 
+    // 2026-08-07: one-shot repair for units approved BEFORE the stale-planner
+    // fix landed -- their suggestions were generated from the old planner.
+    if (action === 'repairuoieditedunits') {
+      const result = repairUoiEditedUnits({ dryRun: body.dryRun === true, limit: body.limit || 0 });
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
     if (action === 'dismissuoiproposal') {
       const result = dismissUoiProposal_({ id: body.id || '', reason: body.reason || '' });
       result.user = verifiedEmail;
@@ -1196,6 +1204,69 @@ function listUoiProposals_(opts) {
   return { proposals: proposals, total: proposals.length };
 }
 
+// 2026-08-07: A teacher's approved CI/LOI edit makes every planner-derived
+// field on that unit stale. plannerText -- a summary written from the OLD
+// planner -- is injected as "Planner context" into every regeneration prompt
+// (inspiringBuildPrompt_, diversityBuildPrompt_, both slot regens and
+// rebootMakerspace) and is longer and more concrete than the fresh ci/lo, so
+// the model keeps writing the old unit. Elsternwick Year 4 "How the World
+// Works" moved from natural disasters to scientific investigations and still
+// got six disaster ideas. Rebuild plannerText from the new ci/lo, drop the
+// whole-year plannerContextRich soup, and unlock the cached STEM project so
+// healMakerspaceFromMemory cannot restore the old 6th slot.
+function uoiRefreshUnitContextAfterEdit_(unit) {
+  var cleared = { plannerTextRebuilt: false, plannerContextRichDropped: false, stemUnlocked: false };
+  if (!unit) return cleared;
+
+  var rebuilt = _repairContamPlannerText_(unit);
+  if (rebuilt) {
+    unit.plannerText = rebuilt;
+    cleared.plannerTextRebuilt = true;
+  } else if (unit.plannerText) {
+    // Nothing left to summarise -- an empty summary still beats the old topic.
+    delete unit.plannerText;
+    cleared.plannerTextRebuilt = true;
+  }
+
+  if (unit.plannerContextRich) {
+    delete unit.plannerContextRich;
+    cleared.plannerContextRichDropped = true;
+  }
+  if (unit.plannerContextRichAt) delete unit.plannerContextRichAt;
+
+  if (unit.stemRebooted) {
+    unit.stemRebooted = false;
+    cleared.stemUnlocked = true;
+  }
+  return cleared;
+}
+
+// True when the teacher's approved CI/LOI edit is newer than the planner file
+// on Drive. That planner still describes the old unit, so re-importing it would
+// undo uoiRefreshUnitContextAfterEdit_. Once someone actually updates the
+// planner file, the planner wins again.
+function uoiEditNewerThanPlanner_(entry, plannerUpdatedMs) {
+  var editedAt = entry && entry.uoiEditApprovedAt ? new Date(entry.uoiEditApprovedAt).getTime() : 0;
+  if (!editedAt) return false;
+  return !(plannerUpdatedMs > editedAt);
+}
+
+// Drop the cached Makerspace project for one unit so the daily heal cannot put
+// the old-topic 6th slot back after a teacher edit.
+function uoiPurgeMakerspaceMemory_(unit) {
+  if (!unit) return false;
+  var props = PropertiesService.getScriptProperties();
+  var raw = props.getProperty('MAKERSPACE_MEMORY');
+  if (!raw) return false;
+  var memory;
+  try { memory = JSON.parse(raw); } catch (e) { return false; }
+  var key = unit.ca + '_' + unit.yl + '_' + unit.th;
+  if (!Object.prototype.hasOwnProperty.call(memory, key)) return false;
+  delete memory[key];
+  props.setProperty('MAKERSPACE_MEMORY', JSON.stringify(memory));
+  return true;
+}
+
 function approveUoiProposal_(opts) {
   var id = String(opts.id || '').trim();
   if (!id) return { error: 'Proposal id required' };
@@ -1225,6 +1296,15 @@ function approveUoiProposal_(opts) {
   // tech suggestions with the new wording — the previous ones were tuned
   // to the old CI/LOI.
   if (unit.inspiringRegenAt) delete unit.inspiringRegenAt;
+  // The teacher's new CI/LOI is now the only trustworthy description of this
+  // unit, so wipe the planner-derived text BEFORE anything regenerates below --
+  // otherwise the regen prompt still reads the old topic (2026-08-07 report:
+  // Elsternwick Year 4 How the World Works).
+  if (changes.length) {
+    uoiRefreshUnitContextAfterEdit_(unit);
+    try { uoiPurgeMakerspaceMemory_(unit); }
+    catch (eMem) { Logger.log('uoiPurgeMakerspaceMemory_ failed: ' + eMem); }
+  }
 
   file.setContent(JSON.stringify(data, null, 2));
   try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e2) { Logger.log('pushToGitHub after UOI approval failed: ' + e2); }
@@ -1252,6 +1332,74 @@ function approveUoiProposal_(opts) {
   saveUoiProposals_(proposals);
 
   return { id: id, applied: true, changes: changes, requiresRegen: !ideasGenerated, ideasGenerated: ideasGenerated };
+}
+
+// 2026-08-07: Repairs units whose CI/LOI was approved BEFORE approval learned to
+// clear the planner-derived text. Those units still carry a plannerText written
+// from the OLD planner, so their six ideas describe the old topic. Finds them by
+// comparing the stored summary against the one their current ci/lo would produce,
+// wipes the stale context, and regenerates. Rerunnable and resumable -- each unit
+// is only picked up while it still looks stale, and regenerateAllInspiring stamps
+// inspiringRegenAt per unit as it goes.
+//   { dryRun: true }  -> list what would be repaired, change nothing
+//   { limit: 5 }      -> cap how many units regenerate this run
+function repairUoiEditedUnits(opts) {
+  opts = opts || {};
+  var file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  var data = JSON.parse(file.getBlob().getDataAsString());
+
+  var stale = [];
+  for (var i = 0; i < data.length; i++) {
+    var u = data[i];
+    if (!u || !u.uoiEditApprovedAt) continue;
+    var wanted = _repairContamPlannerText_(u);
+    var current = (u.plannerText || '').trim();
+    var summaryStale = wanted ? current !== wanted : !!current;
+    if (!summaryStale && !u.plannerContextRich) continue;
+    stale.push({ idx: i, ca: u.ca, yl: u.yl, th: u.th });
+  }
+
+  if (opts.dryRun) {
+    return { dryRun: true, stale: stale.length, units: stale };
+  }
+  if (!stale.length) {
+    return { repaired: 0, regenerated: 0, message: 'No teacher-edited unit is carrying old planner text.' };
+  }
+
+  var limit = opts.limit > 0 ? opts.limit : stale.length;
+  var batch = stale.slice(0, limit);
+  var indices = [];
+  for (var j = 0; j < batch.length; j++) {
+    var unit = data[batch[j].idx];
+    uoiRefreshUnitContextAfterEdit_(unit);
+    try { uoiPurgeMakerspaceMemory_(unit); }
+    catch (eMem) { Logger.log('uoiPurgeMakerspaceMemory_ failed: ' + eMem); }
+    if (unit.inspiringRegenAt) delete unit.inspiringRegenAt;
+    indices.push(batch[j].idx);
+  }
+
+  file.setContent(JSON.stringify(data, null, 2));
+  try { if (typeof pushToGitHub === 'function') pushToGitHub(); }
+  catch (ePush) { Logger.log('repairUoiEditedUnits push failed: ' + ePush); }
+
+  // Regenerate from the now-clean context. Best-effort: if this fails the stale
+  // text is already gone, so a later Inspire All finishes the job correctly.
+  var regen = null;
+  try {
+    if (typeof regenerateAllInspiring === 'function') {
+      regen = regenerateAllInspiring({ indices: indices, redoAll: true, batch: indices.length });
+    }
+  } catch (eRegen) {
+    Logger.log('repairUoiEditedUnits regen failed: ' + eRegen);
+  }
+
+  return {
+    repaired: batch.length,
+    remaining: stale.length - batch.length,
+    regenerated: regen && regen.fixed ? regen.fixed : 0,
+    units: batch,
+    regen: regen
+  };
 }
 
 function dismissUoiProposal_(opts) {
@@ -2178,6 +2326,15 @@ function enrichPlannerContext() {
     var ca = entry.ca, yl = entry.yl, th = entry.th;
     var caCode = campusMap[ca];
     if (!caCode) continue;
+
+    // A teacher's approved CI/LOI edit outranks a planner file nobody has
+    // touched since. Re-importing that planner would restore the old unit's
+    // wording, which is what approval just cleared. Costs one Drive lookup and
+    // only for the handful of units carrying a teacher edit.
+    if (entry.uoiEditApprovedAt) {
+      var uoiGuardFile = findPlannerFile_(folder, yl, th, caCode);
+      if (uoiGuardFile && uoiEditNewerThanPlanner_(entry, uoiGuardFile.getLastUpdated().getTime())) continue;
+    }
 
     var hasRich = entry.plannerContextRich && entry.plannerContextRich.length > 50;
     var richIsError = hasRich && /^ERROR:/.test(entry.plannerContextRich);
