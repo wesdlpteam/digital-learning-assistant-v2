@@ -6583,28 +6583,28 @@
     "lo": "How colour, movement and music communicate character and mood; The creative process of making a multi-disciplinary presentation; The effort and commitment required to produce a live performance",
     "s": [
       {
+        "t": "Brushes Redux",
+        "d": "Students paint several Beijing Opera-inspired masks, changing only the colours to show different characters and moods. This makes the link between artistic choices, identity and emotion easy to see. Classmates view each mask without its title and explain what kind of character they think it shows. The artist then adjusts one colour choice after hearing these different readings. Students finish with a set of original digital mask paintings and a short colour key. Layers let them refine details without repainting the whole mask."
+      },
+      {
         "t": "GarageBand",
-        "d": "Students will create unique soundscapes that express the personalities and emotions of Beijing Opera characters, exploring just how much music alone can tell a story. This activity brings to life the inquiry into how music communicates character and mood, using GarageBand as a creative playground. Imagine students collaborating as composers, debating whether a minor key or tempo shift better brings a mischievous mask to life?every choice becomes a conversation about artistic intent. The final audio tracks are showcased in an interactive listening gallery for families and younger students, challenging visitors to match sounds with character masks. Students will unlock GarageBand's automation feature to carefully fade, swell, and layer sounds for dramatic effect, moving far beyond basic loops. After this, your class won't just recognise music's mood-setting magic?they'll be confident sound designers, ready to shape emotion with every note."
+        "d": "Students compose a short piece of music for a character entering, facing a problem and leaving the stage. They choose tempo, instruments and changes in volume to communicate the character's shifting mood. Another group listens without seeing the story and arranges three mood cards in the order they hear them. Composers use that response to revise any section where their musical message was unclear. Students finish with a polished character soundtrack ready for a live performance. GarageBand's virtual instruments and loops make it possible to test several musical choices quickly."
+      },
+      {
+        "t": "Teachable Machine",
+        "d": "Students photograph and sort body poses that communicate emotions such as confidence, fear, anger and curiosity. This helps them examine how movement can reveal character before a performer says a word. Classmates test the trained model with new poses and look for movements the computer confuses. They then add clearer examples and retrain the model, learning that both performers and computers need precise visual signals. Students finish with a working pose-recognition model and a live demonstration of its strengths and mistakes. Similar pose recognition is used in physiotherapy and sports-coaching tools to check how people move."
       },
       {
         "t": "IMovie",
-        "d": "Students become both directors and actors as they record and edit dramatic scenes that reveal the transformation of a character from mask design to live performance. This directly explores the creative process of blending visual arts and drama into a seamless story, as called out in the unit's central idea. By taking on film crew roles, students experience the challenge of capturing movement and emotion, just like professional filmmakers do?watching each other's rushes and offering feedback is all part of the process. The finished videos will be screened at a 'Red Carpet' celebration night, complete with popcorn and Oscars for Best Character Arc. Students will use iMovie's split-screen and picture-in-picture features to interweave rehearsal footage, backstage moments, and final performances, creating a behind-the-scenes documentary. They'll leave with a filmmaker's eye for storytelling and a new appreciation for the teamwork behind every live show."
-      },
-      {
-        "t": "Padlet",
-        "d": "Students curate a digital gallery of mask designs and performance ideas, inviting anonymous positive critique and suggestions from the wider school community. This taps into student agency and peer feedback, making reflection a two-way street and bringing in fresh perspectives on colour, movement, and mood. As curators, students create guiding questions for visitors, sparking discussion about artistic choices and cultural influences?suddenly, feedback becomes a living, collaborative artwork. Their Padlet will be shared with another campus, uniting creative voices across Wesley and inspiring a real sense of artistic exchange. They'll master Padlet's 'columns' feature so they can organise galleries by emotion, colour palette, or character type, helping even the youngest visitors make connections. By the end, students will see themselves as both artists and critics, ready to express their ideas clearly and receive feedback as a gift."
-      },
-      {
-        "t": "Sketchbook",
-        "d": "Students will use Sketchbook to design Beijing Opera masks, experimenting with digital brushes and colour blending to evoke specific moods and personalities. This is a hands-on dive into how colour and line communicate emotion, deepening their understanding of artistic elements. They'll play the role of professional designers, crafting mask concepts for a hypothetical modern production?pushing tradition with their own creative twists. Their digital portfolios will be displayed in a virtual exhibition, with each design accompanied by a student-voiced audio reflection. They'll use Sketchbook's symmetry and custom brush features to achieve intricate, authentic patterns that would be tricky on paper. Students will come away with a designer's toolkit for expressing ideas visually and the guts to reimagine tradition in bold new ways."
+        "d": "Students record and edit one dramatic scene three ways, changing movement, pacing and shot order to create different moods. This shows how performance and editing choices can change the meaning of the same script. Each group screens its versions to another class, which votes on the clearest mood and explains the choice. Students use that audience response to tighten pauses, remove weak moments and select their strongest version. They finish with a short film that shows both the first cut and the improved performance. IMovie's titles, transitions and editing tools allow students to shape the finished scene in one place."
       },
       {
         "t": "Delightex",
-        "d": "Students step into the role of set designers and performers by building immersive 3D virtual stages for their live performances, using Delightex. This activity brings the line of inquiry about the creative process of making multidisciplinary presentations to life, letting students blend visual, spatial, and dramatic thinking. They'll debate how lighting, backdrop, and digital props transform mood and character?sometimes discovering that a shadow is more powerful than a spotlight. Their finished virtual stages will be explored by families on iPads during open night, allowing visitors to 'walk' through and experience each performance space firsthand. Students will dive into Delightex's texture mapping and interactive hotspot tools, enabling them to add movement or sound triggers for a truly multi-sensory stage. They'll finish the project with the confidence to tell stories in any medium?real or virtual?and an eye for the details that make a performance unforgettable."
+        "d": "Students build a virtual stage for an original character and code objects to move when the viewer interacts with the scene. They use colour, space and movement to show a change in mood across the performance. Groups swap scenes and test whether the character's feelings are understandable without a written explanation. Creators then revise one movement or visual choice that gave viewers the wrong message. Students finish with an interactive 3D performance that classmates can explore. CoBlocks let them program how stage objects move and respond."
       },
       {
-        "t": "Mask Makers' Puppet Parade: Stories on Strings",
-        "d": "Students design and craft vibrant, expressive puppets inspired by Beijing Opera masks and their own cultural identities using cardboard, fabric scraps, yarn, and recycled materials. They integrate simple movement mechanisms?like hinged jaws or movable arms?using popsticks, split pins, and elastic bands, then embed a micro:bit or similar device to trigger light or sound effects that match their puppet's mood. Working in teams, students script and perform short scenes that showcase how colours, movement, and digital elements communicate stories and emotions. The project fuses physical making with coding, performance, and reflection, encouraging deep exploration of personal and cultural expression."
+        "t": "Micro:bit",
+        "d": "Students empathise with performers and backstage helpers by identifying moments when a missed cue can interrupt a live performance, then define one cueing problem to solve. They sketch ideas and prototype a wearable wristband, handheld prop or cardboard stage marker using recycled cardboard, elastic, foil, a battery pack and a Micro:bit. They code buttons to show clear LED symbols and, where useful, connect a buzzer with crocodile clips for a private backstage alert. Teams test their device during a rehearsal, then improve the code, symbol size, attachment or cue timing after feedback. Each team demonstrates a reliable physical cueing device and explains how testing made the performance run more smoothly."
       }
     ],
     "audited": true,
@@ -6616,7 +6616,8 @@
     "inspiringRegenRecovered": true,
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T06:53:42.846Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T07:40:04.841Z"
   },
   {
     "ca": "St Kilda",
