@@ -25,7 +25,6 @@
         "Insta360 camera",
         "Kahoot",
         "Lego Spike Prime",
-        "Makey Makey",
         "Merge Cubes",
         "Micro:bit",
         "Microsoft Excel",
@@ -41,7 +40,6 @@
         "Seek by iNaturalist",
         "Seesaw",
         "Sketchbook",
-        "Sky Map",
         "Slow Motion Physical Analysis",
         "Sphero BOLT",
         "Sphero Indi",
@@ -93,10 +91,6 @@
         },
         "micro:bit": {
           "min": 3,
-          "max": 6
-        },
-        "makey makey": {
-          "min": -2,
           "max": 6
         },
         "3d printers": {
@@ -164,10 +158,6 @@
           "max": 6
         },
         "field guide to victoria": {
-          "min": 0,
-          "max": 6
-        },
-        "sky map": {
           "min": 0,
           "max": 6
         },
