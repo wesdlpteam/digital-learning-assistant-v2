@@ -5814,27 +5814,27 @@
     "s": [
       {
         "t": "Seesaw",
-        "d": "Students become feelings detectives by recording short selfie videos explaining how a favourite playground game makes them feel and why. This dives straight into the big ideas of identifying and naming emotions through the games we play. Flipping the script, students send their videos to a Year 6 buddy, who tries to guess the game based on the emotion clues alone?sparking empathy and perspective-taking across ages. The final artefact is a digital feelings gallery, where families are invited to match emotions to games at home. Seesaw's drawing and annotation tools let students doodle emojis and highlights over their own videos, capturing the rollercoaster of fun, frustration, or pride. Kids leave with a richer vocabulary for feelings and the confidence to express what play means to them."
-      },
-      {
-        "t": "ScratchJr",
-        "d": "Students design and code their own digital board game in ScratchJr, where different player choices trigger animated outcomes?friendly, fair, or not-so-fair. This hands-on task brings to life how players' decisions impact relationships and teamwork. Students swap their games with another class, challenging their peers to spot moments of fairness or conflict, and reflect on how it feels to win, lose, or fix a problem together. The finished artefact is an interactive digital board game, with branching paths and character reactions, that other classes can play on iPads. By using ScratchJr's speech bubble and background-change features, students pack their games with different moods, surprising twists, and visible consequences for each choice. Kids walk away as game makers who understand that every move can shape friendships."
-      },
-      {
-        "t": "IMovie",
-        "d": "Students produce a mini documentary where they interview classmates about their go-to classroom games and how these games build fairness, respect, and responsibility. This taps deeply into the unit's exploration of our roles and choices when playing with others. Students act as junior news reporters, including 'breaking news' segments when a new rule is introduced and reactions ripple through the group. The final artefact is a polished newsreel with voiceovers, interviews, and live-action game footage, ready for a school assembly screening. IMovie's split-screen mode allows students to compare 'before and after' moments?how a game feels with and without certain rules?side by side, sparking richer discussion. Students gain confidence as storytellers and spot the small changes that make games feel fair for everyone."
-      },
-      {
-        "t": "Sphero Indi",
-        "d": "Students use Sphero Indi cars to create a real-life feelings obstacle course, where each coloured tile represents a different emotion experienced during games?excitement, frustration, pride, or disappointment. This activity makes the abstract idea of identifying and managing emotions concrete and active. To add an extra layer, students partner up and design 'challenge moments' in the course, swapping roles as drivers and course designers to feel both sides of teamwork and decision-making. The artefact is a video walk-through of each unique course, with student voiceovers explaining the emotional journey and the strategies for tackling tricky spots. Sphero Indi's sensor-based colour reading brings the invisible world of feelings to life, letting students see how choices shift the emotional path. Kids leave with empathy for others and strategies for navigating ups and downs?on and off the playground."
+        "d": "Students record a short video before, during and after playing the same class game, naming how they feel each time. This shows that games can teach us how our feelings change when we win, wait, disagree or try again. Students choose one difficult moment and record a second response showing a calm-down or conflict-solving strategy. They finish with a three-part video reflection that families can watch and discuss. Seesaw keeps each recording together in the student's journal. Voice and video let Year 1 students explain ideas without needing long written answers."
       },
       {
         "t": "PicCollage",
-        "d": "Students become empathy superheroes by snapping photos of real classroom games in action, then building comic-style storyboards in PicCollage to show how kind and unkind choices affect everyone in the game. This directly explores our responsibilities and the impact of choices in play. Instead of telling, students imagine they are advice columnists, adding speech bubbles with tips or 'what could you do next?' prompts for tricky moments. The finished artefact is a digital comic strip collection, shared with Prep classes as a visual guide to playing fairly and handling feelings. PicCollage's sticker and cutout features let students remix their own faces and friends into superhero or coach roles, making the learning personal and memorable. Students emerge as creative problem-solvers, ready to support others and lead by example."
+        "d": "Students photograph examples of fair and unfair choices during carefully staged playground games. They sort the photographs into a collage and add short captions such as 'invited someone', 'changed the rule' or 'waited for a turn'. Partners swap collages and choose one unfair moment that could be repaired. Students finish with a visual guide showing how players' choices can help or hurt relationships. PicCollage makes it easy to arrange photographs in clear groups. The finished guides can be displayed beside the class game equipment."
       },
       {
-        "t": "Friendship Forts: Build & Code Your Team Hideout",
-        "d": "Students work in small teams to design and construct colourful cardboard 'forts' or cozy hideouts using large boxes, fabric scraps, paper, and markers. Each team personalises their fort to reflect their unique group identity, decorating with symbols, drawings, and words that represent fairness, respect, and teamwork. Using Sphero Indi cars, students collaboratively create a simple coded pathway leading friends to their fort, reinforcing the importance of clear rules and cooperation. This project celebrates classroom community and gives students a tangible, playful space to discuss and role-play positive social behaviours."
+        "t": "IMovie",
+        "d": "Students record two versions of a short game disagreement?one where the problem grows and one where players repair it. This helps them notice how words, facial expressions and choices affect relationships. Small groups choose their own conflict, such as skipping a turn, changing a rule or refusing to include someone. They finish with a short comparison film that pauses for classmates to suggest a better choice. iMovie allows students to join scenes and add simple titles. Watching both endings side by side makes cause and effect easy to discuss."
+      },
+      {
+        "t": "Brushes Redux",
+        "d": "Students paint two digital self-portraits showing how their face and body might look during different moments in a game. This builds precise feelings vocabulary beyond simply happy, sad or angry. Partners view each painting without its emotion being named and explain which visual clues helped them work it out. Students finish with paired portraits that show how emotions can change during play. Brushes Redux supports expressive colour, line and layered painting. Students can revise a layer after peer feedback without starting their artwork again."
+      },
+      {
+        "t": "Sphero Indi",
+        "d": "Students lay coloured tiles to create a game path where Indi's journey changes after each player choice. This makes rules, turn-taking and consequences visible as the car follows the path the group has agreed on. Groups exchange paths and must ask permission before moving another group's tiles or changing its rules. Students finish with a working floor game and a spoken explanation of each player's responsibilities. Indi drives according to the sequence of coloured tiles placed on the floor. Moving one tile gives students an immediate way to test how a choice changes the whole game."
+      },
+      {
+        "t": "Beebots",
+        "d": "Students empathise with younger players by watching where waiting, unclear rules or crowded spaces make a floor game frustrating, then define one problem to solve. Using cardboard, paper arrows, masking tape, recycled lids and small boxes, teams ideate and prototype a Bee-Bot game board that makes turns and goals easy to understand. They program Bee-Bot with its directional buttons, test whether another group can play fairly without extra explanations, and record the problems they observe on paper. Teams move obstacles, simplify routes or rewrite physical rule cards before testing again. Each team demonstrates a working game in which the board design, rules and programmed route help everyone participate."
       }
     ],
     "audited": true,
@@ -5870,7 +5870,8 @@
     ],
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T06:29:31.309Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T07:17:31.262Z"
   },
   {
     "ca": "St Kilda",
@@ -5880,28 +5881,28 @@
     "lo": "Beliefs and values contribute to a culture; The importance of rituals and traditions; How artefacts capture history and cultural expression",
     "s": [
       {
-        "t": "ChatterPix Kids",
-        "d": "Invite students to bring a treasured artefact from home and transform it into a talking storyteller using ChatterPix Kids. This brings the unit's central idea?artefacts as windows into beliefs and values?alive by letting objects share their own cultural stories. Students will imagine their artefact's journey across time, giving it a voice to explain its ritual, tradition, or meaning in a way that celebrates both similarities and differences. The final result is a gallery of artefact portraits, each with a unique, student-created narration that can be shared with families and the school community. ChatterPix's drawing and sticker features let students add cultural symbols or dress to their artefact, making each story even more expressive. Students walk away seeing themselves as creative curators, able to honour and share cultural identity with a playful twist."
+        "t": "Stop Motion Studio",
+        "d": "Students photograph a family object frame by frame as it moves through three moments in its imagined or known history. This shows how an object can carry beliefs, memories and values across time. Students ask a family member which details must stay truthful, then choose how movement can show the object's changing use. They swap unfinished animations and work out what cultural meaning a viewer can understand without words. Each student finishes with a short stop-motion film that treats the object with care and keeps its story clear. Stop Motion Studio joins the photographs into a frame-by-frame animation."
       },
       {
-        "t": "Book Creator",
-        "d": "Students become cultural detectives, assembling a digital museum book in Book Creator that showcases artefacts, recipes, dances, and stories from their own and classmates' backgrounds. This taps into the line of inquiry about how rituals and traditions shape communities, as students collect and curate real examples from home and around the world. To deepen the experience, students can interview a family member or community elder, then include a transcript or audio snippet in their page. The finished eBook is a vibrant, multimedia museum that can be published to the class website or shared at a cultural celebration night. Using Book Creator's comic templates, students can turn interviews and artefact histories into engaging, visual narratives. This project gives every child the chance to see their family story valued and learn how to preserve culture in creative ways."
+        "t": "Podcasting using Canva",
+        "d": "Students interview a family member about a ritual, celebration, food, song or treasured object and record the conversation. Listening to a real voice helps them hear why traditions matter to people, not just what happens during them. Each student selects one answer that challenged an assumption and adds a respectful follow-up question. A partner listens before publication and checks that names, pronunciations and private details have been handled carefully. Students finish with a short edited podcast episode for a class listening library. Podcasting using Canva lets them record and edit the episode on an iPad."
       },
       {
         "t": "ScratchJr",
-        "d": "Students animate a cultural celebration?like Lunar New Year, Diwali, or a family tradition?using ScratchJr to bring the sights and sounds of rituals to life. This activity explores how beliefs and values are expressed through music, dance, and food, making the abstract tangible through code. By swapping projects with a buddy from another cultural background, students get to see their own traditions through someone else's eyes and ask new questions. The end product is a short, interactive animation that can be played on class iPads or looped on a display during assembly. ScratchJr's background and character editing tools let students customise scenes with meaningful artefacts and symbols. Kids leave with not just coding skills, but a sense of pride in their heritage and a curiosity about the world beyond their own."
+        "d": "Students code an animated story showing how an object is used during a family or cultural tradition. The characters' actions reveal the beliefs and values connected with the object. Students exchange projects, then add one question a viewer can tap to explore before the story continues. They revise any scene that makes a culture look like one fixed experience shared by everyone. Each student finishes with an interactive story containing sequenced actions, recorded speech and a clear ending. ScratchJr's blocks let young learners program movement, speech and scene changes."
       },
       {
-        "t": "Insta360 camera",
-        "d": "Students use the insta360 camera to create immersive digital exhibitions of cultural artefacts and rituals. Working in small groups, they film 360-degree scenes that showcase artefacts, traditional clothing, or re-enactments of rituals from their own or researched cultures. The camera's panoramic view allows students to capture the setting, participants and key details, helping viewers feel present at the event. After filming, students record short narrations explaining the beliefs, values and history represented by each artefact or ritual. The finished 360-degree exhibitions are shared with the class, who explore them on iPads and discuss similarities and differences between cultures. Teachers assess students on their ability to interpret and communicate the significance of cultural artefacts using immersive media."
+        "t": "Delightex",
+        "d": "Students build a small 3D exhibition scene around one carefully researched cultural object. The surrounding people, setting and actions show that an object's meaning comes from the culture and history around it. Students invite another class to explore the scenes and identify which details helped them understand the object's importance. They then change one object, label or action that visitors found confusing. Each group finishes with an interactive virtual exhibition scene that can be explored on screen. Delightex provides 3D objects and block coding for simple movement and responses."
       },
       {
-        "t": "Epic",
-        "d": "Students dive into Epic's diverse digital library to research artefacts and traditions from cultures they don't know much about, becoming junior anthropologists for the week. This links to the line of inquiry about how beliefs and values contribute to culture, encouraging respectful curiosity and empathy. Students can recommend a favourite story or artefact to another class, acting as 'reading ambassadors' and sparking cross-classroom conversations. Their final product is a short video or audio book review, spotlighting a story or artefact that surprised them, which can be shared with the school library or on the class blog. Epic's read-to-me function lets students access books above their reading level, opening up a world of global stories. By the end, students feel empowered to explore beyond their own experience and share discoveries with others."
+        "t": "IMovie",
+        "d": "Students record and edit a short film comparing two traditions through music, dance, food, storytelling or meaningful objects. The comparison helps them notice shared purposes while respecting important differences. Students choose whether to include their own narration, a family interview or a filmed demonstration, with permission from everyone shown. A partner checks the draft for sweeping claims such as 'everyone does this' and suggests more accurate words. Each pair finishes with a titled mini-documentary for a class screening. iMovie allows them to arrange clips and add titles and transitions in one place."
       },
       {
-        "t": "Cultural Celebration Light-Up Parade",
-        "d": "Students will design and build miniature parade floats that represent a cultural celebration or tradition from their own background or one they've researched. Using recycled boxes, fabric scraps, coloured paper, and craft materials, they'll craft 3D floats and then integrate simple LED circuits (battery packs, LEDs, copper tape) to illuminate their creations. Students will document their design choices and the story behind their float using iPads to record a short video explanation, which is displayed alongside their float. This project encourages creative expression, hands-on making, and respectful sharing of diverse cultures through both physical building and basic tech integration."
+        "t": "Microsoft Forms",
+        "d": "Students empathise by asking classmates what helps them understand an unfamiliar cultural object respectfully, then collect the answers in Microsoft Forms. They define a need and ideate a hands-on display using cardboard, recycled materials, paper hinges, pull tabs, fabric and removable labels. They prototype a display that reveals the object's story in stages rather than showing it as decoration alone. Visitors test the display and enter feedback in the same Form, and students use the response charts to choose one change. Each group presents its improved physical display and demonstrates how visitor feedback made the cultural explanation clearer."
       }
     ],
     "audited": true,
@@ -5937,7 +5938,8 @@
     ],
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T06:33:37.183Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T07:18:38.744Z"
   },
   {
     "ca": "St Kilda",
@@ -5947,28 +5949,28 @@
     "lo": "An ecosystem has animals, plants and microorganisms; Technology can cause ecosystems to adapt and evolve; Technology can help or hinder ecosystems",
     "s": [
       {
+        "t": "Teachable Machine",
+        "d": "Students train an image model to recognise two types of local leaves by showing each leaf to the camera many times. This shows how technology can help people notice patterns in ecosystems, while mistakes reveal that computer decisions depend on the examples people provide. Students choose whether their model will sort leaves by species, shape or visible damage. Another class tests the model with unfamiliar leaves and records where it succeeds or gets confused. Students finish with a working classifier and a clear example of how technology can help or hinder environmental decisions. Similar image recognition is used by wildlife-monitoring cameras and plant-identification apps to sort large numbers of nature images."
+      },
+      {
         "t": "Field Guide to Victoria",
-        "d": "Students become young ecologists, using the Field Guide to Victoria app to investigate real animals and plants living right here in our local ecosystems. As they explore how ecosystems are made up of animals, plants and microorganisms, students discover which species are thriving and which are struggling in our area. They take on the role of 'ecosystem detectives', gathering evidence to present to a panel of local community members or parents on the health of their chosen ecosystem. The final artefact is a digital field report with annotated photos, species facts, and students' own observations, ready to be shared with families or even local park rangers. By diving into the app's interactive identification keys and audio calls, students practise advanced observation and recording skills beyond basic browsing. They finish with a sense of real-world impact, knowing they can spot and speak up for local wildlife."
-      },
-      {
-        "t": "Beebots",
-        "d": "Students program BeeBots to navigate a giant floor map representing a living ecosystem, with paths winding past plants, animals, and human-made technology. This hands-on coding adventure brings to life the idea that technology can help or hinder ecosystems, as students set up 'challenges' where BeeBots must avoid pollution zones or deliver seeds to help regrow a forest. Students act as ecosystem engineers, redesigning the map after each round to make it more sustainable or to introduce new threats. The end product is a time-lapse video of their evolving ecosystem, with BeeBots' journeys showing how small changes ripple through the whole system?perfect for sharing at assembly or in a class blog. Students use BeeBots' sequence-and-repeat function to create efficient routes, learning to debug and optimise their code. They walk away as confident problem-solvers who see technology as a tool for positive change in the world around them."
-      },
-      {
-        "t": "Seek by iNaturalist",
-        "d": "Students use Seek by iNaturalist to survey the school grounds or a nearby green space, capturing photos of plants, insects, and small animals they find. They identify each species using the app's image recognition and learn key facts, including whether the species are native or introduced. Students record their observations in a digital log, noting habitat details and any signs of adaptation. Using their data, they construct a detailed ecosystem web that illustrates connections between the living things they discovered. This hands-on investigation highlights how technology can monitor biodiversity and support ecosystem health. Teachers guide a discussion on how different technologies might help or challenge ecosystems' survival and evolution."
+        "d": "Students identify and research three Victorian animals that could live in or near St Kilda. They trace what each animal needs from plants, other animals and its habitat, then check how roads, lighting or nesting boxes might affect its survival. Pairs swap one animal and challenge each other to find a helpful technology and a harmful technology. Students choose the species they think most needs human help and explain their reason to the class. They finish with an on-screen shortlist of local species, their needs and the technologies that may change their ecosystem. The app's Victorian species information keeps the inquiry local and manageable for Year 2."
       },
       {
         "t": "Book Creator",
-        "d": "Students author their own interactive eBooks about how technology is changing ecosystems, combining facts, persuasive arguments, and imaginative scenarios. This project connects directly to the idea that technology can help or hinder ecosystems, as students weigh up real-world examples and dream up future inventions. Students take turns as 'editors', giving feedback to classmates and deciding which books should be published in a digital library for the school community. The final artefact is a collection of multimedia eBooks, complete with student-recorded audio, clickable links, and comic-style illustrations. Book Creator's comic templates and embedded audio features allow students to go beyond text, making their arguments come alive. They finish empowered as authors and advocates, ready to share their ideas for a better world."
+        "d": "Students build a digital book showing one ecosystem before and after a new technology arrives. This makes the chain of change visible as plants, animals and microorganisms respond to inventions such as roads, irrigation, lights or wildlife crossings. Each pair chooses whether the technology mostly helps, mostly harms or creates both results, then another pair adds a question to test that claim. Students record short animal and plant viewpoints so different needs can be heard. They finish with a narrated ecosystem story that can be read by another Year 2 class. Book Creator keeps text, pictures and recorded voices together on each page."
+      },
+      {
+        "t": "Microsoft Forms",
+        "d": "Students build a survey asking which technologies should be allowed near a wetland, park or beach ecosystem. Their questions compare choices such as bright night lighting, nesting boxes, rubbish bins, drones and wildlife tunnels. Students send the survey to classmates, then predict which choice will divide opinions before responses arrive. They read the automatic charts and discuss why a technology might help one living thing but hinder another. Students finish with a real set of class opinions and a decision supported by the survey results. Microsoft Forms collects every response in one place and turns the answers into charts automatically."
       },
       {
         "t": "Delightex",
-        "d": "Students use Delightex to design and build interactive 3D models of an ecosystem before and after a technological change, such as the introduction of a new machine or method. This activity spotlights how ecosystems adapt and evolve, letting students experiment with adding or removing species and technologies to see the ripple effects. For a fresh angle, students become 'virtual tour guides', recording a walkthrough of their model to explain the choices they made and the consequences for each part of the ecosystem. The final artefact is a narrated 3D ecosystem tour, ready to be shared with families or even played for a visiting environmental expert. Students harness Delightex's advanced animation and layering features to show changes over time, not just static scenes. They emerge as creative systems thinkers, confident in using digital tools to model and explain complex ideas."
+        "d": "Students build two interactive 3D versions of the same ecosystem?one before technology arrives and one after. They add plants, animals and human-made objects, then code simple movements to show changes such as animals avoiding a road or reaching a new water source. Students exchange scenes and look for one effect the builder did not intend. Each group then changes one part of its world to improve the balance between human needs and ecosystem survival. Students finish with a virtual ecosystem comparison that visitors can explore from different viewpoints. Delightex's 3D building tools and block coding let students show both the parts of a system and how they respond."
       },
       {
-        "t": "Techno-Bug Parade: Inventing Helpful Critters",
-        "d": "Students design and build their own imaginative 'techno-bugs' using recycled materials like egg cartons, pipe cleaners, cardboard, and bottle caps, combined with simple motors or battery-powered movement kits. Each student invents a bug that could help an ecosystem (like cleaning up litter or watering plants), decorating it to show its function and role in the community. They then test and refine their bugs' movement through a collaborative, student-made habitat, reflecting on how technology and nature can work together. This project links directly to the unit's exploration of systems, change, and the impact of technology on living things."
+        "t": "Beebots",
+        "d": "Students empathise with a small animal that must cross a changed habitat, then define the food, shelter and safe movement it needs. Using cardboard, recycled packaging, paper plants and craft materials, they sketch several solutions and build a physical habitat with a Bee-Bot-sized wildlife route. They program the Bee-Bot in advance to travel through the model, test whether the route works and rebuild any narrow turns, blocked paths or unsafe spaces. Another group tests the design without being told the intended route, giving evidence for the next change. Students finish by demonstrating a reliable Bee-Bot journey and explaining how their physical design helps an ecosystem survive without claiming the robot can sense obstacles."
       }
     ],
     "audited": true,
@@ -6004,7 +6006,8 @@
     ],
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T06:33:58.250Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T07:19:12.994Z"
   },
   {
     "ca": "St Kilda",
