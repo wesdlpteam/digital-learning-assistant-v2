@@ -6655,6 +6655,12 @@ function removeRepairContaminatedTrigger_() {
 function _repairContamPlannerText_(u) {
   var ci = (u && u.ci ? String(u.ci) : '').trim();
   var lo = (u && u.lo ? String(u.lo) : '').trim();
+  // Teachers type the lines one per line. Joined raw, the newlines collapse and
+  // the summary reads as one run-on sentence, so separate them explicitly.
+  if (lo) lo = lo.split(/\s*(?:;|\u2022|\r?\n+)\s*/g)
+    .map(function (l) { return l.trim().replace(/^[-\u2013\u2014\u2022]+\s*/, ''); })
+    .filter(function (l) { return l; })
+    .join('; ');
   var parts = [];
   if (ci) parts.push(ci);
   if (lo) parts.push('Lines of inquiry: ' + lo);

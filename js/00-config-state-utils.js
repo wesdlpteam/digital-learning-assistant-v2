@@ -3,7 +3,7 @@ let DATA = [];
 // stamp on the <script src="js/..."> tags in DLA_Studio.html. Bumping the
 // number changes every code file's web address, which forces browsers to
 // download the new code instead of reusing a stale cached copy.
-const APP_VERSION = '5.55';
+const APP_VERSION = '5.56';
 
 // Reliable "get the latest version" action used by the ↻ latest button.
 // Reloads the whole app from the network with a one-off unique address so the
@@ -61,6 +61,18 @@ function withGASToken(payload){
   const token = getGASToken();
   if(token) out.token = token; // optional emergency/shared-secret fallback
   return out;
+}
+// 2026-08-07: Teachers type Lines of Inquiry one per line in the public
+// "Edit unit details" form, but the Studio only split on semicolons and
+// bullets, so a whole set arrived as a single numbered row (Elsternwick Year 4
+// "How the World Works"). index.html has always handled line breaks; this is
+// the same rule, shared, so the two surfaces cannot drift apart again.
+function splitLinesOfInquiry(text){
+  return String(text == null ? '' : text)
+    .replace(/\u2022/g,'\u2022')
+    .split(/\s*(?:;|\u2022|\u00e2\u20ac\u00a2|\?{2,}|\r?\n+)\s*/g)
+    .map(function(l){return l.trim().replace(/^[-\u2013\u2014\u2022]+\s*/,'');})
+    .filter(Boolean);
 }
 function normalizeSmartQuotes_(value){
   // Curly/smart quotes are the one kind of punctuation that gets lossy-transcoded
