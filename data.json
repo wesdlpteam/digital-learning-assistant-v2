@@ -2010,27 +2010,27 @@
     "s": [
       {
         "t": "National Geographic MapMaker",
-        "d": "Students layer terrain, climate and population data to locate Australian communities exposed to bushfires, floods or earthquakes. They compare the natural causes of each hazard with the number of people and places that could be affected. Each group chooses one community and annotates where a protective design, evacuation route or warning system could help. Groups swap maps and question whether the proposed response protects everyone, including people with limited transport or mobility. Students finish with an annotated hazard map showing evidence, risk areas and a recommended response. MapMaker's data layers let them test whether their first assumptions match real geographic patterns."
+        "d": "Students layer terrain, climate and population data to map where bushfires, floods or earthquakes could cause the greatest harm. They compare the natural cause of each hazard with the people, buildings and services in its path. Groups choose one place where a new design could reduce risk, then swap maps and challenge each other's choice. They annotate safe areas, danger zones and possible locations for shelters, firebreaks or flood barriers. Students finish with an evidence-based hazard map that explains where a solution is needed and who it must protect. MapMaker's geographic data layers let them test whether their first judgement changes as new information appears."
       },
       {
         "t": "Micro:bit",
-        "d": "Students program a micro:bit to recognise shaking and send a radio warning to another micro:bit across the classroom. This small model shows how a design process can turn information about earthquake movement into an alert. Pairs set their own movement threshold, test it on a gently shaken table and adjust the code to reduce false alarms. Another pair tests the device without being told its settings and gives practical feedback. Students finish with a working warning system that displays a clear LED message on both devices. The accelerometer, LED grid and radio link make repeated testing and debugging possible."
+        "d": "Students program a micro:bit to detect shaking and send a warning symbol to a second micro:bit by radio. This shows how a designed system can sense a possible earthquake and alert people quickly. Pairs set their own trigger level, test gentle and strong shaking, and adjust the code to reduce false alarms. Another pair then tests the system without being told how sensitive it is. Students finish with a working paired alert system and a record of the changes that made it more reliable. The movement sensor, LED grid and radio link provide the input, warning display and communication."
       },
       {
-        "t": "Freeform",
-        "d": "Students build a shared cause-and-effect map for a bushfire, flood or earthquake using notes, arrows, images and labelled groups. This helps them work out how one natural event can affect homes, wildlife, transport, power and emergency services. Each group adds the views of residents, Traditional Owners, emergency workers, local businesses and environmental groups before choosing a response. Classmates then trace one chain of effects and flag any people or environments the proposed response may overlook. Students finish with a connected planning board that shows the hazard, its impacts, competing needs and revised design criteria. Freeform's infinite canvas makes it easy to move ideas and redraw links as thinking changes."
-      },
-      {
-        "t": "IMovie",
-        "d": "Students record and edit a two-minute pitch for a tested solution to a bushfire, flood or earthquake challenge. They explain the problem, show their prototype being tested and identify one change made after failure or feedback. Teams include a short response from someone acting as a stakeholder who may benefit from or be disadvantaged by the design. Another class watches the films and votes on which solutions best balance safety, cost, access and environmental impact. Students finish with a concise documentary that makes their design decisions and evidence visible. iMovie's titles, transitions and voice recording help students turn separate test clips into one clear explanation."
+        "t": "Delightex",
+        "d": "Students build an interactive 3D neighbourhood facing a bushfire, flood or earthquake. They code objects to move or respond so viewers can see how one hazard affects roads, homes, habitats and emergency access. Each group gives viewers two response choices, such as protecting more homes or leaving more space for water and wildlife. Classmates explore the scene and explain which choice is safest, fairest and most sustainable. Students finish with a coded 3D simulation that shows both a hazard and the consequences of different designs. Delightex's CoBlocks let students control how objects move and respond inside the scene."
       },
       {
         "t": "Sphero BOLT",
-        "d": "Students code Sphero BOLT to carry a small emergency supply token along a floor route through a model hazard zone. This tests how movement, distance and route planning can support people when roads are blocked after a natural hazard. Another group changes one part of the course, forcing the programmers to measure again and debug their route rather than memorise it. Teams must choose whether speed, accuracy or safe clearance matters most and explain that choice. Students finish with a working program that completes the revised route and displays a warning symbol on BOLT's LED grid. BOLT's programmable movement, motor encoders and light grid allow precise trials and visible feedback."
+        "d": "Students program Sphero BOLT to travel from a hazard zone to a safe assembly point on a classroom floor plan. They measure distances and angles, then debug the route when roads are blocked by model floodwater, fallen trees or damaged buildings. Groups exchange floor plans so the code must work in an unfamiliar emergency layout rather than a route they designed themselves. They compare the fastest route with one that safely reaches more people or avoids fragile areas. Students finish with a coded evacuation demonstration and an explanation of the choices built into the route. BOLT's programmable movement and 8x8 light grid allow it to travel precisely and display a warning or arrival symbol."
+      },
+      {
+        "t": "Minecraft Education",
+        "d": "Students build a small Melbourne neighbourhood designed to cope with one natural hazard. They include measured features such as raised buildings, evacuation routes, firebreaks, water channels or shared shelters. Another group enters the world as visitors, follows the routes and checks whether the design still works when one road or service is unavailable. Builders then revise the world after weighing safety, cost, access, habitat protection and the needs of different residents. Students finish with a walkable model that shows how several parts of a hazard-response system work together. Minecraft's block-based building makes changes quick enough for students to compare a first design with an improved one."
       },
       {
         "t": "Lego Spike Prime",
-        "d": "Students read short stakeholder scenarios, define a need and sketch ideas for a fold-out emergency bridge that can move supplies across a model flood gap. They build first with cardboard, paper tubes, string, recycled materials and LEGO pieces, then add a SPIKE Prime motor and either a distance or force sensor where it serves a clear purpose. Teams test span, load, deployment time and access for different users, then change one part at a time after each failure. At the end, students demonstrate the bridge operating, show their test record and explain how feedback shaped the final design. The finished prototype must solve the practical problem without using more material or power than the team can justify."
+        "d": "Students empathise with residents and emergency workers, then define how a house vent could stay open normally but close when wind-blown embers approach. They sketch ideas before building a physical house section from cardboard, mesh, recycled materials and LEGO parts, with a distance sensor and motor controlling the vent. Teams pass paper 'embers' towards the model, measure how reliably it closes, and change the code, sensor position or mechanism after each test. They also test whether residents could still open the vent safely after the danger has passed. At the end, students demonstrate the working prototype and explain how their design balances protection, reliability, cost and everyday use."
       }
     ],
     "audited": true,
@@ -2056,7 +2056,8 @@
     ],
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T04:44:39.237Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T05:27:33.684Z"
   },
   {
     "ca": "Elsternwick",
@@ -2066,28 +2067,28 @@
     "lo": "Types of conflict; Causes and impacts of conflict; Conflict resolution",
     "s": [
       {
+        "t": "Freeform",
+        "d": "Students map one playground conflict by placing each person's words, needs, actions and feelings on different parts of a shared canvas. This shows how the same event can have several causes and several honest perspectives. Groups swap canvases and add two possible solutions without deleting the original thinking. They draw connections to show which solution could reduce harm for everyone involved. Each group ends with a visual conflict map and a short agreed plan for peaceful action. Freeform's infinite collaborative canvas keeps every perspective visible while ideas are moved and connected."
+      },
+      {
         "t": "Dollar Street",
-        "d": "Students use Dollar Street to explore how conflict and its resolution are experienced in households across different cultures and economic backgrounds. They examine photo stories and images that reveal signs of conflict?such as security measures, shared spaces, or family routines?and identify strategies families use to maintain peace. Students create a comparative chart or visual map showing examples of conflict and resolution from three different families. This links to the inquiry into types and impacts of conflict. Dollar Street's AI-driven tagging of household features is similar to how peacebuilding organisations use image analysis to understand community needs. Students share their charts and reflect on how peaceful solutions can make a difference globally."
-      },
-      {
-        "t": "GarageBand",
-        "d": "Students become peacemakers through music by composing original soundtracks in GarageBand that reflect the emotional journey of conflict and reconciliation. This creative process explores the impact of conflict on wellbeing, blending the unit's focus with music and emotional literacy. By collaborating in small groups, students each contribute a musical motif representing a different perspective?turning disagreement into harmony. The final piece is a layered audio track, performed at assembly or published online for the school community. GarageBand's Live Loops feature lets students experiment with structure and mood, giving their compositions a professional edge. They gain confidence expressing complex ideas through sound and learn that peaceful solutions can be heard as well as seen."
-      },
-      {
-        "t": "Teachable Machine",
-        "d": "Students use Teachable Machine to create a model that recognises different types of conflict scenarios?such as personal, community or global conflicts?using short video role-plays or audio recordings. They script and record examples, label them by conflict type, and train the model to classify new scenarios. This process deepens understanding of conflict causes and resolution strategies by requiring students to analyse and categorise real-life situations. The activity mirrors how AI in customer service or online moderation tools detects and classifies conflict or escalation in communications. Students present their model and a reflection on how technology could support peaceful solutions in society."
+        "d": "Students compare photos of everyday homes, meals and belongings across different countries and income levels. This helps them question assumptions that can cause misunderstanding or conflict between communities. Each pair chooses two families who appear different at first, then looks for needs and routines they may share. Pairs show their comparisons to another group and revise any claim that relies only on appearance. They end with an evidence-based comparison showing differences, common ground and questions that still need respectful research. Dollar Street's photographs make global lives visible without reducing people to statistics."
       },
       {
         "t": "Stop Motion Studio",
-        "d": "Students become filmmakers, using Stop Motion Studio to animate stories of conflict and peaceful resolution inspired by literature, history, or their own lives. This hands-on project dives deep into the causes of conflict and the creative possibilities for resolution. Students are challenged to retell a classic story from the perspective of the 'villain,' encouraging empathy and critical thinking. Their final product is a polished stop-motion film, ready to premiere at a lunchtime film festival or on the school website. Stop Motion Studio's onion skinning and voiceover features allow students to layer dialogue and subtle gestures, bringing their characters' emotions to life. They leave with storytelling skills and a new sense of how powerful it is to see the world through someone else's eyes."
+        "d": "Students build a short frame-by-frame story showing a conflict, its impact and two possible endings. Comparing a harmful response with a peaceful response makes cause and effect easy to see. Groups exchange unfinished animations and ask another group to choose which small action should change the ending. Students then reshoot the key frames so the solution includes listening, compromise or repair. They end with a stop-motion film that makes one turning point in conflict resolution visible. Stop Motion Studio lets students adjust the story one movement at a time."
       },
       {
-        "t": "Microsoft Forms",
-        "d": "Students become conflict resolution researchers, designing and distributing a Microsoft Forms survey to gather data on how classmates, teachers, and even family members handle disagreements. This activity explores the unit's focus on the causes and impacts of conflict, while giving students a real-world reason to practise respectful questioning and data analysis. By comparing responses across generations, students uncover surprising trends and spark conversations about how peaceful solutions have changed over time. The final artefact is a dynamic data dashboard, which can be presented to the school leadership team as a catalyst for new wellbeing initiatives. Microsoft Forms' branching logic lets students tailor follow-up questions based on answers, making their survey feel personal and insightful. They finish with real research skills and the knowledge that their voices can help shape a kinder school community."
+        "t": "GarageBand",
+        "d": "Students record and arrange a soundscape that moves from disagreement through tension to a peaceful resolution. This lets them explore how conflict affects wellbeing even when no spoken explanation is used. Another class listens without being told the intended sequence and identifies where the relationship begins to change. Students revise the timing, volume and choice of sounds after hearing that feedback. They end with a short original composition and a clear explanation of the peaceful action represented by its turning point. GarageBand's recording and music-arranging tools let students shape mood through sound."
       },
       {
-        "t": "Peace Pathways: The Conflict Resolution Board Game Lab",
-        "d": "Students design and build their own large-scale, 3D board games that explore conflict and peaceful solutions, using cardboard, recycled materials, clay, and craft supplies for game pieces, pathways, and obstacles. They integrate Makey Makey kits or micro:bit sensors to add interactive elements?such as sound effects or digital 'chance' cards triggered by landing on special spaces?bridging physical play with simple coding. Each game challenges players to navigate real-world-inspired scenarios, encouraging empathy, perspective-taking, and creative problem-solving. Teams follow the Design Cycle to brainstorm, prototype, test, and refine their games, making learning about peacebuilding both hands-on and memorable."
+        "t": "Book Creator",
+        "d": "Students make a digital book that retells one conflict from two different viewpoints before offering a fair resolution. This shows that peaceful solutions often begin when people understand needs beyond their own. Students record each viewpoint in a different voice, then invite a classmate to check whether both sides have been treated respectfully. They revise the ending so it includes a specific action such as an apology, agreement, compromise or act of repair. They end with a narrated book that can be read by younger students during a class visit. Book Creator combines text, images and recorded narration in the same book."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Students empathise by observing common disagreements during group work, then define the need for a fair way to request and take speaking turns. Using LEGO pieces, a motor and a force sensor, teams ideate and build a tabletop device that moves a pointer to the next speaker when the sensor is pressed. They prototype the mechanism with cardboard labels and recycled-material dividers, then code and test it during a real group discussion. Teams record jams, skipped turns and confusing actions, then change the build or program and test again. Each team demonstrates a working model and explains how its design could reduce one cause of conflict without replacing respectful conversation."
       }
     ],
     "audited": true,
@@ -2124,7 +2125,8 @@
     ],
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T04:45:06.967Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T05:28:48.279Z"
   },
   {
     "ca": "Elsternwick",
@@ -2134,31 +2136,31 @@
     "lo": "The impact of colonisation; Colonisation stories; The effects of colonisation ? past, present and future",
     "s": [
       {
-        "t": "Minecraft Education",
-        "d": "Step into the shoes of a goldfield explorer with Minecraft: Australian Gold Rush (https://education.minecraft.net/en-us/lessons/australian-gold-rush2), where students journey through the Victorian goldfields, documenting daily life and choices. This immersive experience brings the impact of colonisation to life, letting students grapple with the hopes, hardships, and cultural collisions that shaped society. As they teleport between ship, settlement, and dig site, students encounter stories from multiple perspectives?including Indigenous voices and migrants?sparking rich questions about fairness and legacy. Their final artefact is a digital diary, crafted with the in-game book and quill and illustrated with Minecraft camera snapshots, ready to be published as an eBook or shared in a school exhibition. The teleportation feature and interactive non-player characters allow students to explore branching narratives and make decisions that affect their story path. Students leave with a deeper empathy for the people who built Australia and the confidence to question whose stories are told?and whose are missing."
-      },
-      {
         "t": "Animating a Character with Adobe Express",
-        "d": "Students bring a historical figure or community member from a colonised society to life by animating their story using Adobe Express's Animate from Audio feature (https://new.express.adobe.com/home/tools/animate-from-audio). This creative approach dives into colonisation stories, encouraging students to voice firsthand accounts and imagine how individuals navigated change. They can flip the script by animating both a coloniser and an Indigenous perspective, then compare the tone, choices, and emotions expressed. The final product is a short, shareable animated video that can be screened for families or published on the school website. Adobe Express's Animate from Audio tool transforms students' recorded voices into expressive, moving characters?making empathy and voice central. Students walk away empowered to use digital storytelling as a way to amplify voices from the past and make history feel personal."
+        "d": "Students record two short avatar narrations that describe the same colonisation event using two teacher-selected historical sources. Each narration clearly separates quoted evidence from the student's explanation. Hearing contrasting accounts shows how colonisation stories change according to whose voice was recorded and preserved. Pairs swap their clips and identify one agreement, one difference and one unanswered question. Students finish with two concise source-based recordings that can open a class discussion. Animate from Audio automatically lip-syncs each character to the student's voice."
       },
       {
-        "t": "Padlet",
-        "d": "Students will curate a living digital museum of colonisation stories using Padlet's map view, plotting real-world locations where key events unfolded and adding perspectives from both colonisers and First Nations communities. This directly probes the line of inquiry around 'Colonisation stories' by making visible the diversity of voices across time and place. Each group adopts the role of historical curators, responsible for investigating, verifying, and ethically presenting stories that challenge single narratives. The final artefact is an interactive global map, with multimedia posts (audio retellings, archival images, diary snippets, and poetry) that can be explored by families and the wider school community. Padlet's map view allows students to geotag content, embed video or audio, and enable moderated commenting for peer-to-peer empathy-building. Beyond empathy, students gain the agency to amplify marginalised voices and question how history is mapped?and who gets to be remembered."
+        "t": "National Geographic MapMaker",
+        "d": "Students map a colonisation journey and add labels at places where land, people, plants or power were changed. They switch between terrain, population and climate layers to work out why particular routes and settlements developed. Each group then removes one layer and asks another group what important part of the story has disappeared. Students revise their labels so the map includes consequences for First Nations peoples as well as settler aims. They finish with an annotated map showing that colonisation reshaped connected places rather than a single location. MapMaker's data layers let students compare geographic patterns directly."
       },
       {
-        "t": "Podcasting using Canva",
-        "d": "Students become investigative journalists, producing a podcast episode that uncovers a lesser-known colonisation story from Australia or another part of the world using Podcasting using Canva (https://www.canva.com). This project tackles the impact of colonisation by encouraging students to interview community members, historians, or even classmates role-playing as historical figures. To deepen the experience, students can create a 'then and now' segment, comparing the lasting effects of colonisation on communities today. Their podcast, complete with intro music and sound effects, will be shared at a school assembly or uploaded for families to listen at home. Canva's podcasting tools allow students to mix interviews, narration, and ambient sounds for a professional finish. They leave with the skills to ask tough questions, listen deeply, and share stories that matter."
+        "t": "Minecraft Education",
+        "d": "Students build three adjoining versions of one researched Victorian place?before colonisation, during early settlement and a carefully considered future. They use teacher-provided sources to decide which buildings, paths, plants and land uses belong in each version. This makes changes to Country visible while avoiding invented details about sacred places or cultural practices. Groups exchange worlds and check whether every major change can be traced to evidence. Students finish with a walk-through model and short in-world labels explaining what changed, who was affected and what could happen next. Minecraft's shared building space lets several students construct and revise the same model."
       },
       {
-        "t": "Delightex",
-        "d": "Students design interactive branching scenarios with Delightex, where choices made by colonisers and Indigenous people lead to different outcomes for society. This activity brings the effects of colonisation?past, present and future?to life by letting students experiment with alternative histories and ethical dilemmas. By inviting peers or parents to play through their scenarios, students spark real conversations about cause, effect, and responsibility. The final artefact is a clickable digital scenario, ready to be showcased at a school expo or embedded in the class blog. Delightex's scenario-mapping feature lets students build complex, multi-path stories with images, audio, and decision points. Students finish with a sense of agency, seeing how small choices can ripple through history?and how imagining alternatives can inspire action today."
+        "t": "IMovie",
+        "d": "Students edit a two-minute documentary from teacher-provided source images about one colonisation story. They record narration that names the source, explains its viewpoint and identifies what the source cannot tell us. Another class watches an early cut and sends back the question they most want answered. Students revise the sequence so Indigenous perspectives are not treated as an afterthought or a single shared experience. They finish with a short documentary that contrasts evidence from the past with an issue still visible today. iMovie's voice-over, titles and transitions keep the whole edit in one place."
       },
       {
-        "t": "Time Capsule Storyworlds: Augmented Diorama Adventures",
-        "d": "Students design and build immersive dioramas representing a location before, during, and after colonisation, using cardboard, fabric, clay, natural and recycled materials. Each diorama includes hidden QR codes or AR markers created with CoSpaces Edu or AR Makr, which, when scanned with iPads, overlay student-made digital stories, Indigenous perspectives, or imagined future scenarios onto the physical scene. The project fuses hands-on model-making with interactive digital storytelling, encouraging students to think critically about change over time and diverse viewpoints. This tactile-tech hybrid brings history to life and empowers students to reflect on place, memory, and the ongoing impact of colonisation."
+        "t": "Sketchbook",
+        "d": "Students draw a layered view of one landscape before and after colonisation, showing changes such as fences, introduced species, roads or altered waterways. They use one drawing layer for each period so individual changes can be hidden and revealed. Partners exchange drawings and suggest one missing cause or consequence supported by class research. Students then add a future layer that shows either continued harm or a realistic repair choice. They finish with a detailed three-stage illustration that can be read as visual evidence rather than decoration. Sketchbook's layers make changes across time easy to compare."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Students empathise with younger visitors who may see only one side of a colonisation display, then define the need for a model that reveals contrasting evidence. They sketch ideas using LEGO beams, gears, a motor, a force sensor and cardboard source labels. Teams build a rotating display that moves from one historical account to another when the force sensor is pressed, then test whether viewers can follow the sequence without an explanation. They revise the gearing, code and labels after observing where classmates hesitate or misunderstand. Each team demonstrates a working physical model that shows how the account people encounter can shape their understanding of colonisation."
       }
     ],
-    "audited": false,
+    "audited": true,
     "plannerText": "The Year 5 'Where We Are in Place and Time' unit explores the impact of colonisation on societies, focusing on stories, perspectives, and consequences past, present, and future. Students investigate colonisation through historical sources, mapping, creative writing, and comparative analysis, with strong links to Indigenous perspectives and global case studies. The unit emphasises critical thinking, empathy, and systems thinking, using inquiry-based approaches and collaborative learning. Cross-curricular connections include English (narrative and poetry), Maths (mapping, measurement), Science (Earth science, invasive species), and Social Studies (cartography, history). Students are encouraged to use digital tools for research, mapping, and creative expression, culminating in reflective and action-oriented projects.",
     "stemRebooted": true,
     "humanVerified": false,
@@ -2192,7 +2194,8 @@
     ],
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T04:48:33.554Z",
-    "suggestionAuditVersion": "a1-2026-06-07"
+    "suggestionAuditVersion": "a1-2026-06-07",
+    "inspiringRegenAt": "2026-08-07T05:30:13.886Z"
   },
   {
     "ca": "Elsternwick",
