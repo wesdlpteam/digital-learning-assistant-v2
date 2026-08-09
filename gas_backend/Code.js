@@ -2110,8 +2110,11 @@ function pushToGitHubCore_(contentOpt) {
   // v5.21b: Retry on 409 (SHA conflict). The remote SHA can go stale if another
   // GAS run, manual commit, or webhook touched the file between our GET and PUT.
   // We refetch the SHA and retry up to 3 times before giving up.
-  const content = contentOpt || DriveApp.getFileById(DATA_JSON_FILE_ID).getBlob().getDataAsString();
-  const base64Content = Utilities.base64Encode(content);
+  const content = contentOpt || DriveApp.getFileById(DATA_JSON_FILE_ID).getBlob().getDataAsString('UTF-8');
+  // Charset is NOT optional here. Utilities.base64Encode(str) uses the default
+  // charset, which replaces every non-ASCII character with '?'. That is how the
+  // published data.json ended up with zero non-ASCII characters in 11 MB.
+  const base64Content = Utilities.base64Encode(content, Utilities.Charset.UTF_8);
   const getUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}?ref=${GITHUB_BRANCH}`;
   const putUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}`;
 
@@ -2181,8 +2184,9 @@ function pushLibrariesToGitHub() {
   // v5.21b: Same retry-on-409 pattern as pushToGitHub
   try {
     const file = DriveApp.getFileById(LIBRARIES_JSON_FILE_ID);
-    const content = file.getBlob().getDataAsString();
-    const base64Content = Utilities.base64Encode(content);
+    const content = file.getBlob().getDataAsString('UTF-8');
+    // See pushToGitHubCore_: without the charset, non-ASCII becomes '?'.
+    const base64Content = Utilities.base64Encode(content, Utilities.Charset.UTF_8);
     const getUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/libraries.json?ref=${GITHUB_BRANCH}`;
     const putUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/libraries.json`;
 
