@@ -305,6 +305,11 @@ function doPost(e) {
       result.user = verifiedEmail;
       return jsonResponse(result);
     }
+    if (action === 'stripemdashes') {
+      var dashResult = stripEmDashesFromCorpus({ dryRun: !!body.dryRun });
+      dashResult.user = verifiedEmail;
+      return jsonResponse(dashResult);
+    }
     if (action === 'repairscrambledtext') {
       var repairResult = repairScrambledText({ dryRun: !!body.dryRun });
       repairResult.user = verifiedEmail;
@@ -1077,7 +1082,12 @@ function extraTechIdeas_(args) {
       var key = squashToolName_(batch.ideas[i].t);
       if (!key || seen[key]) continue;
       seen[key] = true;
-      ideas.push(batch.ideas[i]);
+      // These skipped the shared cleaner, so the demo's spare ideas kept
+      // artefacts the live suggestions had already had stripped.
+      var idea = batch.ideas[i];
+      idea.t = cleanTextCorruption_(idea.t);
+      idea.d = cleanTextCorruption_(stripTwistLabel_(idea.d));
+      ideas.push(idea);
     }
   }
 
@@ -5930,6 +5940,60 @@ function regenerateOneInspiring_(body) {
 // fallback when the model gets stuck on a rogue tool. Returns the new
 // {t,d} to the client — does NOT persist; the Studio routes the answer
 // through showChangesPopup for human approval before writing.
+// 2026-08-09: no em-dashes anywhere in lesson text (Nathan's house style).
+// In this corpus an em-dash is almost always an appositive -- "two possible
+// endings - one where the response is fair" -- which reads correctly as a
+// comma. Spaces around it are collapsed so we never leave a stranded " ,".
+function normaliseEmDashes_(value) {
+  var s = String(value == null ? '' : value);
+  if (s.indexOf('\u2014') === -1) return s;
+  s = s.replace(/\s*\u2014\s*/g, ', ');
+  s = s.replace(/,\s*,/g, ',');
+  s = s.replace(/([,;:])\s*,/g, '$1');
+  s = s.replace(/\s+([,.;:!?])/g, '$1');
+  s = s.replace(/ {2,}/g, ' ');
+  return s;
+}
+
+// Sweeps em-dashes already stored in data.json. cleanTextCorruption_ stops new
+// ones arriving; this clears the backlog. Pass dryRun to count without writing.
+function stripEmDashesFromCorpus(opts) {
+  opts = opts || {};
+  var dry = !!opts.dryRun;
+  var file = DriveApp.getFileById(DATA_JSON_FILE_ID);
+  var raw = JSON.parse(file.getBlob().getDataAsString('UTF-8'));
+  var isArr = Array.isArray(raw);
+  var data = isArr ? raw : Object.values(raw).filter(function (u) { return u && typeof u === 'object'; });
+  var replaced = 0, unitsTouched = 0;
+  for (var i = 0; i < data.length; i++) {
+    var u = data[i];
+    if (!u || !Array.isArray(u.s)) continue;
+    var touched = false;
+    for (var j = 0; j < u.s.length; j++) {
+      var sg = u.s[j];
+      if (!sg) continue;
+      var fields = ['t', 'd'];
+      for (var k = 0; k < fields.length; k++) {
+        var f = fields[k];
+        var before = String(sg[f] == null ? '' : sg[f]);
+        if (before.indexOf('\u2014') === -1) continue;
+        var after = normaliseEmDashes_(before);
+        if (after !== before) {
+          replaced += before.split('\u2014').length - 1;
+          sg[f] = after;
+          touched = true;
+        }
+      }
+    }
+    if (touched) unitsTouched++;
+  }
+  if (replaced && !dry) {
+    file.setContent(JSON.stringify(isArr ? data : raw, null, 2));
+    try { if (typeof pushToGitHub === 'function') pushToGitHub(); } catch (e) { Logger.log('pushToGitHub after em-dash sweep failed: ' + e); }
+  }
+  return { ok: true, dryRun: dry, replaced: replaced, unitsTouched: unitsTouched };
+}
+
 // 2026-06-04: Backend port of the front-end cleanTextCorruption_
 // (js/00-config-state-utils.js). regenerateOneInspiringSlot_ calls it on the
 // success path; without a server-side definition the call threw ReferenceError
@@ -5947,7 +6011,8 @@ function cleanTextCorruption_(value) {
   s = s.replace(/\b(students|learners|teachers|teams|groups|children|communities|families|parents|humans|elephants|animals)\?\s*([a-z])/gi, '$1’ $2');
   s = s.replace(/\b(student|learner|teacher|team|group|child|community|family|parent|human|elephant|animal|school|unit|world)\?\s*([a-z])/gi, '$1’s $2');
   s = s.replace(/([A-Za-z])\?([A-Za-z])/g, '$1’$2');
-  s = s.replace(/([A-Za-z0-9)\]\}"”’])\s+\?\s+([A-Za-z0-9(\[\{"“])/g, '$1 — $2');
+  s = s.replace(/([A-Za-z0-9)\]\}"”’])\s+\?\s+([A-Za-z0-9(\[\{"“])/g, '$1, $2');
+  s = normaliseEmDashes_(s);
   s = s.replace(/\s+([,.;:])/g, '$1');
   s = s.replace(/ {2,}/g, ' ');
   s = s.replace(/__DLA_URL_(\d+)__/g, function (_, i) { return urls[Number(i)] || ''; });
