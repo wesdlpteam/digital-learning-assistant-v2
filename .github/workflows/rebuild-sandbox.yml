@@ -1,0 +1,66 @@
+# Keeps the presentation sandbox in step with the live site.
+name: Rebuild sandbox
+
+# Deliberately NOT "on every push to data.json". The GAS backend commits
+# data.json every few minutes during a bulk run (59 commits in three days), so
+# a per-change rebuild would fire dozens of times a day AND would sometimes
+# publish a half-finished regeneration to the demo. Nightly plus an on-demand
+# button gives a demo that is never more than a day stale and never caught
+# mid-run.
+on:
+  schedule:
+    # 18:00 UTC = 4am AEST / 5am AEDT, well clear of working hours.
+    - cron: '0 18 * * *'
+  workflow_dispatch:
+
+# A scheduled run and a manual run must never push to the sandbox at once.
+concurrency:
+  group: rebuild-sandbox
+  cancel-in-progress: false
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the live site
+        uses: actions/checkout@v4
+
+      - name: Check out the sandbox
+        uses: actions/checkout@v4
+        with:
+          repository: wesdlpteam/dla-sandbox
+          path: sandbox-out
+          # Fine-grained PAT with Contents: read+write on wesdlpteam/dla-sandbox.
+          # The default GITHUB_TOKEN cannot write to a different repository.
+          token: ${{ secrets.SANDBOX_PUSH_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build the sandbox
+        run: node tools/build-sandbox.mjs --out sandbox-out
+
+      - name: Run the sandbox tests
+        run: npm test
+
+      - name: Report how stale the spare tool ideas are
+        # These cost real AI calls and take ~16 minutes, so they are NOT
+        # regenerated automatically. Report instead, so a refresh is a decision
+        # rather than a surprise bill.
+        run: node .github/workflows/check-spare-ideas.mjs >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish if anything changed
+        working-directory: sandbox-out
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "Sandbox already matches the live site. Nothing to publish."
+            exit 0
+          fi
+          git config user.name  "wesdlpteam"
+          git config user.email "dlpteam@wesleycollege.edu.au"
+          git add -A
+          git commit -m "Rebuild: sync the demo with the live site ($(date -u '+%d %b %Y'))"
+          git push
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Sandbox updated." >> "$GITHUB_STEP_SUMMARY"
