@@ -4866,7 +4866,16 @@ function dlaToolMentionRegex_(toolName) {
 
 function dlaDescMentionsTool_(desc, toolName) {
   const rx = dlaToolMentionRegex_(toolName);
-  return rx ? rx.test(String(desc || '')) : false;
+  const text = String(desc || '');
+  if (rx && rx.test(text)) return true;
+  const sides = String(toolName || '').split(/\b(?:using|with)\b/i);
+  if (sides.length < 2) return false;
+  return sides.some(function (side) {
+    const trimmed = side.trim();
+    if (trimmed.length < 4) return false;
+    const sideRx = dlaToolMentionRegex_(trimmed);
+    return sideRx ? sideRx.test(text) : false;
+  });
 }
 
 function dlaYearLevelValue_(label) {
@@ -4914,6 +4923,7 @@ function dlaToolMismatchScan_(data, inv, opts) {
         const cand = approved[a];
         const candKey = diversityToolKey_(cand);
         if (!candKey || candKey === labelKey) continue;
+        if (labelKey.indexOf(candKey) !== -1 || candKey.indexOf(labelKey) !== -1) continue;
         if (bannedSet[candKey] || DLA_MENTION_EVIDENCE_EXCLUDE_[candKey]) continue;
         const rx = dlaToolMentionRegex_(cand);
         if (!rx) continue;

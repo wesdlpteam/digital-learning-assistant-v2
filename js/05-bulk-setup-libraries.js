@@ -1172,6 +1172,26 @@ ${SUGGESTION_STYLE}`;
 
 
 
+// A pre-existing slot-1 clash is outside the scope of targeted Fix All jobs.
+// Re-check opener diversity only when slot 1 is a requested replacement or
+// the model changed it anyway. Incomplete units mark slot 1 as replaced.
+function shouldCheckOpenerDupForFix_(currentSugs, parsed, replacedSlotIndexes){
+  if(Array.isArray(replacedSlotIndexes) && replacedSlotIndexes.includes(0)) return true;
+  const before = currentSugs && currentSugs[0] ? String(sugTool(currentSugs[0]) || '').trim().toLowerCase() : '';
+  const after = parsed && parsed[0] ? String(sugTool(parsed[0]) || '').trim().toLowerCase() : '';
+  return before !== after;
+}
+
+// Mirrors the dashboard age check: slot 6 is the STEM Design Cycle activity
+// name, and every other labelled tool with a configured range must fit.
+function ageMismatchToolsInSuggestions_(sugs, yearLabel){
+  const yv = yearLevelValueFromLabel(yearLabel);
+  if(yv === null || !Array.isArray(sugs)) return [];
+  return sugs
+    .map((s,i)=>({i, tool:String(sugTool(s) || '').trim(), range:toolAgeRangeFor(sugTool(s))}))
+    .filter(x=>x.i !== 5 && x.tool && x.range && (yv < x.range.min || yv > x.range.max));
+}
+
 async function fixAllOfType(type){
   // Tool label/write-up mismatches go through the backend's zero-AI relabel
   // action (strict guards: no banned tools, no duplicates, age ranges
@@ -1231,8 +1251,10 @@ async function fixAllOfType(type){
     try{
       const currentSugs=getSugs(e);
       let prompt='';
+      let replacedSlotIndexes=[];
 
       if(type==='incomplete'){
+        replacedSlotIndexes=[0,1,2,3,4];
         prompt=`${buildGASRules(e.yl)}\n\nGenerate exactly 5 digital technology suggestions for this IB PYP unit.\nCampus: ${e.ca} | Year: ${e.yl} | Theme: "${e.th}"${e.ci?`\nCentral Idea: "${e.ci}"`:''}${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nEvery suggestion uses ONE approved tool (no "+" pairings). All 5 must use DIFFERENT tools.\nReturn ONLY JSON array: [{"t":"Tool Name","d":"Specific description for this unit."},...]`;
 
       } else if(type==='banned'||type==='offwhitelist'){
@@ -1243,19 +1265,26 @@ async function fixAllOfType(type){
         const badTools = currentSugs
           .map((s,i)=>({i, tool:sugTool(s)}))
           .filter(x => x.i !== 5 && x.tool && (dashboardBannedToolMatch_(x.tool) || !isWhitelisted(x.tool)));
+        replacedSlotIndexes=badTools.map(x=>x.i);
         const badToolDesc = badTools.length
           ? badTools.map(x=>`#${x.i+1} ${x.tool}`).join('; ')
           : 'any tool not on the approved list above';
         prompt=`${buildGASRules(e.yl)}\n\nSome suggestions in this unit use tools that are NOT approved. Replace ONLY those; keep every other suggestion exactly as it is. Return 6 total suggestions (the 6th must be a STEM Design Cycle activity).\nUnit: ${e.ca} | ${e.yl} | "${e.th}"${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nCurrent suggestions:\n${currentSugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}\nTools to REPLACE (not approved): ${badToolDesc}\nEach replacement MUST be a tool copied verbatim from the APPROVED TOOLS list above.\nEvery suggestion uses ONE approved tool (no "+" pairings). All 6 must use DIFFERENT tools.\nReturn ONLY JSON array of exactly 6 (the 6th must be a STEM Design Cycle activity): [{"t":"Tool Name","d":"Specific description."},...]`;
 
       } else if(type==='duplicate'){
+        const seenTools=new Set();
+        replacedSlotIndexes=currentSugs.reduce((indexes,s,i)=>{
+          const key=String(sugTool(s)||'').trim().toLowerCase();
+          if(key && seenTools.has(key)) indexes.push(i);
+          else if(key) seenTools.add(key);
+          return indexes;
+        },[]);
         prompt=`${buildGASRules(e.yl)}\n\nFix duplicate tools in this unit — each suggestion must use a DIFFERENT tool.\nUnit: ${e.ca} | ${e.yl} | "${e.th}"${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nCurrent suggestions:\n${currentSugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}\nEvery suggestion uses ONE approved tool (no "+" pairings). All 6 must use DIFFERENT tools.\nReturn ONLY JSON array of exactly 6 (the 6th must be a STEM Design Cycle activity) with NO repeated tools: [{"t":"Tool Name","d":"Specific description."},...]`;
 
       } else if(type==='agemismatch'){
         const yv = yearLevelValueFromLabel(e.yl);
-        const badList = currentSugs
-          .map((s,i)=>({i, tool:sugTool(s), range:toolAgeRangeFor(sugTool(s))}))
-          .filter(x=> x.tool && x.range && yv!==null && (yv < x.range.min || yv > x.range.max));
+        const badList = ageMismatchToolsInSuggestions_(currentSugs,e.yl);
+        replacedSlotIndexes=badList.map(x=>x.i);
         const badDesc = badList.map(x=>`#${x.i+1} ${x.tool} (allowed ${ageRangeLabel(x.range)})`).join('; ');
         const allowed = approvedToolsForYear_(yv);
         prompt=`${buildGASRules(e.yl)}\n\nSome suggestions in this unit use a tool whose allowed year-level range does NOT include ${e.yl}. Replace ONLY those tools; keep every other suggestion exactly as it is. Return 6 total suggestions (the 6th must be a STEM Design Cycle activity).\nUnit: ${e.ca} | ${e.yl} | "${e.th}"${e.plannerText?`\nPlanner: ${e.plannerText}`:''}\nCurrent suggestions:\n${currentSugs.map((s,i)=>`${i+1}. ${sugTool(s)}: ${sugDesc(s)}`).join('\n')}\nTools to REPLACE (wrong year level for ${e.yl}): ${badDesc}\nEach replacement MUST be an approved tool whose age range includes ${e.yl}. Approved tools that fit ${e.yl}: ${allowed.join(', ')}.\nEvery suggestion uses ONE approved tool (no "+" pairings). All 6 must use DIFFERENT tools.\nReturn ONLY JSON array of exactly 6 (the 6th must be a STEM Design Cycle activity): [{"t":"Tool Name","d":"Specific description."},...]`;
@@ -1265,12 +1294,17 @@ async function fixAllOfType(type){
       let lastDupOpener = '';
       let lastFailReason = '';
       let lastOffTools = '';
+      let lastAgeTools = [];
       for(let attempt=0; attempt<3; attempt++){
         let retryNote = '';
         if(attempt>0 && lastFailReason === 'opener-dup'){
           retryNote = `\n\nRETRY ${attempt}: Your previous response used "${lastDupOpener}" as the slot-1 tool, but another unit in this campus + year level already opens with that tool. Slot 1 MUST be a DIFFERENT tool that specifically suits THIS unit's theme.`;
         } else if(attempt>0 && lastFailReason === 'off-list'){
           retryNote = `\n\nRETRY ${attempt}: Your previous response used tool(s) that are NOT on the approved list: ${lastOffTools}. Slots 1-5 MUST each use a tool copied verbatim from the APPROVED TOOLS list. Replace the offending tool(s) with approved ones.`;
+        } else if(attempt>0 && lastFailReason === 'wrong-age'){
+          const allowed = approvedToolsForYear_(yearLevelValueFromLabel(e.yl));
+          const wrongAgeDesc = lastAgeTools.map(x=>`${x.tool} (allowed ${ageRangeLabel(x.range)})`).join(', ');
+          retryNote = `\n\nRETRY ${attempt}: Your previous response still used tool(s) outside ${e.yl}: ${wrongAgeDesc}. Replace them with tools from this age-appropriate approved list: ${allowed.join(', ')}.`;
         }
         const raw=await callAI([{role:'user',parts:[{text:prompt+retryNote}]}],null,OPENAI_MODEL);
         const clean=raw.replace(/```json|```/g,'').trim();
@@ -1281,8 +1315,10 @@ async function fixAllOfType(type){
         const toolNames = parsed.map(s=>(s.t||'').toLowerCase().trim());
         const uniqueTools = new Set(toolNames);
         if(uniqueTools.size < toolNames.length){ if(attempt>=2) throw new Error('AI returned duplicates again after retry'); continue; }
-        const openerDup = openerDupesSiblingInYear_(e, parsed);
-        if(openerDup){ lastDupOpener = openerDup; lastFailReason = 'opener-dup'; if(attempt < 2) continue; }
+        const openerDup = shouldCheckOpenerDupForFix_(currentSugs, parsed, replacedSlotIndexes)
+          ? openerDupesSiblingInYear_(e, parsed)
+          : null;
+        if(openerDup){ lastDupOpener = openerDup; lastFailReason = 'opener-dup'; continue; }
         // Validate the AI's answer against the live whitelist — without this,
         // an off-list "fix" saves fine and the dashboard just re-flags it.
         // Slot 6 (index 5) is the STEM Design Cycle activity name, exempt from
@@ -1295,6 +1331,16 @@ async function fixAllOfType(type){
           lastFailReason = 'off-list';
           if(attempt < 2) continue;
           throw new Error(`AI replacement still used non-approved tool(s): ${lastOffTools}`);
+        }
+        if(type==='agemismatch'){
+          const wrongAgeBack = ageMismatchToolsInSuggestions_(parsed,e.yl);
+          if(wrongAgeBack.length){
+            lastAgeTools = wrongAgeBack;
+            lastFailReason = 'wrong-age';
+            if(attempt < 2) continue;
+            const names = wrongAgeBack.map(x=>`${x.tool} (allowed ${ageRangeLabel(x.range)})`).join(', ');
+            throw new Error(`AI replacement still used tool(s) outside ${e.yl}: ${names}`);
+          }
         }
         sugs = parsed;
         break;

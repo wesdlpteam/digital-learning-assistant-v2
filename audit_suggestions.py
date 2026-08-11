@@ -115,8 +115,25 @@ def family_of(name):
     return TOOL_FAMILY.get(name, name)
 
 
+def tool_key(name):
+    return str(name or "").strip().lower()
+
+
 def make_name_regex(name):
     return re.compile(r"(?<![A-Za-z0-9])" + re.escape(name) + r"(?![A-Za-z0-9])", re.IGNORECASE)
+
+
+def description_mentions_tool(text, name):
+    full_rx = NAME_REGEXES.get(name) or make_name_regex(name)
+    if full_rx.search(text):
+        return True
+    sides = re.split(r"\b(?:using|with)\b", str(name or ""), flags=re.IGNORECASE)
+    if len(sides) < 2:
+        return False
+    return any(
+        len(side.strip()) >= 4 and make_name_regex(side.strip()).search(text)
+        for side in sides
+    )
 
 
 NAME_REGEXES = {t: make_name_regex(t) for t in APPROVED_TOOLS + BANNED_TOOLS}
@@ -199,16 +216,19 @@ def audit():
                 })
 
             # 3. NAME_MISMATCH
-            label_rx = NAME_REGEXES.get(t)
-            label_count = len(label_rx.findall(d)) if label_rx else 0
-            if t_fam != t:
+            label_mentioned = description_mentions_tool(d, t)
+            if not label_mentioned and t_fam != t:
                 fam_rx = NAME_REGEXES.get(t_fam)
                 if fam_rx:
-                    label_count += len(fam_rx.findall(d))
-            if label_count == 0:
+                    label_mentioned = bool(fam_rx.search(d))
+            if not label_mentioned:
                 other_hits = []
+                label_key = tool_key(t)
                 for other in APPROVED_TOOLS:
                     if family_of(other) == t_fam:
+                        continue
+                    other_key = tool_key(other)
+                    if label_key in other_key or other_key in label_key:
                         continue
                     rx = NAME_REGEXES[other]
                     n = len(rx.findall(d))

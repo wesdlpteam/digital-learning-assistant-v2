@@ -443,7 +443,16 @@ function dlaToolMentionRegex_(toolName){
 }
 function dlaDescMentionsTool_(desc, toolName){
   const rx = dlaToolMentionRegex_(toolName);
-  return rx ? rx.test(String(desc || '')) : false;
+  const text = String(desc || '');
+  if(rx && rx.test(text)) return true;
+  const sides = String(toolName || '').split(/\b(?:using|with)\b/i);
+  if(sides.length < 2) return false;
+  return sides.some(side => {
+    const trimmed = side.trim();
+    if(trimmed.length < 4) return false;
+    const sideRx = dlaToolMentionRegex_(trimmed);
+    return sideRx ? sideRx.test(text) : false;
+  });
 }
 // Approved tools (other than the label) that the write-up clearly names.
 function dlaMismatchEvidence_(desc, labelKey){
@@ -455,6 +464,7 @@ function dlaMismatchEvidence_(desc, labelKey){
   for(const cand of approved){
     const candKey = dlaToolKeyPlain_(cand);
     if(!candKey || candKey === labelKey) continue;
+    if(labelKey.includes(candKey) || candKey.includes(labelKey)) continue;
     if(DLA_MENTION_EVIDENCE_EXCLUDE[candKey]) continue;
     if(typeof dashboardBannedToolMatch_ === 'function' && dashboardBannedToolMatch_(cand)) continue;
     const rx = dlaToolMentionRegex_(cand);
