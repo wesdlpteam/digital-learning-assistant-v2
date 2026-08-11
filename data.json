@@ -438,7 +438,7 @@
         "d": "Students collect a class tally of local services they have used, such as libraries, doctors, public transport and emergency services. On Geoboard, pairs stretch different coloured virtual rubber bands up the grid to construct a column for each service. They count the grid spaces carefully so every column matches the class tally, then add a simple colour key. The resulting pictorial column graph reveals which services meet frequent needs and which are used only in special situations. Pairs compare column heights and explain one surprising pattern using language such as more, fewer and equal. They finish with a clear visual model showing how often different community services support the class."
       },
       {
-        "t": "Sphero Indi",
+        "t": "Community Helper Rescue Maze",
         "d": "Students will design and build a 3D maze representing a miniature town using cardboard boxes, tubes, recycled containers, and craft materials to create roads, buildings, and local services (like fire stations, hospitals, and post offices). Using Sphero Indi cars, children program simple routes to 'respond' to community emergencies, navigating their crafted maze to reach different services. This hands-on project lets students explore how community helpers are organised and work together to meet needs, blending creative construction with basic coding and teamwork. It brings the theme to life as students imagine, build, and test their own organised community systems."
       }
     ],
@@ -506,8 +506,8 @@
         "d": "Students use Seek by iNaturalist to identify plants, animals or fungi found during repeated walks through the same part of the school grounds. Returning to one place helps them notice seasonal patterns and changes in which living things appear. Pairs choose one identification they are unsure about and compare the living thing carefully with the app's suggestion before accepting it as a guide. The class compares observations from different days and discusses which living things appeared again. Students end with a checked set of local species observations that can be revisited later in the term. Seek uses the camera to suggest identifications, but students still need to look closely because a suggestion may not always be correct."
       },
       {
-        "t": "Sphero Indi",
-        "d": "Students follow a STEM Design Cycle to design and craft a rotating diorama that shows how a tree or animal changes through the four seasons. Using cardboard circles, paper plates, felt scraps, recycled materials, markers and child-safe fasteners, they build a spinner where each turn reveals a different seasonal scene. They plan a colour-tile route that directs Sphero Indi to travel to each season in the correct repeating order. Teams test the route, observe where Indi turns or stops, and adjust the tiles or seasonal layout when the sequence does not work. Their completed prototype combines a functioning Indi route with a rotating model of seasonal change. During a final demonstration, students explain how planning, testing and improving helped them represent a repeating cycle in nature."
+        "t": "Seasons Spinners: Cycle of Change Dioramas",
+        "d": "Students design and craft a rotating diorama that shows how a tree or animal changes through the four seasons. Using cardboard circles, paper plates, felt scraps, recycled materials, markers, and child-safe fasteners, they build a spinner where each turn reveals a different seasonal scene. Students then use Sphero Indi (or similar simple robot) to 'travel' to each season, triggering their spinner to display the matching change. This hands-on project helps students visualize repeating patterns in nature and connects digital movement with tangible model-making, deepening understanding of cycles in the natural world."
       }
     ],
     "audited": false,
@@ -802,8 +802,8 @@
         "d": "Students build possible floor plans for a small community market by stretching bands around the virtual peg grid. They explore how stall shape, pathway width and available space influence what the market can offer. Partners swap plans and test whether every essential stall can be reached without crossing another stall. Students revise their shapes when a new community need requires a food table, quiet waiting area or donation point. They end with a clear geometric market plan that balances limited space with community priorities. The virtual bands make it quick to move boundaries and compare area and perimeter."
       },
       {
-        "t": "Sphero Indi",
-        "d": "Students follow a STEM Design Cycle to plan, build and test a colour-tile route through a model community marketplace. They define the challenge by identifying essential destinations, such as a food stall, clothing table and donation point, then design a route that serves each one efficiently. Groups arrange Indi's coloured tiles to control direction, speed and stopping, predicting what the robot will do before every trial. They test the route with Sphero Indi, identify missed stalls or unsafe turns and reposition tiles to improve the journey. A new condition, such as delivering baby supplies first or avoiding a crowded pathway, prompts another round of redesign and debugging. Each group demonstrates its final route and explains how testing helped create a marketplace delivery system that responds responsibly to community needs."
+        "t": "Market Marvel Mini-Stalls",
+        "d": "Students design and build their own mini marketplace stalls using recycled boxes, fabric scraps, and craft materials, representing different community needs and wants (e.g., food, clothing, toys). Each group creates physical 'goods' for their stall, then codes a Bee-Bot or Sphero Indi to visit other stalls following a marketplace map they draw and decorate. Along the way, students practice exchanging 'needs' and 'wants' tokens and reflect on how their choices impact the community. This project blends creative building, basic robotics, and real-world marketplace concepts, making the design cycle hands-on and meaningful."
       }
     ],
     "audited": false,
@@ -942,8 +942,8 @@
         "d": "Students record short interviews with classmates about one Earth-friendly choice they already make and one they could improve. Hearing several answers shows that caring for the planet depends on many practical choices rather than one perfect solution. The class selects a few questions for a staff member who helps manage waste, gardens or resources at school. Students listen back and choose the clearest answers rather than recording every idea again. They finish with a set of brief audio interviews that can be played at a class action meeting. The microphones and recorders capture voices clearly enough for students to compare ideas and notice repeated themes."
       },
       {
-        "t": "Sphero Indi",
-        "d": "Students follow a STEM Design Cycle to design a rescue route linking miniature animal habitats made from reused cardboard, bottle caps, fabric scraps and natural materials. They identify what each habitat needs, then create colour-tile commands that guide Sphero Indi in delivering model recycling bins, water drops or habitat signs. Teams test whether Indi follows the intended route without colliding with habitat features or missing a delivery point. They observe failures, reposition colour tiles and refine bends, speeds and stopping points. Each team produces a working eco-habitat rescue course and explains how its deliveries help protect resources, reduce waste or support living things. A final peer trial provides evidence of how effectively each design solves the environmental problem."
+        "t": "Eco-Habitat Rescue Robots",
+        "d": "Students design and build miniature animal habitats using recycled materials like cardboard boxes, fabric scraps, bottle caps, and natural elements such as twigs or leaves. They then program a Sphero Indi robot (or similar age-appropriate robot) to navigate between the habitats, 'delivering' eco-friendly solutions—like tiny recycling bins or water drops they've crafted—to each one. This project lets students explore how caring for different environments supports life on Earth, encouraging creative problem-solving and teamwork while linking local actions to global environmental responsibility."
       }
     ],
     "audited": false,
@@ -2157,7 +2157,7 @@
       },
       {
         "t": "Time Capsule Storyworlds: Augmented Diorama Adventures",
-        "d": "Students design and build immersive dioramas representing a location before, during, and after colonisation, using cardboard, fabric, clay, natural and recycled materials. Each diorama includes hidden QR codes or AR markers created with Delightex Edu or AR Makr, which, when scanned with iPads, overlay student-made digital stories, Indigenous perspectives, or imagined future scenarios onto the physical scene. The project fuses hands-on model-making with interactive digital storytelling, encouraging students to think critically about change over time and diverse viewpoints. This tactile-tech hybrid brings history to life and empowers students to reflect on place, memory, and the ongoing impact of colonisation."
+        "d": "Students design and build immersive dioramas representing a location before, during, and after colonisation, using cardboard, fabric, clay, natural and recycled materials. Each diorama includes hidden QR codes or AR markers created with CoSpaces Edu or AR Makr, which, when scanned with iPads, overlay student-made digital stories, Indigenous perspectives, or imagined future scenarios onto the physical scene. The project fuses hands-on model-making with interactive digital storytelling, encouraging students to think critically about change over time and diverse viewpoints. This tactile-tech hybrid brings history to life and empowers students to reflect on place, memory, and the ongoing impact of colonisation."
       }
     ],
     "audited": true,
@@ -3054,8 +3054,8 @@
         "d": "Students record themselves carrying out one classroom routine and explain each step as they go. This makes the purpose of routines visible instead of treating them as rules to memorise. Another class watches the entries and identifies any step that needs a clearer explanation. Students record an improved version that includes who is responsible and what need the routine meets. They finish with a student-made collection of practical routine guides. Seesaw keeps the videos, voice and reflections together in each student's journal."
       },
       {
-        "t": "Sphero Indi",
-        "d": "Following a STEM Design Cycle, students identify the challenge of helping a community worker travel safely between places that meet people's needs. They imagine and build a colourful community map from cardboard, felt, recycled boxes and paper rolls, including destinations such as a school, bakery and crossing. Each group plans a colour-tile route for Sphero Indi, then tests whether the car can deliver a worker or supply to the correct location. Students observe collisions, missed turns and inefficient routes before changing the road layout or colour-tile sequence. They repeat the test and explain how their improvement makes the community system safer or more reliable. The finished prototype is a working model that demonstrates how roles, routes and routines help a community function."
+        "t": "My Busy Town: Interactive Jobs & Journeys Map",
+        "d": "Students will co-create a large, colorful 3D map of a community using cardboard, felt, recycled boxes, and paper rolls to represent buildings, roads, and parks. Each child crafts a 'community worker' character (like a teacher, baker, or crossing guard) and designs a simple vehicle or tool for their role using craft materials. Using Sphero Indi cars, students program simple routes for their community worker to travel between key locations, demonstrating how different jobs and routines connect and help the town run smoothly. This project immerses students in the systems and roles that organise a community, blending creative building with beginner robotics in a playful, hands-on way."
       }
     ],
     "audited": false,
@@ -3098,8 +3098,8 @@
         "d": "Students record a puppet show in which two characters test a moving toy on different surfaces and disagree about which design works best. They explain pushes, pulls and friction through the characters' conversation using evidence from classroom ramp tests. Another pair watches the first version and suggests one design change for the characters to try. Students record a revised ending that explains whether larger wheels, a smoother surface or a changed ramp improved the movement. They end with a narrated puppet show containing a test, evidence and an improved design. Puppet Pals combines movable characters, backdrops and recorded voices in one simple scene-making tool."
       },
       {
-        "t": "Sphero Indi",
-        "d": "Super Slider Racetrack Challenge: Students design and build their own mini racetrack ramps using cardboard, tubes, popsticks, and recycled materials, experimenting with angles, heights, and different surface textures. They craft unique race vehicles from bottle caps, straws, and clay, then use Sphero Indi robots to test and compare how both their handmade cars and the robot move down the tracks. IPads are used to record slow-motion videos of the races, helping students observe the effects of push, pull, and friction. Through playful competition and iteration, students apply the Design Cycle to improve their tracks and vehicles, discovering how forces and materials affect movement in the real world."
+        "t": "Super Slider Racetrack Challenge",
+        "d": "Students design and build their own mini racetrack ramps using cardboard, tubes, popsticks, and recycled materials, experimenting with angles, heights, and different surface textures. They craft unique race vehicles from bottle caps, straws, and clay, then use Sphero Indi robots to test and compare how both their handmade cars and the robot move down the tracks. iPads are used to record slow-motion videos of the races, helping students observe the effects of push, pull, and friction. Through playful competition and iteration, students apply the Design Cycle to improve their tracks and vehicles, discovering how forces and materials affect movement in the real world."
       }
     ],
     "audited": false,
@@ -3155,7 +3155,7 @@
         "d": "Students build the stages of a butterfly, beetle or snail life cycle from clay and photograph each small change in Stop Motion Studio. This makes growth and change visible instead of showing the stages as separate facts. Groups swap unfinished animations and ask another group to work out which stage should come next. Students revise any unclear movement, add the missing stage and check that the sequence repeats correctly. They finish with a short stop-motion life cycle film for a Prep buddy class. Stop Motion Studio joins frame-by-frame photographs so gradual changes appear to happen on screen."
       },
       {
-        "t": "Book Creator",
+        "t": "Bug Hotel Architects: Invertebrate Eco-Habitats",
         "d": "Students will design and build imaginative 'Bug Hotels' using recycled boxes, cardboard tubes, paper rolls, natural materials (leaves, twigs, bark), and craft supplies. Using iPads, they will photograph their creations and record short voice tours explaining which invertebrates might live in their hotel and how the habitat supports them. This project combines hands-on construction with digital storytelling, deepening students' understanding of invertebrate needs and how humans can share the planet by providing safe spaces for tiny creatures. The activity encourages empathy, creativity, and real-world connections to environmental stewardship."
       }
     ],
@@ -3212,8 +3212,8 @@
         "d": "Students capture a 360-degree view of a classroom display arranged with old and new toys, school items and household objects. Looking in every direction helps them notice relationships between objects rather than studying each item alone. Students decide where each object should sit so viewers can move visually from past to present and then towards the future. Another class explores the image and identifies one change, one reason for change and one thing that has continued. The class ends with an immersive 360-degree view of children's lives across time. The Insta360 camera records the whole surrounding space in one spherical image."
       },
       {
-        "t": "Beebots",
-        "d": "Students follow a STEM Design Cycle to create a floor-based Time Traveller's Toy Museum that a Beebot can tour. They ask how a visitor could move clearly from toys of the past, such as spinning tops or rag dolls, to present-day toys and an imagined future toy. Teams plan a timeline grid, place illustrated exhibit cards and design a sequence of forward, backward and turning commands. They programme the Beebot, test whether it stops at each exhibit and identify problems such as an incorrect turn or missing step. After improving the route, students lead a museum tour and explain how materials, technology and children's needs influenced each change. The final product is a tested, programmable museum pathway showing change and continuity in play."
+        "t": "Time Traveler's Toy Museum",
+        "d": "Students design and build a mini 'museum exhibit' showcasing toys from the past, present, and their imagined future using shoeboxes, cardboard, fabric scraps, and recycled materials. They create models of old toys (like spinning tops or rag dolls), modern toys, and invent a futuristic toy, then use Bee-Bots or Sphero Indi to 'guide' visitors along a timeline path between exhibits. Students integrate simple craft with programmable robots, exploring how play and technology have changed over time. This hands-on museum helps them connect their own experiences to history, sparking reflection on change and continuity in children's lives."
       }
     ],
     "audited": false,
@@ -3312,8 +3312,8 @@
         "d": "Students train an image model to sort their physical sky drawings into day, night and changing-Moon groups. This tests whether visual features such as colour, shape and position communicate the intended meaning clearly. Groups exchange drawings and test which images the model sorts correctly, then redraw examples that confuse it. Astronomers use related image-recognition systems to sort large collections of telescope images, although people still check the results. Students finish with a working classifier and a set of revised illustrations with clearer visual clues. Teachable Machine learns from the image examples students show through the camera."
       },
       {
-        "t": "Sphero Indi",
-        "d": "Shadow Showdown: Sun, Moon & Me!: Students design and build their own interactive shadow theaters using large cardboard boxes, colored cellophane, paper cut-outs, and craft sticks to create scenes of the sky—day, night, moon phases, and seasons. Using a simple torch or a Sphero Indi robot with a mounted LED (driven along tracks to mimic the sun or moon's movement), they animate their stories, exploring how light and shadow change with Earth's rotation and lunar cycles. Students work through the Design Cycle to plan, prototype, test, and refine their theaters, expressing their understanding of sky patterns through both engineering and storytelling. This project merges physical making with technology, empowering students to express their place in the universe through light, movement, and creative performance."
+        "t": "Shadow Showdown: Sun, Moon & Me!",
+        "d": "Students design and build their own interactive shadow theaters using large cardboard boxes, colored cellophane, paper cut-outs, and craft sticks to create scenes of the sky—day, night, moon phases, and seasons. Using a simple torch or a Sphero Indi robot with a mounted LED (driven along tracks to mimic the sun or moon's movement), they animate their stories, exploring how light and shadow change with Earth's rotation and lunar cycles. Students work through the Design Cycle to plan, prototype, test, and refine their theaters, expressing their understanding of sky patterns through both engineering and storytelling. This project merges physical making with technology, empowering students to express their place in the universe through light, movement, and creative performance."
       }
     ],
     "audited": false,
@@ -3496,8 +3496,8 @@
         "d": "Students stretch virtual bands between pegs to recreate familiar star patterns and invent a constellation that can be recognised when rotated. This shows that people notice, name and communicate patterns in the night sky even though the stars are far apart in space. Students swap designs and test whether a partner can rebuild the constellation from spoken directions alone. They revise the pattern or directions when the result does not match. Each student finishes with a clear constellation design made from points and connecting lines. Geoboard lets students move the bands quickly while exploring position, shape and symmetry."
       },
       {
-        "t": "Sphero Indi",
-        "d": "Orbit Racers: Solar System Speedway: Students will work in small teams to design and build a large, circular 'solar system racetrack' using cardboard, paper plates, bottle caps, and craft materials to represent the Sun and planets. Each group will craft a push-powered planet vehicle (using straws, balloons, or wind-up mechanisms) and program a simple Sphero Indi robot to follow their planet's orbital path around the Sun. Along the way, students decorate their orbits with facts and patterns about day/night and moon phases, connecting physical movement to celestial cycles. The project fuses engineering, art, and basic robotics to help students visualize and experience how planets move in our solar system."
+        "t": "Orbit Racers: Solar System Speedway",
+        "d": "Students will work in small teams to design and build a large, circular 'solar system racetrack' using cardboard, paper plates, bottle caps, and craft materials to represent the Sun and planets. Each group will craft a push-powered planet vehicle (using straws, balloons, or wind-up mechanisms) and program a simple Sphero Indi robot to follow their planet's orbital path around the Sun. Along the way, students decorate their orbits with facts and patterns about day/night and moon phases, connecting physical movement to celestial cycles. The project fuses engineering, art, and basic robotics to help students visualize and experience how planets move in our solar system."
       }
     ],
     "audited": false,
@@ -5573,7 +5573,7 @@
         "d": "Students build a narrated digital book that follows one everyday product from its source to the person who buys it. Each page shows one stage, with a picture, a short label and the student's recorded explanation using words such as farm, factory, process and transportation. Partners swap books and listen for a missing stage or a step that is out of order. Students then add a final page comparing two packaging choices and explain which one they would buy. Each child finishes with a sequenced product-journey book for the class library. Book Creator combines pages, images, text and recorded narration in one place."
       },
       {
-        "t": "Sphero Indi",
+        "t": "From Farm to Table: Supply Chain Train Adventure",
         "d": "Students design and build a giant tabletop 'train track' system using cardboard, tubes, recycled boxes, and craft materials to represent the journey of a product (like bread or a t-shirt) from its origin to the consumer. Along the track, they create and decorate stations for each stage—farm, factory, transport, shop, and home—using found materials, drawings, and labels. A Sphero Indi or push-along train serves as the 'product,' traveling through each stop as students narrate and sequence its journey. This playful project helps students physically map out and understand how products move through organised systems, connecting vocabulary and concepts to a hands-on, collaborative creation."
       }
     ],
@@ -5641,8 +5641,8 @@
         "d": "Students code a character to move through two different weather scenes and make a different choice in each one. This shows how rain, heat, cold or wind can change clothing and activities. Partners exchange projects and check whether each coded choice makes sense for the weather shown. Students debug the sequence when a character wears the wrong item, speaks at the wrong time or enters the scenes out of order. They finish with an interactive animation showing one person adapting to changing weather. ScratchJr's picture blocks make movement, speech and scene changes manageable for Year 1 coders."
       },
       {
-        "t": "Sphero Indi",
-        "d": "Students follow a STEM Design Cycle to create and test a colour-tile route that helps Sphero Indi deliver weather-appropriate items to different destinations. They first identify a need, such as taking a raincoat to a rainy playground, a sunhat to a sunny beach or a jumper to a cool park. Teams plan a route, arrange Indi's coloured tiles to control movement and speed, then run the vehicle to see whether each item reaches the correct weather scene. When Indi turns incorrectly, stops early or misses a destination, students change one tile and test again. They produce a working weather-delivery route and explain how their design responds to changing conditions in St Kilda. A final peer challenge checks whether another team can interpret and successfully operate the route."
+        "t": "Weather Wonder Wheels: Rolling Forecast Dioramas",
+        "d": "Students design and build a rolling diorama that shows different weather scenes using large recycled cardboard tubes as the base. They craft interchangeable weather panels (sunny, rainy, windy, snowy) with collage materials, cotton balls, fabric scraps, and tissue paper, attaching them around the tube. Using simple axles and wheels, students create a handle to rotate their diorama and reveal changing weather. With the help of an iPad, they record short videos narrating their diorama's story, explaining how people and places adapt to each weather type—blending creative making, storytelling, and weather science."
       }
     ],
     "audited": false,
@@ -5709,8 +5709,8 @@
         "d": "Students watch a teacher-selected ClickView clip about flower structures, bees and pollination, pausing to notice each contact between bee and flower. The sequence shows how the structures of two living things work together for survival. Before the ending, groups predict what could happen if flowers, nesting places or bees disappeared from the environment. They revisit key moments and answer questions using evidence from what they saw. Students end with an ordered explanation of pollination and one action people can take to reduce harm. ClickView provides curated educational video that can be paused and replayed for close analysis."
       },
       {
-        "t": "Sphero Indi",
-        "d": "Buzz & Bloom Interactive Garden Quest: Students will design and build a large, 3D collaborative garden using recycled boxes, paper tubes, and craft materials to create flowers, plants, and a variety of habitats. They'll craft simple bee robots using Sphero Indi cars decorated as bees, then code the Indis to 'pollinate' their handmade flowers by following colour-coded paths they design with tape and paper. As they test and refine their gardens, students observe how bees interact with plants and discuss ways to make their garden more bee-friendly. This hands-on quest helps them understand the vital relationship between plants, pollinators, and the shared responsibility of caring for our planet."
+        "t": "Buzz & Bloom Interactive Garden Quest",
+        "d": "Students will design and build a large, 3D collaborative garden using recycled boxes, paper tubes, and craft materials to create flowers, plants, and a variety of habitats. They'll craft simple bee robots using Sphero Indi cars decorated as bees, then code the Indis to 'pollinate' their handmade flowers by following colour-coded paths they design with tape and paper. As they test and refine their gardens, students observe how bees interact with plants and discuss ways to make their garden more bee-friendly. This hands-on quest helps them understand the vital relationship between plants, pollinators, and the shared responsibility of caring for our planet."
       }
     ],
     "audited": false,
@@ -6038,8 +6038,8 @@
         "d": "Students photograph a classroom appliance in ChatterPix Kids and make it explain how it depends on energy. The talking object names its energy source, its useful job and one way people could avoid wasting its energy. Students play their clips to a partner who checks for the words electricity, transformation or conserve. They then rerecord one sentence so the advice is clear enough for a Year 1 audience. Each student finishes with a short talking-appliance message for an energy-saving display. ChatterPix Kids adds a drawn mouth and a recorded voice directly to the photo."
       },
       {
-        "t": "Delightex",
-        "d": "Students follow a STEM Design Cycle to design a three-dimensional, sun-powered playground in Delightex. They first identify the need for enjoyable play spaces that use cleaner energy while protecting nearby plants, animals and water. Teams build a virtual prototype with objects representing solar panels, circuits, lights and moving equipment, then label features such as shaded habitats and wildlife corridors. They test the playground through Delightex's immersive viewing and navigation tools, checking whether visitors can move safely without disturbing the ecosystem. Peer feedback prompts teams to reposition, resize or replace features before publishing a refined design. Each team leads a virtual walkthrough and justifies how its technology balances recreation, energy use and ecosystem health."
+        "t": "Sun-Powered Playground Designers",
+        "d": "Students work in teams to design and build mini playground models using cardboard, paper rolls, fabric scraps, and recycled materials, then wire up simple solar-powered circuits (with teacher support) to add moving features like spinning merry-go-rounds or seesaws. They'll test how their playgrounds work under sunlight or a lamp, exploring how solar energy powers movement. This project links energy sources and technology to real-world fun, encouraging students to consider eco-friendly designs that minimize harm to local ecosystems. The Design Cycle guides them from sketching ideas to hands-on building, testing, and sharing their solar-powered creations with classmates."
       }
     ],
     "audited": false,
@@ -7645,8 +7645,8 @@
         "d": "Children create a short stop-motion sequence showing something they can do now that they could not do when they were younger, such as building a taller tower, putting on a coat or joining a group game. They arrange familiar objects or clay figures, move them a tiny amount and capture each frame with teacher guidance. Stop Motion Studio's onion-skin guide helps children see where an object was positioned before taking the next image. Children sequence a beginning, a helping moment and a successful ending to show how change can happen through practice and relationships. They replay the animation, spot any sudden jumps and retake frames where needed. Each silent mini-film becomes a concrete reflection on growth, persistence and the people who help us."
       },
       {
-        "t": "Sphero Indi",
-        "d": "Children follow a teacher-guided STEM Design Cycle to create a coloured-tile pathway connecting model community places such as home, kinder, a park and a meeting place. They ask how Sphero Indi can carry a small paper 'welcome message', imagine possible routes and arrange the colour cards that control movement, speed and direction. Pairs test the route, watch where Indi stops or turns unexpectedly, and change one tile at a time. They add bridges or borders made from classroom blocks while keeping the pathway wide and safe for the robot. Children then run the improved route and explain which change helped Indi reach the destination. The completed community delivery pathway demonstrates planning, testing and redesign while celebrating how places and people are connected."
+        "t": "My Family Faces Light-Up Gallery",
+        "d": "Children create big, friendly portraits of their families using paper plates, fabric scraps, yarn, and cotton wool for hair and features. With help, teachers add simple LED sticker lights (like Chibitronics) behind the eyes or smiles, so each portrait lights up when touched. The class displays their glowing faces in a gallery, celebrating everyone's unique family and identity. This hands-on project blends creative making with gentle technology, helping children share who they are in a bright, joyful way."
       }
     ],
     "audited": false,
@@ -7825,8 +7825,8 @@
         "d": "Students direct the teacher to record close-up photos and short videos as they shine light through clear, coloured, cloudy and solid materials. They describe whether the light passes through, changes colour or makes a strong shadow. Each child chooses the most surprising test and records one spoken sentence for families. The class ends with a narrated book of real light experiments that can be revisited beside the materials. Pages can be arranged from most light passing through to least light passing through. Book Creator keeps images, video and children's recorded voices together in one simple book."
       },
       {
-        "t": "Stop Motion Studio",
-        "d": "Students follow a teacher-guided STEM Design Cycle to design an animal shadow puppet that creates a recognisable shape on a cardboard jungle backdrop. They imagine an animal, build it from safe paper, felt, cellophane and craft sticks, then use Stop Motion Studio's frame-by-frame capture to film a shadow test. Children review the playback and notice whether legs disappear, cellophane lets light through or the shadow becomes too large. They improve one feature, such as widening ears, removing a solid section or changing the puppet's distance from the torch. Onion-skin guides help the teacher and children position each movement for a smooth shadow safari. The finished stop-motion animation shows the tested and improved puppet travelling through the jungle."
+        "t": "Shadow Puppet Safari",
+        "d": "Children design and craft their own animal shadow puppets using safe materials like popsicle sticks, felt, paper, and cellophane, decorating them with collage bits and fabric scraps. With teacher help, they use a small flashlight or a child-friendly LED torch to project their puppets' shadows onto a DIY cardboard 'jungle' backdrop, exploring how different shapes and materials change the shadows. They experiment with moving their puppets closer or further from the light to see how the shadows grow or shrink, connecting to the unit theme of light and shadows. This hands-on project blends storytelling, imaginative play, and STEM discovery, sparking curiosity about 'How the World Works' through light."
       }
     ],
     "audited": false,
@@ -7902,8 +7902,8 @@
         "d": "Students record their voices beside teacher-added photos of hands-on moments when they helped, joined, comforted or solved a problem together. This shows that belonging grows through everyday relationships and contributions. Children choose which moment matters to them and dictate why it helped the group. The class listens to one page each day before play and looks for a new example to add. They finish with a narrated class book called 'How We Help Everyone Belong'. Book Creator keeps photos and children's audio together on each page."
       },
       {
-        "t": "Sketchbook",
-        "d": "Children follow a STEM Design Cycle to imagine a cosy 'Feelings Fort' where someone could rest, feel safe or reconnect with friends. Using Sketchbook's drawing tools, colour palette, shape guides and layers, they design plans showing features such as soft walls, a family-picture space or a window for asking a friend to join. Children explain their plan to a partner, who checks whether the fort would be comfortable, welcoming and strong enough for play. They test ideas by tracing different shapes, moving features and revising colours or entrances on separate layers. Each child produces a labelled fort prototype with teacher-scribed notes explaining how its features support identity, emotions and belonging. The class compares the designs and selects helpful features that could inspire a shared classroom retreat."
+        "t": "Feelings Fort: Build Your Happy Hideaway",
+        "d": "Children work together to design and build cozy 'Feelings Forts' using large cardboard boxes, fabric scraps, cushions, and soft decorations. Each child personalizes their section with drawings or collage portraits of themselves and family, then uses a Bee-Bot to deliver a 'kindness message' between forts. This playful, hands-on project helps children express their identity, explore emotions, and celebrate what makes them feel safe and special in their community. The Design Cycle guides them as they imagine, create, test, and share their unique spaces."
       }
     ],
     "audited": false,
@@ -7958,8 +7958,8 @@
         "d": "Students sort printed photos and drawings of familiar Glen Waverley places, then direct the teacher to place matching images on a shared Freeform canvas. Linking home, kinder, local places and future school helps children see how places shape belonging and identity. Children choose one place that feels safe during change and explain which person, object or routine makes it welcoming. The class ends with a connected visual map of places, people, feelings and transitions. Freeform's open canvas lets the teacher move, group and connect images as children revise their ideas. Families can view the finished board while children trace a journey from home to kinder and towards prep."
       },
       {
-        "t": "Sphero Indi",
-        "d": "Students follow a playful STEM Design Cycle to create a safe journey that helps Indi travel from 'home' to 'kinder' and finally to 'prep'. They first imagine what the route needs, then arrange Indi's coloured tiles to represent turns, speed changes and stopping places such as a crossing, friend's house or welcoming classroom. Small groups test the route, observe where Indi travels and change tile positions when it misses a destination. They add picture cards showing reassuring people, objects and routines at key transition points. Each group produces a working floor pathway that models how planning and support can make change feel manageable. During peer testing, children explain one design choice, receive feedback and improve the journey before the final run."
+        "t": "Journey Jars: My Story in a Bottle",
+        "d": "Children will create their own 'Journey Jar' by decorating a large plastic jar or bottle with fabric scraps, tissue paper, and stickers to represent their personal story. Inside, they will place soft, tactile objects like cotton balls, ribbon pieces, and photos (or drawings) of important moments, people, and places in their lives. Using a Bee-Bot, children will then create a simple map on a large mat, guiding the robot from one jar to another to share and hear each other's stories. This hands-on project helps children explore their identity, life transitions, and sense of belonging through creative building and collaborative storytelling."
       }
     ],
     "audited": false,
