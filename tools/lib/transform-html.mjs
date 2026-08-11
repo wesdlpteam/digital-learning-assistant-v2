@@ -55,9 +55,9 @@ export const STUDIO_ANCHORS = {
   },
   STUDIO_CSS: {
     label: 'studio stylesheet link',
-    find: '<link rel="stylesheet" href="css/studio.css">',
+    find: '<link rel="stylesheet" href="css/studio.css?v=5.62">',
     replace: [
-      '<link rel="stylesheet" href="css/studio.css">',
+      '<link rel="stylesheet" href="css/studio.css?v=5.62">',
       // Start the demo data downloading in parallel with the nine js/ files
       // instead of after them. Shaves most of the wait before the UI appears.
       '<link rel="preload" as="fetch" href="studio-data.json" crossorigin>',

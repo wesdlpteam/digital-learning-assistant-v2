@@ -41,6 +41,7 @@ const CAMPUS_COLOURS = {
 
 // All ECharts instances we own. Keyed by DOM id so we can re-init and resize cleanly.
 const ECHART_INSTANCES = {};
+let ECHART_RESIZE_TIMER = null;
 
 function echartsReady_(){ return typeof window !== 'undefined' && window.echarts; }
 
@@ -76,6 +77,20 @@ function disposeChart_(id){
   const inst = ECHART_INSTANCES[id];
   if(inst && !inst.isDisposed()) inst.dispose();
   delete ECHART_INSTANCES[id];
+}
+
+function resizeAllCharts_(){
+  Object.entries(ECHART_INSTANCES).forEach(([id, inst]) => {
+    if(!inst || inst.isDisposed()) return;
+    const el = document.getElementById(id);
+    if(el) compensateBodyZoom_(el);
+    inst.resize();
+  });
+}
+
+function scheduleChartResize_(){
+  clearTimeout(ECHART_RESIZE_TIMER);
+  ECHART_RESIZE_TIMER = setTimeout(resizeAllCharts_, 120);
 }
 
 // Standard look for any chart's grid + axes. Keeps every panel visually consistent.
@@ -124,21 +139,11 @@ function setAnalyticsSubtab(name){
     p.style.display = (p.dataset.subpanel === name) ? 'block' : 'none';
   });
   // ECharts canvases freeze if they were sized while hidden — resize on reveal.
-  setTimeout(() => {
-    Object.values(ECHART_INSTANCES).forEach(inst => {
-      if(inst && !inst.isDisposed()) inst.resize();
-    });
-  }, 30);
+  setTimeout(resizeAllCharts_, 30);
 }
 
-window.addEventListener('resize', () => {
-  Object.entries(ECHART_INSTANCES).forEach(([id, inst]) => {
-    if(!inst || inst.isDisposed()) return;
-    const el = document.getElementById(id);
-    if(el) compensateBodyZoom_(el);
-    inst.resize();
-  });
-});
+window.addEventListener('resize', scheduleChartResize_);
+window.addEventListener('orientationchange', scheduleChartResize_);
 
 /* ---------- Shared parsing helpers (mirror 09's helpers) ---------- */
 function analyticsDate_(raw){
@@ -859,7 +864,7 @@ function renderReachMatrix(usedRows){
   const reachLabel   = `${reachedCount} of ${totalCells} active`;
 
   let html = `<div class="reach-summary"><b>${esc(reachLabel)}</b> — coverage by year level × campus</div>`;
-  html += '<table class="reach-table"><thead><tr><th></th>';
+  html += '<div class="table-scroll"><table class="reach-table"><thead><tr><th></th>';
   campuses.forEach(c => {
     const col = CAMPUS_COLOURS[c] || ANALYTICS_PALETTE.lime;
     html += `<th style="color:${col}">${esc(c)}</th>`;
@@ -879,7 +884,7 @@ function renderReachMatrix(usedRows){
     });
     html += '</tr>';
   });
-  html += '</tbody></table>';
+  html += '</tbody></table></div>';
   el.innerHTML = html;
 }
 

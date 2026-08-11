@@ -5,7 +5,71 @@ function linkify(s){ return esc(cleanTextCorruption_(s)).replace(/(https?:\/\/[^
 function linkifyLight(s){ return esc(cleanTextCorruption_(s)).replace(/(https?:\/\/[^\s)&<]+)/g, '<a href="$1" target="_blank" style="color:#2563eb;text-decoration:none;word-break:break-all">$1</a>'); }
 function caCol(ca){ return CAMPUS_COL[normCa(ca)]||CAMPUS_COL[ca]||'#818cf8'; }
 
+const STUDIO_MOBILE_NAV_QUERY = '(max-width: 900px)';
+
+function studioUsesMobileNav_(){
+  return typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia(STUDIO_MOBILE_NAV_QUERY).matches;
+}
+
+function setStudioDrawerOpen(open, restoreFocus){
+  if(typeof document === 'undefined') return;
+  const mobile = studioUsesMobileNav_();
+  const shouldOpen = !!open && mobile && document.body.classList.contains('app-mode');
+  const toggle = document.getElementById('mobile-nav-toggle');
+  const backdrop = document.getElementById('mobile-nav-backdrop');
+  const sidebar = document.getElementById('sidebar');
+
+  document.body.classList.toggle('mobile-nav-open', shouldOpen);
+  if(toggle){
+    toggle.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+    toggle.setAttribute('aria-label', shouldOpen ? 'Close navigation' : 'Open navigation');
+  }
+  if(backdrop){
+    backdrop.setAttribute('aria-hidden', shouldOpen ? 'false' : 'true');
+    backdrop.tabIndex = shouldOpen ? 0 : -1;
+  }
+  if(sidebar){
+    if(mobile){
+      if(!shouldOpen && sidebar.contains(document.activeElement) && toggle) toggle.focus();
+      sidebar.setAttribute('aria-hidden', shouldOpen ? 'false' : 'true');
+    }
+    else sidebar.removeAttribute('aria-hidden');
+  }
+  if(!shouldOpen && restoreFocus && toggle) toggle.focus();
+}
+
+function toggleStudioDrawer(){
+  setStudioDrawerOpen(!document.body.classList.contains('mobile-nav-open'));
+}
+
+function closeStudioDrawer(restoreFocus){
+  setStudioDrawerOpen(false, restoreFocus);
+}
+
+function initStudioMobileNavigation_(){
+  const toggle = document.getElementById('mobile-nav-toggle');
+  const backdrop = document.getElementById('mobile-nav-backdrop');
+  if(toggle) toggle.addEventListener('click', toggleStudioDrawer);
+  if(backdrop) backdrop.addEventListener('click', () => closeStudioDrawer(true));
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Escape' && document.body.classList.contains('mobile-nav-open')) closeStudioDrawer(true);
+  });
+  if(typeof window.matchMedia === 'function'){
+    const media = window.matchMedia(STUDIO_MOBILE_NAV_QUERY);
+    const sync = () => setStudioDrawerOpen(document.body.classList.contains('mobile-nav-open'));
+    if(typeof media.addEventListener === 'function') media.addEventListener('change', sync);
+    else if(typeof media.addListener === 'function') media.addListener(sync);
+  }
+  setStudioDrawerOpen(false);
+}
+
+if(typeof document !== 'undefined'){
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initStudioMobileNavigation_);
+  else initStudioMobileNavigation_();
+}
+
 function showScreen(id){
+  closeStudioDrawer();
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.body.classList.remove('app-mode');
   document.getElementById('app-content').style.display='none';
@@ -17,6 +81,7 @@ function showApp(){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('app-content').style.display='block';
   document.body.classList.add('app-mode');
+  closeStudioDrawer();
 }
 
 let _progressTimer = null;
@@ -61,6 +126,10 @@ async function reconnectDrive(){
 }
 
 function showBackendScreen(){
+  if(typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 600px)').matches){
+    showBackendSettingsSheet_();
+    return;
+  }
   const current = getGASToken();
   const msg = 'Optional backend shared secret. Leave blank unless you have set DLA_SHARED_SECRET in Apps Script Script Properties.';
   const next = prompt(msg, current);
@@ -72,6 +141,61 @@ function showBackendScreen(){
     localStorage.removeItem('dla_shared_secret');
     setStatus('Backend shared secret cleared');
   }
+}
+
+function showBackendSettingsSheet_(){
+  closeStudioDrawer();
+  document.getElementById('backend-settings-overlay')?.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'backend-settings-overlay';
+  overlay.className = 'studio-sheet-overlay';
+  overlay.innerHTML = `
+    <div class="studio-sheet-card" role="dialog" aria-modal="true" aria-labelledby="backend-settings-title">
+      <div class="studio-sheet-header">
+        <div>
+          <div class="label" style="margin-bottom:4px">Backend / AI settings</div>
+          <h2 id="backend-settings-title">Shared secret</h2>
+        </div>
+        <button type="button" class="studio-sheet-close" aria-label="Close backend settings">&times;</button>
+      </div>
+      <p class="studio-sheet-copy">Optional. Leave this blank unless DLA_SHARED_SECRET has also been set in Apps Script Script Properties.</p>
+      <label class="label" for="backend-secret-input">Shared secret</label>
+      <input id="backend-secret-input" class="inp" type="password" autocomplete="off" placeholder="Leave blank to clear the saved secret">
+      <div class="studio-sheet-actions">
+        <button type="button" class="btn" data-backend-clear>Clear</button>
+        <button type="button" class="btn-pri" data-backend-save>Save settings</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  const input = overlay.querySelector('#backend-secret-input');
+  const close = () => {
+    overlay.remove();
+    if(studioUsesMobileNav_()) document.getElementById('mobile-nav-toggle')?.focus();
+  };
+  input.value = getGASToken();
+  overlay.querySelector('.studio-sheet-close').addEventListener('click', close);
+  overlay.addEventListener('click', e => { if(e.target === overlay) close(); });
+  overlay.addEventListener('keydown', e => {
+    if(e.key !== 'Escape') return;
+    e.preventDefault();
+    e.stopPropagation();
+    close();
+  });
+  overlay.querySelector('[data-backend-clear]').addEventListener('click', () => { input.value = ''; input.focus(); });
+  overlay.querySelector('[data-backend-save]').addEventListener('click', () => {
+    const next = input.value.trim();
+    if(next){
+      localStorage.setItem('dla_shared_secret', next);
+      setStatus('Backend shared secret saved locally');
+    } else {
+      localStorage.removeItem('dla_shared_secret');
+      setStatus('Backend shared secret cleared');
+    }
+    close();
+  });
+  setTimeout(() => input.focus(), 0);
 }
 
 async function getDriveToken(){
@@ -451,6 +575,7 @@ async function gradeSuggestionLive(entry, sugIdx, t, d) {
 }
 
 function switchTab(tab,btn){
+  closeStudioDrawer();
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   if(btn) btn.classList.add('active');
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));

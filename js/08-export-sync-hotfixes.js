@@ -345,7 +345,7 @@ function showKeyboardHelp(){
   overlay.innerHTML=`<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:480px;width:100%">
     <div style="display:flex;align-items:center;margin-bottom:18px">
       <span style="font-size:18px;font-weight:900">Keyboard Shortcuts</span>
-      <button onclick="document.getElementById('keyboard-help-overlay').remove()" style="margin-left:auto;background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:18px">✕</button>
+      <button id="keyboard-help-close" type="button" aria-label="Close keyboard shortcuts" style="margin-left:auto;background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:18px">✕</button>
     </div>
     ${shortcuts.map(([key,desc])=>`<div style="display:flex;align-items:center;gap:14px;padding:8px 0;border-bottom:1px solid var(--border)">
       <kbd style="background:var(--card2);border:1px solid var(--border);border-radius:5px;padding:3px 10px;font-size:12px;font-weight:700;font-family:monospace;white-space:nowrap">${key}</kbd>
@@ -354,6 +354,7 @@ function showKeyboardHelp(){
     <div style="margin-top:14px;font-size:12px;color:var(--dim)">Press <kbd style="background:var(--card2);border:1px solid var(--border);border-radius:4px;padding:2px 6px;font-size:11px">?</kbd> anytime to show this</div>
   </div>`;
   document.body.appendChild(overlay);
+  document.getElementById('keyboard-help-close')?.addEventListener('click', () => overlay.remove());
 }
 
 function renderCoverageHeatmap(){
@@ -361,7 +362,7 @@ function renderCoverageHeatmap(){
   const campuses=[...new Set(DATA.map(e=>e.ca))].sort();
   const palette={'Elsternwick':'#818cf8','Glen Waverley':'#34d399','St Kilda':'#fb923c','St Kilda Road':'#fb923c'};
 
-  let html=`<table style="width:100%;border-collapse:collapse;font-size:13px">
+  let html=`<div class="table-scroll"><table style="width:100%;border-collapse:collapse;font-size:13px">
     <thead><tr><th style="padding:8px 12px;text-align:left;border-bottom:1.5px solid var(--border);font-weight:700">Year Level</th>`;
   campuses.forEach(ca=>{
     html+=`<th style="padding:8px 12px;text-align:center;border-bottom:1.5px solid var(--border);color:${palette[ca]||'var(--lime)'};font-weight:700">${esc(ca)}</th>`;
@@ -390,7 +391,7 @@ function renderCoverageHeatmap(){
     });
     html+='</tr>';
   });
-  html+='</tbody></table>';
+  html+='</tbody></table></div>';
   el.innerHTML=html;
 }
 

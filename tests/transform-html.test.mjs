@@ -10,7 +10,7 @@ const STUDIO_SAMPLE = [
   '<html lang="en"><head><meta charset="UTF-8">',
   '<script src="https://accounts.google.com/gsi/client" async defer></script>',
   '<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>',
-  '<link rel="stylesheet" href="css/studio.css">',
+  '<link rel="stylesheet" href="css/studio.css?v=5.62">',
   '</head>',
   '<body>',
   '<div id="app-content"></div>',
@@ -138,6 +138,11 @@ test('studio: removes the Google sign-in library', () => {
 test('studio: keeps the echarts CDN, which the analytics screens need', () => {
   const out = transformStudioHtml(STUDIO_SAMPLE, { guardJs: '/*g*/', shimJs: '/*s*/' });
   assert.ok(out.includes('echarts'));
+});
+
+test('studio: preserves the versioned stylesheet while injecting demo assets', () => {
+  const out = transformStudioHtml(STUDIO_SAMPLE, { guardJs: '/*g*/', shimJs: '/*s*/' });
+  assert.ok(out.includes('<link rel="stylesheet" href="css/studio.css?v=5.62">'));
 });
 
 test('studio: guard lands before the js/ scripts, shim after them', () => {

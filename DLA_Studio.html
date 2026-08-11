@@ -8,15 +8,23 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d0d0d'/%3E%3Crect width='32' height='32' rx='8' fill='none' stroke='%23D4A017' stroke-width='1.5' opacity='0.4'/%3E%3Ctext x='16' y='23' font-family='system-ui,sans-serif' font-size='18' font-weight='900' fill='%23D4A017' text-anchor='middle' letter-spacing='-1'%3EW%3C/text%3E%3Ccircle cx='25' cy='7' r='4' fill='%23C5E84A'/%3E%3C/svg%3E">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
-<link rel="stylesheet" href="css/studio.css">
+<link rel="stylesheet" href="css/studio.css?v=5.62">
 </head>
 <body>
 <canvas id="bg-canvas"></canvas>
 <div id="global-progress"><div id="global-progress-bar"></div></div>
 
+<!-- MOBILE APP BAR -->
+<header id="mobile-topbar" aria-label="DLA Studio navigation">
+  <button id="mobile-nav-toggle" type="button" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">
+    <span class="mobile-nav-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+  </button>
+  <div class="mobile-wordmark">DLA Studio</div>
+</header>
+<button id="mobile-nav-backdrop" type="button" aria-label="Close navigation" aria-hidden="true" tabindex="-1"></button>
 
 <!-- SIDEBAR -->
-<div id="sidebar">
+<div id="sidebar" role="navigation" aria-label="Studio sections">
   <div id="logo">DLA Studio</div>
   <div class="nav-item active" data-tab="dashboard" onclick="switchTab('dashboard',this)">
     <span>◈</span><span class="nav-label"> Dashboard</span>
@@ -186,7 +194,7 @@
         <p style="font-size:13px;color:var(--dim);margin-bottom:16px;line-height:1.6">
           Submit a new unit to the auditor. The Apps Script engine picks it up within 10 minutes, finds the matching planner PDF on Drive, and fills in 5 AI-generated suggestions automatically.
         </p>
-        <div style="display:grid;grid-template-columns:1fr 1fr 2fr;gap:10px;margin-bottom:12px">
+        <div class="queue-fields" style="display:grid;grid-template-columns:1fr 1fr 2fr;gap:10px;margin-bottom:12px">
           <div>
             <div style="font-size:11px;color:var(--dim);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">Campus</div>
             <select id="q-campus" class="inp" style="margin-bottom:0">
@@ -221,7 +229,7 @@
     <div id="panel-browse" class="panel">
       <div class="page-title">Browse Library</div>
       <div class="page-sub">All entries across campuses and year levels.</div>
-      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+      <div class="studio-filter-row" style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
         <select id="f-campus" class="inp" style="width:auto" onchange="renderBrowse()"><option value="">All campuses</option></select>
         <select id="f-year" class="inp" style="width:auto" onchange="renderBrowse()"><option value="">All year levels</option></select>
         <input id="f-search" class="inp" placeholder="Search themes or tools..." oninput="renderBrowse()" style="flex:1;min-width:160px">
@@ -245,7 +253,7 @@
 
       <!-- Analytics -->
       <div id="audit-analytics">
-        <div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">
+        <div class="studio-filter-row" style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">
           <button class="view-tab active" data-av="tools" onclick="setAnalyticsView(this)">By tool</button>
           <button class="view-tab" data-av="campus" onclick="setAnalyticsView(this)">By campus</button>
           <button class="view-tab" data-av="year" onclick="setAnalyticsView(this)">By year</button>
@@ -275,7 +283,7 @@
           </div>
         </div>
         <div id="bulk-reasoning" style="display:none;padding:10px 20px;background:var(--card2);border-top:1px solid var(--border);max-height:180px;overflow-y:auto"></div>
-        <div style="display:flex;gap:10px;padding:14px 20px;background:var(--card);align-items:center">
+        <div class="bulk-chat-compose" style="display:flex;gap:10px;padding:14px 20px;background:var(--card);align-items:center">
           <button class="btn-sm" id="btn-bulk-reset" onclick="bulkChatReset()" style="padding:8px 10px;flex-shrink:0;white-space:nowrap" title="Clear this conversation and start a brand-new request">🆕 New</button>
           <button class="btn-sm" id="btn-bulk-voice" onclick="toggleBulkVoice()" style="padding:8px 10px;flex-shrink:0" title="Speak your request (uses browser speech recognition)">🎤</button>
           <input id="bulk-chat-input" class="inp" placeholder="Describe the change you want to make…" style="flex:1;margin-bottom:0;font-size:13px" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();bulkChatSend()}">
@@ -308,14 +316,14 @@
         </div>
         <p style="font-size:12px;color:var(--dim);margin-bottom:14px">Control exactly which tools the AI can suggest. Changes sync with <code style="font-size:11px;color:var(--mint)">libraries.json</code>.</p>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="inventory-layout" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
           <div>
             <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
               <span style="font-size:12px;font-weight:700;color:var(--lime)">✓ WHITELIST</span>
               <span id="inv-whitelist-count" style="font-size:10px;color:var(--dim);font-weight:600"></span>
             </div>
             <div style="font-size:11px;color:var(--dim);margin-bottom:8px;line-height:1.5">Only these tools will be suggested. Leave empty to allow all approved tools.</div>
-            <div style="display:grid;grid-template-columns:minmax(170px,1fr) 105px 105px auto;gap:6px;margin-bottom:8px;align-items:center">
+            <div class="inventory-add-grid" style="display:grid;grid-template-columns:minmax(170px,1fr) 105px 105px auto;gap:6px;margin-bottom:8px;align-items:center">
               <input id="inv-whitelist-input" class="inp" placeholder="e.g. Sphero BOLT" style="margin-bottom:0;font-size:12px;padding:6px 10px" onkeydown="if(event.key==='Enter'){event.preventDefault();invAddTool('approved')}">
               <select id="inv-whitelist-min" class="inp" title="Minimum year level" style="margin-bottom:0;font-size:12px;padding:6px 8px">
                 <option value="-2" selected>3 Year Old Kinder</option><option value="-1">4 Year Old Kinder</option><option value="0">Prep</option><option value="1">Year 1</option><option value="2">Year 2</option><option value="3">Year 3</option><option value="4">Year 4</option><option value="5">Year 5</option><option value="6">Year 6</option>
@@ -376,7 +384,7 @@
       <div class="card" style="margin-bottom:14px">
         <span class="label">Run Surgeon</span>
         <p style="font-size:13px;color:var(--dim);margin-bottom:14px;line-height:1.6">Remove a banned tool from all entries. Optionally force a specific replacement — otherwise the AI will choose the best fit.</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+        <div class="surgeon-fields" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
           <div>
             <div style="font-size:11px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Tool to Remove <span style="color:#f87171">*</span></div>
             <input id="surgeon-banned" class="inp" placeholder="e.g. Flip" style="margin-bottom:0">
@@ -416,7 +424,7 @@
       <div class="card">
         <span class="label">Side-by-side campus comparison</span>
         <p style="font-size:13px;color:var(--dim);margin-bottom:14px;line-height:1.6">Pick a unit theme to see how all three campuses' suggestions compare side by side.</p>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+        <div class="studio-filter-row" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
           <select id="compare-year" class="inp" style="width:160px;margin-bottom:0" onchange="updateCompareThemes()">
             <option value="">All year levels</option>
           </select>
@@ -511,7 +519,7 @@
             <div id="live-reach-matrix"></div>
           </div>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+          <div class="analytics-two-column" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
             <div class="card analytics-card">
               <span class="label">views by campus</span>
               <p class="card-hint">Total page views and average dwell time per campus.</p>
@@ -567,7 +575,7 @@
               </div>
             </div>
             <p class="card-hint">Most-used tools, plus tools that get suggested often but are rarely (or never) confirmed as used.</p>
-            <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:14px">
+            <div class="rankings-layout" style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:14px">
               <div>
                 <div class="sub-label">Most used tools</div>
                 <div id="rankings-most-used-chart"></div>
@@ -647,7 +655,7 @@
       </div>
       <p class="page-sub">Curate the lesson libraries that Bulk AI Edit references when proposing changes. Only lessons in these libraries will be suggested — this prevents hallucinations.</p>
 
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+      <div class="library-actions" style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
         <button class="btn-pri" onclick="showAddLibraryDialog()" style="font-size:13px;padding:10px 18px">+ Add Library</button>
         <button class="btn-sm" onclick="libExportAll()">↓ Export All</button>
         <button class="btn-sm" onclick="libImportAllTrigger()">↑ Import</button>
@@ -690,14 +698,14 @@
 
 <!-- ?v=APP_VERSION cache-busts the code files. Bump this to match APP_VERSION
      in js/00-config-state-utils.js on every deploy so browsers fetch fresh code. -->
-<script src="js/00-config-state-utils.js?v=5.61"></script>
-<script src="js/01-inventory-helpers.js?v=5.61"></script>
-<script src="js/02-ui-load-navigation.js?v=5.61"></script>
-<script src="js/04-audit-analytics-live.js?v=5.61"></script>
-<script src="js/05-bulk-setup-libraries.js?v=5.61"></script>
-<script src="js/06-bulk-router-chat.js?v=5.61"></script>
-<script src="js/07-bulk-actions.js?v=5.61"></script>
-<script src="js/09-legacy-restored.js?v=5.61"></script>
-<script src="js/08-export-sync-hotfixes.js?v=5.61"></script>
+<script src="js/00-config-state-utils.js?v=5.62"></script>
+<script src="js/01-inventory-helpers.js?v=5.62"></script>
+<script src="js/02-ui-load-navigation.js?v=5.62"></script>
+<script src="js/04-audit-analytics-live.js?v=5.62"></script>
+<script src="js/05-bulk-setup-libraries.js?v=5.62"></script>
+<script src="js/06-bulk-router-chat.js?v=5.62"></script>
+<script src="js/07-bulk-actions.js?v=5.62"></script>
+<script src="js/09-legacy-restored.js?v=5.62"></script>
+<script src="js/08-export-sync-hotfixes.js?v=5.62"></script>
 </body>
 </html>
