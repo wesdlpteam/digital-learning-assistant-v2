@@ -1,8 +1,9 @@
 /* Sample analytics for the Studio demo.
  *
  * Every figure here is illustrative. It is never presented as Wesley's real
- * adoption data: the Studio shim stamps "Sample data — demonstration only" on
- * the analytics and dashboard panels, on top of the sandbox badge.
+ * adoption data: the Studio shim stamps a "Sample data for demonstration only"
+ * banner (SAMPLE_LEAD/SAMPLE_BODY in tools/browser/studio-shim.js) on the
+ * analytics and dashboard panels, on top of the sandbox badge.
  *
  * ── Sheet shapes, read out of the live renderers (do not guess these) ────────
  *

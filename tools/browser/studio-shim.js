@@ -13,7 +13,8 @@
  */
 (function () {
   var BADGE_TEXT = 'Sandbox demo — not live data';
-  var SAMPLE_TEXT = 'Sample data — demonstration only';
+  var SAMPLE_LEAD = 'Sample data for demonstration only.';
+  var SAMPLE_BODY = 'These numbers do not reflect actual usage at Wesley College. They are made up, and only show the kind of reporting this screen can produce.';
   var OFF_NOTE = 'Turned off in this demo';
 
   var ANALYTICS = null;
@@ -88,7 +89,8 @@
       'box-shadow:0 2px 10px rgba(0,0,0,.35);pointer-events:none;opacity:.92}' +
       '.sandbox-sample-note{display:block;margin:0 0 14px;padding:8px 14px;border-radius:8px;' +
       'background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.45);color:#fbbf24;' +
-      'font:700 12px/1.4 system-ui,-apple-system,Segoe UI,sans-serif;letter-spacing:.02em}' +
+      'font:500 12px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;letter-spacing:.02em}' +
+      '.sandbox-sample-note strong{font-weight:800}' +
       '.sandbox-off{opacity:.45;cursor:not-allowed!important;position:relative}' +
       '.sandbox-off-note{font-size:11px;color:#888;margin-left:8px;font-weight:600}' +
       // Tool Inventory whitelist fills the content width. It lives in
@@ -229,7 +231,10 @@
       if (!host || host.querySelector('.sandbox-sample-note')) return;
       var note = document.createElement('div');
       note.className = 'sandbox-sample-note';
-      note.textContent = SAMPLE_TEXT;
+      var lead = document.createElement('strong');
+      lead.textContent = SAMPLE_LEAD;
+      note.appendChild(lead);
+      note.appendChild(document.createTextNode(' ' + SAMPLE_BODY));
       host.insertBefore(note, host.firstChild);
     });
   }
