@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Wesley Digital Learning Assistant</title>
-<script>window.APP_VERSION='2026-07-20-1';</script>  <!-- bump on every deploy so open tabs auto-refresh -->
+<script>window.APP_VERSION='2026-08-13-1';</script>  <!-- bump on every deploy so open tabs auto-refresh -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23111111'/%3E%3Cpolygon points='19,3 10,17 15,17 13,29 22,15 17,15' fill='%23CDEB45'/%3E%3Ccircle cx='6' cy='6' r='2' fill='%23CDEB45' opacity='0.5'/%3E%3Ccircle cx='26' cy='26' r='2' fill='%23CDEB45' opacity='0.5'/%3E%3Ccircle cx='26' cy='6' r='1.5' fill='%237ED957' opacity='0.6'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -273,15 +273,21 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
   padding:12px 16px;
   margin:16px 0 28px;
 }
-.champ-ribbon::-webkit-scrollbar{height:4px}
-.champ-ribbon::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
-.champ-ribbon-inner{display:flex;flex-wrap:wrap;align-items:center;gap:10px;justify-content:flex-start}
-.champ-ribbon-label{flex-basis:100%;font-size:12px;font-weight:800;color:#F5A623;letter-spacing:.6px;text-transform:uppercase;flex-shrink:0;margin-bottom:2px}
-.champ-pill{display:inline-flex;align-items:center;gap:7px;background:#1A1A1A;border:1px solid #2a2a2a;border-radius:99px;padding:5px 10px 5px 8px;font-size:13px;flex-shrink:0;cursor:pointer;transition:border-color .15s,transform .15s}
+.champ-pill-row::-webkit-scrollbar{height:4px}
+.champ-pill-row::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
+.champ-ribbon-inner{display:block}
+.champ-ribbon-label{display:block;font-size:12px;font-weight:800;color:#F5A623;letter-spacing:.6px;text-transform:uppercase;margin-bottom:8px}
+/* The three pills sit inside the 700px .wp column. At the old spacing they came to
+   628px against 627px of room, so bronze dropped to its own line. Tighter padding
+   plus nowrap keeps all three on one row; if names or scores ever grow past the
+   width it scrolls sideways instead of wrapping. Phones wrap, so nothing hides. */
+.champ-pill-row{display:flex;flex-wrap:nowrap;align-items:center;gap:8px;overflow-x:auto;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+@media(max-width:719px){.champ-pill-row{flex-wrap:wrap;overflow-x:visible}}
+.champ-pill{display:inline-flex;align-items:center;gap:6px;background:#1A1A1A;border:1px solid #2a2a2a;border-radius:99px;padding:5px 8px 5px 7px;font-size:13px;flex-shrink:0;cursor:pointer;transition:border-color .15s,transform .15s}
 .champ-pill:hover{border-color:#F5A623;transform:translateY(-1px)}
 .champ-medal{font-size:15px;line-height:1}
 .champ-team{color:#EEE;font-weight:600;font-size:12.5px}
-.champ-pts{color:#111;font-weight:800;background:#CDEB45;border-radius:99px;padding:2px 9px;font-size:11.5px;line-height:1.35}
+.champ-pts{color:#111;font-weight:800;background:#CDEB45;border-radius:99px;padding:2px 8px;font-size:11.5px;line-height:1.35}
 .champ-empty{color:#666;font-size:12px;font-style:italic;padding:2px 4px}
 .team-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
 .team-overlay.open{opacity:1;pointer-events:all}
@@ -2592,12 +2598,15 @@ function renderChampionsRibbon(){
   var medals=['🥇','🥈','🥉'];
   var h='<div class="champ-ribbon"><div class="champ-ribbon-inner">';
   h+='<span class="champ-ribbon-label">🏆 Tech Champions</span>';
+  // Own row so the three pills stay on one line however long the team names or
+  // scores get; it scrolls sideways rather than dropping bronze to a second line.
+  h+='<div class="champ-pill-row">';
   sorted.forEach(function(t,i){
     var campusShort=normaliseCampusName(t.campus);
     var yr=normaliseYearName(t.year);
     h+='<span class="champ-pill" onclick="document.querySelector(\'.lb-section\')&&document.querySelector(\'.lb-section\').scrollIntoView({behavior:\'smooth\',block:\'start\'})"><span class="champ-medal">'+medals[i]+'</span><span class="champ-team">'+escapeHtml(campusShort)+' · '+escapeHtml(yr)+'</span><span class="champ-pts">'+(Number(t.points)||0)+'</span></span>';
   });
-  h+='</div></div>';
+  h+='</div></div></div>';
   return h;
 }
 function renderLeaderboard(){
