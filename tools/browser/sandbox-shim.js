@@ -8,7 +8,17 @@
      button[onclick*="regenTechResultFromOverlay"] */
 (function () {
   var FAKE_THINK_MS = 700;
-  var EXTRA_IDEAS_URL = 'sandbox-extra-ideas.json';
+
+  // A bare 'thing.json' resolves against whatever the address bar currently
+  // says, and the app rewrites that to /GW/Year3/HWOO as you browse. Anything
+  // fetched after that point would 404. Anchor demo assets to the site root the
+  // page worked out for itself (_basePath is a top-level `var` in index.html,
+  // so unlike its `const` state it really is a window property).
+  function demoUrl(name) {
+    var base = '';
+    try { if (typeof _basePath === 'string') base = _basePath; } catch (e) { base = ''; }
+    return base.replace(/\/+$/, '') + '/' + name;
+  }
 
   // ---- styles -------------------------------------------------------------
   function addStyles() {
@@ -20,9 +30,12 @@
       '@media(max-width:430px){#sandboxBadge{font-size:11px;padding:6px 10px;left:8px;bottom:8px}}' +
       // nothing to regenerate in a demo, so hide every regen control
       'button[onclick*="regenTechResultFromOverlay"]{display:none!important}' +
-      // tools that have a ready-made idea for the unit you are on
+      // tools with one of this unit's five fresh ideas waiting
       '.tech-tile.sandbox-ready{outline:2px solid #4CAF50;outline-offset:-2px}' +
       '.tech-tile.sandbox-ready::after{content:" \\2713";color:#4CAF50;font-weight:700;margin-left:6px}' +
+      // why the tool list is shorter than the full inventory
+      '.sandbox-picker-note{margin:0 0 10px;color:#BBB;font-size:13px;line-height:1.5}' +
+      '.sandbox-picker-note strong{color:#FFF}' +
       // the "here are five others" panel
       '.sandbox-alt-intro{margin:0 0 14px;color:#BBB;font-size:14px;line-height:1.5}' +
       '.sandbox-alt-intro strong{color:#FFF}' +
@@ -64,7 +77,7 @@
   var _snapshot = null;
   window.fetchLeaderboard = function () {
     if (_snapshot) return Promise.resolve(_snapshot);
-    return fetch('demo-leaderboard.json', { cache: 'no-store' })
+    return fetch(demoUrl('demo-leaderboard.json'), { cache: 'no-store' })
       .then(function (r) { return r.ok ? r.json() : []; })
       .then(function (rows) { _snapshot = rows; return rows; })
       .catch(function () { _snapshot = []; return []; });
@@ -77,7 +90,7 @@
   var _extrasPromise = null;
   function loadExtraIdeas() {
     if (!_extrasPromise) {
-      _extrasPromise = fetch(EXTRA_IDEAS_URL, { cache: 'force-cache' })
+      _extrasPromise = fetch(demoUrl('sandbox-extra-ideas.json'), { cache: 'force-cache' })
         .then(function (r) { return r.ok ? r.json() : {}; })
         .catch(function () { return {}; });
     }
@@ -93,33 +106,73 @@
     });
   }
 
-  // ---- picker: float the tools that actually have a ready-made idea ------
-  // Only ~9% of (unit, tool) pairs have a stored idea, so without this most
-  // taps land on the fallback. Marking and floating the ones that work makes
-  // the demo land without hiding anything.
+  // ---- picker: only offer tools this unit does not already use ------------
+  // The unit page already lists six ideas and names the tool behind each one.
+  // Offering those same tools again only replays what is on screen, so drop
+  // their tiles. What is left is genuinely new, and the five tools with a
+  // pre-written idea for this unit get ticked and floated to the top so a demo
+  // tap lands on a real answer.
   var _realOpenTechPicker = window.openTechPicker;
   if (typeof _realOpenTechPicker === 'function') {
     window.openTechPicker = function () {
       var result = _realOpenTechPicker.apply(this, arguments);
-      try {
-        var grid = document.getElementById('techGrid');
-        if (!grid) return result;
-        var suggestions = currentUnitSuggestions();
-        if (!suggestions.length) return result;
-        var tiles = grid.querySelectorAll('.tech-tile');
-        var ready = [];
-        for (var i = 0; i < tiles.length; i++) {
-          var tool = tiles[i].getAttribute('data-tool') || '';
-          if (matchToolToSuggestion(tool, suggestions)) {
-            tiles[i].classList.add('sandbox-ready');
-            tiles[i].title = 'Has a ready-made idea for this unit';
-            ready.push(tiles[i]);
-          }
-        }
-        for (var j = ready.length - 1; j >= 0; j--) grid.insertBefore(ready[j], grid.firstChild);
-      } catch (e) { /* presentation sugar only, never break the picker */ }
+      try { dressPicker(); } catch (e) { /* presentation sugar only, never break the picker */ }
       return result;
     };
+  }
+
+  function dropUsedTools(grid, used) {
+    var tiles = grid.querySelectorAll('.tech-tile');
+    var dropped = 0;
+    for (var i = tiles.length - 1; i >= 0; i--) {
+      var tool = tiles[i].getAttribute('data-tool') || '';
+      // Never empty the grid: if a unit somehow used everything, keep the list.
+      if (matchToolToSuggestion(tool, used) && tiles.length - dropped > 1) {
+        tiles[i].parentNode.removeChild(tiles[i]);
+        dropped++;
+      }
+    }
+    return dropped;
+  }
+
+  function addPickerNote(grid) {
+    if (!grid.parentNode || grid.parentNode.querySelector('.sandbox-picker-note')) return;
+    var note = document.createElement('div');
+    note.className = 'sandbox-picker-note';
+    // No count here: the unit's tools are not all in the approved list, so the
+    // number of tiles removed is not the number of tools the unit uses.
+    note.innerHTML = 'Tools this unit already uses are left out, so everything here is new. ' +
+      'Tools marked <strong>&#10003;</strong> have an idea ready in this demo.';
+    grid.parentNode.insertBefore(note, grid);
+  }
+
+  function markReadyTools(grid, extras) {
+    var tiles = grid.querySelectorAll('.tech-tile');
+    var ready = [];
+    for (var i = 0; i < tiles.length; i++) {
+      var tool = tiles[i].getAttribute('data-tool') || '';
+      if (matchToolToSuggestion(tool, extras)) {
+        tiles[i].classList.add('sandbox-ready');
+        tiles[i].title = 'Has an idea ready for this unit';
+        ready.push(tiles[i]);
+      }
+    }
+    for (var j = ready.length - 1; j >= 0; j--) grid.insertBefore(ready[j], grid.firstChild);
+  }
+
+  function dressPicker() {
+    var grid = document.getElementById('techGrid');
+    if (!grid) return;
+    var used = currentUnitSuggestions();
+    if (used.length) {
+      if (dropUsedTools(grid, used)) addPickerNote(grid);
+    }
+    // Fetched here rather than at page load, so the file never competes with
+    // first paint. After the first open it is cached and this resolves at once.
+    extraIdeasFor(currentUnit()).then(function (extras) {
+      if (!extras.length) return;
+      try { markReadyTools(grid, extras); } catch (e) { /* sugar only */ }
+    });
   }
 
   // ---- picker result: ready-made idea, or five others for this unit -------
@@ -137,15 +190,20 @@
       }, FAKE_THINK_MS);
       return;
     }
-    // No ready-made idea for this tool. Show the five that were written ahead
-    // of time for this unit instead. Keep the fake think time so the demo still
-    // feels like the live site even when the file is already cached.
+    // Otherwise show the five ideas written ahead of time for this unit, each
+    // using a tool the unit's own six do not. If one of them happens to use the
+    // tool that was picked, lead with it. Keep the fake think time so the demo
+    // still feels like the live site even when the file is already cached.
     var started = Date.now();
     extraIdeasFor(currentUnit()).then(function (extras) {
+      var picked = matchToolToSuggestion(tool, extras);
+      var others = extras.filter(function (idea) { return idea !== picked; });
       setTimeout(function () {
         renderTechResult(campus, yl, theme, tool, {
           sandboxNoMatch: true,
           sandboxExtras: extras,
+          sandboxPicked: picked || null,
+          sandboxOthers: others,
           sandboxAlternatives: suggestions.slice(0, 6)
         });
       }, Math.max(0, FAKE_THINK_MS - (Date.now() - started)));
@@ -161,13 +219,13 @@
     try { return (typeof TE !== 'undefined' && TE[theme]) || '💡'; } catch (e) { return '💡'; }
   }
 
-  function ideaCardHtml(idea, theme) {
+  function ideaCardHtml(idea, theme, label) {
     var tc = themeColour(theme);
     var em = themeEmoji(theme);
     var desc = (typeof linkifyDesc === 'function') ? linkifyDesc(idea.d) : escapeHtml(idea.d);
     return '<div class="sg">' +
       '<div class="sg-head"><div class="sg-icon" style="background:' + tc + '">' + em + '</div>' +
-        '<div class="sg-meta"><div class="sg-type">Another idea for this unit</div>' +
+        '<div class="sg-meta"><div class="sg-type">' + escapeHtml(label || 'Another idea for this unit') + '</div>' +
         '<div class="sg-tool">' + escapeHtml(idea.t) + '</div></div></div>' +
       '<div class="sg-body"><div class="sg-desc">' + desc + '</div></div>' +
       '</div>';
@@ -183,12 +241,25 @@
       var args = [d.campus || campus, d.yl || yl, d.theme || theme, d.ci || '', d.lo || '']
         .map(encodeURIComponent).map(function (v) { return "'" + v + "'"; }).join(',');
       var extras = resp.sandboxExtras || [];
+      var picked = resp.sandboxPicked || null;
+      var others = resp.sandboxOthers || extras;
       var main;
-      if (extras.length) {
+      if (picked) {
         main =
-          '<p class="sandbox-alt-intro">There is no ready-made idea for <strong>' + escapeHtml(tool) + '</strong> in this unit. ' +
-            'On the live DLA this is where it writes you a fresh one for ' + escapeHtml(tool) + ' in about ten seconds. ' +
-            'This demo copy generates nothing on the day, so here are ' + extras.length + ' other ideas for this unit instead.</p>' +
+          '<p class="sandbox-alt-intro">Here is an idea using <strong>' + escapeHtml(tool) + '</strong> for this unit. ' +
+            'On the live DLA it is written fresh in about ten seconds; in this demo copy it was written ahead of time.</p>' +
+          // The card prints the tool name underneath, so the label must not
+          // repeat it.
+          '<div class="sandbox-alt">' + ideaCardHtml(picked, theme, 'The tool you picked') + '</div>' +
+          (others.length
+            ? '<div class="sandbox-alt-count">' + others.length + ' more ideas for ' + escapeHtml(yl) + ' · ' + escapeHtml(theme) + '</div>' +
+              '<div class="sandbox-alt">' + others.map(function (idea) { return ideaCardHtml(idea, theme); }).join('') + '</div>'
+            : '');
+      } else if (extras.length) {
+        main =
+          '<p class="sandbox-alt-intro">On the live DLA, picking <strong>' + escapeHtml(tool) + '</strong> is where it writes you a ' +
+            'brand new idea in about ten seconds. This demo copy generates nothing on the day, so here are ' + extras.length +
+            ' other ideas for this unit instead, each using a different tool.</p>' +
           '<div class="sandbox-alt-count">' + extras.length + ' more ideas for ' + escapeHtml(yl) + ' · ' + escapeHtml(theme) + '</div>' +
           '<div class="sandbox-alt">' + extras.map(function (idea) { return ideaCardHtml(idea, theme); }).join('') + '</div>';
       } else {
