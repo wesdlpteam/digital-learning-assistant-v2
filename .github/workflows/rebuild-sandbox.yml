@@ -1,19 +1,18 @@
 # Keeps the presentation sandbox in step with the live site.
 name: Rebuild sandbox
 
-# Deliberately NOT "on every push to data.json". The GAS backend commits
-# data.json every few minutes during a bulk run (59 commits in three days), so
-# a per-change rebuild would fire dozens of times a day AND would sometimes
-# publish a half-finished regeneration to the demo. Nightly plus an on-demand
-# button gives a demo that is never more than a day stale and never caught
-# mid-run.
+# Manual-only since 2026-08-17 (Nathan's request). The demo refreshes when he
+# presses "Refresh the public demo" in the Studio (backend rebuildsandbox
+# action fires this workflow_dispatch), or via the Run-workflow button here.
+# The old nightly cron is gone: the demo is link-only now, so a demo that
+# lags the live site is fine, and an unattended rebuild could publish a
+# half-finished bulk regeneration. (A per-push trigger was rejected long ago
+# for the same reason - the GAS backend commits data.json every few minutes
+# during a bulk run.)
 on:
-  schedule:
-    # 18:00 UTC = 4am AEST / 5am AEDT, well clear of working hours.
-    - cron: '0 18 * * *'
   workflow_dispatch:
 
-# A scheduled run and a manual run must never push to the sandbox at once.
+# Two manual runs must never push to the sandbox at once.
 concurrency:
   group: rebuild-sandbox
   cancel-in-progress: false

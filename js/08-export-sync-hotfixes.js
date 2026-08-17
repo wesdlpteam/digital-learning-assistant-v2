@@ -92,6 +92,38 @@ async function runTwistSweep(){
   if(btn) btn.disabled = false;
 }
 
+// 2026-08-17: The demo copy of the site is no longer rebuilt automatically each
+// night — it refreshes on demand from this button. The backend's rebuildSandbox
+// action fires the main repo's rebuild-sandbox.yml workflow on GitHub, which
+// does the build and publishes to the demo repo a few minutes later.
+async function refreshPublicDemo(){
+  const btn = document.getElementById('btn-demo-refresh');
+  const statusEl = document.getElementById('demo-refresh-status');
+  if(!confirm('Refresh the public demo with today\'s live content?\n\nThe rebuild runs on GitHub and the refreshed demo goes live at the demo address in about five minutes. Nothing on the live site changes.')) return;
+  if(btn) btn.disabled = true;
+  if(statusEl){ statusEl.style.color = '#fbbf24'; statusEl.textContent = 'Asking GitHub to rebuild the demo…'; }
+  startProgress();
+  try{
+    const r = await fetch(SCRIPT_URL, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify(withGASToken({ action:'rebuildSandbox' }))
+    });
+    const result = await r.json();
+    stopProgress();
+    if(result.started){
+      if(statusEl){ statusEl.style.color = 'var(--lime)'; statusEl.textContent = '✓ Rebuild started — the refreshed demo goes live in about five minutes.'; }
+    } else {
+      const why = result.reason || result.message || result.error || 'no response from the backend';
+      if(statusEl){ statusEl.style.color = '#f87171'; statusEl.textContent = '✗ Could not start the rebuild: ' + why; }
+    }
+  }catch(e){
+    stopProgress();
+    if(statusEl){ statusEl.style.color = '#f87171'; statusEl.textContent = '✗ ' + e.message; }
+  }
+  if(btn) btn.disabled = false;
+}
+
 // 2026-05-28: Rewired to the server-side inspiring pipeline via the same
 // regenerateAllInspiring batch poller that Inspire All uses. Replaces the
 // previous client-side per-unit loop, which:

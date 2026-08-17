@@ -55,9 +55,9 @@ export const STUDIO_ANCHORS = {
   },
   STUDIO_CSS: {
     label: 'studio stylesheet link',
-    find: '<link rel="stylesheet" href="css/studio.css?v=5.62">',
+    find: '<link rel="stylesheet" href="css/studio.css?v=5.63">',
     replace: [
-      '<link rel="stylesheet" href="css/studio.css?v=5.62">',
+      '<link rel="stylesheet" href="css/studio.css?v=5.63">',
       // The demo is link-only: keep it out of search engines.
       '<meta name="robots" content="noindex, nofollow">',
       // Start the demo data downloading in parallel with the nine js/ files

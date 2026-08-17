@@ -305,6 +305,12 @@ function doPost(e) {
       result.user = verifiedEmail;
       return jsonResponse(result);
     }
+    if (action === 'rebuildsandbox') {
+      const result = triggerSandboxRebuild_();
+      result.user = verifiedEmail;
+      return jsonResponse(result);
+    }
+
     if (action === 'stripemdashes') {
       var dashResult = stripEmDashesFromCorpus({ dryRun: !!body.dryRun });
       dashResult.user = verifiedEmail;
@@ -2114,6 +2120,24 @@ function pushToGitHub(contentOpt) {
     try { PropertiesService.getScriptProperties().setProperty('DLA_LAST_GITHUB_PUSH_FAIL', new Date().toISOString() + ' ' + String(e).slice(0, 300)); } catch (_) {}
     throw e;
   }
+}
+
+// 2026-08-17: The sandbox demo is no longer rebuilt nightly. The Studio's
+// "Refresh the public demo" button calls this to fire the main repo's
+// rebuild-sandbox.yml workflow (workflow_dispatch). The Action does the build
+// and pushes to the demo repo; this returns as soon as GitHub accepts the
+// dispatch (HTTP 204). Same GITHUB_TOKEN as the data.json pushes.
+function triggerSandboxRebuild_() {
+  const url = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/actions/workflows/rebuild-sandbox.yml/dispatches';
+  const resp = UrlFetchApp.fetch(url, {
+    method: 'post',
+    headers: { 'Authorization': 'token ' + getGitHubToken_(), 'Accept': 'application/vnd.github+json' },
+    payload: JSON.stringify({ ref: GITHUB_BRANCH }),
+    muteHttpExceptions: true
+  });
+  const code = resp.getResponseCode();
+  if (code === 204) return { started: true };
+  return { started: false, error: 'GitHub dispatch failed: HTTP ' + code + ' - ' + String(resp.getContentText()).slice(0, 300) };
 }
 
 function pushToGitHubCore_(contentOpt) {
