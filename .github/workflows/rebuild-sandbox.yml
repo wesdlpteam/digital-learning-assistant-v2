@@ -28,9 +28,13 @@ jobs:
       - name: Check out the sandbox
         uses: actions/checkout@v4
         with:
-          repository: wesdlpteam/dla-sandbox
+          # Deliberately unguessable name (2026-08-17): the demo is link-only,
+          # shared with invited participants, and no longer sits next to the
+          # live platform at a guessable address.
+          repository: wesdlpteam/dla-demo-7kwq3
           path: sandbox-out
-          # Fine-grained PAT with Contents: read+write on wesdlpteam/dla-sandbox.
+          # Fine-grained PAT with Contents: read+write on the sandbox repo
+          # (tracks the repo across renames, so no token change was needed).
           # The default GITHUB_TOKEN cannot write to a different repository.
           token: ${{ secrets.SANDBOX_PUSH_TOKEN }}
 

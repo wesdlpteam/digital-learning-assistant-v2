@@ -58,6 +58,8 @@ export const STUDIO_ANCHORS = {
     find: '<link rel="stylesheet" href="css/studio.css?v=5.62">',
     replace: [
       '<link rel="stylesheet" href="css/studio.css?v=5.62">',
+      // The demo is link-only: keep it out of search engines.
+      '<meta name="robots" content="noindex, nofollow">',
       // Start the demo data downloading in parallel with the nine js/ files
       // instead of after them. Shaves most of the wait before the UI appears.
       '<link rel="preload" as="fetch" href="studio-data.json" crossorigin>',
@@ -204,7 +206,8 @@ export function transformHtml(html, { guardJs, shimJs } = {}) {
   }
   out = out.replace(
     HEAD_SCRIPT_RE,
-    `${headHits[0]}\n<script>/* ===== DLA sandbox guard ===== */\n${guardJs}\n</script>`
+    // The demo is link-only: keep it out of search engines.
+    `${headHits[0]}\n<meta name="robots" content="noindex, nofollow">\n<script>/* ===== DLA sandbox guard ===== */\n${guardJs}\n</script>`
   );
 
   return `${out}\n<script>/* ===== DLA sandbox shim ===== */\n${shimJs}\n</script>\n`;
