@@ -4321,7 +4321,14 @@ const INSPIRING_DESCRIPTION_RULES = '\nDESCRIPTION STYLE — INSPIRING + INNOVAT
   '  - "leave seeing themselves as ..." / "come away recognising ..." -- no closing moral. Stop after the useful information.\n' +
   '  - "under-used" / "invisible inputs" / "measurable outputs" / "ethical imagination" / "lived experience".\n' +
   'Name the actual topic. If the unit is about ecosystems, say "ecosystems". If it is about migration, say "migration".\n\n' +
-  'WRITING MECHANICS: Use straight apostrophes (\'), em-dashes (—), Australian English. No curly quotes. No line breaks inside JSON string values.';
+  'WRITING MECHANICS: Use straight apostrophes (\'), Australian English. No curly quotes. No line breaks inside JSON string values.\n\n' +
+  'HUMAN VOICE (HARD RULE - the suggestion must read like a helpful colleague wrote it, never like AI):\n' +
+  '  - No em dashes or en dashes anywhere in the output. Use a comma, brackets or a new sentence instead.\n' +
+  '  - Plain verbs of being: "is", "are", "has". Never "serves as", "acts as", "boasts", or "offers/features" used to mean "has".\n' +
+  '  - Banned AI-flavoured words: vibrant, showcase, delve, foster, empower, testament, tapestry, journey (figurative), landscape (figurative), pivotal, crucial, seamlessly, transformative, elevate, harness, unleash.\n' +
+  '  - Never the shape "not just X but Y" or "isn\'t only X, it\'s Y".\n' +
+  '  - Do not force ideas into groups of three for rhythm; two or four concrete items are fine.\n' +
+  '  - No hype endings ("The possibilities are endless!"). End on the concrete thing students made or did.';
 
 // 2026-05-27: Cached per-execution loader for the Minecraft + Micro:bit
 // lesson libraries from libraries.json. Used by inspiringBuildPrompt_ and

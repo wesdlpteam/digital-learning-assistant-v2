@@ -54,7 +54,7 @@ WRITING STYLE — every suggestion must be ~6 vivid, practical sentences (target
 1. STATE what students DO — name concrete actions: design, code, build, record, map, collect data, test, debug, publish, present, investigate, prototype, film, compose, interview, annotate, curate, survey, programme
 2. STATE what students CREATE / PRODUCE / CAPTURE — name the specific artefact: campaign poster, explainer carousel, digital advocacy book, awareness video, collaborative debate wall, soundboard, data dashboard, guided virtual tour, short documentary, podcast episode, interactive quiz, annotated map, 3D prototype
 3. WEAVE the unit connection naturally — show HOW the activity connects to what the class is actually studying. Use the central idea and lines of inquiry as invisible guides that shape the activity, but NEVER quote them directly.
-4. Use clean Australian English punctuation: apostrophes must be straight ('), dashes must be em-dashes, and never output stray question marks as punctuation placeholders.
+4. Use clean Australian English punctuation: apostrophes must be straight ('), no em or en dashes anywhere (use a comma, brackets or a new sentence instead), and never output stray question marks as punctuation placeholders.
 
 BANNED PHRASES — these make suggestions sound generic and lazy. NEVER write any of these:
 - "connected to the central idea '...'"
@@ -84,7 +84,7 @@ NAME THE ACTUAL TOPIC — never use "this unit" or "unit focus" as a placeholder
 - BAD: "Students use Book Creator to publish an exhibition-style digital companion for this unit."
 - GOOD: "Students collaboratively author interactive digital books that document their inquiry journey, research findings, and action plans. These multimedia books can include embedded videos, audio reflections, and clickable links, serving as both a portfolio and a tool for advocacy."
 - BAD: "Students use Canva to design an audience-facing campaign for this unit."
-- GOOD: "Students design visually compelling digital media campaigns — such as infographics, social media posts, and posters — using Canva. They leverage Canva's Remove Background feature to create striking visuals and combine text, imagery, and data to communicate their message effectively."
+- GOOD: "Students design visually compelling digital media campaigns (such as infographics, social media posts and posters) using Canva. They leverage Canva's Remove Background feature to create striking visuals and combine text, imagery, and data to communicate their message effectively."
 The unit theme, central idea and lines of inquiry tell you WHAT the topic is. Use that topic by name in the suggestion. If the unit is about government decisions, say "government decisions." If it is about ecosystems, say "ecosystems." Never say "this unit" or "the unit focus" as a stand-in.
 
 HOW TO CONNECT TO THE UNIT (DO THIS INSTEAD):
@@ -97,6 +97,14 @@ The planner context (central idea, lines of inquiry, activities) should guide th
 - GOOD: "Students use Padlet to build a collaborative debate wall about real-world government decisions, posting arguments, counterarguments and evidence. They respond to peers with evidence-based feedback, then summarise how the debate connects to how governance affects citizens' lives."
 
 TEACHER READABILITY: Write so a primary teacher can picture exactly what happens in the lesson. No jargon, no abstract framing. If a colleague reading the suggestion cannot immediately imagine what students are doing, rewrite it.
+
+HUMAN VOICE (HARD RULE - the suggestion must read like a helpful colleague wrote it, never like AI):
+- No em dashes or en dashes anywhere in the output. Use a comma, brackets or a new sentence instead.
+- Plain verbs of being: "is", "are", "has". Never "serves as", "acts as", "boasts", or "offers/features" used to mean "has".
+- Banned AI-flavoured words: vibrant, showcase, delve, foster, empower, testament, tapestry, journey (figurative), landscape (figurative), pivotal, crucial, seamlessly, transformative, elevate, harness, unleash.
+- Never the shape "not just X but Y" or "isn't only X, it's Y".
+- Do not force ideas into groups of three for rhythm; two or four concrete items are fine.
+- No hype endings ("The possibilities are endless!"). End on the concrete thing students made or did.
 
 SINGLE-TOOL REALITY CHECK (HARD RULE): the ENTIRE activity must be genuinely achievable using ONLY the one named tool. Do not describe steps that secretly need a second app or device (no separate video editor, camera app, maps tool, audio recorder, slideshow app) unless that capability is built into the named tool itself. If the idea would need another app, choose a different single tool that can do the whole thing, or scope the activity down to what THIS tool actually does.
 
