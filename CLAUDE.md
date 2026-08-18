@@ -87,7 +87,7 @@ Load order matters — `08` ships after `09` so its definitions win. Don't "fix"
 
 `index.html` is a single self-contained file (inline CSS + JS); it does not load the `js/` folder.
 
-The top of `00-config-state-utils.js` is where global constants live: `SCRIPT_URL` (gas_backend `/exec`), `CLIENT_ID` (Google OAuth — change here if Wesley rotates the client), `ANALYTICS_SHEET_ID`, plus two model names — `OPENAI_MODEL = 'gpt-5.6-sol'` for heavy paths (Bulk AI Edit, Fix All, regenerate, scoring) and `OPENAI_FAST_MODEL = 'gpt-5.6-sol'` for per-suggestion feedback and single-suggestion regen (both pinned to the flagship tier per Nathan 2026-07-14; `gpt-5.6-luna` is the cheap/fast fallback if cost or latency becomes a problem). Grep for both when tracing model usage.
+The top of `00-config-state-utils.js` is where global constants live: `SCRIPT_URL` (gas_backend `/exec`), `CLIENT_ID` (Google OAuth — change here if Wesley rotates the client), `ANALYTICS_SHEET_ID`, plus two model names — `OPENAI_MODEL = 'gpt-5.6-terra'` for heavy paths (Bulk AI Edit, Fix All, regenerate, scoring) and `OPENAI_FAST_MODEL = 'gpt-5.6-terra'` for per-suggestion feedback and single-suggestion regen. Both use the balanced intelligence-and-cost tier; grep for both when tracing model usage.
 
 ### Authentication & backend calls
 - Frontend obtains a Google OAuth access token via GIS (`accounts.google.com/gsi/client`), stored in `DRIVE_TOKEN`. The same token is sent to GAS as `googleAccessToken` so the backend can verify the user's email against `DLA_ALLOWED_EMAILS` in `gas_backend/Code.js`. To add a user, edit that array and `clasp push`.
@@ -99,7 +99,7 @@ Single `doPost(e)` router dispatched by `body.action` (lowercased). Current acti
 
 `extraTechIdeas` is build-time only and exists for the sandbox demo (see below): given a unit plus the tools it already uses, it returns N ideas each using a *different* approved tool that suits the year level. It never writes to `data.json` and deliberately sits **outside** `TECH_SUGGEST_DAILY_CAP`, so regenerating the demo cannot lock teachers out of the live picker.
 
-`doGet(e)` exposes one **public** action — `?action=suggestTech&ca=...&yl=...&th=...&tool=...&cb=<jsonpCallback>&regen=0|1` — used by `index.html`'s "Have a tool in mind?" picker. JSONP only (no Google auth, since teachers aren't signed in). Validates `tool` against the synced `DLA_TOOL_APPROVED` list, caches results per `(ca|yl|th|tool)` in Script Properties as `tech_sugg_v1_<sha1>`, and refuses calls past `TECH_SUGGEST_DAILY_CAP` (counter resets daily). Uses `OPENAI_FAST_MODEL` (currently `gpt-5.6-sol`) and returns `{description, valueAdd, steps[], fit, fitNote, generatedAt, cached}`.
+`doGet(e)` exposes one **public** action — `?action=suggestTech&ca=...&yl=...&th=...&tool=...&cb=<jsonpCallback>&regen=0|1` — used by `index.html`'s "Have a tool in mind?" picker. JSONP only (no Google auth, since teachers aren't signed in). Validates `tool` against the synced `DLA_TOOL_APPROVED` list, caches results per `(ca|yl|th|tool)` in Script Properties as `tech_sugg_v1_<sha1>`, and refuses calls past `TECH_SUGGEST_DAILY_CAP` (counter resets daily). Uses `OPENAI_FAST_MODEL` (currently `gpt-5.6-terra`) and returns `{description, valueAdd, steps[], fit, fitNote, generatedAt, cached}`.
 
 Required Script Properties: `OPENAI_API_KEY`, `GITHUB_TOKEN`. Optional: `DLA_SHARED_SECRET`, plus tool-inventory keys written by `syncToolInventory_`.
 
