@@ -6073,28 +6073,28 @@
     "lo": "An inquiry into the interdependence of human and natural worlds through rights, responsibilities and dignity of all\nAn inquiry into the interdependence of human and natural worlds through pathways to just, peaceful and reimaged futures\nAn inquiry into the interdependence of human and natural worlds through nature, complexity, coexistence and wisdom",
     "s": [
       {
-        "t": "Seek by iNaturalist",
-        "d": "Students photograph and identify plants, insects and fungi around the St Kilda campus. They look for clues that each living thing depends on soil, water, shelter or another species. Pairs revisit one small area after rain or gardening and compare which living things are now present. They choose one identification to show another class and explain what could happen if its habitat disappeared. Each pair ends with a collection of identified local species and a spoken explanation. Seek's camera-based identification gives students a starting point that they can check against what they observe."
+        "t": "Beebots",
+        "d": "Students program Bee-Bots to travel across a floor map of a shared beach, choosing refill, reuse and rubbish-collection squares instead of squares that harm birds. Each route helps children see that a small choice changes what people and animals can use in the same place. Pairs swap route cards and debug each other's instructions when a Bee-Bot lands on a harmful square. They end with a tested route card and a working Bee-Bot pathway that shows one caring choice. Bee-Bot's directional buttons keep the focus on putting clear steps in order."
       },
       {
-        "t": "Microsoft Forms",
-        "d": "Students build a short survey about how families use water, electricity, transport and reusable items. The responses show how everyday wants and needs can affect resources and fossil-fuel use. Each pair chooses one question, predicts the result and asks another Year 2 class to respond. Students compare their prediction with the automatic response chart and discuss one realistic change. They end with a class survey and charts based on real community choices. Microsoft Forms collects every response in one place and creates automatic charts."
+        "t": "Seek by iNaturalist",
+        "d": "Students photograph plants, insects and birds around the school with Seek, then check each suggested identification by looking closely at the living thing and its habitat. Seeing which species use a busy patch of garden helps them talk about why shared places need care. Each pair chooses one practical change, such as leaving leaf litter, protecting flowering plants or keeping paths clear of habitat. They end with a paper observation card showing the species, where it was found and the care action they recommend. Seek gives students a suggested identification from the image they take."
+      },
+      {
+        "t": "Puppet Pals",
+        "d": "Students plan and record a short Puppet Pals scene in which a child, an animal and a park worker disagree about litter, water or damaged habitat. The conversation helps them practise rights and responsibilities when humans and natural worlds need the same resources. Another pair watches each scene and asks whether the ending is fair to every character, then the creators revise one line if needed. They end with a recorded puppet show that explains a peaceful, workable choice. Puppet Pals lets students use characters, backdrops and recorded voices to build the scene."
       },
       {
         "t": "Brushes Redux",
-        "d": "Students paint two layered views of the same local habitat, one healthy and one changed by heavy resource use. They show how removing trees, using land or creating pollution can affect living things that depend on the place. Students swap paintings and ask a partner to add one practical repair, such as shade, habitat or cleaner water. Each student decides which repair would help the greatest number of living things and explains the choice. They end with a pair of detailed digital paintings that show cause, impact and repair. Layers let students change one part of the environment without repainting the whole scene."
-      },
-      {
-        "t": "Beebots",
-        "d": "Students program a Bee-Bot across a floor mat showing homes, water, food, trees, fuel and waste. They must deliver three human needs while avoiding routes that use more finite resources than necessary. Groups exchange mats, test each other's route and find a shorter or more sustainable sequence. Students then debug their commands and explain which resource choice they changed. They end with a tested command sequence and a floor map showing how choices connect people and environments. Bee-Bot's directional buttons make every planned step visible and easy to revise."
+        "d": "Students paint two versions of the same local place in Brushes Redux, one where resources are wasted and one where people care for water, plants and animals. Painting the change side by side makes cause and effect visible without needing a long written explanation. Students place their iPads together in a gallery walk and explain which details show a fairer shared environment. They end with a layered digital painting that compares the consequences of two choices. Brushes Redux lets students build an original painting in layers."
       },
       {
         "t": "Seesaw",
-        "d": "Students record a short explanation of one resource they use and what the environment provides to make it possible. They include a drawing or photo and explain whether the resource can be replaced quickly or may run out. Families respond with one way they already save that resource at home, giving students ideas beyond the classroom. Students choose one family suggestion to try, then add a follow-up voice reflection about what changed. They end with a multimodal journal entry containing evidence, a practical action and reflection. Seesaw keeps photos, drawings, voice and responses together in one portfolio post."
+        "d": "Students photograph one shared classroom resource they use during the week, such as paper, water, lights or art materials, and record a short voice reflection in Seesaw. Their reflections turn everyday routines into evidence about how choices shape a place everyone uses. Students listen to a partner's entry and add one kind, practical suggestion for reducing waste or caring for the resource. They end with a Seesaw journal entry containing a photo, spoken explanation and one next-step promise. Seesaw captures photos, voice and student reflections in one journal."
       },
       {
-        "t": "Trash-to-Treasure Transport Trail",
-        "d": "Students work in teams to design and build imaginative vehicles from recycled materials—think bottle-cap wheels, cardboard chassis, and fabric flags—tasked with carrying 'precious planet resources' (represented by small objects) along a custom obstacle trail. Using simple programmable Sphero Indi cars, students attach their creations and code routes, navigating through zones themed around sustainable choices, resource sharing, and environmental challenges. This hands-on project sparks creativity and problem-solving as students prototype, decorate, and iterate on their designs, reflecting on how technology and innovation can help us move resources responsibly and care for the planet together."
+        "t": "Sphero Indi",
+        "d": "Students empathise with people and animals using the same park, then define a problem: how can a visitor reach refill and sorting points without crossing a nesting area? They ideate routes on paper and build a cardboard park from recycled boxes, paper tubes and natural loose parts. Teams prototype their route with Sphero Indi colour tiles, test whether Indi reaches the right place, then move tiles and rebuild obstacles when the route fails. They demonstrate a working park model and explain how their route protects a shared space."
       }
     ],
     "audited": true,
@@ -6119,7 +6119,8 @@
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T06:38:56.217Z",
     "suggestionAuditVersion": "a1-2026-06-07",
-    "uoiEditApprovedAt": "2026-08-31T01:46:55.205Z"
+    "uoiEditApprovedAt": "2026-08-31T01:46:55.205Z",
+    "inspiringRegenAt": "2026-08-31T01:47:47.738Z"
   },
   {
     "ca": "St Kilda",
