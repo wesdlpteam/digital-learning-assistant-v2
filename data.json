@@ -2155,7 +2155,7 @@
       },
       {
         "t": "Time Capsule Storyworlds: Augmented Diorama Adventures",
-        "d": "Students design and build immersive dioramas representing a location before, during, and after colonisation, using cardboard, fabric, clay, natural and recycled materials. Each diorama includes hidden QR codes or AR markers created with CoSpaces Edu or AR Makr, which, when scanned with iPads, overlay student-made digital stories, Indigenous perspectives, or imagined future scenarios onto the physical scene. The project fuses hands-on model-making with interactive digital storytelling, encouraging students to think critically about change over time and diverse viewpoints. This tactile-tech hybrid brings history to life and empowers students to reflect on place, memory, and the ongoing impact of colonisation."
+        "d": "Students design and build immersive dioramas representing a location before, during, and after colonisation, using cardboard, fabric, clay, natural and recycled materials. Each diorama includes hidden QR codes or AR markers created with Delightex Edu or AR Makr, which, when scanned with iPads, overlay student-made digital stories, Indigenous perspectives, or imagined future scenarios onto the physical scene. The project fuses hands-on model-making with interactive digital storytelling, encouraging students to think critically about change over time and diverse viewpoints. This tactile-tech hybrid brings history to life and empowers students to reflect on place, memory, and the ongoing impact of colonisation."
       }
     ],
     "audited": true,
@@ -3097,7 +3097,7 @@
       },
       {
         "t": "Super Slider Racetrack Challenge",
-        "d": "Students design and build their own mini racetrack ramps using cardboard, tubes, popsticks, and recycled materials, experimenting with angles, heights, and different surface textures. They craft unique race vehicles from bottle caps, straws, and clay, then use Sphero Indi robots to test and compare how both their handmade cars and the robot move down the tracks. iPads are used to record slow-motion videos of the races, helping students observe the effects of push, pull, and friction. Through playful competition and iteration, students apply the Design Cycle to improve their tracks and vehicles, discovering how forces and materials affect movement in the real world."
+        "d": "Students design and build their own mini racetrack ramps using cardboard, tubes, popsticks, and recycled materials, experimenting with angles, heights, and different surface textures. They craft unique race vehicles from bottle caps, straws, and clay, then use Sphero Indi robots to test and compare how both their handmade cars and the robot move down the tracks. IPads are used to record slow-motion videos of the races, helping students observe the effects of push, pull, and friction. Through playful competition and iteration, students apply the Design Cycle to improve their tracks and vehicles, discovering how forces and materials affect movement in the real world."
       }
     ],
     "audited": false,
@@ -3800,16 +3800,17 @@
         "d": "Students make a six-page digital book about one everyday invention, such as a lunchbox, bicycle light or hearing aid. They explain the need that came first, the problem the inventor tried to solve, and whether the invention also became something people wanted. Each student records a short narration for one page so a younger reader can hear the explanation. Students swap books with a partner and check whether the need and want are easy to tell apart. Their finished book has labelled pages, drawings or images, text and recorded voice. Book Creator lets students combine text, images, audio and video in one book."
       },
       {
-        "t": "Delightex",
-        "d": "Students build a simple 3D scene showing a message travelling from one digital device to another through a router. They work out that networks move information between connected devices rather than making messages appear by magic. Pairs trade scenes and follow each other's moving message to check where it starts, where it goes and what happens if one part is missing. Students add labels for the device, router and destination, then explain the route aloud. Their finished 3D scene shows a moving message and the parts of a small network. Delightex lets students code how objects move and respond in a virtual scene."
+        "t": "Merge Cubes",
+        "d": "Students rotate digital device models on Merge Cubes and sort each one by the need it meets, such as communicating, finding information or keeping people safe. They see that inventions begin when someone wants to solve a real problem. Pairs choose a phone, router and laptop, then explain how a message can travel between them on a network. Another pair listens and checks whether the explanation includes the device, the connection and safe behaviour online. Students make a labelled paper pathway showing their chosen message travelling through the devices. Merge Cubes lets children turn and inspect 3D models from every angle while they talk through how the network works."
       },
       {
         "t": "Teachable Machine",
         "d": "Students train a simple image model to sort classroom rubbish into recycling and rubbish using teacher-provided examples. They see how a digital system can help meet the need to reduce waste, while also learning that a computer can make mistakes when its training examples are limited. Students test the model with new objects and keep a tally of wrong guesses before deciding which images should be added. Camera-driven sorting arms in recycling facilities use a similar kind of image recognition to sort materials. Students finish with a tested model and a short list of examples that confused it. Teachable Machine lets students train and test a basic image-recognition model."
       },
       {
-        "t": "Kahoot",
-        "d": "Students write a short Kahoot quiz that teaches safe choices when using devices and networks. They include questions about protecting personal information, asking before sharing someone else's work, and checking whether a message is trustworthy. Groups exchange quizzes and revise any question that is confusing or has more than one possible answer. Students play another group's quiz and explain why the safest answer is best. Their finished quiz gives the class a quick check of responsible digital citizenship. Kahoot lets students make and run game-style question-and-answer quizzes."
+        "t": "Minecraft Education",
+        "d": "Students use the verified Minecraft Education lesson \"Revamp Melbourne\" (https://education.minecraft.net/en-us/lessons/revamp-melbourne). Lesson focus: Create a solution that meets the future needs of Melbourne. Effectively contribute to a team and reflect on its progress. Here they apply it to the unit's central idea and lines of inquiry and turn 2–3 screenshots from the world into a short evidence note connecting the Minecraft task back to the unit.",
+        "url": "Https://education.minecraft.net/en-us/lessons/revamp-melbourne"
       },
       {
         "t": "Micro:bit",
