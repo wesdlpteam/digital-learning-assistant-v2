@@ -3792,28 +3792,28 @@
     "lo": "How needs and wants lead to new inventions\nHow digital devices and networks operate\nBeing a responsible digital citizen",
     "s": [
       {
-        "t": "Micro:bit",
-        "d": "Students program two Micro:bits to send and receive simple messages about safe online choices. One student presses button A or B, the message travels by radio, and the receiving LED grid shows the agreed symbol. This makes the parts of a digital system clear, input, code, connection and output all have a job. Pairs swap devices with classmates and work out the symbols without being told the code. They debug any message that is unclear, delayed or sent to the wrong receiver. The finished pair of devices is a working communication system students can demonstrate and explain."
-      },
-      {
-        "t": "Teachable Machine",
-        "d": "Students train an image model to sort teacher-prepared cards into 'safe to share' and 'keep private' groups. They choose examples such as a favourite colour, a full name, a password, a pet photo or a home address. Classmates test the model with unfamiliar cards and record where its choices are wrong or uncertain. This works like image-recognition systems that flag visual content for human review on online services. Students then improve the training examples so the model makes more reliable choices. The finished model gives the class a powerful reason to discuss why people, not computers, remain responsible for sharing decisions."
-      },
-      {
         "t": "Microsoft Forms",
-        "d": "Students build a survey about how classmates consume, create and communicate with technology during a typical week. They write clear questions that avoid collecting names, passwords, locations or other private details. Another Year 3 class completes the survey, giving students a real audience and a larger set of anonymous responses. Students read the automatic charts and look for patterns in screen time, creative use and safe choices. They revise any question that produced confusing or unhelpful information. The finished survey and charts provide real evidence for a class discussion about balanced and responsible technology use."
-      },
-      {
-        "t": "Delightex",
-        "d": "Students build a 3D model showing how a message moves through a digital system from sender to receiver. They add objects for the input, processing steps, storage, connection and output, then code simple movements or responses. This helps students see that a digital system is organised from several connected parts rather than one mysterious device. Partners test each other's scenes and identify a missing step, unsafe action or broken connection. Students revise the scene so the message only reaches its destination after a responsible choice is made. The finished interactive model can be explored as a clear visual explanation of how information is organised and shared."
+        "d": "Students build a short survey that asks classmates which classroom items they need, which they want, and what problem each item solves. The responses help them see that inventions often begin when many people have the same problem. They choose one surprising result from the auto-charts and ask another Year 3 class whether they agree. Students use the answers to write a clear claim about a need that could lead to a new invention. Their finished survey and response charts give the class real evidence to discuss. Microsoft Forms collects responses and makes simple charts automatically."
       },
       {
         "t": "Book Creator",
-        "d": "Students make a digital citizenship handbook containing the class Essential Agreement, safe-sharing examples and responses to common online problems. They combine short text, original illustrations and recorded explanations so younger students can understand each rule. A Year 2 class listens to selected pages and identifies advice that is clear or still confusing. Year 3 students use that feedback to replace vague warnings with practical actions such as stopping, saving evidence and telling a trusted adult. Each student adds a final page showing one change they will make to their own digital habits. The finished narrated book is a useful guide that can remain in the class library."
+        "d": "Students make a six-page digital book about one everyday invention, such as a lunchbox, bicycle light or hearing aid. They explain the need that came first, the problem the inventor tried to solve, and whether the invention also became something people wanted. Each student records a short narration for one page so a younger reader can hear the explanation. Students swap books with a partner and check whether the need and want are easy to tell apart. Their finished book has labelled pages, drawings or images, text and recorded voice. Book Creator lets students combine text, images, audio and video in one book."
       },
       {
-        "t": "Digital City Command Central",
-        "d": "Students work in teams to design and build a bustling model city using recycled boxes, cardboard, craft sticks, and assorted makerspace materials. Each group creates 'digital system stations' (like a library, bank, or school) that connect via roads and coloured string 'data cables.' Using simple programmable Sphero Indi cars or Bee-Bots, students code safe delivery routes for messages or 'data packets' between stations, physically moving tokens to represent information flow. Along the way, they embed safety checkpoints and decorate with signs highlighting digital citizenship rules, making abstract concepts like information organisation and online safety visible, tangible, and fun."
+        "t": "Delightex",
+        "d": "Students build a simple 3D scene showing a message travelling from one digital device to another through a router. They work out that networks move information between connected devices rather than making messages appear by magic. Pairs trade scenes and follow each other's moving message to check where it starts, where it goes and what happens if one part is missing. Students add labels for the device, router and destination, then explain the route aloud. Their finished 3D scene shows a moving message and the parts of a small network. Delightex lets students code how objects move and respond in a virtual scene."
+      },
+      {
+        "t": "Teachable Machine",
+        "d": "Students train a simple image model to sort classroom rubbish into recycling and rubbish using teacher-provided examples. They see how a digital system can help meet the need to reduce waste, while also learning that a computer can make mistakes when its training examples are limited. Students test the model with new objects and keep a tally of wrong guesses before deciding which images should be added. Camera-driven sorting arms in recycling facilities use a similar kind of image recognition to sort materials. Students finish with a tested model and a short list of examples that confused it. Teachable Machine lets students train and test a basic image-recognition model."
+      },
+      {
+        "t": "Kahoot",
+        "d": "Students write a short Kahoot quiz that teaches safe choices when using devices and networks. They include questions about protecting personal information, asking before sharing someone else's work, and checking whether a message is trustworthy. Groups exchange quizzes and revise any question that is confusing or has more than one possible answer. Students play another group's quiz and explain why the safest answer is best. Their finished quiz gives the class a quick check of responsible digital citizenship. Kahoot lets students make and run game-style question-and-answer quizzes."
+      },
+      {
+        "t": "Micro:bit",
+        "d": "Students begin by asking where a quick message could help at school, then sketch a physical alert system for a classroom need such as requesting help from a reading corner. Using cardboard, recycled materials, copper foil switches, battery packs and two Micro:bits, they build a sender and receiver. They program one Micro:bit to send a radio message when its foil switch is pressed and the other to show an icon on its LED grid. Teams test the alert from different parts of the room, fix loose connections or unclear code, and improve the casing after each test. Each team demonstrates its working model and explains how messages can move between connected devices."
       }
     ],
     "audited": true,
@@ -3849,7 +3849,8 @@
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T05:34:02.311Z",
     "suggestionAuditVersion": "a1-2026-06-07",
-    "uoiEditApprovedAt": "2026-09-06T22:59:38.835Z"
+    "uoiEditApprovedAt": "2026-09-06T22:59:38.835Z",
+    "inspiringRegenAt": "2026-09-06T23:01:06.448Z"
   },
   {
     "ca": "Glen Waverley",
