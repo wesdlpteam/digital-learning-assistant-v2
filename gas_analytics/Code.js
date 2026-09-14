@@ -166,8 +166,8 @@ function doGet(e) {
 function handleUsed_(ss, body) {
   const sheet = ensureSheet_(ss, SHEETS.USED);
   const ts = new Date();
-  const campus = clean_(body.campus);
-  const year   = clean_(body.year);
+  const campus = cleanCampus_(body.campus);
+  const year   = cleanYear_(body.year);
   const theme  = clean_(body.theme);
   const tool   = clean_(body.tool);
   const phase  = clean_(body.phase);
@@ -190,8 +190,8 @@ function handleUsed_(ss, body) {
 // belongs to exactly one team's view, so dropping the team check is safe.
 function handleUnused_(ss, body) {
   const sheet = ensureSheet_(ss, SHEETS.USED);
-  const campus = clean_(body.campus);
-  const year   = clean_(body.year);
+  const campus = cleanCampus_(body.campus);
+  const year   = cleanYear_(body.year);
   const theme  = clean_(body.theme);
   const tool   = clean_(body.tool);
   const phase  = clean_(body.phase);
@@ -209,8 +209,8 @@ function handleUnused_(ss, body) {
   const tiers = [
     // 1. Exact: every field including team.
     function(r) {
-      return clean_(r[2]) === campus &&
-             clean_(r[3]) === year &&
+      return cleanCampus_(r[2]) === campus &&
+             cleanYear_(r[3]) === year &&
              clean_(r[4]) === theme &&
              clean_(r[5]) === tool &&
              clean_(r[6]) === phase &&
@@ -218,23 +218,23 @@ function handleUnused_(ss, body) {
     },
     // 2. Drop team check (old rows may have a different/empty team field).
     function(r) {
-      return clean_(r[2]) === campus &&
-             clean_(r[3]) === year &&
+      return cleanCampus_(r[2]) === campus &&
+             cleanYear_(r[3]) === year &&
              clean_(r[4]) === theme &&
              clean_(r[5]) === tool &&
              clean_(r[6]) === phase;
     },
     // 3. Drop phase check too (phase labels have changed historically).
     function(r) {
-      return clean_(r[2]) === campus &&
-             clean_(r[3]) === year &&
+      return cleanCampus_(r[2]) === campus &&
+             cleanYear_(r[3]) === year &&
              clean_(r[4]) === theme &&
              clean_(r[5]) === tool;
     },
     // 4. Last resort — drop tool too. Removes any row for that team+theme.
     function(r) {
-      return clean_(r[2]) === campus &&
-             clean_(r[3]) === year &&
+      return cleanCampus_(r[2]) === campus &&
+             cleanYear_(r[3]) === year &&
              clean_(r[4]) === theme;
     }
   ];
@@ -263,8 +263,8 @@ function handleUnused_(ss, body) {
 function handleIntent_(ss, body) {
   const sheet = ensureSheet_(ss, SHEETS.INTENT);
   const ts = new Date();
-  const campus = clean_(body.campus);
-  const year   = clean_(body.year);
+  const campus = cleanCampus_(body.campus);
+  const year   = cleanYear_(body.year);
   const theme  = clean_(body.theme);
   const tool   = clean_(body.tool);
   const phase  = clean_(body.phase);
@@ -281,8 +281,8 @@ function handleIntent_(ss, body) {
 // row even when stored team/phase strings have drifted from the request.
 function handleUnintent_(ss, body) {
   const sheet = ensureSheet_(ss, SHEETS.INTENT);
-  const campus = clean_(body.campus);
-  const year   = clean_(body.year);
+  const campus = cleanCampus_(body.campus);
+  const year   = cleanYear_(body.year);
   const theme  = clean_(body.theme);
   const tool   = clean_(body.tool);
   const phase  = clean_(body.phase);
@@ -296,19 +296,19 @@ function handleUnintent_(ss, body) {
   const data = sheet.getRange(2, 1, lastRow - 1, 7).getValues();
   const tiers = [
     function(r) {
-      return clean_(r[2]) === campus && clean_(r[3]) === year && clean_(r[4]) === theme &&
+      return cleanCampus_(r[2]) === campus && cleanYear_(r[3]) === year && clean_(r[4]) === theme &&
              clean_(r[5]) === tool && clean_(r[6]) === phase && (!team || clean_(r[1]) === team);
     },
     function(r) {
-      return clean_(r[2]) === campus && clean_(r[3]) === year && clean_(r[4]) === theme &&
+      return cleanCampus_(r[2]) === campus && cleanYear_(r[3]) === year && clean_(r[4]) === theme &&
              clean_(r[5]) === tool && clean_(r[6]) === phase;
     },
     function(r) {
-      return clean_(r[2]) === campus && clean_(r[3]) === year && clean_(r[4]) === theme &&
+      return cleanCampus_(r[2]) === campus && cleanYear_(r[3]) === year && clean_(r[4]) === theme &&
              clean_(r[5]) === tool;
     },
     function(r) {
-      return clean_(r[2]) === campus && clean_(r[3]) === year && clean_(r[4]) === theme;
+      return cleanCampus_(r[2]) === campus && cleanYear_(r[3]) === year && clean_(r[4]) === theme;
     }
   ];
   for (let t = 0; t < tiers.length; t++) {
@@ -381,6 +381,43 @@ function handleFeedback_(ss, body) {
   sheet.appendRow([ts, campus, year, theme, tool, phase, feedback]);
 }
 
+// ─── Campus / year normalisation ──────────────────────────────────
+
+// The Used/Intent sheets hold more than one spelling of the same campus: rows
+// written before the page switched its label say 'St Kilda Rd', later ones say
+// 'St Kilda Road', and some tooling sends the 'SKR' code. Keying a team on the
+// raw cell split one team into several, so its score jumped about depending on
+// which row was read last. Fold every spelling to one name on the way in and on
+// the way out. Mirrors normaliseCampusName() in index.html.
+function normaliseCampus_(campus) {
+  const c = String(campus || '').trim();
+  const k = c.toLowerCase().replace(/\./g, '').replace(/\s+/g, ' ');
+  if (k === 'el' || k.indexOf('elsternwick') > -1) return 'Elsternwick';
+  if (k === 'gw' || k.indexOf('glen waverley') > -1) return 'Glen Waverley';
+  if (k === 'skr' || k === 'stk' || k.indexOf('st kilda') > -1) return 'St Kilda Road';
+  return c;
+}
+
+// Mirrors normaliseYearName() in index.html. Unlike the page version an
+// unrecognised value passes straight through rather than becoming 'Unknown' —
+// the collector must never merge two teams it cannot identify.
+function normaliseYear_(year) {
+  let y = String(year || '').trim();
+  y = y.replace(/^(Elsternwick|Glen Waverley|St Kilda(?: Road| Rd)?|EL|GW|SKR|STK)\s*/i, '')
+       .replace(/\s*Team$/i, '').trim();
+  if (/3\s*year\s*old\s*kinder|3yo\s*kinder/i.test(y)) return '3 Year Old Kinder';
+  if (/4\s*year\s*old\s*kinder|4yo\s*kinder/i.test(y)) return '4 Year Old Kinder';
+  if (/prep|foundation/i.test(y)) return 'Prep';
+  const m = y.match(/year\s*([1-6])/i) || y.match(/\b([1-6])\b/);
+  if (m) return 'Year ' + m[1];
+  return y;
+}
+
+// clean_ first (it defangs spreadsheet formulas and caps length), then fold to
+// the canonical name.
+function cleanCampus_(v) { return normaliseCampus_(clean_(v)); }
+function cleanYear_(v)   { return normaliseYear_(clean_(v)); }
+
 // ─── Leaderboard ───────────────────────────────────────────────────────
 
 // Aggregates Used + Intent rows into per-team totals. Source of truth for both
@@ -408,8 +445,8 @@ function aggregateLeaderboard_(ss) {
   // Used rows — each worth POINTS_PER_USED, and contribute to streak bonus.
   for (let i = 1; i < usedData.length; i++) {
     const r = usedData[i];
-    const campus = clean_(r[2]);
-    const year   = clean_(r[3]);
+    const campus = cleanCampus_(r[2]);
+    const year   = cleanYear_(r[3]);
     const theme  = clean_(r[4]);
     const tool   = clean_(r[5]);
     if (!campus || !year) continue;
@@ -435,8 +472,8 @@ function aggregateLeaderboard_(ss) {
   // Intent rows — each worth POINTS_PER_INTENT, stack on top of any Used points.
   for (let i = 1; i < intentData.length; i++) {
     const r = intentData[i];
-    const campus = clean_(r[2]);
-    const year   = clean_(r[3]);
+    const campus = cleanCampus_(r[2]);
+    const year   = cleanYear_(r[3]);
     if (!campus || !year) continue;
     const team = getOrInitTeam(campus, year);
     team.points += POINTS_PER_INTENT;
@@ -499,8 +536,8 @@ function getKeysFromSheet_(ss, sheetName) {
   const out = [];
   for (let i = 1; i < data.length; i++) {
     const r = data[i];
-    const campus = clean_(r[2]);
-    const year   = clean_(r[3]);
+    const campus = cleanCampus_(r[2]);
+    const year   = cleanYear_(r[3]);
     const theme  = clean_(r[4]);
     const tool   = clean_(r[5]);
     const phase  = clean_(r[6]);

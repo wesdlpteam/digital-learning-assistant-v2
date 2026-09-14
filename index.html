@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Wesley Digital Learning Assistant</title>
-<script>window.APP_VERSION='2026-08-13-1';</script>  <!-- bump on every deploy so open tabs auto-refresh -->
+<script>window.APP_VERSION='2026-09-14-1';</script>  <!-- bump on every deploy so open tabs auto-refresh -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23111111'/%3E%3Cpolygon points='19,3 10,17 15,17 13,29 22,15 17,15' fill='%23CDEB45'/%3E%3Ccircle cx='6' cy='6' r='2' fill='%23CDEB45' opacity='0.5'/%3E%3Ccircle cx='26' cy='26' r='2' fill='%23CDEB45' opacity='0.5'/%3E%3Ccircle cx='26' cy='6' r='1.5' fill='%237ED957' opacity='0.6'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -2486,23 +2486,29 @@ function normaliseLeaderboard(data){
     };
   }).filter(function(t){return t.campus&&t.year&&t.year!=='Unknown';});
 }
-function mergeLeaderboard(existing,incoming){
+// One team can arrive as several rows when the sheet holds more than one
+// spelling of its campus ('St Kilda Rd' alongside 'St Kilda Road'). Those rows
+// tidy up to the same key here, so they are added together — keeping only the
+// last one made a team's score drop to whatever its newest row was worth.
+function foldLeaderboardRows(rows){
   var map={};
-  function put(t){
+  (rows||[]).forEach(function(t){
     if(!t)return;
     var campus=normaliseCampusName(t.campus);
     var year=normaliseYearName(t.year);
     var key=campus+'|'+year;
-    var points=Number(t.points||0)||0;
-    var streaks=Number(t.streaks||0)||0;
-    if(!map[key])map[key]={campus:campus,year:year,points:points,streaks:streaks};
-    else{
-      map[key].points=points;
-      map[key].streaks=streaks;
-    }
-  }
-  (existing||[]).forEach(function(t){put(t);});
-  (incoming||[]).forEach(function(t){put(t);});
+    if(!map[key])map[key]={campus:campus,year:year,points:0,streaks:0};
+    map[key].points+=Number(t.points||0)||0;
+    map[key].streaks+=Number(t.streaks||0)||0;
+  });
+  return map;
+}
+function mergeLeaderboard(existing,incoming){
+  var map=foldLeaderboardRows(existing);
+  var fresh=foldLeaderboardRows(incoming);
+  // A fresh payload is the whole truth for the teams it names, so it replaces
+  // those totals outright rather than stacking on the cached ones.
+  Object.keys(fresh).forEach(function(k){map[k]=fresh[k];});
   return Object.keys(map).map(function(k){return map[k];});
 }
 var _lbJsonpSeq=0;
