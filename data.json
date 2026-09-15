@@ -4865,29 +4865,28 @@
     "lo": "The transfer and transformation of energy in electrical circuits (physical science)\nReversible and irreversible changes (chemical science)\nThe movement of the Earth and other planets relative to the sun\nHow scientists conduct experiments using inquiry methods",
     "s": [
       {
-        "t": "Micro:bit",
-        "d": "Students wire foil switches to a Micro:bit and program its LED grid to show when a test circuit is open or closed. They change one variable at a time, such as the number of connected components, and record whether their prediction holds. Each group swaps its device with another group, which must work out the tested variable from the program's response. Students then debug any test that gives inconsistent results and repeat it. They end with a working circuit-testing device and a short set of evidence-based conclusions. The pins, crocodile clips and programmable LED grid make the circuit's input and output easy to see."
-      },
-      {
         "t": "Minecraft Education",
-        "d": "Students build a Minecraft experiment that tests how changing one condition affects a clear result, while keeping all other conditions the same. This makes the scientific method visible and shows why repeated trials can confirm or contest an idea. Groups exchange worlds and run each other's experiments without being told the expected outcome. They then revise any setup that does not produce fair or repeatable evidence. Students end with a working experiment, recorded trial results and a conclusion displayed inside the world. Minecraft's blocks make variables easy to isolate, rebuild and test. Verified lesson link: https://education.minecraft.net/en-us/lessons/the-scientific-method",
-        "url": "Https://education.minecraft.net/en-us/lessons/the-scientific-method"
+        "d": "Students build two redstone test stations, then change one part of one circuit while keeping the other station the same. They see why scientists need a fair test before they can confirm or contest an explanation about electrical energy. Pairs visit another group's stations and try to find an uncontrolled variable or a claim that needs more evidence. Students add signs that name the question, variable, prediction, observation and conclusion. The finished Minecraft world is a walk-through set of controlled experiments that classmates can test. Minecraft Education lets students build and alter a model world quickly enough to repeat an experiment."
       },
       {
-        "t": "Microsoft Excel",
-        "d": "Students enter results from repeated circuit or energy-transfer experiments into an Excel table. They calculate averages and create graphs to check whether the evidence supports their first prediction. Groups receive the same data with one unusual result included and decide whether it is an error, an exception or a reason to repeat the test. They compare graph choices and select the one that communicates the pattern most honestly. Students end with a labelled graph and a written claim supported by specific data. Excel's formulas and charts allow results to be checked and viewed in several ways."
-      },
-      {
-        "t": "Teachable Machine",
-        "d": "Students photograph examples of recyclable and non-recyclable packaging in Teachable Machine and train an image model to sort them. They test whether changing the number, angle and background of the training images improves the model's reliability. Another group challenges the model with difficult items, such as crushed boxes or partly hidden containers, before suggesting better training data. This mirrors camera-driven sorting systems that guide robotic arms in recycling facilities. Students end with a tested classification model and a record of examples it still sorts incorrectly. Teachable Machine shows confidence levels, helping students decide whether the evidence is strong enough to trust."
+        "t": "Micro:bit",
+        "d": "Students wire crocodile clips and foil switches to a Micro:bit, then program its LED grid to show when a low-voltage circuit is complete. They trace how electrical energy moves through a closed path and changes into light on the LED display. Groups swap their testers and write a challenge that makes another group debug a broken connection. Students end with a working circuit tester and a short set of labelled test results. They repeat trials with different conductors and record which setups complete the circuit. The Micro:bit pins, LED grid and simple code make each change easy to see straight away."
       },
       {
         "t": "Explain Everything",
-        "d": "Students draw a Sun, planets and orbital paths in Explain Everything, then record themselves explaining how distance and movement shape the planetary system. They use arrows, scale notes and moving objects to distinguish a useful scientific model from the real system it represents. Partners pause the recording at one questionable claim and add a challenge that must be answered with clearer reasoning. Students revise the explanation when the challenge exposes missing evidence or an inaccurate assumption. They end with a narrated screencast that shows both the model and how their explanation changed. Explain Everything records the screen and voice while students move and annotate their diagrams."
+        "d": "Students draw particle diagrams for melting, freezing, dissolving, burning and rusting while recording a spoken explanation in Explain Everything. They work out which changes can be reversed and which create a new substance. Each pair watches an unlabeled class recording and pauses it to predict whether the change is reversible before hearing the explanation. Students revise their diagrams when the evidence does not match their first idea. The finished screencast shows changing particles, labels and each student's spoken reasoning. Explain Everything records the screen and voice while students draw and annotate."
       },
       {
-        "t": "Smart Swap Stop: The Sustainable Vending Machine Challenge",
-        "d": "Students team up to design and build a working prototype of an eco-friendly vending machine using recycled cardboard, plastic bottles, motors, LEDs, and micro:bit controllers. Each group invents a machine that 'dispenses' sustainable choices—like reusable or upcycled items—triggered by coded micro:bit sensors or buttons. Students must prototype mechanical components (doors, levers, conveyor belts) and program digital feedback (lights, messages) to simulate real-world consumer decisions and environmental impacts. This project brings together engineering, coding, and creative problem-solving, letting students explore how technology can influence responsible consumerism and promote a sustainable future."
+        "t": "Sphero BOLT",
+        "d": "Students code Sphero BOLT to travel a planned oval route around a floor marker that represents the sun. They use the moving model to explain that Earth travels around the sun while other planets follow different paths and take different times. Groups exchange route cards and test whether another group's code makes a clear and repeatable orbit. Students adjust speed, turns and distance after each trial. The final demonstration includes a running BOLT orbit and a labelled route card that explains the model's limits. BOLT's programmable movement and 8x8 light grid let students show a planet's position as it travels."
+      },
+      {
+        "t": "Microsoft Excel",
+        "d": "Students enter repeated results from their circuit and chemical-change experiments into Microsoft Excel. They use tables and graphs to decide whether their evidence supports a claim, or whether they need more trials. Groups trade graphs without conclusions and write the claim they think the data supports. Students then compare that claim with the experimenter's explanation and discuss any mismatch. The finished work is a graph set with a written conclusion, anomalies and a next test to run. Excel makes patterns and unusual results visible across repeated trials."
+      },
+      {
+        "t": "Lego Spike Prime",
+        "d": "Students empathise by asking younger students which part of the Earth and sun movement is hardest to picture, then define one explanation their model must make clear. They ideate with cardboard circles, string, paper labels and Lego parts before building a motorised model with Lego Spike Prime. Teams code the motor to move an Earth model around a sun model, then test whether a viewer can explain rotation and revolution from watching it. They change the arm length, speed, labels or program after each test and keep a record of what helped. Each team demonstrates a working physical model and explains the design choices that made the movement easier to understand."
       }
     ],
     "audited": true,
@@ -4924,7 +4923,8 @@
     "inspiringRegenAtVersion": "r3-2026-05-29",
     "suggestionAuditAt": "2026-06-08T06:04:33.872Z",
     "suggestionAuditVersion": "a1-2026-06-07",
-    "uoiEditApprovedAt": "2026-09-15T23:45:26.543Z"
+    "uoiEditApprovedAt": "2026-09-15T23:45:07.277Z",
+    "inspiringRegenAt": "2026-09-15T23:46:51.935Z"
   },
   {
     "ca": "Glen Waverley",
