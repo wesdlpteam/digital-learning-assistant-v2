@@ -4865,28 +4865,28 @@
     "lo": "The transfer and transformation of energy in electrical circuits (physical science)\nReversible and irreversible changes (chemical science)\nThe movement of the Earth and other planets relative to the sun\nHow scientists conduct experiments using inquiry methods",
     "s": [
       {
-        "t": "Minecraft Education",
-        "d": "Students build two redstone test stations, then change one part of one circuit while keeping the other station the same. They see why scientists need a fair test before they can confirm or contest an explanation about electrical energy. Pairs visit another group's stations and try to find an uncontrolled variable or a claim that needs more evidence. Students add signs that name the question, variable, prediction, observation and conclusion. The finished Minecraft world is a walk-through set of controlled experiments that classmates can test. Minecraft Education lets students build and alter a model world quickly enough to repeat an experiment."
+        "t": "Lego Spike Prime",
+        "d": "Students build two geared winches, code each motor to lift the same small load, and test which design lifts it fastest. They see that scientists need a fair test before they can support or challenge a claim about energy transfer. Each team chooses one variable to change, such as gear size or load, while keeping the other parts the same. Another team repeats the test with the written method and checks whether the result holds up. Students finish with a working coded winch and a clear claim backed by repeated trials. LEGO SPIKE Prime motors let students change their code, run the model, and improve it straight away."
       },
       {
-        "t": "Micro:bit",
-        "d": "Students wire crocodile clips and foil switches to a Micro:bit, then program its LED grid to show when a low-voltage circuit is complete. They trace how electrical energy moves through a closed path and changes into light on the LED display. Groups swap their testers and write a challenge that makes another group debug a broken connection. Students end with a working circuit tester and a short set of labelled test results. They repeat trials with different conductors and record which setups complete the circuit. The Micro:bit pins, LED grid and simple code make each change easy to see straight away."
+        "t": "Minecraft Education",
+        "d": "Students build a Sun, Earth, Moon and a marked orbit path in Minecraft Education, then move through the model to show changing positions over time. The build helps them work out that Earth's movement relative to the Sun is a pattern that can be modelled and checked. Pairs swap worlds and test whether they can use the signs and paths to explain day, year and seasons. Students revise any part that gives a misleading explanation, rather than simply keeping their first build. They finish with a walk-through Minecraft model that explains relative movement using labelled places and routes. Code Builder and the Agent can help students place repeated orbit markers accurately."
+      },
+      {
+        "t": "Stop Motion Studio",
+        "d": "Students plan and film a short stop-motion sequence showing one reversible change and one irreversible chemical change. They must show what is changed, what evidence they would look for, and whether the original material can be recovered. Groups choose everyday examples that are safe to model with classroom materials, such as melting and refreezing water or cooking a batter substitute with paper props. A partner watches the film without explanation and identifies the evidence for each type of change. Students finish with a short labelled animation that can be replayed during a science discussion. Stop Motion Studio captures one frame at a time, so students can make gradual changes easy to see."
       },
       {
         "t": "Explain Everything",
-        "d": "Students draw particle diagrams for melting, freezing, dissolving, burning and rusting while recording a spoken explanation in Explain Everything. They work out which changes can be reversed and which create a new substance. Each pair watches an unlabeled class recording and pauses it to predict whether the change is reversible before hearing the explanation. Students revise their diagrams when the evidence does not match their first idea. The finished screencast shows changing particles, labels and each student's spoken reasoning. Explain Everything records the screen and voice while students draw and annotate."
-      },
-      {
-        "t": "Sphero BOLT",
-        "d": "Students code Sphero BOLT to travel a planned oval route around a floor marker that represents the sun. They use the moving model to explain that Earth travels around the sun while other planets follow different paths and take different times. Groups exchange route cards and test whether another group's code makes a clear and repeatable orbit. Students adjust speed, turns and distance after each trial. The final demonstration includes a running BOLT orbit and a labelled route card that explains the model's limits. BOLT's programmable movement and 8x8 light grid let students show a planet's position as it travels."
+        "d": "Students draw an electrical circuit investigation in Explain Everything and record their voice while they explain the method, variables and results. This makes the inquiry method visible, including why one result is not enough to prove a scientific idea. They pause at a planned point to state a prediction, then add the evidence that made them keep or change it. Another pair listens to the recording and leaves a question for any step that is unclear or unfair. Students finish with a narrated screencast that shows their experiment from question to conclusion. Explain Everything records their drawing and voice together as they explain."
       },
       {
         "t": "Microsoft Excel",
-        "d": "Students enter repeated results from their circuit and chemical-change experiments into Microsoft Excel. They use tables and graphs to decide whether their evidence supports a claim, or whether they need more trials. Groups trade graphs without conclusions and write the claim they think the data supports. Students then compare that claim with the experimenter's explanation and discuss any mismatch. The finished work is a graph set with a written conclusion, anomalies and a next test to run. Excel makes patterns and unusual results visible across repeated trials."
+        "d": "Students enter repeated results from electrical circuit tests into Microsoft Excel and make a graph for each variable they changed. The graphs help them spot patterns, odd results and cases where more testing is needed. Groups compare graphs from the same investigation and decide whether their evidence supports the same claim. They add a short chart title that states exactly what was tested, rather than a broad science topic. Students finish with labelled tables and graphs that support or contest a claim about energy in a circuit. Microsoft Excel turns their class data into charts that are easy to compare."
       },
       {
-        "t": "Lego Spike Prime",
-        "d": "Students empathise by asking younger students which part of the Earth and sun movement is hardest to picture, then define one explanation their model must make clear. They ideate with cardboard circles, string, paper labels and Lego parts before building a motorised model with Lego Spike Prime. Teams code the motor to move an Earth model around a sun model, then test whether a viewer can explain rotation and revolution from watching it. They change the arm length, speed, labels or program after each test and keep a record of what helped. Each team demonstrates a working physical model and explains the design choices that made the movement easier to understand."
+        "t": "Micro:bit",
+        "d": "Students empathise with classmates who need a quick way to check whether a cardboard circuit is complete before starting a fair test. They define the need, sketch ideas, and build a circuit checker from cardboard, copper tape, foil switches, crocodile clips and a Micro:bit. They code the LED grid to show one symbol when a foil switch closes the circuit and another when it is open. Students test their checker with several circuit layouts, find loose connections, and rebuild the copper-tape paths when the result is unreliable. They demonstrate a working physical prototype and explain which test changed their design."
       }
     ],
     "audited": true,
@@ -4924,7 +4924,7 @@
     "suggestionAuditAt": "2026-06-08T06:04:33.872Z",
     "suggestionAuditVersion": "a1-2026-06-07",
     "uoiEditApprovedAt": "2026-09-15T23:45:07.277Z",
-    "inspiringRegenAt": "2026-09-15T23:46:51.935Z"
+    "inspiringRegenAt": "2026-09-15T23:48:36.692Z"
   },
   {
     "ca": "Glen Waverley",
