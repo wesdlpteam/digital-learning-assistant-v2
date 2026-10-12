@@ -530,13 +530,13 @@
 
 /* Tool Inventory whitelist: two columns (first half left, second half right)
    with a 1px divider. One column and no divider on narrow screens. */
-#inv-whitelist-pills{display:flex;flex-direction:column;gap:6px;min-height:32px}
+#inv-whitelist-pills{display:flex;flex-direction:column;gap:6px;min-height:32px;width:100%}
 #inv-whitelist-pills.inv-two-col{display:grid;grid-template-columns:minmax(0,1fr) 1px minmax(0,1fr);column-gap:14px;align-items:start}
-.inv-col{display:flex;flex-direction:column;gap:6px;min-width:0;container-type:inline-size}
+.inv-col{display:flex;flex-direction:column;gap:6px;min-width:0}
 .inv-col-divider{align-self:stretch;width:1px;background:var(--border)}
-/* When a column is too narrow for every control on one line, the actions drop to a second line. */
-@container (max-width:500px){
-  .inv-row{grid-template-columns:minmax(0,1fr) 96px 96px!important}
+/* On medium screens the two columns are too narrow for every control on one line, so the actions drop to a second line. */
+@media (max-width:1500px){
+  .inv-row{grid-template-columns:minmax(140px,1fr) 96px 96px!important}
   .inv-row .inv-actions{grid-column:1/-1;justify-content:flex-end}
 }
 @media (max-width:900px){

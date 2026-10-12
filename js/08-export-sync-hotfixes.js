@@ -746,7 +746,7 @@ function clearSession(){
       const toolAttr = invAttr(t);
       const rwNote = (typeof getToolAffordance_ === 'function') ? getToolAffordance_(t) : null;
       const rwOn = !!(rwNote && rwNote.realWorld);
-      return `<div class="inv-row" style="display:grid;grid-template-columns:minmax(0,1fr) 96px 96px auto;gap:6px;align-items:center;padding:7px 8px;background:rgba(197,232,74,0.08);border:1px solid rgba(197,232,74,0.3);border-radius:12px;font-size:12px;color:var(--lime)">
+      return `<div class="inv-row" style="display:grid;grid-template-columns:minmax(140px,1fr) 96px 96px auto;gap:6px;align-items:center;padding:7px 8px;background:rgba(197,232,74,0.08);border:1px solid rgba(197,232,74,0.3);border-radius:12px;font-size:12px;color:var(--lime)">
         <div style="min-width:0"><div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(t)}</div><div style="font-size:10px;color:var(--dim);font-weight:600">${ageRangeLabel(range)}</div></div>
         <select class="inp" data-inv-age-tool="${toolAttr}" data-inv-age-edge="min" title="Minimum year level" style="margin-bottom:0;font-size:11px;padding:5px 7px;color:var(--lime);border-color:rgba(197,232,74,.3)">${yearSelectOptions(range.min)}</select>
         <select class="inp" data-inv-age-tool="${toolAttr}" data-inv-age-edge="max" title="Maximum year level" style="margin-bottom:0;font-size:11px;padding:5px 7px;color:var(--lime);border-color:rgba(197,232,74,.3)">${yearSelectOptions(range.max)}</select>
@@ -3140,11 +3140,10 @@ function clearSession(){
     // any task that requires student-built maps must use MapMaker from the
     // start. No post-save mutation needed.
     //
-    // Also removed: the auto-rewrite of map descriptions
-    // (dqRewriteMapDescription_ injection of "Students add labels..." /
-    // "Students use Street View..." sentences). That tooling mutated AI
-    // output on every save, which masked prompt-quality regressions and
-    // produced descriptions the AI never wrote.
+    // Also removed: the auto-rewrite of map descriptions that injected
+    // "Students add labels..." / "Students use Street View..." sentences.
+    // That tooling mutated AI output on every save, which masked
+    // prompt-quality regressions and produced descriptions the AI never wrote.
 
     out.t = tool;
     out.d = desc;

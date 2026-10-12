@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Wesley Digital Learning Assistant</title>
-<script>window.APP_VERSION='2026-10-12-2';</script>  <!-- bump on every deploy so open tabs auto-refresh -->
+<script>window.APP_VERSION='2026-10-12-3';</script>  <!-- bump on every deploy so open tabs auto-refresh -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23111111'/%3E%3Cpolygon points='19,3 10,17 15,17 13,29 22,15 17,15' fill='%23CDEB45'/%3E%3Ccircle cx='6' cy='6' r='2' fill='%23CDEB45' opacity='0.5'/%3E%3Ccircle cx='26' cy='26' r='2' fill='%23CDEB45' opacity='0.5'/%3E%3Ccircle cx='26' cy='6' r='1.5' fill='%237ED957' opacity='0.6'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -593,6 +593,38 @@ function restoreDlaOpener_(){
   window._dlaOpener=null;
   if(a&&a.isConnected&&typeof a.focus==='function'){try{a.focus({preventScroll:true});}catch(e){a.focus();}}
 }
+// Keep Tab and Shift+Tab inside the open popup (one delegated listener, wired once below).
+function openDlaDialog_(){
+  var all=document.querySelectorAll('[role="dialog"]'),top=null;
+  for(var i=0;i<all.length;i++){
+    var d=all[i];
+    if(typeof d.closest==='function'&&d.closest('.open'))top=d;
+  }
+  return top;
+}
+function dlaFocusable_(dialog){
+  var list=dialog.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex="0"],summary'),out=[];
+  for(var i=0;i<list.length;i++){
+    var el=list[i];
+    if(typeof el.getClientRects==='function'&&el.getClientRects().length===0)continue;
+    out.push(el);
+  }
+  return out;
+}
+function trapDlaTab_(e){
+  if(!e||e.key!=='Tab')return;
+  var dialog=openDlaDialog_();
+  if(!dialog)return;
+  var items=dlaFocusable_(dialog);
+  if(!items.length){e.preventDefault();dialog.focus();return;}
+  var first=items[0],last=items[items.length-1],a=document.activeElement;
+  var inside=dialog.contains(a);
+  if(e.shiftKey){
+    if(!inside||a===first||a===dialog){e.preventDefault();last.focus();}
+  }else if(!inside||a===last){
+    e.preventDefault();first.focus();
+  }
+}
 // Cards are div role="button": make Enter and Space act like a click (one delegated listener).
 function handleRoleButtonKey_(e){
   if(!e||e.repeat||e.ctrlKey||e.metaKey||e.altKey)return;
@@ -606,6 +638,7 @@ function handleRoleButtonKey_(e){
   el.click();
 }
 document.addEventListener('keydown',handleRoleButtonKey_);
+document.addEventListener('keydown',trapDlaTab_);
 // True when an open popup holds text the teacher has typed (used to hold back auto-refresh).
 function hasUnsavedDialogInput_(doc){
   try{
@@ -927,7 +960,7 @@ function renderTechResult(campus,yl,theme,tool,resp){
   // unit suggestion (How do I teach this / try / used / feedback). Each button
   // is wired by pushing one entry into the shared global arrays and reusing the
   // existing handlers. centralIdea/linesOfInquiry come from editorCi/editorLo.
-  var tc=(window.TC&&TC[theme])||'#888';var em=(window.TE&&TE[theme])||'💡';
+  var tcl=(typeof TCL!=='undefined'&&TCL[theme])||'#888';var em=(window.TE&&TE[theme])||'💡';
   var phaseLabel='Teacher-picked tool';
   // 2026-06-04: Honest poor-fit handling. When the tool genuinely doesn't suit
   // this unit, don't dress it up as a lesson — show the plain explanation, point
@@ -941,7 +974,7 @@ function renderTechResult(campus,yl,theme,tool,resp){
     var caE=encAttr_(campus),ylE=encAttr_(yl),thE=encAttr_(theme),ciE=encAttr_(editorCi||''),loE=encAttr_(editorLo||'');
     body.innerHTML=
       '<div class="sg" style="margin-bottom:14px">' +
-        '<div class="sg-head"><div class="sg-icon" style="background:'+tc+'">'+em+'</div><div class="sg-meta"><div class="sg-type">Honest fit check</div><div class="sg-tool">'+escapeHtml(tool)+'</div></div></div>' +
+        '<div class="sg-head"><div class="sg-icon" style="background:'+tcl+'">'+em+'</div><div class="sg-meta"><div class="sg-type">Honest fit check</div><div class="sg-tool">'+escapeHtml(tool)+'</div></div></div>' +
         '<div class="sg-body">' +
           '<div class="tech-fit '+escapeHtml(fit)+'" style="margin-bottom:10px">'+fitLabel+'</div>' +
           '<div class="sg-desc">'+linkifyDesc(desc)+'</div>' +
@@ -965,12 +998,12 @@ function renderTechResult(campus,yl,theme,tool,resp){
   var _iniKey=_intentKey(window._intentData[_ini]);var _iniDone=_isIntentLocally(_iniKey);
   body.innerHTML=
     '<div class="sg" style="margin-bottom:14px">' +
-      '<div class="sg-head"><div class="sg-icon" style="background:'+tc+'">'+em+'</div><div class="sg-meta"><div class="sg-type">Your chosen tool</div><div class="sg-tool">'+escapeHtml(tool)+'</div></div></div>' +
+      '<div class="sg-head"><div class="sg-icon" style="background:'+tcl+'">'+em+'</div><div class="sg-meta"><div class="sg-type">Your chosen tool</div><div class="sg-tool">'+escapeHtml(tool)+'</div></div></div>' +
       '<div class="sg-body">' +
         '<div class="tech-fit '+escapeHtml(fit)+'" style="margin-bottom:10px">'+fitLabel+'</div>' +
         noteHtml +
         '<div class="sg-desc">'+linkifyDesc(desc)+'</div>' +
-        (va?'<div class="sg-section"><div class="sg-label">Value Add</div><div class="vb" style="border-left-color:'+tc+'">'+escapeHtml(va)+'</div></div>':'') +
+        (va?'<div class="sg-section"><div class="sg-label">Value Add</div><div class="vb" style="border-left-color:'+tcl+'">'+escapeHtml(va)+'</div></div>':'') +
         '<div class="sg-copilot"><button class="sg-copilot-btn" onclick="openCopilotHelper('+_cpi+',this)"><span class="sg-copilot-ico">🤖</span><span class="sg-copilot-main">How do I teach this?</span></button></div>' +
         '<div class="sg-fb"><button class="sg-intent'+(_iniDone?' done':'')+'" data-ikey="'+encodeURIComponent(_iniKey)+'" onclick="markIntent('+_ini+',this)">'+(_iniDone?'🟡 Planned — click to undo':'🚀 I\'m going to try this')+'</button><button class="sg-used'+(_usiDone?' done':'')+'" data-ukey="'+encodeURIComponent(_usiKey)+'" onclick="markUsed('+_usi+',this)">'+(_usiDone?'✅ Used — click to undo':'✓ I Used This')+'</button><div class="sg-react"><button onclick="openFB('+_fbi+')" class="sg-fb-btn">💬 Feedback</button></div></div>' +
       '</div>' +
@@ -1155,7 +1188,7 @@ function startUoiEdit(){
   requestAnimationFrame(function(){
     overlay.classList.add('open');
     var ciEl=document.getElementById('uoi-edit-ci');
-    if(ciEl){try{ciEl.focus();}catch(e){}}
+    if(ciEl){try{ciEl.focus();}catch(e){}}else{focusDlaDialog(overlay);}
   });
 }
 

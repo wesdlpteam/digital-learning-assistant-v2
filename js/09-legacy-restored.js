@@ -3,8 +3,8 @@
 
    Restores ~3,400 lines of functionality that were dropped during
    the modular refactor. The "modular" files 00-08 only covered
-   about two-thirds of the original DLA_Studio_legacy_backup.html
-   inline script; this file fills the gap.
+   about two-thirds of the original single-file Studio inline script;
+   this file fills the gap.
 
    Contents (in order):
      - Audit panel:  renderAudit, setAuditView, setAnalyticsView, setYrCampus,
@@ -32,20 +32,16 @@
        bulkInstructionTargetsNamedToolOpportunity_, which Bulk AI Edit
        uses to recognise "find opportunities for <tool>" requests.
 
-   Not here: computeStats, renderAuditChart, the popup apply flow
-   (applyChangesFromPopup) and the full realism scan (runFullRealismAudit).
-   All four are defined only in js/08-export-sync-hotfixes.js; the copies that used to live here were
-   always replaced by 08 and were removed in Studio v5.72.
+   Anything that js/08-export-sync-hotfixes.js redefines lives only in js/08.
 
-   Source: lifted verbatim from DLA_Studio_legacy_backup.html line
-   ranges 2317-4264, 5203-6374, and 6828-7137. Order preserved so
+   Source: lifted verbatim from the original single-file Studio. Order preserved so
    forward-references continue to resolve under script-element
    hoisting. Do not reorder without checking dependencies.
 
    Loaded before 08-export-sync-hotfixes.js so that 08's init IIFE
    can call initNetworkCanvas() at parse time, and so 08's patch
-   wrappers (e.g. the bulkChatSend / bulkChatSelectOption / sendChat
-   try/catch wrappers) can find the functions they wrap. Most of
+   wrappers (e.g. the bulk chat send and select-option try/catch
+   wrappers) can find the functions they wrap. Most of
    those wrappers are guarded by `if(typeof X === 'function')`,
    so they pass these definitions through unchanged.
    ============================================================= */

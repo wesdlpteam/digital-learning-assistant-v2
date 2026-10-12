@@ -1,23 +1,14 @@
 function initBulkTools(){
   const campuses=[...new Set(DATA.map(e=>e.ca))].sort();
   const yrs=[...new Set(DATA.map(e=>e.yl))].sort((a,b)=>YR.indexOf(a)-YR.indexOf(b));
-  ['bulk-regen-campus'].forEach(id=>{
-    const el=document.getElementById(id); if(!el) return;
-    while(el.options.length>1) el.remove(1);
-    campuses.forEach(c=>el.add(new Option(c,c)));
-  });
-  ['bulk-regen-year','compare-year'].forEach(id=>{
+  ['compare-year'].forEach(id=>{
     const el=document.getElementById(id); if(!el) return;
     while(el.options.length>1) el.remove(1);
     yrs.forEach(y=>el.add(new Option(y,y)));
   });
-  updateBulkRegenCount();
   updateCompareThemes();
   renderCoverageHeatmap();
-  
-  document.getElementById('bulk-regen-campus')?.addEventListener('change', updateBulkRegenCount);
-  document.getElementById('bulk-regen-year')?.addEventListener('change', updateBulkRegenCount);
-  
+
   ['export-campus'].forEach(id=>{
     const el=document.getElementById(id); if(!el) return;
     while(el.options.length>1) el.remove(1);
@@ -28,18 +19,6 @@ function initBulkTools(){
     while(el.options.length>1) el.remove(1);
     yrs.forEach(y=>el.add(new Option(y,y)));
   });
-}
-
-function updateBulkRegenCount(){
-  const ca=document.getElementById('bulk-regen-campus')?.value||'';
-  const yr=document.getElementById('bulk-regen-year')?.value||'';
-  const targets=DATA.filter(e=>{
-    if(ca&&e.ca!==ca) return false;
-    if(yr&&e.yl!==yr) return false;
-    return getSugs(e).filter(isRealSug).length>=6;
-  });
-  const el=document.getElementById('bulk-regen-count');
-  if(el) el.textContent=`${targets.length} entries selected`;
 }
 
 // Shared description quality + ordering instructions — referenced by all suggestion-generating prompts
