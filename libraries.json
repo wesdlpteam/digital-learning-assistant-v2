@@ -1,0 +1,898 @@
+{
+  "_meta": {
+    "_inventory": {
+      "approved": [
+        "3D Printers",
+        "Adobe Express",
+        "Animating a Character with Adobe Express",
+        "Apple Clips",
+        "Beebots",
+        "Book Creator",
+        "Brushes Redux",
+        "Canva",
+        "ChatterPix Kids",
+        "Clickview",
+        "Delightex",
+        "Dollar Street",
+        "Epic",
+        "Explain Everything",
+        "Field Guide to Victoria",
+        "Freeform",
+        "GarageBand",
+        "Geoboard",
+        "Google Maps",
+        "IMovie",
+        "Insta360 camera",
+        "Kahoot",
+        "Lego Spike Prime",
+        "Merge Cubes",
+        "Micro:bit",
+        "Microsoft Excel",
+        "Microsoft Forms",
+        "Minecraft Education",
+        "National Geographic MapMaker",
+        "Padlet",
+        "PicCollage",
+        "Podcast Equipment",
+        "Podcasting using Canva",
+        "Puppet Pals",
+        "ScratchJr",
+        "Seek by iNaturalist",
+        "Seesaw",
+        "Sketchbook",
+        "Slow Motion Physical Analysis",
+        "Sphero BOLT",
+        "Sphero Indi",
+        "Stop Motion Studio",
+        "Tablet Magnifiers",
+        "Teachable Machine",
+        "Tinkercad",
+        "Wise Discussion Chatbots"
+      ],
+      "banned": [
+        "Apple Keynote",
+        "Banqer",
+        "ClassVR",
+        "Digital Cameras",
+        "Google Earth",
+        "Google Suite",
+        "Green Screen",
+        "Lego Spike Essential",
+        "Microsoft OneNote",
+        "Microsoft PowerPoint",
+        "Microsoft Sway",
+        "Microsoft Teams",
+        "WeVideo"
+      ],
+      "ageRanges": {
+        "excel": {
+          "min": 3,
+          "max": 6
+        },
+        "forms": {
+          "min": 2,
+          "max": 6
+        },
+        "beebots": {
+          "min": 0,
+          "max": 2
+        },
+        "sphero indi": {
+          "min": -2,
+          "max": 2
+        },
+        "sphero bolt": {
+          "min": 3,
+          "max": 6
+        },
+        "lego spike prime": {
+          "min": 4,
+          "max": 6
+        },
+        "micro:bit": {
+          "min": 3,
+          "max": 6
+        },
+        "3d printers": {
+          "min": 5,
+          "max": 6
+        },
+        "merge cubes": {
+          "min": 3,
+          "max": 6
+        },
+        "podcast equipment": {
+          "min": 2,
+          "max": 6
+        },
+        "seesaw": {
+          "min": -2,
+          "max": 4
+        },
+        "canva": {
+          "min": 3,
+          "max": 6
+        },
+        "book creator": {
+          "min": -2,
+          "max": 6
+        },
+        "padlet": {
+          "min": 3,
+          "max": 6
+        },
+        "garageband": {
+          "min": -2,
+          "max": 6
+        },
+        "scratchjr": {
+          "min": 0,
+          "max": 2
+        },
+        "stop motion studio": {
+          "min": -2,
+          "max": 6
+        },
+        "chatterpix kids": {
+          "min": -2,
+          "max": 2
+        },
+        "imovie": {
+          "min": 0,
+          "max": 6
+        },
+        "puppet pals": {
+          "min": -2,
+          "max": 2
+        },
+        "adobe express": {
+          "min": 3,
+          "max": 6
+        },
+        "podcasting using canva": {
+          "min": 2,
+          "max": 6
+        },
+        "google maps": {
+          "min": 0,
+          "max": 6
+        },
+        "field guide to victoria": {
+          "min": 0,
+          "max": 6
+        },
+        "geoboard": {
+          "min": 0,
+          "max": 6
+        },
+        "clickview": {
+          "min": 0,
+          "max": 6
+        },
+        "epic": {
+          "min": 0,
+          "max": 6
+        },
+        "piccollage": {
+          "min": -2,
+          "max": 6
+        },
+        "brushes redux": {
+          "min": -2,
+          "max": 6
+        },
+        "sketchbook": {
+          "min": -2,
+          "max": 6
+        },
+        "explain everything": {
+          "min": 3,
+          "max": 6
+        },
+        "freeform": {
+          "min": -2,
+          "max": 6
+        },
+        "delightex": {
+          "min": 2,
+          "max": 6
+        },
+        "kahoot": {
+          "min": 3,
+          "max": 6
+        },
+        "tinkercad": {
+          "min": 4,
+          "max": 6
+        },
+        "minecraft education": {
+          "min": 2,
+          "max": 6
+        },
+        "wise discussion chatbots": {
+          "min": 3,
+          "max": 6
+        },
+        "national geographic mapmaker": {
+          "min": 3,
+          "max": 6
+        },
+        "animating a character with adobe express": {
+          "min": 0,
+          "max": 6
+        },
+        "insta360 camera": {
+          "min": 0,
+          "max": 6
+        },
+        "apple clips": {
+          "min": 0,
+          "max": 1
+        },
+        "tablet magnifiers": {
+          "min": -2,
+          "max": 1
+        },
+        "seek by inaturalist": {
+          "min": -2,
+          "max": 3
+        },
+        "slow motion physical analysis": {
+          "min": -2,
+          "max": 1
+        },
+        "teachable machine": {
+          "min": 1,
+          "max": 6
+        },
+        "dollar street": {
+          "min": 3,
+          "max": 6
+        }
+      }
+    },
+    "_toolAffordances": {
+      "teachable machine": {
+        "is": "Teachable Machine is a web-based tool that lets students create simple machine learning models by training the computer to recognise images, sounds, or poses.",
+        "good": "Students can make projects that identify objects, recognise their voice commands, or detect body movements to create interactive stories or games.",
+        "avoid": "Avoid using it for complex or highly accurate machine learning tasks as it is designed for basic, educational purposes only.",
+        "realWorld": "In 1-2 sentences woven into the description, connect THIS specific classification task to a real-world system that works the same way ? choose the parallel that genuinely matches the activity, never a generic list. True examples to draw from: recognising uniforms/vehicles/helpers ? image recognition in council CCTV and emergency-dispatch systems; sorting recycling/materials ? camera-driven sorting arms in recycling facilities; identifying plants/animals/leaves ? wildlife-monitoring cameras and apps like Seek/iNaturalist; recognising faces/poses/movements ? face unlock, accessibility tools, physiotherapy and sports-coaching apps; sorting food/produce ? fruit-grading machines on farms; recognising sounds/voice commands ? smart speakers and hearing-assistance tech."
+      },
+      "dollar street": {
+        "is": "Dollar Street is an online tool that shows photos and information about everyday homes and lives of people from different income levels around the world to help students understand global diversity. The houses are lined up on the street according to their income. Our method for calculating the income of each family tries to measure consumption rather than salary or income, although the data from the families does not always allow this. This means that if a family grow all the rice they eat each month, then the value of this rice will be included in the total consumption of the home.\n\nThe \"dollars per month\" assigned to each home refer to the consumption available to each adult in the family. This means that we take the total consumption and divide it with something called ?adult equivalents?, accounting for the fact that young children consume less. Lastly, they measure the value of the consumption in US dollars. Since the cost of living can vary a lot between countries, we use dollars adjusted for purchasing power parity (PPP).",
+        "good": "Students can compare living conditions, clothing, and food from various countries to create presentations or posters about cultural and economic differences. Dollar Street was invented by Anna Rosling R?nnlund at Gapminder. For 15 years she spent her workdays making global public data easier to understand and use. Over time her frustration grew: carefully selecting data to present it in colorful and moving charts made overall global trends and patterns easier to understand. But it did not make everyday life on different income levels understandable. Especially not in places far from home. ?People in other cultures are often portrayed as scary or exotic.? Anna explains: ?This has to change. We want to show how people really live. It seemed natural to use photos as data so people can see for themselves what life looks like on different income levels. Dollar Street lets you visit many, many homes all over the world. Without travelling.?",
+        "avoid": "Avoid using it as a source for detailed statistics or current news since it focuses on visual stories rather than data analysis.",
+        "realWorld": "In 1-2 sentences woven into the description, connect this specific activity to a real-world system that uses the same kind of AI ? choose a parallel that genuinely matches the activity, never a generic list."
+      },
+      "tinkercad": {
+        "realWorld": "In 1-2 sentences woven into the description, connect this specific activity to a real-world system that uses the same kind of AI ? choose a parallel that genuinely matches the activity, never a generic list."
+      },
+      "sphero indi": {
+        "realWorld": "In 1-2 sentences woven into the description, connect this specific activity to a real-world system that uses the same kind of AI ? choose a parallel that genuinely matches the activity, never a generic list."
+      }
+    }
+  },
+  "minecraft": [
+    {
+      "title": "Ratio Riddles",
+      "desc": "ratio, proportion, fractions & scale through 3 games",
+      "ages": "8+",
+      "subject": "MATHEMATICS",
+      "url": "https://education.minecraft.net/en-us/lessons/ratio-riddles"
+    },
+    {
+      "title": "Dangerous Data Sets",
+      "desc": "probability & data using mob drop rates",
+      "ages": "11+",
+      "subject": "MATHEMATICS",
+      "url": "https://education.minecraft.net/en-us/lessons/dangerous-data-sets"
+    },
+    {
+      "title": "Area and Volume",
+      "desc": "create & solve area/volume problems",
+      "ages": "8+",
+      "subject": "MATHEMATICS",
+      "url": "https://education.minecraft.net/en-us/lessons/area-and-volume-2"
+    },
+    {
+      "title": "Fractions Pixel Art",
+      "desc": "Design a pixel art image then break down the colors into fractions, discuss number patterns & unit fractions, then build the designs in Minecraft.",
+      "ages": "8+",
+      "subject": "MATHEMATICS",
+      "url": "https://education.minecraft.net/en-us/lessons/fractions-pixel-art"
+    },
+    {
+      "title": "Number Pattern Architecture",
+      "desc": "explore arithmetic patterns through building",
+      "ages": "8+",
+      "subject": "MATHEMATICS",
+      "url": "https://education.minecraft.net/en-us/lessons/number-pattern-architecture"
+    },
+    {
+      "title": "The Scientific Method",
+      "desc": "teach the scientific method through Minecraft experiments",
+      "ages": "11+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/the-scientific-method"
+    },
+    {
+      "title": "Shipwreck Narrative",
+      "desc": "write a narrative about a mysterious shipwreck",
+      "ages": "8+",
+      "subject": "LANGUAGE & LITERACY",
+      "url": "https://education.minecraft.net/en-us/lessons/shipwreck-narrative"
+    },
+    {
+      "title": "Meet and Greet!",
+      "desc": "research historical figures, build 3D timeline",
+      "ages": "8+",
+      "subject": "SOCIAL STUDIES & HISTORY"
+    },
+    {
+      "title": "Peter Is Here Ai For Cultural Heritage",
+      "desc": "How can we use technology to explore, protect, and celebrate cultural heritage sites, and why is it important to work together in this effort?",
+      "ages": "8+",
+      "subject": "SOCIAL STUDIES & HISTORY",
+      "url": "https://education.minecraft.net/en-us/lessons/peter-is-here-ai-for-cultural-heritage"
+    },
+    {
+      "title": "Peace Builders",
+      "desc": "Peace Builders offers new perspectives from four more laureates and focuses on avoiding and mitigating conflict. Learners will gain perspective on how to work together toward a more peaceful world.",
+      "ages": "10+",
+      "subject": "SOCIAL STUDIES & HISTORY",
+      "url": "https://education.minecraft.net/en-us/lessons/peace-builders"
+    },
+    {
+      "title": "Ocean Heroes",
+      "desc": "Join the Ocean Heroes team in a thrilling underwater adventure to rescue coral reefs, mangroves, and kelp forests. Learn real-world conservation skills while protecting marine biodiversity!",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/ocean-heroes"
+    },
+    {
+      "title": "The Investigators",
+      "desc": "Can you trust the sources of your information? Go on a quest for the facts! Become a school reporter and investigate 3 unique stories. Evaluate biases, decode clues, and uncover the truth!",
+      "ages": "8+",
+      "subject": "SOCIAL STUDIES & HISTORY",
+      "url": "https://education.minecraft.net/en-us/lessons/the-investigators"
+    },
+    {
+      "title": "Active Citizen",
+      "desc": "Minecraft: Education Edition?s Active Citizen world which explores the incredible stories of Nobel Peace Laureates and how they achieved amazing things.",
+      "ages": "8+",
+      "subject": "SOCIAL STUDIES & HISTORY",
+      "url": "https://education.minecraft.net/en-us/lessons/active-citizen"
+    },
+    {
+      "title": "The Hall of Inventions",
+      "desc": "Explore this museum that features key innovations from history. However, there are blank spaces across time. This is where you come in. Consider what you think are the most important inventions, and then use the build plots to build them yourself.",
+      "ages": "8+",
+      "subject": "ARTS & DESIGN",
+      "url": "https://education.minecraft.net/en-us/challenges/the-hall-of-inventions"
+    },
+    {
+      "title": "Historical Homes",
+      "desc": "Travel through time in this build challenge and explore architecture from ancient, medieval, and modern times.",
+      "ages": "8+",
+      "subject": "SOCIAL STUDIES & HISTORY",
+      "url": "https://education.minecraft.net/en-us/challenges/historical-homes"
+    },
+    {
+      "title": "Artemis Rocket Build",
+      "desc": "Blast off to the moon with this superstellar map created in partnership with NASA. Meet scientists and engineers, explore jet propulsion, and design a rocket. Test your creation with a fiery launch!",
+      "ages": "5+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/artemis-rocket-build"
+    },
+    {
+      "title": "Planet Earth Iii Lesson Collection2",
+      "desc": "Play as a series of animals like the Cape fur seal and great white shark, the musk ox and Arctic wolf, and many more. Explore locations from the Arctic tundra to the Okavango Delta.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/planet-earth-iii-lesson-collection2"
+    },
+    {
+      "title": "Filtering Water On The Iss",
+      "desc": "Students will experiment with creating a water filtering system as well as learn how water is filtered on the International Space Station.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/filtering-water-on-the-iss"
+    },
+    {
+      "title": "Bone Loss In Space",
+      "desc": "Students will complete an experiment to understand the effects of bone loss in space and graph the data in Minecraft.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/bone-loss-in-space"
+    },
+    {
+      "title": "Plants Vs Gravity",
+      "desc": "Students learn about how gravity affects plants on Earth as well as in space. They then participate in a hands-on planting experiment.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/plants-vs-gravity"
+    },
+    {
+      "title": "Invisible Forces At Work",
+      "desc": "Students will review magnetism and gravity. They will design a magnetic structure that could protect the International Space Station or assist its astronauts.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/invisible-forces-at-work"
+    },
+    {
+      "title": "Rockets Away",
+      "desc": "Students will learn about rockets and how astronauts get to the International Space Station on one. They will also build a hands-on rocket as well as one in Minecraft.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/rockets-away"
+    },
+    {
+      "title": "Seeing Earth From The Iss",
+      "desc": "Students will recreate an area of Earth in Minecraft after exploring images of Earth from the International Space Station.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/seeing-earth-from-the-iss"
+    },
+    {
+      "title": "Solar Panel Setback",
+      "desc": "Students will explore how solar energy powers the International Space Station. They will also understand how robotic tools help astronauts fix items in space.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/solar-panel-setback"
+    },
+    {
+      "title": "Moon Base One",
+      "desc": "Utilize your creativity and collaboration skills to build a sustainable lunar base to support efficient life systems and long-term lunar habitation!",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/moon-base-one"
+    },
+    {
+      "title": "James Webb Space Telescope Challenge",
+      "desc": "Peer into the world's most advanced telescope to explore the universe, craft constellations and create a solar system. Developed with NASA to inspire the next generation of cosmic adventurers.",
+      "ages": "5+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/james-webb-space-telescope-challenge"
+    },
+    {
+      "title": "Its Good To Be Green",
+      "desc": "Students explore a sustainable building.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/its-good-to-be-green"
+    },
+    {
+      "title": "Sustainable Food Production",
+      "desc": "Begin at a grocery store where farm products are bought and sold. Explore a sustainable farm and learn about soil conservation, crop rotation, and water pollution. Visit a waste facility and learn how fertile soil is created from waste products. Walk through a recycling facility and learn how old packaging is recycled into new packaging. Visit the shop where the farm products are being packaged and sold back to the grocery store.",
+      "ages": "5+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/sustainable-food-production"
+    },
+    {
+      "title": "Sustainable Home",
+      "desc": "Students will? Explore a home that has been built with sustainable materials. Discover what materials are sustainable and where those materials come from. Understand what can be done to a home to help it be efficient.",
+      "ages": "11+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/sustainable-home"
+    },
+    {
+      "title": "Radical Recycling",
+      "desc": "Gain background knowledge about recycling through introductory games and a challenge.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/radical-recycling"
+    },
+    {
+      "title": "Dependable Forests",
+      "desc": "Students will explore a sustainable forest in order to understand how it can be used consistently. Understand the importance of protecting forests not only for the trees, but for wildlife as well. Understand that sustainable forestry practices have a social, economic, and environmental impact.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/dependable-forests"
+    },
+    {
+      "title": "Alternative Energy",
+      "desc": "Explore hydropower, wind power, and waste-to-energy. Understand how mechanical and electrical energy play a part in alternative energy. Explore how the energy created at the power plant gives energy back to the community. Learn how landfills can be sustainable using garbage. Explore what happens to recyclable and non-recyclable materials once they leave the home. Understand how non-recyclables can be turned into energy.",
+      "ages": "11+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/alternative-energy"
+    },
+    {
+      "title": "Outflow Order",
+      "desc": "Explore how outflow (wastewater) gets from a home to a water treatment plant. Understand that biosolids are used in composting. Learn how outflow is treated in order to go back into the city system.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/outflow-order"
+    },
+    {
+      "title": "Frozen Planet Ii Frozen Worlds",
+      "desc": "Students are introduced to the killer whale, polar bear, and Lapland bumblebee. They will develop an understanding of how these animals have adapted to survive extreme conditions.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/frozen-planet-ii-frozen-worlds"
+    },
+    {
+      "title": "Frozen Planet Ii Frozen Peaks",
+      "desc": "Students are introduced to the high-casqued chameleon and the golden eagle. They will develop an understanding of how they have adapted to survive extreme conditions.",
+      "ages": "11+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/frozen-planet-ii-frozen-peaks"
+    },
+    {
+      "title": "Frozen Planet Ii Frozen Lands2",
+      "desc": "Students are introduced to the Lapland bumblebee and the Amur leopard. They will develop an understanding of how they have adapted to survive extreme conditions.",
+      "ages": "5+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/frozen-planet-ii-frozen-lands2"
+    },
+    {
+      "title": "Frozen Planet Ii Frozen South",
+      "desc": "Explore animals living in the Frozen South and examine how climate change is making their survival more difficult.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/frozen-planet-ii-frozen-south"
+    },
+    {
+      "title": "Frozen Planet Ii Frozen Ocean",
+      "desc": "Explore the Arctic Ocean and its wildlife. See how the habitats and behaviors of animals has changed with the effect of climate change.",
+      "ages": "5+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/frozen-planet-ii-frozen-ocean"
+    },
+    {
+      "title": "An Ecosystem Jigsaw",
+      "desc": "Students will understand how habitat loss might affect the relationship between the leopard and impala, as well as the grazing and hunting habits of the impala and leopard, respectively.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/an-ecosystem-jigsaw"
+    },
+    {
+      "title": "The Arctic Wolf Musk Ox Challenge",
+      "desc": "Understand the characteristics of Arctic wolves and musk oxen. Describe the relationship and interactions between Arctic wolves and musk oxen. Consider how actual and hypothetical changes could affect the interconnectedness of these two animals.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/the-arctic-wolf-musk-ox-challenge"
+    },
+    {
+      "title": "Fur Seal Great White Shark Showdown",
+      "desc": "Understand how Cape fur seals defend themselves, their pups, and their territory against great white sharks Understand how great white sharks hunt for Cape fur seals and how solitary hunting can be difficult Consider how humans can protect areas in which both the Cape fur seals and great white sharks live (optional activity)",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/fur-seal-great-white-shark-showdown"
+    },
+    {
+      "title": "Mutualistic Vibes",
+      "desc": "Understand the characteristics of treehoppers and stingless bees. Explain how treehoppers communicate with their young (nymphs). Be able to describe how stingless bees help certain species of treehoppers keep their offspring safe. Explore deforestation and how that affects the ecosystem of the treehopper and stingless bee (optional activities).",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/mutualistic-vibes"
+    },
+    {
+      "title": "Lily Trotter Nest Challenge",
+      "desc": "Understand the characteristics of lily-trotter fathers and their chicks. Become familiar with where the Okavango Delta is and how it is a unique ecosystem. Explore the challenges of lily-trotter fathers in caring for their young from eggs to hatched chicks.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/lily-trotter-nest-challenge"
+    },
+    {
+      "title": "Climate Futures The Forest",
+      "desc": "To develop an understanding of deforestation and the pitfalls of unsustainable industrialization (SDG 9)  To explore how deforestation is connected to the greenhouse effect (SDG 13)  To identify how human activities contribute to climate change (SDG 13)",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/climate-futures-the-forest"
+    },
+    {
+      "title": "Climate Futures Transportation",
+      "desc": "To learn how the development of transportation has contributed to climate change resulting in increased greenhouse gas emissions (SDG 13)  Explore the impact of increased transportation and the conflict in achieving sustainability in infrastructure and industrialization (SDG 9)  Develop an awareness of sustainable innovation to prevent, mitigate or adapt the impact of transportation on climate change (SDG 9 and 13)",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/climate-futures-transportation"
+    },
+    {
+      "title": "Climate Futures The Farm",
+      "desc": "To understand agriculture, the food supply chain and conflicts in achieving sustainability in infrastructure and industrialization. Explore the impact mass food production has on climate change locally, nationally, and globally (SDG 13)  Identify strategies to prevent, mitigate or reduce the impact on the environment of mass agriculture (SDG 13)",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/climate-futures-the-farm"
+    },
+    {
+      "title": "Watr Meet The Rangers",
+      "desc": "Obtain and combine information about ways individual communities use science ideas to protect the Earth?s resources and environment.  Explore day to day duties of a Wildlife Ranger in the conservation of animals and their habitats  Develop an understanding of the role of a Ranger in wildlife conservation",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/watr-meet-the-rangers"
+    },
+    {
+      "title": "Watr Humans And Elephants",
+      "desc": "Students develop an understanding of the complex issues surrounding habitat destruction and land-use conflict  Students use case studies to identify solutions that have been tried and tested ? and use tools to assess their relative success  NGSS - HS-LS2-7. Design, evaluate, and refine a solution for reducing the impacts of human activities on the environment and biodiversity.  Students use their developing understanding of the needs and preferences of both elephant and human communities to design and trial a range of solutions in Minecraft",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/watr-humans-and-elephants"
+    },
+    {
+      "title": "Running With Rhinos",
+      "desc": "Students develop an understanding of the different species and sub species of African rhinos.  Students explore the different requirements, behaviors and preferences of these species and use this knowledge to plan and build a suitable sanctuary.  NGSS - MS-ESS3-3. Apply scientific principles to design a method for monitoring and minimizing a human impact on the environment.*",
+      "ages": "5+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/running-with-rhinos"
+    },
+    {
+      "title": "Detecting Wildlife Crime",
+      "desc": "Students explore the operation of animal trafficking at a working port. They investigate a crime by interacting with staff on-site to stop trafficking",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/lessons/detecting-wildlife-crime"
+    },
+    {
+      "title": "Conservation Science",
+      "desc": "Students take part in a DNA matching operation, sourcing dung and ivory to assist in identifying where elephants are most at risk.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/conservation-science"
+    },
+    {
+      "title": "BUILD WITH BEES: BUMBLE BUZZ",
+      "desc": "Students learn about the huge diversity of bumble bee species using an online community science database and observations in their own schoolyard.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/build-with-bees-bumble-buzz"
+    },
+    {
+      "title": "Build With Bees Bee A Hero",
+      "desc": "After hearing farmers? and beekeepers? stories on the Farm, students embark on their own bee advocacy projects.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/build-with-bees-bee-a-hero"
+    },
+    {
+      "title": "Build With Bees Farming",
+      "desc": "Students explore dynamic, multi-faceted solutions to the difficult and complicated issue of bee death, using sustainable agriculture as a guide.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/build-with-bees-farming"
+    },
+    {
+      "title": "Build With Bees Pollination",
+      "desc": "Students dissect a flower to explore how its structures and functions relate to a pollinator?s physical and behavioral adaptations.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/build-with-bees-pollination"
+    },
+    {
+      "title": "Build With Bees Bee Nests",
+      "desc": "Focusing on different bees species? nesting sites and practices, students explore how unique adaptations help bees survive in a variety of settings.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/build-with-bees-bee-nests"
+    },
+    {
+      "title": "Build With Bees Habitat",
+      "desc": "Students apply their knowledge of bees? lifelong needs to build Minecraft ?beetopias? to support and grow their very own bee colonies.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/build-with-bees-habitat"
+    },
+    {
+      "title": "Build With Bees Life Cycle",
+      "desc": "Students explore the life cycle of bees, learning what the bees need to thrive -- and what can threaten survival -- at each stage.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/build-with-bees-life-cycle"
+    },
+    {
+      "title": "Build With Bees Beeswax",
+      "desc": "Students learn how bees make and use wax, then they explore tessellation and perimeter-to-area ratios to find out why bees build hexagons.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/build-with-bees-beeswax"
+    },
+    {
+      "title": "Build With Bees Honey",
+      "desc": "How honey is made, & why. Students practice observational skills and become honey connoisseurs by exploring honey?s wide range of colors and tastes.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/build-with-bees-honey"
+    },
+    {
+      "title": "Build With Bees Bee Treasures",
+      "desc": "Students learn about what bees produce in the hive: honey, beeswax, propolis, bee bread, and royal jelly, and how humans use these products, too.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/build-with-bees-bee-treasures"
+    },
+    {
+      "title": "Build With Bees Anatomy",
+      "desc": "Students compare characteristics common to all insects with a honeybee?s anatomy before using this information to design and build their own bees.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://education.minecraft.net/en-us/lessons/build-with-bees-anatomy"
+    },
+    {
+      "title": "Creature Crafter",
+      "desc": "In this creative build challenge you will discover information about the life and legacy of Mary Shelley, the brilliant mind behind Frankenstein. Explore a thrilling laboratory and bring your imagination to life by crafting your own fantastical creature?build from scratch or remix Minecraft mobs. Unleash your inner creator in this fun and educational adventure!",
+      "ages": "8+",
+      "subject": "LANGUAGE & LITERACY",
+      "url": "https://education.minecraft.net/en-us/challenges/creature-crafter"
+    },
+    {
+      "title": "Revamp Melbourne",
+      "desc": "Create a solution that meets the future needs of Melbourne. Effectively contribute to a team and reflect on its progress. Explain how a solution meets current and future needs",
+      "ages": "8+",
+      "subject": "SOCIAL STUDIES & HISTORY",
+      "url": "https://education.minecraft.net/en-us/lessons/revamp-melbourne"
+    },
+    {
+      "title": "Gold Rush",
+      "desc": "Students will conduct a historical inquiry to investigate how major events during the Australian Gold Rush period were significant in bringing about change. Students will create a historical letter/diary entry from the point of view of a person living in the Gold Rush era.",
+      "ages": "10+",
+      "subject": "SOCIAL STUDIES & HISTORY",
+      "url": "https://education.minecraft.net/en-us/lessons/australian-gold-rush2",
+      "teaching_notes": "Students will interact with the character of ?John?, a prospective miner from England, hoping to strike it rich on the Goldfields of Victoria, Australia. The journey starts out on board the ship, travelling to Australia and describes the arduous journey to get there. Students will read John?s story and complete a short written task using the book and quill (or alternative source). They will teleport to each location using in-built buttons on John?s dialogue screen and will be able to link to additional information about the topic of each location.  \n\nStudents will be given a task- to write a short diary entry from the point of view of a person like John. They will be given a camera and a book and quill when they first encounter John and should use these to document their adventures at each location and use the book and quill to write their diary entry. By the end of the activity, students should have a detailed diary of life on the goldfields and be able to use a range of descriptive vocabulary to describe characters, events and settings. Students can export completed book to use as portfolio of work for assessment or printed/used as an eBook about life on the Goldfields."
+    }
+  ],
+  "microbit": [
+    {
+      "title": "Barefoot Litter Hunt",
+      "desc": "Two lessons aimed at students aged 9-11. Students use buttons and sensors on the micro:bit to make different images display, are introduced to the concept of variables, and create a device that records details of litter that can be recycled in the local area.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=barefoot-litter-hunt"
+    },
+    {
+      "title": "Barefoot Wildlife Animations",
+      "desc": "Two lessons aimed at students aged 7-9. Students create icons and animations by programming the micro:bit's LED display and using the forever block and count-controlled loops.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=barefoot-wildlife-animations"
+    },
+    {
+      "title": "Being Active",
+      "desc": "Three simple projects to learn about the importance of being active to help prevent heart disease and create wearable devices to encourage people to be more active. Design challenges for finding solutions to the Global Goals for sustainable development (SDGs).",
+      "ages": "8+",
+      "subject": "SEL & LIFE SKILLS",
+      "url": "https://microbit.org/teach/lessons/?selected=being-active"
+    },
+    {
+      "title": "Computing Fundamentals",
+      "desc": "Six lessons designed for students aged 11-12 years. Students are introduced to the basics of computational thinking, programming and computer systems to ensure a shared level of understanding.",
+      "ages": "11+",
+      "subject": "CODING & COMPUTER SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=computing-fundamentals-unit-of-work"
+    },
+    {
+      "title": "CreateAI Taster Lessons",
+      "desc": "Two lessons introducing the concepts of AI and machine learning using micro:bit CreateAI.",
+      "ages": "8+",
+      "subject": "CODING & COMPUTER SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=createai-taster-lessons"
+    },
+    {
+      "title": "Cryptography",
+      "desc": "Three lessons designed for students aged 11-14 years to follow on from the ?Cyber security unit,? unit and a good first-introduction to text-based programming. Students are introduced to the fascinating world of cryptography through unplugged and programming activities.",
+      "ages": "11+",
+      "subject": "CODING & COMPUTER SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=cryptography"
+    },
+    {
+      "title": "Cyber Security",
+      "desc": "Three lessons designed for students aged 11-14 years introducing cyber security. Students explore the need to create strong passwords before writing algorithms and programs to create their own ?strong password generator? using the BBC micro:bit.",
+      "ages": "11+",
+      "subject": "CODING & COMPUTER SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=cyber-security"
+    },
+    {
+      "title": "Data Handling",
+      "desc": "Five lessons aimed at students aged 9-10 years. Students explore data and the sensors on the BBC micro:bit through a variety of unplugged and programming activities.",
+      "ages": "8+",
+      "subject": "MATHEMATICS",
+      "url": "https://microbit.org/teach/lessons/?selected=data-handling-unit-summary"
+    },
+    {
+      "title": "Digital Flashcards",
+      "desc": "Five lessons aimed at students aged 7-8 years. Students design and program digital flashcards to help them learn a foreign language using the BBC micro:bit.",
+      "ages": "8+",
+      "subject": "CODING & COMPUTER SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=digital-flashcards-unit-of-work"
+    },
+    {
+      "title": "Electrical Conductors",
+      "desc": "Five lessons aimed at students aged 8-9 years. Students develop their understanding of flowchart algorithms, selection, inputs and outputs by programming the BBC micro:bit to make a tester for electrical conductivity.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=electrical-conductors-unit-of-work"
+    },
+    {
+      "title": "Energy Awareness",
+      "desc": "Gather data about energy use around you using the BBC micro:bit as a simple data logger, then process and analyse the data to make informed decisions about reducing energy usage",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=energy-awareness"
+    },
+    {
+      "title": "First Lessons with MakeCode",
+      "ages": "8+",
+      "subject": "CODING & COMPUTER SCIENCE"
+    },
+    {
+      "title": "Getting Active",
+      "desc": "Five lessons aimed at students aged 10-11. Students are introduced to variables and develop different programs using the BBC micro:bit to help families get active.",
+      "ages": "8+",
+      "subject": "SEL & LIFE SKILLS",
+      "url": "https://microbit.org/teach/lessons/?selected=getting-active-unit-overview"
+    },
+    {
+      "title": "Health Tech",
+      "desc": "Five lessons designed for students aged 11-14 years to follow on from the ?Computing fundamentals? unit. Students work in teams to design and prototype their own health tech innovation.",
+      "ages": "11+",
+      "subject": "SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=health-tech-unit-of-work"
+    },
+    {
+      "title": "Healthy Oceans",
+      "desc": "Two longer, advanced projects to explore how wireless networks, smart materials and algorithms can help keep our oceans clean. Design challenges for finding solutions to the Global Goals for sustainable development (SDGs).",
+      "ages": "11+",
+      "subject": "SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=healthy-oceans"
+    },
+    {
+      "title": "Helping Plants Grow",
+      "desc": "Two advanced projects to explore how technology can protect plant life and increase food production. Design challenges for finding solutions to the Global Goals for sustainable development (SDGs).",
+      "ages": "11+",
+      "subject": "SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=helping-plants-grow"
+    },
+    {
+      "title": "Musical Micro:bit",
+      "desc": "Five lessons designed for students aged 9-10. Students compose musical phrases and algorithms before exploring how the BBC micro:bit can be programmed to play music.",
+      "ages": "8+",
+      "subject": "ARTS & DESIGN",
+      "url": "https://microbit.org/teach/lessons/?selected=musical-microbit-unit-overview"
+    },
+    {
+      "title": "Nature Art",
+      "desc": "This unit of four lessons is suitable for students aged 7-8 years. They create nature representations, firstly using art materials and are introduced to computational thinking and programming the LEDs on the BBC micro:bit.",
+      "ages": "8+",
+      "subject": "ARTS & DESIGN",
+      "url": "https://microbit.org/teach/lessons/?selected=nature-art-unit-of-work"
+    },
+    {
+      "title": "Night Safety",
+      "desc": "Three simple projects to learn about the importance of road safety at night and create wearable devices to help young people ?Be Safe: Be Seen!? Design challenges for finding solutions to the Global Goals for sustainable development (SDGs).",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=night-safety"
+    },
+    {
+      "title": "Protecting Animals",
+      "desc": "Two simple activities exploring how technology can be used to protect biodiversity in your neighbourhood and the wider world using the BBC micro:bit. Design challenges for finding solutions to the Global Goals for sustainable development (SDGs).",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=protecting-animals"
+    },
+    {
+      "title": "Sea Creatures",
+      "ages": "8+",
+      "subject": "SCIENCE"
+    },
+    {
+      "title": "Sensory Classroom",
+      "desc": "Four lessons designed for students aged 11-14 years. Students explore sensory classrooms and design and create their own sensory learning aids using the BBC micro:bit.",
+      "ages": "11+",
+      "subject": "SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=sensory-classroom"
+    },
+    {
+      "title": "Volcano Animations",
+      "desc": "Five lessons aimed at students aged 8-9 years. Students explore animations, developing their computational thinking and use repetition to create volcanic eruption animations using the LEDs on the BBC micro:bit.",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=volcano-animations-unit-of-work"
+    },
+    {
+      "title": "Saving Sea Creatures",
+      "desc": "Two simple projects to learn about the threats faced by fish and sea turtles and how technology can help them survive and promote bio-diversity. Design challenges for finding solutions to the Global Goals for sustainable development (SDGs).",
+      "ages": "8+",
+      "subject": "SCIENCE",
+      "url": "https://microbit.org/teach/lessons/?selected=sea-creatures"
+    }
+  ]
+}
