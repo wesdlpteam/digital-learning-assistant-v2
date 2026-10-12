@@ -2,7 +2,6 @@ function esc(s){
   return cleanTextCorruption_(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 function linkify(s){ return esc(cleanTextCorruption_(s)).replace(/(https?:\/\/[^\s)&<]+)/g, '<a href="$1" target="_blank" style="color:var(--mint);text-decoration:none;word-break:break-all">$1</a>'); }
-function linkifyLight(s){ return esc(cleanTextCorruption_(s)).replace(/(https?:\/\/[^\s)&<]+)/g, '<a href="$1" target="_blank" style="color:#2563eb;text-decoration:none;word-break:break-all">$1</a>'); }
 function caCol(ca){ return CAMPUS_COL[normCa(ca)]||CAMPUS_COL[ca]||'#818cf8'; }
 
 const STUDIO_MOBILE_NAV_QUERY = '(max-width: 900px)';
@@ -338,20 +337,6 @@ async function loadFromDrive(){
     err.textContent=e.message; err.style.display='block';
     btn.disabled=false; btn.textContent='↑ Load from Google Drive';
   }
-}
-
-function localImportDisabled_(){
-  alert('Local JSON import is disabled in production. Load data.json from Google Drive so Drive remains the single source of truth.');
-  return false;
-}
-
-function loadFromFile(e){
-  if(e && e.target) e.target.value = ''; 
-  return localImportDisabled_();
-}
-
-function loadFromPaste(){
-  return localImportDisabled_();
 }
 
 function ingest(arr, skipCache){

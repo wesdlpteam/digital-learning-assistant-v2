@@ -252,122 +252,6 @@ async function refreshPublicDemo(){
   if(btn) btn.disabled = false;
 }
 
-// 2026-05-28: Rewired to the server-side inspiring pipeline via the same
-// regenerateAllInspiring batch poller that Inspire All uses. Replaces the
-// previous client-side per-unit loop, which:
-//   (a) used a custom SUGGESTION_STYLE prompt that drifted from the
-//       6-sentence inspiring style of Inspire All
-//   (b) was NOT resumable — a laptop sleep mid-loop lost everything past
-//       the last per-unit saveToDrive
-// New behaviour: heartbeat-driven batch poll, snapshot-on-first-batch,
-// per-unit inspiringRegenAt markers (free resumability), and scope-filtered
-// to the selected campus + year level. Pass redoAll:true so units that
-// were inspiring-regenerated in a prior sweep also get refreshed.
-async function runBulkRegen(){
-  const ca=document.getElementById('bulk-regen-campus')?.value||'';
-  const yr=document.getElementById('bulk-regen-year')?.value||'';
-  const targets=DATA.map((e,idx)=>({e,idx})).filter(({e})=>{
-    if(ca&&e.ca!==ca) return false;
-    if(yr&&e.yl!==yr) return false;
-    return getSugs(e).filter(isRealSug).length>=6;
-  });
-  if(!targets.length){ setStatus('No entries match the selected filters','error'); return; }
-
-  const scopeLabel = [ca, yr].filter(Boolean).join(' · ') || 'the whole corpus';
-  const confirmed=confirm(`Regenerate ${targets.length} entr${targets.length!==1?'ies':'y'} in ${scopeLabel} through the inspiring 6-sentence pipeline?\n\n• Same whitelist + age + sibling-dup + auto-substitute validators as Inspire All\n• Library lessons (Minecraft / Micro:bit / Sphero) considered when the theme fits\n• Snapshot taken to Drive on the first batch (rollback path)\n• Per-unit markers — safe to refresh / close laptop; click again to resume\n• ~4 units per batch, ~1-3 min/batch\n\nProceed?`);
-  if(!confirmed) return;
-
-  const btn=document.getElementById('btn-bulk-regen');
-  const prog=document.getElementById('bulk-regen-progress');
-  const bar=document.getElementById('bulk-regen-bar');
-  const lbl=document.getElementById('bulk-regen-label');
-  const res=document.getElementById('bulk-regen-result');
-  if(!btn || !prog || !bar || !lbl || !res){ setStatus('Bulk regenerate panel is not available in this Studio view','error'); return; }
-  btn.disabled=true; prog.style.display='block'; res.innerHTML='';
-  bar.style.width='0%';
-  lbl.textContent='Starting batch 1…';
-
-  let heartbeatTimer = null;
-  const startHeartbeat = (label) => {
-    const t0 = Date.now();
-    const tick = () => {
-      const secs = Math.floor((Date.now() - t0) / 1000);
-      const mm = String(Math.floor(secs / 60)).padStart(1, '0');
-      const ss = String(secs % 60).padStart(2, '0');
-      lbl.textContent = `${label} — ${mm}:${ss} elapsed`;
-    };
-    tick();
-    heartbeatTimer = setInterval(tick, 1000);
-  };
-  const stopHeartbeat = () => { if(heartbeatTimer){ clearInterval(heartbeatTimer); heartbeatTimer = null; } };
-
-  let batchNum = 0;
-  let totalFixed = 0;
-  let totalFailed = 0;
-  const allFailures = [];
-
-  try {
-    while(true){
-      batchNum++;
-      const firstBatchHint = batchNum === 1 ? ' (first batch also snapshots data.json)' : '';
-      startHeartbeat(`Batch ${batchNum} running${firstBatchHint}`);
-      setStatus(`Bulk Regen: batch ${batchNum} processing…`, 'loading');
-      const payload = withGASToken({ action: 'regenerateAllInspiring', batch: 4, redoAll: true });
-      if(ca) payload.ca = ca;
-      if(yr) payload.yl = yr;
-      const response = await fetch(SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
-      });
-      const result = await response.json();
-      stopHeartbeat();
-      if(result.error){
-        setStatus('Bulk Regen error: ' + result.error, 'error');
-        lbl.textContent = 'Failed: ' + result.error + ' — partial progress saved. Click again to resume.';
-        btn.disabled = false;
-        return;
-      }
-      if(result.paused){
-        const isAbort = result.reason === 'aborted' || result.aborted === true;
-        const msg = isAbort
-          ? 'Bulk Regen stopped by abort flag. Clear the abort flag before resuming.'
-          : 'Bulk Regen paused: ' + (result.reason || 'unknown') + (result.until ? ' until ' + result.until : '');
-        setStatus(msg, isAbort ? 'success' : 'error');
-        lbl.textContent = isAbort ? 'Stopped by abort flag — use "Clear abort flag" before resuming.' : `Paused (${result.reason || 'unknown'}). Click again to resume.`;
-        btn.disabled = false;
-        return;
-      }
-      totalFixed += result.fixed || 0;
-      totalFailed += result.failed || 0;
-      if(Array.isArray(result.failures)) allFailures.push(...result.failures);
-      const pct = result.total ? Math.round((result.done / result.total) * 100) : 0;
-      bar.style.width = `${pct}%`;
-      lbl.textContent = `Batch ${batchNum} done — ${result.done}/${result.total} regenerated, ${result.remaining} remaining`;
-      setStatus(`Bulk Regen: ${result.done}/${result.total} done (batch ${batchNum})`, 'success');
-      if(result.allDone){
-        const failNote = totalFailed > 0 ? ` (${totalFailed} failed — see console)` : '';
-        const skipMsg = result.skippedCount ? ` · ${result.skippedCount} skipped (need CI + LOI)` : '';
-        setStatus(`✨ Bulk Regen complete — ${totalFixed} regenerated${failNote}${skipMsg}`, 'success');
-        lbl.textContent = `Complete — ${totalFixed} regenerated${failNote}${skipMsg}. Reload data to see the new descriptions.`;
-        if(allFailures.length) console.warn('Bulk Regen failures:', allFailures);
-        if(typeof loadFromDrive === 'function'){
-          await loadFromDrive();
-          if(typeof renderDashboard === 'function') renderDashboard();
-        }
-        btn.disabled = false;
-        return;
-      }
-      await sleep(2500);
-    }
-  } catch(err){
-    stopHeartbeat();
-    setStatus('Bulk Regen failed: ' + err.message, 'error');
-    lbl.textContent = 'Failed: ' + err.message + ' — partial progress saved. Click again to resume.';
-    btn.disabled = false;
-  }
-}
-
 // 2026-05-27: scanAndFixComponentDupes apparatus removed — under the
 // new single-tool rule, App Smash component duplicates cannot exist.
 // The Sweep App Smashes button in the Maintenance box handles any
@@ -2132,15 +2016,6 @@ function clearSession(){
     return true;
   }
 
-  function bgSafeSave_(){
-    try{
-      if(typeof saveToDrive !== 'function') return;
-      saveToDrive().catch(function(err){ bgReport_(err, 'saveToDrive after Bulk AI changes'); });
-    }catch(err){
-      bgReport_(err, 'saveToDrive after Bulk AI changes');
-    }
-  }
-
   // Catch unhandled errors while Bulk AI is active or while its review popup is open.
   window.addEventListener('error', function(ev){
     try{
@@ -2205,95 +2080,6 @@ function clearSession(){
       }
     };
   }
-
-  // Replace the popup apply flow with a defensive version that cannot take the whole Studio down.
-  applyChangesFromPopup = window.applyChangesFromPopup = function(){
-    const overlay = document.getElementById('changes-popup-overlay');
-    if(!overlay) return;
-    const applyBtn = document.getElementById('popup-apply-btn');
-    try{
-      if(applyBtn){ applyBtn.disabled = true; applyBtn.textContent = 'Applying…'; applyBtn.style.opacity = '0.65'; }
-      const changes = (window._popupChanges || []).map(bgNormaliseChange_).filter(bgValidChange_);
-      const states = window._popupStates || [];
-      const approved = changes.filter(function(c, i){ return states[i] === 'approved'; });
-      let applied = 0;
-      let skippedDupes = 0;
-      let skippedInvalid = 0;
-      let appliedRealismFixes = false;
-
-      if(approved.length > 0 && typeof createSnapshot === 'function'){
-        try{
-          const snapName = window._snapshotReason || `Before applying ${approved.length} bulk change${approved.length!==1?'s':''}`;
-          createSnapshot(snapName);
-          delete window._snapshotReason;
-        }catch(e){ console.warn('Snapshot before bulk apply failed:', e); }
-      }
-
-      approved.forEach(function(c){
-        try{
-          const entryIdx = Number(c.entryIdx);
-          const sugIdx = Number(c.sugIdx);
-          const t = bgCleanText_(c.t || c.tool || c.technology || c.name || '');
-          const d = bgCleanText_(c.d || c.desc || c.description || c.integration_idea || c.activity || c.suggestion || '');
-          const url = bgCleanUrl_(c.url || c.lessonUrl || '');
-          if(!DATA[entryIdx]){ skippedInvalid++; return; }
-          if(!t || !d){ skippedInvalid++; return; }
-          if(typeof wouldDupeToolProposalInEntry === 'function' && wouldDupeToolProposalInEntry(DATA[entryIdx], t, sugIdx)){
-            skippedDupes++;
-            return;
-          }
-          const currentSugs = (typeof getSugs === 'function') ? getSugs(DATA[entryIdx]) : (Array.isArray(DATA[entryIdx].s) ? DATA[entryIdx].s : []);
-          if(!Array.isArray(DATA[entryIdx].s)){
-            DATA[entryIdx].s = currentSugs.map(function(s){
-              return {
-                t: (typeof sugTool === 'function') ? sugTool(s) : (s && (s.t || s.tool || s.technology || s.name) || ''),
-                d: (typeof sugDesc === 'function') ? sugDesc(s) : (s && (s.d || s.desc || s.description || s.integration_idea || s.activity) || ''),
-                ...(s && (s.url || s.lessonUrl) ? {url:s.url || s.lessonUrl} : {})
-              };
-            });
-          }
-          if(sugIdx < 0 || sugIdx >= DATA[entryIdx].s.length){ skippedInvalid++; return; }
-          DATA[entryIdx].s[sugIdx] = url ? {t:t, d:d, url:url} : {t:t, d:d};
-          DATA[entryIdx].audited = true;
-          applied++;
-          try { if(typeof isRealismAuditChange_ === 'function' && isRealismAuditChange_(c)) appliedRealismFixes = true; } catch(e){}
-          try { if(typeof markEntryNeedsHumanRecheck_ === 'function') markEntryNeedsHumanRecheck_(entryIdx, 'AI suggestion change applied after human verification'); } catch(e){}
-        }catch(oneErr){
-          skippedInvalid++;
-          console.warn('Skipped one Bulk AI change after apply error:', oneErr, c);
-        }
-      });
-
-      try { overlay.remove(); } catch(e){}
-      delete window._popupStates;
-      delete window._popupChanges;
-      delete window._popupUpdateCounter;
-
-      bgSafeSave_();
-
-      const bits = [];
-      if(skippedDupes) bits.push(`skipped ${skippedDupes} duplicate${skippedDupes!==1?'s':''}`);
-      if(skippedInvalid) bits.push(`skipped ${skippedInvalid} invalid change${skippedInvalid!==1?'s':''}`);
-      const note = bits.length ? ' (' + bits.join(', ') + ')' : '';
-
-      if(appliedRealismFixes && typeof rescanRealismAfterApprovedFixes_ === 'function'){
-        try { if(typeof setStatus === 'function') setStatus(`${applied} suggestion${applied!==1?'s':''} updated${note} — saving, then rescanning realism audit…`, 'loading'); } catch(e){}
-        setTimeout(function(){
-          try { rescanRealismAfterApprovedFixes_(applied, skippedDupes); }
-          catch(err){ bgReport_(err, 'rescanRealismAfterApprovedFixes'); }
-        }, 250);
-      } else {
-        try { if(typeof setStatus === 'function') setStatus(`${applied} suggestion${applied!==1?'s':''} updated${note} — saving to Drive…`, 'loading'); } catch(e){}
-      }
-
-      try { if(typeof renderAuditChart === 'function') renderAuditChart(); } catch(e){ console.warn('renderAuditChart after bulk apply failed:', e); }
-      try { if(typeof renderBrowse === 'function') renderBrowse(); } catch(e){ console.warn('renderBrowse after bulk apply failed:', e); }
-      try { if(typeof CURRENT_ENTRY_IDX !== 'undefined' && CURRENT_ENTRY_IDX !== null && typeof renderEntry === 'function') renderEntry(CURRENT_ENTRY_IDX); } catch(e){ console.warn('renderEntry after bulk apply failed:', e); }
-    }catch(err){
-      if(applyBtn){ applyBtn.disabled = false; applyBtn.textContent = '✓ Apply approved changes'; applyBtn.style.opacity = '1'; }
-      bgReport_(err, 'applyChangesFromPopup');
-    }
-  };
 })();
 /* ===== end DLA hotfix ===== */
 
@@ -2660,15 +2446,6 @@ function clearSession(){
       window[BASELINE_FIELD] = mergeMakeBaselineFromData_(Array.isArray(arr) ? arr : DATA);
       window.__dlaMergeBaselineCapturedAt = Date.now();
     }catch(e){ window[BASELINE_FIELD] = {}; }
-  }
-
-  function mergeLocalMap_(){
-    const map = new Map();
-    (Array.isArray(DATA) ? DATA : []).forEach(function(entry, idx){
-      const key = mergeEntryKey_(entry);
-      if(key) map.set(key, { entry, idx });
-    });
-    return map;
   }
 
   function mergeLatestMap_(latest){
@@ -3340,30 +3117,6 @@ function clearSession(){
     const s = String(desc || '').toLowerCase();
     return /\b(annotat|label|layer|data layer|custom map|map maker|mapmaker|gis|heat ?map|choropleth|measure distance|measure area|plot data|plot points|overlay|spatial data|thematic map)\b/.test(s)
       && !/\bstreet\s*view\b/.test(s);
-  }
-
-  function dqDescriptionSuggestsStreetView_(desc){
-    return /\bstreet\s*view\b|\b360\b|\bvirtual walk\b|\bwalk through\b|\bground[- ]level\b/i.test(String(desc || ''));
-  }
-
-  function dqRewriteMapDescription_(tool, desc){
-    let d = dqText_(desc);
-    if(dqKey_(tool) === dqKey_(NATGEO_TOOL)){
-      d = d
-        .replace(/\bGoogle Maps\b/gi, NATGEO_TOOL)
-        .replace(/\bStreet View\b/gi, 'map layers')
-        .replace(/\bannotate in maps\b/gi, 'add labels and data layers in MapMaker');
-      if(!/mapmaker|map maker|data layer|layer|annotat|label|gis/i.test(d)){
-        d += ' Students add labels, map layers or simple spatial evidence so their map becomes an explanation rather than just a location search.';
-      }
-    }
-    if(dqKey_(tool) === dqKey_('Google Maps')){
-      d = d.replace(/\bannotat(e|ed|ing|ions?)\b/gi, 'observe').replace(/\blayer(s|ed)?\b/gi, 'Street View evidence');
-      if(!dqDescriptionSuggestsStreetView_(d)){
-        d += ' Students use Street View to observe ground-level evidence, compare places and capture notes that connect directly to the unit.';
-      }
-    }
-    return d.replace(/\s{2,}/g,' ').trim();
   }
 
   function dqSanitiseSuggestion_(sug){
@@ -4153,9 +3906,7 @@ function clearSession(){
   if(typeof inspireAllBatch === 'function') inspireAllBatch = window.inspireAllBatch = dlaWithBulkBusy_(inspireAllBatch, 45 * 60 * 1000);
   if(typeof sweepAppSmashesBatch === 'function') sweepAppSmashesBatch = window.sweepAppSmashesBatch = dlaWithBulkBusy_(sweepAppSmashesBatch);
   if(typeof rebootMakerspaceBatch === 'function') rebootMakerspaceBatch = window.rebootMakerspaceBatch = dlaWithBulkBusy_(rebootMakerspaceBatch);
-  if(typeof runBulkRegen === 'function') runBulkRegen = window.runBulkRegen = dlaWithBulkBusy_(runBulkRegen);
   if(typeof runSurgeon === 'function') runSurgeon = window.runSurgeon = dlaWithBulkBusy_(runSurgeon);
-  if(typeof runAutoDiversify === 'function') runAutoDiversify = window.runAutoDiversify = dlaWithBulkBusy_(runAutoDiversify);
   if(typeof draftAllRealismFixes === 'function') draftAllRealismFixes = window.draftAllRealismFixes = dlaWithBulkBusy_(draftAllRealismFixes);
   if(typeof bulkChatSend === 'function') bulkChatSend = window.bulkChatSend = dlaWithBulkBusy_(bulkChatSend);
   if(typeof startBulkAnalysis === 'function') startBulkAnalysis = window.startBulkAnalysis = dlaWithBulkBusy_(startBulkAnalysis);

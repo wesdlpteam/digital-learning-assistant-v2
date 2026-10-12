@@ -7,20 +7,19 @@
    inline script; this file fills the gap.
 
    Contents (in order):
-     - Audit panel:  computeStats, renderAudit, renderAuditChart,
-       setAuditView, setAnalyticsView, setYrCampus,
+     - Audit panel:  renderAudit, setAuditView, setAnalyticsView, setYrCampus,
        suggestionAuditIssues, auditEntrySuggestions, etc.
      - (Live Analytics now lives in js/03 and js/04.)
      - Libraries UI:  renderLibraries, libAddLesson / DeleteLesson
        / EditLesson / ExtractFromUrl / ExportAll / ImportAll /
        Trigger / ToggleSection, showAddLibraryDialog,
        createNewLibrary, deleteLibrary, libSlugToTitle.
-     - Realism audit:  runFullRealismAudit, scanCurrentEntryRealism,
+     - Realism audit:  scanCurrentEntryRealism,
        renderRealismResults, draftAllRealismFixes,
        evaluateDraftImprovement, severityColour, etc.
      - Quality scoring:  scoreEntryQuality.
      - Misc:  initNetworkCanvas, showChangesPopup,
-       applyChangesFromPopup, showBeforeAfterPreview,
+       showBeforeAfterPreview,
        setChangeState, addToGASQueue, runWhatIfSimulation.
      - Bulk chat:  bulkChatSend, bulkChatAddMessage, bulkChatReset,
        bulkChatQuickStart, renderBulkChat, renderBulkWelcome, the
@@ -28,10 +27,15 @@
        showNextQuestion, buildClarifyPrompt), reasoning step UI
        (showReasoningSteps, hideReasoningSteps, updateReasoningStep),
        and bulk insight computation.
-     - Opportunity detection:  the family of bulkInstruction*
-       /bulkDetectNamedToolOpportunity_ /chooseNamedToolOpportunitySlot_
-       /buildNamedToolOpportunityChange_ /runBulkNamedToolOpportunityFlow_
-       helpers used by Bulk AI Edit.
+     - Opportunity detection:  the bulkInstruction* helpers and
+       bulkDetectNamedToolOpportunity_ /
+       bulkInstructionTargetsNamedToolOpportunity_, which Bulk AI Edit
+       uses to recognise "find opportunities for <tool>" requests.
+
+   Not here: computeStats, renderAuditChart, the popup apply flow
+   (applyChangesFromPopup) and the full realism scan (runFullRealismAudit).
+   All four are defined only in js/08-export-sync-hotfixes.js; the copies that used to live here were
+   always replaced by 08 and were removed in Studio v5.72.
 
    Source: lifted verbatim from DLA_Studio_legacy_backup.html line
    ranges 2317-4264, 5203-6374, and 6828-7137. Order preserved so
@@ -77,21 +81,6 @@ function setYrCampus(ca,btn){
   document.querySelectorAll('#year-campus-filter .view-tab').forEach(b=>b.classList.remove('active'));
   if(btn) btn.classList.add('active');
   renderAuditChart();
-}
-
-function jumpToBrowse(toolName){
-  switchTab('browse',document.querySelector('.nav-item[data-tab="browse"]'));
-  document.getElementById('f-search').value=toolName;
-  renderBrowse();
-}
-
-function toggleToolDrilldown(row, toolName){
-  const dd=row.querySelector('.tool-drilldown');
-  if(!dd) return;
-  const isOpen=dd.style.display!=='none';
-  
-  document.querySelectorAll('.tool-drilldown').forEach(d=>d.style.display='none');
-  if(!isOpen) dd.style.display='block';
 }
 
 
@@ -262,75 +251,6 @@ function setChangeState(ci, state){
     if(approveBtn){ approveBtn.style.background='transparent'; approveBtn.style.color='var(--lime)'; }
   }
   if(window._popupUpdateCounter) window._popupUpdateCounter();
-}
-
-function applyChangesFromPopup(){
-  const overlay=document.getElementById('changes-popup-overlay');
-  if(!overlay) return;
-  const changes=window._popupChanges||[];
-  const states=window._popupStates||[];
-  let applied=0, skippedDupes=0;
-  let appliedRealismFixes=false;
-  
-  // Auto-create a snapshot before applying bulk changes
-  const approvedCount = states.filter(s => s === 'approved').length;
-  if(approvedCount > 0){
-    const snapName = window._snapshotReason || `Before applying ${approvedCount} bulk change${approvedCount!==1?'s':''}`;
-    createSnapshot(snapName);
-    delete window._snapshotReason;
-  }
-
-  changes.forEach((c,ci)=>{
-    if(states[ci]!=='approved') return;
-    const entryIdx=c.entryIdx;
-    const sugIdx=c.sugIdx;
-    const t=cleanSuggestionText_(c.t||c.tool||c.technology||c.name||'');
-    const d=cleanSuggestionText_(c.d||c.desc||c.description||c.integration_idea||'');
-    const url=cleanMinecraftLessonUrl_(c.url||c.lessonUrl||'');
-    // Safety net: if an earlier approved change already put this tool in a sibling slot, skip
-    if(entryIdx>=0 && entryIdx<DATA.length && wouldDupeToolProposalInEntry(DATA[entryIdx], t, sugIdx)){
-      skippedDupes++;
-      return;
-    }
-    if(entryIdx>=0&&entryIdx<DATA.length){
-      const sugs=getSugs(DATA[entryIdx]);
-      if(Array.isArray(DATA[entryIdx].s)){
-        if(sugIdx>=0&&sugIdx<DATA[entryIdx].s.length){
-          DATA[entryIdx].s[sugIdx]=url?{t,d,url}:{t,d};
-          applied++;
-          DATA[entryIdx].audited=true;
-          if(isRealismAuditChange_(c)) appliedRealismFixes=true;
-          markEntryNeedsHumanRecheck_(entryIdx, 'AI suggestion change applied after human verification');
-        }
-      } else {
-        
-        DATA[entryIdx].s=sugs.map((s,i)=>({t:sugTool(s),d:sugDesc(s)}));
-        if(sugIdx>=0&&sugIdx<DATA[entryIdx].s.length){
-          DATA[entryIdx].s[sugIdx]=url?{t,d,url}:{t,d};
-          applied++;
-          DATA[entryIdx].audited=true;
-          if(isRealismAuditChange_(c)) appliedRealismFixes=true;
-          markEntryNeedsHumanRecheck_(entryIdx, 'AI suggestion change applied after human verification');
-        }
-      }
-    }
-  });
-
-  overlay.remove();
-  delete window._popupStates;
-  delete window._popupChanges;
-  delete window._popupUpdateCounter;
-
-  saveToDrive().catch(showSaveError_);
-  const dupeNote = skippedDupes ? ` (skipped ${skippedDupes} duplicate${skippedDupes!==1?'s':''})` : '';
-  if(appliedRealismFixes){
-    setStatus(`${applied} suggestion${applied!==1?'s':''} updated${dupeNote} — saving, then rescanning realism audit…`, 'loading');
-    setTimeout(() => rescanRealismAfterApprovedFixes_(applied, skippedDupes), 250);
-  } else {
-    setStatus(`${applied} suggestion${applied!==1?'s':''} updated${dupeNote} — saving to Drive…`, 'loading');
-  }
-  renderAuditChart();
-  if(typeof renderBrowse === 'function') renderBrowse();
 }
 
 // ========== BEFORE/AFTER PREVIEW ==========
@@ -721,23 +641,6 @@ function scanCurrentEntryRealism(){
   REALISM_AUDIT_RESULTS = results;
   renderRealismResults(results, 'entry-realism-result', {maxHeight:'none', limit:20});
   if(btn){ btn.disabled = false; btn.textContent = 'Scan this entry'; }
-}
-
-function runFullRealismAudit(){
-  const btn = document.getElementById('btn-full-realism-audit');
-  if(btn){ btn.disabled = true; btn.textContent = 'Scanning…'; }
-  const all = [];
-  DATA.forEach((entry, entryIdx) => {
-    all.push(...auditEntrySuggestions(entry, entryIdx));
-  });
-  all.sort((a,b) => {
-    const weight = {high:0, medium:1, low:2};
-    return weight[resultHighestSeverity(a)] - weight[resultHighestSeverity(b)] || String(a.yl).localeCompare(String(b.yl)) || String(a.th).localeCompare(String(b.th));
-  });
-  REALISM_AUDIT_RESULTS = all;
-  renderRealismResults(all, 'realism-audit-result', {maxHeight:'560px', limit:100});
-  setStatus(all.length ? `Realism audit complete — ${all.length} flagged` : 'Realism audit complete — no issues found');
-  if(btn){ btn.disabled = false; btn.textContent = 'Scan all suggestions'; }
 }
 
 function draftRealismReplacementFromAudit(idx){
@@ -1271,8 +1174,6 @@ function bulkExtractTargetYears_(instruction){
 
   return [...out].sort((a,b) => YR.indexOf(a) - YR.indexOf(b));
 }
-// Backward-compatible alias
-function buildMinecraftContext(){ return buildLibraryContext('minecraft'); }
 
 // ========== ADD LIBRARY DIALOG ==========
 
@@ -2354,309 +2255,6 @@ function bulkInstructionTargetsNamedToolOpportunity_(instruction){
   if(key === toolInventoryKey('Wise Discussion Chatbots')) return false;
   if(key === toolInventoryKey('Minecraft Education')) return false;
   if(key === toolInventoryKey('Micro:bit')) return false;
-  return true;
-}
-
-function bulkToolOpportunityFamily_(toolName){
-  const key = toolInventoryKey(toolName).toLowerCase();
-  if(/lego spike|sphero|bee-bot|beebot|micro:bit|codrone|makey makey|tinkercad|3d printer|minecraft/.test(key)) return 'stem-hardware';
-  if(/book creator|canva|adobe express|imovie|garageband|green screen|stop motion|chatterpix|puppet pals/.test(key)) return 'creation';
-  if(/forms|excel|word clouds|geoboard/.test(key)) return 'data';
-  if(/google earth|google maps|field guide/.test(key)) return 'place';
-  if(/padlet|freeform|teams|onenote|sway|powerpoint|word/.test(key)) return 'collaboration';
-  return 'general';
-}
-
-function bulkToolOpportunityUnitScore_(entry, toolName, instruction){
-  const family = bulkToolOpportunityFamily_(toolName);
-  const key = toolInventoryKey(toolName).toLowerCase();
-  const unit = unitContextTextForRealism(entry).toLowerCase();
-  let score = 5;
-
-  // A named request is already coordinator intent, but still rank the strongest fits first.
-  if(family === 'stem-hardware'){
-    score += 3;
-    if(/how the world works|force|motion|energy|material|machine|simple machine|system|cause and effect|electric|circuit|sensor|automation|robot|code|algorithm|prototype|design|engineering|model|test|debug|iterate|innovation|solution|sustainab|waste|water|habitat|ecosystem|environment|transport|journey|map|navigation|measurement|data/.test(unit)) score += 12;
-    if(/sharing the planet|how we organise ourselves/.test(unit) && /problem|solution|sustainab|community|system|service|resource|environment|waste|water|energy|transport/.test(unit)) score += 8;
-    if(/who we are|wellbeing|identity|belief|friendship|emotion|self|relationship/.test(unit) && !/design|solution|prototype|system|model|assistive|accessibility|community/.test(unit)) score -= 10;
-    if(/how we express ourselves|art|story|culture|celebration|performance|music/.test(unit) && !/interactive|mechanism|prototype|design|model/.test(unit)) score -= 6;
-  } else if(family === 'creation'){
-    if(/express|story|identity|culture|perspective|report|explain|present|communication|reflection|portfolio|narrative|information|publish|audience|art|media/.test(unit)) score += 10;
-    if(/how the world works|sharing the planet|where we are|organise/.test(unit)) score += 4;
-  } else if(family === 'data'){
-    if(/data|survey|graph|chart|measure|pattern|compare|questionnaire|statistics|evidence|results|investigation|experiment|poll/.test(unit)) score += 12;
-  } else if(family === 'place'){
-    if(/place|location|map|migration|journey|settlement|country|community|environment|habitat|landform|geography|where we are/.test(unit)) score += 12;
-  } else if(family === 'collaboration'){
-    if(/collaborat|perspective|discussion|brainstorm|compare|reflect|organise|community|systems|inquiry|research|share/.test(unit)) score += 8;
-  }
-
-  // Tool-specific nudges.
-  if(/lego spike prime/i.test(toolName)){
-    if(/year 5|year 6/i.test(entry?.yl || '')) score += 2;
-    if(/force|motion|energy|machine|mechanism|sensor|automated|robot|prototype|design|engineering|system|solution|sustainab|waste|transport|accessibility/.test(unit)) score += 8;
-  }
-  if(/book creator/i.test(toolName) && /prep|year 1|year 2/i.test(entry?.yl || '')) score += 4;
-
-  // If the coordinator named a year level, that filtering happens elsewhere.
-  return score;
-}
-
-function bulkNamedToolOpportunitySlotScore_(entry, sug, sugIdx, targetTool){
-  if(!entry || !sug || Number(sugIdx) === 5) return -9999;
-  const existingTool = sugTool(sug);
-  const existingKey = toolInventoryKey(existingTool).toLowerCase();
-  if(existingKey === toolInventoryKey(targetTool).toLowerCase()) return -9999;
-  const desc = String(sugDesc(sug) || '').replace(/\s+/g,' ').trim();
-  const issues = (typeof suggestionAuditIssues === 'function') ? suggestionAuditIssues(entry, sug, sugIdx) : [];
-  let score = 0;
-  const typeSet = new Set(issues.map(i => i.type));
-  if(typeSet.has('vague') || typeSet.has('thin') || typeSet.has('connection') || typeSet.has('generic')) score += 9;
-  if(desc.length < 90) score += 5;
-  if(!/(create|produce|record|build|design|publish|share|capture|explain|compare|reflect|draft|prototype|present|map|model|question|interview|test|code|collect|analyse|analyze)/i.test(desc)) score += 3;
-
-  // Prefer replacing familiar, lower-impact capture tools over curated or hands-on ideas.
-  if(['seesaw','canva','book creator','padlet','microsoft sway','microsoft powerpoint','microsoft word','freeform','piccollage'].some(k => existingKey.includes(k))) score += 5;
-  if(/worksheet|research|poster|presentation|reflection|journal/i.test(desc)) score += 2;
-  if(/micro:?bit|minecraft|sphero|lego spike|codrone|3d printer|tinkercad|makey makey/i.test(existingTool)) score -= 6;
-  if(sug.url) score -= 3;
-  return score;
-}
-
-function chooseNamedToolOpportunitySlot_(entry, targetTool){
-  let best = null;
-  getSugs(entry).forEach((sug, sugIdx) => {
-    const score = bulkNamedToolOpportunitySlotScore_(entry, sug, sugIdx, targetTool);
-    if(score <= -999) return;
-    if(!best || score > best.score){
-      best = {sugIdx, score, oldTool:sugTool(sug), oldDesc:sugDesc(sug)};
-    }
-  });
-  return best;
-}
-
-function fallbackNamedToolOpportunityDescription_(entry, targetTool){
-  const unit = cleanSuggestionText_(entry?.th || 'this unit');
-  const ci = cleanSuggestionText_(entry?.ci || 'the central idea');
-  const tool = cleanSuggestionText_(targetTool || 'the selected tool');
-  const context = unitContextTextForRealism(entry).toLowerCase();
-  if(/lego spike prime/i.test(tool)){
-    if(/force|motion|energy|machine|mechanism|material|system|how the world works/i.test(context)){
-      return `Students use ${tool} to build and code a working model that tests one system, force or mechanism connected to “${unit}”. They run trials, adjust the build or code, and record a short evidence note explaining how the model helps prove or challenge an idea from the unit.`;
-    }
-    if(/sustain|environment|waste|water|habitat|ecosystem|sharing the planet/i.test(context)){
-      return `Students use ${tool} to prototype an automated solution for an environmental or sustainability challenge connected to “${unit}”, such as sorting, sensing, warning or moving materials. They test the prototype, photograph the final design, and explain how one design choice connects to the central idea: ${ci}.`;
-    }
-    return `Students use ${tool} to build and code a small prototype that models a problem, system or possible solution connected to “${unit}”. They test the prototype, improve one part of the build or program, and create a short design note explaining how it connects to the central idea: ${ci}.`;
-  }
-  if(/makey makey/i.test(tool)) return `Students use ${tool} to build a simple interactive model, poster or prototype connected to “${unit}”, using everyday conductive materials to trigger sounds, labels or responses. They test the circuit, refine one interaction, and record a short explanation of how their physical-digital product connects to the central idea: ${ci}.`;
-  if(/book creator/i.test(tool)) return `Students use ${tool} to create a short multimodal book that explains one important idea from “${unit}” using text, images and voice recording. They include a final reflection page explaining how their evidence connects to the central idea: ${ci}.`;
-  if(/canva|adobe express/i.test(tool)) return `Students use ${tool} to create a clear visual product connected to “${unit}”, combining concise text, images and labelled evidence. They share the finished design with a partner and explain how it supports the central idea: ${ci}.`;
-  if(/padlet|freeform/i.test(tool)) return `Students use ${tool} to collect, sort and connect examples from “${unit}” on a shared board. They add short notes explaining the pattern they notice and how it links to the central idea: ${ci}.`;
-  return `Students use ${tool} to create a practical learning product connected to “${unit}”. They include evidence from the unit and a short explanation of how their product connects to the central idea: ${ci}.`;
-}
-
-async function buildNamedToolOpportunityChange_(entryIdx, slot, targetTool, instruction){
-  const entry = DATA[entryIdx];
-  const currentSug = getSugs(entry)[slot.sugIdx];
-  const oldTool = sugTool(currentSug);
-  const oldDesc = sugDesc(currentSug);
-  const existingTools = getSugs(entry).map((s,i)=>i===slot.sugIdx?null:sugTool(s)).filter(Boolean).join(', ');
-  const plannerCtx = entry.plannerContextRich || entry.plannerText || '';
-  const affordanceNote = (typeof toolAffordanceNote_ === 'function') ? toolAffordanceNote_(targetTool) : '';
-  const prompt = `You are a Digital Learning Coach at Wesley College.
-
-Task: add a strong opportunity to use the named tool: ${targetTool}.
-
-Unit: ${entry.ca} | ${entry.yl} | "${entry.th}"
-Central Idea: ${entry.ci || ''}
-Lines of Inquiry: ${entry.lo || ''}
-Planner context: ${plannerCtx ? plannerCtx.slice(0, 1500) : 'No planner context available.'}
-
-Current suggestion slot to replace:
-Tool: ${oldTool}
-Description: ${oldDesc}
-
-Other tools already in this unit, do not duplicate: ${existingTools || 'none'}
-${affordanceNote ? '\n' + affordanceNote + '\n' : ''}
-Tool rules:
-- The "t" field MUST start with exactly: ${targetTool}
-- You MAY pair the target tool with ONE secondary tool when it genuinely strengthens the activity. Use the format: "${targetTool} + SecondaryTool" (e.g. "${targetTool} + Freeform"). The secondary must be a Wesley-approved tool that is age-appropriate for ${entry.yl} (good pairings include Freeform, Padlet, Book Creator, Canva, Seesaw, iMovie, GarageBand, PicCollage). Do not pair with any tool already listed above.
-- Otherwise return just "${targetTool}" in "t".
-- Do not target the STEM Design Cycle slot; this slot has already been selected from slots 0-4.
-
-Description rules:
-- Write ~6 vivid practical sentences (500-800 chars) following the DESCRIPTION QUALITY RULES below.
-- Name a specific student action and the concrete product/artefact they create.
-- Anchor the action to the planner content above — refer to the unit's specific topic, concepts, or learning goals by name (drawn from the planner context, central idea, and lines of inquiry) — but NEVER quote the central idea or lines of inquiry directly.
-- If pairing tools, briefly say how the two tools work together (e.g. one captures, the other displays/collects/extends).
-- If using robotics/hardware such as Lego Spike Prime, describe a real build/code/test action, not a metaphor.
-- Keep the wording clear for a primary teacher.
-${SUGGESTION_STYLE}
-
-Return ONLY JSON: {"t":"${targetTool}" OR "${targetTool} + Secondary","d":"~6 vivid practical sentences (500-800 chars) anchored in the planner, following the rules above."}`;
-
-  const targetKey = toolInventoryKey(targetTool);
-  let lastIssue = '';
-  for(let attempt=0; attempt<3; attempt++){
-    try{
-      const retry = lastIssue ? `\n\nRETRY because the previous answer was rejected: ${lastIssue}. Start "t" with exactly ${targetTool}, make the classroom action concrete, and anchor it to the planner above.` : '';
-      const raw = await callAI([{role:'user', parts:[{text:prompt + retry}]}], null, OPENAI_FAST_MODEL || OPENAI_MODEL);
-      const clean = raw.replace(/```json|```/g,'').trim();
-      const si = clean.indexOf('{'), ei = clean.lastIndexOf('}');
-      if(si === -1 || ei === -1) throw new Error('AI did not return JSON.');
-      const parsed = JSON.parse(clean.slice(si, ei + 1));
-      const rawT = cleanSuggestionText_(parsed.t || parsed.tool || parsed.technology || targetTool);
-      const newDesc = cleanSuggestionText_(parsed.d || parsed.desc || parsed.description || '');
-      // Accept "X" or "X + Y" where X canonically equals targetTool.
-      const parts = String(rawT).split(/\s*\+\s*/).map(s => normaliseToolName(s.trim())).filter(Boolean);
-      if(!parts.length || toolInventoryKey(parts[0]) !== targetKey){
-        lastIssue = `it returned ${rawT} instead of ${targetTool}`; continue;
-      }
-      const secondaries = parts.slice(1);
-      let secondaryIssue = '';
-      for(const sec of secondaries){
-        if(toolInventoryKey(sec) === targetKey){ secondaryIssue = `duplicated ${targetTool} as secondary`; break; }
-        if(!isAiToolSafeForEntry(sec, entry)){ secondaryIssue = `secondary tool ${sec} is not approved or age-appropriate for ${entry.yl}`; break; }
-      }
-      if(secondaryIssue){ lastIssue = secondaryIssue; continue; }
-      const finalTool = secondaries.length ? `${targetTool} + ${secondaries.join(' + ')}` : targetTool;
-      if(!newDesc){ lastIssue = 'missing description'; continue; }
-      if(wouldDupeToolProposalInEntry(entry, finalTool, slot.sugIdx)){ lastIssue = `${finalTool} already exists in this unit`; continue; }
-      if(!isAiToolSafeForEntry(targetTool, entry)){ lastIssue = `${targetTool} is not age-appropriate or safe for ${entry.yl}`; continue; }
-      const realism = checkRealisticToolUse(targetTool, newDesc, entry);
-      if(!realism.ok){ lastIssue = `realism check failed: ${realism.reason}`; continue; }
-      const multiNote = secondaries.length ? ` (paired with ${secondaries.join(', ')})` : '';
-      return {
-        entryIdx,
-        sugIdx: slot.sugIdx,
-        t: finalTool,
-        d: newDesc,
-        auditReason: `Named tool opportunity: adds ${finalTool} to a suitable ${entry.yl} unit. Replaces: ${oldTool}.`,
-        auditSource: 'bulk-named-tool-opportunity',
-        improvementConfidence: 'Named tool opportunity',
-        improvementScore: 4,
-        whyBetter: `Uses the coordinator-requested tool (${targetTool})${multiNote} in a unit where it can create a practical student product anchored in the planner.`,
-        oldTool
-      };
-    }catch(err){
-      lastIssue = err.message || String(err);
-    }
-  }
-
-  // Fallback is still reviewable and practical rather than silently returning too few.
-  const fallback = fallbackNamedToolOpportunityDescription_(entry, targetTool);
-  return {
-    entryIdx,
-    sugIdx: slot.sugIdx,
-    t: targetTool,
-    d: fallback,
-    auditReason: `Named tool opportunity fallback: adds ${targetTool} after AI drafting failed. Replaces: ${oldTool}.`,
-    auditSource: 'bulk-named-tool-opportunity-fallback',
-    improvementConfidence: 'Fallback draft — review carefully',
-    improvementScore: 3,
-    whyBetter: `Creates a reviewable ${targetTool} opportunity instead of stopping after only a couple of AI drafts.`,
-    remainingConcern: 'Generated by fallback wording; please review the unit fit before applying.',
-    oldTool
-  };
-}
-
-async function runBulkNamedToolOpportunityFlow_(instruction, completeData, prog, lbl, bar){
-  const enrichedInstruction = bulkChatEffectiveInstruction_(instruction);
-  const targetTool = bulkDetectNamedToolOpportunity_(enrichedInstruction);
-  if(!targetTool) return false;
-
-  updateReasoningStep(0, 'done');
-  updateReasoningStep(1, 'active', `Finding ${targetTool} opportunity targets locally`);
-  if(lbl) lbl.textContent = `Finding eligible units for ${targetTool}…`;
-  if(bar) bar.style.width = '18%';
-
-  const targetYears = bulkExtractTargetYears_(enrichedInstruction);
-  const explicitCount = getBulkExplicitCount_(enrichedInstruction, null);
-  const allCandidates = [];
-  let skippedYear = 0, skippedAge = 0, skippedExisting = 0, skippedNoSlot = 0;
-
-  completeData.forEach(({e,i}) => {
-    if(targetYears.length && !targetYears.includes(e.yl)){ skippedYear++; return; }
-    if(!isAiToolSafeForEntry(targetTool, e)){ skippedAge++; return; }
-    if(entryAlreadyHasTool_(e, targetTool)){ skippedExisting++; return; }
-    const slot = chooseNamedToolOpportunitySlot_(e, targetTool);
-    if(!slot){ skippedNoSlot++; return; }
-    const unitScore = bulkToolOpportunityUnitScore_(e, targetTool, enrichedInstruction);
-    const slotScore = Math.max(0, slot.score || 0);
-    allCandidates.push({entryIdx:i, slot, score: unitScore + Math.min(slotScore, 10), unitScore, slotScore});
-  });
-
-  allCandidates.sort((a,b) => b.score - a.score);
-  const defaultCap = Math.min(12, allCandidates.length);
-  const cap = explicitCount ? Math.min(explicitCount, allCandidates.length, 45) : defaultCap;
-  const selected = allCandidates.slice(0, cap);
-
-  if(!selected.length){
-    if(prog) prog.style.display = 'none';
-    updateReasoningStep(1, 'done');
-    setTimeout(hideReasoningSteps, 800);
-    if(bulkChatHistory.length && bulkChatHistory[bulkChatHistory.length-1].content.includes('Analysing all entries')) bulkChatHistory.pop();
-    const yearText = targetYears.length ? ` in ${targetYears.join(', ')}` : '';
-    const parts = [];
-    if(skippedAge) parts.push(`${skippedAge} outside the Tool Inventory age range`);
-    if(skippedExisting) parts.push(`${skippedExisting} already contain ${targetTool}`);
-    if(skippedNoSlot) parts.push(`${skippedNoSlot} had no safe non-STEM slot to replace`);
-    bulkChatAddMessage('assistant', `⚠️ I understood this as a request to find more ${esc(targetTool)} opportunities${yearText}, but I could not find eligible non-STEM units to change.${parts.length ? '<br><br><span style="font-size:12px;color:var(--dim)">Skipped: '+esc(parts.join(' · '))+'</span>' : ''}`);
-    bulkChatState = 'idle';
-    stopProgress();
-    return true;
-  }
-
-  updateReasoningStep(1, 'done');
-  updateReasoningStep(2, 'done');
-  updateReasoningStep(3, 'done');
-  updateReasoningStep(4, 'active', `Drafting ${selected.length} ${targetTool} opportunities`);
-  if(lbl) lbl.textContent = `Drafting ${selected.length} ${targetTool} opportunities…`;
-
-  const changes = [];
-  const failures = [];
-
-  // AI-driven drafts with planner context. buildNamedToolOpportunityChange_ has its
-  // own retry + deterministic fallback so a single bad response will not abort the run.
-  // Sequential with sleep(350) between calls — same shape as runBulkSameToolDescriptionRewrite_,
-  // which has proven stable in-browser at this concurrency.
-  for(let idx=0; idx<selected.length; idx++){
-    const c = selected[idx];
-    if(bar) bar.style.width = `${25 + Math.round(((idx+1)/selected.length)*65)}%`;
-    if(lbl) lbl.textContent = `${idx+1}/${selected.length}: drafting ${targetTool} opportunity…`;
-    try{
-      const change = await buildNamedToolOpportunityChange_(c.entryIdx, c.slot, targetTool, enrichedInstruction);
-      if(change) changes.push(change);
-    }catch(err){
-      failures.push({target:c, error:err.message || String(err)});
-    }
-    if(idx < selected.length-1) await sleep(350);
-  }
-
-  if(bar) bar.style.width = '100%';
-  if(prog) prog.style.display = 'none';
-  updateReasoningStep(4, 'done');
-  updateReasoningStep(5, 'done');
-  setTimeout(hideReasoningSteps, 1200);
-  if(bulkChatHistory.length && bulkChatHistory[bulkChatHistory.length-1].content.includes('Analysing all entries')) bulkChatHistory.pop();
-
-  if(changes.length){
-    const yearText = targetYears.length ? ` in ${targetYears.join(', ')}` : '';
-    const cappedNote = allCandidates.length > selected.length ? `<br><span style="font-size:12px;color:var(--orange)">I found ${allCandidates.length} eligible ${targetTool} candidate unit${allCandidates.length!==1?'s':''}${yearText}, but drafted ${selected.length} this run to stay responsive. Apply these, then run again for the next set.</span>` : '';
-    const failNote = failures.length ? `<br><span style="font-size:12px;color:#F5A623">${failures.length} draft${failures.length!==1?'s':''} failed and were skipped.</span>` : '';
-    const sample = changes.slice(0,6).map(c => { const e = DATA[c.entryIdx]; const old = getSugs(e)[c.sugIdx] ? sugTool(getSugs(e)[c.sugIdx]) : 'existing suggestion'; return `• ${esc(e.yl)} ${esc(e.th)} — ${esc(old)} → ${esc(c.t)}`; }).join('<br>');
-    bulkChatAddMessage('assistant', `✅ <strong>${changes.length} ${esc(targetTool)} opportunit${changes.length!==1?'ies':'y'}</strong> ready for review${yearText}.<br><br><span style="font-size:12px;color:var(--lime)">This targeted flow found eligible units locally first, so it should not stop at 2 when there are more genuine fits.</span>${cappedNote}${failNote}<br><br><span style="font-size:12px;color:var(--lime)">Sample:</span><br>${sample}${changes.length>6?'<br>• …':''}`);
-    bulkChatMemory.push({ role:'assistant', content:`Proposed ${changes.length} named-tool opportunities for ${targetTool}.` });
-    window._snapshotReason = `Before adding ${targetTool} opportunities`;
-    showChangesPopup(changes);
-    bulkChatState = 'done';
-  } else {
-    const first = failures[0]?.error || 'No usable drafts were returned.';
-    bulkChatAddMessage('assistant', `⚠️ I found ${selected.length} ${esc(targetTool)} candidate unit${selected.length!==1?'s':''}, but could not draft usable ${esc(targetTool)} opportunities. First issue: ${esc(first)}`);
-    bulkChatState = 'idle';
-  }
-  stopProgress();
   return true;
 }
 

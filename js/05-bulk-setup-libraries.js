@@ -756,13 +756,6 @@ function getToolAgeRange(toolName){
   return stored ? normaliseAgeRange(stored) : getDefaultToolAgeRange(toolName);
 }
 
-function setToolAgeRange(toolName, min, max){
-  normaliseToolInventory();
-  const key = toolInventoryKey(toolName);
-  if(!key) return;
-  TOOL_INVENTORY.ageRanges[key] = normaliseAgeRange({min,max});
-}
-
 function buildApprovedToolsList(){
   normaliseToolInventory();
   const tools = (TOOL_INVENTORY.approved && TOOL_INVENTORY.approved.length)
@@ -829,8 +822,6 @@ function seedDefaultInventoryIfEmpty(){
   });
 }
 
-// Legacy alias kept for any old references
-function getBannedTools(){ return TOOL_INVENTORY.banned || []; }
 // Treat inventory.banned as the runtime "not available" list
 Object.defineProperty(window, 'NOT_AVAILABLE_AT_WESLEY', {
   get(){ return TOOL_INVENTORY.banned || []; },
@@ -1096,7 +1087,6 @@ function checkRealisticToolUse(toolName, desc, entry){
   }
   return realismResult(true, '');
 }
-function isRealisticToolUse(toolName, desc, entry){ return checkRealisticToolUse(toolName, desc, entry).ok; }
 
 // Build a constraint block to inject into every regen/feedback prompt
 function buildToolConstraints(yearLevel){
@@ -1717,8 +1707,6 @@ async function syncToolInventoryToGAS_() {
     console.warn('GAS inventory sync failed:', err.message);
   }
 }
-// Backward-compatible alias
-function getMinecraftLessons(){ return getLibraryLessons('minecraft'); }
 
 function buildLibraryContext(key){
   const lessons = getLibraryLessons(key);

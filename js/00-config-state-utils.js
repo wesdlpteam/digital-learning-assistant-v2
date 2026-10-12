@@ -3,7 +3,7 @@ let DATA = [];
 // stamp on the <script src="js/..."> tags in DLA_Studio.html. Bumping the
 // number changes every code file's web address, which forces browsers to
 // download the new code instead of reusing a stale cached copy.
-const APP_VERSION = '5.71';
+const APP_VERSION = '5.72';
 
 // Reliable "get the latest version" action used by the ↻ latest button.
 // Reloads the whole app from the network with a one-off unique address so the
@@ -42,7 +42,6 @@ let PREV_TAB = 'dashboard';
 let AUDIT_VIEW = 'tools';
 let AUDIT_YEAR_CAMPUS = '';
 const CHANGE_HISTORY = [];
-const LOCKS = {}; 
 const MAX_HISTORY = 20;
 
 // Bulk-work flag. While a long bulk job is running (it holds unit numbers across
@@ -292,52 +291,6 @@ function wouldDupeToolProposalInEntry(entry, toolName, excludeSugIdx){
     const existingKeys = proposalToolParts(sugTool(s)).map(toolKey).filter(Boolean);
     return existingKeys.some(k => newKeys.includes(k));
   });
-}
-
-// 2026-05-26: Component-level dedup for the regen retry loops. The pre-existing
-// dedup in 05/06/08/09 compares the WHOLE `t` string via toolKey() — so
-// "Seesaw", "Seesaw + Padlet", and "Seesaw + Book Creator" are three distinct
-// keys and the same component can repeat freely across slots 1-5 (observed:
-// GW 3YOK "Who We Are" had Seesaw in slots 2,3,5). Likewise "Seesaw + Seesaw"
-// is a unique whole-string so the existing dedup never trips it (observed in
-// 3 audited units). This helper splits each `t` on '+' and reports the first
-// offending tool component if either (a) a single slot pairs a tool with
-// itself, or (b) the same component appears in 2+ of slots 1-5. Returns null
-// if clean.
-function componentDupesInRegen_(sugs){
-  const arr = Array.isArray(sugs) ? sugs : [];
-  for(let i=0; i<Math.min(5, arr.length); i++){
-    const s = arr[i];
-    const t = s && typeof s.t === 'string' ? s.t : '';
-    if(!t) continue;
-    const parts = t.split(/\s*\+\s*/).map(p => p.trim()).filter(Boolean);
-    if(parts.length > 1){
-      const seen = new Set();
-      for(const p of parts){
-        const k = p.toLowerCase();
-        if(seen.has(k)) return p;
-        seen.add(k);
-      }
-    }
-  }
-  const counts = {};
-  for(let i=0; i<Math.min(5, arr.length); i++){
-    const s = arr[i];
-    const t = s && typeof s.t === 'string' ? s.t : '';
-    if(!t) continue;
-    const seenInSlot = new Set();
-    t.split(/\s*\+\s*/).map(p => p.trim()).filter(Boolean).forEach(p => {
-      const k = p.toLowerCase();
-      if(seenInSlot.has(k)) return;
-      seenInSlot.add(k);
-      if(!counts[k]) counts[k] = { label: p, slots: 0 };
-      counts[k].slots++;
-    });
-  }
-  for(const k in counts){
-    if(counts[k].slots >= 2) return counts[k].label;
-  }
-  return null;
 }
 
 // 2026-05-25: Collect the distinct slot-1 tool labels currently in use by
