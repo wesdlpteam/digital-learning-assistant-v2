@@ -609,6 +609,7 @@ function switchTab(tab,btn){
   if((tab==='dashboard'||tab==='browse') && typeof loadUoiProposals==='function') loadUoiProposals();
   if(tab==='audit') renderAudit();
   if(tab==='live') loadLiveAnalytics();
+  if(tab==='shoutouts' && typeof loadShoutouts==='function') loadShoutouts();
   if(tab==='tools'){
     initBulkTools();
     renderBulkWelcome();
