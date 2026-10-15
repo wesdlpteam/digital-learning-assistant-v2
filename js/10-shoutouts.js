@@ -94,6 +94,33 @@ function shoutoutTestBannerHtml_(state) {
   return '<div role="status" style="background:var(--card);border:1px solid var(--salmon);color:var(--salmon);border-radius:12px;padding:10px 16px;margin-bottom:16px;font-weight:700">Test mode is on: posts go to the DLA Test team</div>';
 }
 
+function shoutoutTestSwitchHtml_(state) {
+  const on = !!(state && state.testMode);
+  return '<label style="display:flex;align-items:center;gap:8px;margin-bottom:16px;font-weight:600;cursor:pointer"><input type="checkbox" id="shout-testmode"' + (on ? ' checked' : '') +
+    ' onchange="shoutToggleTestMode_(this)"> Test mode: posts go to the DLA Test team</label>';
+}
+
+function shoutoutBannerAreaHtml_(state) {
+  return shoutoutTestBannerHtml_(state) + shoutoutTestSwitchHtml_(state);
+}
+
+async function shoutToggleTestMode_(box) {
+  const want = !!box.checked;
+  if (!want && !confirm("Turn off test mode? Approved posts will then go to the real campus channels.")) { box.checked = true; return; }
+  box.disabled = true;
+  try {
+    const r = await shoutoutCall_({ action: 'shoutoutsSetTestMode', on: want });
+    if (r && r.error) throw new Error(r.error);
+    if (!window._shoutState) window._shoutState = {};
+    window._shoutState.testMode = !!(r && r.testMode);
+    const area = document.getElementById('shout-banner');
+    if (area) area.innerHTML = shoutoutBannerAreaHtml_(window._shoutState);
+  } catch (e) {
+    box.checked = !want;
+    alert('Could not change test mode: ' + (e && e.message ? e.message : e));
+  } finally { box.disabled = false; }
+}
+
 function shoutStatusHtml_(draft) {
   const posts = draft.posts || {};
   const testPosts = draft.testPosts || {};
@@ -280,7 +307,7 @@ function renderShoutouts(state) {
   window._shoutDirty = {};
   shoutBindDirty_(el);
   shoutUpdateSub_(state);
-  let h = '<div id="shout-banner">' + shoutoutTestBannerHtml_(state) + '</div>' + shoutoutPostersBoxHtml_(state);
+  let h = '<div id="shout-banner">' + shoutoutBannerAreaHtml_(state) + '</div>' + shoutoutPostersBoxHtml_(state);
   const cyc = state && state.cycle;
   if (!cyc || !(cyc.drafts || []).length) {
     h += '<div style="padding:30px;text-align:center;color:var(--dim)">No drafts yet. Press "Make drafts now" to write them.</div>';
@@ -377,7 +404,7 @@ async function shoutRefreshSoft_() {
   window._shoutState = s;
   shoutUpdateSub_(s);
   const banner = document.getElementById('shout-banner');
-  if (banner) banner.innerHTML = shoutoutTestBannerHtml_(s);
+  if (banner) banner.innerHTML = shoutoutBannerAreaHtml_(s);
   plan.campuses.forEach(shoutRedrawCard_);
   shoutSyncPolling_(s);
 }
