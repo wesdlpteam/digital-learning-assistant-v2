@@ -170,6 +170,7 @@ function shoutoutCardHtml(draft, posters, imageUrl, defaultPosterEmail, factsHtm
   h += '<div style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;border:1px solid var(--border);color:var(--dim)">' + shoutEsc_(label) + '</div></div>';
   h += '<div style="font-size:12px;color:var(--dim);margin:6px 0">Goes to:<ul style="margin:4px 0 0 18px;padding:0">' +
     dests.map(function (x) { return '<li>' + shoutEsc_(x.text) + '</li>'; }).join('') + '</ul></div>';
+  if (d.isLaunch) h += '<div style="font-size:12px;color:var(--dim);margin:4px 0 6px">First post: includes the introduction to the Tech Champions updates.</div>';
 
   if (status === 'pending') {
     return h + '<div style="padding:18px 0;color:var(--dim)">Writing this post now. It will appear here in a minute.</div></div>';
@@ -252,7 +253,7 @@ function shoutoutRedrawPlan_(oldState, newState, dirty) {
     const changed = !o || o.status !== d.status || o.imageFileId !== d.imageFileId;
     if (changed && !skip[d.campus]) campuses.push(d.campus);
   });
-  const needImages = (nc.drafts || []).some(function (d) { return d.imageFileId && !images[d.campus]; });
+  const needImages = (nc.drafts || []).some(function (d) { return d.status !== 'skipped' && d.imageFileId && !images[d.campus]; });
   return { full: false, campuses: campuses, images: images, needImages: needImages };
 }
 
@@ -299,6 +300,26 @@ function shoutBindDirty_(el) {
   });
 }
 
+// Pure. Drafts that get a card on the page: skipped ones are hidden (kept in the store).
+function shoutoutVisibleDrafts_(drafts) {
+  return (drafts || []).filter(function (d) { return d.status !== 'skipped'; });
+}
+
+// Pure. The one small dim line naming skipped campuses, or ''.
+function shoutoutSkippedLineHtml_(state) {
+  const ds = (state && state.cycle && state.cycle.drafts) || [];
+  const names = ds.filter(function (d) { return d.status === 'skipped'; }).map(function (d) { return shoutEsc_(d.campus); });
+  if (!names.length) return '';
+  return '<div style="font-size:12px;color:var(--dim);margin:0 0 12px">Skipped this round: ' + names.join(', ') + '. Press Make drafts now to write fresh ones.</div>';
+}
+
+// Pure. The empty-state message when no card is on the page, or ''.
+function shoutoutEmptyHtml_(state) {
+  const ds = (state && state.cycle && state.cycle.drafts) || [];
+  if (shoutoutVisibleDrafts_(ds).length) return '';
+  return '<div style="padding:30px;text-align:center;color:var(--dim)">No drafts yet. Press "Make drafts now" to write them.</div>';
+}
+
 // Draws everything. Only for the first load, a different round, or "Make drafts now".
 function renderShoutouts(state) {
   const el = document.getElementById('shout-content');
@@ -309,11 +330,10 @@ function renderShoutouts(state) {
   shoutUpdateSub_(state);
   let h = '<div id="shout-banner">' + shoutoutBannerAreaHtml_(state) + '</div>' + shoutoutPostersBoxHtml_(state);
   const cyc = state && state.cycle;
-  if (!cyc || !(cyc.drafts || []).length) {
-    h += '<div style="padding:30px;text-align:center;color:var(--dim)">No drafts yet. Press "Make drafts now" to write them.</div>';
-  } else {
+  h += '<div id="shout-skipped-line">' + shoutoutSkippedLineHtml_(state) + '</div><div id="shout-empty">' + shoutoutEmptyHtml_(state) + '</div>';
+  if (cyc && (cyc.drafts || []).length) {
     const order = SHOUT_CAMPUS_LIST;
-    const drafts = cyc.drafts.slice().sort(function (a, b) { return order.indexOf(a.campus) - order.indexOf(b.campus); });
+    const drafts = shoutoutVisibleDrafts_(cyc.drafts).sort(function (a, b) { return order.indexOf(a.campus) - order.indexOf(b.campus); });
     h += drafts.map(function (d) { return shoutoutCardWithFacts_(d, state); }).join('');
   }
   el.innerHTML = h;
@@ -343,16 +363,47 @@ function shoutFindCard_(campus) {
   return null;
 }
 
-// Redraws ONE card from the cached state. Drops that card's unsaved-edit flag.
+// Refreshes the skipped line and the empty-state message from the cached state.
+function shoutShowSkipped_(st) {
+  const line = document.getElementById('shout-skipped-line');
+  if (line) line.innerHTML = shoutoutSkippedLineHtml_(st);
+  const empty = document.getElementById('shout-empty');
+  if (empty) empty.innerHTML = shoutoutEmptyHtml_(st);
+}
+
+// Redraws ONE card from the cached state. Drops that card's unsaved-edit flag. A skipped
+// draft has no card: its card is removed. A draft that has no card yet (it came back from
+// skipped) gets one in campus order.
 function shoutRedrawCard_(campus) {
   const st = window._shoutState;
   const card = shoutFindCard_(campus);
   const draft = st && st.cycle && (st.cycle.drafts || []).filter(function (d) { return d.campus === campus; })[0];
-  if (!card || !draft) return;
+  if (!draft) return;
+  if (draft.status === 'skipped') {
+    if (card) card.remove();
+    delete window._shoutDirty[campus];
+    shoutShowSkipped_(st);
+    return;
+  }
   const tmp = document.createElement('div');
   tmp.innerHTML = shoutoutCardWithFacts_(draft, st);
-  if (tmp.firstElementChild) card.replaceWith(tmp.firstElementChild);
+  const fresh = tmp.firstElementChild;
+  if (!fresh) return;
+  if (card) {
+    card.replaceWith(fresh);
+  } else {
+    const el = document.getElementById('shout-content');
+    if (!el) return;
+    const order = SHOUT_CAMPUS_LIST;
+    let before = null;
+    const cards = el.querySelectorAll('.shout-card');
+    for (let i = 0; i < cards.length && !before; i++) {
+      if (order.indexOf(cards[i].getAttribute('data-campus')) > order.indexOf(campus)) before = cards[i];
+    }
+    if (before) el.insertBefore(fresh, before); else el.appendChild(fresh);
+  }
   delete window._shoutDirty[campus];
+  shoutShowSkipped_(st);
 }
 
 // Puts a picture into a card without redrawing it.
@@ -406,6 +457,7 @@ async function shoutRefreshSoft_() {
   const banner = document.getElementById('shout-banner');
   if (banner) banner.innerHTML = shoutoutBannerAreaHtml_(s);
   plan.campuses.forEach(shoutRedrawCard_);
+  shoutShowSkipped_(s);
   shoutSyncPolling_(s);
 }
 
@@ -554,7 +606,7 @@ async function makeShoutoutsNow() {
   const sub = document.getElementById('shout-sub');
   const have = window._shoutState && window._shoutState.cycle && (window._shoutState.cycle.drafts || []).length;
   const force = !!have;
-  if (force && !confirm('This will replace the drafts you can see with fresh ones. Continue?')) return;
+  if (force && !confirm('This will rewrite every draft that has not been posted yet, including skipped ones. Posts already sent are kept. Continue?')) return;
   if (sub) sub.textContent = 'Starting the drafts...';
   try {
     await shoutoutCall_({ action: 'shoutoutsMakeNow', force: force });
