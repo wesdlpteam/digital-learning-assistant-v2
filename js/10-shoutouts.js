@@ -519,6 +519,20 @@ async function shoutoutCall_(payload) {
   return result || {};
 }
 
+// Starts the writing straight away without waiting for it: the server keeps running after the browser
+// moves on (keepalive), and the reply and any error are ignored. The backend's one-off timer is the backup,
+// and its drafting claim stops the two from writing twice.
+function shoutoutKickDraft_() {
+  try {
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(shoutoutPayload_(withGASToken({ action: 'shoutoutsDraftNow' }))),
+      keepalive: true
+    }).catch(function () {});
+  } catch (e) { /* the timer will start it */ }
+}
+
 function stopShoutoutPolling_() {
   if (window._shoutPollTimer) { clearInterval(window._shoutPollTimer); window._shoutPollTimer = null; }
 }
@@ -811,9 +825,10 @@ async function makeShoutoutsNow() {
   if (force && !confirm('This will rewrite every draft that has not been posted yet, including skipped ones. Posts already sent are kept. Continue?')) return;
   // Show the "Being written" cards straight away; the backend catches up behind them.
   renderShoutouts(shoutoutOptimisticMakeNow_(before));
-  if (sub) sub.textContent = 'Writing the drafts. They appear here one by one over the next few minutes.';
+  if (sub) sub.textContent = 'Writing the drafts. They should all appear here within a few minutes.';
   try {
     await shoutoutCall_({ action: 'shoutoutsMakeNow', force: force });
+    shoutoutKickDraft_();
     await loadShoutouts(true);
     startShoutoutPolling_();
   } catch (err) {
