@@ -216,7 +216,7 @@ function shoutoutCardHtml(draft, posters, imageUrl, defaultPosterEmail, factsHtm
     h += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0">' +
       '<button class="btn-sm" data-campus="' + ce + '" onclick="saveShoutout(this)">Save edits</button>' +
       '<button class="btn-sm" data-campus="' + ce + '" onclick="rewriteShoutout(this)">New wording</button>' +
-      (fixedImage ? '' : '<button class="btn-sm" data-campus="' + ce + '" onclick="newShoutoutPicture(this)">New picture</button>') + '</div>';
+      '<button class="btn-sm" data-campus="' + ce + '" onclick="newShoutoutPicture(this)">New infographic</button>' + '</div>';
   }
 
   if (canPost) {
@@ -325,21 +325,19 @@ function shoutoutNotifyBoxHtml_(state) {
   return h + '</details>';
 }
 
-// Pure. The "Picture for every post" box.
+// Pure. The "Backup picture" box.
 function shoutoutFixedPictureBoxHtml_(state) {
   const fixed = !!(state && state.fixedImage);
   let h = '<details id="shout-picture-box" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:16px">';
-  h += '<summary style="cursor:pointer;font-weight:700">Picture for every post</summary>';
+  h += '<summary style="cursor:pointer;font-weight:700">Backup picture</summary>';
   if (fixed && state.fixedImageUrl && /^data:image\//.test(state.fixedImageUrl)) {
-    h += '<img src="' + shoutEsc_(state.fixedImageUrl) + '" alt="The Tech Champions picture used for every post" style="max-width:100%;width:240px;border-radius:10px;display:block;margin:10px 0">';
+    h += '<img src="' + shoutEsc_(state.fixedImageUrl) + '" alt="The backup picture" style="max-width:100%;width:240px;border-radius:10px;display:block;margin:10px 0">';
   }
-  h += '<p style="margin:10px 0;color:var(--dim)">' + (fixed
-    ? 'Every post uses this Tech Champions picture. Choose a different file to replace it.'
-    : 'No picture chosen, so each post gets its own AI picture. Choose your Tech Champions picture to use it for every post.') + '</p>';
+  h += '<p style="margin:10px 0;color:var(--dim)">Each post gets an infographic made from that round\'s numbers. This picture is only used if an infographic cannot be made.</p>';
   h += '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">';
   h += '<input id="shout-pic-file" type="file" accept="image/jpeg,image/png" style="font-family:inherit">';
   h += '<button class="btn-sm" onclick="useShoutoutPicture()">Use this picture</button>';
-  if (fixed) h += '<button class="btn-sm" onclick="clearShoutoutPicture()">Go back to AI pictures</button>';
+  if (fixed) h += '<button class="btn-sm" onclick="clearShoutoutPicture()">Remove the backup picture</button>';
   h += '</div><div id="shout-pic-msg" style="font-size:12px;min-height:16px;margin-top:6px"></div>';
   return h + '</details>';
 }
@@ -606,13 +604,13 @@ async function rewriteShoutout(btn) {
 
 async function newShoutoutPicture(btn) {
   const card = shoutCardOf_(btn); const campus = btn.dataset.campus;
-  shoutCardMsg_(card, 'Making a new picture, this can take a little while...');
+  shoutCardMsg_(card, 'Making a new infographic, this can take a little while...');
   try {
     const r = await shoutoutCall_({ action: 'shoutoutsNewPicture', cycleId: shoutCycleId_(), campus: campus });
     const st = window._shoutState;
     if (st && r.image) { st.images = st.images || {}; st.images[campus] = r.image; }
     if (r.image) shoutSetCardImage_(card, r.image, campus);
-    shoutCardMsg_(card, r.image ? 'New picture is in. It is already saved.' : 'New picture saved. Press Refresh to see it.');
+    shoutCardMsg_(card, r.image ? 'New infographic is in. It is already saved.' : 'New infographic saved. Press Refresh to see it.');
     // Keep the cached copy of this draft in step, so the next poll does not see a "change".
     try {
       const s = await shoutoutCall_({ action: 'shoutoutsList', withImages: false });
@@ -663,13 +661,13 @@ async function useShoutoutPicture() {
     await shoutoutCall_({ action: 'shoutoutsSetFixedImage', imageBase64: b64, mime: 'image/jpeg' });
     await loadShoutouts(true);
     const m2 = document.getElementById('shout-pic-msg');
-    if (m2) { m2.style.color = 'var(--dim)'; m2.textContent = 'Saved. Every post now uses this picture.'; }
+    if (m2) { m2.style.color = 'var(--dim)'; m2.textContent = 'Saved. This is now the backup picture.'; }
   } catch (err) { msg.style.color = 'var(--salmon)'; msg.textContent = err.message; }
 }
 
 async function clearShoutoutPicture() {
   const msg = document.getElementById('shout-pic-msg');
-  if (!confirm('Go back to a new AI picture for each post? Posts already written keep the Tech Champions picture until you press New picture on them.')) return;
+  if (!confirm('Remove the backup picture? Posts that already use it keep it until you press New infographic on them.')) return;
   try {
     await shoutoutCall_({ action: 'shoutoutsClearFixedImage' });
     await loadShoutouts(true);
