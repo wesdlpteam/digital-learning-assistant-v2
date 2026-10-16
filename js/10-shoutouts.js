@@ -153,7 +153,7 @@ function shoutImgHtml_(imageUrl, campus) {
 
 // Pure. One campus card. Everything from the server is escaped.
 // Never touches a webhook link: posters only carry {name, email}.
-function shoutoutCardHtml(draft, posters, imageUrl, defaultPosterEmail, factsHtml) {
+function shoutoutCardHtml(draft, posters, imageUrl, defaultPosterEmail, factsHtml, fixedImage) {
   const d = draft || {};
   const campus = d.campus || '';
   const ce = shoutEsc_(campus);
@@ -195,7 +195,7 @@ function shoutoutCardHtml(draft, posters, imageUrl, defaultPosterEmail, factsHtm
     h += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0">' +
       '<button class="btn-sm" data-campus="' + ce + '" onclick="saveShoutout(this)">Save edits</button>' +
       '<button class="btn-sm" data-campus="' + ce + '" onclick="rewriteShoutout(this)">New wording</button>' +
-      '<button class="btn-sm" data-campus="' + ce + '" onclick="newShoutoutPicture(this)">New picture</button></div>';
+      (fixedImage ? '' : '<button class="btn-sm" data-campus="' + ce + '" onclick="newShoutoutPicture(this)">New picture</button>') + '</div>';
   }
 
   if (canPost) {
@@ -218,7 +218,7 @@ function shoutoutCardHtml(draft, posters, imageUrl, defaultPosterEmail, factsHtm
 
 function shoutoutCardWithFacts_(draft, state) {
   const facts = shoutFactsHtml_(state.cycle && state.cycle.facts, draft.campus);
-  return shoutoutCardHtml(draft, state.posters, (state.images || {})[draft.campus] || '', shoutoutDefaultPoster_(state.posters, state.currentUser), facts);
+  return shoutoutCardHtml(draft, state.posters, (state.images || {})[draft.campus] || '', shoutoutDefaultPoster_(state.posters, state.currentUser), facts, !!state.fixedImage);
 }
 
 // Pure. Pictures already fetched that are still the right ones (same cycle, same picture file).
@@ -289,6 +289,25 @@ function shoutoutPostersBoxHtml_(state) {
   return h + '</details>';
 }
 
+// Pure. The "Picture for every post" box.
+function shoutoutFixedPictureBoxHtml_(state) {
+  const fixed = !!(state && state.fixedImage);
+  let h = '<details id="shout-picture-box" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:16px">';
+  h += '<summary style="cursor:pointer;font-weight:700">Picture for every post</summary>';
+  if (fixed && state.fixedImageUrl && /^data:image\//.test(state.fixedImageUrl)) {
+    h += '<img src="' + shoutEsc_(state.fixedImageUrl) + '" alt="The Tech Champions picture used for every post" style="max-width:100%;width:240px;border-radius:10px;display:block;margin:10px 0">';
+  }
+  h += '<p style="margin:10px 0;color:var(--dim)">' + (fixed
+    ? 'Every post uses this Tech Champions picture. Choose a different file to replace it.'
+    : 'No picture chosen, so each post gets its own AI picture. Choose your Tech Champions picture to use it for every post.') + '</p>';
+  h += '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">';
+  h += '<input id="shout-pic-file" type="file" accept="image/jpeg,image/png" style="font-family:inherit">';
+  h += '<button class="btn-sm" onclick="useShoutoutPicture()">Use this picture</button>';
+  if (fixed) h += '<button class="btn-sm" onclick="clearShoutoutPicture()">Go back to AI pictures</button>';
+  h += '</div><div id="shout-pic-msg" style="font-size:12px;min-height:16px;margin-top:6px"></div>';
+  return h + '</details>';
+}
+
 function shoutBindDirty_(el) {
   if (el._shoutBound) return;
   el._shoutBound = true;
@@ -328,7 +347,7 @@ function renderShoutouts(state) {
   window._shoutDirty = {};
   shoutBindDirty_(el);
   shoutUpdateSub_(state);
-  let h = '<div id="shout-banner">' + shoutoutBannerAreaHtml_(state) + '</div>' + shoutoutPostersBoxHtml_(state);
+  let h = '<div id="shout-banner">' + shoutoutBannerAreaHtml_(state) + '</div>' + shoutoutPostersBoxHtml_(state) + shoutoutFixedPictureBoxHtml_(state);
   const cyc = state && state.cycle;
   h += '<div id="shout-skipped-line">' + shoutoutSkippedLineHtml_(state) + '</div><div id="shout-empty">' + shoutoutEmptyHtml_(state) + '</div>';
   if (cyc && (cyc.drafts || []).length) {
@@ -446,11 +465,13 @@ function stopShoutoutPolling_() {
 async function shoutRefreshSoft_() {
   const old = window._shoutState;
   const s = await shoutoutCall_({ action: 'shoutoutsList', withImages: false });
+  if (old && !!old.fixedImage !== !!s.fixedImage) { renderShoutouts(await shoutoutCall_({ action: 'shoutoutsList' })); return; }
   const plan = shoutoutRedrawPlan_(old, s, window._shoutDirty);
   if (plan.full) { renderShoutouts(await shoutoutCall_({ action: 'shoutoutsList' })); return; }
   s.images = plan.images;
+  if (s.fixedImage && old && old.fixedImageUrl) s.fixedImageUrl = old.fixedImageUrl;
   if (plan.needImages) {
-    try { s.images = (await shoutoutCall_({ action: 'shoutoutsList' })).images || {}; } catch (e) { /* pictures can wait */ }
+    try { const full = await shoutoutCall_({ action: 'shoutoutsList' }); s.images = full.images || {}; if (full.fixedImageUrl) s.fixedImageUrl = full.fixedImageUrl; } catch (e) { /* pictures can wait */ }
   }
   window._shoutState = s;
   shoutUpdateSub_(s);
@@ -562,6 +583,61 @@ async function newShoutoutPicture(btn) {
       window._shoutState = shoutoutMergeDraft_(window._shoutState, s, campus);
     } catch (e) { /* the next refresh sorts it out */ }
   } catch (err) { shoutCardMsg_(card, err.message, true); }
+}
+
+// Pure maths: size to fit inside max pixels on the longest side, never enlarged.
+function shoutoutFitSize_(w, h, max) {
+  const scale = Math.min(1, max/Math.max(w, h, 1));
+  return { w: Math.max(1, Math.round(w * scale)), h: Math.max(1, Math.round(h * scale)) };
+}
+
+// Shrinks a chosen picture in the browser (longest side 1600 px, JPEG 0.85). Resolves to base64 without the prefix.
+function shoutResizePicture_(file) {
+  return new Promise(function (resolve, reject) {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = function () {
+      try {
+        const sz = shoutoutFitSize_(img.naturalWidth || img.width, img.naturalHeight || img.height, 1600);
+        const canvas = document.createElement('canvas');
+        canvas.width = sz.w; canvas.height = sz.h;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, sz.w, sz.h);
+        ctx.drawImage(img, 0, 0, sz.w, sz.h);
+        const data = canvas.toDataURL('image/jpeg', 0.85);
+        URL.revokeObjectURL(url);
+        resolve(data.split(',')[1] || '');
+      } catch (e) { URL.revokeObjectURL(url); reject(e); }
+    };
+    img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('That file could not be read as a picture.')); };
+    img.src = url;
+  });
+}
+
+async function useShoutoutPicture() {
+  const msg = document.getElementById('shout-pic-msg');
+  const input = document.getElementById('shout-pic-file');
+  const file = input && input.files && input.files[0];
+  if (!file) { msg.style.color = 'var(--salmon)'; msg.textContent = 'Please choose a picture file first.'; return; }
+  if (file.type !== 'image/jpeg' && file.type !== 'image/png') { msg.style.color = 'var(--salmon)'; msg.textContent = 'Please choose a JPEG or PNG picture.'; return; }
+  msg.style.color = 'var(--dim)'; msg.textContent = 'Preparing and saving the picture...';
+  try {
+    const b64 = await shoutResizePicture_(file);
+    await shoutoutCall_({ action: 'shoutoutsSetFixedImage', imageBase64: b64, mime: 'image/jpeg' });
+    await loadShoutouts(true);
+    const m2 = document.getElementById('shout-pic-msg');
+    if (m2) { m2.style.color = 'var(--dim)'; m2.textContent = 'Saved. Every post now uses this picture.'; }
+  } catch (err) { msg.style.color = 'var(--salmon)'; msg.textContent = err.message; }
+}
+
+async function clearShoutoutPicture() {
+  const msg = document.getElementById('shout-pic-msg');
+  if (!confirm('Go back to a new AI picture for each post? Posts already written keep the Tech Champions picture until you press New picture on them.')) return;
+  try {
+    await shoutoutCall_({ action: 'shoutoutsClearFixedImage' });
+    await loadShoutouts(true);
+  } catch (err) { if (msg) { msg.style.color = 'var(--salmon)'; msg.textContent = err.message; } }
 }
 
 async function approveShoutout(btn) {
