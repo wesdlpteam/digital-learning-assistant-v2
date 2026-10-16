@@ -310,6 +310,21 @@ function shoutoutPostersBoxHtml_(state) {
   return h + '</details>';
 }
 
+// Pure. The "Reminder when drafts are ready" box. Never shows the link.
+function shoutoutNotifyBoxHtml_(state) {
+  const on = !!(state && state.notifyConfigured);
+  let h = '<details id="shout-notify-box" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:16px"' + (on ? '' : ' open') + '>';
+  h += '<summary style="cursor:pointer;font-weight:700">Reminder when drafts are ready' + (on ? ' (Set up)' : '') + '</summary>';
+  h += '<p style="margin:10px 0;color:var(--dim)">' + (on
+    ? 'Teams will send you a message from the Flow bot when the drafts are ready. Paste a new link to replace it.'
+    : 'Not set up yet. Create the small reminder flow in Power Automate, then paste its link here.') + '</p>';
+  h += '<div style="display:flex;gap:8px;flex-wrap:wrap">';
+  h += '<input id="shout-notify-link" type="password" autocomplete="off" placeholder="Link to the reminder flow" style="padding:8px;min-width:220px;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:8px;font-family:inherit">';
+  h += '<button class="btn-sm" onclick="saveShoutoutNotifyLink()">Save</button></div>';
+  h += '<div id="shout-notify-msg" style="font-size:12px;min-height:16px;margin-top:6px"></div>';
+  return h + '</details>';
+}
+
 // Pure. The "Picture for every post" box.
 function shoutoutFixedPictureBoxHtml_(state) {
   const fixed = !!(state && state.fixedImage);
@@ -368,7 +383,7 @@ function renderShoutouts(state) {
   window._shoutDirty = {};
   shoutBindDirty_(el);
   shoutUpdateSub_(state);
-  let h = '<div id="shout-banner">' + shoutoutBannerAreaHtml_(state) + '</div>' + shoutoutPostersBoxHtml_(state) + shoutoutFixedPictureBoxHtml_(state);
+  let h = '<div id="shout-banner">' + shoutoutBannerAreaHtml_(state) + '</div>' + shoutoutPostersBoxHtml_(state) + shoutoutNotifyBoxHtml_(state) + shoutoutFixedPictureBoxHtml_(state);
   const cyc = state && state.cycle;
   h += '<div id="shout-skipped-line">' + shoutoutSkippedLineHtml_(state) + '</div><div id="shout-empty">' + shoutoutEmptyHtml_(state) + '</div>';
   if (cyc && (cyc.drafts || []).length) {
@@ -710,6 +725,22 @@ async function makeShoutoutsNow() {
     await loadShoutouts(true);
     startShoutoutPolling_();
   } catch (err) { if (sub) sub.textContent = err.message; }
+}
+
+async function saveShoutoutNotifyLink() {
+  const msg = document.getElementById('shout-notify-msg');
+  const linkEl = document.getElementById('shout-notify-link');
+  const link = linkEl.value.trim();
+  if (!link) { msg.style.color = 'var(--salmon)'; msg.textContent = 'Please paste the reminder flow link.'; return; }
+  msg.style.color = 'var(--dim)'; msg.textContent = 'Saving...';
+  try {
+    await shoutoutCall_({ action: 'shoutoutsSetNotifyWebhook', webhookUrl: link });
+    linkEl.value = '';
+    if (window._shoutState) window._shoutState.notifyConfigured = true;
+    msg.style.color = 'var(--dim)'; msg.textContent = 'Saved. You will get a Teams message from the Flow bot when drafts are ready.';
+  } catch (err) {
+    msg.style.color = 'var(--salmon)'; msg.textContent = err.message;
+  }
 }
 
 async function addShoutoutPoster() {
