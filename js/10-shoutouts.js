@@ -73,8 +73,29 @@ function shoutFactsHtml_(facts, campus) {
   h += '<b style="color:var(--text)">The numbers behind it</b> (teachers marking tools as used)<br>';
   if ((c.top || []).length) h += 'Top teams: ' + c.top.map(shoutTeamLine_).join('; ') + '<br>';
   else h += 'No teams used a tool in the last three weeks.<br>';
-  if ((c.risers || []).length) h += 'Biggest riser: ' + c.risers.map(shoutTeamLine_).join('; ');
-  else h += 'No biggest riser this round.';
+  if ((c.risers || []).length) h += 'Biggest riser: ' + c.risers.map(shoutTeamLine_).join('; ') + '<br>';
+  else h += 'No biggest riser this round.<br>';
+  const ov = facts.overall;
+  const pts = function (t, withCampus) {
+    const n = Number(t.points) || 0;
+    return shoutEsc_(t.year) + (withCampus ? ', ' + shoutEsc_(t.campus) : '') + ': ' + n + (n === 1 ? ' point' : ' points');
+  };
+  if (ov) {
+    const mine = (ov.campuses && ov.campuses[campus]) || [];
+    h += 'Overall standings (all-time points): ';
+    h += (mine.length ? campus + ' top 3 overall: ' + mine.map(function (t) { return pts(t, false); }).join('; ') : 'No ' + campus + ' teams on the leaderboard yet');
+    h += '<br>' + ((ov.college || []).length ? 'College top 3 overall: ' + ov.college.map(function (t) { return pts(t, true); }).join('; ') : 'No College teams on the leaderboard yet') + '<br>';
+  }
+  const tl = function (list) { return list.map(function (t) { const n = Number(t.count) || 0; return shoutEsc_(t.name) + ': ' + n + (n === 1 ? ' Used click' : ' Used clicks'); }).join('; '); };
+  const tools = facts.tools;
+  if (tools) {
+    const mineT = (tools.campus && tools.campus[campus]) || [];
+    const lines = [];
+    if (mineT.length) lines.push('Top tools this round: ' + tl(mineT));
+    if ((tools.college || []).length) lines.push('Top tools this round across the College: ' + tl(tools.college));
+    else if ((tools.collegeAllTime || []).length) lines.push('Top tools all time across the College: ' + tl(tools.collegeAllTime));
+    h += lines.length ? lines.join('<br>') : 'No tools were marked as used yet.';
+  }
   return h + '</div>';
 }
 
