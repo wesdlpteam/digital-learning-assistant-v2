@@ -784,17 +784,42 @@ async function skipShoutout(btn) {
   }
 }
 
+// Pure. The state "Make drafts now" will lead to, so the "Being written" cards show at once.
+// Same rules as the backend: drafts, skipped drafts with no real post, and drafts whose writing
+// failed go back to pending; posted, partly posted and failed posts stay. Returns a copy.
+function shoutoutOptimisticMakeNow_(state) {
+  const s = JSON.parse(JSON.stringify(state || {}));
+  if (!s.cycle || !(s.cycle.drafts || []).length) {
+    s.cycle = Object.assign({ id: '', facts: {} }, s.cycle || {}, {
+      drafts: SHOUT_CAMPUS_LIST.map(function (c) { return { campus: c, status: 'pending', posts: {} }; })
+    });
+    return s;
+  }
+  s.cycle.drafts.forEach(function (d) {
+    const posts = d.posts || {};
+    const realPost = Object.keys(posts).some(function (k) { const p = posts[k]; return p && !p.test && (p.status === 'posted' || p.status === 'unknown'); });
+    if (d.status === 'draft' || (d.status === 'failed' && !d.body) || (d.status === 'skipped' && !realPost)) d.status = 'pending';
+  });
+  return s;
+}
+
 async function makeShoutoutsNow() {
   const sub = document.getElementById('shout-sub');
-  const have = window._shoutState && window._shoutState.cycle && (window._shoutState.cycle.drafts || []).length;
+  const before = window._shoutState;
+  const have = before && before.cycle && (before.cycle.drafts || []).length;
   const force = !!have;
   if (force && !confirm('This will rewrite every draft that has not been posted yet, including skipped ones. Posts already sent are kept. Continue?')) return;
-  if (sub) sub.textContent = 'Starting the drafts...';
+  // Show the "Being written" cards straight away; the backend catches up behind them.
+  renderShoutouts(shoutoutOptimisticMakeNow_(before));
+  if (sub) sub.textContent = 'Writing the drafts. They appear here one by one over the next few minutes.';
   try {
     await shoutoutCall_({ action: 'shoutoutsMakeNow', force: force });
     await loadShoutouts(true);
     startShoutoutPolling_();
-  } catch (err) { if (sub) sub.textContent = err.message; }
+  } catch (err) {
+    if (before) renderShoutouts(before);
+    if (sub) sub.textContent = err.message;
+  }
 }
 
 async function saveShoutoutNotifyLink() {
