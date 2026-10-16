@@ -18,6 +18,7 @@ const SHOUT_DEST_LABELS = {
   ]
 };
 const SHOUT_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const SHOUT_POSTING_MSG = 'Posting... this can take up to 15 seconds';
 const SHOUT_POLL_MS = 10000;
 const SHOUT_POLL_MAX_MS = 10 * 60 * 1000;
 
@@ -289,6 +290,34 @@ function shoutoutMergeDraft_(state, serverState, campus) {
     testMode: serverState.testMode,
     posters: serverState.posters
   });
+}
+
+// Pure. The cached state with this draft (matched by its campus) swapped in, from a backend reply
+// that carries the updated draft. Returns the SAME state when there is nothing to swap.
+function shoutoutApplyDraft_(state, draft) {
+  if (!state || !state.cycle || !draft || !draft.campus) return state;
+  const drafts = state.cycle.drafts || [];
+  if (!drafts.some(function (d) { return d.campus === draft.campus; })) return state;
+  return Object.assign({}, state, {
+    cycle: Object.assign({}, state.cycle, { drafts: drafts.map(function (d) { return d.campus === draft.campus ? draft : d; }) })
+  });
+}
+
+// Pure. The cached state with one campus's draft marked skipped (the card disappears at once),
+// or null when that draft is not there. Put it back with shoutoutApplyDraft_ and the old draft.
+function shoutoutOptimisticSkip_(state, campus) {
+  if (!state || !state.cycle) return null;
+  const old = (state.cycle.drafts || []).filter(function (d) { return d.campus === campus; })[0];
+  if (!old) return null;
+  return shoutoutApplyDraft_(state, Object.assign({}, old, { status: 'skipped' }));
+}
+
+// Pure. The one Approve request. Subject and body go along only when the card can still be edited,
+// so the backend saves them and posts in a single call.
+function shoutoutApprovePayload_(o) {
+  const p = { action: 'shoutoutsApprove', cycleId: o.cycleId, campus: o.campus, posterEmail: o.posterEmail, confirmUnknown: !!o.confirmUnknown };
+  if (o.editable) { p.subject = o.subject; p.body = o.body; }
+  return p;
 }
 
 function shoutoutPostersBoxHtml_(state) {
@@ -580,6 +609,13 @@ async function shoutRefreshCardFromServer_(campus) {
   shoutRedrawCard_(campus);
 }
 
+// Greys out every control on a card while it posts, and frees them again.
+function shoutSetCardBusy_(card, busy) {
+  if (!card || !card.querySelectorAll) return;
+  const els = card.querySelectorAll('button, select, input, textarea');
+  for (let i = 0; i < els.length; i++) els[i].disabled = !!busy;
+}
+
 async function saveShoutout(btn) {
   const card = shoutCardOf_(btn); const campus = btn.dataset.campus;
   shoutCardMsg_(card, 'Saving...');
@@ -690,26 +726,62 @@ async function approveShoutout(btn) {
     : hasUnknown ? 'We could not confirm whether this posted. Please check the channel first. Post again anyway?'
     : 'Post this to ' + channels + ' as ' + name + '?';
   if (!confirm(question)) return;
-  shoutCardMsg_(card, 'Posting...');
+  const bodyEl = card.querySelector('.shout-body');
+  const subjectEl = card.querySelector('.shout-subject');
+  const payload = shoutoutApprovePayload_({
+    cycleId: shoutCycleId_(), campus: campus, posterEmail: sel.value, confirmUnknown: hasUnknown,
+    editable: !!(bodyEl && !bodyEl.readOnly && subjectEl), subject: subjectEl ? subjectEl.value : '', body: bodyEl ? bodyEl.value : ''
+  });
+  shoutSetCardBusy_(card, true);
+  shoutCardMsg_(card, SHOUT_POSTING_MSG);
   let result;
   try {
-    if (card.querySelector('.shout-body') && !card.querySelector('.shout-body').readOnly) await shoutSaveFromCard_(card, campus);
-    result = await shoutoutCall_({ action: 'shoutoutsApprove', cycleId: shoutCycleId_(), campus: campus, posterEmail: sel.value, confirmUnknown: hasUnknown });
+    result = await shoutoutCall_(payload);
   } catch (err) {
+    shoutSetCardBusy_(card, false);
     shoutCardMsg_(card, err.message, true);
     return;
   }
-  try { await shoutRefreshCardFromServer_(campus); } catch (err) { shoutCardMsg_(card, 'Posted, but the card could not refresh: ' + err.message + ' Press Refresh.', true); return; }
+  // The reply carries the updated draft, so no second trip to the server is needed.
+  try {
+    const old = window._shoutState;
+    const next = shoutoutApplyDraft_(old, result && result.draft);
+    if (next !== old) { window._shoutState = next; shoutRedrawCard_(campus); }
+    else await shoutRefreshCardFromServer_(campus);
+  } catch (err) { shoutCardMsg_(card, 'Posted, but the card could not refresh: ' + err.message + ' Press Refresh.', true); return; }
   if (result && result.test) shoutCardMsg_(shoutFindCard_(campus), 'Test post sent to the DLA Test team. Nothing was marked as posted.');
 }
 
 async function skipShoutout(btn) {
   const card = shoutCardOf_(btn); const campus = btn.dataset.campus;
   if (!confirm('Skip the ' + campus + ' post this round?')) return;
+  const old = window._shoutState;
+  const prev = shoutDraftOf_(campus);
+  const optimistic = shoutoutOptimisticSkip_(old, campus);
+  // The card goes at once; the backend call follows. If it fails the card comes back.
+  if (optimistic) { window._shoutState = optimistic; shoutRedrawCard_(campus); }
   try {
-    await shoutoutCall_({ action: 'shoutoutsSkip', cycleId: shoutCycleId_(), campus: campus });
-    await shoutRefreshCardFromServer_(campus);
-  } catch (err) { shoutCardMsg_(card, err.message, true); }
+    const r = await shoutoutCall_({ action: 'shoutoutsSkip', cycleId: shoutCycleId_(), campus: campus });
+    if (!optimistic) await shoutRefreshCardFromServer_(campus);
+    else if (r && r.draft) {
+      const cur = window._shoutState;
+      const next = shoutoutApplyDraft_(cur, r.draft);
+      if (next !== cur) window._shoutState = next;
+    }
+  } catch (err) {
+    if (!optimistic) { shoutCardMsg_(card, err.message, true); return; }
+    window._shoutState = shoutoutApplyDraft_(window._shoutState, prev);
+    shoutRedrawCard_(campus);
+    const back = shoutFindCard_(campus);
+    if (back && card) {
+      // Keep whatever was typed in the card that went away.
+      ['.shout-subject', '.shout-body'].forEach(function (s) {
+        const a = card.querySelector(s); const b = back.querySelector(s);
+        if (a && b && a.value !== b.value) { b.value = a.value; window._shoutDirty[campus] = true; }
+      });
+    }
+    shoutCardMsg_(back || card, err.message, true);
+  }
 }
 
 async function makeShoutoutsNow() {
