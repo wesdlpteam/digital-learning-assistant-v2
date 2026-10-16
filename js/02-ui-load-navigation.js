@@ -303,6 +303,12 @@ function showAccessDenied(email){
   el.style.display='flex';
 }
 
+// '#shoutouts' -> 'shoutouts'; anything else -> 'dashboard'. Only known tabs, so a link cannot inject.
+function studioStartTab_(hash){
+  const t=String(hash||'').replace(/^#/,'').toLowerCase();
+  return ['shoutouts'].indexOf(t)>-1 ? t : 'dashboard';
+}
+
 async function loadFromDrive(){
   startProgress();
   const btn=document.getElementById('btn-drive');
@@ -385,7 +391,10 @@ function ingest(arr, skipCache){
   
   const emailEl=document.getElementById('sidebar-user-email');
   if(emailEl&&CURRENT_USER_EMAIL) emailEl.textContent=CURRENT_USER_EMAIL;
-  switchTab('dashboard',document.querySelector('.nav-item[data-tab="dashboard"]'));
+  // A link ending #shoutouts (the Teams reminder) opens that tab once, then the hash is cleared.
+  const startTab=studioStartTab_(window.location&&window.location.hash);
+  if(startTab!=='dashboard'){ try{ history.replaceState(null,'',location.pathname+location.search); }catch(e){} }
+  switchTab(startTab,document.querySelector('.nav-item[data-tab="'+startTab+'"]'));
   renderDashboard();
   // Fetch pending teacher submissions now that sign-in is complete. The blind
   // 1.5s startup timer in js/06 can fire before auth and fail (then never
