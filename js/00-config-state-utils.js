@@ -3,7 +3,7 @@ let DATA = [];
 // stamp on the <script src="js/..."> tags in DLA_Studio.html. Bumping the
 // number changes every code file's web address, which forces browsers to
 // download the new code instead of reusing a stale cached copy.
-const APP_VERSION = '5.81';
+const APP_VERSION = '5.82';
 
 // Reliable "get the latest version" action used by the ↻ latest button.
 // Reloads the whole app from the network with a one-off unique address so the
@@ -11,7 +11,8 @@ const APP_VERSION = '5.81';
 // version-stamped (and therefore fresh) code files.
 function forceLatestVersion(){
   const base = location.href.split('#')[0].split('?')[0];
-  location.replace(base + '?v=' + Date.now());
+  // Keep a #tab link (e.g. #shoutouts from the Teams reminder) so the fresh page opens on that tab.
+  location.replace(base + '?v=' + Date.now() + (location.hash || ''));
 }
 
 // Show the running code's version in the bottom-left + setup labels so the
