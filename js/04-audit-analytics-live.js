@@ -609,7 +609,7 @@ function renderGrowthChart(m){
   const emptyEl = document.getElementById('live-growth-empty');
   const noteEl  = document.getElementById('live-growth-trend');
   const s = amSeries(m, { bucket: CURRENT_GROWTH_BUCKET, campus: CURRENT_GROWTH_CAMPUS });
-  const names = Object.keys(s.visits);
+  const names = Object.keys(s.visits).filter(n => n !== AM_NO_CAMPUS);
   const sum = a => a.reduce((x, y) => x + y, 0);
   const totalVisits = names.reduce((a, n) => a + sum(s.visits[n]), 0);
   const totalUsed = sum(s.used), totalIntents = sum(s.intents);
@@ -720,7 +720,7 @@ function renderTeamGrid(m){
 function renderCampusBar(m){
   const id = 'live-campus-chart';
   const host = document.getElementById(id);
-  const rows = amCampusTotals(m).filter(r => r.campus !== AM_NO_CAMPUS || r.visits);
+  const rows = amCampusTotals(m).filter(r => r.campus !== AM_NO_CAMPUS);
   if(!rows.some(r => r.visits)){
     disposeChart_(id);
     if(host){ host.style.height = ''; host.innerHTML = '<div class="empty-msg">No visits recorded yet.</div>'; }
