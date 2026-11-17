@@ -185,17 +185,6 @@
       },
       "s": [
         {
-          "t": "Microsoft Forms",
-          "d": "Students build a branching identification guide that asks about visible soil components and leads to a likely sample match. This makes them choose which soil properties actually distinguish their samples, using a blank branching form the teacher prepares. A buddy class tests the guide against numbered samples and reports incorrect matches through the form. Students revise the questions, and the teacher assesses whether their guide reliably separates the samples.",
-          "stage": "Sorting out",
-          "activity": "Classify and compare soil samples",
-          "rat": "T",
-          "transforms": "learning, goals: Students build and revise an identification tool through sample testing; assessment judges its reliability.",
-          "loi": "1",
-          "quote": "Finding out: Science Investigation: Students classify and compare soil/rock samples, describing their observable properties.",
-          "link": "The sample comparison becomes a working identification guide that another class checks against the actual soils."
-        },
-        {
           "t": "Book Creator",
           "d": "Students create a linked book that lets younger students choose an everyday use, then follow links to suitable rocks or minerals. This connects observable properties with uses such as pencils and buildings, starting from a linked page template the teacher prepares. Year 1 students use the book to answer material-choice questions and identify confusing routes. The teacher assesses the accuracy of the choices and explanations, and students repair links or explanations that misled readers.",
           "stage": "Making conclusions",
@@ -203,17 +192,6 @@
           "rat": "T",
           "transforms": "learning, goals: Younger students test material choices using the linked guide; assessment examines its accuracy and explanations.",
           "loi": "1"
-        },
-        {
-          "t": "Microsoft Excel",
-          "d": "Students enter counts of pebbles and plant fragments from equal-sized soil samples into a shared table and create comparison charts. This shows how soils differ, using a labelled spreadsheet the teacher prepares. A buddy teacher uses the charts to choose two contrasting samples for a class investigation, then checks that choice against the actual samples. The teacher assesses whether the class's data supported a sound choice, and students correct unclear labels or counting errors.",
-          "stage": "Finding out",
-          "activity": "Local soil study",
-          "rat": "T",
-          "transforms": "learning, goals: Another teacher uses the data to select samples and checks the decision; assessment judges the data's usefulness.",
-          "loi": "1",
-          "quote": "Finding out: Science Investigation: Students classify and compare soil/rock samples, describing their observable properties.",
-          "link": "The local soil observations become a comparison table another class uses to select contrasting investigation samples."
         },
         {
           "t": "Canva",
@@ -234,6 +212,28 @@
           "loi": "3",
           "quote": "Cultural Knowledge: Students explain how First Nations Australians use a particular rock, mineral, or soil resource and reflect on its value.",
           "link": "The cultural knowledge explanation includes clear sources and questions that keep First Nations accounts at the centre."
+        },
+        {
+          "t": "Microsoft Excel",
+          "d": "Students enter counts of pebbles and plant fragments from equal-sized soil samples into a shared table and create comparison charts. This shows how soils differ, using a labelled spreadsheet the teacher prepares. A buddy teacher uses the charts to choose two contrasting samples for a class investigation, then checks that choice against the actual samples. The teacher assesses whether the class's data supported a sound choice, and students correct unclear labels or counting errors.",
+          "stage": "Finding out",
+          "activity": "Local soil study",
+          "rat": "T",
+          "transforms": "learning, goals: Another teacher uses the data to select samples and checks the decision; assessment judges the data's usefulness.",
+          "loi": "1",
+          "quote": "Finding out: Science Investigation: Students classify and compare soil/rock samples, describing their observable properties.",
+          "link": "The local soil observations become a comparison table another class uses to select contrasting investigation samples."
+        },
+        {
+          "t": "Microsoft Forms",
+          "d": "Students build a branching identification guide that asks about visible soil components and leads to a likely sample match. This makes them choose which soil properties actually distinguish their samples, using a blank branching form the teacher prepares. A buddy class tests the guide against numbered samples and reports incorrect matches through the form. Students revise the questions, and the teacher assesses whether their guide reliably separates the samples.",
+          "stage": "Sorting out",
+          "activity": "Classify and compare soil samples",
+          "rat": "T",
+          "transforms": "learning, goals: Students build and revise an identification tool through sample testing; assessment judges its reliability.",
+          "loi": "1",
+          "quote": "Finding out: Science Investigation: Students classify and compare soil/rock samples, describing their observable properties.",
+          "link": "The sample comparison becomes a working identification guide that another class checks against the actual soils."
         }
       ],
       "stem": {
