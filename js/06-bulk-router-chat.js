@@ -1881,7 +1881,7 @@ Return ONLY a JSON array of exactly 3 suggestions:
     const isParseError = e.message.includes('JSON') || e.message.includes('No suggestions') || e.message.includes('Empty');
     const msg = isParseError
       ? 'AI returned an unexpected format. Try being more specific, e.g. "change the tool to Canva" or "make this about the provocation activity".'
-      : e.message.replace(/\n/g, '<br>');
+      : esc(e.message).replace(/\n/g, '<br>');
     resultEl.innerHTML = `<div style="font-size:12px;color:#f87171;line-height:1.5">\u2717 ${msg}</div>`;
     // Roll back this turn from memory since it failed
     if(window[memKey] && window[memKey].instructions.length){

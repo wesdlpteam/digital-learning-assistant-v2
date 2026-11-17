@@ -1,0 +1,288 @@
+{
+  "pilot": "v3",
+  "generatedAt": "2026-11-17T01:03:27.391Z",
+  "units": [
+    {
+      "ca": "Glen Waverley",
+      "yl": "Year 3",
+      "th": "How the World Works",
+      "builtFrom": {
+        "ci": "Observing how materials change helps us make sense of the physical world.",
+        "lo": "Observable properties of solids and liquids; How heating and cooling change state; Scientific thinking helps solve everyday problems"
+      },
+      "s": [
+        {
+          "t": "Explain Everything",
+          "d": "Students draw a solid from the Sunken shapes activity in Explain Everything, then draw what they predict will happen when it is warmed. Comparing their drawings with the demonstration helps them notice how adding heat can change a material's shape. Partners swap screens and circle a prediction they want to check during the demonstration. Each pair keeps a before-and-after drawing with a written sentence explaining what they changed their minds about.",
+          "stage": "Tuning in",
+          "activity": "Sunken shapes"
+        },
+        {
+          "t": "Microsoft Excel",
+          "d": "Students enter the melting times of equal-sized chocolate pieces into a teacher-prepared Excel table after testing them in different warm places. Comparing the times helps them explain how adding heat changes a solid into a liquid. Each group predicts which place will melt the chocolate fastest, then checks its prediction against the class results. Students make a column chart from the table and add a written explanation of one difference they notice.",
+          "stage": "Finding out",
+          "activity": "Heat it up"
+        },
+        {
+          "t": "Freeform",
+          "d": "Students draw materials observed during the investigations on separate Freeform sticky notes and move them into solid or liquid groups. Sorting by what holds its shape and what flows helps them describe observable properties. Partners exchange boards and move any disputed examples beside a written question, then check those materials again using containers. Each pair ends with a revised sorting board that includes reasons for two tricky choices.",
+          "stage": "Sorting out",
+          "activity": "Classifying solids and liquids"
+        },
+        {
+          "t": "Seesaw",
+          "d": "Students draw predictions in Seesaw showing what water in a sealed bag will look like before and after freezing. Checking the bag after cooling helps them explain how removing heat can change liquid water into solid ice. Pairs choose whether to test the frozen bag's shape or whether its contents still flow, keeping the bag sealed. They add a second drawing and a written comparison to make a two-page record of their prediction and observation.",
+          "stage": "Finding out",
+          "activity": "Freeze it"
+        },
+        {
+          "t": "Book Creator",
+          "d": "Students build a Book Creator book with drawings and written observations of their clay at the wet, dry and fired stages. Comparing these stages helps them notice that heating does not make every material melt or produce a change they can reverse. Each pair writes a question for the art teacher about a change they cannot explain, then adds the answer after discussing it. The finished book has a page comparing clay with melting chocolate, including what happens when each material cools.",
+          "stage": "Going further",
+          "activity": "Clay changes during ceramic making"
+        }
+      ],
+      "stem": {
+        "t": "Cardboard Ice Rescue Boxes",
+        "d": "Students design and build a box that keeps an ice cube solid while allowing them to inspect it through a small opening flap, using recycled cardboard, fabric scraps, foil and tape. They sketch their ideas first and choose how to slow the warming that causes ice to melt. Groups test equal-sized ice cubes in their boxes beside an uncovered cube for the same length of time, then compare how much ice remains. They change one part of their box and repeat the test with fresh ice cubes. Each group demonstrates its opening flap and explains whether its revised box kept more ice solid.",
+        "stage": "Finding out",
+        "activity": "Cool customers"
+      }
+    },
+    {
+      "ca": "Glen Waverley",
+      "yl": "Year 3",
+      "th": "How We Express Ourselves",
+      "builtFrom": {
+        "ci": "Creativity allows people to express their understanding of the world.",
+        "lo": "The ways people use technology to express creativity; How texts and images work together; How technology influences our creativity"
+      },
+      "s": [
+        {
+          "t": "Brushes Redux",
+          "d": "Students draw the same familiar playground twice, using different colours and brush marks to show how they feel about it. This shows how digital art can express different understandings of the same place. A partner compares the drawings and points to the marks that changed their impression. Students keep two contrasting drawings made with the app's brushes and layers.",
+          "stage": "Finding out",
+          "activity": "Digital drawing and editing"
+        },
+        {
+          "t": "Book Creator",
+          "d": "Students take two photographs of the same classroom object using Book Creator's camera option, changing the framing each time. They explore how a photograph and a few words can make an ordinary object seem precious or unimportant. Students choose a different caption for each photograph, then ask a partner how each page changes their view of the object. Each student makes a two-page book combining carefully framed photographs with contrasting text.",
+          "stage": "Sorting out",
+          "activity": "Well-composed photographs"
+        },
+        {
+          "t": "GarageBand",
+          "d": "Students compose short parts for the planner's picture book image using GarageBand's keyboard, with pentatonic scale mode selected by the teacher. They choose sounds and rhythms that express features they notice in the illustration. Each group records its parts on separate tracks, then changes the volume so a different part leads the music. The group keeps a short instrumental composition and plays both versions for classmates to compare.",
+          "stage": "Going further",
+          "activity": "Composition inspired by a picture"
+        },
+        {
+          "t": "Stop Motion Studio",
+          "d": "Students arrange paper eyes, eyebrows and mouths, then photograph small changes in Stop Motion Studio to animate a facial expression. They explore how moving just one feature can change the feeling an audience reads. Partners watch the animation without an explanation and identify the moment when the expression changes. Students adjust the frame timing and keep a short silent animation showing the change.",
+          "stage": "Finding out",
+          "activity": "Facial expression as communication"
+        },
+        {
+          "t": "Canva",
+          "d": "Students build two outfit pictures in Canva using clothing graphics and colours they can name in French. They add short French opinions from the class vocabulary to explore how words guide the way an image is read. Students duplicate their page and swap the opinions while keeping the outfit pictures unchanged, then ask classmates which combinations make sense. Each student produces two contrasting pages showing how the same clothes can receive different opinions.",
+          "stage": "Making conclusions",
+          "activity": "Colours, clothes and giving opinions"
+        }
+      ],
+      "stem": {
+        "t": "Pull-Tab Tension Theatre",
+        "d": "Students sketch and build a cardboard stage with paper characters, split-pin joints and sliding card tabs that change a character's posture. They explore how a raised shoulder or a slowly opening door can communicate dramatic tension without words. After testing their first model with classmates, students adjust the joints or sliders to make the movement clearer. They use an iPad camera to film a single silent performance, watching it back to check whether the intended tension comes across. Each group demonstrates its working theatre and explains one change made after testing.",
+        "stage": "Going further",
+        "activity": "Dramatic tension"
+      }
+    },
+    {
+      "ca": "Glen Waverley",
+      "yl": "Year 3",
+      "th": "How We Organise Ourselves",
+      "builtFrom": {
+        "ci": "Needs and wants drive innovation.",
+        "lo": "How needs and wants lead to new inventions\nHow digital devices and networks operate\nBeing a responsible digital citizen"
+      },
+      "s": [
+        {
+          "t": "Freeform",
+          "d": "Students add sticky notes to a Freeform board showing what they think computers need to send a message. This brings out their starting ideas about how digital devices and networks operate. Partners move the notes into 'We think we know' and 'We need to check', keeping disagreements visible rather than deleting them. The board becomes a class question wall that students can revisit and correct as they investigate digital systems.",
+          "stage": "Tuning in",
+          "activity": "Prior knowledge"
+        },
+        {
+          "t": "Canva",
+          "d": "Students build a two-column chart in Canva and sort text cards naming computer hardware and software. This helps them work out which physical parts and programs work together to meet a user's need. Partners exchange charts and use a different text colour to flag any cards they would move, explaining their choices beside them. Each pair produces a revised chart with a short example showing hardware and software working together, such as a keyboard and a writing program.",
+          "stage": "Finding out",
+          "activity": "T chart sort of systems"
+        },
+        {
+          "t": "Seesaw",
+          "d": "Students sort teacher-prepared online situations into safe and risky areas on a Seesaw drawing page. They explore how responsible choices help people use digital inventions without giving away private information or hurting others. Each pair chooses one risky situation and writes a safer next step, then another pair checks whether the advice is clear enough to follow. Their completed page contains sorted situations and practical advice that can be revisited before the next online activity.",
+          "stage": "Sorting out",
+          "activity": "Safe vs risky puddles"
+        },
+        {
+          "t": "Micro:bit",
+          "d": "Students program a Micro:bit to display one symbol when button A is pressed and another when button B is pressed. They design it to meet a classroom communication need, such as quietly showing whether a table needs help. Another group tests the device without instructions and suggests changes if the symbols are confusing. Students revise the code and demonstrate a working signal device, explaining how the button press leads to the programmed response.",
+          "stage": "Going further",
+          "activity": "Algorithms to program actions"
+        },
+        {
+          "t": "Microsoft Excel",
+          "d": "Students collect classmates' choices about which classroom problem most needs an invention, then enter category totals in Microsoft Excel. Counting the choices helps them check whether their favourite idea meets a need other people actually have. Groups create a column chart and a pie chart from the same totals, then choose which makes the priorities easier to read. Their spreadsheet contains the frequency table, both charts and a written recommendation for which problem to tackle first.",
+          "stage": "Making conclusions",
+          "activity": "Collecting and representing data"
+        }
+      ],
+      "stem": {
+        "t": "Cardboard Message Delivery Machines",
+        "d": "Students ask another table what makes passing classroom messages difficult, then sketch a solution using a cardboard tray that travels along string between two chairs. They build a prototype with recycled cardboard, string, paper clips and tape, designing a way to send a folded message without it falling out. This explores how a real communication need can lead to an invention. Partners test five deliveries, count dropped messages and change the tray shape or string arrangement before testing again. Students demonstrate the improved machine and point to the change that made delivery more reliable.",
+        "stage": "Going further",
+        "activity": "Designing a solution for a problem"
+      }
+    },
+    {
+      "ca": "Glen Waverley",
+      "yl": "Year 3",
+      "th": "Sharing the Planet",
+      "builtFrom": {
+        "ci": "The diversity of soils, rocks, and minerals shapes the way people value and use Earth's resources.",
+        "lo": "Observable properties of soils, rocks and minerals; Earth's resources are vital and must be used responsibly; First Nations knowledge of soils and rocks"
+      },
+      "s": [
+        {
+          "t": "Padlet",
+          "d": "Students record where they find rocks and soil around the school, adding a short observation to a teacher-prepared Padlet back in class. Each post connects an observable property, such as roughness, with how the material is being used. Another pair adds a comment suggesting why that material suits the spot, or asking what needs checking. The class ends with a shared board of local examples and questions to investigate.",
+          "stage": "Tuning in",
+          "activity": "Geology quest"
+        },
+        {
+          "t": "Microsoft Excel",
+          "d": "Students sort equal spoonfuls of dry soil from different school locations and enter counts of visible pebbles and plant pieces into a prepared Excel table. Comparing these counts helps them describe how soils differ without assuming every soil contains the same things. Pairs choose one component and turn its counts into a column chart, then ask another pair to explain what it shows. Their finished chart includes a sentence explaining one difference between the samples.",
+          "stage": "Finding out",
+          "activity": "Local soil study"
+        },
+        {
+          "t": "Freeform",
+          "d": "Students draw two overlapping circles in Freeform and sort notes about Australia and a neighbouring country using information the teacher has already provided. They compare named places rather than treating either country as having only one soil, climate or landform. Pairs swap boards and move any note they think belongs elsewhere, explaining their choice before agreeing on its position. The finished Venn diagram includes a question beside any comparison they still need to check.",
+          "stage": "Sorting out",
+          "activity": "Venn diagram comparing natural features"
+        },
+        {
+          "t": "Book Creator",
+          "d": "Students write an illustrated page explaining one First Nations use of a rock, mineral or soil, using teacher-provided material from an appropriate First Nations source. They name the community or Country identified by the source and explain the resource's practical or cultural value without copying restricted designs. Each pair chooses a question younger readers might ask and adds a page answering it with text and their own drawing of the material. The pages form a class reference book with source acknowledgements and a reminder that knowledge and practices differ between communities.",
+          "stage": "Going further",
+          "activity": "Cultural knowledge"
+        },
+        {
+          "t": "Canva",
+          "d": "Students design a Canva poster tracing one everyday object, such as a pencil, back to a rock or mineral studied in class. They use arrows, text boxes and shapes to show how the material's properties make it useful and why it should be used carefully. Students choose a real classroom audience and include one specific action, such as using pencils fully before replacing them. Their finished poster shows the resource, its use and a practical way to avoid waste.",
+          "stage": "Making conclusions",
+          "activity": "Poster showing Earth's resources"
+        }
+      ],
+      "stem": {
+        "t": "Shake-and-Sort Soil Towers",
+        "d": "Students design and build a stack of soil-sorting trays using recycled cardboard frames, different sizes of mesh, tape and a reusable catch tray. Their tower separates a small, teacher-approved dry soil sample into groups that students can inspect, helping them compare the particles that make soils different. They sketch a plan, build a first version and test it over a tray with gentle shaking, then change the mesh order or seal gaps where material escapes. Another group tests the revised tower with an equal-sized sample and checks whether it keeps all the material contained. Students demonstrate their working tower and explain what each tray caught, including why particle size alone cannot identify a mineral.",
+        "stage": "Finding out",
+        "activity": "Science investigation"
+      }
+    },
+    {
+      "ca": "Glen Waverley",
+      "yl": "Year 3",
+      "th": "Where We Are in Place and Time",
+      "builtFrom": {
+        "ci": "Land and place are represented and valued in different ways.",
+        "lo": "How Australia and neighbouring regions define places; Australia's states/territories have unique identities; First Nations connections to Country"
+      },
+      "s": [
+        {
+          "t": "Freeform",
+          "d": "Students draw their favourite school place in Freeform, then add words explaining why it matters to them. This shows how the same place can mean different things to different people. Partners compare drawings of the same location and choose which details they would keep on a shared school map. Each pair makes a board with both drawings and a short note explaining their different choices.",
+          "stage": "Tuning in",
+          "activity": "A favourite place at school"
+        },
+        {
+          "t": "National Geographic MapMaker",
+          "d": "Students explore Australia in National Geographic MapMaker and add markers for capital cities from the planner's blank-map activity. State and territory borders show one way people divide and name Australian places. Partners check each other's markers, then choose a state or territory and add a note about a distinctive feature using teacher-provided information. They finish with an annotated map that shows both locations and something that makes a place distinctive.",
+          "stage": "Finding out",
+          "activity": "States, territories and capital cities"
+        },
+        {
+          "t": "Google Maps",
+          "d": "Students explore Australia and a neighbouring country in Google Maps, then open Street View at teacher-checked locations where it is available. Comparing a coastal settlement in each country helps them look beyond borders to how places look and are used. Pairs choose two visible details that might surprise another pair and explain what the images cannot tell them about people's lives. They give a short live walkthrough of their chosen views, pointing out the details on screen.",
+          "stage": "Sorting out",
+          "activity": "Learning about Australia's neighbours"
+        },
+        {
+          "t": "Book Creator",
+          "d": "Students write and illustrate a short Book Creator guide explaining how to care for their chosen Australian place or feature. Their pages explain why people value the place, using teacher-provided sources, including approved First Nations accounts where available. Another pair reads the draft and checks whether a visitor could actually follow the advice. Students revise their guide and finish with an illustrated book containing practical actions and a page naming their sources.",
+          "stage": "Going further",
+          "activity": "Showing respect for an Australian place"
+        },
+        {
+          "t": "Seesaw",
+          "d": "Students open a teacher-uploaded image of their original world map in Seesaw and draw new knowledge over it in a different colour. Comparing the colours makes changes in their understanding of places and borders easy to see. Each student chooses one original idea to correct and one map detail that still needs checking. They save an annotated map with a short voice explanation of those choices, rather than simply listing everything they remember.",
+          "stage": "Making conclusions",
+          "activity": "Adding to the original world map"
+        }
+      ],
+      "stem": {
+        "t": "Lift-the-Layer Australia Maps",
+        "d": "Students design a layered cardboard map of a small, teacher-selected Australian region, using yarn for a river and clear packaging sheets for separate border overlays. They investigate a teacher-provided map to see how natural features and state borders represent the same place differently. Pairs sketch a plan, then build lifting tabs with tape and paper fasteners so viewers can reveal each layer without shifting the base map. Another pair tests whether the layers line up and the key is clear, then the makers adjust tabs or markings. Students demonstrate their working map by lifting each layer and explaining what it shows and what it leaves out.",
+        "stage": "Sorting out",
+        "activity": "Natural and human-made boundaries"
+      }
+    },
+    {
+      "ca": "Glen Waverley",
+      "yl": "Year 3",
+      "th": "Who We Are",
+      "builtFrom": {
+        "ci": "The choices and actions we make contribute to our health and wellbeing.",
+        "lo": "What it means to be healthy; Choices and their impact on health; Actions to maintain a healthy mind and body"
+      },
+      "s": [
+        {
+          "t": "Padlet",
+          "d": "Students add drawings and short posts to a teacher-prepared Padlet showing friendly choices during playground games. Feeling included helps us stay well, and our actions can help others feel safe enough to join in. Small groups read the posts and suggest how to include someone when a game already feels full. The class ends with a shared board of practical actions, with comments explaining when each action could help.",
+          "stage": "Finding out",
+          "activity": "We are a friendly class"
+        },
+        {
+          "t": "Explain Everything",
+          "d": "Students draw a square in Explain Everything and record themselves moving a pointer around it while explaining the square breathing routine already practised in class. Practising a calming action gives children another choice when strong feelings make friendship problems harder. Partners try following the recording and suggest whether the pace needs changing. Each pair saves a short breathing guide with a moving pointer and spoken instructions.",
+          "stage": "Sorting out",
+          "activity": "Emotional regulation"
+        },
+        {
+          "t": "Book Creator",
+          "d": "Students draw a fictional Friendship Fire in Book Creator and add speech bubbles showing two possible responses. Comparing the responses helps them explain how choices can affect everyone's wellbeing. Another pair reads both endings and identifies which words might help repair the friendship, giving a reason before the authors revise. Students produce a short graphic novel with alternative endings and a final page explaining a helpful action.",
+          "stage": "Taking action",
+          "activity": "Friendship Fire graphic novel"
+        },
+        {
+          "t": "Canva",
+          "d": "Students arrange a colour, a drawn symbol and an image from Canva's library to represent one choice that supports a healthy mind or body. Their choices bring the planned colour, symbol and image reflection back to everyday actions that support wellbeing. A partner tries to work out the healthy action before reading the student's explanation, helping the designer spot anything unclear. Each student completes a one-page visual reflection with a short explanation beneath each element.",
+          "stage": "Making conclusions",
+          "activity": "Colour symbol image"
+        },
+        {
+          "t": "Microsoft Forms",
+          "d": "Students complete a short teacher-made Microsoft Forms questionnaire about fictional friendship situations, choosing a response and explaining how it could affect wellbeing. This shows what they already understand about choices that help people feel safe and included. The teacher displays the class response charts without names, and students discuss a situation where opinions differ. Each student writes one action to practise in the final response box, giving the teacher a starting point for later reflection.",
+          "stage": "Tuning in",
+          "activity": "Beginning of unit self assessment"
+        }
+      ],
+      "stem": {
+        "t": "Cardboard Calm Breathing Windows",
+        "d": "Students build a handheld cardboard frame with a sliding paper strip that reveals the stages of the square breathing routine already practised in class. Using cardboard, split pins, paper strips and fabric tabs, they sketch and build a guide someone could operate while taking a quiet break. Partners test whether the strip moves smoothly and whether the instructions are clear, then suggest one change before the builders revise their prototypes. Students demonstrate the finished moving guide and explain how choosing a calming action can support wellbeing during a friendship disagreement.",
+        "stage": "Going further",
+        "activity": "Emotional regulation"
+      }
+    }
+  ]
+}

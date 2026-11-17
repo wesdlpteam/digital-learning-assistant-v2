@@ -807,16 +807,6 @@ Object.defineProperty(window, 'NOT_AVAILABLE_AT_WESLEY', {
   configurable: true
 });
 
-const TOOL_AGE_GUIDE = `TOOL AGE GUIDE (HARD RULE — match Australian year levels):
-3 Year Old Kinder = ages 3-4 | 4 Year Old Kinder = ages 4-5 | Prep = ages 5-6 | Year 1 = 6-7 | Year 2 = 7-8 | Year 3 = 8-9 | Year 4 = 9-10 | Year 5 = 10-11 | Year 6 = 11-12
-- Kinder-Year 2 ONLY: Bee-Bots, ScratchJR, ChatterPix Kids, Puppet Pals, Sphero Indi
-- Year 3+: Sphero BOLT, Lego Spike Essential, Micro:bits, Scratch, Stop Motion Studio, Adobe Express, Canva, Padlet, Kahoot, Tinkercad, Explain Everything, Wise Discussion Chatbots
-- Year 4+: Microsoft Teams, Lego Spike Prime, CoDrone EDU, Minecraft Education (with scaffolding for Year 4)
-- Year 5+: 3D Printers, Python-based coding
-- Kinder-Year 6: Seesaw, Epic, PicCollage, Freeform, Brushes Redux, Book Creator
-- Prep-Year 6: GarageBand, iMovie, Google Maps (view-only, Street View), Clickview, Green Screen, iPads, Laptops, Digital Cameras, Sketchbook
-NEVER propose a tool for a year level below its minimum age.`;
-
 // Map year level string → numeric year for age filtering
 function getYearNumber(yearLevel){
   const s = String(yearLevel || '').toLowerCase().trim();

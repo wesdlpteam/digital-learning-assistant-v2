@@ -1766,7 +1766,7 @@ async function pollSuggestionAudit() {
         ${(r.status === 'running') ? `<br><button class="btn-sm" onclick="abortSuggestionAudit()">Stop</button>` : ''}
       </div>`;
     if (r.status === 'running') setTimeout(pollSuggestionAudit, 20000);
-  } catch (e) { panel.innerHTML = `<span style="color:#f87171">Status check failed: ${e.message}</span>`; }
+  } catch (e) { panel.innerHTML = `<span style="color:#f87171">Status check failed: ${esc(e.message)}</span>`; }
 }
 
 async function confirmAuditAutoFix() {
