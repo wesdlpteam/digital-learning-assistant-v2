@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Wesley Digital Learning Assistant</title>
-<script>window.APP_VERSION='2026-11-17-4';</script>  <!-- bump on every deploy so open tabs auto-refresh -->
+<script>window.APP_VERSION='2026-11-17-5';</script>  <!-- bump on every deploy so open tabs auto-refresh -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23111111'/%3E%3Cpolygon points='19,3 10,17 15,17 13,29 22,15 17,15' fill='%23CDEB45'/%3E%3Ccircle cx='6' cy='6' r='2' fill='%23CDEB45' opacity='0.5'/%3E%3Ccircle cx='26' cy='26' r='2' fill='%23CDEB45' opacity='0.5'/%3E%3Ccircle cx='26' cy='6' r='1.5' fill='%237ED957' opacity='0.6'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -552,6 +552,17 @@ fetch('libraries.json')
 // JSONP path only (responses come back as JSONP callbacks). If you redeploy
 // gas_backend and the /exec URL changes, update this constant.
 const AI_HOOK = "https://script.google.com/macros/s/AKfycbzIoUL_vbTaH4P7PXuX8HeU9Xh6HuiEWJ05k7q50aJjCg7oeF-ELrlLuPx8uxPFHmE-eA/exec";
+// Testing switch: open the site with ?backend=test and the tool picker and
+// unit edit proposals go to the TEST copy of the backend (same real data).
+// A small "TEST backend" badge shows so nobody forgets. Never applies in the
+// demo build, where AI_HOOK is blocked.
+var AI_HOOK_TEST_="https://script.google.com/macros/s/AKfycbwIbXeHVGcmkTcu2-k3e5fbAEDcVOjcMHi5NPHwxhZoHCmj_S97ejDB13lxylZzYpl24Q/exec";
+(function(){try{
+  if(!/[?&]backend=test(&|$)/.test(location.search)||AI_HOOK.indexOf('sandbox:')===0)return;
+  var realFetch=window.fetch.bind(window);
+  window.fetch=function(input,init){if(typeof input==='string'&&input.indexOf(AI_HOOK)===0)input=AI_HOOK_TEST_+input.slice(AI_HOOK.length);return realFetch(input,init);};
+  if(document.body){var b=document.createElement('div');b.textContent='TEST backend';b.setAttribute('role','status');b.style.cssText='position:fixed;bottom:10px;right:10px;z-index:100001;background:#F5A623;color:#111;font-weight:800;font-size:12px;padding:6px 10px;border-radius:8px';document.body.appendChild(b);}
+}catch(e){}})();
 const BK="https://outlook.office365.com/book/DigitalLearningPractice@WesleyCollegeMelbourne.onmicrosoft.com/?ismsaljsauthenabled=true";
 const ADMIN_URL="https://wesdlpteam.github.io/digital-learning-assistant-v2/DLA_Studio.html"; // Admin shortcut to the live DLA Studio.
 const TU={

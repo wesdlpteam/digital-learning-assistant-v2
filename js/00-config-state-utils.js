@@ -3,7 +3,7 @@ let DATA = [];
 // stamp on the <script src="js/..."> tags in DLA_Studio.html. Bumping the
 // number changes every code file's web address, which forces browsers to
 // download the new code instead of reusing a stale cached copy.
-const APP_VERSION = '5.88';
+const APP_VERSION = '5.89';
 
 // Reliable "get the latest version" action used by the ↻ latest button.
 // Reloads the whole app from the network with a one-off unique address so the
@@ -20,7 +20,7 @@ function forceLatestVersion(){
 function stampVersionLabels(){
   try{
     const a = document.getElementById('dla-version-label');
-    if(a) a.textContent = '● DLA Studio v' + APP_VERSION;
+    if(a) a.textContent = '● DLA Studio v' + APP_VERSION + (window.DLA_TEST_BACKEND ? ' · TEST backend' : '');
     const b = document.getElementById('setup-version-label');
     if(b) b.textContent = 'v' + APP_VERSION;
     // Status bar shows the REAL configured model, so the label can never go
@@ -35,6 +35,26 @@ if(typeof document !== 'undefined'){
 }
 
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzIoUL_vbTaH4P7PXuX8HeU9Xh6HuiEWJ05k7q50aJjCg7oeF-ELrlLuPx8uxPFHmE-eA/exec';
+// Testing switch: open the Studio with ?backend=test and every backend call
+// goes to the TEST copy of the backend instead of the live one. It runs the
+// same real data (it reads and writes the real Drive files), but new backend
+// code can be tried there before the live deployment is bumped. The version
+// label bottom-left then says "TEST backend". Never applies in the demo
+// build, where SCRIPT_URL is blocked.
+const SCRIPT_URL_TEST_ = 'https://script.google.com/macros/s/AKfycbwIbXeHVGcmkTcu2-k3e5fbAEDcVOjcMHi5NPHwxhZoHCmj_S97ejDB13lxylZzYpl24Q/exec';
+(function(){
+  try{
+    if(typeof location === 'undefined' || !/[?&]backend=test(&|$)/.test(location.search)) return;
+    if(SCRIPT_URL.indexOf('sandbox:') === 0) return;
+    const realFetch = window.fetch.bind(window);
+    window.fetch = function(input, init){
+      if(typeof input === 'string' && input.indexOf(SCRIPT_URL) === 0) input = SCRIPT_URL_TEST_ + input.slice(SCRIPT_URL.length);
+      return realFetch(input, init);
+    };
+    window.DLA_TEST_BACKEND = true;
+    stampVersionLabels();
+  }catch(e){}
+})();
 let DRIVE_TOKEN = null;
 let CURRENT_USER_EMAIL = '';
 let DRIVE_FILE_ID = null;
