@@ -185,53 +185,66 @@
       },
       "s": [
         {
-          "t": "Microsoft Excel",
-          "d": "Students count visible pebbles and pieces of plant matter in equal spoonfuls of soil, then enter their counts into a prepared Excel table. Comparing equal amounts helps them describe how soils differ without assuming one sample represents every soil nearby. Each group predicts which sample will contain more plant matter before checking another group's counts. They make a column chart and add a sentence explaining one difference that might matter to plants.",
-          "stage": "Finding out",
-          "activity": "Local soil study",
-          "quote": "Local Soil Study: collect soil samples from different locations around the school or local area.",
-          "link": "This adds a fair comparison and a readable chart to the planned soil observations."
-        },
-        {
-          "t": "Freeform",
-          "d": "Students write descriptions of soil and rock samples on movable notes in Freeform, then sort them by an observable property. This helps them notice that the same samples can belong together for different reasons. Groups exchange their boards and work out the sorting rule before suggesting another way to arrange the notes. Each board ends with two labelled groupings and a written explanation of one sample that was difficult to place.",
+          "t": "Microsoft Forms",
+          "d": "Students build a branching identification guide that asks about visible soil components and leads to a likely sample match. This makes them choose which soil properties actually distinguish their samples, using a blank branching form the teacher prepares. A buddy class tests the guide against numbered samples and reports incorrect matches through the form. Students revise the questions, and the teacher assesses whether their guide reliably separates the samples.",
           "stage": "Sorting out",
           "activity": "Classify and compare soil samples",
-          "quote": "Science Investigation: Students classify and compare soil/rock samples, describing their observable properties.",
-          "link": "Movable notes let students reconsider their classifications without rewriting every observation."
-        },
-        {
-          "t": "National Geographic MapMaker",
-          "d": "Students locate Australia and Indonesia in MapMaker, then add markers at two teacher-selected landforms in each country. Comparing these places helps them connect different rock features with how people use nearby land. Partners choose one pair of places and add notes separating what the map shows from questions that need more research. They finish with an annotated comparison map containing observations and questions, rather than guesses about local soils.",
-          "stage": "Going further",
-          "activity": "Compare Australia and a neighbouring country",
-          "quote": "Compare: investigate similarities and differences in natural features between Australia and a neighbouring country…",
-          "link": "The map gives the planned country comparison specific places to examine and discuss."
+          "rat": "T",
+          "transforms": "learning, goals: Students build and revise an identification tool through sample testing; assessment judges its reliability.",
+          "loi": "1",
+          "quote": "Finding out: Science Investigation: Students classify and compare soil/rock samples, describing their observable properties.",
+          "link": "The sample comparison becomes a working identification guide that another class checks against the actual soils."
         },
         {
           "t": "Book Creator",
-          "d": "Students build a short Book Creator book explaining one documented First Nations use of ochre or grindstones, using teacher-provided, community-approved source material. This shows that a rock or mineral can have cultural value as well as a practical use. Each pair chooses a younger audience and explains the example without copying cultural designs or suggesting all First Nations communities use resources alike. Their book includes a labelled drawing, a clear explanation and a page naming the source and community where appropriate.",
-          "stage": "Going further",
-          "activity": "First Nations cultural knowledge",
-          "quote": "Cultural Knowledge: Students explain how First Nations Australians use a particular rock, mineral, or soil resource and reflect on its value.",
-          "link": "The book develops the planned cultural explanation while keeping it grounded in a specific, approved source."
+          "d": "Students create a linked book that lets younger students choose an everyday use, then follow links to suitable rocks or minerals. This connects observable properties with uses such as pencils and buildings, starting from a linked page template the teacher prepares. Year 1 students use the book to answer material-choice questions and identify confusing routes. The teacher assesses the accuracy of the choices and explanations, and students repair links or explanations that misled readers.",
+          "stage": "Making conclusions",
+          "activity": "Soils, rocks and minerals presentation",
+          "rat": "T",
+          "transforms": "learning, goals: Younger students test material choices using the linked guide; assessment examines its accuracy and explanations.",
+          "loi": "1"
         },
         {
-          "t": "Adobe Express",
-          "d": "Students design an Adobe Express poster showing how the properties of one soil, rock or mineral influence its everyday use. They connect that use with a practical choice about caring for Earth's resources. Another group checks whether the poster explains why the material suits the job, rather than simply naming its use. Students revise the text and layout to produce a poster with a labelled diagram and one supported recommendation for using the resource responsibly.",
+          "t": "Microsoft Excel",
+          "d": "Students enter counts of pebbles and plant fragments from equal-sized soil samples into a shared table and create comparison charts. This shows how soils differ, using a labelled spreadsheet the teacher prepares. A buddy teacher uses the charts to choose two contrasting samples for a class investigation, then checks that choice against the actual samples. The teacher assesses whether the class's data supported a sound choice, and students correct unclear labels or counting errors.",
+          "stage": "Finding out",
+          "activity": "Local soil study",
+          "rat": "T",
+          "transforms": "learning, goals: Another teacher uses the data to select samples and checks the decision; assessment judges the data's usefulness.",
+          "loi": "1",
+          "quote": "Finding out: Science Investigation: Students classify and compare soil/rock samples, describing their observable properties.",
+          "link": "The local soil observations become a comparison table another class uses to select contrasting investigation samples."
+        },
+        {
+          "t": "Canva",
+          "d": "Students design a comparison poster showing how one rock or mineral's properties suit two everyday uses. They connect those uses with a practical suggestion for using that resource responsibly. Partners read the poster at its intended display size and identify any claim that lacks an explanation or readable label. Students revise the layout and wording before printing a poster that connects properties, uses and a responsible choice.",
           "stage": "Making conclusions",
-          "activity": "Poster showing why resources matter",
-          "quote": "Design a poster or digital presentation showing how soils, rocks, and minerals are important for life, culture, and the environment across different places.",
-          "link": "This gives the planned poster a clear explanation to communicate and a useful resource choice to recommend."
+          "activity": "Resources poster",
+          "rat": "A",
+          "transforms": "Digital layout and peer feedback improve the planned poster without changing its purpose or assessment.",
+          "loi": "2"
+        },
+        {
+          "t": "Padlet",
+          "d": "Students read community-endorsed First Nations resources selected and linked by the teacher about ochre or grindstones. They add a short explanation of one use, its cultural value and the source it came from. Partners comment with a question that the original writer checks against the same source rather than guessing an answer. The class ends with a searchable board of sourced explanations and clearly marked unanswered questions.",
+          "stage": "Going further",
+          "activity": "First Nations cultural knowledge",
+          "rat": "A",
+          "transforms": "Searchable explanations and source-checked discussion improve sharing and research within the existing cultural knowledge task.",
+          "loi": "3",
+          "quote": "Cultural Knowledge: Students explain how First Nations Australians use a particular rock, mineral, or soil resource and reflect on its value.",
+          "link": "The cultural knowledge explanation includes clear sources and questions that keep First Nations accounts at the centre."
         }
       ],
       "stem": {
-        "t": "Catch the Runaway Soil",
-        "d": "Students build small soil-saving barriers from reused food trays, cardboard strips, pebbles and fabric scraps to investigate how different soils wash away. They ask how to keep soil in place, sketch a design and build a first prototype inside a tray. Groups test it with equal amounts of soil and water poured from the same height, catching runoff in clear reused containers. They compare the settled soil in the containers, change one part of their barrier and repeat the test. Each group demonstrates its improved model and explains how the soil's observable properties affected its design.",
+        "t": "Shake and Sort Soil Sieves",
+        "d": "Students design small sieves from cardboard frames and different mesh scraps to separate pebbles from equal amounts of dry, safe soil. The teacher provides a Micro:bit starter program that uses its accelerometer to count shakes while the device is secured to the frame. Teams compare separation after the same shake count, then change the mesh or frame after checking what passed through. They demonstrate a revised sieve and explain which soil components it separates reliably.",
         "stage": "Finding out",
-        "activity": "Science investigation comparing soil samples",
-        "quote": "Science Investigation: Students classify and compare soil/rock samples, describing their observable properties.",
-        "link": "This extends the planned soil comparison into building and improving a practical way to protect soil."
+        "activity": "Local soil study",
+        "rat": "A",
+        "transforms": "Accelerometer counts make repeated sieve tests more consistent and give students evidence for changing their physical designs.",
+        "quote": "Finding out: Science Investigation: Students classify and compare soil/rock samples, describing their observable properties.",
+        "link": "Building and testing sieves gives students another way to compare the components found in their local soil samples."
       }
     },
     {
