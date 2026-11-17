@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Wesley Digital Learning Assistant</title>
-<script>window.APP_VERSION='2026-11-17-5';</script>  <!-- bump on every deploy so open tabs auto-refresh -->
+<script>window.APP_VERSION='2026-11-17-6';</script>  <!-- bump on every deploy so open tabs auto-refresh -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23111111'/%3E%3Cpolygon points='19,3 10,17 15,17 13,29 22,15 17,15' fill='%23CDEB45'/%3E%3Ccircle cx='6' cy='6' r='2' fill='%23CDEB45' opacity='0.5'/%3E%3Ccircle cx='26' cy='26' r='2' fill='%23CDEB45' opacity='0.5'/%3E%3Ccircle cx='26' cy='6' r='1.5' fill='%237ED957' opacity='0.6'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -532,7 +532,7 @@ fetch('data.json')
   .then(data => { if(!data) return; D = data;
     var go = function(){ try{ if(typeof readHash==='function')readHash(); R(); loadLeaderboard(); }catch(e){ try{console.error(e);}catch(_){} showRenderFailure_(); } };
     if(_pilotMode==='v3'){
-      fetch(_pilotUrl)
+      fetch(_pilotUrl,{cache:'no-cache'})
         .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
         .then(p => { D = applyPilotV3_(D, p); })
         .catch(() => {})
