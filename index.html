@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Wesley Digital Learning Assistant</title>
-<script>window.APP_VERSION='2026-11-17-1';</script>  <!-- bump on every deploy so open tabs auto-refresh -->
+<script>try{var _q=new URLSearchParams(location.search);if(_q.get('admin')==='1')localStorage.setItem('dla_admin_link','1');if(localStorage.getItem('dla_admin_link')==='1')document.documentElement.classList.add('show-admin');}catch(e){}</script>
+<script>window.APP_VERSION='2026-11-17-2';</script>  <!-- bump on every deploy so open tabs auto-refresh -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23111111'/%3E%3Cpolygon points='19,3 10,17 15,17 13,29 22,15 17,15' fill='%23CDEB45'/%3E%3Ccircle cx='6' cy='6' r='2' fill='%23CDEB45' opacity='0.5'/%3E%3Ccircle cx='26' cy='26' r='2' fill='%23CDEB45' opacity='0.5'/%3E%3Ccircle cx='26' cy='6' r='1.5' fill='%237ED957' opacity='0.6'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -405,7 +406,15 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color
 .tech-editor-input:focus{outline:none;border-color:#38BDF8;background:#111}
 .tech-editor-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 
-</style></head><body><div id="app"></div>
+.admin-btn{display:none}html.show-admin .admin-btn{display:inline-flex}
+.skip-link{position:absolute;left:-9999px;top:8px;z-index:100000;background:#CDEB45;color:#111;padding:10px 16px;border-radius:8px;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:inherit}
+.skip-link:focus{left:8px}
+.app-loading{padding:60px 20px;text-align:center;color:#BBB;font-size:15px}
+a:focus-visible,summary:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--ac)!important;outline-offset:2px}
+.bk,.uoi-loi-remove,.tech-chip-x{position:relative}
+.bk::after,.uoi-loi-remove::after,.tech-chip-x::after{content:"";position:absolute;inset:-6px}
+</style></head><body><button type="button" class="skip-link" onclick="var a=document.getElementById('app');a.setAttribute('tabindex','-1');a.focus();">Skip to the ideas</button><div id="app"><div class="app-loading" role="status">Loading ideas...</div></div>
 <script>
 
 // ---- Pilot v3 (private link only: ?pilot=v3). Plain URLs never touch pilot-v3.json. ----
@@ -486,13 +495,17 @@ function showLoadFailure_(){
   var app=document.getElementById('app');
   if(app)app.innerHTML="<div class=\"load-fail\" role=\"alert\">⚠️ The unit list couldn't load. Check your internet connection, then try again.<br><button type=\"button\" onclick=\"location.reload()\">Try again</button></div>";
 }
+function showRenderFailure_(){
+  var app=document.getElementById('app');
+  if(app)app.innerHTML="<div class=\"load-fail\" role=\"alert\">Something went wrong showing this page. Reloading usually fixes it.<br><button type=\"button\" onclick=\"location.reload()\">Reload</button></div>";
+}
 // Only the fetch can reach showLoadFailure_; a bug while drawing the page is not a load failure.
 fetch('data.json')
   .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
   .then(data => { if(!Array.isArray(data)) throw new Error('bad data'); return data; })
   .catch(showLoadFailure_)
   .then(data => { if(!data) return; D = data;
-    var go = function(){ if(typeof readHash==='function')readHash(); R(); loadLeaderboard(); };
+    var go = function(){ try{ if(typeof readHash==='function')readHash(); R(); loadLeaderboard(); }catch(e){ try{console.error(e);}catch(_){} showRenderFailure_(); } };
     if(_pilotMode==='v3'){
       fetch(_pilotUrl)
         .then(r => { if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
@@ -875,7 +888,7 @@ function openTechPicker(campusEnc,ylEnc,themeEnc,ciEnc,loEnc){
       var safe=escapeHtml(t);
       return '<button class="tech-tile" data-tool="'+safe+'" onclick="pickTech(this,\''+encAttr_(campus)+'\',\''+encAttr_(yl)+'\',\''+encAttr_(theme)+'\')">'+safe+'</button>';
     }).join('');
-    body='<input class="tech-search" id="techSearch" placeholder="Search tools…" oninput="filterTechTiles(this.value)" autocomplete="off"/>' +
+    body='<input class="tech-search" id="techSearch" aria-label="Search tools" placeholder="Search tools…" oninput="filterTechTiles(this.value)" autocomplete="off"/>' +
       '<div class="tech-grid" id="techGrid">'+tilesHtml+'</div>';
   }
   var html='<div class="tech-modal" role="dialog" aria-modal="true" aria-labelledby="techModalTitle">' +
@@ -986,9 +999,10 @@ function fetchTechSuggestion(campus,yl,theme,tool,regen,customCi,customLo){
     })
     .catch(function(err){
       clearTimeout(timeoutId);
-      var msg='Could not reach the suggestion service. Check your internet and try again.';
-      if(err&&err.name==='AbortError')msg='The suggestion is taking longer than 60 seconds — please try again.';
-      else if(err&&err.message)msg='Could not reach the suggestion service ('+err.message+'). Please try again.';
+      try{console.warn('Tool suggestion failed',err);}catch(_){}
+      var msg='Something went wrong getting that idea. Please try again in a moment.';
+      if(err&&err.name==='AbortError')msg='That took longer than a minute. Please try again.';
+      else if(typeof navigator!=='undefined'&&navigator.onLine===false)msg='You seem to be offline. Check your internet connection and try again.';
       renderTechResult(campus,yl,theme,tool,{error:msg});
     });
 }
@@ -1042,7 +1056,7 @@ function renderTechResult(campus,yl,theme,tool,resp){
     var caE=encAttr_(campus),ylE=encAttr_(yl),thE=encAttr_(theme),ciE=encAttr_(editorCi||''),loE=encAttr_(editorLo||'');
     body.innerHTML=
       '<div class="sg" style="margin-bottom:14px">' +
-        '<div class="sg-head"><div class="sg-icon" style="background:'+tcl+'">'+em+'</div><div class="sg-meta"><div class="sg-type">Honest fit check</div><div class="sg-tool">'+escapeHtml(tool)+'</div></div></div>' +
+        '<div class="sg-head"><div class="sg-icon" style="background:'+tcl+'">'+em+'</div><div class="sg-meta"><div class="sg-type">Does this fit the unit?</div><div class="sg-tool">'+escapeHtml(tool)+'</div></div></div>' +
         '<div class="sg-body">' +
           '<div class="tech-fit '+escapeHtml(fit)+'" style="margin-bottom:10px">'+fitLabel+'</div>' +
           '<div class="sg-desc">'+linkifyDesc(desc)+'</div>' +
@@ -1213,7 +1227,7 @@ function startUoiEdit(){
     loiInputsHtml+=
       '<div class="uoi-loi-row">'
         +'<div class="uoi-loi-num">'+pad2(i+1)+'</div>'
-        +'<input type="text" class="uoi-loi-input" placeholder="Line of inquiry '+(i+1)+'" value="'+escapeHtml(text)+'">'
+        +'<input type="text" class="uoi-loi-input" aria-label="Line of inquiry '+(i+1)+'" placeholder="Line of inquiry '+(i+1)+'" value="'+escapeHtml(text)+'">'
         +'<button type="button" class="uoi-loi-remove" onclick="removeUoiLoiInput(this)" title="Remove this line of inquiry" aria-label="Remove">×</button>'
       +'</div>';
   });
@@ -1294,7 +1308,7 @@ function addUoiLoiInput(){
   row.className='uoi-loi-row';
   row.innerHTML=
     '<div class="uoi-loi-num">'+nPad+'</div>'
-    +'<input type="text" class="uoi-loi-input" placeholder="Line of inquiry '+n+'" value="">'
+    +'<input type="text" class="uoi-loi-input" aria-label="Line of inquiry '+n+'" placeholder="Line of inquiry '+n+'" value="">'
     +'<button type="button" class="uoi-loi-remove" onclick="removeUoiLoiInput(this)" title="Remove this line of inquiry" aria-label="Remove">×</button>';
   list.appendChild(row);
   var input=row.querySelector('.uoi-loi-input');if(input)try{input.focus();}catch(e){}
@@ -1333,7 +1347,9 @@ function submitUoiEdit(campusEnc,ylEnc,themeEnc){
     +'&lo='+encodeURIComponent(lo)
     +'&note='+encodeURIComponent(note)
     +'&t='+Date.now();
-  fetch(url,{method:'GET',redirect:'follow',credentials:'omit',cache:'no-store'})
+  var _uoiAc=typeof AbortController==='function'?new AbortController():null;
+  if(_uoiAc)setTimeout(function(){_uoiAc.abort();},20000);
+  fetch(url,{method:'GET',redirect:'follow',credentials:'omit',cache:'no-store',signal:_uoiAc?_uoiAc.signal:undefined})
     .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();})
     .then(function(txt){
       var parsed;try{parsed=JSON.parse(txt);}catch(e){throw new Error('Server returned invalid response');}
@@ -1349,7 +1365,8 @@ function submitUoiEdit(campusEnc,ylEnc,themeEnc){
       },80);
     })
     .catch(function(err){
-      alert('Submission failed: '+(err&&err.message?err.message:err)+'\n\nPlease try again.');
+      var _why=(err&&err.name==='AbortError')?'That took too long.':'That did not send.';
+      alert(_why+' Please check your internet connection and try again.');
       if(saveBtn){saveBtn.disabled=false;saveBtn.textContent='💾 Save and submit for approval';}
     });
 }
@@ -1981,6 +1998,7 @@ var anchorY=r.top+window.scrollY+r.height/2;
 return {x:anchorX,y:anchorY,top:r.top+window.scrollY,bottom:r.bottom+window.scrollY,vw:Math.max(document.documentElement.clientWidth,window.innerWidth||0)};
 }
 function _spawnConfetti(anchor,count,spread){
+if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return document.createElement('div');
 var colors=['#CDEB45','#F5A623','#7ED957','#38BDF8','#A78BFA','#FF6B6B','#FBBF24','#22C55E'];
 var container=document.createElement('div');
 container.className='confetti-container';
@@ -2432,7 +2450,7 @@ function closeStem(){
   }
 }
 var _fbCurrent='';
-function openFB(idx){_fbCurrent=window._fbData[idx]||{};trackInteraction('feedback_open',_fbCurrent.tool||'');var ctx=[_fbCurrent.campus,_fbCurrent.year,_fbCurrent.theme,_fbCurrent.tool,_fbCurrent.phase].map(function(v){return escapeHtml(v||'');}).join(' · ');var host=document.getElementById('fbContent');if(!host)return;host.innerHTML='<div class="fb-title" id="fbTitle">💬 Suggestion Feedback</div><div class="fb-sub">Your feedback helps us improve these suggestions for everyone.</div><div class="fb-context">'+ctx+'</div><div class="fb-label">How did this go, or what would you change?</div><textarea class="fb-textarea" id="fbText" placeholder="e.g. We tried this and it worked great, but we\'d swap Canva for Book Creator next time..."></textarea><div class="fb-actions"><button class="fb-cancel" onclick="closeFB()">Cancel</button><button class="fb-submit" id="fbSubmit" onclick="submitFB()">Submit Feedback</button></div>';rememberDlaOpener_();var fbo=document.getElementById('fbOverlay');fbo.classList.add('open');document.addEventListener('keydown',handleDlaOverlayKey);var fbt=document.getElementById('fbText');if(fbt){try{fbt.focus();}catch(e){}}else{focusDlaDialog(fbo);}}
+function openFB(idx){_fbCurrent=window._fbData[idx]||{};trackInteraction('feedback_open',_fbCurrent.tool||'');var ctx=[_fbCurrent.campus,_fbCurrent.year,_fbCurrent.theme,_fbCurrent.tool,_fbCurrent.phase].map(function(v){return escapeHtml(v||'');}).join(' · ');var host=document.getElementById('fbContent');if(!host)return;host.innerHTML='<div class="fb-title" id="fbTitle">💬 Suggestion Feedback</div><div class="fb-sub">Your feedback helps us improve these suggestions for everyone.</div><div class="fb-context">'+ctx+'</div><div class="fb-label">How did this go, or what would you change?</div><textarea class="fb-textarea" id="fbText" aria-label="Your feedback" placeholder="e.g. We tried this and it worked great, but we\'d swap Canva for Book Creator next time..."></textarea><div class="fb-actions"><button class="fb-cancel" onclick="closeFB()">Cancel</button><button class="fb-submit" id="fbSubmit" onclick="submitFB()">Submit Feedback</button></div>';rememberDlaOpener_();var fbo=document.getElementById('fbOverlay');fbo.classList.add('open');document.addEventListener('keydown',handleDlaOverlayKey);var fbt=document.getElementById('fbText');if(fbt){try{fbt.focus();}catch(e){}}else{focusDlaDialog(fbo);}}
 function closeFB(){document.getElementById('fbOverlay').classList.remove('open');restoreDlaOpener_();}
 function submitFB(){var txt=document.getElementById('fbText').value.trim();if(!txt){document.getElementById('fbText').style.borderColor='#FF6B6B';return;}var btn=document.getElementById('fbSubmit');btn.disabled=true;btn.textContent='Sending...';var payload={type:'feedback',v:'2',campus:_fbCurrent.campus,year:_fbCurrent.year,theme:_fbCurrent.theme,tool:_fbCurrent.tool,phase:_fbCurrent.phase,feedback:txt};fetch(FBHOOK,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)}).then(function(){showFBSuccess();}).catch(function(){showFBSuccess();});}
 function showFBSuccess(){document.getElementById('fbContent').innerHTML='<div class="fb-success"><div class="fb-success-icon">✅</div><div class="fb-success-msg">Thanks for your feedback!</div><div class="fb-success-sub">This helps us make better suggestions for everyone.</div><button class="fb-cancel" onclick="closeFB()" style="margin-top:20px">Close</button></div>';}
@@ -2518,7 +2536,7 @@ window.addEventListener('beforeunload',function(){_pauseTracking();_flushAnalyti
 <div class="fb-sub">Your feedback helps us improve these suggestions for everyone.</div>
 <div class="fb-context" id="fbContext"></div>
 <div class="fb-label">How did this go, or what would you change?</div>
-<textarea class="fb-textarea" id="fbText" placeholder="e.g. We tried this and it worked great, but we'd swap Canva for Book Creator next time..."></textarea>
+<textarea class="fb-textarea" id="fbText" aria-label="Your feedback" placeholder="e.g. We tried this and it worked great, but we'd swap Canva for Book Creator next time..."></textarea>
 <div class="fb-actions">
 <button class="fb-cancel" onclick="closeFB()">Cancel</button>
 <button class="fb-submit" id="fbSubmit" onclick="submitFB()">Submit Feedback</button>
