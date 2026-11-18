@@ -6,6 +6,7 @@
         "Adobe Express",
         "Animating a Character with Adobe Express",
         "Apple Clips",
+        "Aqua - Adobe for Kids",
         "Beebots",
         "Book Creator",
         "Brushes Redux",
@@ -16,6 +17,7 @@
         "Dollar Street",
         "Epic",
         "Field Guide to Victoria",
+        "FlipaClip",
         "Freeform",
         "GarageBand",
         "Geoboard",
@@ -23,6 +25,7 @@
         "IMovie",
         "Insta360 camera",
         "Lego Spike Prime",
+        "Mathigon",
         "Merge Cubes",
         "Micro:bit",
         "Microsoft Excel",
@@ -34,6 +37,7 @@
         "Podcast Equipment",
         "Podcasting using Canva",
         "Puppet Pals",
+        "Scaniverse",
         "ScratchJr",
         "Seek by iNaturalist",
         "Seesaw",
@@ -42,6 +46,7 @@
         "Sphero BOLT",
         "Sphero Indi",
         "Stop Motion Studio",
+        "Swift Playgrounds",
         "Tablet Magnifiers",
         "Teachable Machine",
         "Tinkercad",
@@ -238,6 +243,26 @@
         "dollar street": {
           "min": 3,
           "max": 6
+        },
+        "flipaclip": {
+          "min": 1,
+          "max": 6
+        },
+        "aqua adobe for kids": {
+          "min": 0,
+          "max": 6
+        },
+        "scaniverse": {
+          "min": 2,
+          "max": 6
+        },
+        "mathigon": {
+          "min": 1,
+          "max": 6
+        },
+        "swift playgrounds": {
+          "min": 3,
+          "max": 6
         }
       }
     },
@@ -259,6 +284,30 @@
       },
       "sphero indi": {
         "realWorld": "In 1-2 sentences woven into the description, connect this specific activity to a real-world system that uses the same kind of AI — choose a parallel that genuinely matches the activity, never a generic list."
+      },
+      "flipaclip": {
+        "is": "FlipaClip is a drawing app for creating frame-by-frame animations by drawing a sequence of pictures that play as a moving image.",
+        "good": "Students can animate a seed growing, show a character's actions in a short story, or create a moving diagram to explain how something works.",
+        "avoid": "Avoid using it just to decorate work with movement; choose tasks where the animation helps students tell a story or explain a change or process.",
+        "realWorld": ""
+      },
+      "scaniverse": {
+        "is": "Scaniverse is a mobile app that uses a device's camera to capture real objects and places as 3D scans.",
+        "good": "Students can create 3D records of their clay models, sculptures or school garden features, then rotate and zoom in on the scans to discuss shape, detail and design choices.",
+        "avoid": "Avoid scanning children or sharing scans that reveal faces, names or private details of the school.",
+        "realWorld": ""
+      },
+      "mathigon": {
+        "is": "Mathigon is a free online maths learning platform with interactive resources and virtual materials for exploring mathematical ideas.",
+        "good": "Students can use its Polypad workspace to build and compare fractions, make repeating patterns and symmetrical designs, and explore shapes with virtual tiles and tangrams.",
+        "avoid": "Avoid treating free play with virtual materials as a complete lesson; give students a clear maths question and ask them to explain what their model shows.",
+        "realWorld": ""
+      },
+      "swift playgrounds": {
+        "is": "Swift Playgrounds is a free Apple app for iPad and Mac that teaches coding in Swift through interactive challenges and lets students build apps.",
+        "good": "Students write code to guide characters through puzzles, practise sequences, loops and conditions, and build simple apps such as quizzes or interactive stories.",
+        "avoid": "Avoid having students copy code or rush through puzzles without predicting what their instructions will do, testing them and explaining their choices.",
+        "realWorld": ""
       }
     }
   },
