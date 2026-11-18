@@ -15,7 +15,6 @@
         "Delightex",
         "Dollar Street",
         "Epic",
-        "Explain Everything",
         "Field Guide to Victoria",
         "Freeform",
         "GarageBand",
@@ -23,7 +22,6 @@
         "Google Maps",
         "IMovie",
         "Insta360 camera",
-        "Kahoot",
         "Lego Spike Prime",
         "Merge Cubes",
         "Micro:bit",
@@ -185,20 +183,12 @@
           "min": -2,
           "max": 6
         },
-        "explain everything": {
-          "min": 3,
-          "max": 6
-        },
         "freeform": {
           "min": -2,
           "max": 6
         },
         "delightex": {
           "min": 2,
-          "max": 6
-        },
-        "kahoot": {
-          "min": 3,
           "max": 6
         },
         "tinkercad": {
@@ -256,19 +246,19 @@
         "is": "Teachable Machine is a web-based tool that lets students create simple machine learning models by training the computer to recognise images, sounds, or poses.",
         "good": "Students can make projects that identify objects, recognise their voice commands, or detect body movements to create interactive stories or games.",
         "avoid": "Avoid using it for complex or highly accurate machine learning tasks as it is designed for basic, educational purposes only.",
-        "realWorld": "In 1-2 sentences woven into the description, connect THIS specific classification task to a real-world system that works the same way ? choose the parallel that genuinely matches the activity, never a generic list. True examples to draw from: recognising uniforms/vehicles/helpers ? image recognition in council CCTV and emergency-dispatch systems; sorting recycling/materials ? camera-driven sorting arms in recycling facilities; identifying plants/animals/leaves ? wildlife-monitoring cameras and apps like Seek/iNaturalist; recognising faces/poses/movements ? face unlock, accessibility tools, physiotherapy and sports-coaching apps; sorting food/produce ? fruit-grading machines on farms; recognising sounds/voice commands ? smart speakers and hearing-assistance tech."
+        "realWorld": "In 1-2 sentences woven into the description, connect THIS specific classification task to a real-world system that works the same way — choose the parallel that genuinely matches the activity, never a generic list. True examples to draw from: recognising uniforms/vehicles/helpers → image recognition in council CCTV and emergency-dispatch systems; sorting recycling/materials → camera-driven sorting arms in recycling facilities; identifying plants/animals/leaves → wildlife-monitoring cameras and apps like Seek/iNaturalist; recognising faces/poses/movements → face unlock, accessibility tools, physiotherapy and sports-coaching apps; sorting food/produce → fruit-grading machines on farms; recognising sounds/voice commands → smart speakers and hearing-assistance tech."
       },
       "dollar street": {
-        "is": "Dollar Street is an online tool that shows photos and information about everyday homes and lives of people from different income levels around the world to help students understand global diversity. The houses are lined up on the street according to their income. Our method for calculating the income of each family tries to measure consumption rather than salary or income, although the data from the families does not always allow this. This means that if a family grow all the rice they eat each month, then the value of this rice will be included in the total consumption of the home.\n\nThe \"dollars per month\" assigned to each home refer to the consumption available to each adult in the family. This means that we take the total consumption and divide it with something called ?adult equivalents?, accounting for the fact that young children consume less. Lastly, they measure the value of the consumption in US dollars. Since the cost of living can vary a lot between countries, we use dollars adjusted for purchasing power parity (PPP).",
-        "good": "Students can compare living conditions, clothing, and food from various countries to create presentations or posters about cultural and economic differences. Dollar Street was invented by Anna Rosling R?nnlund at Gapminder. For 15 years she spent her workdays making global public data easier to understand and use. Over time her frustration grew: carefully selecting data to present it in colorful and moving charts made overall global trends and patterns easier to understand. But it did not make everyday life on different income levels understandable. Especially not in places far from home. ?People in other cultures are often portrayed as scary or exotic.? Anna explains: ?This has to change. We want to show how people really live. It seemed natural to use photos as data so people can see for themselves what life looks like on different income levels. Dollar Street lets you visit many, many homes all over the world. Without travelling.?",
+        "is": "Dollar Street is an online tool that shows photos and information about everyday homes and lives of people from different income levels around the world to help students understand global diversity. The houses are lined up on the street according to their income. Our method for calculating the income of each family tries to measure consumption rather than salary or income, although the data from the families does not always allow this. This means that if a family grow all the rice they eat each month, then the value of this rice will be included in the total consumption of the home.\n\nThe \"dollars per month\" assigned to each home refer to the consumption available to each adult in the family. This means that we take the total consumption and divide it with something called “adult equivalents”, accounting for the fact that young children consume less. Lastly, they measure the value of the consumption in US dollars. Since the cost of living can vary a lot between countries, we use dollars adjusted for purchasing power parity (PPP).",
+        "good": "Students can compare living conditions, clothing, and food from various countries to create presentations or posters about cultural and economic differences. Dollar Street was invented by Anna Rosling Rönnlund at Gapminder. For 15 years she spent her workdays making global public data easier to understand and use. Over time her frustration grew: carefully selecting data to present it in colorful and moving charts made overall global trends and patterns easier to understand. But it did not make everyday life on different income levels understandable. Especially not in places far from home. “People in other cultures are often portrayed as scary or exotic.” Anna explains: “This has to change. We want to show how people really live. It seemed natural to use photos as data so people can see for themselves what life looks like on different income levels. Dollar Street lets you visit many, many homes all over the world. Without travelling.”",
         "avoid": "Avoid using it as a source for detailed statistics or current news since it focuses on visual stories rather than data analysis.",
-        "realWorld": "In 1-2 sentences woven into the description, connect this specific activity to a real-world system that uses the same kind of AI ? choose a parallel that genuinely matches the activity, never a generic list."
+        "realWorld": "In 1-2 sentences woven into the description, connect this specific activity to a real-world system that uses the same kind of AI — choose a parallel that genuinely matches the activity, never a generic list."
       },
       "tinkercad": {
-        "realWorld": "In 1-2 sentences woven into the description, connect this specific activity to a real-world system that uses the same kind of AI ? choose a parallel that genuinely matches the activity, never a generic list."
+        "realWorld": "In 1-2 sentences woven into the description, connect this specific activity to a real-world system that uses the same kind of AI — choose a parallel that genuinely matches the activity, never a generic list."
       },
       "sphero indi": {
-        "realWorld": "In 1-2 sentences woven into the description, connect this specific activity to a real-world system that uses the same kind of AI ? choose a parallel that genuinely matches the activity, never a generic list."
+        "realWorld": "In 1-2 sentences woven into the description, connect this specific activity to a real-world system that uses the same kind of AI — choose a parallel that genuinely matches the activity, never a generic list."
       }
     }
   },
@@ -726,7 +716,7 @@
       "ages": "10+",
       "subject": "SOCIAL STUDIES & HISTORY",
       "url": "https://education.minecraft.net/en-us/lessons/australian-gold-rush2",
-      "teaching_notes": "Students will interact with the character of ?John?, a prospective miner from England, hoping to strike it rich on the Goldfields of Victoria, Australia. The journey starts out on board the ship, travelling to Australia and describes the arduous journey to get there. Students will read John?s story and complete a short written task using the book and quill (or alternative source). They will teleport to each location using in-built buttons on John?s dialogue screen and will be able to link to additional information about the topic of each location.  \n\nStudents will be given a task- to write a short diary entry from the point of view of a person like John. They will be given a camera and a book and quill when they first encounter John and should use these to document their adventures at each location and use the book and quill to write their diary entry. By the end of the activity, students should have a detailed diary of life on the goldfields and be able to use a range of descriptive vocabulary to describe characters, events and settings. Students can export completed book to use as portfolio of work for assessment or printed/used as an eBook about life on the Goldfields."
+      "teaching_notes": "Students will interact with the character of ‘John’, a prospective miner from England, hoping to strike it rich on the Goldfields of Victoria, Australia. The journey starts out on board the ship, travelling to Australia and describes the arduous journey to get there. Students will read John’s story and complete a short written task using the book and quill (or alternative source). They will teleport to each location using in-built buttons on John’s dialogue screen and will be able to link to additional information about the topic of each location.  \n\nStudents will be given a task- to write a short diary entry from the point of view of a person like John. They will be given a camera and a book and quill when they first encounter John and should use these to document their adventures at each location and use the book and quill to write their diary entry. By the end of the activity, students should have a detailed diary of life on the goldfields and be able to use a range of descriptive vocabulary to describe characters, events and settings. Students can export completed book to use as portfolio of work for assessment or printed/used as an eBook about life on the Goldfields."
     }
   ],
   "microbit": [
@@ -767,14 +757,14 @@
     },
     {
       "title": "Cryptography",
-      "desc": "Three lessons designed for students aged 11-14 years to follow on from the ?Cyber security unit,? unit and a good first-introduction to text-based programming. Students are introduced to the fascinating world of cryptography through unplugged and programming activities.",
+      "desc": "Three lessons designed for students aged 11-14 years to follow on from the ‘Cyber security unit,’ unit and a good first-introduction to text-based programming. Students are introduced to the fascinating world of cryptography through unplugged and programming activities.",
       "ages": "11+",
       "subject": "CODING & COMPUTER SCIENCE",
       "url": "https://microbit.org/teach/lessons/?selected=cryptography"
     },
     {
       "title": "Cyber Security",
-      "desc": "Three lessons designed for students aged 11-14 years introducing cyber security. Students explore the need to create strong passwords before writing algorithms and programs to create their own ?strong password generator? using the BBC micro:bit.",
+      "desc": "Three lessons designed for students aged 11-14 years introducing cyber security. Students explore the need to create strong passwords before writing algorithms and programs to create their own ‘strong password generator’ using the BBC micro:bit.",
       "ages": "11+",
       "subject": "CODING & COMPUTER SCIENCE",
       "url": "https://microbit.org/teach/lessons/?selected=cyber-security"
@@ -821,7 +811,7 @@
     },
     {
       "title": "Health Tech",
-      "desc": "Five lessons designed for students aged 11-14 years to follow on from the ?Computing fundamentals? unit. Students work in teams to design and prototype their own health tech innovation.",
+      "desc": "Five lessons designed for students aged 11-14 years to follow on from the ‘Computing fundamentals’ unit. Students work in teams to design and prototype their own health tech innovation.",
       "ages": "11+",
       "subject": "SCIENCE",
       "url": "https://microbit.org/teach/lessons/?selected=health-tech-unit-of-work"
@@ -856,7 +846,7 @@
     },
     {
       "title": "Night Safety",
-      "desc": "Three simple projects to learn about the importance of road safety at night and create wearable devices to help young people ?Be Safe: Be Seen!? Design challenges for finding solutions to the Global Goals for sustainable development (SDGs).",
+      "desc": "Three simple projects to learn about the importance of road safety at night and create wearable devices to help young people ‘Be Safe: Be Seen!’ Design challenges for finding solutions to the Global Goals for sustainable development (SDGs).",
       "ages": "8+",
       "subject": "SCIENCE",
       "url": "https://microbit.org/teach/lessons/?selected=night-safety"
