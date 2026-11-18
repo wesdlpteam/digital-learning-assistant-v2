@@ -8,6 +8,7 @@
         "Apple Clips",
         "Aqua - Adobe for Kids",
         "Beebots",
+        "Bloxels",
         "Book Creator",
         "Brushes Redux",
         "Canva",
@@ -36,6 +37,8 @@
         "PicCollage",
         "Podcast Equipment",
         "Podcasting using Canva",
+        "Popplet",
+        "PromptSmart",
         "Puppet Pals",
         "Scaniverse",
         "ScratchJr",
@@ -45,6 +48,7 @@
         "Slow Motion Physical Analysis",
         "Sphero BOLT",
         "Sphero Indi",
+        "Stellarium",
         "Stop Motion Studio",
         "Swift Playgrounds",
         "Tablet Magnifiers",
@@ -263,6 +267,22 @@
         "swift playgrounds": {
           "min": 3,
           "max": 6
+        },
+        "promptsmart": {
+          "min": 2,
+          "max": 6
+        },
+        "popplet": {
+          "min": 2,
+          "max": 6
+        },
+        "bloxels": {
+          "min": 3,
+          "max": 6
+        },
+        "stellarium": {
+          "min": 2,
+          "max": 6
         }
       }
     },
@@ -307,6 +327,30 @@
         "is": "Swift Playgrounds is a free Apple app for iPad and Mac that teaches coding in Swift through interactive challenges and lets students build apps.",
         "good": "Students write code to guide characters through puzzles, practise sequences, loops and conditions, and build simple apps such as quizzes or interactive stories.",
         "avoid": "Avoid having students copy code or rush through puzzles without predicting what their instructions will do, testing them and explaining their choices.",
+        "realWorld": ""
+      },
+      "promptsmart": {
+        "is": "PromptSmart is a teleprompter app that displays a prepared script and can scroll it automatically as the speaker reads aloud.",
+        "good": "Students can rehearse speeches or present scripted news reports, explanations and video introductions while keeping their eyes near the audience or camera.",
+        "avoid": "Avoid using it to read a script students do not understand; have them write, discuss and practise their words before presenting.",
+        "realWorld": ""
+      },
+      "popplet": {
+        "is": "Popplet is a visual mind-mapping tool for organising ideas in connected boxes containing text, images or drawings.",
+        "good": "Students can brainstorm questions before an inquiry, group facts about an animal, map connections between story characters or plan the main ideas for a piece of writing.",
+        "avoid": "Avoid asking students to copy facts into disconnected boxes without grouping ideas or showing meaningful connections.",
+        "realWorld": ""
+      },
+      "bloxels": {
+        "is": "Bloxels is a game-making tool that lets students build pixel-art characters, settings and playable video games using an app, with optional physical blocks and a game board.",
+        "good": "Students can create a platform game with original characters and settings, retell a story through playable scenes, and test and improve their games using classmates' feedback.",
+        "avoid": "Avoid treating game-building time as evidence of subject learning unless students' game content or explanations show what they understand.",
+        "realWorld": ""
+      },
+      "stellarium": {
+        "is": "Stellarium is a digital planetarium that shows the sky from different places and times to help students explore stars, planets and constellations.",
+        "good": "Students can set their local place and viewing time to plan a stargazing session, sketch labelled sky maps, or compare the Moon's position and appearance across several dates.",
+        "avoid": "Avoid treating constellation pictures as universal, as different cultures group and interpret stars differently.",
         "realWorld": ""
       }
     }
