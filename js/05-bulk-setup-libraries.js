@@ -29,7 +29,7 @@ const SUGGESTION_STYLE = `DESCRIPTION QUALITY RULES (CRITICAL — read these bef
 
 INNOVATION FIRST: The most innovative, unexpected, and out-of-the-box suggestion must always come first (slot 0). Teachers see the top suggestion first — lead with something that makes them think "I want to try that!" Save the more familiar tools (Seesaw, Canva, Book Creator) for later slots.
 
-WRITING STYLE — every suggestion must be ~6 vivid, practical sentences (target 500-800 characters total) that paint a clear classroom picture matching the depth of a strong Inspire All / app-smash description. Never shorten to 2-3 sentences regardless of tool category — Minecraft, Micro:bit, Adobe Express verified-library suggestions are held to the same ~6-sentence standard as every other tool. The sentences below cover the minimum content; expand naturally with concrete examples, pedagogical arc and unit-specific anchoring to hit the ~6-sentence target:
+WRITING STYLE — every suggestion must be about 6 short, plain, practical sentences (target 500-800 characters total) that paint a clear classroom picture matching the depth of a strong Inspire All / app-smash description. Never shorten to 2-3 sentences regardless of tool category — Minecraft, Micro:bit, Adobe Express verified-library suggestions are held to the same ~6-sentence standard as every other tool. The sentences below cover the minimum content; expand naturally with concrete examples, pedagogical arc and unit-specific anchoring to hit the ~6-sentence target:
 1. STATE what students DO — name concrete actions: design, code, build, record, map, collect data, test, debug, publish, present, investigate, prototype, film, compose, interview, annotate, curate, survey, programme
 2. STATE what students CREATE / PRODUCE / CAPTURE — name the specific artefact: campaign poster, explainer carousel, digital advocacy book, awareness video, collaborative debate wall, soundboard, data dashboard, guided virtual tour, short documentary, podcast episode, interactive quiz, annotated map, 3D prototype
 3. WEAVE the unit connection naturally — show HOW the activity connects to what the class is actually studying. Use the central idea and lines of inquiry as invisible guides that shape the activity, but NEVER quote them directly.
@@ -56,14 +56,17 @@ BANNED PHRASES — these make suggestions sound generic and lazy. NEVER write an
 - "Students use [tool] to [vague verb] about [unit theme]."
 - "The twist" / "The twist:" / "Here's the twist" / "the real twist" — never announce a twist by name; write the unexpected angle as a plain sentence.
 - "For a twist" / "To stretch" / "Take it further" / "For an extra challenge" - vary sentence openings naturally instead of stock lead-ins.
+- "becomes a ... crew" / "becomes a ... lab" / "students become ..." - no role-play branding.
+- "leave seeing themselves as ..." / "come away recognising ..." - no closing moral. Stop after the useful information.
+- "under-used" / "invisible inputs" / "measurable outputs" / "ethical imagination" / "lived experience".
 
 NAME THE ACTUAL TOPIC — never use "this unit" or "unit focus" as a placeholder:
 - BAD: "Students use Padlet as a collaborative evidence wall for this unit."
 - GOOD: "Students use Padlet to build a collaborative debate wall about real-world government decisions, posting arguments, counterarguments and evidence."
 - BAD: "Students use Book Creator to publish an exhibition-style digital companion for this unit."
-- GOOD: "Students collaboratively author interactive digital books that document their inquiry journey, research findings, and action plans. These multimedia books can include embedded videos, audio reflections, and clickable links, serving as both a portfolio and a tool for advocacy."
+- GOOD: "Students collaboratively author interactive digital books that document their inquiry journey, research findings, and action plans. These multimedia books can include embedded videos, audio reflections, and clickable links, so the book works as both a portfolio and a way to speak up for change."
 - BAD: "Students use Canva to design an audience-facing campaign for this unit."
-- GOOD: "Students design visually compelling digital media campaigns (such as infographics, social media posts and posters) using Canva. They leverage Canva's Remove Background feature to create striking visuals and combine text, imagery, and data to communicate their message effectively."
+- GOOD: "Students design visually compelling digital media campaigns (such as infographics, social media posts and posters) using Canva. They use Canva's Remove Background feature to create striking visuals and combine text, imagery, and data to communicate their message effectively."
 The unit theme, central idea and lines of inquiry tell you WHAT the topic is. Use that topic by name in the suggestion. If the unit is about government decisions, say "government decisions." If it is about ecosystems, say "ecosystems." Never say "this unit" or "the unit focus" as a stand-in.
 
 HOW TO CONNECT TO THE UNIT (DO THIS INSTEAD):
@@ -77,6 +80,14 @@ The planner context (central idea, lines of inquiry, activities) should guide th
 
 TEACHER READABILITY: Write so a primary teacher can picture exactly what happens in the lesson. No jargon, no abstract framing. If a colleague reading the suggestion cannot immediately imagine what students are doing, rewrite it.
 
+WRITE FOR A REAL TEACHER (HARD RULE). The reader is a classroom teacher with no free time who may never have touched this tool. If a sentence would make them stop and reread it, rewrite it.
+- NO INVENTED ACTIVITY NAMES. Never brand the lesson. Banned shapes: "a black-box systems lab", "a forensic engineering crew", "tiny nature listeners", "a decision theatre", "an evidence room", "disaster-data detectives", "a junior museum catalogue". Just say what students do.
+- NO "students become X" role-play framing. Say what they do, not who they pretend to be.
+- NO abstract nouns doing the work: ethical imagination, dispositions, agency, sonic motifs, transdisciplinary connections, systems thinking, provocations, mindsets. Use plain verbs instead.
+- PLAIN WORDS: use "work out" not "infer", "show" not "illuminate", "find out" not "uncover", "thing they make" not "artefact", "idea" not "premise".
+- Keep the good idea. Being plain does NOT mean being boring. Still suggest something a teacher would not have thought of, said in everyday words.
+- A Year 3 teacher should be able to read it once and know what Monday morning looks like.
+
 HUMAN VOICE (HARD RULE - the suggestion must read like a helpful colleague wrote it, never like AI):
 - No em dashes or en dashes anywhere in the output. Use a comma, brackets or a new sentence instead.
 - Plain verbs of being: "is", "are", "has". Never "serves as", "acts as", "boasts", or "offers/features" used to mean "has".
@@ -89,9 +100,9 @@ SINGLE-TOOL REALITY CHECK (HARD RULE): the ENTIRE activity must be genuinely ach
 
 NAME THE TOOL'S FEATURES: Do not treat tools as black boxes. Name the specific feature, mode, or affordance that makes the activity work:
 - BAD: "They combine evidence, concise copy and deliberate design choices" (could be any tool)
-- GOOD: "They leverage Canva's Remove Background feature to create striking visuals and combine text, imagery, and data" (names the specific Canva feature)
+- GOOD: "They use Canva's Remove Background feature to create striking visuals and combine text, imagery, and data" (names the specific Canva feature)
 - BAD: "Each page combines student-curated evidence, diagrams, captions, voice reflection" (generic)
-- GOOD: "These multimedia books can include embedded videos, audio reflections, and clickable links, serving as both a portfolio and a tool for advocacy" (names Book Creator's specific multimedia affordances)
+- GOOD: "These multimedia books can include embedded videos, audio reflections, and clickable links, so the book works as both a portfolio and a way to speak up for change" (names Book Creator's specific multimedia affordances)
 - BAD: "They post examples, questions and counterpoints" (could be any platform)
 - GOOD: "Students post arguments, counterarguments, and evidence about real-world government decisions (e.g., social media bans, new laws). This interactive platform allows for peer feedback" (names what Padlet uniquely enables — threaded peer responses)
 
@@ -103,7 +114,7 @@ MINECRAFT EDUCATION VERIFIED LESSON USE:
 - Use the tool name "Minecraft Education".
 - Minecraft suggestions must come from the verified Minecraft library only.
 - Name the specific Minecraft library lesson and include its direct URL inline in the description.
-- Write ~6 vivid, practical sentences (target 500-800 characters) — the SAME depth as every other tool category. The old 2-sentence cap is removed; do NOT default to 2 sentences anymore.
+- Write about 6 plain, practical sentences (target 500-800 characters) — the SAME depth as every other tool category. The old 2-sentence cap is removed; do NOT default to 2 sentences anymore.
 - Suggested sentence flow across the ~6 sentences: (1) name the verified lesson and the main classroom purpose; (2) describe what students actually DO in Minecraft — concrete actions like build, code with Code Builder / Agent, place blocks, capture screenshots, annotate signs; (3) name the platform-specific feature(s) the lesson hinges on (NPC dialogue, Code Builder, Agent commands, redstone, build templates, structure blocks); (4) name the concrete student product/evidence (annotated build screenshots, signposted world tour, short explainer screencast, captioned map, reflection slide); (5) anchor explicitly to the unit using the central idea, a Line of Inquiry or a named planner topic — never "this unit" / "the unit focus"; (6) close with how the product is shared or assessed (peer walkthrough, gallery, presentation, exhibition).
 - HARD GUARDRAILS that still apply at 6-sentence depth:
   · Do NOT paste or paraphrase the full Minecraft lesson overview, standards text, NGSS codes, or verbatim library description. Write in your own words.
@@ -114,7 +125,7 @@ MINECRAFT EDUCATION VERIFIED LESSON USE:
 
 VERIFIED LIBRARY LESSONS — NON-MINECRAFT (Micro:bit, Adobe Express, and any future user-curated library):
 Treat these with the SAME ~6-sentence depth as every other tool — matching a strong app-smash / Inspire All description (e.g., the Padlet → iMovie documentary example or the Protecting Animals Micro:bit GOOD example below).
-- Write ~6 vivid, practical sentences. Aim for 500-800 characters. The old 3-4 sentence / 70-130 word cap is removed; do NOT under-write to that size anymore.
+- Write about 6 plain, practical sentences. Aim for 500-800 characters. The old 3-4 sentence / 70-130 word cap is removed; do NOT under-write to that size anymore.
 - Name the specific library lesson AND include its direct URL inline in the description.
 - Name the platform-specific feature the lesson actually uses — never use black-box phrasing like "the device", "a simple device", "the platform" or "the technology". For Micro:bit specifically: name the actual sensors or inputs (accelerometer, light sensor, temperature sensor, compass, radio, A/B buttons, LED matrix, MakeCode blocks, Python editor). For Adobe Express: name the specific Adobe Express feature being used (Animate from Audio, Quick Actions, Remove Background, Generative Fill, etc.).
 - Name the concrete student artefact (data log, working prototype, paired-device alert, sensor map, annotated MakeCode screenshot, calibration report, edited podcast episode, infographic, awareness video, lip-synced explainer) — never just "a prototype" or "their product".
@@ -719,7 +730,7 @@ const DEFAULT_BANNED_TOOLS = [
   // Hardware banned
   'ClassVR', 'Green Screen Kits', 'Digital Cameras', 'Lego Spike Essential',
   // Other banned
-  'WeVideo', 'Flipgrid', 'Google Earth', 'Banqer', 'Apple Keynote'
+  'WeVideo', 'Flipgrid', 'Flip', 'Google Earth', 'Banqer', 'Apple Keynote'
 ];
 
 const DEFAULT_TOOL_AGE_RANGES = {
