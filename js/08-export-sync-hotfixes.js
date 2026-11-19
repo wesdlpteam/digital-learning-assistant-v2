@@ -682,11 +682,12 @@ function clearSession(){
     if(typeof renderDashboard === 'function') renderDashboard();
     invPersist();
     if(typeof setStatus === 'function') setStatus(`Added "${display}" to ${safeList === 'approved' ? 'whitelist' : 'banned list'}`);
-    // For whitelist adds, draft a "what it's for" note and show the approve/edit popup.
+    // For whitelist adds, AI-draft a feature card (js/11-tool-cards.js) for the curator to check.
+    // This replaces the old "What is X for?" pop-up (proposeToolAffordance_).
     // NOTE: this patched invAddTool (in 08, loads last) is the version that actually runs —
     // the copy in js/01 is shadowed, so the trigger MUST live here too.
-    if(safeList === 'approved' && typeof proposeToolAffordance_ === 'function'){
-      try { proposeToolAffordance_(display); } catch(e){ console.warn('[DLA] affordance draft failed to start', e); }
+    if(safeList === 'approved' && typeof draftToolCardForTool_ === 'function'){
+      try { draftToolCardForTool_(display); } catch(e){ console.warn('[DLA] feature card draft failed to start', e); }
     }
     return false;
   };
@@ -734,6 +735,11 @@ function clearSession(){
     const banCountEl = document.getElementById('inv-banned-count');
     const totalEl = document.getElementById('inv-count');
     if(!whitelistEl || !bannedEl) return;
+    // First render while signed in: fetch the feature cards once (js/11). A failed load is not retried here.
+    if(typeof TOOL_CARDS_STATE !== 'undefined' && !TOOL_CARDS_STATE.loaded && !TOOL_CARDS_STATE.loading && !TOOL_CARDS_STATE.error
+       && typeof loadToolCards_ === 'function' && typeof DRIVE_TOKEN !== 'undefined' && DRIVE_TOKEN){
+      try { loadToolCards_(); } catch(e){ console.warn('[DLA] feature cards load failed to start', e); }
+    }
     invCleanup('banned');
     const approved = TOOL_INVENTORY.approved || [];
     const banned = TOOL_INVENTORY.banned || [];
@@ -746,8 +752,14 @@ function clearSession(){
       const toolAttr = invAttr(t);
       const rwNote = (typeof getToolAffordance_ === 'function') ? getToolAffordance_(t) : null;
       const rwOn = !!(rwNote && rwNote.realWorld);
+      // Feature-card status chip (js/11-tool-cards.js). Nothing shows until the cards have loaded.
+      let tcChip = '';
+      if(typeof TOOL_CARDS_STATE !== 'undefined' && TOOL_CARDS_STATE.loaded && TOOL_CARDS_STATE.configured && typeof toolCardStatusFor_ === 'function'){
+        const tcSt = toolCardStatusFor_(t);
+        tcChip = `<button type="button" class="tc-chip tc-${tcSt}" data-inv-card="${toolAttr}" title="Open this tool's feature card" aria-label="${tcSt === 'checked' ? 'Card checked' : tcSt === 'draft' ? 'Draft card' : 'Needs card'}: open the feature card for ${toolAttr}">${tcSt === 'checked' ? 'Card checked' : tcSt === 'draft' ? 'Draft card' : 'Needs card'}</button>`;
+      }
       return `<div class="inv-row" style="display:grid;grid-template-columns:minmax(140px,1fr) 96px 96px auto;gap:6px;align-items:center;padding:7px 8px;background:rgba(197,232,74,0.08);border:1px solid rgba(197,232,74,0.3);border-radius:12px;font-size:12px;color:var(--lime)">
-        <div style="min-width:0"><div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(t)}</div><div style="font-size:10px;color:var(--dim);font-weight:600">${ageRangeLabel(range)}</div></div>
+        <div style="min-width:0"><div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(t)}</div><div style="font-size:10px;color:var(--dim);font-weight:600">${ageRangeLabel(range)}</div>${tcChip}</div>
         <select class="inp" data-inv-age-tool="${toolAttr}" data-inv-age-edge="min" title="Minimum year level" style="margin-bottom:0;font-size:11px;padding:5px 7px;color:var(--lime);border-color:rgba(197,232,74,.3)">${yearSelectOptions(range.min)}</select>
         <select class="inp" data-inv-age-tool="${toolAttr}" data-inv-age-edge="max" title="Maximum year level" style="margin-bottom:0;font-size:11px;padding:5px 7px;color:var(--lime);border-color:rgba(197,232,74,.3)">${yearSelectOptions(range.max)}</select>
         <div class="inv-actions" style="display:flex;align-items:center;gap:6px;min-width:0">
@@ -3903,7 +3915,6 @@ function clearSession(){
   if(typeof fixAllOfType === 'function') fixAllOfType = window.fixAllOfType = dlaWithBulkBusy_(fixAllOfType);
   // Inspire All runs server-side for a long time: allow 45 minutes before it is ignored.
   if(typeof inspireAllBatch === 'function') inspireAllBatch = window.inspireAllBatch = dlaWithBulkBusy_(inspireAllBatch, 45 * 60 * 1000);
-  if(typeof sweepAppSmashesBatch === 'function') sweepAppSmashesBatch = window.sweepAppSmashesBatch = dlaWithBulkBusy_(sweepAppSmashesBatch);
   if(typeof rebootMakerspaceBatch === 'function') rebootMakerspaceBatch = window.rebootMakerspaceBatch = dlaWithBulkBusy_(rebootMakerspaceBatch);
   if(typeof runSurgeon === 'function') runSurgeon = window.runSurgeon = dlaWithBulkBusy_(runSurgeon);
   if(typeof draftAllRealismFixes === 'function') draftAllRealismFixes = window.draftAllRealismFixes = dlaWithBulkBusy_(draftAllRealismFixes);

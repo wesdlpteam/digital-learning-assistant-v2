@@ -643,12 +643,12 @@ function removeAllHumanVerified(){
 // ---------------------------------------------------------------------------
 // Maintenance box (Bulk screen, <details id="maintenance-box">).
 // Holds the few bulk jobs still worth running when new units are added:
-// Inspire All, the App Smash sweep and the Makerspace reboot. They always run
+// Inspire All and the Makerspace reboot. They always run
 // across ALL units (the Browse filters are not on the Bulk screen).
 //
 // Run state lives in window.DLA_MAINT:
-//   jobs      how many of the three jobs are running in this tab
-//   abortable how many of those can be stopped (Inspire All and the sweep; the
+//   jobs      how many of the two jobs are running in this tab
+//   abortable how many of those can be stopped (Inspire All only; the
 //             Makerspace reboot does not read the abort flag)
 //   aborted   true after a run reported it was stopped by the abort flag, until
 //             Clear abort succeeds
@@ -674,7 +674,7 @@ function maintenanceStats_(data){
   list.forEach(function(u){ if(u && typeof u === 'object'){ const k = keyOf(u); counts[k] = (counts[k] || 0) + 1; } });
   const has = function(v){ return !!(v && String(v).trim()); };
   const st = { total: list.length, inspireTotal: 0, inspired: 0, inspireLeft: 0, skipped: 0, skippedList: [],
-    appSmash: 0, rebootTotal: 0, rebootDone: 0, rebootLeft: 0 };
+    rebootTotal: 0, rebootDone: 0, rebootLeft: 0 };
   list.forEach(function(u){
     if(!u || typeof u !== 'object') return;
     if(has(u.ci) && has(u.lo)){
@@ -686,12 +686,6 @@ function maintenanceStats_(data){
       if(!has(u.ci)) missing.push('CI');
       if(!has(u.lo)) missing.push('LOI');
       st.skippedList.push((u.ca || '') + ' · ' + (u.yl || '') + ' · ' + (u.th || '') + ' (missing ' + missing.join(' + ') + ')');
-    }
-    if(Array.isArray(u.s)){
-      for(let i = 0; i < 5 && i < u.s.length; i++){
-        const sg = u.s[i];
-        if(sg && typeof sg.t === 'string' && sg.t.indexOf('+') !== -1){ st.appSmash++; break; }
-      }
     }
     if(u.audited && Array.isArray(u.s) && u.s.length >= 5 && !u.humanVerified && counts[keyOf(u)] === 1){
       st.rebootTotal++;
@@ -709,7 +703,6 @@ function maintenanceControls_(stats, state){
   const run = state || {};
   return {
     inspire: (st.inspireLeft || 0) > 0,
-    sweep: (st.appSmash || 0) > 0,
     reboot: (st.rebootLeft || 0) > 0,
     stop: (run.abortable || 0) > 0,
     clearAbort: !!run.aborted
@@ -771,10 +764,6 @@ function renderMaintenanceBox(){
       : '';
     parts.push(row('✨', st.inspired + '/' + st.inspireTotal + ' units in the current idea style' + skipNote,
       ctl.inspire ? '<button id="btn-inspire-all" onclick="inspireAllBatch()"' + dis + btnBase + 'background:#38BDF8;color:#0a1f2e;border:none" title="Regenerate each unit that is not yet in the current idea style. Takes a snapshot of data.json first. 4 units per batch.">Inspire All</button>' : ''));
-    if(ctl.sweep){
-      parts.push(row('🔥', st.appSmash + (st.appSmash === 1 ? ' unit still holds' : ' units still hold') + ' App Smash ("+") suggestions',
-        '<button id="btn-sweep-appsmashes" onclick="sweepAppSmashesBatch()"' + dis + btnBase + 'background:#F97316;color:#1a0e00;border:none" title="Regenerate every unit still holding a + App Smash suggestion as a single-tool idea.">Sweep App Smashes (' + st.appSmash + ')</button>'));
-    }
     if(st.rebootTotal > 0){
       parts.push(row('🛠', st.rebootDone + '/' + st.rebootTotal + ' Makerspace ideas redone' + (st.rebootLeft ? '' : ', all done'),
         ctl.reboot ? '<button id="btn-reboot-makerspace" onclick="rebootMakerspaceBatch()"' + dis + btnBase + 'background:#A78BFA;color:#111;border:none" title="Replace the 6th (Makerspace) suggestion with a new hands-on project. Human-verified units are skipped.">Reboot makerspace (4 at a time)</button>' : ''));
@@ -782,7 +771,7 @@ function renderMaintenanceBox(){
   }
   if(ctl.stop || ctl.clearAbort){
     const stopBtn = ctl.stop
-      ? '<button id="btn-maint-stop" onclick="inspireAllAbort()" style="' + btnBase + 'background:transparent;border:1px solid #DC2626;color:#DC2626" title="Emergency stop for Inspire All and the App Smash sweep. They stop at the next unit.">STOP</button>' : '';
+      ? '<button id="btn-maint-stop" onclick="inspireAllAbort()" style="' + btnBase + 'background:transparent;border:1px solid #DC2626;color:#DC2626" title="Emergency stop for Inspire All. It stops at the next unit.">STOP</button>' : '';
     const clearBtn = ctl.clearAbort
       ? '<button id="btn-maint-clear-abort" onclick="inspireAllClearAbort()" style="' + btnBase + 'background:transparent;border:1px solid #888;color:#bbb" title="Clear the stop flag so the jobs can run again.">Clear abort</button>' : '';
     parts.push(row('🛑', ctl.clearAbort ? 'A run was stopped. Clear the stop flag before running again.' : 'A job is running.', stopBtn + clearBtn));
@@ -928,127 +917,13 @@ async function inspireAllBatch(){
   }
 }
 
-// 2026-05-27: Client-side mirror of inspiringFindUnitsWithAppSmashes_ —
-// counts units whose slots 1-5 contain any "+" in t. Used to gate +
-// label the Sweep button in the Maintenance box. Slot 6 (STEM) is
-// intentionally excluded; it was never an App Smash slot.
-//
-// Note: uses bare `DATA` (the top-level `let` in 00-config-state-utils.js),
-// not `window.DATA`. `let` at the top of a classic script binds to the
-// script scope, not the window object — `window.DATA` is undefined.
-function findAppSmashUnitsLocal_(){
-  if(!Array.isArray(DATA)) return [];
-  const out = [];
-  for(let i=0; i<DATA.length; i++){
-    const u = DATA[i];
-    if(!u || !Array.isArray(u.s)) continue;
-    for(let s=0; s<5 && s<u.s.length; s++){
-      const sg = u.s[s];
-      if(sg && typeof sg.t === 'string' && sg.t.indexOf('+') !== -1){ out.push(i); break; }
-    }
-  }
-  return out;
-}
-
-// 2026-05-27: One-time sweep. Routes the affected units through the same
-// regenerateAllInspiring batch infrastructure as Inspire All (same lock,
-// snapshot, marker discipline, status endpoint, abort flag). Resumable
-// per existing per-unit timestamp markers if the laptop sleeps.
-async function sweepAppSmashesBatch(){
-  const targets = findAppSmashUnitsLocal_();
-  if(!targets.length){
-    alert('No App Smash units found. Every unit already uses single-tool suggestions.');
-    return;
-  }
-  const estMin = Math.max(1, Math.ceil(targets.length / 4 * 1.5));
-  if(!confirm(`Regenerate ${targets.length} unit${targets.length===1?'':'s'} still holding "+" App Smash suggestions?\n\n• Every "+" suggestion becomes a single-tool 6-sentence suggestion in the inspiring style.\n• Routed through the same pipeline as Inspire All, and resumable if your laptop sleeps.\n• About 4 units per batch, 1-3 min per batch.\n• Estimated total: about ${estMin} min.\n• Progress shows in the Maintenance box; safe to leave running.\n\nProceed?`)) return;
-
-  const statusEl = maintStatusEl_();
-  maintJobStart_(true);
-  let batchNum = 0;
-  let totalFixed = 0;
-  let totalFailed = 0;
-  const allFailures = [];
-
-  let heartbeatTimer = null;
-  const startHeartbeat = (label) => {
-    const t0 = Date.now();
-    const tick = () => {
-      if(!statusEl) return;
-      const secs = Math.floor((Date.now() - t0) / 1000);
-      const mm = String(Math.floor(secs / 60)).padStart(1, '0');
-      const ss = String(secs % 60).padStart(2, '0');
-      statusEl.textContent = `${label}, ${mm}:${ss} elapsed (each batch takes ~1-3 min)`;
-    };
-    tick();
-    heartbeatTimer = setInterval(tick, 1000);
-  };
-  const stopHeartbeat = () => { if(heartbeatTimer){ clearInterval(heartbeatTimer); heartbeatTimer = null; } };
-
-  try {
-    while(true){
-      batchNum++;
-      const firstBatchHint = batchNum === 1 ? ' (first batch also snapshots data.json, ~30s extra)' : '';
-      startHeartbeat(`Sweep batch ${batchNum} running${firstBatchHint}`);
-      setStatus(`App Smash sweep: batch ${batchNum} processing…`, 'loading');
-      const payload = withGASToken({ action: 'regenerateAllInspiringSweepAppSmashes', batch: 4 });
-      const response = await fetch(SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
-      });
-      const result = await response.json();
-      stopHeartbeat();
-      if(result.error){
-        setStatus('Sweep error: ' + result.error, 'error');
-        if(statusEl) statusEl.textContent = 'Failed: ' + result.error + ', partial progress saved. Click Sweep again to resume.';
-        return;
-      }
-      if(result.paused){
-        const isAbort = result.reason === 'aborted' || result.aborted === true;
-        const msg = isAbort
-          ? 'Sweep stopped by abort flag. Click "Clear abort" before resuming.'
-          : 'Sweep paused: ' + (result.reason || 'unknown') + (result.until ? ' until ' + result.until : '');
-        setStatus(msg, isAbort ? 'success' : 'error');
-        if(isAbort) maintSetAborted_(true);
-        if(statusEl) statusEl.textContent = isAbort ? 'Stopped by abort flag. Use "Clear abort" before resuming.' : `Paused (${result.reason || 'unknown'}${result.until ? ' until ' + result.until : ''}). Click Sweep again to resume.`;
-        return;
-      }
-      totalFixed += result.fixed || 0;
-      totalFailed += result.failed || 0;
-      if(Array.isArray(result.failures)) allFailures.push(...result.failures);
-      if(statusEl) statusEl.textContent = `Sweep batch ${batchNum} done, ${result.done || totalFixed}/${result.total || targets.length} swept`;
-      setStatus(`App Smash sweep: ${result.done || totalFixed}/${result.total || targets.length} done (batch ${batchNum})`, 'success');
-      if(result.allDone){
-        const failNote = totalFailed > 0 ? ` (${totalFailed} failed, see console)` : '';
-        setStatus(`🔥 App Smash sweep complete: ${totalFixed} regenerated${failNote}`, 'success');
-        if(statusEl) statusEl.textContent = `Sweep complete, ${totalFixed} regenerated${failNote}. Reloading data…`;
-        if(allFailures.length) console.warn('App Smash sweep failures:', allFailures);
-        if(typeof loadFromDrive === 'function'){
-          await loadFromDrive();
-          if(typeof renderBrowse === 'function') renderBrowse();
-        }
-        return;
-      }
-      await sleep(2500);
-    }
-  } catch(err){
-    stopHeartbeat();
-    setStatus('Sweep failed: ' + err.message, 'error');
-    if(statusEl) statusEl.textContent = 'Failed: ' + err.message + ', partial progress saved. Click Sweep again to resume.';
-  } finally {
-    stopHeartbeat();
-    maintJobEnd_(true);
-  }
-}
-
 // 2026-05-25: Emergency kill switch. Sets the INSPIRING_ABORT Script
 // Property to '1'; every in-flight regenerateAllInspiring batch checks
 // this between units and bails. Frontend loop also reads the response
 // and stops. Must be explicitly cleared (via Clear abort button) before
 // future runs can proceed.
 async function inspireAllAbort(){
-  if(!confirm('Emergency STOP for Inspire All and the App Smash sweep?\n\n• Stops the current batch (and any queued batches) at the next unit\n• Already-saved progress stays\n• Blocks future runs until you click "Clear abort" in the Maintenance box\n\nProceed?'))return;
+  if(!confirm('Emergency STOP for Inspire All?\n\n• Stops the current batch (and any queued batches) at the next unit\n• Already-saved progress stays\n• Blocks future runs until you click "Clear abort" in the Maintenance box\n\nProceed?'))return;
   try {
     const payload = withGASToken({ action: 'regenerateAllInspiringAbort' });
     const response = await fetch(SCRIPT_URL, {

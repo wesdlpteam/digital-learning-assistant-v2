@@ -85,7 +85,7 @@ HUMAN VOICE (HARD RULE - the suggestion must read like a helpful colleague wrote
 - Do not force ideas into groups of three for rhythm; two or four concrete items are fine.
 - No hype endings ("The possibilities are endless!"). End on the concrete thing students made or did.
 
-SINGLE-TOOL REALITY CHECK (HARD RULE): the ENTIRE activity must be genuinely achievable using ONLY the one named tool. Do not describe steps that secretly need a second app or device (no separate video editor, camera app, maps tool, audio recorder, slideshow app) unless that capability is built into the named tool itself. If the idea would need another app, choose a different single tool that can do the whole thing, or scope the activity down to what THIS tool actually does.
+SINGLE-TOOL REALITY CHECK (HARD RULE): the ENTIRE activity must be genuinely achievable using ONLY the named tool (or the named "A + B" pair). Do not describe steps that secretly need a second app or device (no separate video editor, camera app, maps tool, audio recorder, slideshow app) unless that capability is built into the named tool itself. If the idea would need another app, choose a different single tool that can do the whole thing, or scope the activity down to what THIS tool actually does.
 
 NAME THE TOOL'S FEATURES: Do not treat tools as black boxes. Name the specific feature, mode, or affordance that makes the activity work:
 - BAD: "They combine evidence, concise copy and deliberate design choices" (could be any tool)
@@ -138,6 +138,34 @@ GREEN SCREEN RULE: Instead of physical Green Screen Kits (which are banned), sug
 
 ENCODING: Use standard straight apostrophes (') only. Do NOT use curly/smart quotes. Do NOT use line breaks inside JSON string values.`;
 
+// How ideas may name more than one app (Nathan, 2026-11-18). KEEP WORD-FOR-WORD IN SYNC
+// with MULTI_APP_RULES in gas_backend/ToolCards.js (tests/tool-cards-prompt-sync compares them).
+const MULTI_APP_RULES = 'MORE THAN ONE APP (optional, only when it truly helps the idea): an idea may offer an alternative app that does the same job, written in the description as "FlipaClip (or Stop Motion Studio)". Or it may use two apps that each do a different part, written in the tool field as "Scaniverse + Tinkercad", with the description saying which app does which step. Every app you name must be on the approved list and suit this year level. Never name more than two apps in one idea.';
+
+// Same wording as TOOL_CARD_ACCESS_RULE in gas_backend/ToolCards.js.
+const TOOL_CARD_ACCESS_RULE = 'Build each idea on at least one real feature listed for its tool and name that feature plainly. Never invent a feature that is not listed. [S] means students may use the feature themselves. [T] means teacher-led only: the teacher demonstrates or operates it while students watch, direct or respond; never write a [T] feature as something students do on their own devices. Pick the simplest listed feature that does the job: the list is a menu, not a checklist, and most ideas need only one feature. Fit the year level: before Year 5, students never code or build a scene, game or branching story; coding at those years means floor robots or ScratchJr only. Give every idea a different kind of thing students make, and never reuse one idea shape with a new app. Name features in plain everyday words a teacher would use, and keep each description short.';
+
+// Full feature-card text for one tool, for Studio-side prompts (mirrors
+// toolCardFullFor_ in gas_backend/ToolCards.js). Only a curator-checked card
+// counts; unticked features and features students may not use are left out.
+// yearNum (optional) drops features meant for older students.
+function toolCardPromptText_(toolName, yearNum){
+  const card = (typeof getToolCard_ === 'function') ? getToolCard_(toolName) : null;
+  if(!card || card.status === 'draft') return '';
+  const minYear = a => a === '3-4' ? 3 : (a === '5-6' ? 5 : -2);
+  const feats = (card.features || []).filter(f => f && f.off !== true && f.studentAllowed !== false &&
+    (yearNum == null || yearNum >= minYear(f.ages)));
+  if(!feats.length) return '';
+  const lines = ['TOOL FEATURE CARD: ' + card.tool + (card.what ? '. ' + card.what : '')];
+  feats.forEach(f => {
+    let line = '- ' + f.name + ' [' + (f.studentAllowed === true ? 'S' : 'T') + ']: ' + f.does;
+    if(f.transformHint) line += ' Transformation idea: ' + f.transformHint;
+    lines.push(line);
+  });
+  if(card.restrictions && card.restrictions.length) lines.push('Limits: ' + card.restrictions.join(' '));
+  return lines.join('\n') + '\n' + TOOL_CARD_ACCESS_RULE;
+}
+
 const REALISTIC_TOOL_USE_RULES = `REALISTIC CLASSROOM USE RULES (HARD RULE):
 - Suggestions must be practical enough for a teacher to run; name the concrete student action and product.
 - The tool's real affordance must be central. Do not use a tool as a vague metaphor for an abstract idea.
@@ -145,7 +173,8 @@ const REALISTIC_TOOL_USE_RULES = `REALISTIC CLASSROOM USE RULES (HARD RULE):
 - CoDrone EDU rule: only use it within the Studio-configured year range; it must involve actual drone actions such as flight paths, take-off/landing, waypoints, altitude, obstacle courses, mapping, aerial observation or sensor/data collection. Do NOT suggest CoDrone for body systems, emotions, wellbeing, fitness challenges, storytelling-only tasks, or purely abstract concepts.
 - Bad example: CoDrone EDU drones model body systems or wellbeing. A flying drone cannot meaningfully model a circulatory system.
 - Tinkercad rule: Tinkercad is for designing and modelling 3D objects to 3D-print in plastic. Only suggest it for designing a 3D object or prototype to print. Do NOT use Tinkercad to simulate, test or compare material properties (strength, flexibility, weight, recyclability, or the sustainability of plastic vs metal vs wood) — it only designs shapes in plastic and cannot simulate materials. Do NOT frame Tinkercad as electronics, circuits or block-coding.
-- If you cannot explain exactly what students will do with the hardware/software, choose a different tool.`;
+- If you cannot explain exactly what students will do with the hardware/software, choose a different tool.
+- ${MULTI_APP_RULES}`;
 
 // ===== Per-tool "what this tool is really for" notes (2026-06-05) =====
 // Short, accurate affordance notes covering the approved tool inventory. Injected into
@@ -417,7 +446,8 @@ function getToolAffordance_(toolName){
 
 function toolAffordanceNote_(toolName){
   const note = getToolAffordance_(toolName);
-  if(!note) return '';
+  const cardText = toolCardPromptText_(toolName);
+  if(!note) return cardText;
   let s = '';
   if(note.is){
     s = `WHAT ${String(toolName).toUpperCase()} IS REALLY FOR: ${toolName} is ${note.is}.`;
@@ -425,6 +455,7 @@ function toolAffordanceNote_(toolName){
     if(note.avoid) s += ` AVOID: ${note.avoid}`;
   }
   if(note.realWorld) s += `${s ? '\n' : ''}REAL-WORLD CONNECTION (REQUIRED): ${note.realWorld}`;
+  if(cardText) s += `${s ? '\n' : ''}${cardText}`;
   return s;
 }
 
