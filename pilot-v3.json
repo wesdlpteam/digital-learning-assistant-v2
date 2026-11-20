@@ -1,305 +1,314 @@
 {
   "pilot": "v3",
-  "generatedAt": "2026-11-20T00:47:09.089Z",
+  "generatedAt": "2026-11-20T01:30:49.694Z",
   "units": [
     {
       "ca": "Glen Waverley",
       "yl": "Year 3",
       "th": "How the World Works",
+      "ci": "Observing how materials change helps us make sense of the physical world.",
+      "lo": "The observable properties of solids and liquids\nHow heating and cooling can change the state of materials\nHow scientific thinking helps us solve everyday problems",
       "builtFrom": {
         "ci": "Observing how materials change helps us make sense of the physical world.",
         "lo": "Observable properties of solids and liquids; How heating and cooling change state; Scientific thinking helps solve everyday problems"
       },
       "s": [
         {
-          "t": "Micro:bit",
-          "d": "Students program a button to display the micro:bit's temperature reading and compare readings beside ice investigations in two locations. The readings describe conditions around the board, not the temperature inside the ice. Groups keep the board dry and allow it to settle before comparing readings with their melting observations. They finish with a paper table connecting approximate surrounding temperatures and observed changes.",
-          "stage": "Finding out",
-          "activity": "Heat it up",
-          "rat": "A",
-          "transforms": "Temperature readings enrich the existing melting investigation, but students do not create a product others test.",
-          "loi": "2",
-          "quote": "using ice cubes, butter or chocolate to explore how changes of state involve the removal of heat or the addition of heat",
-          "link": "Approximate surrounding temperature readings add evidence to the planned ice-melting comparisons."
-        },
-        {
           "t": "Book Creator",
-          "d": "Students build a linked book where readers choose heating or cooling and jump to an explanation of what happens to water. Their choices must match observations from the sealed bag investigation. The teacher prepares an empty linked-page example, and a buddy class follows every route and reports incorrect outcomes. The teacher assesses the revised explanations and working routes through the book.",
-          "stage": "Taking action",
-          "activity": "Explaining melting and freezing",
-          "rat": "T",
-          "transforms": "methods, learning, goals: Readers test every route; students revise an interactive explanation assessed for scientific accuracy and function.",
+          "d": "Students use teacher-supplied photographs of wet clay, dry clay and fired ceramic to explain the changes. In one 50 minute lesson, pairs place the images in a short digital book and record an explanation beside each. Preparation takes 10 minutes if photographs from the art project are ready. Students listen back with a partner and re-record any claim that all changes can be undone by cooling. They finish with an audio comparison between clay firing and the class ice investigation.",
+          "stage": "Making conclusions",
+          "activity": "Clay changes through firing",
+          "rat": "A",
+          "why": "Recorded explanations beside stage photographs make it easy to hear and revise students' thinking about different kinds of change.",
           "loi": "2",
-          "quote": "Assessment: investigating ice melting or water freezing in a sealed bag and explaining their observations",
-          "link": "The sealed bag observations supply the evidence for each heating and cooling choice."
+          "quote": "Students will investigate how water, air, and especially heat affect clay, changing it from a soft and workable material into a hard and durable ceramic object through the firing process.",
+          "link": "This draws together the art investigation and ice investigation to distinguish melting from changes that cooling does not undo."
         },
         {
           "t": "Stop Motion Studio",
-          "d": "Students capture fixed-position frames of an ice cube at regular intervals during Heat it up. Playing the frames together makes slow changes in shape easier to inspect. Groups swap devices and pause the silent sequence where they first see liquid, then compare their choices. Each group keeps a short visual record showing the evidence they discussed.",
+          "d": "Students photograph an ice cube in a shallow tray every minute while watching it melt. Keep the device still on a simple stand and include a paper time label beside the tray. Allow one 50 minute lesson and 10 minutes beforehand to check the camera and gather trays. Students play the photographs as a short movie, noticing when edges soften and water spreads. They finish by choosing two moments that show how adding heat changes solid water into liquid water.",
           "stage": "Finding out",
-          "activity": "Ice melting observations",
-          "rat": "A",
-          "transforms": "Replay and pausing make slow changes easier to inspect while retaining the existing observation task.",
+          "activity": "Investigating ice melting",
+          "rat": "T",
+          "why": "Rapid playback makes gradual melting visible, helping students support explanations with changes they can actually see.",
           "loi": "2",
-          "quote": "using ice cubes, butter or chocolate to explore how changes of state involve the removal of heat or the addition of heat",
-          "link": "Frame-by-frame playback makes the planned melting observations easier to revisit and compare."
+          "quote": "Assessment: investigating ice melting or water freezing in a sealed bag and explaining their observations",
+          "link": "This adds a replayable record to the planned ice investigation so students can revisit changes that were slow to notice."
         },
         {
-          "t": "Microsoft Forms",
-          "d": "Students create a branching quiz that asks younger students to classify materials using clues about shape and pouring. This checks whether observable properties give useful evidence. The teacher prepares a blank branching form, and younger students test the quiz and report misleading clues. Students revise the feedback, and the teacher assesses whether each pathway explains the science correctly.",
-          "stage": "Making conclusions",
+          "t": "Freeform",
+          "d": "Students photograph the same solid and liquid samples in differently shaped clear containers. In pairs, they add the photographs to a shared device's Freeform board and group them by what stays the same or changes. Plan 45 minutes, with 10 minutes beforehand to gather safe samples and containers. Students zoom in on details and move photographs when a partner challenges a choice. They keep their first and revised arrangements on separate parts of the board, then explain which observation changed their thinking.",
+          "stage": "Sorting out",
+          "activity": "Comparing properties of solids and liquids",
+          "rat": "A",
+          "why": "Movable photographs let students regroup real evidence and revisit examples that challenge their first sorting decisions.",
+          "loi": "1"
+        },
+        {
+          "t": "Teachable Machine",
+          "d": "Students collect examples of solids and sealed containers of liquids, then predict how a camera might sort them. In a 45 minute lesson, help groups train one shared image classifier with two labelled groups of examples. Allow 15 minutes beforehand to check camera access and practise adding images. Students test unfamiliar examples and move the same container against different backgrounds. They compare the results with real observations of shape and pouring, then explain why the camera sometimes gets it wrong.",
+          "stage": "Tuning in",
           "activity": "Classifying solids and liquids",
           "rat": "T",
-          "transforms": "methods, learning, goals: Students apply classification knowledge in a tested quiz; assessment examines revised scientific pathways.",
+          "why": "Testing a camera classifier helps students notice why appearance alone cannot reliably identify solids and liquids.",
           "loi": "1",
           "quote": "L1 - What clues help us classify a material as a solid or a liquid?",
-          "link": "The quiz turns the planned classification questions into clues that younger students can test."
+          "link": "This extends the initial classification activity by testing whether visible clues are enough to identify solids and liquids."
         },
         {
-          "t": "Seesaw",
-          "d": "Students create a family activity with drawing spaces for predictions and before-and-after observations of water freezing in a sealed bag. This applies their classroom observations to an everyday change. The teacher prepares one family activity, and families try it and return results through Seesaw. Students revise unclear instructions, and the teacher assesses whether their guide produces observations that support its explanation.",
-          "stage": "Taking action",
-          "activity": "Freezing water",
+          "t": "Micro:bit",
+          "d": "Students compare ice melting in two safe classroom spots, one warmer and one cooler. With help, they code a micro:bit to display its temperature when a button is pressed. Allow two lessons and 15 minutes to check the simple code and gather trays. Move the board between spots, let readings settle, and keep it dry beside rather than inside each tray. Explain that it reads board temperature, not ice temperature. Students compare these rough local readings with melting observations before recommending where to keep ice.",
+          "stage": "Going further",
+          "activity": "Heat and materials in real life",
           "rat": "T",
-          "transforms": "methods, learning, goals: Families conduct student-designed investigations; returned evidence informs revisions and assessment of the guide's scientific effectiveness.",
+          "why": "Live temperature readings help students check whether a warmer location also makes ice melt more quickly.",
           "loi": "3",
-          "quote": "Assessment: investigating ice melting or water freezing in a sealed bag and explaining their observations",
-          "link": "Families repeat the planned sealed bag investigation and test whether the students' instructions are clear."
+          "quote": "L3 - How can understanding heat and materials help us in real life?",
+          "link": "This builds on heating and cooling investigations by using measurements to check advice about where ice will last longer."
         }
       ],
-      "stem": null,
-      "ci": "Observing how materials change helps us make sense of the physical world.",
-      "lo": "The observable properties of solids and liquids\nHow heating and cooling can change the state of materials\nHow scientific thinking helps us solve everyday problems"
+      "stem": {
+        "t": "Keep the Ice!",
+        "d": "Students build ice-cube shelters around identical cups using cardboard, foil, fabric scraps and tape. Across two lessons, they test shelters beside an uncovered cup, using equal ice cubes and measuring collected meltwater after the same time. Students enter the results into Microsoft Excel and make a column chart to compare designs. They change one feature, repeat the test under similar conditions and use the new chart to judge the improvement. Allow 15 minutes to gather materials, measuring containers and a simple results sheet.",
+        "stage": "Taking action",
+        "activity": "Understanding heat and materials",
+        "rat": "A",
+        "why": "A shared graph helps students compare melting across designs and check whether their improvements really helped.",
+        "quote": "L3 - How can understanding heat and materials help us in real life?",
+        "link": "This turns observations from heating and cooling investigations into a practical design problem: slowing the melting of ice."
+      }
     },
     {
       "ca": "Glen Waverley",
       "yl": "Year 3",
       "th": "How We Express Ourselves",
+      "ci": "Creativity allows people to express their understanding of the world.",
+      "lo": "The ways people use technology to express their creativity.\nHow texts and images work together.\nHow technology influences our creativity.",
       "builtFrom": {
         "ci": "Creativity allows people to express their understanding of the world.",
         "lo": "The ways people use technology to express creativity; How texts and images work together; How technology influences our creativity"
       },
       "s": [
         {
-          "t": "Sketchbook",
-          "d": "Students draw a face on one layer and try different eyebrows and mouths on separate layers. Comparing these versions explores how small visual changes communicate different feelings. A partner chooses two combinations that could fit the same situation and explains the difference. Students keep a layered drawing that lets them switch between expressions without redrawing the whole face.",
-          "stage": "Sorting out",
-          "activity": "Changing facial expressions",
-          "rat": "A",
-          "transforms": "Layers make expression changes easier to compare without redrawing; partner feedback does not significantly change the learning.",
+          "t": "GarageBand",
+          "d": "Students record short musical parts inspired by different features of a picture book image. Use the pentatonic notes already explored in Music, recording one part at a time into the same project. In two 40 minute lessons, groups listen back and adjust which parts are loud, quiet or repeated. Teacher preparation takes about 10 minutes to practise recording and playing back two tracks. Each group presents its combined recording and explains how the sounds express its understanding of the image.",
+          "stage": "Going further",
+          "activity": "Composition inspired by a picture",
+          "rat": "T",
+          "why": "Recording separate musical parts lets students hear, adjust and combine their ideas rather than relying on a single live performance.",
           "loi": "1",
-          "quote": "They look into the universal facial expressions and further build their understanding on reading expressions and changing expressions to communicate feelings in various situations…",
-          "link": "Layers make it practical to isolate and compare the facial changes students are already exploring."
+          "quote": "Music: students worked in small groups to create a composition inspired by a picture book image.",
+          "link": "This extends the image-inspired composition by letting students listen closely to how their separate musical parts work together."
         },
         {
           "t": "Book Creator",
-          "d": "Students make a sound book with drawn picture book features and tappable recordings of contrasting musical phrases they perform. Readers can test how different sounds change the meaning of the same image. The teacher prepares a two-page template, then younger students tap the sound choices and explain which fits each image feature. Students revise unclear pairings, and the teacher assesses the musical choices and explanations in the finished listening book.",
-          "stage": "Taking action",
-          "activity": "Connecting sounds and images",
-          "rat": "T",
-          "transforms": "learning, goals: Younger readers test selectable sound meanings; students revise an interactive listening resource assessed for its musical communication.",
-          "loi": "2",
-          "quote": "They connected the way the sounds of their piece represented the features of the image, and how music could have meaning and represent ideas.",
-          "link": "The listening book turns the existing connection between image features and musical sounds into something younger students can test."
-        },
-        {
-          "t": "GarageBand",
-          "d": "Students compose two short pentatonic arrangements for the same picture book image, changing the instruments while keeping the notes. This tests how digital sound choices change the ideas an image communicates. The teacher prepares a project with a pentatonic keyboard setting, then the music specialist auditions student arrangements and selects one for a class performance, explaining the choice. Students revise the selected arrangement, and the teacher assesses how well their musical choices support the image.",
-          "stage": "Taking action",
-          "activity": "Composing from picture book images",
+          "d": "Students photograph a classroom object and place the same image on two pages. They add a different short caption to each, making the object seem welcoming on one page and mysterious on the other. Give pairs one 50 minute lesson and spend five minutes beforehand checking how to add photographs and text. Partners read both versions and explain how the words changed their reading of the image. Students revise one caption and keep both pages as evidence of how text and images shape meaning together.",
+          "stage": "Sorting out",
+          "activity": "Texts and images work together",
           "rat": "A",
-          "transforms": "Digital instrument changes and specialist feedback improve existing image-inspired composition without significantly changing learning or assessment.",
-          "loi": "1",
-          "quote": "Using the pentatonic scale, they each created a part that worked with the others in the group.",
-          "link": "Comparing instrument choices extends the existing group composition task without changing its picture book starting point."
-        },
-        {
-          "t": "Microsoft Forms",
-          "d": "Students draw facial expressions and build a quiz that pairs each image with two different situation descriptions. Testing how words change the meaning of the same face explores how texts and images work together. The teacher prepares a blank quiz, then a buddy class completes it and reports which situations made the expressions unclear. Students revise the quiz feedback, and the teacher assesses whether their explanations account for the different interpretations.",
-          "stage": "Making conclusions",
-          "activity": "Reading facial expressions",
-          "rat": "T",
-          "transforms": "learning, goals: Students create and test an interpretation quiz; assessment examines their explanations of audience misunderstandings.",
+          "why": "Comparing the same image with different words helps students see how text changes a reader's interpretation.",
           "loi": "2",
-          "quote": "They look into the universal facial expressions and further build their understanding on reading expressions and changing expressions to communicate feelings in various situations…",
-          "link": "The quiz builds on reading facial expressions by testing how a situation changes what a face seems to communicate."
+          "quote": "How texts and images work together. How technology influences our creativity.",
+          "link": "This makes the text and image inquiry concrete through paired versions that students can compare and revise."
         },
         {
-          "t": "Bloxels",
-          "d": "Students build two short digital game levels with different spacing between hazards to express different amounts of dramatic tension. This tests how choices available in a digital tool shape creative expression. The teacher prepares one practice level, then a buddy class plays both student versions and identifies where tension rises or drops. Students revise their levels using those results, and the teacher assesses how deliberately their game design communicates tension.",
-          "stage": "Going further",
-          "activity": "Creating dramatic tension",
+          "t": "FlipaClip",
+          "d": "Students draw a simple face and animate a change in its expression across six to eight frames. Begin with mirrors and a discussion about how the same expression might be read differently in different situations. Allow two 40 minute lessons, with 10 minutes beforehand to practise adding frames and playing the animation. Partners watch without hearing the intended meaning, then explain which moving features gave them clues. Students revise one detail and present how their animation communicates a feeling.",
+          "stage": "Finding out",
+          "activity": "Facial expression as communication",
           "rat": "T",
-          "transforms": "learning, goals: Playable levels apply dramatic tension; audience testing informs revisions and assessment of deliberate game design.",
+          "why": "Frame-by-frame playback makes small changes in drawn expressions visible and gives students a clear way to test their meaning.",
+          "loi": "1",
+          "quote": "Facial expression as a form of communication Term 1 - students explore how we communicate and express ourselves using our faces.",
+          "link": "This extends the exploration of facial communication by letting students build and replay small changes in an expression."
+        },
+        {
+          "t": "Brushes Redux",
+          "d": "Students draw a familiar playground place, then save a copy before changing its colours and marks. Ask them to make the second version express a different feeling about that place. Allow one 50 minute lesson, with five minutes beforehand to check how to save their work. Partners compare both versions and point to choices that changed the meaning. Students finish by explaining whether the available tools helped their idea or pulled it in a new direction.",
+          "stage": "Finding out",
+          "activity": "Basic drawing and editing tools",
+          "rat": "A",
+          "why": "Students compare changes to the same drawing and notice how digital tools influence their artistic choices.",
           "loi": "3",
-          "quote": "Dramatic Tension Term 2 - students explore 'tension' as a physical movement activity, understanding how we hold tension and express different levels of tension depending on our circumstance.",
-          "link": "Playable levels extend the exploration of dramatic tension through choices about what happens and when."
+          "quote": "They will learn foundational skills such as taking well-composed photographs with an iPad and using the basic drawing and editing tools in apps like Brushes Redux and PicEdu.",
+          "link": "This builds on exploring drawing tools by asking students to notice how those tools influence what they express."
+        },
+        {
+          "t": "IMovie",
+          "d": "Students film three short shots of a hand approaching a closed cardboard box. In pairs, they make two versions using the same footage, changing shot length and adding or removing recorded tapping sounds. Allow two 45 minute lessons, with 10 minutes beforehand to practise trimming clips and recording sound. Show both versions in class and ask students which feels more tense and why. Each pair explains how editing influenced its creative choices, rather than treating tension as something created only by acting.",
+          "stage": "Making conclusions",
+          "activity": "Dramatic tension",
+          "rat": "T",
+          "why": "Editing identical footage in different ways reveals how timing and sound can change the tension an audience feels.",
+          "loi": "3",
+          "quote": "They also learn to analyse dramatic tension through in film and television and how/why certain elements are used.",
+          "link": "This builds on analysing dramatic tension by letting students test how editing and sound influence an audience."
         }
       ],
       "stem": {
-        "t": "Shake and Change Cardboard Faces",
-        "d": "Students sketch and build a cardboard face with paper eyebrow flaps, a mouth opening and a Micro:bit showing a changing LED mouth. They program its accelerometer to change the mouth when tilted, testing how physical movement changes the expression. Partners try gentle and sharper tilts, then students adjust the program and flap positions when the intended expression is unclear. Students demonstrate a working face and explain which tested change made its expression easier to read.",
+        "t": "Build a Shadow Stage",
+        "d": "Students build a miniature stage from cardboard boxes, tracing paper and removable cardboard flaps, then use a torch to create a tense scene with a paper figure. Across two lessons, they use a Micro:bit programmed to display its light reading, keeping it in the same stage position while testing different flap openings. They record readings alongside observations of the shadows, then improve one opening to achieve their chosen lighting effect. Allow 15 minutes of preparation to gather materials and practise the short program that repeatedly displays the light level. Students present their improved stage and explain how the measurements helped them control the lighting, without claiming that a sensor can measure tension.",
         "stage": "Going further",
-        "activity": "Changing facial expressions",
-        "rat": "A",
-        "transforms": "A movement sensor gives immediate feedback while students compare and refine a physical expression model.",
-        "quote": "They look into the universal facial expressions and further build their understanding on reading expressions and changing expressions to communicate feelings in various situations…",
-        "link": "A movable face combines the planned exploration of facial expressions with technology that responds to movement."
-      },
-      "ci": "Creativity allows people to express their understanding of the world.",
-      "lo": "The ways people use technology to express their creativity.\nHow texts and images work together.\nHow technology influences our creativity."
+        "activity": "Dramatic tension",
+        "rat": "T",
+        "why": "Light readings help students compare stage designs fairly and connect physical design changes with the atmosphere they create.",
+        "quote": "They also learn to analyse dramatic tension through in film and television and how/why certain elements are used.",
+        "link": "This extends the exploration of dramatic tension through building, measuring and improving lighting for a miniature scene."
+      }
     },
     {
       "ca": "Glen Waverley",
       "yl": "Year 3",
       "th": "How We Organise Ourselves",
+      "ci": "Needs and wants drive innovation.",
+      "lo": "How needs and wants lead to new inventions\nHow digital devices and networks operate\nBeing a responsible digital citizen",
       "builtFrom": {
         "ci": "Needs and wants drive innovation.",
         "lo": "How needs and wants lead to new inventions\nHow digital devices and networks operate\nBeing a responsible digital citizen"
       },
       "s": [
         {
-          "t": "FlipaClip",
-          "d": "Students animate a small black-and-white grid changing into a picture as rows of zeros and ones are revealed. This makes the planned discussion of binary codes visible one step at a time. Partners replay each other's animation and check that every square matches its stated code. Students finish with a silent animation that they can correct frame by frame when a mismatch appears.",
-          "stage": "Making conclusions",
-          "activity": "Computers representing pictures with codes",
-          "rat": "A",
-          "transforms": "Replay and frame editing help students check binary representations, but the animation remains an explanation rather than a working system.",
-          "loi": "2",
-          "quote": "binary numeral system, how computers use numeric codes to represent complex data.",
-          "link": "A frame-by-frame picture gives students a manageable example of numbers representing visual information."
-        },
-        {
-          "t": "Micro:bit",
-          "d": "Students program two Micro:bits so pressing a button sends a radio message and displays a matching symbol on the receiving device. This tests how devices follow commands to communicate. The teacher prepares a starter program, then a buddy class tests whether different button presses produce the agreed messages. Students leave a working message program, which the teacher assesses for reliable sending and receiving.",
-          "stage": "Going further",
-          "activity": "Sending a digital message",
+          "t": "Teachable Machine",
+          "d": "Students help train a teacher-controlled image classifier to distinguish a pencil from a glue stick. Spend 15 minutes beforehand checking camera access and trying two image classes, then allow one lesson. Capture only objects against a plain background, keeping students out of view. Students test the objects at different angles, tally mistakes and suggest extra examples to improve the results. They explain how the camera supplies images while software makes a prediction, and discuss whose need an object sorter might meet.",
+          "stage": "Sorting out",
+          "activity": "Hardware and software",
           "rat": "T",
-          "transforms": "learning, goals: Students build a working communication system, buddies test its accuracy, and assessment targets reliable sending and receiving.",
-          "loi": "2",
-          "quote": "What happens inside our computers and networks when we send a message or a picture to someone else?",
-          "link": "Sending real messages gives students a small, testable example of communication between digital devices."
-        },
-        {
-          "t": "Microsoft Forms",
-          "d": "Students create a branching form where safe and risky online choices lead to different next steps. They apply the online safety situations already discussed in Library. The teacher prepares a short branching example, then younger students try the forms and flag advice they cannot follow. Students deliver revised working guides, and the teacher assesses whether each pathway gives safe, usable advice.",
-          "stage": "Taking action",
-          "activity": "Safe and risky online choices",
-          "rat": "T",
-          "transforms": "learning, goals: Younger students test branching safety guides, and assessment targets safe, usable advice across the pathways.",
-          "loi": "3",
-          "quote": "Unplugged by Steve Antony sparked discussion about balancing screen time with real-world play and how unplugging from devices can spark creativity and connection, while The Internet is a Puddle by Shona Innes helped students identify safe versus risky online situations - a lesson reinforced through the Safe vs Risky Puddles Seesaw activity.",
-          "link": "The Library discussion supplies situations for a guide that responds to a younger student's choices."
-        },
-        {
-          "t": "Microsoft Excel",
-          "d": "Students collect class votes on which digital system best meets a stated classroom need, then enter totals and create a chart. Comparing the votes connects needs and wants with choices about inventions. The teacher prepares a labelled table, and a specialist teacher uses the chart to choose which system to demonstrate and checks that the totals support that choice. Students correct any errors and submit the working spreadsheet for assessment of its calculations and usefulness.",
-          "stage": "Making conclusions",
-          "activity": "Collecting data about digital systems",
-          "rat": "T",
-          "transforms": "learning, goals: A specialist uses the data product for a real decision and checks its evidence; assessment includes accuracy and usefulness.",
-          "loi": "1",
-          "quote": "AC9M3ST01 acquire data for categorical and discrete numerical variables to address a question of interest or purpose by observing, collecting and accessing data sets; record the data using appropriate methods including frequency tables and spreadsheets…",
-          "link": "The planned data collection answers a real question about which digital system deserves closer investigation."
+          "why": "Live testing shows students how camera input and software work together, including when the software gets things wrong.",
+          "loi": "2"
         },
         {
           "t": "Popplet",
-          "d": "Students build a mind map showing computer parts and what each part does after examining the broken digital items. Connecting parts to jobs makes the hardware and software discussion more concrete. Partners swap maps and add a connection that explains how two parts work together. Students finish with a revised map whose connecting lines show relationships rather than a list of parts.",
-          "stage": "Finding out",
-          "activity": "Computer systems mind map",
+          "d": "Students sort pictures of familiar digital devices by the needs or wants they meet. Allow one lesson, with 10 minutes beforehand to gather pictures of classroom devices. In pairs, students build a Popplet map with branches such as communicating, creating and playing. They connect a device to more than one branch and explain their choices to another pair. After discussing why people invent things, students move or add connections and explain one change in their thinking.",
+          "stage": "Tuning in",
+          "activity": "Prior knowledge of digital systems",
           "rat": "A",
-          "transforms": "Digital mapping supports clearer connections and easier revision, but the learning task remains familiar.",
+          "why": "Students can rearrange their thinking and compare how one invention meets several different needs.",
+          "loi": "1",
+          "quote": "Why do people invent things, and how do we design a solution for a real problem?",
+          "link": "This extends the prior knowledge sheet by making students' connections between inventions, needs and wants easy to revisit."
+        },
+        {
+          "t": "Stop Motion Studio",
+          "d": "Students move paper message pieces between a sender, a network device and a receiver, photographing each small move. Use one lesson and 10 minutes of prep to gather paper, markers and a simple teacher reference diagram. Explain that messages travel as data through connected devices, rather than as whole pictures floating through the air. Pairs make a short animation showing this simplified journey. They replay it with another pair, correct a missing connection and record a spoken explanation.",
+          "stage": "Finding out",
+          "activity": "How digital devices and networks operate",
+          "rat": "T",
+          "why": "Animation makes an invisible message journey visible, so students can replay it and spot missing steps.",
           "loi": "2",
-          "quote": "hardware and software operate through specific components, commands, and procedures.",
-          "link": "The planned mind map becomes a way to explain how computer parts work together."
+          "quote": "What happens inside our computers and networks when we send a message or a picture to someone else?",
+          "link": "This gives students a visible way to explain the planner's question about messages travelling through computers and networks."
+        },
+        {
+          "t": "Sphero BOLT",
+          "d": "Students program a robot to deliver a paper message between two buildings on a floor map. Allow two lessons and 15 minutes to gather tape, check connections and practise a short movement program. Pairs mark a start, destination and blocked path, then code timed rolls and turns. They test at low speed, measure where the robot stops and change one instruction at a time. Students demonstrate their improved route and explain which delivery need their invention addresses.",
+          "stage": "Going further",
+          "activity": "Algorithms used to solve problems",
+          "rat": "T",
+          "why": "A moving robot gives immediate evidence of whether students' instructions solve their delivery problem.",
+          "loi": "1",
+          "quote": "algorithms used to solve problems, run software, or program actions.",
+          "link": "This connects the planner's algorithms work with its school-map robot example through a practical delivery problem."
+        },
+        {
+          "t": "Book Creator",
+          "d": "Students create a short audio advice book about two safe or risky online situations already discussed in Library. Allow one lesson and five minutes to select fictional examples without names or personal details. Pairs draw each situation, then record what they would do and why. Partners listen without extra explanation and say whether the advice is clear enough to follow. Students rerecord one explanation and finish by explaining how a useful digital invention can also create responsibilities.",
+          "stage": "Making conclusions",
+          "activity": "Responsible online behaviour",
+          "rat": "A",
+          "why": "Recorded explanations let students hear their reasoning and improve safety advice after a partner responds.",
+          "loi": "3",
+          "quote": "Library: In Library, students explored the theme of digital wellbeing and citizenship through stories about balancing screen time, safe internet use, and responsible online behavior.",
+          "link": "This builds on Library discussions by asking students to explain and improve practical advice about responsible online behaviour."
         }
       ],
       "stem": {
-        "t": "Cardboard Message Machines",
-        "d": "Students prototype cardboard message boxes with paper button labels and Micro:bits programmed to send radio signals between boxes. They choose a classroom communication need, test two button layouts with a buddy class, and move labels or change displayed symbols when messages are misunderstood. The teacher prepares a starter radio program and assesses whether the revised design communicates the intended request. Students demonstrate two working boxes and explain which test results changed their design.",
-        "stage": "Going further",
-        "activity": "Designing a communication solution",
+        "t": "Keep the Reading Corner Bright!",
+        "d": "Students build a miniature reading shelter from cardboard, fabric scraps and popsticks that reduces glare without making the space too dark. Allow two lessons and 15 minutes beforehand to gather materials and prepare a Micro:bit program that displays its light reading when a button is pressed. Students place the Micro:bit in the same spot beneath each roof and compare readings under the same classroom lamp, keeping its LED face uncovered. They change one roof opening or fabric layer, retest and explain which design best meets their chosen need for light and shade.",
+        "stage": "Taking action",
+        "activity": "Design a solution",
         "rat": "T",
-        "transforms": "learning, goals: students combine physical design and radio programs, then use communication failures to improve a working invention.",
+        "why": "A light sensor helps students compare shade designs using readings rather than relying only on how bright something looks.",
         "quote": "Why do people invent things, and how do we design a solution for a real problem?",
-        "link": "A working communication invention connects a real need with components, commands and testing."
-      },
-      "ci": "Needs and wants drive innovation.",
-      "lo": "How needs and wants lead to new inventions\nHow digital devices and networks operate\nBeing a responsible digital citizen"
+        "link": "This gives students a small physical design problem where a digital sensor helps them test and improve their solution."
+      }
     },
     {
       "ca": "Glen Waverley",
       "yl": "Year 3",
       "th": "Sharing the Planet",
+      "ci": "The diversity of soils, rocks, and minerals shapes the way people value and use Earth's resources.",
+      "lo": "Soils, rocks, and minerals have observable properties that make them useful in different ways.\nEarth's resources are vital for living things, including humans, and must be used responsibly.\nFirst Nations Australians have long-standing knowledge and cultural uses of soils, rocks, and minerals.",
       "builtFrom": {
         "ci": "The diversity of soils, rocks, and minerals shapes the way people value and use Earth's resources.",
         "lo": "Observable properties of soils, rocks and minerals; Earth's resources are vital and must be used responsibly; First Nations knowledge of soils and rocks"
       },
       "s": [
         {
-          "t": "Book Creator",
-          "d": "Students create a linked book that lets younger students choose an everyday use, then follow links to suitable rocks or minerals. This connects observable properties with uses such as pencils and buildings, starting from a linked page template the teacher prepares. Year 1 students use the book to answer material-choice questions and identify confusing routes. The teacher assesses the accuracy of the choices and explanations, and students repair links or explanations that misled readers.",
+          "t": "Microsoft Excel",
+          "d": "Students examine equal spoonfuls of collected soil and count visible pebbles and pieces of plant matter. Keep samples separate and leave any living creatures undisturbed. Allow one lesson, with ten minutes beforehand to prepare a simple shared table in Excel. Pairs contribute their counts while the teacher helps turn the class results into column charts. Compare samples collected from the same place as well as different places. Students explain one pattern and why a small sample might not represent the whole garden bed.",
+          "stage": "Sorting out",
+          "activity": "Local soil study",
+          "rat": "A",
+          "why": "A shared chart makes differences between samples easier to spot and gives students evidence for checking their first impressions.",
+          "loi": "1",
+          "quote": "Local Soil Study: collect soil samples from different locations around the school or local area.",
+          "link": "This builds on the local soil observations by bringing the class counts together for a more careful comparison."
+        },
+        {
+          "t": "Stop Motion Studio",
+          "d": "Students build a tabletop scene showing soil, plants and flowing water using paper pieces and reusable modelling clay. Across two lessons, they photograph tiny changes to show rain carrying uncovered soil away. Spend ten minutes beforehand practising capture and playback, then keep devices still on simple stands. Partners replay their sequence and check whether the movement clearly explains what happens. They revise any confusing frames and add a second ending with ground cover protecting the soil. Finish by explaining which parts show evidence from their learning and which simplify real events.",
           "stage": "Making conclusions",
-          "activity": "Soils, rocks and minerals presentation",
+          "activity": "Resources important for life",
           "rat": "T",
-          "transforms": "learning, goals: Younger students test material choices using the linked guide; assessment examines its accuracy and explanations.",
-          "loi": "1"
+          "why": "Animating small changes helps students explain how losing soil affects living things rather than simply listing why soil matters.",
+          "loi": "2",
+          "quote": "How do soils, rocks, and minerals connect living things and societies across places?",
+          "link": "This develops the planned concluding explanation through a moving model of soil's importance and responsible care."
         },
         {
-          "t": "Canva",
-          "d": "Students design a comparison poster showing how one rock or mineral's properties suit two everyday uses. They connect those uses with a practical suggestion for using that resource responsibly. Partners read the poster at its intended display size and identify any claim that lacks an explanation or readable label. Students revise the layout and wording before printing a poster that connects properties, uses and a responsible choice.",
-          "stage": "Making conclusions",
-          "activity": "Resources poster",
-          "rat": "A",
-          "transforms": "Digital layout and peer feedback improve the planned poster without changing its purpose or assessment.",
-          "loi": "2"
-        },
-        {
-          "t": "Padlet",
-          "d": "Students read community-endorsed First Nations resources selected and linked by the teacher about ochre or grindstones. They add a short explanation of one use, its cultural value and the source it came from. Partners comment with a question that the original writer checks against the same source rather than guessing an answer. The class ends with a searchable board of sourced explanations and clearly marked unanswered questions.",
+          "t": "Book Creator",
+          "d": "Students listen to a First Nations speaker in a community-endorsed source explaining a particular use of ochre or grindstones. Spend up to 15 minutes selecting a short source that is appropriate for classroom use and checking sharing permissions. Across two lessons, pairs create two pages in Book Creator using their own material observations and a link to the source. They record what they learnt, naming the community identified by the source rather than generalising across Australia. Students replay and revise their explanations without copying cultural designs or demonstrating restricted practices. Finish with a reflection on the resource's practical and cultural value.",
           "stage": "Going further",
-          "activity": "First Nations cultural knowledge",
+          "activity": "Cultural knowledge",
           "rat": "A",
-          "transforms": "Searchable explanations and source-checked discussion improve sharing and research within the existing cultural knowledge task.",
+          "why": "Recorded explanations alongside credited sources let students revisit their wording and clearly separate learned knowledge from their own reflections.",
           "loi": "3",
           "quote": "Cultural Knowledge: Students explain how First Nations Australians use a particular rock, mineral, or soil resource and reflect on its value.",
-          "link": "The cultural knowledge explanation includes clear sources and questions that keep First Nations accounts at the centre."
+          "link": "This supports the planned cultural explanation while keeping First Nations voices, attribution and permissions central."
         },
         {
-          "t": "Microsoft Excel",
-          "d": "Students enter counts of pebbles and plant fragments from equal-sized soil samples into a shared table and create comparison charts. This shows how soils differ, using a labelled spreadsheet the teacher prepares. A buddy teacher uses the charts to choose two contrasting samples for a class investigation, then checks that choice against the actual samples. The teacher assesses whether the class's data supported a sound choice, and students correct unclear labels or counting errors.",
-          "stage": "Finding out",
-          "activity": "Local soil study",
+          "t": "Google Maps",
+          "d": "Students explore teacher-selected Street View locations near Glen Waverley and in Indonesia, looking for gardens, farms, exposed ground and building materials. Spend ten minutes beforehand checking two accessible locations with clear views. In one lesson, pairs take turns navigating and zooming without logging in or saving maps. They sketch evidence in a paper Venn diagram and distinguish observations from guesses. Prompt students to consider where plants need soil and where buildings cover it. Each pair finishes with one question about responsible resource use that the images cannot answer.",
+          "stage": "Going further",
+          "activity": "Compare natural features",
           "rat": "T",
-          "transforms": "learning, goals: Another teacher uses the data to select samples and checks the decision; assessment judges the data's usefulness.",
-          "loi": "1",
-          "quote": "Finding out: Science Investigation: Students classify and compare soil/rock samples, describing their observable properties.",
-          "link": "The local soil observations become a comparison table another class uses to select contrasting investigation samples."
+          "why": "Street View lets students inspect distant landscapes closely and compare visible ways people use land without leaving the classroom.",
+          "loi": "2",
+          "quote": "Comparison: Students create a Venn diagram or report comparing natural features of Australia with a neighbouring country.",
+          "link": "This gives students close-up visual evidence for the planned comparison while keeping claims about soils and resources cautious."
         },
         {
-          "t": "Microsoft Forms",
-          "d": "Students build a branching identification guide that asks about visible soil components and leads to a likely sample match. This makes them choose which soil properties actually distinguish their samples, using a blank branching form the teacher prepares. A buddy class tests the guide against numbered samples and reports incorrect matches through the form. Students revise the questions, and the teacher assesses whether their guide reliably separates the samples.",
-          "stage": "Sorting out",
+          "t": "Teachable Machine",
+          "d": "Students sort three dry soil samples by visible properties, then test whether a webcam can tell them apart. Allow one lesson and 15 minutes beforehand to practise creating an image project with three labelled groups. Students help capture several views of each sample on identical trays against the same background. Test fresh views, change the lighting and discuss mistakes. Explain that the tool matches appearances, not soil ingredients or scientific identities. Students finish by recording which properties helped their own sorting more than the computer's.",
+          "stage": "Finding out",
           "activity": "Classify and compare soil samples",
           "rat": "T",
-          "transforms": "learning, goals: Students build and revise an identification tool through sample testing; assessment judges its reliability.",
+          "why": "Testing a webcam classifier helps students notice which visible properties are useful clues and which can mislead them.",
           "loi": "1",
-          "quote": "Finding out: Science Investigation: Students classify and compare soil/rock samples, describing their observable properties.",
-          "link": "The sample comparison becomes a working identification guide that another class checks against the actual soils."
+          "quote": "Science Investigation: Students classify and compare soil/rock samples, describing their observable properties.",
+          "link": "This extends the planned sample classification by letting students test how reliably visible differences distinguish their samples."
         }
       ],
       "stem": {
-        "t": "Shake and Sort Soil Sieves",
-        "d": "Students design small sieves from cardboard frames and different mesh scraps to separate pebbles from equal amounts of dry, safe soil. The teacher provides a Micro:bit starter program that uses its accelerometer to count shakes while the device is secured to the frame. Teams compare separation after the same shake count, then change the mesh or frame after checking what passed through. They demonstrate a revised sieve and explain which soil components it separates reliably.",
-        "stage": "Finding out",
-        "activity": "Local soil study",
+        "t": "Keep the Soil in Place!",
+        "d": "Students build soil-saving barriers from mesh offcuts, small stones and popsticks in shallow trays of soil, linking their designs to the investigation of soil's importance. Allow two lessons and 15 minutes to gather materials, prepare trays and practise filming with IMovie. Teams pour the same amount of water from the same height onto equally sloped trays, filming each test with a device kept safely away from splashes. They replay the clips to spot where soil escapes, change one part of the barrier and repeat under the same conditions. Students present before-and-after footage and explain whether their change kept more soil in place without simply blocking all water.",
+        "stage": "Taking action",
+        "activity": "Soils important for living things",
         "rat": "A",
-        "transforms": "Accelerometer counts make repeated sieve tests more consistent and give students evidence for changing their physical designs.",
-        "quote": "Finding out: Science Investigation: Students classify and compare soil/rock samples, describing their observable properties.",
-        "link": "Building and testing sieves gives students another way to compare the components found in their local soil samples."
-      },
-      "ci": "The diversity of soils, rocks, and minerals shapes the way people value and use Earth's resources.",
-      "lo": "Soils, rocks, and minerals have observable properties that make them useful in different ways.\nEarth's resources are vital for living things, including humans, and must be used responsibly.\nFirst Nations Australians have long-standing knowledge and cultural uses of soils, rocks, and minerals."
+        "why": "Video replay helps students compare how their barriers behave and notice exactly where soil escapes before improving their designs.",
+        "quote": "Why are soils, rocks, and minerals important for living things and humans?",
+        "link": "This turns the planner's investigation of soil's importance into a practical design task that protects soil needed by living things."
+      }
     },
     {
       "ca": "Glen Waverley",
@@ -313,66 +322,66 @@
       },
       "s": [
         {
-          "t": "Microsoft Forms",
-          "d": "Students write automatically marked compass-direction questions about Australia and its Asian neighbours in a quiz template prepared by the teacher. Each answer explanation names the countries and explains their relative positions. A buddy class completes the quiz, then flags questions whose wording or answer feedback caused confusion. Students repair those questions using response results, and the teacher assesses geographic accuracy and whether the revised quiz works.",
-          "stage": "Sorting out",
-          "activity": "Australia and its Asian neighbours",
+          "t": "Google Maps",
+          "d": "Students explore Australia and a neighbouring country, then open Street View where coverage is available. Pairs compare what they notice about roads, buildings and land with what the world map shows. Allow one lesson, with 10 minutes beforehand to check two suitable locations. Students only view and navigate, with no login or saved pins needed. They finish with a spoken explanation of what each view reveals and leaves out, remembering that one street cannot represent a whole country.",
+          "stage": "Finding out",
+          "activity": "Learning about Australia's neighbours",
           "rat": "T",
-          "transforms": "methods, learning, goals: Students create and test a geographic quiz, using response evidence to improve a product assessed for accuracy and usability.",
+          "why": "Students move between regional maps and street-level views to check how a map represents a real place.",
           "loi": "1",
-          "quote": "Learn about where they are situated in relation to Australia.",
-          "link": "Builds on compass revision by asking another class to test student-written questions about neighbouring countries."
-        },
-        {
-          "t": "Padlet",
-          "d": "Students sort observations and questions beside teacher-posted images of the collection of artefacts. For First Nations items, the teacher includes community-endorsed descriptions that identify their source and cultural context. Pairs revisit their posts after reading these descriptions, separating what they noticed from what they assumed. The board keeps their original questions beside their revised thinking.",
-          "stage": "Tuning in",
-          "activity": "Observing artefacts and asking questions",
-          "rat": "A",
-          "transforms": "Keeping original and revised posts supports reflection, but observation and questioning remain the same learning practice.",
-          "loi": "2",
-          "quote": "Tuning in/Provocations Tuning in 1 - get a collection of artefacts, photos, dot paintings, stuff from TI Learning Asian/Pacific neighbours.",
-          "link": "Extends the planned observation and sticky note questions with source information and revisable responses."
-        },
-        {
-          "t": "Book Creator",
-          "d": "Students build a linked guide that lets readers choose how to show respect for an Australian place, using a page template prepared by the teacher. Advice comes from checked sources, with community-endorsed First Nations guidance where relevant. Younger students follow the page links to make choices and report any advice they cannot understand or follow. The teacher assesses the revised guide's accuracy and usefulness, including how students repaired confusing choices.",
-          "stage": "Going further",
-          "activity": "Showing respect for an Australian place",
-          "rat": "T",
-          "transforms": "methods, learning, goals: Readers test a choice-based guide; students revise its advice and navigation, assessed for practical usefulness as well as accuracy.",
-          "loi": "3",
-          "quote": "Choose a place or feature of Australia and write and how and why people could show respect for it.",
-          "link": "Turns the planned writing about respect into a guide that younger readers actually use."
+          "quote": "How can we use maps to learn about Aust and our neighbouring countries?",
+          "link": "This builds on learning about Australia's neighbours by connecting map locations with visible features of particular places."
         },
         {
           "t": "Seesaw",
-          "d": "Students annotate their original world maps in a new colour and add a recorded direction challenge in a task prepared by the teacher. Their challenges require families to locate Australia and its neighbours using the new map information. Families submit their answers and identify unclear labels or directions through Seesaw. Students revise the maps, and the teacher assesses both geographic corrections and whether families could use their representations accurately.",
+          "d": "Students photograph their original world map before adding new learning in a different colour on paper. They upload an after photo and record an explanation of two important changes. Prompt them to explain whose views their map includes and what it still cannot show about a valued place. Allow one lesson and five minutes to prepare the class instructions. Partners listen, ask one clarifying question, and students rerecord if needed. The finished entry preserves both the visible changes and their reasons.",
           "stage": "Making conclusions",
-          "activity": "Adding new learning to world maps",
+          "activity": "Add to the original world map",
+          "rat": "A",
+          "why": "Voice recordings capture students' reasons for map changes, revealing understanding that labels and colours alone might miss.",
+          "loi": "3",
+          "quote": "Students are given their original world map and asked to add to it - using a different colour to show new learning.",
+          "link": "This keeps the planned map assessment and adds students' explanations of how their understanding of place has changed."
+        },
+        {
+          "t": "Book Creator",
+          "d": "Students listen to a teacher-selected, community-endorsed First Nations account of connection to Country. Pairs create one book page with a drawing and record their own explanation of something they learnt. They name the source and distinguish its teaching from their own thoughts. Allow one lesson and 15 minutes to select the source and check sharing permissions. Replay recordings so students can revise explanations that treat Country as only land, without copying cultural designs or retelling restricted knowledge.",
+          "stage": "Sorting out",
+          "activity": "Connections to Country and Place",
+          "rat": "A",
+          "why": "Recorded reflections let students explain and revisit how a First Nations source has changed their understanding of Country.",
+          "loi": "2",
+          "quote": "First Nations Australians have deep and ongoing connections to Country, which are spiritual, cultural, and environmental…",
+          "link": "This supports exploring Country through First Nations voices, with students recording their developing understanding rather than inventing cultural knowledge."
+        },
+        {
+          "t": "Stop Motion Studio",
+          "d": "Students move a paper arrow across a regional map, photographing small steps from Australia towards a neighbouring country. They play the images as an animation and describe the compass directions shown. Partners check the route against the map, then reshoot any misleading section. Explain that this shows relative location, not an actual travel route or journey time. Allow one lesson and 10 minutes to gather maps and arrow cut-outs. Finish by comparing how different map positions affect their direction descriptions.",
+          "stage": "Sorting out",
+          "activity": "Revise the points of the compass",
           "rat": "T",
-          "transforms": "methods, learning, goals: Families use maps to solve challenges; students revise from results, and assessment now includes how effectively representations guide users.",
+          "why": "Animation playback makes changes in direction visible, helping students check whether their spoken route matches movement on a map.",
           "loi": "1"
         },
         {
-          "t": "Freeform",
-          "d": "Students sketch a favourite school place on a shared board and add a note explaining why it matters to them. Different sketches show how the same place can hold different meanings. Partners move similar reasons together, then ask classmates before moving any that seem unclear. The finished board groups places by what students value, rather than simply where they are.",
-          "stage": "Tuning in",
-          "activity": "A favourite place at school",
-          "rat": "A",
-          "transforms": "Shared sketches and movable notes make comparing personal meanings easier without changing the underlying learning task.",
-          "loi": "3"
+          "t": "Minecraft Education",
+          "d": "Students build a small fictional lookout beside a beach or creek, adding paths, seating and protected vegetation. Partners walk through it as visitors and explain where access or care for the place could improve. Students change one feature, then revisit it from ground level to check the difference. Keep builds small and use an existing flat world, with 15 minutes to check access beforehand. Across two lessons, students explain how their changes balance different ways people value a place.",
+          "stage": "Going further",
+          "activity": "Show respect for a place",
+          "rat": "T",
+          "why": "Students can walk through a proposed design, experience its effects and alter it after hearing a different viewpoint.",
+          "loi": "3",
+          "quote": "Choose a place or feature of Australia and write and how and why people could show respect for it.",
+          "link": "This extends the respect-for-place writing task into a small design that students can explore and improve."
         }
       ],
       "stem": {
-        "t": "Two Maps, One Robot Route",
-        "d": "Students build two cardboard maps of the same Australian area, using string for political boundaries and raised paper for natural features. They program a Sphero BOLT to follow the same planned route on each map, comparing which features affect travel and which are simply drawn lines. After testing, they adjust spacing and feature placement so the robot route matches their intended representation. They demonstrate both versions and explain where their models simplify the real place.",
+        "t": "Build a Robot-Friendly Map Route",
+        "d": "Students build a large floor map of an imaginary coastal place using cardboard landmarks, fabric water and masking-tape paths, then code a Sphero BOLT to travel between landmarks. In pairs, they test short roll commands, measuring where the robot stops and adjusting travel time or heading. They widen one tricky path or move a cardboard barrier, then test whether their change helps the robot reach its destination. Allow two lessons and 15 minutes to charge robots, gather materials and check a clear floor area. Students finish by explaining how their simplified map helps navigation but leaves out other things people might value.",
         "stage": "Sorting out",
-        "activity": "Natural and human-made boundaries",
-        "rat": "A",
-        "transforms": "Programmed travel provides repeatable tests that inform revisions to two physical map representations.",
-        "quote": "what are some of the natural and man Museum Vic resources can made borders/boundaries in Australia and support this inquiry the region?",
-        "link": "Builds on the boundary investigation by comparing two physical representations of the same place through robot navigation."
+        "activity": "Revise the points of the compass",
+        "rat": "T",
+        "why": "A moving robot reveals whether students' route measurements and directions work, giving them clear evidence for improving their design."
       }
     },
     {
@@ -388,69 +397,63 @@
       "s": [
         {
           "t": "Seesaw",
-          "d": "Students draw and record a short square-breathing guide with pauses that families can follow at home. The teacher prepares one family activity asking whether the pacing is comfortable and the instructions are clear. Families try the guide and return a response explaining where they needed more time or clearer directions. Students rerecord those sections, and the teacher assesses whether someone can follow the revised breathing guide.",
-          "stage": "Taking action",
-          "activity": "Emotional regulation strategies",
-          "rat": "T",
-          "transforms": "methods, learning, goals: Families use and evaluate student-created breathing guides; students revise them and are assessed on whether others can follow.",
-          "loi": "4",
-          "quote": "Lesson 4: Emotional Regulation - the key to resilience & good friendships…",
-          "link": "The emotional regulation lesson becomes a paced guide that families try and help students improve."
-        },
-        {
-          "t": "Adobe Express",
-          "d": "Students arrange illustrated comic panels showing a Friendship Fire and a respectful attempt to resolve it. Editable speech bubbles let them compare how different wording changes the exchange. A partner reads a duplicate version with the final panel removed and suggests a likely consequence before checking the original ending. Students revise unclear dialogue and finish with a comic whose ending follows from the characters' choices.",
-          "stage": "Taking action",
-          "activity": "Friendship Fire graphic novel",
-          "rat": "A",
-          "transforms": "Editable panels and partner predictions improve the planned comic; readers do not test a usable conflict-resolution resource.",
-          "loi": "1",
-          "quote": "Create a graphic novel that features a Friendship Fire.",
-          "link": "Editable panels let students test whether the dialogue and consequences in their planned graphic novel fit together."
-        },
-        {
-          "t": "Microsoft Forms",
-          "d": "Students write a branching questionnaire where choices lead to different responses to a Friendship Fire. The teacher prepares one branching example showing how respectful choices can change what happens next. A buddy class tries the questionnaires and reports any response that feels unhelpful or unfair. Students revise their branches, and the teacher assesses whether the advice fits each conflict.",
+          "d": "Students record a short explanation of how to make amends, then ask a partner for one helpful suggestion. Model feedback such as asking for a clearer next step, rather than judging the speaker. Allow five minutes to check recording access and 40 minutes for the lesson. Students listen to their first recording, practise using the suggestion and save a second attempt alongside it. They replay both and explain which feedback helped them improve and what they want to practise next.",
           "stage": "Going further",
-          "activity": "Friendship Fire scenarios",
-          "rat": "T",
-          "transforms": "methods, learning, goals: Students create conflict advice that others test for fairness; assessment focuses on whether revised advice fits each situation.",
-          "loi": "2",
-          "quote": "Can you sort out these Friendship Fires? Read all six scenarios and then select two to write about.",
-          "link": "The written scenario responses become choices that a buddy class can try and check."
+          "activity": "Feedback and goal setting",
+          "rat": "A",
+          "why": "Keeping a first attempt beside a revised recording makes it easier to hear whether feedback led to a useful change.",
+          "loi": "3"
         },
         {
-          "t": "Book Creator",
-          "d": "Students create a Friendship Fire comic with page links that let readers choose what a character does next. The teacher prepares a three-page linked example showing how words can change a friendship problem. Younger students follow different routes and identify endings where the problem remains unresolved. The teacher assesses the consequences students wrote, and students repair confusing choices in their interactive comics.",
-          "stage": "Taking action",
-          "activity": "Friendship Fire graphic novel",
+          "t": "Stop Motion Studio",
+          "d": "Students use counters or clay figures to animate someone trying a tricky task, meeting a setback and trying a different strategy. Connect this to the planner's discussion of athletes' attitudes without asking students to copy sporting footage. Spend ten minutes checking the capture and playback controls and gathering materials. Across two 40 minute lessons, pairs plan six key moments, photograph small movements and replay their animation to check whether the strategy is clear. Finish by naming the action that helped their character keep going.",
+          "stage": "Sorting out",
+          "activity": "Resilience and character strengths",
           "rat": "T",
-          "transforms": "methods, learning, goals: Readers test alternative consequences, and students repair choices against an assessment of how words affect friendship problems.",
+          "why": "Animating a setback makes students show the small actions involved in persisting, not just say that someone kept trying.",
+          "loi": "4"
+        },
+        {
+          "t": "Clickview",
+          "d": "Students watch a short section of the planner's friendship video and spot a choice that affects someone else. Allow five minutes beforehand to preview the clip and choose two stopping points. In a 35 minute lesson, pause before a response and ask pairs to predict how each person might feel. Replay the moment so students can check facial expressions, words and actions against their predictions. Finish with pairs acting out a kinder response and explaining what they changed.",
+          "stage": "Tuning in",
+          "activity": "What makes a good friend",
+          "rat": "A",
+          "why": "Pausing and replaying a shared moment helps students check what they noticed rather than rely on first impressions.",
           "loi": "1",
-          "quote": "Create a graphic novel that features a Friendship Fire.",
-          "link": "The planned graphic novel gains reader choices that test whether its friendship advice makes sense."
+          "quote": "Develop a list of things students can do to make the class friendly.",
+          "link": "This builds on identifying friendly behaviour by examining the effects of specific choices."
         },
         {
           "t": "GarageBand",
-          "d": "Students arrange a short piece using instrument tracks, with each group member responsible for one section. They practise the cooperation and perseverance already expected during the group music task. Another group listens while students mute individual tracks to hear where parts clash or leave space for others. Students revise the arrangement and keep both versions to compare how their teamwork changed the music.",
-          "stage": "Making conclusions",
-          "activity": "Creating music together",
-          "rat": "A",
-          "transforms": "Track controls and saved versions make musical collaboration and peer revision more effective within the existing music task.",
-          "loi": "3",
-          "quote": "Music - In music, students practised working in small groups to create music together.",
-          "link": "Separate tracks let groups hear how listening and responding to feedback improves their shared piece."
+          "d": "Students record the same friendly sentence twice, first sounding impatient and then sounding calm. Use a made-up disagreement about sharing equipment rather than a real class conflict. Allow ten minutes to check audio recording, then run a 45 minute lesson with pairs sharing devices. Students play both recordings to another pair, who explain how the voice changes the message, then record a more respectful version. They finish with a short audio comparison explaining which response could help settle the disagreement.",
+          "stage": "Finding out",
+          "activity": "Conflict and emotional regulation strategies",
+          "rat": "T",
+          "why": "Hearing the same words delivered differently makes the effect of tone easier to notice and discuss.",
+          "loi": "2"
+        },
+        {
+          "t": "Book Creator",
+          "d": "Students create a short Friendship Fire comic with drawings and recorded inner thoughts for both characters. Use a fictional disagreement and keep the story to three pages: the problem, a respectful response and making amends. Allow ten minutes to check drawing and audio recording, then two 40 minute lessons. Partners read the pictures first, then tap the recordings to hear feelings that were not obvious from the dialogue. Students revise one response after listening and finish by explaining how it supports a healthier friendship.",
+          "stage": "Taking action",
+          "activity": "Friendship Fire graphic novel",
+          "rat": "T",
+          "why": "Recorded inner thoughts let readers hear two perspectives that the characters do not say aloud.",
+          "loi": "2",
+          "quote": "Create a graphic novel that features a Friendship Fire.",
+          "link": "This extends the planned graphic novel by letting readers hear both characters' unspoken perspectives."
         }
       ],
       "stem": {
-        "t": "Cardboard Chariot Repair Challenge",
-        "d": "Students build cardboard and popstick chariots for Sphero BOLT, agreeing on roles before testing the same programmed route. They ask partners for one specific improvement, then change the axle position or attachment after comparing where each chariot tips or catches. The robot repeats the route at the same speed so groups can check whether their change worked. Each group demonstrates its revised chariot and explains how it used feedback when the first design failed.",
+        "t": "Build a Steady Sphero Chariot",
+        "d": "Students build a lightweight chariot from cardboard, straws, wheels and tape for a Sphero BOLT to pull using a loose cardboard harness that does not block rolling. Allow 15 minutes to gather materials and check a short, slow programmed route with a turn, then use two 45 minute lessons. Teams test whether their chariot carries three counters through the route without spilling, keeping the robot programme unchanged. After each run, students give one kind, specific suggestion and alter one part, such as the axle position or tray sides. They compare successful deliveries before and after the change, then explain which teamwork strategy helped when the build became tricky.",
         "stage": "Going further",
         "activity": "Sphero Chariot race",
-        "rat": "A",
-        "transforms": "Repeatable robot movement makes design comparisons clearer while students practise collaboration and persistence.",
-        "quote": "Sphero challenge task, Friendship Fire story writing and our Sphero Chariot race.",
-        "link": "The planned chariot race gains repeatable tests and a clear reason to listen to a partner's design feedback."
+        "rat": "T",
+        "why": "A repeatable robot route helps students compare chariot changes while practising calm teamwork when designs fail.",
+        "quote": "During these tasks we were aiming to be... collaborators.",
+        "link": "This builds directly on the Sphero Chariot race, combining a fair design comparison with reflection on teamwork and persistence."
       }
     }
   ]
