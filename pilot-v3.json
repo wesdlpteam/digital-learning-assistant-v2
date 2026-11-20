@@ -1,6 +1,6 @@
 {
   "pilot": "v3",
-  "generatedAt": "2026-11-19T23:35:24.784Z",
+  "generatedAt": "2026-11-20T00:47:09.089Z",
   "units": [
     {
       "ca": "Glen Waverley",
@@ -67,7 +67,9 @@
           "link": "Families repeat the planned sealed bag investigation and test whether the students' instructions are clear."
         }
       ],
-      "stem": null
+      "stem": null,
+      "ci": "Observing how materials change helps us make sense of the physical world.",
+      "lo": "The observable properties of solids and liquids\nHow heating and cooling can change the state of materials\nHow scientific thinking helps us solve everyday problems"
     },
     {
       "ca": "Glen Waverley",
@@ -143,7 +145,9 @@
         "transforms": "A movement sensor gives immediate feedback while students compare and refine a physical expression model.",
         "quote": "They look into the universal facial expressions and further build their understanding on reading expressions and changing expressions to communicate feelings in various situations…",
         "link": "A movable face combines the planned exploration of facial expressions with technology that responds to movement."
-      }
+      },
+      "ci": "Creativity allows people to express their understanding of the world.",
+      "lo": "The ways people use technology to express their creativity.\nHow texts and images work together.\nHow technology influences our creativity."
     },
     {
       "ca": "Glen Waverley",
@@ -219,7 +223,9 @@
         "transforms": "learning, goals: students combine physical design and radio programs, then use communication failures to improve a working invention.",
         "quote": "Why do people invent things, and how do we design a solution for a real problem?",
         "link": "A working communication invention connects a real need with components, commands and testing."
-      }
+      },
+      "ci": "Needs and wants drive innovation.",
+      "lo": "How needs and wants lead to new inventions\nHow digital devices and networks operate\nBeing a responsible digital citizen"
     },
     {
       "ca": "Glen Waverley",
@@ -291,12 +297,16 @@
         "transforms": "Accelerometer counts make repeated sieve tests more consistent and give students evidence for changing their physical designs.",
         "quote": "Finding out: Science Investigation: Students classify and compare soil/rock samples, describing their observable properties.",
         "link": "Building and testing sieves gives students another way to compare the components found in their local soil samples."
-      }
+      },
+      "ci": "The diversity of soils, rocks, and minerals shapes the way people value and use Earth's resources.",
+      "lo": "Soils, rocks, and minerals have observable properties that make them useful in different ways.\nEarth's resources are vital for living things, including humans, and must be used responsibly.\nFirst Nations Australians have long-standing knowledge and cultural uses of soils, rocks, and minerals."
     },
     {
       "ca": "Glen Waverley",
       "yl": "Year 3",
       "th": "Where We Are in Place and Time",
+      "ci": "Land and place are represented and valued in different ways.",
+      "lo": "How Australia and its neighbouring regions define places\nFirst Nations Australians have deep and ongoing connections to Country, which are spiritual, cultural, and environmental.\nPlaces can be understood and valued in different ways, depending on cultural and historical perspectives.",
       "builtFrom": {
         "ci": "Land and place are represented and valued in different ways.",
         "lo": "How Australia and neighbouring regions define places; Australia's states/territories have unique identities; First Nations connections to Country"
@@ -304,141 +314,143 @@
       "s": [
         {
           "t": "Microsoft Forms",
-          "d": "Students build self-marking quizzes that ask a buddy class to match Australian states and territories with their capitals and location clues. This makes them check how accurately their questions describe places, rather than simply name them. The teacher prepares one sample quiz and assesses the accuracy of the questions and answer feedback. Buddy students try the quizzes, report misleading clues, and retest the revised versions.",
-          "stage": "Finding out",
-          "activity": "States, territories and capital cities",
+          "d": "Students write automatically marked compass-direction questions about Australia and its Asian neighbours in a quiz template prepared by the teacher. Each answer explanation names the countries and explains their relative positions. A buddy class completes the quiz, then flags questions whose wording or answer feedback caused confusion. Students repair those questions using response results, and the teacher assesses geographic accuracy and whether the revised quiz works.",
+          "stage": "Sorting out",
+          "activity": "Australia and its Asian neighbours",
           "rat": "T",
-          "transforms": "learning, goals: Students apply geography to tested quizzes; assessment shifts from naming places to evaluating questions and feedback.",
-          "loi": "2",
-          "quote": "States, territories and capital cities of Australia. Give the students a blank map of Australia",
-          "link": "The blank map check becomes the starting point for questions that test another class's knowledge of Australia."
+          "transforms": "methods, learning, goals: Students create and test a geographic quiz, using response evidence to improve a product assessed for accuracy and usability.",
+          "loi": "1",
+          "quote": "Learn about where they are situated in relation to Australia.",
+          "link": "Builds on compass revision by asking another class to test student-written questions about neighbouring countries."
         },
         {
-          "t": "Clickview",
-          "d": "Students pause and replay a teacher-selected, community-endorsed First Nations video to identify how its speakers describe their own connections to Country. They compare an early prediction with the speakers' actual explanations, keeping the Nation or community named in the source clear. Partners choose a short section that changed their thinking and explain why it matters. Their final contribution is an evidence-based spoken comparison supported by replaying that section.",
-          "stage": "Sorting out",
-          "activity": "First Nations connections to Country",
+          "t": "Padlet",
+          "d": "Students sort observations and questions beside teacher-posted images of the collection of artefacts. For First Nations items, the teacher includes community-endorsed descriptions that identify their source and cultural context. Pairs revisit their posts after reading these descriptions, separating what they noticed from what they assumed. The board keeps their original questions beside their revised thinking.",
+          "stage": "Tuning in",
+          "activity": "Observing artefacts and asking questions",
           "rat": "A",
-          "transforms": "Pausing and replaying strengthen evidence-based interpretation, without creating something others use to test their understanding.",
-          "loi": "3",
-          "quote": "What connections do First Australians have to Country and Place?",
-          "link": "First Nations speakers' own explanations provide evidence for the planned discussion of Country and Place."
+          "transforms": "Keeping original and revised posts supports reflection, but observation and questioning remain the same learning practice.",
+          "loi": "2",
+          "quote": "Tuning in/Provocations Tuning in 1 - get a collection of artefacts, photos, dot paintings, stuff from TI Learning Asian/Pacific neighbours.",
+          "link": "Extends the planned observation and sticky note questions with source information and revisable responses."
         },
         {
           "t": "Book Creator",
-          "d": "Students create a linked book where families choose actions for visiting an Australian place and tap through to explanations of their consequences. This puts their reasons for respecting that place into practical choices. The teacher prepares a short page-linking example and assesses whether each choice and explanation is accurate. Families test different routes through the book and report unclear advice, leaving students with a revised visitor guide.",
+          "d": "Students build a linked guide that lets readers choose how to show respect for an Australian place, using a page template prepared by the teacher. Advice comes from checked sources, with community-endorsed First Nations guidance where relevant. Younger students follow the page links to make choices and report any advice they cannot understand or follow. The teacher assesses the revised guide's accuracy and usefulness, including how students repaired confusing choices.",
           "stage": "Going further",
           "activity": "Showing respect for an Australian place",
           "rat": "T",
-          "transforms": "learning, goals: Families test practical choices; students revise their advice, and assessment targets accurate choices and consequences.",
-          "loi": "2",
+          "transforms": "methods, learning, goals: Readers test a choice-based guide; students revise its advice and navigation, assessed for practical usefulness as well as accuracy.",
+          "loi": "3",
           "quote": "Choose a place or feature of Australia and write and how and why people could show respect for it.",
-          "link": "The planned writing becomes a guide families can test by making choices about respecting a place."
+          "link": "Turns the planned writing about respect into a guide that younger readers actually use."
         },
         {
-          "t": "Bloxels",
-          "d": "Students build a screen-based game with labelled destinations arranged to represent Australia and selected Asian neighbours, using compass clues to direct players. Their game must show relative direction accurately, without pretending its distances are to scale. The teacher prepares one example destination and assesses the geographical layout and clues. A buddy class plays, reports destinations reached through misleading directions, and tests the corrected game.",
-          "stage": "Sorting out",
-          "activity": "Compass points and Australia's neighbours",
+          "t": "Seesaw",
+          "d": "Students annotate their original world maps in a new colour and add a recorded direction challenge in a task prepared by the teacher. Their challenges require families to locate Australia and its neighbours using the new map information. Families submit their answers and identify unclear labels or directions through Seesaw. Students revise the maps, and the teacher assesses both geographic corrections and whether families could use their representations accurately.",
+          "stage": "Making conclusions",
+          "activity": "Adding new learning to world maps",
           "rat": "T",
-          "transforms": "learning, goals: Students apply compass knowledge in a playable game, use testers' evidence, and receive assessment on geographical accuracy.",
-          "loi": "1",
-          "quote": "Revise the points of the compass. Talk Inquisitive lesson 2 about our Asian neighbours.",
-          "link": "The compass revision becomes a playable test of where neighbouring countries sit in relation to Australia."
+          "transforms": "methods, learning, goals: Families use maps to solve challenges; students revise from results, and assessment now includes how effectively representations guide users.",
+          "loi": "1"
         },
         {
-          "t": "Google Maps",
-          "d": "Students investigate an Australian river boundary and a straight political boundary using the map, satellite imagery and available Street View. They compare what each view reveals about how people divide and represent places. Partners take turns directing the viewing, explaining where they would place a boundary and pointing to visible evidence. They finish with a live screen-based explanation that switches between views to support their comparison.",
-          "stage": "Sorting out",
-          "activity": "Natural and man made boundaries",
+          "t": "Freeform",
+          "d": "Students sketch a favourite school place on a shared board and add a note explaining why it matters to them. Different sketches show how the same place can hold different meanings. Partners move similar reasons together, then ask classmates before moving any that seem unclear. The finished board groups places by what students value, rather than simply where they are.",
+          "stage": "Tuning in",
+          "activity": "A favourite place at school",
           "rat": "A",
-          "transforms": "Switching views strengthens evidence and comparison, but students do not create an application that others use and evaluate.",
-          "loi": "1"
+          "transforms": "Shared sketches and movable notes make comparing personal meanings easier without changing the underlying learning task.",
+          "loi": "3"
         }
       ],
       "stem": {
-        "t": "Cardboard Coast and Border Routes",
-        "d": "Students build two cardboard route models of an Australian place, using folded card rivers and popstick fences to compare natural and human-made boundaries. They program a Sphero BOLT through each model, using its actual travel to identify gaps too narrow for the planned route. After a buddy group tests both routes, students widen crossings or move barriers and retest their programs. They demonstrate two working routes and explain how each model represents boundaries differently.",
+        "t": "Two Maps, One Robot Route",
+        "d": "Students build two cardboard maps of the same Australian area, using string for political boundaries and raised paper for natural features. They program a Sphero BOLT to follow the same planned route on each map, comparing which features affect travel and which are simply drawn lines. After testing, they adjust spacing and feature placement so the robot route matches their intended representation. They demonstrate both versions and explain where their models simplify the real place.",
         "stage": "Sorting out",
-        "activity": "Natural and man made boundaries",
+        "activity": "Natural and human-made boundaries",
         "rat": "A",
-        "transforms": "Programmed movement makes route problems visible and supports repeated testing of physical boundary models."
+        "transforms": "Programmed travel provides repeatable tests that inform revisions to two physical map representations.",
+        "quote": "what are some of the natural and man Museum Vic resources can made borders/boundaries in Australia and support this inquiry the region?",
+        "link": "Builds on the boundary investigation by comparing two physical representations of the same place through robot navigation."
       }
     },
     {
       "ca": "Glen Waverley",
       "yl": "Year 3",
       "th": "Who We Are",
+      "ci": "Strategies support healthy relationships and personal growth.",
+      "lo": "How our words, actions and choices affect others\nWays we can solve problems and manage conflict respectfully\nWhy is it important to listen to feedback and use it to grow\nWhat helps us keep going when things get tricky",
       "builtFrom": {
         "ci": "The choices and actions we make contribute to our health and wellbeing.",
         "lo": "What it means to be healthy; Choices and their impact on health; Actions to maintain a healthy mind and body"
       },
       "s": [
         {
-          "t": "Microsoft Excel",
-          "d": "Students enter anonymous group tallies of helpful teamwork choices after creating music, then build charts comparing groups' experiences. They investigate which choices supported participation and enjoyment without ranking individual students. The teacher prepares a small table, then the music teacher uses the charts to choose one teamwork routine to trial next lesson. Students add the next results to their chart, and the teacher assesses whether their recommendation matches the evidence.",
-          "stage": "Making conclusions",
-          "activity": "Group music reflection",
+          "t": "Seesaw",
+          "d": "Students draw and record a short square-breathing guide with pauses that families can follow at home. The teacher prepares one family activity asking whether the pacing is comfortable and the instructions are clear. Families try the guide and return a response explaining where they needed more time or clearer directions. Students rerecord those sections, and the teacher assesses whether someone can follow the revised breathing guide.",
+          "stage": "Taking action",
+          "activity": "Emotional regulation strategies",
           "rat": "T",
-          "transforms": "methods, learning, goals: The music teacher uses student evidence to trial a routine; students evaluate results and justify recommendations.",
-          "loi": "2",
-          "quote": "Students were required to reflect on their group experience, and consider which choices were important for their group to succeed.",
-          "link": "The group reflection supplies evidence for choosing and checking a teamwork routine during music."
+          "transforms": "methods, learning, goals: Families use and evaluate student-created breathing guides; students revise them and are assessed on whether others can follow.",
+          "loi": "4",
+          "quote": "Lesson 4: Emotional Regulation - the key to resilience & good friendships…",
+          "link": "The emotional regulation lesson becomes a paced guide that families try and help students improve."
         },
         {
-          "t": "GarageBand",
-          "d": "Students compose a short group piece using software instruments, with each member contributing a musical part. They practise the cooperation and persistence already discussed as choices that affect group enjoyment. Groups save an initial version, change one section after listening together and compare both versions. They finish with a piece whose separate tracks make everyone's contribution easy to hear.",
-          "stage": "Going further",
-          "activity": "Creating music together",
+          "t": "Adobe Express",
+          "d": "Students arrange illustrated comic panels showing a Friendship Fire and a respectful attempt to resolve it. Editable speech bubbles let them compare how different wording changes the exchange. A partner reads a duplicate version with the final panel removed and suggests a likely consequence before checking the original ending. Students revise unclear dialogue and finish with a comic whose ending follows from the characters' choices.",
+          "stage": "Taking action",
+          "activity": "Friendship Fire graphic novel",
           "rat": "A",
-          "transforms": "Tracks and saved versions support revision and comparison within the existing group music task.",
-          "loi": "3",
-          "quote": "Music - In music, students practised working in small groups to create music together.",
-          "link": "Separate musical tracks make contributions and revisions easier to hear during the existing group composition task."
+          "transforms": "Editable panels and partner predictions improve the planned comic; readers do not test a usable conflict-resolution resource.",
+          "loi": "1",
+          "quote": "Create a graphic novel that features a Friendship Fire.",
+          "link": "Editable panels let students test whether the dialogue and consequences in their planned graphic novel fit together."
         },
         {
           "t": "Microsoft Forms",
-          "d": "Students write a branching quiz where choices in Friendship Fire scenarios lead to different responses and explanations. This makes them consider how words and actions affect emotional wellbeing. The teacher prepares one branching example, then a buddy class tries the quizzes and reports any advice that seems unkind or unclear. Students revise their quizzes, and the teacher assesses whether each pathway gives safe, respectful advice.",
-          "stage": "Sorting out",
+          "d": "Students write a branching questionnaire where choices lead to different responses to a Friendship Fire. The teacher prepares one branching example showing how respectful choices can change what happens next. A buddy class tries the questionnaires and reports any response that feels unhelpful or unfair. Students revise their branches, and the teacher assesses whether the advice fits each conflict.",
+          "stage": "Going further",
           "activity": "Friendship Fire scenarios",
           "rat": "T",
-          "transforms": "learning, goals: Students apply friendship strategies in branching advice, revise after testing, and are assessed on safe pathways.",
+          "transforms": "methods, learning, goals: Students create conflict advice that others test for fairness; assessment focuses on whether revised advice fits each situation.",
           "loi": "2",
-          "quote": "Read all six scenarios and then select two to write about.",
+          "quote": "Can you sort out these Friendship Fires? Read all six scenarios and then select two to write about.",
           "link": "The written scenario responses become choices that a buddy class can try and check."
         },
         {
           "t": "Book Creator",
-          "d": "Students build a linked digital book where readers choose what to say next when making amends. Each choice shows how a response might support or hurt someone's wellbeing. The teacher prepares a book with two linked pages, then younger students follow the finished pathways and identify confusing choices. Students correct their books, and the teacher assesses the explanations behind the different endings.",
-          "stage": "Going further",
-          "activity": "Making amends",
+          "d": "Students create a Friendship Fire comic with page links that let readers choose what a character does next. The teacher prepares a three-page linked example showing how words can change a friendship problem. Younger students follow different routes and identify endings where the problem remains unresolved. The teacher assesses the consequences students wrote, and students repair confusing choices in their interactive comics.",
+          "stage": "Taking action",
+          "activity": "Friendship Fire graphic novel",
           "rat": "T",
-          "transforms": "learning, goals: Younger readers test usable choices; students revise pathways and explain the consequences assessed by the teacher.",
-          "loi": "2",
-          "quote": "Going Further Lesson 5: Making amends Practice using the sorry flow chart in pairs…",
-          "link": "The sorry flow chart becomes a book that lets younger students try different responses."
+          "transforms": "methods, learning, goals: Readers test alternative consequences, and students repair choices against an assessment of how words affect friendship problems.",
+          "loi": "1",
+          "quote": "Create a graphic novel that features a Friendship Fire.",
+          "link": "The planned graphic novel gains reader choices that test whether its friendship advice makes sense."
         },
         {
-          "t": "Padlet",
-          "d": "Students post drawings or short statements showing friendly behaviour, then sort the class responses into groups. This broadens their picture of health to include feeling safe and included. Each group finds one example that could belong in two categories and explains its choice in a comment. The finished board keeps the original ideas beside the class's agreed examples of friendly actions.",
-          "stage": "Tuning in",
-          "activity": "Belonging and being friendly",
+          "t": "GarageBand",
+          "d": "Students arrange a short piece using instrument tracks, with each group member responsible for one section. They practise the cooperation and perseverance already expected during the group music task. Another group listens while students mute individual tracks to hear where parts clash or leave space for others. Students revise the arrangement and keep both versions to compare how their teamwork changed the music.",
+          "stage": "Making conclusions",
+          "activity": "Creating music together",
           "rat": "A",
-          "transforms": "Shared posting, sorting and comments improve the existing friendly-behaviour discussion without changing its learning purpose.",
-          "loi": "1",
-          "quote": "Develop a list of things students can do to make the class friendly.",
-          "link": "The friendly class list becomes a shared collection that students can sort and discuss together."
+          "transforms": "Track controls and saved versions make musical collaboration and peer revision more effective within the existing music task.",
+          "loi": "3",
+          "quote": "Music - In music, students practised working in small groups to create music together.",
+          "link": "Separate tracks let groups hear how listening and responding to feedback improves their shared piece."
         }
       ],
       "stem": {
-        "t": "Cardboard Chariots That Stay on Track",
-        "d": "Students build two cardboard and popstick chariots for Sphero BOLT, comparing wheel spacing while keeping the programmed route and speed unchanged. Teams agree on safe testing roles, connecting their choices with physical safety and enjoyable participation. They test on a clear floor course, adjust any design that tips or drifts and repeat the same program. Each group demonstrates its revised chariot and explains how both a design change and a teamwork choice improved the test.",
+        "t": "Cardboard Chariot Repair Challenge",
+        "d": "Students build cardboard and popstick chariots for Sphero BOLT, agreeing on roles before testing the same programmed route. They ask partners for one specific improvement, then change the axle position or attachment after comparing where each chariot tips or catches. The robot repeats the route at the same speed so groups can check whether their change worked. Each group demonstrates its revised chariot and explains how it used feedback when the first design failed.",
         "stage": "Going further",
-        "activity": "Sphero chariot race",
+        "activity": "Sphero Chariot race",
         "rat": "A",
-        "transforms": "Repeatable programmed movement makes chariot comparisons more consistent while teams practise safe collaboration.",
+        "transforms": "Repeatable robot movement makes design comparisons clearer while students practise collaboration and persistence.",
         "quote": "Sphero challenge task, Friendship Fire story writing and our Sphero Chariot race.",
-        "link": "The existing chariot race becomes a fair comparison of designs alongside a practical test of safe collaboration."
+        "link": "The planned chariot race gains repeatable tests and a clear reason to listen to a partner's design feedback."
       }
     }
   ]
