@@ -106,7 +106,7 @@
       ],
       "stem": {
         "t": "Keep the Ice Cool!",
-        "d": "With about 15 minutes of preparation, set out small recycled containers, cardboard, foil, fabric scraps, tape, sealed ice packs and two Micro:bits with a simple temperature-display program loaded. Groups build an insulated cool box, then take turns comparing it with an uninsulated matching container at one shared test station. Put equal sealed ice packs and a Micro:bit inside each container, keeping the boards dry and separate from the packs, and record starting and finishing readings over the same interval. Explain that the sensors report board temperature, not the ice temperature, so students compare temperature changes as clues about the conditions inside. Students improve one part of their insulation, repeat the comparison and demonstrate whether their change kept the inside cooler.",
+        "d": "With 15 minutes of prep, set out small recycled containers, cardboard, foil, fabric scraps, tape, sealed ice packs and two Micro:bits loaded with a simple temperature display. Groups build an insulated cool box and compare it with a plain matching container at a test station, keeping the boards dry and away from the ice packs. Students improve one part of their insulation and test again to see if it kept the inside cooler.",
         "stage": "Taking action",
         "activity": "Solve everyday problems",
         "rat": "T",
@@ -147,7 +147,7 @@
         },
         {
           "t": "Book Creator",
-          "d": "A photograph can tell one story while its caption tells another. Students open Book Creator on their iPads and photograph a small arrangement of classroom objects. They place the photograph on a page, add a surprising caption and record themselves reading it with expression. Across one lesson, students show the image to a partner first, then reveal the text and play the recording. Spend five minutes checking photo and recording access beforehand. Listeners explain which detail changed their interpretation, showing whether students understand that words, images and voice contribute different clues.",
+          "d": "Students open Book Creator on their iPads, photograph a small arrangement of classroom objects, and add a caption that gives the photo a surprising twist. They record themselves reading the caption with expression, then show a partner the photo first before revealing the words and audio. Listeners explain which clue changed how they read the picture.",
           "stage": "Finding out",
           "activity": "Texts and images work together",
           "rat": "T",
@@ -162,7 +162,7 @@
         },
         {
           "t": "GarageBand",
-          "d": "Bring back the picture book image used in Music and sort its features into possible sounds. Students open GarageBand on their iPads and record two short parts using notes from their familiar pentatonic scale. They choose an instrument sound for each part, then listen to the parts separately and together. Use two lessons, with ten minutes beforehand to check recording and playback. During a final listening circle, students point to the feature each sound represents. Their explanations show whether the music communicates an image feature rather than simply sounding appealing.",
+          "d": "Bring back the picture book image from Music and pick two details to turn into sounds. Students open GarageBand on their iPads, choose an instrument for each detail and record two short parts using notes from their pentatonic scale. Play selected tracks in a listening circle so classmates can guess which part of the picture each sound represents.",
           "stage": "Sorting out",
           "activity": "Composition inspired by a picture",
           "rat": "T",
@@ -177,7 +177,7 @@
         },
         {
           "t": "Stop Motion Studio",
-          "d": "How little does a face need to change before its message changes? Pairs share an iPad with Stop Motion Studio and build a paper face with movable eyebrows and mouth. Keeping the camera steady, they photograph small adjustments to animate a neutral expression becoming surprised. Allow two lessons and ten minutes to gather paper shapes and check playback. Pairs replay the animation and adjust one movement that makes the feeling unclear. End with a silent screening where viewers identify the first visible clue, revealing how facial features work together to communicate.",
+          "d": "Pairs use an iPad in Stop Motion Studio and build a paper face with movable eyebrows and mouth. Keeping the camera steady, they take step-by-step photos to animate a neutral face turning surprised. Pairs replay their clip, adjust any jumpy frames, and share it so classmates can spot the first clue that shows the feeling.",
           "stage": "Going further",
           "activity": "Facial expression as communication",
           "rat": "T",
@@ -192,7 +192,7 @@
         },
         {
           "t": "IMovie",
-          "d": "The same closed box can seem ordinary or mysterious depending on the edit. Pairs share an iPad with IMovie and film three short shots of a hand approaching and opening a box containing a classroom object. They use the same footage to make a quick version and a version that holds longer before the reveal. Allow two lessons and ten minutes beforehand to check filming and trimming. Screen both versions and ask students to record a before-and-after claim about editing. Listen for the conclusion that timing can create tension even when the filmed event stays unchanged.",
+          "d": "The same closed box can feel ordinary or mysterious depending on the edit. Pairs share an iPad with iMovie to film three short shots of a hand approaching and opening a box, then edit a quick version and a slower version that holds before the reveal. Screen both edits so students can compare how timing builds tension.",
           "stage": "Making conclusions",
           "activity": "Analysing dramatic tension",
           "rat": "T",
@@ -207,7 +207,7 @@
         },
         {
           "t": "Seesaw",
-          "d": "Turn the class's completed artwork into a collection of short artist explanations. Each student opens their own Seesaw portfolio on their iPad, photographs their artwork and uses drawing and voice recording to point out two choices that express their view of the world. Use one lesson and five minutes beforehand to check class access and microphone recording. Classmates listen to a partner's post and leave spoken feedback about one clearly communicated idea. Finish by comparing an artwork alone with its recorded explanation, checking whether students can connect specific creative choices to intended meaning.",
+          "d": "Each student opens their own Seesaw portfolio on their iPad and photographs their finished artwork. Using the drawing and voice tools, they circle and explain two choices they made to express their view of the world. Classmates listen to a partner's post and leave a short spoken comment about one idea that stood out.",
           "stage": "Taking action",
           "activity": "Student self-assessment and peer feedback",
           "rat": "A",
@@ -223,7 +223,7 @@
       ],
       "stem": {
         "t": "Cardboard Faces That Change Their Minds",
-        "d": "Pairs build a cardboard face with a paper mouth and a window for a Micro:bit LED display, using tape, card and fabric scraps. Each pair connects a Micro:bit to an iPad with the MakeCode editor open in a web browser and codes button A and button B to display different eye patterns. They show both expressions to classmates, collect interpretations and improve one eye pattern or the mouth position to make the intended feelings clearer. Allow two lessons and 15 minutes of teacher preparation to gather materials, check connections and practise sending a two-button program. Finish with a demonstration showing how one physical face can communicate two messages through a working programmed change.",
+        "d": "Allow 15 minutes to gather cardboard, tape, fabric scraps and Micro:bits. Pairs build a cardboard face with a window for the Micro:bit LED grid, then connect a Micro:bit to an iPad in MakeCode so button A and button B show two different eye expressions. They test both faces with classmates and adjust one detail so each feeling reads clearly.",
         "stage": "Going further",
         "activity": "Facial expression as communication",
         "rat": "T",
@@ -249,7 +249,7 @@
       "s": [
         {
           "t": "Microsoft Excel",
-          "d": "Would everyone invent the same thing to improve our classroom? Pairs choose between four possible inventions, such as a quieter chair foot or an automatic pencil sorter, and discuss the need or want behind their choice. The teacher opens one shared Microsoft Excel spreadsheet on the front screen and enters the class vote counts. Create a column chart together, then watch it change as students vote again after hearing different reasons. Finish by checking the original predictions against the chart and listening for whether students recognise that people can have different needs.",
+          "d": "Pairs pick from four classroom invention ideas, such as a quieter chair foot or an automatic pencil sorter, and decide whether each is a need or a want. The teacher enters the class votes into one Microsoft Excel sheet on the front screen to build a live column chart. Watch how the chart shifts if students re-vote after hearing other reasons.",
           "stage": "Tuning in",
           "activity": "Needs and wants",
           "rat": "A",
@@ -264,13 +264,13 @@
         },
         {
           "t": "Popplet",
-          "d": "A screen, keyboard and speaker look different, but what makes them part of one system? Students open Popplet on their iPads and photograph the outside of disconnected digital items supplied through IT. They create a mind map linking each part to what it does, including receiving information, processing it or giving a result. Comparing ideas with a partner, students move pictures and reconnect lines after explaining how typing a letter leads to something appearing on screen. Finish with an unfamiliar mouse or microphone and ask where it belongs, checking that students describe its job rather than its appearance.",
+          "d": "Students open Popplet on their iPads and photograph everyday tech around the classroom, such as a screen, keyboard, speaker or iPad. They connect each photo to a short label explaining what job that part does. Pairs then compare mind maps and move or relink bubbles as they talk through how the parts work together as one system.",
           "stage": "Finding out",
           "activity": "Systems pictures",
           "rat": "A",
           "why": "Movable pictures and connecting lines help students revise their thinking about how computer parts work together rather than simply naming them.",
           "diff": {
-            "support": "Supply four component photos and use the spoken starter, 'This part helps us...'",
+            "support": "Give students four classroom items to photograph and the starter, 'This part helps us...'",
             "stretch": "Add a component that can both receive and send information, and explain why it needs two connections."
           },
           "loi": "2",
@@ -279,7 +279,7 @@
         },
         {
           "t": "FlipaClip",
-          "d": "Make the invisible journey of a digital picture visible in a short animation. After a brief class explanation, students open FlipaClip on their iPads and draw two devices connected through network equipment. Across six frames, they move a coloured message symbol from the sending device, through the connection, to the receiving device. They play the animation and record a spoken explanation that the symbol represents digital information, not a tiny photograph flying through the air. Replay selected animations to check whether students understand that sending needs a connection between devices.",
+          "d": "Students open FlipaClip on their iPads and draw two devices linked by a network connection. Across six short frames, they animate a coloured message travelling from the sender, along the connection, to the receiver. Students record a brief voice note explaining why the signal needs a real path between devices rather than floating through empty space.",
           "stage": "Sorting out",
           "activity": "Digital devices and networks",
           "rat": "T",
@@ -294,7 +294,7 @@
         },
         {
           "t": "Sphero BOLT",
-          "d": "Set a practical challenge: deliver a pretend replacement keyboard to the library on a floor map of the school. Groups of four share a Sphero BOLT and an iPad running its control app, with students rotating coding, placing, observing and recording roles. Students build a short block program using timed rolls and headings, then run it from a marked starting position. They compare the actual route with their paper plan and adjust one instruction at a time. Finish with a working delivery and an explanation of which instruction caused an earlier wrong turn, showing that the robot follows programmed directions.",
+          "d": "Students build a simple floor map of the school using paper labels for key spots like the library, classrooms and oval. In small groups with a Sphero BOLT and an iPad running the Sphero Edu app, they code the robot to travel from one landmark to another using roll and heading blocks. When the robot veers off course, groups tweak one block at a time until it reaches the target.",
           "stage": "Going further",
           "activity": "Programming a robot",
           "rat": "T",
@@ -309,7 +309,7 @@
         },
         {
           "t": "Seesaw",
-          "d": "Return to the Library discussions about safe and risky online situations. Each student opens their own Seesaw portfolio on their iPad and chooses a teacher-provided fictional message asking for a password, photo or home address. They photograph the message card and record advice explaining the risk and what the recipient should do next. After listening back, they record a second response if their advice misses a practical action, such as stopping and asking a trusted adult. Finish by comparing the first and final recordings, listening for the understanding that a friendly tone does not make sharing private information safe.",
+          "d": "Each student opens their own Seesaw portfolio on their iPad and photographs a fictional message card asking for a password, photo or address. They record spoken advice explaining the risk and what to do next, such as stopping and checking with a trusted adult. Students listen back and re-record if their advice left out a clear safe action.",
           "stage": "Making conclusions",
           "activity": "Safe internet use",
           "rat": "A",
@@ -324,7 +324,7 @@
         },
         {
           "t": "Microsoft Forms",
-          "d": "Turn the class safety advice into a short choose-your-action activity. In under 15 minutes, the teacher opens Microsoft Forms in one shared browser tab and creates a choice question with two possible routes using branching. Pairs draft a fictional group-message problem and dictate the choices and consequence text while the teacher enters one class example. Students then open the published form in a web browser on their iPads and test both routes without entering names. End by presenting the safer route and explaining why asking permission before sharing a photo protects someone else's privacy.",
+          "d": "Spend 10 minutes setting up one class Microsoft Form in a web browser with a short branching scenario based on students' online-safety rules. Pairs help draft two possible responses and consequences for the class form, then students open the published link on their iPads to test both routes without entering names. Discuss why the safer choice protects everyone.",
           "stage": "Taking action",
           "activity": "Responsible online behavior",
           "rat": "T",
@@ -340,7 +340,7 @@
       ],
       "stem": {
         "t": "Beat the Glare!",
-        "d": "Can a tiny cardboard shade reduce glare at a model classroom window? Groups of four build a window frame and adjustable shade using recycled cardboard, fabric scraps, tape and popsticks. Allow 15 minutes of teacher preparation to gather materials and load each shared Micro:bit with a simple program that displays its light reading. Students place the Micro:bit in the same marked position behind each shade, keep the lamp position fixed and record three readings with the shade open and closed. They improve one part of the shade, retest it and demonstrate whether their change reduces the light reaching the sensor.",
+        "d": "Allow 15 minutes to gather cardboard, fabric scraps, tape and popsticks, and load each Micro:bit with a simple light-reading display. Groups of four build a model window frame with an adjustable shade and record three Micro:bit readings with the shade open and closed. They adjust one part of the shade and test again to see if it cuts more glare.",
         "stage": "Going further",
         "activity": "Design a solution",
         "rat": "T",
@@ -396,7 +396,7 @@
         },
         {
           "t": "Google Maps",
-          "d": "Start with two coastal places, one in Australia and one in Indonesia, selected in ten minutes beforehand. Students open Google Maps in a web browser on their iPads without signing in. Working side by side with a partner, they zoom between country and local views, then inspect available Street View scenes for exposed rock, vegetation, farms and buildings. They sort observations into a paper Venn diagram, separating visible evidence from questions about soil or climate. End by asking which claims need another source, making it clear that a landscape image cannot establish soil fertility.",
+          "d": "Choose two coastal places beforehand, one in Australia and one in Indonesia. Students open the Google Maps app on their iPads (no sign-in needed) and explore Street View scenes to spot rock, plants, farms and buildings. Working alongside a partner, they sort what they can see into a paper Venn diagram and note one question they would need another source to answer.",
           "stage": "Sorting out",
           "activity": "Comparing natural features",
           "rat": "A",
@@ -410,23 +410,23 @@
           "link": "This gives the planned comparison a shared base of visible landscape evidence before students make broader claims."
         },
         {
-          "t": "Clickview",
-          "d": "Use one shared front-screen browser showing a short Clickview video featuring a First Nations voice discussing ochre, stone or clay. Allow fifteen minutes beforehand to locate and check a community-endorsed source and its suitability. Students listen once, then request pauses and replays to hear the speaker's explanation accurately. Pairs record on paper what resource is discussed, how it is used and whose knowledge is being shared. Finish with spoken explanations that distinguish a material's practical use from the cultural value described by the speaker.",
+          "t": "Book Creator",
+          "d": "After exploring a class First Nations resource about ochre, stone or clay, students open Book Creator on their iPads to make one short page. They add a photo or drawing of the natural material, label how it is used, and record a short voice note explaining why that knowledge matters and acknowledging whose knowledge it is. Share a few pages together to discuss both practical uses and cultural value.",
           "stage": "Going further",
           "activity": "Cultural knowledge",
           "rat": "A",
-          "why": "Pausing and replaying a First Nations speaker's explanation helps students listen carefully and distinguish cultural meaning from their own assumptions.",
+          "why": "Pairing images with a recorded voice note lets students explain First Nations uses of natural materials carefully in their own words.",
           "diff": {
-            "support": "Provide three listening prompts: the resource, its use and what the speaker says makes it important.",
-            "stretch": "Identify a question the source does not answer and suggest an appropriate source for further learning."
+            "support": "Provide three clear prompts for the voice note: the material, how it is used, and why it is valued.",
+            "stretch": "Add a second voice note naming one question you would still like to learn from a First Nations source."
           },
           "loi": "3",
           "quote": "Cultural Knowledge: Students explain how First Nations Australians use a particular rock, mineral, or soil resource and reflect on its value.",
-          "link": "This grounds the cultural knowledge task in First Nations explanations rather than asking students to invent meanings or practices."
+          "link": "This gives students a clear, respectful way to record what they learn from class First Nations resources about ochre, stone or soil."
         },
         {
           "t": "Minecraft Education",
-          "d": "Students open Minecraft Education on their iPads and start a new Creative world, allowing ten minutes for setup. They build a small cutaway landscape showing soil, rock, plants and a place where people collect a resource. Students add a walkable route so classmates can explore both the surface and the layers below. Each student then changes one design choice to protect soil or vegetation while keeping access to the resource. During a guided walkthrough with a partner, students explain the connections their model represents, rather than treating the game's resource rules as scientific evidence.",
+          "d": "Students open Minecraft Education on their iPads and start a new world in Creative mode. They build a small cutaway landscape showing soil, rock, plants and a spot where people gather a natural resource, with a path classmates can walk through. Each student then changes one design choice to protect soil or plants and explains the trade-off to a partner.",
           "stage": "Making conclusions",
           "activity": "Resources for living things",
           "rat": "T",
@@ -441,7 +441,7 @@
         },
         {
           "t": "Canva",
-          "d": "Turn the school-ground observations into one small action that protects soil, such as keeping feet on an existing path. Students open Canva in a web browser on their iPads, with five minutes needed to check access. They capture a short demonstration using Canva's recording tools and add a spoken explanation of the problem and action. Keep the finished video under thirty seconds and play examples on the classroom screen before trying the action outside. Finish by collecting fresh observations of the chosen spot so students can distinguish evidence of improvement from a hopeful prediction.",
+          "d": "Students open the Canva app on their iPads to turn their school-ground observations into a short 30-second video about one small way to protect soil, such as sticking to paths. They record a quick clip and voiceover showing the spot, the problem and their suggested action. Play a few clips for the class before testing the action outside.",
           "stage": "Taking action",
           "activity": "Use resources responsibly",
           "rat": "A",
@@ -457,7 +457,7 @@
       ],
       "stem": {
         "t": "Build a Soil-Saving Bridge",
-        "d": "Can a bridge keep a delivery route away from a garden's soil? In groups of four, students use cardboard, popsticks, tape and recycled containers to build a low bridge over a paper garden bed, with ten minutes of teacher preparation. Groups share a Sphero BOLT and a device running its controls, programming a slow, straight crossing with the same starting position each time. Students observe sagging, slipping or falls, improve one part and run three further crossings on a clear floor. Each group demonstrates its working fix and explains how real paths or bridges can reduce trampling, while recognising that their model tests the structure rather than real soil damage.",
+        "d": "Allow 10 minutes to gather cardboard, popsticks, tape and recycled containers. Groups of four build a low bridge over a paper garden bed, then share a Sphero BOLT and an iPad to code a slow, straight crossing from the same start point. When the bridge sags or a wheel slips, groups strengthen one part and run three steady crossings.",
         "stage": "Taking action",
         "activity": "Use resources responsibly",
         "rat": "T",
@@ -483,7 +483,7 @@
       "s": [
         {
           "t": "Padlet",
-          "d": "Can the same school place feel peaceful to one student and boring to another? Students open a teacher-prepared Padlet in a web browser on their iPads. Each student photographs a favourite school place without people, uploads it to the class board and records a short audio explanation of why that place matters. Back inside, play contrasting recordings beside the photographs so students can identify how personal experiences change the value of a place.",
+          "d": "Students open a teacher-prepared board in the Padlet app on their iPads. Each student photographs a favourite school spot (with no people in frame), posts it to the class board and records a short voice note explaining why that place matters to them. Back inside, play contrasting clips beside the photos to see how different people experience the same place.",
           "stage": "Tuning in",
           "activity": "A favourite place",
           "rat": "A",
@@ -498,7 +498,7 @@
         },
         {
           "t": "Google Maps",
-          "d": "Which neighbouring places look close on a map but feel very different at street level? The teacher opens Google Maps in one browser tab on the front screen, with no student login needed. Students predict compass directions from Australia to Indonesia and New Zealand on paper. Direct the teacher to zoom out, check directions, then explore teacher-checked Street View locations in both countries. Students sketch one observed feature beside each destination and explain the difference between a map symbol and a street-level view.",
+          "d": "Students open the Google Maps app on their iPads (no sign-in needed) after predicting compass directions from Australia to Indonesia and New Zealand. They zoom out to check directions, then drop into Street View in both countries to sketch one real detail beside each label. Compare their sketches to see what street-level views show that flat map symbols hide.",
           "stage": "Finding out",
           "activity": "Learning about Australia's neighbours",
           "rat": "T",
@@ -512,23 +512,23 @@
           "link": "This builds on locating Australia's neighbours and revising compass directions."
         },
         {
-          "t": "Clickview",
-          "d": "Begin with the planner's question about the difference between space and place. The teacher uses one shared Clickview browser tab to show a short, teacher-selected, community-endorsed video featuring a First Nations speaker discussing Country. Students listen, then suggest moments to pause and replay. Pairs sort their paper notes under spiritual, cultural and environmental connections, allowing overlap. Finish by replaying one passage while students explain how it shows an ongoing connection, rather than something belonging only to the past.",
+          "t": "Popplet",
+          "d": "Using stories and resources shared in class about First Nations connections to Country, students open Popplet on their iPads to sort ideas into three colour-coded groups: caring for land, belonging, and living culture today. They link examples that fit more than one group, then compare maps with a partner to explain why Country means much more than a place on a map.",
           "stage": "Sorting out",
           "activity": "Connections to Country and Place",
           "rat": "A",
-          "why": "Pausing and replaying a First Nations speaker lets students check their interpretations against the speaker's own words.",
+          "why": "Colour-coded bubbles help students see how spiritual, cultural and environmental connections to Country overlap rather than sitting in separate boxes.",
           "diff": {
-            "support": "Give students three listening prompts: caring for Country, belonging, and connections continuing today.",
-            "stretch": "Identify a statement that challenges the idea that Country means only land, and explain the evidence."
+            "support": "Start with the three group headings already placed in Popplet so students can focus on adding examples.",
+            "stretch": "Draw linking lines between examples that belong in two groups and explain the connection aloud."
           },
           "loi": "2",
           "quote": "What connections do First Australians have to Country and Place?",
-          "link": "This centres a First Nations voice while students explore the planner's distinction between space, place and Country."
+          "link": "This helps students organise what they learn from class First Nations resources around the planner's question about Country and Place."
         },
         {
           "t": "Minecraft Education",
-          "d": "Turn the planner's writing about respect into a small design students can walk through. Students open Minecraft Education on their iPads and start a flat Creative world. They model a small coastal dune area, then build a visitor path and lookout that avoid the vegetation. Each student walks their route in first-person view, checks sightlines and fixes one tempting shortcut. Finish with a partner walkthrough explaining whose needs the design serves and how it protects the place.",
+          "d": "Students open Minecraft Education on their iPads and start a flat world in Creative mode to model a small coastal dune area. They build a visitor path and lookout that keeps people off the fragile plants, then walk the route in first-person view to spot and block tempting shortcuts. Pairs share a quick walkthrough explaining how their design protects the area.",
           "stage": "Going further",
           "activity": "Show respect for a place",
           "rat": "T",
@@ -543,7 +543,7 @@
         },
         {
           "t": "National Geographic MapMaker",
-          "d": "Does a place look separate or connected when you zoom out? Students open National Geographic MapMaker in a web browser on their iPads, beside their original world maps. They predict which neighbouring countries are closest to Australia, then zoom out to locate them and zoom in to inspect the water between them. Students trace coastlines onscreen with a finger and compare these with country boundaries. They add corrections and new learning to their original maps in a different colour. Finish with students pointing to evidence for one corrected claim, revealing whether they distinguish a coastline from a country boundary.",
+          "d": "Students open National Geographic MapMaker in a web browser on their iPads beside their original world maps. After predicting which countries sit closest to Australia, they zoom out to locate them and zoom in to compare coastlines against country borders. Students add corrections to their paper maps in a new colour and share one surprise with a partner.",
           "stage": "Making conclusions",
           "activity": "Add new learning to world map",
           "rat": "T",
@@ -558,7 +558,7 @@
         },
         {
           "t": "GarageBand",
-          "d": "After the holiday, invite students to choose a place they visited, including somewhere close to home. Students open GarageBand on their iPads and record two short spoken memories on separate audio tracks. They describe something they actually noticed and why it mattered to them. Students trim long pauses and arrange the recordings one after another so the contrast is clear. Play selected recordings in class, then agree on one practical action for caring for a similar local place.",
+          "d": "Invite students to pick a place they have visited, including somewhere close to home. In GarageBand on their iPads, they record two short voice clips on separate tracks: one describing what they noticed there, and one explaining why that place mattered to them. Students trim long pauses, play selected recordings for the class, and agree on one simple way to care for a similar local place.",
           "stage": "Taking action",
           "activity": "Where they went",
           "rat": "A",
@@ -574,7 +574,7 @@
       ],
       "stem": {
         "t": "Build a Dune-Safe Visitor Route",
-        "d": "Allow 10 minutes to gather cardboard, fabric scraps, popsticks and tape, and set out Sphero BOLT robots with their control devices ready. Groups of four build a tabletop-scale dune visitor route on the floor, using fabric for vegetation and cardboard for barriers. Students share one control device per group to code BOLT along the path, checking whether it touches barriers or crosses protected patches. They adjust one bend or barrier and repeat the same program three times to compare reliability. Finish by demonstrating the improved route and explaining how its boundaries guide visitors while protecting the dune.",
+        "d": "Allow 10 minutes to gather cardboard, fabric scraps, popsticks and tape, and set out Sphero BOLT robots with their control iPads. Groups of four build a tabletop dune route on the floor using fabric for plants and cardboard for barriers, then code BOLT along the path. When it clips a barrier, groups tweak a bend and test three clean runs.",
         "stage": "Going further",
         "activity": "Show respect for a place",
         "rat": "T",
@@ -660,20 +660,20 @@
         },
         {
           "t": "Canva",
-          "d": "Return to the planner's Colour Symbol Image response using Canva on students' iPads. Each student makes a simple visual response to the central idea and explains it aloud to a partner. Students duplicate their page before receiving one specific comment about how clearly it shows a relationship strategy. They revise the copy and present both versions side by side to a small group. Their final explanation names the feedback they used and shows whether they understand that useful feedback improves meaning, not just appearance.",
+          "d": "Students open the Canva app on their iPads to build a Colour, Symbol, Image page for the unit. They pick a background colour, a simple icon and an image that show what they have learned about healthy friendships, then add a short caption or voice note explaining each choice. Pairs swap iPads to see if their partner can read the message in their choices.",
           "stage": "Making conclusions",
           "activity": "Colour Symbol Image",
           "rat": "A",
           "why": "Keeping an original beside a revised explanation makes the effect of specific feedback visible and easy to discuss.",
           "diff": {
-            "support": "Provide the spoken starter, \"My symbol shows this strategy because...\" and a choice of three familiar strategies.",
-            "stretch": "Identify feedback you chose not to use and explain why it would weaken your message."
+            "support": "Offer three friendship strategies to choose from and the starter, 'I chose this symbol because...'",
+            "stretch": "Add one extra note explaining how your symbol or colour would change during a tricky disagreement."
           },
           "loi": "3"
         },
         {
           "t": "Adobe Express",
-          "d": "Bring the planned Friendship Fire graphic novel to life as a short narrated comic in Adobe Express. Students open Adobe Express in a web browser on their iPads, using three scenes with drawings or supplied images. They add speech bubbles for what fictional characters say and record narration for thoughts the other character cannot hear. Students show the finished sequence to a small group, who identify the respectful strategy and its effect. End by asking whether the solution repairs the harm or merely stops the argument, using the comic as evidence.",
+          "d": "Students open the Adobe Express app on their iPads to turn their Friendship Fire graphic novel into a short three-scene narrated comic. Using drawings or supplied images, they add speech bubbles for what characters say aloud and record voiceovers for what the other character is thinking. Small groups watch each comic and point out the respectful strategy that helped repair the friendship.",
           "stage": "Taking action",
           "activity": "Friendship Fire graphic novel",
           "rat": "T",
@@ -689,7 +689,7 @@
       ],
       "stem": {
         "t": "Cardboard Chariots That Stay Together",
-        "d": "Spend about ten minutes gathering cardboard, tape, straws and popsticks, and marking a short floor route with a wide turn. Groups of four build a lightweight chariot for Sphero BOLT to pull, carrying a small paper passenger. Each group shares an iPad with the robot's control app open and drives the route at the same speed setting for each trial. Students record where the passenger falls or the chariot tips, listen to one specific design suggestion and rebuild one part. Finish with another trial and a spoken comparison showing how respectful feedback and persistence improved the design.",
+        "d": "Allow 10 minutes to gather cardboard, tape, straws and popsticks, and mark a short floor route with a wide turn. Groups of four build a lightweight chariot carrying a paper passenger for Sphero BOLT to pull, using a shared control iPad at one steady speed. After each run, groups fix one weak spot and test again to show how feedback improved the build.",
         "stage": "Going further",
         "activity": "Sphero Chariot race",
         "rat": "T",
