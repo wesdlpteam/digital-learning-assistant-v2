@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Wesley Digital Learning Assistant</title>
-<script>window.APP_VERSION='2026-11-25-1';</script>  <!-- bump on every deploy so open tabs auto-refresh -->
+<script>window.APP_VERSION='2026-11-25-2';</script>  <!-- bump on every deploy so open tabs auto-refresh -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23111111'/%3E%3Cpolygon points='19,3 10,17 15,17 13,29 22,15 17,15' fill='%23CDEB45'/%3E%3Ccircle cx='6' cy='6' r='2' fill='%23CDEB45' opacity='0.5'/%3E%3Ccircle cx='26' cy='26' r='2' fill='%23CDEB45' opacity='0.5'/%3E%3Ccircle cx='26' cy='6' r='1.5' fill='%237ED957' opacity='0.6'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -473,16 +473,19 @@ function applyPilotV3_(data,pilot){
     var pu=byKey[[u.ca,u.yl,u.th].join('|')];
     if(!pu||!Array.isArray(u.s))return u;
     if(normCiLo_(pu.builtFrom.ci)!==normCiLo_(u.ci)||normCiLo_(pu.builtFrom.lo)!==normCiLo_(u.lo))return u;
-    var s=pu.s.slice(0,5),used={};
+    var target=pu.s.length>=6?6:5;
+    var s=pu.s.slice(0,target),used={};
     s.forEach(function(x){used[x.t]=1;});
-    for(var i=0;i<5&&s.length<5;i++){
+    for(var i=0;i<5&&s.length<target;i++){
       var l=u.s[i];
       if(l&&!used[l.t]){s.push(l);used[l.t]=1;}
     }
-    if(s.length<5)return u; // STEM must only ever sit at index 5
+    if(s.length<5)return u; // STEM must only ever sit at index 5 or higher
+    var stemIdx=s.length;
     var stem=pu.stem||u.s[5]||null;
     if(stem)s.push(stem);
-    var patch={s:s,_pilot:{stem:!!pu.stem}};
+    var pMeta=stemIdx>5?{stem:!!pu.stem,n:stemIdx}:{stem:!!pu.stem};
+    var patch={s:s,_pilot:pMeta};
     if(typeof pu.ci==='string'&&pu.ci.trim())patch.ci=pu.ci;
     if(typeof pu.lo==='string'&&pu.lo.trim())patch.lo=pu.lo;
     return Object.assign({},u,patch);
@@ -1855,8 +1858,9 @@ if(u.lo && String(u.lo).trim()){
 }
 
 var curList=u.s;
-var mainSugs=curList.slice(0,5);
-var stemSug=curList.length>=6?curList[5]:null;
+var _mainN=(u._pilot&&u._pilot.n)||5;
+var mainSugs=curList.slice(0,_mainN);
+var stemSug=curList.length>_mainN?curList[_mainN]:null;
 window._copilotData=[];
 window._plannerFits=[];
 if(u._pilot){h+='<div class="sg-pilot-note">Pilot: these ideas are drawn from your 2026 planner</div>';}
