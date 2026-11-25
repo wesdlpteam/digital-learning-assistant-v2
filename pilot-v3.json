@@ -15,7 +15,7 @@
       "s": [
         {
           "t": "Teachable Machine",
-          "d": "Can a computer tell a solid from a liquid just by looking? Run one shared Teachable Machine image project in a web browser on the front screen, keeping faces out of view. Students help collect webcam examples of solids and liquids in clear containers for two labelled groups, then train the model. Test unfamiliar examples, including water and a clear solid plastic block, and compare its guesses with observations of shape and pouring. Finish by hearing students explain why appearance alone cannot reliably identify a material's state.",
+          "d": "Can a computer tell a solid from a liquid just by looking? Open Teachable Machine in a browser on the front screen (or an iPad mirrored to the board) and use the iPad camera, keeping faces out of view, to collect photo examples of solids and liquids in clear containers for two labelled groups. Train the model, then test tricky items like water and a clear plastic block and compare its guesses with what students notice about shape and pouring.",
           "stage": "Tuning in",
           "activity": "Properties of solids and liquids",
           "rat": "T",
