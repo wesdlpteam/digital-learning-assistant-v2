@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Wesley Digital Learning Assistant</title>
-<script>window.APP_VERSION='2026-11-26-1';</script>  <!-- bump on every deploy so open tabs auto-refresh -->
+<script>window.APP_VERSION='2026-11-26-2';</script>  <!-- bump on every deploy so open tabs auto-refresh -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23111111'/%3E%3Cpolygon points='19,3 10,17 15,17 13,29 22,15 17,15' fill='%23CDEB45'/%3E%3Ccircle cx='6' cy='6' r='2' fill='%23CDEB45' opacity='0.5'/%3E%3Ccircle cx='26' cy='26' r='2' fill='%23CDEB45' opacity='0.5'/%3E%3Ccircle cx='26' cy='6' r='1.5' fill='%237ED957' opacity='0.6'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,16 +31,15 @@ button{font-family:inherit;cursor:pointer}
 button.c5-crumb:hover{color:#FFF;text-decoration:underline;text-underline-offset:4px}
 .c5-crumb[aria-current="page"]{color:#FFF;cursor:default}
 .c5-crumb-sep{color:#465063}
-.c5-unit-tabs{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
-.c5-unit-tab{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:10px;border:1px solid #262C36;background:#13161B;color:#CBD2DC;font-size:12.5px;font-weight:600;transition:border-color .14s,background .14s,color .14s}
+.c5-unit-tabs{display:flex;gap:5px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-top:10px;padding-bottom:2px}
+.c5-unit-tabs::-webkit-scrollbar{display:none}
+.c5-unit-tab{flex:0 0 auto;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;padding:5px 8.5px;border-radius:9px;border:1px solid #262C36;background:#13161B;color:#CBD2DC;font-size:11.5px;font-weight:600;transition:border-color .14s,background .14s,color .14s}
 .c5-unit-tab:hover{border-color:#465063;color:#FFF}
-.c5-unit-tab.active{background:#1E242E;border-color:var(--tab-acc,var(--ac));color:#FFF}
-.c5-unit-dot{width:8px;height:8px;border-radius:50%;background:var(--tab-acc,var(--ac));flex-shrink:0}
+.c5-unit-tab.active{background:#1E242E;border-color:var(--tab-acc,var(--ac));color:#FFF;font-weight:700}
+.c5-unit-dot{width:7px;height:7px;border-radius:50%;background:var(--tab-acc,var(--ac));flex-shrink:0}
 @media(max-width:600px){
   .hi{padding:12px 16px}
-  .c5-unit-tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:10px -16px 0;padding:0 16px 2px}
-  .c5-unit-tabs::-webkit-scrollbar{display:none}
-  .c5-unit-tab{flex:0 0 auto;white-space:nowrap}
+  .c5-unit-tabs{margin:10px -16px 0;padding:0 16px 2px}
 }
 
 .admin-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:999px;background:#151921;color:var(--ac);border:1px solid #2C3340;text-decoration:none;font-size:12.5px;font-weight:700;line-height:1;transition:all .15s;white-space:nowrap;flex-shrink:0}
@@ -1900,7 +1899,64 @@ const TTX={"Who We Are":"#FFF","Where We Are in Place and Time":"#3D1E00","How W
 
 function gu(c,y){const n=Object.entries(CM).find(([k,v])=>v===c);return n?D.filter(r=>r.ca===n[0]&&r.yl===y):[]}
 function gS(t,d){const s=(t+" "+d).toLowerCase();if(/scratch|robot|code|micro.bit|beebot|sphero|spike|codrone|cubetto|indi|drone|dji|website/.test(s))return"Digital Technologies";if(/garageband|music|chrome music/.test(s))return"Music";if(/imovie|green screen|stop motion|video|premiere|insta360|360/.test(s))return"Media Arts";if(/canva.*present|poster|infograph|visual|drawing|character animat/.test(s))return"Visual Arts";if(/google earth|geography|timeline|histor|migrat|colon/.test(s))return"HASS";if(/data|graph|survey|excel|chart|measur|statistic/.test(s))return"Mathematics";if(/experiment|investig|scien|material|force|energy|plant|animal|habitat|ecosystem|weather|sensor/.test(s))return"Science";if(/book creator|writing|story|narrat|reading|podcast|oral|literacy/.test(s))return"English";if(/wellbeing|emotion|relationship|health|safe|reflect|journal/.test(s))return"Health & PE";return"Integrated"}
-function gA(t,d){const s=(t+" "+d).toLowerCase();if(/video|film|imovie|record|360|insta/.test(s))return"Students practise speaking, presenting and telling stories using video tools.";if(/book creator|story|narrat/.test(s))return"Students combine writing, images and voice recording to create rich digital books.";if(/data|graph|survey|chart|excel/.test(s))return"Students learn to collect, organise and make sense of real data.";if(/scratch|code|robot|beebot|sphero|spike|codrone|cubetto|indi/.test(s))return"Students learn to think logically, solve problems and create through coding.";if(/collaborat|padlet|shared/.test(s))return"Students work together, share ideas and build on each other's thinking online.";if(/podcast|garageband|audio/.test(s))return"Students develop confidence in speaking and learn to produce audio content.";if(/website/.test(s))return"Students learn to design and share information online.";if(/canva.*present|poster|infograph|design/.test(s))return"Students learn to communicate ideas visually through posters, infographics and presentations.";if(/reflect|journal|seesaw|wellbeing/.test(s))return"Students reflect on their own learning and track how their thinking grows over time.";if(/google earth/.test(s))return"Students explore real places around the world and connect geography to their learning.";if(/green screen|stop motion/.test(s))return"Students combine creative storytelling with video production techniques.";if(/tinkercad|3d print/.test(s))return"Students design, test and improve 3D models — learning through trial and error.";if(/micro.bit|makey/.test(s))return"Students connect coding to the physical world using sensors and electronics.";if(/vr|merge|cospaces|delightex|pico/.test(s))return"Students step inside their learning through virtual and augmented reality experiences.";if(/freeform/.test(s))return"Students make their thinking visible by mapping ideas, connections and questions on a shared canvas.";if(/character animat|animat/.test(s))return"Students bring stories to life through digital animation.";if(/drone|dji/.test(s))return"Students see their environment from above, connecting aerial views to their inquiry.";if(/mentimeter|kahoot/.test(s))return"Students share their thinking in real time and see how the class responds instantly.";if(/microsoft forms/.test(s))return"Students design surveys, collect responses and analyse what the class thinks.";return"Students use technology with purpose to deepen and demonstrate their learning."}
+function gA(t,d){
+  function match_(s){
+    if(!s)return"";
+    if(/teachable machine/.test(s))return"Students see firsthand how AI learns from training examples, test where it gets confused and improve its accuracy. That builds real-world understanding of how everyday AI works, from photo sorting and face unlock to wildlife cameras and medical screening.";
+    if(/minecraft/.test(s))return"Students build, test and walk through three-dimensional spaces they could never construct on paper, comparing before-and-after designs in real time. Architects, urban planners and game designers use 3D sandbox modelling the same way to test ideas before building.";
+    if(/book creator/.test(s))return"Students combine voice recordings, photos, drawings and text into one interactive book, giving emerging writers a way to share deep thinking aloud. It mirrors how modern digital publishers and accessible media reach real audiences.";
+    if(/freeform/.test(s))return"Students move, group and connect photos, sticky notes and sketches on an endless shared canvas, reorganising their thinking as new evidence arrives. Design and research teams use digital whiteboards the same way to map complex ideas together.";
+    if(/stop motion/.test(s))return"Frame-by-frame animation slows a process down so students plan and show every tiny step of change over time. Filmmakers, science explainers and animators use the same technique to make slow or invisible changes easy to see.";
+    if(/garageband/.test(s))return"Students layer voice, sound effects and music on separate tracks, editing timing and mood in a way live speech cannot. Radio producers, film composers and podcasters use multi-track audio editing to shape how listeners experience a story.";
+    if(/microsoft forms/.test(s))return"Students collect live responses from classmates or families and see patterns appear automatically instead of tallying by hand. Scientists, councils and product teams use digital surveys the same way to gather evidence before making decisions.";
+    if(/brushes redux/.test(s))return"Students work with layers, undo and zoom to test colour, texture and detail without starting over on a fresh sheet of paper. Digital illustrators and concept artists rely on layered painting apps to refine visual ideas step by step.";
+    if(/delightex|cospaces|cospace/.test(s))return"Students design and code interactive 3D worlds they can step inside and test from different viewpoints. Museum designers, engineers and VR creators use virtual prototypes to walk through spaces before anything is built.";
+    if(/animating a character|character animat/.test(s))return"Students turn spoken explanations into animated characters synced to their own voice, helping quieter learners share ideas clearly without being on camera. Voice-driven animation is used in explainer videos, accessibility tools and educational media.";
+    if(/mapmaker|map maker/.test(s))return"Students toggle live map layers, measure distances and plot spatial evidence to spot geographic patterns a flat paper map hides. Environmental scientists, emergency planners and journalists use GIS mapping layers the same way.";
+    if(/google maps/.test(s))return"Students jump down to Street View to examine real places at ground level and compare environments around the world. Geographers, travellers and urban researchers use street-level imagery to gather real-world evidence remotely.";
+    if(/puppet pals/.test(s))return"Students move characters and record dialogue at the same time, letting young learners act out stories and rehearse spoken language before writing. Storyboard artists and animators use live rehearsal tools to test scenes and dialogue.";
+    if(/wise discussion chatbot|chatbot/.test(s))return"Students practise questioning, explaining and testing their ideas in a structured back-and-forth with a teacher-guided AI inside Schoolbox. It teaches students how to prompt thoughtfully and check AI answers critically, a key real-world skill.";
+    if(/microsoft excel|\bexcel\b/.test(s))return"Students organise real numbers, test formulas and turn raw data into clear charts in seconds, freeing up time to spot trends and ask why. Scientists, economists and sports analysts rely on spreadsheets every day to turn data into decisions.";
+    if(/chatterpix/.test(s))return"Students photograph an object or drawing and give it a spoken voice, helping early learners explain what they know aloud without writing getting in the way. It builds early oral storytelling and presentation skills used across digital media.";
+    if(/seesaw/.test(s))return"Students capture photos, voice reflections and work-in-progress over time so they can actually hear and see how their thinking grew. Digital portfolios let learners share authentic evidence with families and reflect like real designers and scientists.";
+    if(/imovie|green screen/.test(s))return"Students sequence clips, trim pauses and layer narration or green-screen backdrops to communicate clearly and concisely. Video journalists, documentary makers and science communicators use editing to turn raw footage into clear stories.";
+    if(/micro:?bit|makey/.test(s))return"Students connect code to real physical sensors (light, temperature, motion or sound) and get immediate feedback from the world around them. Everyday smart devices, from fitness watches and weather stations to automatic doors, run on the exact same sensor-and-code loop.";
+    if(/insta360|\b360\b/.test(s))return"Students capture an entire 360-degree space in one shot so viewers can look around and notice details a normal photo crops out. Virtual museum tours, wildlife researchers and architects use 360 cameras to document real places immersively.";
+    if(/explain everything/.test(s))return"Students record their voice while drawing, moving diagrams and annotating live, making step-by-step thinking visible instead of only showing a final answer. Teachers, engineers and explainer-video creators use screen-recorded whiteboards to unpack tricky ideas.";
+    if(/piccollage|pic collage/.test(s))return"Students curate, crop and arrange real photos with short labels to compare evidence side by side in one clean visual. Photojournalists, scientists and museum curators group visual evidence the same way to highlight patterns and contrasts.";
+    if(/podcast/.test(s))return"Students script, record and polish spoken interviews or episodes for a real audience, focusing on clear voice, pacing and listening skills. Journalists, historians and community storytellers use podcasts to share perspectives beyond the written page.";
+    if(/sphero indi|\bindi\b/.test(s))return"Students test cause and effect hands-on by laying coloured tiles to control how a robot moves, debugging sequences on the spot without needing to read code. It introduces the same logic behind autonomous vehicles, warehouse robots and smart traffic systems.";
+    if(/sphero/.test(s))return"Students write and debug code that drives real speed, angles, lights and sensors in physical space, seeing immediately when their maths or logic is off. Robotics engineers test real-world navigation, automation and sensor feedback the same way.";
+    if(/scratch/.test(s))return"Students snap logic blocks together to test sequences, loops and decisions immediately, learning from bugs in seconds. Software developers, game designers and animators use the same building blocks to create interactive apps and simulations.";
+    if(/beebot|cubetto/.test(s))return"Students plan, predict and test step-by-step directions on a floor mat, turning abstract instructions into real movement they can debug straight away. Hands-on sequencing is the foundation of everyday automated systems and robotics.";
+    if(/sketchbook/.test(s))return"Students draw with clean guides, layers and zoom so they can focus on accuracy, labelled diagrams or careful observation without smudges. Industrial designers, architects and scientific illustrators use digital sketching apps to draft and refine work.";
+    if(/kahoot|mentimeter/.test(s))return"Every student shares their thinking at the same time and sees the whole class's ideas live, sparking instant discussion about misconceptions. Live polling is used in town halls, conferences and research sessions to hear every voice quickly.";
+    if(/adobe express|canva/.test(s))return"Students combine typography, icons, photos and layout hierarchy to turn inquiry findings into clear posters, infographics or short videos. Designers, communicators and community campaigns use visual design tools to make important messages easy to grasp.";
+    if(/clickview/.test(s))return"Curated, age-appropriate video brings real-world places, experts and voices into the classroom that students could never visit in person. Pausing and replaying lets students analyse real evidence and perspectives closely.";
+    if(/padlet/.test(s))return"Students post photos, voice notes or findings onto one live shared board and build on classmates' ideas in real time. Research teams and newsrooms use shared digital boards to pool evidence from many contributors at once.";
+    if(/slow motion/.test(s))return"Slow-motion video reveals split-second movements, forces and changes that happen too fast for the human eye to catch. Sports scientists, biomechanists and physicists use slow-motion replay to analyse motion and improve technique.";
+    if(/seek|inaturalist/.test(s))return"Students use camera recognition outdoors to identify local plants, insects and birds safely, connecting classroom inquiry straight to living biodiversity. Citizen scientists and ecologists use iNaturalist data to track habitats and species.";
+    if(/dollar street/.test(s))return"Students compare real, unfiltered photographs of everyday homes and items from families across the world, challenging stereotypes with authentic visual data. Global researchers and educators use real-life photo datasets to understand how income shapes daily life.";
+    if(/magnifier/.test(s))return"Clip-on magnifiers turn an iPad camera into a live digital microscope so students can zoom in, freeze and photograph tiny textures together. Biologists, geologists and quality inspectors use digital magnification to document fine evidence.";
+    if(/apple clips/.test(s))return"Students film short clips with automatic live captions and titles, turning quick observations into clear, accessible mini-documentaries. Short-form captioned video is how modern newsrooms, museums and accessibility-minded creators share quick stories.";
+    if(/geoboard/.test(s))return"Students stretch, test and compare shapes and fractions instantly without snapping rubber bands or redrawing grids, making geometric patterns easy to spot. Digital manipulatives mirror the visual modelling tools mathematicians and engineers use.";
+    if(/field guide/.test(s))return"Students use the same digital field guide trusted by Victorian museums to compare real local wildlife, habitats and calls. Naturalists and park rangers rely on mobile field guides to identify and protect native species accurately.";
+    if(/tinkercad|3d print/.test(s))return"Students design exact 3D prototypes digitally and check measurements before printing, learning through rapid iteration instead of wasting materials. Engineers, prosthetics makers and product designers rely on CAD and 3D printing to solve real-world problems.";
+    if(/\bepic\b/.test(s))return"Students access levelled, read-to-me and audio-supported texts across topics instantly, letting every learner research independently regardless of reading stage. Digital libraries with audio support mirror how modern readers and researchers access information.";
+    if(/merge cube|pico vr|\bvr\b/.test(s))return"Students hold and rotate 3D models like organs, planets or artefacts using augmented or virtual reality, inspecting angles flat diagrams cannot show. Medical trainers, museums and engineers use AR and VR models to examine complex objects up close.";
+    if(/lego spike|\bspike\b/.test(s))return"Students combine physical gears, motors and sensors with code to build working machines they can test, measure and refine. Mechanical and robotics engineers prototype real-world machines using the same build-code-test cycle.";
+    if(/scaniverse/.test(s))return"Students scan real objects or classroom builds into rotatable 3D models using their iPad camera, preserving physical work digitally. Museums, archaeologists and architects use 3D scanning to archive artefacts and map real spaces.";
+    if(/stellarium/.test(s))return"Students explore an accurate, real-time night sky for any date or location, observing star and planet movement that is impossible to see during school hours. Astronomers and planetariums use sky-simulation software to track celestial patterns.";
+    if(/flipaclip/.test(s))return"Students draw frame by frame with onion-skinning previews so they can see how small visual changes create smooth movement. Professional 2D animators use the exact same technique to bring characters and processes to life.";
+    if(/swift playground/.test(s))return"Students write real Swift code and watch live visual feedback show what each command does, bridging block coding to real programming. App developers around the world build everyday iPhone and iPad apps in the exact same language.";
+    if(/popplet/.test(s))return"Students map and rearrange linked ideas with text, sketches and photos, making connections visible as their understanding grows. Planners, writers and researchers use digital mind maps to organise complex thinking.";
+    if(/promptsmart/.test(s))return"A voice-following teleprompter helps students keep eye contact and steady pacing while presenting, building speaking confidence. News anchors, documentary hosts and public speakers use teleprompters the same way.";
+    if(/drone|dji|codrone/.test(s))return"Students explore flight paths, aerial views or coded drone routines, seeing their environment from angles impossible from the ground. Surveyors, wildlife conservationists and filmmakers use drones to map landscapes safely.";
+    return"";
+  }
+  var tool=String(t||"").toLowerCase(),desc=String(d||"").toLowerCase();
+  return match_(tool)||match_(desc)||"Students combine hands-on making with digital tools to prototype, test and improve a real-world solution, mirroring how engineers and designers iterate on working models.";
+}
 
 const FBHOOK="https://script.google.com/macros/s/AKfycbwFSbbn_1IaTst0ujfzBiQpE5pGpo07UL8yxemoHOudXzPHxKmKJvkgW2jvivf9yr9Alg/exec";
 let S={v:"home",ca:null,yl:null,ui:null,lbTab:"overall",lbCampus:"GW"};
@@ -1937,6 +1993,10 @@ function teardownNeonEffects_(){
   while(_neonCleanups.length){try{_neonCleanups.pop()();}catch(_){}}
 }
 function initNeonEffects_(accHex){
+  var activeTab=document.querySelector('.c5-unit-tab.active');
+  if(activeTab&&typeof activeTab.scrollIntoView==='function'){
+    try{activeTab.scrollIntoView({inline:'nearest',block:'nearest'});}catch(_){}
+  }
   var hd=document.querySelector('.hd');
   if(hd){
     var h=Math.round(hd.getBoundingClientRect().height);
@@ -2179,7 +2239,6 @@ mainSugs.forEach((s,si)=>{
   cardsHtml+='<article class="c5-card-wrap'+(seqIdx===0?' is-current':'')+'" data-seq-card="'+seqIdx+'" tabindex="-1"><div class="c5-card-inner" style="--tcl:'+tcl+'">'
     +'<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:12px">'
       +'<span class="pill-chip" style="background:rgba(255,255,255,.06);border:1px solid #2C3442;color:'+tcl+'">Idea #'+(si+1)+' of '+mainSugs.length+'</span>'
-      +'<span class="pill-chip" style="background:#1B2029;border:1px solid #2C3442;color:#CBD2DC">'+escapeHtml(j)+'</span>'
     +'</div>'
     +_fits
     +'<h3 class="c5-card-tool">'+toolLabel+'</h3>'
@@ -3115,8 +3174,8 @@ DOCS["doc_rubbish_audit"]={"n":"DT Hub — Rubbish Recording and Reduction Lesso
     const oldGA=gA;
     gA=function(t,d){
       t=text_(t); d=text_(d);
-      if(isGoogleMaps_(t)) return 'Students use Street View to make careful ground-level observations and compare real places connected to the unit.';
-      if(isMapMaker_(t) || t===NATGEO_TOOL) return 'Students use map layers, labels and spatial evidence to explain patterns and connections in the world.';
+      if(isGoogleMaps_(t)) return 'Students jump down to Street View to examine real places at ground level and compare environments around the world. Geographers, travellers and urban researchers use street-level imagery to gather real-world evidence remotely.';
+      if(isMapMaker_(t) || t===NATGEO_TOOL) return 'Students toggle live map layers, measure distances and plot spatial evidence to spot geographic patterns a flat paper map hides. Environmental scientists, emergency planners and journalists use GIS mapping layers the same way.';
       if(/cospaces/i.test(t)) t='Delightex';
       return oldGA.call(this,t,d);
     };
