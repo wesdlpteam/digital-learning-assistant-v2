@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Wesley Digital Learning Assistant</title>
-<script>window.APP_VERSION='2026-11-26-2';</script>  <!-- bump on every deploy so open tabs auto-refresh -->
+<script>window.APP_VERSION='2026-11-26-3';</script>  <!-- bump on every deploy so open tabs auto-refresh -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23111111'/%3E%3Cpolygon points='19,3 10,17 15,17 13,29 22,15 17,15' fill='%23CDEB45'/%3E%3Ccircle cx='6' cy='6' r='2' fill='%23CDEB45' opacity='0.5'/%3E%3Ccircle cx='26' cy='26' r='2' fill='%23CDEB45' opacity='0.5'/%3E%3Ccircle cx='26' cy='6' r='1.5' fill='%237ED957' opacity='0.6'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1951,6 +1951,9 @@ function gA(t,d){
     if(/swift playground/.test(s))return"Students write real Swift code and watch live visual feedback show what each command does, bridging block coding to real programming. App developers around the world build everyday iPhone and iPad apps in the exact same language.";
     if(/popplet/.test(s))return"Students map and rearrange linked ideas with text, sketches and photos, making connections visible as their understanding grows. Planners, writers and researchers use digital mind maps to organise complex thinking.";
     if(/promptsmart/.test(s))return"A voice-following teleprompter helps students keep eye contact and steady pacing while presenting, building speaking confidence. News anchors, documentary hosts and public speakers use teleprompters the same way.";
+    if(/aqua|adobe for kids/.test(s))return"Students design illustrated stories, comics and layered artwork using kid-friendly digital drawing tools they can revise without starting over. Children's illustrators and comic artists use digital studios the same way to draft and polish visual stories.";
+    if(/bloxels/.test(s))return"Students turn pixel art, levels and game rules into a playable game classmates can actually test and improve, seeing cause and effect straight away. Indie game designers prototype mechanics and player feedback loops the exact same way.";
+    if(/mathigon|polypad/.test(s))return"Students manipulate virtual fraction bars, shapes, algebra tiles and probability tools interactively to test maths ideas and spot patterns immediately. Mathematicians, teachers and data modellers use dynamic visual tools to explore relationships paper diagrams cannot move.";
     if(/drone|dji|codrone/.test(s))return"Students explore flight paths, aerial views or coded drone routines, seeing their environment from angles impossible from the ground. Surveyors, wildlife conservationists and filmmakers use drones to map landscapes safely.";
     return"";
   }
